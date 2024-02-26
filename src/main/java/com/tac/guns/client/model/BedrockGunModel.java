@@ -1,27 +1,23 @@
 package com.tac.guns.client.model;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import com.tac.guns.client.handler.AimingHandler;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
-import com.tac.guns.client.render.item.IOverrideModel;
-import com.tac.guns.client.render.item.OverrideModelManager;
 import com.tac.guns.client.resource.model.bedrock.BedrockVersion;
 import com.tac.guns.client.resource.model.bedrock.pojo.BedrockModelPOJO;
-import com.tac.guns.client.util.RenderUtil;
-import com.tac.guns.common.Gun;
-import com.tac.guns.init.ModItems;
-import com.tac.guns.item.GunItem;
-import com.tac.guns.item.attachment.IAttachment;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,8 +29,7 @@ import java.util.Stack;
 
 import static com.tac.guns.client.model.CommonComponents.*;
 
-public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideModel {
-    protected Gun currentModifiedGun;
+public class BedrockGunModel extends BedrockAnimatedModel{
     protected ItemStack currentItem;
     protected ItemStack currentParent;
     protected LivingEntity currentEntity;
@@ -63,7 +58,7 @@ public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideMo
                     PoseStack poseStack2 = new PoseStack();
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
-                    RenderUtil.renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, Minecraft.getInstance().renderBuffers().bufferSource(), light1);
+                    renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, Minecraft.getInstance().renderBuffers().bufferSource(), light1);
                 });
             }
         });
@@ -77,7 +72,7 @@ public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideMo
                     PoseStack poseStack2 = new PoseStack();
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
-                    RenderUtil.renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.RIGHT, poseStack2, Minecraft.getInstance().renderBuffers().bufferSource(), light1);
+                    renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.RIGHT, poseStack2, Minecraft.getInstance().renderBuffers().bufferSource(), light1);
                 });
             }
         });
@@ -100,115 +95,67 @@ public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideMo
             return null;
         });
         this.setFunctionalRenderer(MUZZLE_BRAKE, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.BARREL)) {
-                ItemStack muzzle = Gun.getAttachment(IAttachment.Type.BARREL, currentItem);
-                bedrockPart.visible = muzzle.getItem() == ModItems.MUZZLE_BRAKE.get();
-            } else
-                bedrockPart.visible = false;
+            //todo 判断枪械是否安装枪口制动器，改变bedrockPart.visible以隐藏或者显示对应模型，下同
             return null;
         });
         this.setFunctionalRenderer(MUZZLE_COMPENSATOR, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.BARREL)) {
-                ItemStack muzzle = Gun.getAttachment(IAttachment.Type.BARREL, currentItem);
-                bedrockPart.visible = muzzle.getItem() == ModItems.MUZZLE_COMPENSATOR.get();
-            } else
-                bedrockPart.visible = false;
+            //todo 安装补偿器时可见
             return null;
         });
         this.setFunctionalRenderer(MUZZLE_SILENCER, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.BARREL)) {
-                ItemStack muzzle = Gun.getAttachment(IAttachment.Type.BARREL, currentItem);
-                bedrockPart.visible = muzzle.getItem() == ModItems.SILENCER.get();
-            } else
-                bedrockPart.visible = false;
+            //todo 安装消音器时可见
             return null;
         });
         this.setFunctionalRenderer(MUZZLE_DEFAULT, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.BARREL)) {
-                ItemStack muzzle = Gun.getAttachment(IAttachment.Type.BARREL, currentItem);
-                bedrockPart.visible = muzzle.getItem() == ItemStack.EMPTY.getItem();
-            } else
-                bedrockPart.visible = true;
+            //todo 没有枪口配件时可见
             return null;
         });
         this.setFunctionalRenderer(MOUNT, bedrockPart -> {
-            bedrockPart.visible = currentModifiedGun.canAttachType(IAttachment.Type.SCOPE) && Gun.getScope(currentItem) != null;
+            //todo 安装瞄具时可见
             return null;
         });
         this.setFunctionalRenderer(CARRY, bedrockPart -> {
-            bedrockPart.visible = currentModifiedGun.canAttachType(IAttachment.Type.SCOPE) && Gun.getScope(currentItem) == null;
+            //todo 未安装瞄具时可见
             return null;
         });
         this.setFunctionalRenderer(SIGHT_FOLDED, bedrockPart -> {
-            bedrockPart.visible = currentModifiedGun.canAttachType(IAttachment.Type.SCOPE) && Gun.getScope(currentItem) != null;
+            //todo 安装瞄具时可见
             return null;
         });
         this.setFunctionalRenderer(SIGHT, bedrockPart -> {
-            bedrockPart.visible = currentModifiedGun.canAttachType(IAttachment.Type.SCOPE) && Gun.getScope(currentItem) == null;
+            //todo 未安装瞄具时可见
             return null;
         });
         this.setFunctionalRenderer(STOCK_LIGHT, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.STOCK)) {
-                ItemStack stock = Gun.getAttachment(IAttachment.Type.STOCK, currentItem);
-                bedrockPart.visible = stock.getItem() == ModItems.LIGHT_STOCK.get();
-            } else
-                bedrockPart.visible = false;
+            //todo 安装轻型枪托时可见
             return null;
         });
         this.setFunctionalRenderer(STOCK_TACTICAL, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.STOCK)) {
-                ItemStack stock = Gun.getAttachment(IAttachment.Type.STOCK, currentItem);
-                bedrockPart.visible = stock.getItem() == ModItems.TACTICAL_STOCK.get();
-            } else
-                bedrockPart.visible = false;
+            //todo 安装战术枪托时可见
             return null;
         });
         this.setFunctionalRenderer(STOCK_HEAVY, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.STOCK)) {
-                ItemStack stock = Gun.getAttachment(IAttachment.Type.STOCK, currentItem);
-                bedrockPart.visible = stock.getItem() == ModItems.WEIGHTED_STOCK.get();
-            } else
-                bedrockPart.visible = false;
+            //todo 安装重型枪托时可见
             return null;
         });
         this.setFunctionalRenderer(STOCK_DEFAULT, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.STOCK)) {
-                ItemStack stock = Gun.getAttachment(IAttachment.Type.STOCK, currentItem);
-                bedrockPart.visible = stock.getItem() == ItemStack.EMPTY.getItem();
-            } else
-                bedrockPart.visible = true;
+            //todo 未安装枪托时可见
             return null;
         });
         this.setFunctionalRenderer(MAG_EXTENDED_1, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.EXTENDED_MAG)) {
-                ItemStack mag = Gun.getAttachment(IAttachment.Type.EXTENDED_MAG, currentItem);
-                bedrockPart.visible = mag.getItem() == ModItems.SMALL_EXTENDED_MAG.get();
-            } else
-                bedrockPart.visible = false;
+            //todo 安装一级扩容弹匣时可见
             return null;
         });
         this.setFunctionalRenderer(MAG_EXTENDED_2, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.EXTENDED_MAG)) {
-                ItemStack mag = Gun.getAttachment(IAttachment.Type.EXTENDED_MAG, currentItem);
-                bedrockPart.visible = mag.getItem() == ModItems.MEDIUM_EXTENDED_MAG.get();
-            } else
-                bedrockPart.visible = false;
+            //todo 安装二级扩容弹匣时可见
             return null;
         });
         this.setFunctionalRenderer(MAG_EXTENDED_3, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.EXTENDED_MAG)) {
-                ItemStack mag = Gun.getAttachment(IAttachment.Type.EXTENDED_MAG, currentItem);
-                bedrockPart.visible = mag.getItem() == ModItems.LARGE_EXTENDED_MAG.get();
-            } else
-                bedrockPart.visible = false;
+            //todo 安装三级扩容弹匣时可见
             return null;
         });
         this.setFunctionalRenderer(MAG_STANDARD, bedrockPart -> {
-            if (currentModifiedGun.canAttachType(IAttachment.Type.EXTENDED_MAG)) {
-                ItemStack mag = Gun.getAttachment(IAttachment.Type.EXTENDED_MAG, currentItem);
-                bedrockPart.visible = mag.getItem() == ItemStack.EMPTY.getItem();
-            } else
-                bedrockPart.visible = true;
+            //todo 未安装扩容弹匣时可见
             return null;
         });
         {
@@ -248,6 +195,8 @@ public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideMo
         this.setFunctionalRenderer(SCOPE_POS_NODE, bedrockPart -> {
             bedrockPart.visible = false;
             return (poseStack, transformType, consumer, light, overlay) -> {
+                //todo 获取当前枪械安装的瞄具，获取其模型并渲染。注释的代码先保留
+                /*
                 ItemStack scopeItemStack = Gun.getAttachment(IAttachment.Type.SCOPE, currentItem);
                 if (!scopeItemStack.isEmpty()) {
                     IOverrideModel scopeModel = OverrideModelManager.getModel(scopeItemStack);
@@ -265,6 +214,7 @@ public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideMo
                         });
                     }
                 }
+                */
             };
         });
         this.setFunctionalRenderer(EJECTION_NODE, bedrockPart -> {
@@ -305,27 +255,23 @@ public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideMo
         return ejectionNormal;
     }
 
-    @Override
     public void render(float partialTicks, ItemTransforms.TransformType transformType, ItemStack stack, ItemStack parent, LivingEntity entity, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {
         currentItem = stack;
         currentParent = parent;
         currentEntity = entity;
 
         matrixStack.pushPose();
-        if (currentItem != null) {
-            if (!(currentItem.getItem() instanceof GunItem))
-                throw new ClassCastException("The Item type of the item stack must be GunItem when render BedrockGunModel");
-            currentModifiedGun = ((GunItem) currentItem.getItem()).getModifiedGun(currentItem);
-        }
+
         if (transformType.firstPerson()) {
-            //计算瞄准的进度
-            float v = aimingDynamics.update(0.05f, (float) AimingHandler.get().getLerpAdsProgress(partialTicks));
+            //todo v就是瞄准动作的进度
+            float v = 0;
             //从渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
             matrixStack.translate(0, 1.5f, 0);
             //游戏中模型是上下颠倒的，需要翻转过来。
             matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
-            ItemStack scopeItemStack = Gun.getAttachment(IAttachment.Type.SCOPE, stack);
-            if (scopeItemStack.isEmpty()) {
+            //todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。
+            //todo 不要删掉注释的代码，因为应用位移的逻辑需要保留下来
+            if (true) {
                 //应用定位组的反向位移、旋转，使定位组的位置就是屏幕中心
                 matrixStack.translate(0, 1.5f, 0);
                 for (int f = ironSightPath.size() - 1; f >= 0; f--) {
@@ -340,6 +286,7 @@ public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideMo
                 }
                 matrixStack.translate(0, -1.5f, 0);
             } else {
+                /*
                 IOverrideModel scopeModel = OverrideModelManager.getModel(scopeItemStack);
                 if (scopeModel instanceof BedrockAttachmentModel bedrockScopeModel) {
                     //应用定位组的反向位移、旋转，使定位组的位置就是屏幕中心
@@ -366,6 +313,7 @@ public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideMo
                     }
                     matrixStack.translate(0, -1.5f, 0);
                 }
+                */
             }
             //主摄像机的默认位置是(0, 8, 12)
             matrixStack.translate(0, 0.5 * (1 - v), -0.75 * (1 - v));
@@ -388,5 +336,24 @@ public class BedrockGunModel extends BedrockAnimatedModel implements IOverrideMo
                 (float) (sy * cp * cr - cy * sp * sr),
                 (float) (cy * cp * cr + sy * sp * sr)
         };
+    }
+
+    private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight)
+    {
+        Minecraft mc = Minecraft.getInstance();
+        EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
+        PlayerRenderer renderer = (PlayerRenderer) renderManager.getRenderer(player);
+        int oldId = RenderSystem.getShaderTexture(0);
+        RenderSystem.setShaderTexture(0, player.getSkinTextureLocation());
+
+        if(hand == HumanoidArm.RIGHT)
+        {
+            renderer.renderRightHand(matrixStack, buffer, combinedLight, player);
+        }
+        else
+        {
+            renderer.renderLeftHand(matrixStack, buffer, combinedLight, player);
+        }
+        RenderSystem.setShaderTexture(0, oldId);
     }
 }
