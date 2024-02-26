@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -50,17 +51,69 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
         if (!(entityIn instanceof Player))
             return;
 
-        this.resetRotationAngles();
+        this.tac$resetAll(this.head);
+        this.tac$resetAll(this.hat);
+        this.tac$resetAll(this.body);
+        this.tac$resetAll(this.jacket);
+
+        this.tac$resetAll(this.rightArm);
+        this.rightArm.x = -5.0F;
+        this.rightArm.y = this.slim ? 2.5F : 2.0F;
+        this.rightArm.z = 0.0F;
+
+        this.tac$resetAll(this.rightSleeve);
+        this.rightSleeve.x = -5.0F;
+        this.rightSleeve.y = this.slim ? 2.5F : 2.0F;
+        this.rightSleeve.z = 10.0F;
+
+        this.tac$resetAll(this.leftArm);
+        this.leftArm.x = 5.0F;
+        this.leftArm.y = this.slim ? 2.5F : 2.0F;
+        this.leftArm.z = 0.0F;
+
+        this.tac$resetAll(this.leftSleeve);
+        this.leftSleeve.x = 5.0F;
+        this.leftSleeve.y = this.slim ? 2.5F : 2.0F;
+        this.leftSleeve.z = 0.0F;
+
+        this.tac$resetAll(this.leftLeg);
+        this.leftLeg.x = 1.9F;
+        this.leftLeg.y = 12.0F;
+        this.leftLeg.z = 0.0F;
+
+        this.tac$resetAll(this.leftPants);
+        this.leftPants.copyFrom(this.leftLeg);
+
+        this.tac$resetAll(this.rightLeg);
+        this.rightLeg.x = -1.9F;
+        this.rightLeg.y = 12.0F;
+        this.rightLeg.z = 0.0F;
+
+        this.tac$resetAll(this.rightPants);
+        this.rightPants.copyFrom(this.rightLeg);
+
+        //fire Pre event
     }
 
     @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "TAIL"))
-    private void setRotationAnglesTail(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
+    private void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
         if (!(entityIn instanceof Player))
             return;
-        this.setupRotationAngles();
-    }
 
-    private void setupRotationAngles() {
+        // Dirty hack to reject first person arms
+        PlayerModel model = (PlayerModel) (Object) this;
+        if (ageInTicks == 0F) {
+            model.rightArm.xRot = 0;
+            model.rightArm.yRot = 0;
+            model.rightArm.zRot = 0;
+            model.leftArm.xRot = 0;
+            model.leftArm.yRot = 0;
+            model.leftArm.zRot = 0;
+            return;
+        }
+
+        //fire Post event
+
         this.rightSleeve.copyFrom(this.rightArm);
         this.leftSleeve.copyFrom(this.leftArm);
         this.rightPants.copyFrom(this.rightLeg);
@@ -70,58 +123,12 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
     }
 
     /**
-     * Resets all the rotations and rotation points back to their initial values. This makes it
-     * so ever developer doesn't have to do it themselves.
-     */
-    private void resetRotationAngles() {
-        this.resetAll(this.head);
-        this.resetAll(this.hat);
-        this.resetAll(this.body);
-        this.resetAll(this.jacket);
-
-        this.resetAll(this.rightArm);
-        this.rightArm.x = -5.0F;
-        this.rightArm.y = this.slim ? 2.5F : 2.0F;
-        this.rightArm.z = 0.0F;
-
-        this.resetAll(this.rightSleeve);
-        this.rightSleeve.x = -5.0F;
-        this.rightSleeve.y = this.slim ? 2.5F : 2.0F;
-        this.rightSleeve.z = 10.0F;
-
-        this.resetAll(this.leftArm);
-        this.leftArm.x = 5.0F;
-        this.leftArm.y = this.slim ? 2.5F : 2.0F;
-        this.leftArm.z = 0.0F;
-
-        this.resetAll(this.leftSleeve);
-        this.leftSleeve.x = 5.0F;
-        this.leftSleeve.y = this.slim ? 2.5F : 2.0F;
-        this.leftSleeve.z = 0.0F;
-
-        this.resetAll(this.leftLeg);
-        this.leftLeg.x = 1.9F;
-        this.leftLeg.y = 12.0F;
-        this.leftLeg.z = 0.0F;
-
-        this.resetAll(this.leftPants);
-        this.leftPants.copyFrom(this.leftLeg);
-
-        this.resetAll(this.rightLeg);
-        this.rightLeg.x = -1.9F;
-        this.rightLeg.y = 12.0F;
-        this.rightLeg.z = 0.0F;
-
-        this.resetAll(this.rightPants);
-        this.rightPants.copyFrom(this.rightLeg);
-    }
-
-    /**
      * Resets the rotation angles and points to zero for the given model renderer
      *
      * @param part the model part to reset
      */
-    private void resetAll(ModelPart part) {
+    @Unique
+    private void tac$resetAll(ModelPart part) {
         part.xRot = 0.0F;
         part.yRot = 0.0F;
         part.zRot = 0.0F;
