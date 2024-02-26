@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.model.bedrock.pojo;
+package com.tac.guns.client.resource.pojo.model;
 
 import com.google.common.collect.Lists;
 import com.google.gson.*;

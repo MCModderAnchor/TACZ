@@ -2,8 +2,7 @@ package com.tac.guns.client.model.bedrock;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.tac.guns.client.resource.model.bedrock.BedrockVersion;
-import com.tac.guns.client.resource.model.bedrock.pojo.*;
+import com.tac.guns.client.resource.pojo.model.*;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;

@@ -1,17 +1,14 @@
-package com.tac.guns.client.resource.model.bedrock.pojo;
+package com.tac.guns.client.resource.pojo.model;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class GeometryModelLegacy {
-    @SerializedName("bones")
-    private List<BonesItem> bones;
-
-    @SerializedName("textureheight")
+public class Description {
+    @SerializedName("texture_height")
     private int textureHeight;
 
-    @SerializedName("texturewidth")
+    @SerializedName("texture_width")
     private int textureWidth;
 
     @SerializedName("visible_bounds_height")
@@ -22,10 +19,6 @@ public class GeometryModelLegacy {
 
     @SerializedName("visible_bounds_offset")
     private List<Float> visibleBoundsOffset;
-
-    public List<BonesItem> getBones() {
-        return bones;
-    }
 
     public int getTextureHeight() {
         return textureHeight;
@@ -45,20 +38,5 @@ public class GeometryModelLegacy {
 
     public List<Float> getVisibleBoundsOffset() {
         return visibleBoundsOffset;
-    }
-
-    public GeometryModelLegacy deco() {
-        if (bones != null) {
-            this.bones.forEach(bonesItem -> {
-                if (bonesItem.getCubes() != null) {
-                    bonesItem.getCubes().forEach(cubesItem -> {
-                        if (!cubesItem.isHasMirror()) {
-                            cubesItem.setMirror(bonesItem.isMirror());
-                        }
-                    });
-                }
-            });
-        }
-        return this;
     }
 }

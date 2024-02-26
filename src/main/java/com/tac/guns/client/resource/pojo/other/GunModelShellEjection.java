@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.model.bedrock.pojo;
+package com.tac.guns.client.resource.pojo.other;
 
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;

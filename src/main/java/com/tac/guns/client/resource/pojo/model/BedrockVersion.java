@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.model.bedrock;
+package com.tac.guns.client.resource.pojo.model;
 
 public enum BedrockVersion {
     /**

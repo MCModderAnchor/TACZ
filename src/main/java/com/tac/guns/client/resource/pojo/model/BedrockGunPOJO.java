@@ -1,13 +1,14 @@
-package com.tac.guns.client.resource.model.bedrock.pojo;
+package com.tac.guns.client.resource.pojo.model;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.resources.ResourceLocation;
+import com.tac.guns.client.resource.pojo.other.GunModelShellEjection;
+import com.tac.guns.client.resource.pojo.texture.GunModelTexture;
 
 import java.util.List;
 
-public class BedrockGunModelPOJO {
+public class BedrockGunPOJO {
     @SerializedName("model")
-    private ResourceLocation modelLocation;
+    private String modelLocation;
 
     @SerializedName("textures")
     private List<GunModelTexture> textures;
@@ -15,7 +16,7 @@ public class BedrockGunModelPOJO {
     @SerializedName("shell_ejection")
     private GunModelShellEjection shellEjection;
 
-    public ResourceLocation getModelLocation() {
+    public String getModelLocation() {
         return modelLocation;
     }
 

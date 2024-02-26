@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.model.bedrock.pojo;
+package com.tac.guns.client.resource.pojo.texture;
 
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
@@ -8,13 +8,13 @@ public class GunModelAttachmentTexture {
     private ResourceLocation key;
 
     @SerializedName("location")
-    private ResourceLocation location;
+    private String location;
 
     public ResourceLocation getKey() {
         return key;
     }
 
-    public ResourceLocation getLocation() {
+    public String getLocation() {
         return location;
     }
 }

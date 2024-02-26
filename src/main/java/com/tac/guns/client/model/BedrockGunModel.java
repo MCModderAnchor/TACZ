@@ -8,8 +8,8 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
-import com.tac.guns.client.resource.model.bedrock.BedrockVersion;
-import com.tac.guns.client.resource.model.bedrock.pojo.BedrockModelPOJO;
+import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
+import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -29,9 +29,8 @@ import java.util.Stack;
 
 import static com.tac.guns.client.model.CommonComponents.*;
 
-public class BedrockGunModel extends BedrockAnimatedModel{
+public class BedrockGunModel extends BedrockAnimatedModel {
     protected ItemStack currentItem;
-    protected ItemStack currentParent;
     protected LivingEntity currentEntity;
     protected final List<BedrockPart> ironSightPath = new ArrayList<>();
     protected final List<BedrockPart> scopePosPath = new ArrayList<>();
@@ -255,9 +254,8 @@ public class BedrockGunModel extends BedrockAnimatedModel{
         return ejectionNormal;
     }
 
-    public void render(float partialTicks, ItemTransforms.TransformType transformType, ItemStack stack, ItemStack parent, LivingEntity entity, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {
+    public void render(float partialTicks, ItemTransforms.TransformType transformType, ItemStack stack, LivingEntity entity, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {
         currentItem = stack;
-        currentParent = parent;
         currentEntity = entity;
 
         matrixStack.pushPose();
@@ -338,20 +336,16 @@ public class BedrockGunModel extends BedrockAnimatedModel{
         };
     }
 
-    private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight)
-    {
+    private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight) {
         Minecraft mc = Minecraft.getInstance();
         EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
         PlayerRenderer renderer = (PlayerRenderer) renderManager.getRenderer(player);
         int oldId = RenderSystem.getShaderTexture(0);
         RenderSystem.setShaderTexture(0, player.getSkinTextureLocation());
 
-        if(hand == HumanoidArm.RIGHT)
-        {
+        if (hand == HumanoidArm.RIGHT) {
             renderer.renderRightHand(matrixStack, buffer, combinedLight, player);
-        }
-        else
-        {
+        } else {
             renderer.renderLeftHand(matrixStack, buffer, combinedLight, player);
         }
         RenderSystem.setShaderTexture(0, oldId);

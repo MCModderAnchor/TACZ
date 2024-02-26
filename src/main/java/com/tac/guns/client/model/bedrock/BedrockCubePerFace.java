@@ -6,8 +6,8 @@ import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
-import com.tac.guns.client.resource.model.bedrock.pojo.FaceItem;
-import com.tac.guns.client.resource.model.bedrock.pojo.FaceUVsItem;
+import com.tac.guns.client.resource.pojo.model.FaceItem;
+import com.tac.guns.client.resource.pojo.model.FaceUVsItem;
 import net.minecraft.core.Direction;
 
 public class BedrockCubePerFace implements BedrockCube {

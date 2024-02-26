@@ -3,8 +3,8 @@ package com.tac.guns.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
-import com.tac.guns.client.resource.model.bedrock.BedrockVersion;
-import com.tac.guns.client.resource.model.bedrock.pojo.BedrockModelPOJO;
+import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
+import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class BedrockAttachmentModel extends BedrockAnimatedModel{
+public class BedrockAttachmentModel extends BedrockAnimatedModel {
     public static final String SCOPE_VIEW_NODE = "scope_view";
     protected final List<BedrockPart> scopeViewPath = new ArrayList<>();
 

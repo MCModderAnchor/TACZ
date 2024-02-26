@@ -14,6 +14,6 @@ public class GunMod {
 
     public GunMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModItems.REGISTER.register(bus);
+        ModItems.ITEMS.register(bus);
     }
 }

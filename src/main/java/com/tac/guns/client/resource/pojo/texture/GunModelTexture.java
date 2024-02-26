@@ -1,7 +1,6 @@
-package com.tac.guns.client.resource.model.bedrock.pojo;
+package com.tac.guns.client.resource.pojo.texture;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -11,7 +10,7 @@ public class GunModelTexture {
     private String name;
 
     @SerializedName("location")
-    private ResourceLocation location;
+    private String location;
 
     @SerializedName("attachment")
     @Nullable
@@ -21,7 +20,7 @@ public class GunModelTexture {
         return name;
     }
 
-    public ResourceLocation getLocation() {
+    public String getLocation() {
         return location;
     }
 

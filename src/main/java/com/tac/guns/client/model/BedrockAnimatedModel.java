@@ -11,9 +11,9 @@ import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.IModelRenderer;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
-import com.tac.guns.client.resource.model.bedrock.BedrockVersion;
-import com.tac.guns.client.resource.model.bedrock.pojo.BedrockModelPOJO;
-import com.tac.guns.client.resource.model.bedrock.pojo.BonesItem;
+import com.tac.guns.client.resource.pojo.model.BedrockVersion;
+import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
+import com.tac.guns.client.resource.pojo.model.BonesItem;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 
