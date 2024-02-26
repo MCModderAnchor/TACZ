@@ -24,6 +24,11 @@ archivesBaseName = "tac-1.18.2"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
+mixin {
+    add sourceSets.main, "tac.refmap.json"
+    config "tac.mixins.json"
+}
+
 minecraft {
     mappings channel: 'parchment', version: '2022.05.22-1.18.2'
 
@@ -92,6 +97,8 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 jar {
