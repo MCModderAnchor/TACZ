@@ -2,6 +2,7 @@ package com.tac.guns.item;
 
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
 import com.tac.guns.entity.EntityBullet;
+import com.tac.guns.init.ModSounds;
 import com.tac.guns.item.nbt.GunItemData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -47,12 +48,13 @@ public class GunItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player player, InteractionHand hand) {
-        if (hand == InteractionHand.MAIN_HAND && !pLevel.isClientSide) {
-            EntityBullet bullet = new EntityBullet(pLevel, player);
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+        if (hand == InteractionHand.MAIN_HAND && !world.isClientSide) {
+            EntityBullet bullet = new EntityBullet(world, player);
             bullet.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 10, 0);
-            pLevel.addFreshEntity(bullet);
+            world.addFreshEntity(bullet);
         }
-        return super.use(pLevel, player, hand);
+        world.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.FIRE.get(), player.getSoundSource(), 1.0f, 0.8f);
+        return super.use(world, player, hand);
     }
 }

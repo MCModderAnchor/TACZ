@@ -2,6 +2,7 @@ package com.tac.guns;
 
 import com.tac.guns.init.ModEntities;
 import com.tac.guns.init.ModItems;
+import com.tac.guns.init.ModSounds;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -17,5 +18,6 @@ public class GunMod {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
+        ModSounds.SOUNDS.register(bus);
     }
 }
