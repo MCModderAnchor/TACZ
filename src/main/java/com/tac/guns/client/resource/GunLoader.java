@@ -20,7 +20,6 @@ import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,12 +42,17 @@ public class GunLoader {
      * 放置自定义枪械模型的目录
      */
     public static final Path FOLDER = Paths.get("config", GunMod.MOD_ID, "custom");
-
-    private static final GunInfo GUN_INFO = new GunInfo();
+    /**
+     * 如果从zip包中加载、注册材质，自动在命名空间后加上此后缀，以作区分。
+     */
+    public static final String ZIP_TEXTURE_NAMESPACE_SUFFIX = "-zip";
     private static final Marker MARKER = MarkerManager.getMarker("BedrockModelLoader");
     private static final String DEFAULT_TEXTURE_NAME = "default";
     private static final String DEFAULT_GUN_PACK_NAME = "tac_default_gun.zip";
-    private static final Pattern GUNS_PATTERN = Pattern.compile("^guns/(\\w+)\\.json$");
+    private static final Pattern GUNS_PATTERN = Pattern.compile("^(\\w+)/guns/(\\w+)\\.json$");
+    /**
+     * 缓存已经注册的材质的注册名，避免重复注册浪费内存。
+     */
     private static final Set<ResourceLocation> TMP_REGISTER_TEXTURE = Sets.newHashSet();
 
     public static void initAndReload() {
@@ -71,58 +75,60 @@ public class GunLoader {
         }
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".zip")) {
-                readGunFile(file);
+                readZipGunPack(file);
             }
         }
     }
 
-    public static void readGunFile(File file) {
+    public static void readZipGunPack(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
-                Matcher matcher = GUNS_PATTERN.matcher(path);
-                if (matcher.find()) {
-                    String id = matcher.group(1);
-                    loadInfo(id, zipFile, path);
-                }
+                loadGunFromZipPack(path, zipFile);
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
     }
 
-    @Nullable
-    public static void loadInfo(String id, ZipFile zipFile, String path) throws IOException {
-        ZipEntry entry = zipFile.getEntry(path);
-        if (entry == null) {
-            GunMod.LOGGER.warn(MARKER, "{} file don't exist", path);
-            return;
-        }
-        try (InputStream stream = zipFile.getInputStream(entry)) {
-            // 获取枪械的定义文件
-            BedrockGunPOJO gunInfo = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), BedrockGunPOJO.class);
-            // 检查默认模型是否存在
-            Optional<GunModelTexture> defaultOptional = gunInfo.getTextures().stream().filter(texture -> DEFAULT_TEXTURE_NAME.equals(texture.getName())).findAny();
-            if (defaultOptional.isEmpty()) {
-                GunMod.LOGGER.warn(MARKER, "{} meta file don't have default texture", path);
+    public static void loadGunFromZipPack(String path, ZipFile zipFile) throws IOException {
+        Matcher matcher = GUNS_PATTERN.matcher(path);
+        if (matcher.find()) {
+            String namespace = matcher.group(1);
+            String id = matcher.group(2);
+            ZipEntry entry = zipFile.getEntry(path);
+            if (entry == null) {
+                GunMod.LOGGER.warn(MARKER, "{} file don't exist", path);
                 return;
             }
-            ResourceLocation defaultTexture = new ResourceLocation(GunMod.MOD_ID, defaultOptional.get().getLocation());
-            gunInfo.getTextures().forEach(texture -> {
-                registerZipTexture(zipFile.getName(), defaultTexture);
-            });
-            // 渲染类型
-            RenderType renderType = RenderType.itemEntityTranslucentCull(defaultTexture);
-            // 加载模型
-            loadModel(id, zipFile, gunInfo, renderType);
-            // 加载动画
-            loadAnimation(id, zipFile, gunInfo);
+            try (InputStream stream = zipFile.getInputStream(entry)) {
+                // 获取枪械的定义文件
+                BedrockGunPOJO gunInfo = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), BedrockGunPOJO.class);
+                BedrockAssetManager.INSTANCE.addBedrockGunInfo(new ResourceLocation(namespace, id), gunInfo);
+                // 检查默认材质是否存在，并创建默认的RenderType
+                Optional<GunModelTexture> defaultOptional = gunInfo.getTextures().stream().filter(texture -> DEFAULT_TEXTURE_NAME.equals(texture.getName())).findAny();
+                if (defaultOptional.isEmpty()) {
+                    GunMod.LOGGER.warn(MARKER, "{} meta file don't have default texture", path);
+                    return;
+                }
+                ResourceLocation defaultTextureRegistry = registerZipTexture(zipFile.getName(), new ResourceLocation(namespace, defaultOptional.get().getLocation()));
+                RenderType renderType = RenderType.itemEntityTranslucentCull(defaultTextureRegistry);
+                // 注册所有需要的材质
+                gunInfo.getTextures().forEach(texture -> {
+                    registerZipTexture(zipFile.getName(), new ResourceLocation(namespace, texture.getLocation()));
+                    // todo 构建对应的RenderType并缓存起来~
+                });
+                // 加载模型
+                loadGunModel(namespace, id, zipFile, gunInfo, renderType);
+                // 加载动画
+                loadAnimation(namespace, id, zipFile, gunInfo);
+            }
         }
     }
 
-    private static void loadModel(String id, ZipFile zipFile, BedrockGunPOJO gunInfo, RenderType renderType) {
-        String modelPath = "models/" + gunInfo.getModelLocation();
+    private static void loadGunModel(String namespace, String id, ZipFile zipFile, BedrockGunPOJO gunInfo, RenderType renderType) {
+        String modelPath = String.format("%s/models/%s", namespace, gunInfo.getModelLocation());
         ZipEntry modelEntry = zipFile.getEntry(modelPath);
         if (modelEntry == null) {
             GunMod.LOGGER.warn(MARKER, "{} model file don't exist", modelPath);
@@ -135,7 +141,7 @@ public class GunLoader {
                 // 如果 model 字段不为空
                 if (pojo.getGeometryModelLegacy() != null) {
                     BedrockGunModel bedrockGunModel = new BedrockGunModel(pojo, BedrockVersion.LEGACY, renderType);
-                    GUN_INFO.addInfo(id, gunInfo, bedrockGunModel);
+                    BedrockAssetManager.INSTANCE.addModel(new ResourceLocation(namespace, id), bedrockGunModel);
                 } else {
                     // 否则日志给出提示
                     GunMod.LOGGER.warn(MARKER, "{} model file don't have model field", modelPath);
@@ -148,7 +154,7 @@ public class GunLoader {
                 // 如果 model 字段不为空
                 if (pojo.getGeometryModelNew() != null) {
                     BedrockGunModel bedrockGunModel = new BedrockGunModel(pojo, BedrockVersion.NEW, renderType);
-                    GUN_INFO.addInfo(id, gunInfo, bedrockGunModel);
+                    BedrockAssetManager.INSTANCE.addModel(new ResourceLocation(namespace, id), bedrockGunModel);
                 } else {
                     // 否则日志给出提示
                     GunMod.LOGGER.warn(MARKER, "{} model file don't have model field", modelPath);
@@ -164,8 +170,8 @@ public class GunLoader {
         }
     }
 
-    private static void loadAnimation(String id, ZipFile zipFile, BedrockGunPOJO gunInfo){
-        String animationPath = "animations/" + gunInfo.getAnimationLocation();
+    private static void loadAnimation(String namespace, String id, ZipFile zipFile, BedrockGunPOJO gunInfo){
+        String animationPath = String.format("%s/animations/%s", namespace, gunInfo.getAnimationLocation());
         ZipEntry modelEntry = zipFile.getEntry(animationPath);
         if (modelEntry == null) {
             GunMod.LOGGER.warn(MARKER, "{} animation file don't exist", animationPath);
@@ -174,7 +180,7 @@ public class GunLoader {
         try (InputStream animationFileStream = zipFile.getInputStream(modelEntry)) {
             RawAnimationStructure rawStructure = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), RawAnimationStructure.class);
             AnimationStructure structure = new AnimationStructure(rawStructure);
-            GUN_INFO.addAnimation(id, structure);
+            BedrockAssetManager.INSTANCE.addAnimation(new ResourceLocation(namespace, id), structure);
         }catch (IOException ioe) {
             // 可能用来判定错误，打印下
             GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", animationPath);
@@ -193,21 +199,18 @@ public class GunLoader {
         }
     }
 
-    public static void registerZipTexture(String zipFilePath, ResourceLocation texturePath) {
-        if (!TMP_REGISTER_TEXTURE.contains(texturePath)) {
-            ZipPackTexture zipPackTexture = new ZipPackTexture(zipFilePath, texturePath.getPath());
+    /**
+     * 返回材质的注册名
+     */
+    public static ResourceLocation registerZipTexture(String zipFilePath, ResourceLocation texturePath) {
+        ResourceLocation registryName = new ResourceLocation(texturePath.getNamespace() + ZIP_TEXTURE_NAMESPACE_SUFFIX, texturePath.getPath());
+        if (!TMP_REGISTER_TEXTURE.contains(registryName)) {
+            ZipPackTexture zipPackTexture = new ZipPackTexture(zipFilePath, texturePath.getNamespace(), texturePath.getPath());
             if (zipPackTexture.isExist()) {
-                Minecraft.getInstance().textureManager.register(texturePath, zipPackTexture);
-                TMP_REGISTER_TEXTURE.add(texturePath);
+                Minecraft.getInstance().textureManager.register(registryName, zipPackTexture);
+                TMP_REGISTER_TEXTURE.add(registryName);
             }
         }
-    }
-
-    public static BedrockGunModel getGunModel(String id) {
-        return GUN_INFO.getGunModel(id);
-    }
-
-    public static AnimationStructure getAnimationStructure(String id){
-        return GUN_INFO.getAnimation(id);
+        return registryName;
     }
 }

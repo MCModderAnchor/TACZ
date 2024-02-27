@@ -4,12 +4,15 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.ObjectAnimation;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
+import com.tac.guns.client.model.BedrockAnimatedModel;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.resource.BedrockAssetManager;
 import com.tac.guns.client.resource.GunLoader;
 import com.tac.guns.init.ModItems;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -36,8 +39,8 @@ public class CheckGunKey {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && player.getMainHandItem().is(ModItems.GUN.get())) {
                 if (AK47AC == null) {
-                    BedrockGunModel ak47 = GunLoader.getGunModel("ak47");
-                    AnimationStructure ak47Animation = GunLoader.getAnimationStructure("ak47");
+                    BedrockAnimatedModel ak47 = BedrockAssetManager.INSTANCE.getModel(new ResourceLocation("tac", "ak47"));
+                    AnimationStructure ak47Animation = BedrockAssetManager.INSTANCE.getAnimation(new ResourceLocation("tac", "ak47"));
                     AK47AC = new AnimationController(ak47Animation, ak47);
                 }
                 AK47AC.runAnimation(0, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f);
