@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tac.guns.GunMod;
+import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.animation.gltf.RawAnimationStructure;
@@ -120,19 +121,19 @@ public class GunLoader {
                     // todo 构建对应的RenderType并缓存起来~
                 });
                 // 加载模型
-                loadGunModel(namespace, id, zipFile, gunInfo, renderType);
+                BedrockGunModel model = loadGunModel(namespace, id, zipFile, gunInfo, renderType);
                 // 加载动画
-                loadAnimation(namespace, id, zipFile, gunInfo);
+                if(model != null) loadAnimation(namespace, id, zipFile, gunInfo, model);
             }
         }
     }
 
-    private static void loadGunModel(String namespace, String id, ZipFile zipFile, BedrockGunPOJO gunInfo, RenderType renderType) {
+    private static BedrockGunModel loadGunModel(String namespace, String id, ZipFile zipFile, BedrockGunPOJO gunInfo, RenderType renderType) {
         String modelPath = String.format("%s/models/%s", namespace, gunInfo.getModelLocation());
         ZipEntry modelEntry = zipFile.getEntry(modelPath);
         if (modelEntry == null) {
             GunMod.LOGGER.warn(MARKER, "{} model file don't exist", modelPath);
-            return;
+            return null;
         }
         try (InputStream modelFileStream = zipFile.getInputStream(modelEntry)) {
             BedrockModelPOJO pojo = GSON.fromJson(new InputStreamReader(modelFileStream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
@@ -142,11 +143,12 @@ public class GunLoader {
                 if (pojo.getGeometryModelLegacy() != null) {
                     BedrockGunModel bedrockGunModel = new BedrockGunModel(pojo, BedrockVersion.LEGACY, renderType);
                     BedrockAssetManager.INSTANCE.addModel(new ResourceLocation(namespace, id), bedrockGunModel);
+                    return bedrockGunModel;
                 } else {
                     // 否则日志给出提示
                     GunMod.LOGGER.warn(MARKER, "{} model file don't have model field", modelPath);
                 }
-                return;
+                return null;
             }
 
             // 判定是不是 1.12.0 版本基岩版模型文件
@@ -155,11 +157,12 @@ public class GunLoader {
                 if (pojo.getGeometryModelNew() != null) {
                     BedrockGunModel bedrockGunModel = new BedrockGunModel(pojo, BedrockVersion.NEW, renderType);
                     BedrockAssetManager.INSTANCE.addModel(new ResourceLocation(namespace, id), bedrockGunModel);
+                    return bedrockGunModel;
                 } else {
                     // 否则日志给出提示
                     GunMod.LOGGER.warn(MARKER, "{} model file don't have model field", modelPath);
                 }
-                return;
+                return null;
             }
 
             GunMod.LOGGER.warn(MARKER, "{} model version is not 1.10.0 or 1.12.0", modelPath);
@@ -168,9 +171,10 @@ public class GunLoader {
             GunMod.LOGGER.warn(MARKER, "Failed to load model: {}", modelPath);
             ioe.printStackTrace();
         }
+        return null;
     }
 
-    private static void loadAnimation(String namespace, String id, ZipFile zipFile, BedrockGunPOJO gunInfo){
+    private static void loadAnimation(String namespace, String id, ZipFile zipFile, BedrockGunPOJO gunInfo, BedrockGunModel model){
         String animationPath = String.format("%s/animations/%s", namespace, gunInfo.getAnimationLocation());
         ZipEntry modelEntry = zipFile.getEntry(animationPath);
         if (modelEntry == null) {
@@ -180,7 +184,7 @@ public class GunLoader {
         try (InputStream animationFileStream = zipFile.getInputStream(modelEntry)) {
             RawAnimationStructure rawStructure = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), RawAnimationStructure.class);
             AnimationStructure structure = new AnimationStructure(rawStructure);
-            BedrockAssetManager.INSTANCE.addAnimation(new ResourceLocation(namespace, id), structure);
+            BedrockAssetManager.INSTANCE.addAnimation(new ResourceLocation(namespace, id), new AnimationController(structure, model));
         }catch (IOException ioe) {
             // 可能用来判定错误，打印下
             GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", animationPath);

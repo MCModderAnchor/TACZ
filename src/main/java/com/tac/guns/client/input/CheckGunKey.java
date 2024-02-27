@@ -39,9 +39,7 @@ public class CheckGunKey {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && player.getMainHandItem().is(ModItems.GUN.get())) {
                 if (AK47AC == null) {
-                    BedrockAnimatedModel ak47 = BedrockAssetManager.INSTANCE.getModel(new ResourceLocation("tac", "ak47"));
-                    AnimationStructure ak47Animation = BedrockAssetManager.INSTANCE.getAnimation(new ResourceLocation("tac", "ak47"));
-                    AK47AC = new AnimationController(ak47Animation, ak47);
+                    AK47AC =  BedrockAssetManager.INSTANCE.getAnimation(new ResourceLocation("tac", "ak47"));
                 }
                 AK47AC.runAnimation(0, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f);
             }
