@@ -1,6 +1,7 @@
 package com.tac.guns.client.event;
 
 import com.tac.guns.GunMod;
+import com.tac.guns.client.input.CheckGunKey;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.GunLoader;
 import com.tac.guns.init.ModItems;
@@ -29,6 +30,9 @@ public class RenderArmGunEvent {
         ItemTransforms.TransformType transformType = hand == InteractionHand.MAIN_HAND ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
         if (stack.is(ModItems.GUN.get())) {
             BedrockGunModel model = GunLoader.getGunModel("ak47");
+            if (CheckGunKey.AK47AC != null) {
+                CheckGunKey.AK47AC.update();
+            }
             model.render(0, transformType, stack, player, event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
             event.setCanceled(true);
         }
