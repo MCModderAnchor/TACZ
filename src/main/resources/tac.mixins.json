@@ -7,6 +7,7 @@
   "mixins": [
   ],
   "client": [
+    "client.FirstPersonRendererMixin",
     "client.PlayerModelMixin"
   ],
   "injectors": {
