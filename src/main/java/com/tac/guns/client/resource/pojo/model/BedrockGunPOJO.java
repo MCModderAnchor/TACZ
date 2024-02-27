@@ -10,6 +10,9 @@ public class BedrockGunPOJO {
     @SerializedName("model")
     private String modelLocation;
 
+    @SerializedName("animation")
+    private String animationLocation;
+
     @SerializedName("textures")
     private List<GunModelTexture> textures;
 
@@ -18,6 +21,10 @@ public class BedrockGunPOJO {
 
     public String getModelLocation() {
         return modelLocation;
+    }
+
+    public String getAnimationLocation() {
+        return animationLocation;
     }
 
     public List<GunModelTexture> getTextures() {

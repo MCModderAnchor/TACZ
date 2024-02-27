@@ -4,7 +4,9 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tac.guns.GunMod;
+import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.resource.animation.gltf.RawAnimationStructure;
 import com.tac.guns.client.resource.pojo.model.BedrockGunPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
@@ -114,6 +116,8 @@ public class GunLoader {
             RenderType renderType = RenderType.itemEntityTranslucentCull(defaultTexture);
             // 加载模型
             loadModel(id, zipFile, gunInfo, renderType);
+            // 加载动画
+            loadAnimation(id, zipFile, gunInfo);
         }
     }
 
@@ -160,6 +164,24 @@ public class GunLoader {
         }
     }
 
+    private static void loadAnimation(String id, ZipFile zipFile, BedrockGunPOJO gunInfo){
+        String animationPath = "animations/" + gunInfo.getAnimationLocation();
+        ZipEntry modelEntry = zipFile.getEntry(animationPath);
+        if (modelEntry == null) {
+            GunMod.LOGGER.warn(MARKER, "{} animation file don't exist", animationPath);
+            return;
+        }
+        try (InputStream animationFileStream = zipFile.getInputStream(modelEntry)) {
+            RawAnimationStructure rawStructure = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), RawAnimationStructure.class);
+            AnimationStructure structure = new AnimationStructure(rawStructure);
+            GUN_INFO.addAnimation(id, structure);
+        }catch (IOException ioe) {
+            // 可能用来判定错误，打印下
+            GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", animationPath);
+            ioe.printStackTrace();
+        }
+    }
+
     private static void createFolder(Path path) {
         File folder = path.toFile();
         if (!folder.isDirectory()) {
@@ -183,5 +205,9 @@ public class GunLoader {
 
     public static BedrockGunModel getGunModel(String id) {
         return GUN_INFO.getGunModel(id);
+    }
+
+    public static AnimationStructure getAnimationStructure(String id){
+        return GUN_INFO.getAnimation(id);
     }
 }

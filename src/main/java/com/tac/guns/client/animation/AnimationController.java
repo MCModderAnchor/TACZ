@@ -1,9 +1,8 @@
 package com.tac.guns.client.animation;
 
 import com.tac.guns.client.animation.gltf.AnimationStructure;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,14 +30,13 @@ public class AnimationController {
     }
 
     @Nullable
-    @UnmodifiableView
     public List<ObjectAnimation> getPrototypes() {
         if (prototypes == null) return null;
         return Collections.unmodifiableList(prototypes);
     }
 
     public void refreshPrototypes() {
-        prototypes = AnimationResources.getInstance().createAnimations(animationStructure, (AnimationListenerSupplier[]) null);
+        prototypes = ObjectAnimation.createAnimations(animationStructure, (AnimationListenerSupplier[]) null);
     }
 
     @Nullable
