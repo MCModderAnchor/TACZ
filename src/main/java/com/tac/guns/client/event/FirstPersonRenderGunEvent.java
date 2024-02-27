@@ -5,7 +5,6 @@ import com.tac.guns.client.input.CheckGunKey;
 import com.tac.guns.client.model.BedrockAnimatedModel;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.BedrockAssetManager;
-import com.tac.guns.client.resource.GunLoader;
 import com.tac.guns.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -33,9 +32,12 @@ public class FirstPersonRenderGunEvent {
         ItemTransforms.TransformType transformType = hand == InteractionHand.MAIN_HAND ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
         if (stack.is(ModItems.GUN.get())) {
             BedrockAnimatedModel model = BedrockAssetManager.INSTANCE.getModel(new ResourceLocation("tac", "ak47"));
-            if(model instanceof BedrockGunModel gunModel){
+            if (model instanceof BedrockGunModel gunModel) {
                 if (CheckGunKey.AK47AC != null) {
                     CheckGunKey.AK47AC.update();
+                }
+                if (CheckGunKey.AK47_FIRE != null) {
+                    CheckGunKey.AK47_FIRE.update();
                 }
                 gunModel.render(0, transformType, stack, player, event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
                 event.setCanceled(true);

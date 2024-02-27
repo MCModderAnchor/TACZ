@@ -41,7 +41,7 @@ public class EntityBullet extends ThrowableProjectile {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (result.getEntity() instanceof LivingEntity livingEntity) {
-            livingEntity.hurt(DamageSource.thrown(this, this.getOwner()), 50);
+            livingEntity.hurt(DamageSource.thrown(this, this.getOwner()), 5);
         }
         super.onHitEntity(result);
     }

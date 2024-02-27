@@ -24,6 +24,7 @@ import org.lwjgl.glfw.GLFW;
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class CheckGunKey {
     public static AnimationController AK47AC = null;
+    public static AnimationController AK47_FIRE = null;
 
 
     public static final KeyMapping CHECK_GUN_KEY = new KeyMapping("key.tac.check_gun.desc",
