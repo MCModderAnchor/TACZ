@@ -267,8 +267,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             matrixStack.translate(0, 1.5f, 0);
             //游戏中模型是上下颠倒的，需要翻转过来。
             matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
-            //todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。
-            //todo 不要删掉注释的代码，因为应用位移的逻辑需要保留下来
+            //todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。不要删掉注释的代码.
             if (true) {
                 //应用定位组的反向位移、旋转，使定位组的位置就是屏幕中心
                 matrixStack.translate(0, 1.5f, 0);

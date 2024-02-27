@@ -2,7 +2,6 @@ package com.tac.guns.client.resource;
 
 import com.google.common.collect.Maps;
 import com.tac.guns.client.animation.AnimationController;
-import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.BedrockAnimatedModel;
 import com.tac.guns.client.resource.pojo.model.BedrockGunPOJO;
 import net.minecraft.resources.ResourceLocation;
