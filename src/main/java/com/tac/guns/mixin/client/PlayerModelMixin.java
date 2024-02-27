@@ -91,8 +91,6 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
 
         this.tac$resetAll(this.rightPants);
         this.rightPants.copyFrom(this.rightLeg);
-
-        //fire Pre event
     }
 
     @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "TAIL"))
@@ -100,7 +98,8 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
         if (!(entityIn instanceof Player))
             return;
 
-        // Dirty hack to reject first person arms
+        // Dirty Hack，用于清除默认的手臂旋转
+        @SuppressWarnings("all")
         PlayerModel model = (PlayerModel) (Object) this;
         if (ageInTicks == 0F) {
             model.rightArm.xRot = 0;
@@ -112,8 +111,6 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
             return;
         }
 
-        //fire Post event
-
         this.rightSleeve.copyFrom(this.rightArm);
         this.leftSleeve.copyFrom(this.leftArm);
         this.rightPants.copyFrom(this.rightLeg);
@@ -123,9 +120,7 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
     }
 
     /**
-     * Resets the rotation angles and points to zero for the given model renderer
-     *
-     * @param part the model part to reset
+     * 将给定模型的旋转角度和旋转点重置为零
      */
     @Unique
     private void tac$resetAll(ModelPart part) {
