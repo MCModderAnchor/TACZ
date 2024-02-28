@@ -49,8 +49,9 @@ public enum ClientAssetManager {
 
     public @Nonnull GunTextureSet getGunTextureSet(ResourceLocation registryName) {
         return gunTextureSets.compute(registryName, (k, v) -> {
-            if (v == null)
+            if (v == null) {
                 return new GunTextureSet();
+            }
             return v;
         });
     }
