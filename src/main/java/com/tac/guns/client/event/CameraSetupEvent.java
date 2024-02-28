@@ -5,7 +5,7 @@ import com.mojang.math.Quaternion;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.client.model.BedrockAnimatedModel;
-import com.tac.guns.client.resource.BedrockAssetManager;
+import com.tac.guns.client.resource.cache.ClientAssetManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +21,7 @@ public class CameraSetupEvent {
         if(Minecraft.getInstance().player == null) return;
         if(!Minecraft.getInstance().options.bobView) return;
         // todo 把硬编码改掉
-        BedrockAnimatedModel bedrockAnimatedModel = BedrockAssetManager.INSTANCE.getModel(new ResourceLocation("tac", "ak47"));
+        BedrockAnimatedModel bedrockAnimatedModel = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).model();
         Quaternion q = bedrockAnimatedModel.getCameraAnimationObject().rotationQuaternion;
         double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
         double pitch = Math.atan2(2 * (q.r() * q.i() + q.j() * q.k()), 1 - 2 * (q.i() * q.i() + q.j() * q.j()));
@@ -40,7 +40,7 @@ public class CameraSetupEvent {
         LocalPlayer player = Minecraft.getInstance().player;
         if(player == null) return;
         // todo 把硬编码改掉
-        BedrockAnimatedModel animatedModel = BedrockAssetManager.INSTANCE.getModel(new ResourceLocation("tac", "ak47"));
+        BedrockAnimatedModel animatedModel = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).model();
         PoseStack poseStack = event.getPoseStack();
         poseStack.mulPose(animatedModel.getCameraAnimationObject().rotationQuaternion);
     }

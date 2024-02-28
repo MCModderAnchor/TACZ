@@ -3,8 +3,7 @@ package com.tac.guns.client.renderer.tileentity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.client.model.BedrockAnimatedModel;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.BedrockAssetManager;
-import com.tac.guns.client.resource.GunLoader;
+import com.tac.guns.client.resource.cache.ClientAssetManager;
 import com.tac.guns.init.ModItems;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -25,7 +24,7 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.is(ModItems.GUN.get())) {
             // Fixme：硬编码，应该改成配置文件可以调节
-            BedrockAnimatedModel model = BedrockAssetManager.INSTANCE.getModel(new ResourceLocation("tac", "ak47"));
+            BedrockAnimatedModel model = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).model();
             if(model instanceof BedrockGunModel gunModel){
                 poseStack.pushPose();
                 poseStack.translate(0.425, 1.25, 0.375);

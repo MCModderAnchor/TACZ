@@ -3,11 +3,7 @@ package com.tac.guns.client.input;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.ObjectAnimation;
-import com.tac.guns.client.animation.gltf.AnimationStructure;
-import com.tac.guns.client.model.BedrockAnimatedModel;
-import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.BedrockAssetManager;
-import com.tac.guns.client.resource.GunLoader;
+import com.tac.guns.client.resource.cache.ClientAssetManager;
 import com.tac.guns.init.ModItems;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -40,7 +36,7 @@ public class CheckGunKey {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && player.getMainHandItem().is(ModItems.GUN.get())) {
                 if (AK47AC == null) {
-                    AK47AC =  BedrockAssetManager.INSTANCE.getAnimation(new ResourceLocation("tac", "ak47"));
+                    AK47AC =  ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).defaultController();
                 }
                 AK47AC.runAnimation(0, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f);
             }

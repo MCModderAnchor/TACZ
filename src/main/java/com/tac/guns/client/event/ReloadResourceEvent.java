@@ -1,7 +1,7 @@
 package com.tac.guns.client.event;
 
 import com.tac.guns.GunMod;
-import com.tac.guns.client.resource.GunLoader;
+import com.tac.guns.client.resource.ClientGunLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -25,7 +25,7 @@ public class ReloadResourceEvent {
     public static void reloadAllPack() {
         StopWatch watch = StopWatch.createStarted();
         {
-            GunLoader.initAndReload();
+            ClientGunLoader.initAndReload();
         }
         watch.stop();
         GunMod.LOGGER.info("Model loading time: {} ms", watch.getTime(TimeUnit.MICROSECONDS) / 1000.0);

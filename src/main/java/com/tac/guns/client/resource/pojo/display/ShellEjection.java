@@ -1,11 +1,11 @@
-package com.tac.guns.client.resource.pojo.other;
+package com.tac.guns.client.resource.pojo.display;
 
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 
-public class GunModelShellEjection {
+public class ShellEjection {
     @SerializedName("type")
     private ResourceLocation type;
 

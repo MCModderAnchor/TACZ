@@ -3,7 +3,7 @@ package com.tac.guns.item;
 import com.tac.guns.client.animation.ObjectAnimation;
 import com.tac.guns.client.input.CheckGunKey;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
-import com.tac.guns.client.resource.BedrockAssetManager;
+import com.tac.guns.client.resource.cache.ClientAssetManager;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.init.ModSounds;
 import com.tac.guns.item.nbt.GunItemData;
@@ -60,7 +60,7 @@ public class GunItem extends Item {
                 world.addFreshEntity(bullet);
             } else {
                 if (CheckGunKey.AK47_FIRE == null) {
-                    CheckGunKey.AK47_FIRE = BedrockAssetManager.INSTANCE.getAnimation(new ResourceLocation("tac", "ak47"));
+                    CheckGunKey.AK47_FIRE = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).defaultController();
                 }
                 CheckGunKey.AK47_FIRE.runAnimation(0, "shoot", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
                 player.setXRot(player.getXRot() - 1);

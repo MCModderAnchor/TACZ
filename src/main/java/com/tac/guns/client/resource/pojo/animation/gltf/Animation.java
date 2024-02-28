@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.animation.gltf;
+package com.tac.guns.client.resource.pojo.animation.gltf;
 
 import java.util.ArrayList;
 import java.util.List;
