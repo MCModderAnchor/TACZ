@@ -1,6 +1,6 @@
 package com.tac.guns.client.event;
 
-import com.tac.guns.client.input.CheckGunKey;
+import com.tac.guns.client.input.InspectKey;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -11,6 +11,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class ClientSetupEvent {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        ClientRegistry.registerKeyBinding(CheckGunKey.CHECK_GUN_KEY);
+        ClientRegistry.registerKeyBinding(InspectKey.INSPECT_KEY);
     }
 }

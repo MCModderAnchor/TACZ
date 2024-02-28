@@ -1,8 +1,6 @@
 package com.tac.guns.client.resource.pojo;
 
 import com.google.gson.annotations.SerializedName;
-import com.tac.guns.client.resource.pojo.data.GunData;
-import com.tac.guns.client.resource.pojo.display.GunDisplay;
 
 public class ClientGunIndexPOJO {
     @SerializedName("name")
@@ -12,10 +10,10 @@ public class ClientGunIndexPOJO {
     private String tooltip;
 
     @SerializedName("display")
-    private GunDisplay display;
+    private String display;
 
     @SerializedName("data")
-    private GunData data;
+    private String data;
 
     public String getName() {
         return name;
@@ -25,11 +23,11 @@ public class ClientGunIndexPOJO {
         return tooltip;
     }
 
-    public GunDisplay getDisplay() {
+    public String getDisplay() {
         return display;
     }
 
-    public GunData getData() {
+    public String getData() {
         return data;
     }
 }

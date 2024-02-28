@@ -1,16 +1,15 @@
 package com.tac.guns.client.event;
 
 import com.tac.guns.GunMod;
-import com.tac.guns.client.input.CheckGunKey;
-import com.tac.guns.client.model.BedrockAnimatedModel;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.cache.ClientAssetManager;
+import com.tac.guns.client.resource.cache.data.BedrockAnimatedAsset;
 import com.tac.guns.init.ModItems;
+import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,13 +30,10 @@ public class FirstPersonRenderGunEvent {
         ItemStack stack = event.getItemStack();
         ItemTransforms.TransformType transformType = hand == InteractionHand.MAIN_HAND ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
         if (stack.is(ModItems.GUN.get())) {
-            BedrockAnimatedModel model = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).model();
-            if (model instanceof BedrockGunModel gunModel) {
-                if (CheckGunKey.AK47AC != null) {
-                    CheckGunKey.AK47AC.update();
-                }
-                if (CheckGunKey.AK47_FIRE != null) {
-                    CheckGunKey.AK47_FIRE.update();
+            BedrockAnimatedAsset asset = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(GunItem.DEFAULT);
+            if (asset != null && asset.model() instanceof BedrockGunModel gunModel) {
+                if (asset.defaultController() != null) {
+                    asset.defaultController().update();
                 }
                 gunModel.render(0, transformType, stack, player, event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
                 event.setCanceled(true);

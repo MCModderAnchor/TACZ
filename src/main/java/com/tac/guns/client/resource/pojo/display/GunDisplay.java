@@ -23,7 +23,7 @@ public class GunDisplay {
     @SerializedName("transform")
     private GunTransform transform;
     @Nullable
-    @SerializedName("shell_ejection")
+    @SerializedName("shell")
     private ShellEjection shellEjection;
 
     public String getModelLocation() {

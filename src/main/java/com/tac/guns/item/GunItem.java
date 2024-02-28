@@ -1,11 +1,13 @@
 package com.tac.guns.item;
 
+import com.tac.guns.GunMod;
 import com.tac.guns.client.animation.ObjectAnimation;
-import com.tac.guns.client.input.CheckGunKey;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
 import com.tac.guns.client.resource.cache.ClientAssetManager;
+import com.tac.guns.client.resource.cache.data.BedrockAnimatedAsset;
+import com.tac.guns.client.resource.pojo.data.GunSound;
+import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.entity.EntityBullet;
-import com.tac.guns.init.ModSounds;
 import com.tac.guns.item.nbt.GunItemData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -22,6 +24,8 @@ import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public class GunItem extends Item {
+    public static final ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "ak47");
+
     public GunItem() {
         super(new Properties().stacksTo(1));
     }
@@ -59,14 +63,16 @@ public class GunItem extends Item {
                 bullet.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 10, 0);
                 world.addFreshEntity(bullet);
             } else {
-                if (CheckGunKey.AK47_FIRE == null) {
-                    CheckGunKey.AK47_FIRE = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).defaultController();
+                BedrockAnimatedAsset asset = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(GunItem.DEFAULT);
+                if (asset != null && asset.defaultController() != null) {
+                    asset.defaultController().runAnimation(0, "shoot", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
                 }
-                CheckGunKey.AK47_FIRE.runAnimation(0, "shoot", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
+                GunSound sounds = ClientAssetManager.INSTANCE.getGunIndex(DEFAULT).getData().getSounds();
+                ResourceLocation shootSound = new ResourceLocation(GunMod.MOD_ID, sounds.getShootSoundLocation());
+                SoundPlayManager.playClientSound(player, shootSound, 1.0f, 0.8f);
                 player.setXRot(player.getXRot() - 1);
             }
         }
-        world.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.FIRE.get(), player.getSoundSource(), 1.0f, 0.8f);
         return super.use(world, player, hand);
     }
 }
