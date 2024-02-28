@@ -21,11 +21,11 @@ public final class DataLoader {
     private static final Marker MARKER = MarkerManager.getMarker("DataLoader");
 
     @Nullable
-    public static GunData loadDisplayData(String namespace, String id, String dataPath, ZipFile zipFile) throws IOException {
-        String filePath = String.format("%s/guns/data/%s", namespace, dataPath);
+    public static GunData loadDisplayData(String namespace, String id, ZipFile zipFile) throws IOException {
+        String filePath = String.format("%s/guns/data/%s.data.json", namespace, id);
         ZipEntry entry = zipFile.getEntry(filePath);
         if (entry == null) {
-            GunMod.LOGGER.warn(MARKER, "{} file don't exist", dataPath);
+            GunMod.LOGGER.warn(MARKER, "{} file don't exist", filePath);
             return null;
         }
         try (InputStream stream = zipFile.getInputStream(entry)) {

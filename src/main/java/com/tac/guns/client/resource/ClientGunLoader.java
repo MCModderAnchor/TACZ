@@ -108,10 +108,10 @@ public class ClientGunLoader {
                 ClientGunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), ClientGunIndexPOJO.class);
 
                 // 加载 display 数据
-                GunDisplay display = DisplayDataLoader.loadDisplayData(namespace, id, indexPOJO.getDisplay(), zipFile);
+                GunDisplay display = DisplayDataLoader.loadDisplayData(namespace, id, zipFile);
 
                 // 加载 data 数据
-                GunData gunData = DataLoader.loadDisplayData(namespace, id, indexPOJO.getData(), zipFile);
+                GunData gunData = DataLoader.loadDisplayData(namespace, id, zipFile);
 
                 // 加载 index 数据
                 ClientGunIndex index = new ClientGunIndex();

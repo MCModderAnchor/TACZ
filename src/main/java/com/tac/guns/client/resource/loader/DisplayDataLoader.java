@@ -24,11 +24,11 @@ public final class DisplayDataLoader {
     private static final String DEFAULT_TEXTURE_NAME = "default";
 
     @Nullable
-    public static GunDisplay loadDisplayData(String namespace, String id, String displayPath, ZipFile zipFile) throws IOException {
-        String filePath = String.format("%s/guns/display/%s", namespace, displayPath);
+    public static GunDisplay loadDisplayData(String namespace, String id, ZipFile zipFile) throws IOException {
+        String filePath = String.format("%s/guns/display/%s.display.json", namespace, id);
         ZipEntry entry = zipFile.getEntry(filePath);
         if (entry == null) {
-            GunMod.LOGGER.warn(MARKER, "{} file don't exist", displayPath);
+            GunMod.LOGGER.warn(MARKER, "{} file don't exist", filePath);
             return null;
         }
         try (InputStream stream = zipFile.getInputStream(entry)) {
@@ -37,7 +37,7 @@ public final class DisplayDataLoader {
             // 检查默认材质是否存在，并创建默认的RenderType
             Optional<GunModelTexture> defaultOptional = displayData.getModelTextures().stream().filter(texture -> DEFAULT_TEXTURE_NAME.equals(texture.getId())).findAny();
             if (defaultOptional.isEmpty()) {
-                GunMod.LOGGER.warn(MARKER, "{} display file don't have default texture", displayPath);
+                GunMod.LOGGER.warn(MARKER, "{} display file don't have default texture", filePath);
                 return null;
             }
             ResourceLocation defaultTextureRegistry = TextureLoader.loadTexture(zipFile.getName(), new ResourceLocation(namespace, defaultOptional.get().getLocation()));
