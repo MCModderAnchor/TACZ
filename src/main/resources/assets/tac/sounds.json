@@ -1,9 +1,9 @@
 {
-  "gun.ak47_fire": {
-    "subtitle": "subtitle.tac.ak47_fire",
+  "gun": {
+    "subtitle": "subtitle.tac.gun",
     "sounds": [
       {
-        "name": "tac:gun/ak47_fire"
+        "name": "tac:gun/empty"
       }
     ]
   }

@@ -10,9 +10,5 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModSounds {
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, GunMod.MOD_ID);
 
-    public static final RegistryObject<SoundEvent> FIRE = registerSound("gun.ak47_fire");
-
-    private static RegistryObject<SoundEvent> registerSound(String name) {
-        return SOUNDS.register(name, () -> new SoundEvent(new ResourceLocation(GunMod.MOD_ID, name)));
-    }
+    public static final RegistryObject<SoundEvent> GUN = SOUNDS.register("gun", () -> new SoundEvent(new ResourceLocation(GunMod.MOD_ID, "gun")));
 }

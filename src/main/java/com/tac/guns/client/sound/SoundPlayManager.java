@@ -1,0 +1,14 @@
+package com.tac.guns.client.sound;
+
+import com.tac.guns.init.ModSounds;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+
+public class SoundPlayManager {
+    public static void playClientSound(Player player, ResourceLocation name, float volume, float pitch) {
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.getSoundManager().play(new GunSoundInstance(ModSounds.GUN.get(), SoundSource.PLAYERS, volume, pitch, player, name));
+    }
+}
