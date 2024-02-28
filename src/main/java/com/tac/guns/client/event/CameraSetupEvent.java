@@ -17,9 +17,9 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class CameraSetupEvent {
     @SubscribeEvent
-    public static void applyCameraAnimation(EntityViewRenderEvent.CameraSetup event){
-        if(Minecraft.getInstance().player == null) return;
-        if(!Minecraft.getInstance().options.bobView) return;
+    public static void applyCameraAnimation(EntityViewRenderEvent.CameraSetup event) {
+        if (Minecraft.getInstance().player == null) return;
+        if (!Minecraft.getInstance().options.bobView) return;
         // todo 把硬编码改掉
         BedrockAnimatedModel bedrockAnimatedModel = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).model();
         Quaternion q = bedrockAnimatedModel.getCameraAnimationObject().rotationQuaternion;
@@ -35,10 +35,10 @@ public class CameraSetupEvent {
     }
 
     @SubscribeEvent
-    public static void applyItemLayerCameraAnimation(BeforeRenderHandEvent event){
-        if(!Minecraft.getInstance().options.bobView) return;
+    public static void applyItemLayerCameraAnimation(BeforeRenderHandEvent event) {
+        if (!Minecraft.getInstance().options.bobView) return;
         LocalPlayer player = Minecraft.getInstance().player;
-        if(player == null) return;
+        if (player == null) return;
         // todo 把硬编码改掉
         BedrockAnimatedModel animatedModel = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).model();
         PoseStack poseStack = event.getPoseStack();

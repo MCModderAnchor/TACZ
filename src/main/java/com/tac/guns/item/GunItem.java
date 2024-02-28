@@ -26,17 +26,6 @@ public class GunItem extends Item {
         super(new Properties().stacksTo(1));
     }
 
-    @Override
-    public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-        consumer.accept(new IItemRenderProperties() {
-            @Override
-            public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
-                Minecraft minecraft = Minecraft.getInstance();
-                return new TileEntityItemStackGunRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
-            }
-        });
-    }
-
     public static @Nonnull GunItemData getData(@Nonnull ItemStack itemStack) {
         if (itemStack.getItem() instanceof GunItem) {
             return GunItemData.deserialization(itemStack.getOrCreateTag());
@@ -49,6 +38,17 @@ public class GunItem extends Item {
             GunItemData.serialization(stack.getOrCreateTag(), data);
         }
         return stack;
+    }
+
+    @Override
+    public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+        consumer.accept(new IItemRenderProperties() {
+            @Override
+            public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+                Minecraft minecraft = Minecraft.getInstance();
+                return new TileEntityItemStackGunRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+            }
+        });
     }
 
     @Override

@@ -6,5 +6,6 @@ import com.tac.guns.client.model.BedrockAnimatedModel;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public record BedrockAnimatedAsset(@Nonnull BedrockAnimatedModel model, @Nullable AnimationController defaultController) {
+public record BedrockAnimatedAsset(@Nonnull BedrockAnimatedModel model,
+                                   @Nullable AnimationController defaultController) {
 }

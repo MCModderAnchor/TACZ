@@ -13,7 +13,7 @@ public class GunTextureSet {
     @Nullable
     private ResourceLocation slotIcon;
 
-    public GunTextureSet(){
+    public GunTextureSet() {
         modelTextures = Maps.newHashMap();
     }
 

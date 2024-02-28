@@ -30,20 +30,20 @@ import java.util.Stack;
 import static com.tac.guns.client.model.CommonComponents.*;
 
 public class BedrockGunModel extends BedrockAnimatedModel {
-    protected ItemStack currentItem;
-    protected LivingEntity currentEntity;
-    protected final List<BedrockPart> ironSightPath = new ArrayList<>();
-    protected final List<BedrockPart> scopePosPath = new ArrayList<>();
     public static final String IRON_VIEW_NODE = "iron_view";
     public static final String SCOPE_POS_NODE = "scope_pos";
     public static final String EJECTION_NODE = "ejection";
+    protected final List<BedrockPart> ironSightPath = new ArrayList<>();
+    protected final List<BedrockPart> scopePosPath = new ArrayList<>();
+    private final SecondOrderDynamics aimingDynamics = new SecondOrderDynamics(0.45f, 0.8f, 1.2f, 0);
+    protected ItemStack currentItem;
+    protected LivingEntity currentEntity;
     protected Matrix4f ejectionPose = null;
     protected Matrix3f ejectionNormal = null;
     protected Vector3f ejectionVelocity = null;
     protected Vector3f ejectionRandomVelocity = null;
     protected Vector3f ejectionAngularVelocity = null;
     protected float ejectionLivingTimeS = 0;
-    private final SecondOrderDynamics aimingDynamics = new SecondOrderDynamics(0.45f, 0.8f, 1.2f, 0);
 
     public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version, RenderType renderType) {
         super(pojo, version, renderType);
@@ -230,6 +230,21 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         }
     }
 
+    private static float[] toQuaternion(float roll, float pitch, float yaw) {
+        double cy = Math.cos(yaw * 0.5);
+        double sy = Math.sin(yaw * 0.5);
+        double cp = Math.cos(pitch * 0.5);
+        double sp = Math.sin(pitch * 0.5);
+        double cr = Math.cos(roll * 0.5);
+        double sr = Math.sin(roll * 0.5);
+        return new float[]{
+                (float) (cy * cp * sr - sy * sp * cr),
+                (float) (sy * cp * sr + cy * sp * cr),
+                (float) (sy * cp * cr - cy * sp * sr),
+                (float) (cy * cp * cr + sy * sp * sr)
+        };
+    }
+
     public float getEjectionLivingTimeS() {
         return ejectionLivingTimeS;
     }
@@ -318,21 +333,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         //调用上层渲染方法
         render(transformType, matrixStack, buffer, light, overlay);
         matrixStack.popPose();
-    }
-
-    private static float[] toQuaternion(float roll, float pitch, float yaw) {
-        double cy = Math.cos(yaw * 0.5);
-        double sy = Math.sin(yaw * 0.5);
-        double cp = Math.cos(pitch * 0.5);
-        double sp = Math.sin(pitch * 0.5);
-        double cr = Math.cos(roll * 0.5);
-        double sr = Math.sin(roll * 0.5);
-        return new float[]{
-                (float) (cy * cp * sr - sy * sp * cr),
-                (float) (sy * cp * sr + cy * sp * cr),
-                (float) (sy * cp * cr - cy * sp * sr),
-                (float) (cy * cp * cr + sy * sp * sr)
-        };
     }
 
     private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight) {

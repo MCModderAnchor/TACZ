@@ -19,16 +19,14 @@ import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class CheckGunKey {
-    public static AnimationController AK47AC = null;
-    public static AnimationController AK47_FIRE = null;
-
-
     public static final KeyMapping CHECK_GUN_KEY = new KeyMapping("key.tac.check_gun.desc",
             KeyConflictContext.IN_GAME,
             KeyModifier.NONE,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_H,
             "key.category.tac");
+    public static AnimationController AK47AC = null;
+    public static AnimationController AK47_FIRE = null;
 
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
@@ -36,7 +34,7 @@ public class CheckGunKey {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && player.getMainHandItem().is(ModItems.GUN.get())) {
                 if (AK47AC == null) {
-                    AK47AC =  ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).defaultController();
+                    AK47AC = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).defaultController();
                 }
                 AK47AC.runAnimation(0, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f);
             }

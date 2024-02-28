@@ -57,46 +57,6 @@ public class ObjectAnimation {
         }
     }
 
-    protected void addChannel(ObjectAnimationChannel channel) {
-        channels.compute(channel.node, (node, list) -> {
-            if (list == null) list = new ArrayList<>();
-            list.add(channel);
-            return list;
-        });
-
-        if (channel.getEndTimeS() > maxEndTimeS)
-            maxEndTimeS = channel.getEndTimeS();
-    }
-
-    protected Map<String, List<ObjectAnimationChannel>> getChannels() {
-        return channels;
-    }
-
-    public void applyAnimationListeners(AnimationListenerSupplier supplier) {
-        for (List<ObjectAnimationChannel> channelList : channels.values()) {
-            for (ObjectAnimationChannel channel : channelList) {
-                AnimationListener listener = supplier.supplyListeners(channel.node, channel.type);
-                if (listener != null)
-                    channel.addListener(listener);
-            }
-        }
-    }
-
-    /**
-     * Trigger all listeners to notify them of the updated value.
-     */
-    public void update() {
-        for (List<ObjectAnimationChannel> channels : channels.values()) {
-            for (ObjectAnimationChannel channel : channels) {
-                channel.update(timeNs / 1e9f);
-            }
-        }
-    }
-
-    public float getMaxEndTimeS() {
-        return maxEndTimeS;
-    }
-
     protected static @Nonnull List<ObjectAnimation> createAnimations(@Nonnull AnimationStructure structure, @Nullable AnimationListenerSupplier... suppliers) {
         List<ObjectAnimation> result = new ArrayList<>();
 
@@ -176,6 +136,46 @@ public class ObjectAnimation {
         }
 
         return result;
+    }
+
+    protected void addChannel(ObjectAnimationChannel channel) {
+        channels.compute(channel.node, (node, list) -> {
+            if (list == null) list = new ArrayList<>();
+            list.add(channel);
+            return list;
+        });
+
+        if (channel.getEndTimeS() > maxEndTimeS)
+            maxEndTimeS = channel.getEndTimeS();
+    }
+
+    protected Map<String, List<ObjectAnimationChannel>> getChannels() {
+        return channels;
+    }
+
+    public void applyAnimationListeners(AnimationListenerSupplier supplier) {
+        for (List<ObjectAnimationChannel> channelList : channels.values()) {
+            for (ObjectAnimationChannel channel : channelList) {
+                AnimationListener listener = supplier.supplyListeners(channel.node, channel.type);
+                if (listener != null)
+                    channel.addListener(listener);
+            }
+        }
+    }
+
+    /**
+     * Trigger all listeners to notify them of the updated value.
+     */
+    public void update() {
+        for (List<ObjectAnimationChannel> channels : channels.values()) {
+            for (ObjectAnimationChannel channel : channels) {
+                channel.update(timeNs / 1e9f);
+            }
+        }
+    }
+
+    public float getMaxEndTimeS() {
+        return maxEndTimeS;
     }
 
     public enum PlayType {

@@ -28,6 +28,7 @@ public class CommonComponents {
     public static final String STOCK_LIGHT = "stock_light";
     public static final String STOCK_TACTICAL = "stock_tactical";
     public static final String STOCK_HEAVY = "stock_heavy";
+
     private CommonComponents() {
     }
 }

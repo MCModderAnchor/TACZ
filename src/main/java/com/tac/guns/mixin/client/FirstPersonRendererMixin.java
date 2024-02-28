@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ItemInHandRenderer.class)
 public class FirstPersonRendererMixin {
     @Inject(method = "renderHandsWithItems", at = @At("HEAD"))
-    public void beforeHandRender(float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource.BufferSource pBuffer, LocalPlayer pPlayerEntity, int pCombinedLight, CallbackInfo ci){
+    public void beforeHandRender(float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource.BufferSource pBuffer, LocalPlayer pPlayerEntity, int pCombinedLight, CallbackInfo ci) {
         MinecraftForge.EVENT_BUS.post(new BeforeRenderHandEvent(pMatrixStack));
     }
 }

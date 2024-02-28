@@ -6,15 +6,15 @@ import com.google.gson.GsonBuilder;
 import com.tac.guns.GunMod;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.pojo.animation.gltf.RawAnimationStructure;
 import com.tac.guns.client.resource.cache.ClientAssetManager;
 import com.tac.guns.client.resource.cache.data.ClientGunInfo;
 import com.tac.guns.client.resource.pojo.ClientGunInfoPOJO;
+import com.tac.guns.client.resource.pojo.animation.gltf.RawAnimationStructure;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
+import com.tac.guns.client.resource.pojo.display.GunModelTexture;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
-import com.tac.guns.client.resource.pojo.display.GunModelTexture;
 import com.tac.guns.client.resource.texture.ZipPackTexture;
 import com.tac.guns.util.GetJarResources;
 import net.minecraft.client.Minecraft;
@@ -115,7 +115,7 @@ public class ClientGunLoader {
         return registryName;
     }
 
-    private static void loadGunDisplayData(String namespace, String id, String path, ZipFile zipFile, GunDisplay displayData){
+    private static void loadGunDisplayData(String namespace, String id, String path, ZipFile zipFile, GunDisplay displayData) {
         // 检查默认材质是否存在，并创建默认的RenderType
         Optional<GunModelTexture> defaultOptional = displayData.getModelTextures().stream().filter(texture -> DEFAULT_TEXTURE_NAME.equals(texture.getName())).findAny();
         if (defaultOptional.isEmpty()) {
@@ -133,7 +133,7 @@ public class ClientGunLoader {
         // 加载模型
         BedrockGunModel model = loadGunModel(namespace, id, zipFile, displayData, renderType);
         // 加载动画
-        if(model != null) loadAnimation(namespace, id, zipFile, displayData, model);
+        if (model != null) loadAnimation(namespace, id, zipFile, displayData, model);
     }
 
     private static BedrockGunModel loadGunModel(String namespace, String id, ZipFile zipFile, GunDisplay displayData, RenderType renderType) {
@@ -178,8 +178,8 @@ public class ClientGunLoader {
         return null;
     }
 
-    private static void loadAnimation(String namespace, String id, ZipFile zipFile, GunDisplay displayData, BedrockGunModel model){
-        if(displayData.getAnimationLocation() == null) return;
+    private static void loadAnimation(String namespace, String id, ZipFile zipFile, GunDisplay displayData, BedrockGunModel model) {
+        if (displayData.getAnimationLocation() == null) return;
         String animationPath = String.format("%s/animations/%s", namespace, displayData.getAnimationLocation());
         ZipEntry modelEntry = zipFile.getEntry(animationPath);
         if (modelEntry == null) {
@@ -190,7 +190,7 @@ public class ClientGunLoader {
             RawAnimationStructure rawStructure = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), RawAnimationStructure.class);
             AnimationStructure structure = new AnimationStructure(rawStructure);
             ClientAssetManager.INSTANCE.setBedrockAnimatedAsset(new ResourceLocation(namespace, id), model, structure);
-        }catch (IOException ioe) {
+        } catch (IOException ioe) {
             // 可能用来判定错误，打印下
             GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", animationPath);
             ioe.printStackTrace();

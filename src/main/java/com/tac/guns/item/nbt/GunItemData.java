@@ -11,12 +11,12 @@ public class GunItemData {
     public static final String GUN_ID_TAG = "GunId";
     private ResourceLocation gunId;
 
-    public GunItemData(){
+    public GunItemData() {
         gunId = null;
     }
 
-    public static void serialization(@Nonnull CompoundTag nbt, @Nonnull GunItemData data){
-        if(data.gunId != null) nbt.putString(GUN_ID_TAG, data.gunId.toString());
+    public static void serialization(@Nonnull CompoundTag nbt, @Nonnull GunItemData data) {
+        if (data.gunId != null) nbt.putString(GUN_ID_TAG, data.gunId.toString());
     }
 
     public static @Nonnull GunItemData deserialization(@Nonnull CompoundTag nbt) {
@@ -27,11 +27,11 @@ public class GunItemData {
         return data;
     }
 
-    public void setGunId(ResourceLocation gunId){
-        this.gunId = gunId;
-    }
-
     public @Nullable ResourceLocation getGunId() {
         return gunId;
+    }
+
+    public void setGunId(ResourceLocation gunId) {
+        this.gunId = gunId;
     }
 }

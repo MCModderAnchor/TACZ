@@ -25,7 +25,7 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
         if (stack.is(ModItems.GUN.get())) {
             // Fixme：硬编码，应该改成配置文件可以调节
             BedrockAnimatedModel model = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(new ResourceLocation("tac", "ak47")).model();
-            if(model instanceof BedrockGunModel gunModel){
+            if (model instanceof BedrockGunModel gunModel) {
                 poseStack.pushPose();
                 poseStack.translate(0.425, 1.25, 0.375);
                 poseStack.scale(-0.55f, -0.55f, 0.55f);

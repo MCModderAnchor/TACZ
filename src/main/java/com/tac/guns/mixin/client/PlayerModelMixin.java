@@ -20,27 +20,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
     @Shadow
     @Final
-    private boolean slim;
-
-    @Shadow
-    @Final
     public ModelPart leftSleeve;
-
     @Shadow
     @Final
     public ModelPart rightSleeve;
-
     @Shadow
     @Final
     public ModelPart leftPants;
-
     @Shadow
     @Final
     public ModelPart rightPants;
-
     @Shadow
     @Final
     public ModelPart jacket;
+    @Shadow
+    @Final
+    private boolean slim;
 
     public PlayerModelMixin(ModelPart part) {
         super(part);
