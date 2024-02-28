@@ -4,10 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.cache.ClientAssetManager;
-import com.tac.guns.client.resource.cache.data.ClientGunInfo;
+import com.tac.guns.client.resource.cache.data.ClientGunIndex;
+import com.tac.guns.client.resource.loader.DataLoader;
 import com.tac.guns.client.resource.loader.DisplayDataLoader;
 import com.tac.guns.client.resource.loader.TextureLoader;
-import com.tac.guns.client.resource.pojo.ClientGunInfoPOJO;
+import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
 import com.tac.guns.util.GetJarResources;
 import net.minecraft.resources.ResourceLocation;
@@ -102,13 +103,19 @@ public class ClientGunLoader {
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
                 // 获取枪械的定义文件
-                ClientGunInfoPOJO infoPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), ClientGunInfoPOJO.class);
-                ClientGunInfo info = new ClientGunInfo();
-                info.setName(infoPOJO.getName());
-                info.setTooltip(infoPOJO.getTooltip());
-                ClientAssetManager.INSTANCE.setGunInfo(new ResourceLocation(namespace, id), info);
-                // 加载Display数据
-                DisplayDataLoader.loadDisplayData(namespace, id, path, zipFile, infoPOJO.getDisplay());
+                ClientGunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), ClientGunIndexPOJO.class);
+
+                // 加载 index 数据
+                ClientGunIndex index = new ClientGunIndex();
+                index.setName(indexPOJO.getName());
+                index.setTooltip(indexPOJO.getTooltip());
+                ClientAssetManager.INSTANCE.putGunIndex(new ResourceLocation(namespace, id), index);
+
+                // 加载 display 数据
+                DisplayDataLoader.loadDisplayData(namespace, id, path, zipFile, indexPOJO.getDisplay());
+
+                // 加载 data 数据
+                DataLoader.loadDisplayData(namespace, id, path, zipFile, indexPOJO.getData());
             }
         }
     }

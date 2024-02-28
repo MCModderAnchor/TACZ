@@ -1,6 +1,6 @@
 package com.tac.guns.client.resource.cache.data;
 
-public class ClientGunInfo {
+public class ClientGunIndex {
     private String name;
     private String tooltip;
 
