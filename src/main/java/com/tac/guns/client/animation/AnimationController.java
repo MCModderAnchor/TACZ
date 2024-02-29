@@ -1,7 +1,5 @@
 package com.tac.guns.client.animation;
 
-import com.tac.guns.client.animation.gltf.AnimationStructure;
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,19 +8,14 @@ import java.util.Queue;
 
 public class AnimationController {
     protected final ArrayList<ObjectAnimationRunner> currentRunners = new ArrayList<>();
-    private final AnimationStructure animationStructure;
     private final AnimationListenerSupplier listenerSupplier;
     private final ArrayList<Queue<AnimationPlan>> animationQueue = new ArrayList<>();
     protected List<ObjectAnimation> prototypes;
 
-    public AnimationController(AnimationStructure animationStructure, AnimationListenerSupplier model) {
-        this.animationStructure = animationStructure;
+    protected AnimationController(List<ObjectAnimation> animationprototypes, AnimationListenerSupplier model) {
+        this.prototypes = animationprototypes;
         this.listenerSupplier = model;
         prototypes = null;
-    }
-
-    public AnimationStructure getAnimationStructure() {
-        return animationStructure;
     }
 
     public AnimationListenerSupplier getListenerSupplier() {
@@ -35,10 +28,6 @@ public class AnimationController {
         return Collections.unmodifiableList(prototypes);
     }
 
-    public void refreshPrototypes() {
-        prototypes = ObjectAnimation.createAnimations(animationStructure, (AnimationListenerSupplier[]) null);
-    }
-
     @Nullable
     public ObjectAnimationRunner getAnimation(int track) {
         if (track >= currentRunners.size()) return null;
@@ -46,9 +35,6 @@ public class AnimationController {
     }
 
     public void queueAnimation(int track, Queue<AnimationPlan> queue) {
-        if (prototypes == null) {
-            refreshPrototypes();
-        }
         //ensure the capability
         for (int i = animationQueue.size(); i <= track; i++) {
             animationQueue.add(null);
@@ -68,9 +54,6 @@ public class AnimationController {
     }
 
     public void runAnimation(int track, String animationName, ObjectAnimation.PlayType playType, float transitionTimeS) {
-        if (prototypes == null) {
-            refreshPrototypes();
-        }
         //运行单个动画的时候视为执行一个只有一个动画的动画队列，因此需要清理旧的队列。
         if (track < animationQueue.size()) {
             animationQueue.set(track, null);

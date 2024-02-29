@@ -3,11 +3,13 @@ package com.tac.guns.client.resource.cache;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tac.guns.client.animation.AnimationController;
+import com.tac.guns.client.animation.Animations;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.BedrockAnimatedModel;
 import com.tac.guns.client.resource.cache.data.BedrockAnimatedAsset;
 import com.tac.guns.client.resource.cache.data.ClientGunIndex;
 import com.tac.guns.client.resource.cache.data.GunTextureSet;
+import com.tac.guns.client.resource.pojo.animation.gltf.RawAnimationStructure;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -40,8 +42,9 @@ public enum ClientAssetManager {
         indexes.put(registryName, index);
     }
 
-    public void putBedrockAnimatedAsset(ResourceLocation registryName, BedrockAnimatedModel model, AnimationStructure animation) {
-        animatedAssets.put(registryName, new BedrockAnimatedAsset(model, new AnimationController(animation, model)));
+    public void putBedrockAnimatedAsset(ResourceLocation registryName, BedrockAnimatedModel model, RawAnimationStructure animation) {
+        AnimationController controller = Animations.createControllerFromGltf(new AnimationStructure(animation), model);
+        animatedAssets.put(registryName, new BedrockAnimatedAsset(model, controller));
     }
 
     public void putTextureSet(ResourceLocation registryName, GunTextureSet textureSet) {

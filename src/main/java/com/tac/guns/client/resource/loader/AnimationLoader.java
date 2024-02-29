@@ -30,8 +30,7 @@ public final class AnimationLoader {
         }
         try (InputStream animationFileStream = zipFile.getInputStream(modelEntry)) {
             RawAnimationStructure rawStructure = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), RawAnimationStructure.class);
-            AnimationStructure structure = new AnimationStructure(rawStructure);
-            ClientAssetManager.INSTANCE.putBedrockAnimatedAsset(new ResourceLocation(namespace, id), model, structure);
+            ClientAssetManager.INSTANCE.putBedrockAnimatedAsset(new ResourceLocation(namespace, id), model, rawStructure);
         } catch (IOException ioe) {
             // 可能用来判定错误，打印下
             GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", animationPath);
