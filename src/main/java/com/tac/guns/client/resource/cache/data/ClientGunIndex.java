@@ -1,43 +1,78 @@
 package com.tac.guns.client.resource.cache.data;
 
-import com.tac.guns.client.resource.pojo.data.GunData;
+import com.tac.guns.client.animation.AnimationController;
+import com.tac.guns.client.animation.Animations;
+import com.tac.guns.client.animation.gltf.AnimationStructure;
+import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.resource.cache.ClientAssetManager;
+import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
+import com.tac.guns.client.resource.pojo.display.GunModelTexture;
+import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
+import com.tac.guns.client.resource.pojo.model.BedrockVersion;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.Map;
+import java.util.Optional;
 
 public class ClientGunIndex {
+    private static final String DEFAULT_TEXTURE_NAME = "default";
+
     private String name;
     private String tooltip;
-    private GunDisplay display;
-    private GunData data;
+    private BedrockGunModel gunModel;
+    private AnimationController controller;
+    private Map<String, ResourceLocation> sounds;
+
+    public ClientGunIndex(ClientGunIndexPOJO gunIndexPOJO) {
+        this.name = gunIndexPOJO.getName();
+        this.tooltip = gunIndexPOJO.getTooltip();
+        GunDisplay display = ClientAssetManager.INSTANCE.getGunDisplay(gunIndexPOJO.getDisplay());
+
+        // 加载材质
+        BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(display.getModelLocation());
+        // 检查默认材质是否存在，并创建默认的RenderType
+        Optional<GunModelTexture> defaultOptional = display.getModelTextures().stream().filter(texture -> DEFAULT_TEXTURE_NAME.equals(texture.getId())).findAny();
+        if (defaultOptional.isPresent()) {
+            RenderType renderType = RenderType.itemEntityTranslucentCull(defaultOptional.get().getLocation());
+            // 先判断是不是 1.10.0 版本基岩版模型文件
+            if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+                this.gunModel = new BedrockGunModel(modelPOJO, BedrockVersion.LEGACY, renderType);
+            }
+            // 判定是不是 1.12.0 版本基岩版模型文件
+            if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+                this.gunModel = new BedrockGunModel(modelPOJO, BedrockVersion.NEW, renderType);
+            }
+        }
+
+        // 加载动画
+        if (this.gunModel != null) {
+            AnimationStructure animations = ClientAssetManager.INSTANCE.getAnimations(display.getAnimationLocation());
+            this.controller = Animations.createControllerFromGltf(animations, this.gunModel);
+        }
+
+        // 加载声音
+        this.sounds = display.getSounds();
+    }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getTooltip() {
         return tooltip;
     }
 
-    public void setTooltip(String tooltip) {
-        this.tooltip = tooltip;
+    public BedrockGunModel getGunModel() {
+        return gunModel;
     }
 
-    public GunDisplay getDisplay() {
-        return display;
+    public AnimationController getController() {
+        return controller;
     }
 
-    public void setDisplay(GunDisplay display) {
-        this.display = display;
-    }
-
-    public GunData getData() {
-        return data;
-    }
-
-    public void setData(GunData data) {
-        this.data = data;
+    public ResourceLocation getSounds(String name) {
+        return sounds.get(name);
     }
 }

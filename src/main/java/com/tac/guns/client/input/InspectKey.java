@@ -1,9 +1,11 @@
 package com.tac.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.ObjectAnimation;
-import com.tac.guns.client.resource.cache.ClientAssetManager;
-import com.tac.guns.client.resource.cache.data.BedrockAnimatedAsset;
+import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.cache.data.ClientGunIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.KeyMapping;
@@ -31,9 +33,11 @@ public class InspectKey {
         if (INSPECT_KEY.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && player.getMainHandItem().is(ModItems.GUN.get())) {
-                BedrockAnimatedAsset asset = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(GunItem.DEFAULT);
-                if (asset != null && asset.defaultController() != null) {
-                    asset.defaultController().runAnimation(0, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f);
+                ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(GunItem.DEFAULT);
+                BedrockGunModel gunModel = gunIndex.getGunModel();
+                AnimationController controller = gunIndex.getController();
+                if (gunModel != null && controller != null) {
+                    controller.runAnimation(0, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
                 }
             }
         }

@@ -1,11 +1,12 @@
 package com.tac.guns.item;
 
 import com.tac.guns.GunMod;
+import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.ObjectAnimation;
+import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
-import com.tac.guns.client.resource.cache.ClientAssetManager;
-import com.tac.guns.client.resource.cache.data.BedrockAnimatedAsset;
-import com.tac.guns.client.resource.pojo.data.GunSound;
+import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.cache.data.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.item.nbt.GunItemData;
@@ -63,13 +64,13 @@ public class GunItem extends Item {
                 bullet.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 10, 0);
                 world.addFreshEntity(bullet);
             } else {
-                BedrockAnimatedAsset asset = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(GunItem.DEFAULT);
-                if (asset != null && asset.defaultController() != null) {
-                    asset.defaultController().runAnimation(0, "shoot", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
+                ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(GunItem.DEFAULT);
+                BedrockGunModel gunModel = gunIndex.getGunModel();
+                AnimationController controller = gunIndex.getController();
+                if (gunModel != null && controller != null) {
+                    controller.runAnimation(0, "shoot", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
                 }
-                GunSound sounds = ClientAssetManager.INSTANCE.getGunIndex(DEFAULT).getData().getSounds();
-                ResourceLocation shootSound = new ResourceLocation(GunMod.MOD_ID, sounds.getShootSoundLocation());
-                SoundPlayManager.playClientSound(player, shootSound, 1.0f, 0.8f);
+                SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
                 player.setXRot(player.getXRot() - 1);
             }
         }

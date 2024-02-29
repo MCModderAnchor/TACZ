@@ -1,6 +1,7 @@
 package com.tac.guns.client.resource.pojo.display;
 
 import com.google.gson.annotations.SerializedName;
+import net.minecraft.resources.ResourceLocation;
 
 public class GunModelTexture {
     @SerializedName("id")
@@ -10,7 +11,7 @@ public class GunModelTexture {
     private String name;
 
     @SerializedName("location")
-    private String location;
+    private ResourceLocation location;
 
     public String getId() {
         return id;
@@ -20,7 +21,7 @@ public class GunModelTexture {
         return name;
     }
 
-    public String getLocation() {
+    public ResourceLocation getLocation() {
         return location;
     }
 }

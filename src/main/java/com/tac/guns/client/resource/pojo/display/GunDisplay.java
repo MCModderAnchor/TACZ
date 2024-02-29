@@ -1,24 +1,29 @@
 package com.tac.guns.client.resource.pojo.display;
 
 import com.google.gson.annotations.SerializedName;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 public class GunDisplay {
     @SerializedName("model")
-    private String modelLocation;
+    private ResourceLocation modelLocation;
     @SerializedName("textures")
     private List<GunModelTexture> modelTextures;
     @Nullable
     @SerializedName("hud")
-    private String hudTextureLocation;
+    private ResourceLocation hudTextureLocation;
     @Nullable
     @SerializedName("slot")
-    private String slotTextureLocation;
+    private ResourceLocation slotTextureLocation;
     @Nullable
     @SerializedName("animation")
-    private String animationLocation;
+    private ResourceLocation animationLocation;
+    @Nullable
+    @SerializedName("sounds")
+    private Map<String, ResourceLocation> sounds;
     @Nullable
     @SerializedName("transform")
     private GunTransform transform;
@@ -26,7 +31,7 @@ public class GunDisplay {
     @SerializedName("shell")
     private ShellEjection shellEjection;
 
-    public String getModelLocation() {
+    public ResourceLocation getModelLocation() {
         return modelLocation;
     }
 
@@ -35,18 +40,23 @@ public class GunDisplay {
     }
 
     @Nullable
-    public String getHudTextureLocation() {
+    public ResourceLocation getHudTextureLocation() {
         return hudTextureLocation;
     }
 
     @Nullable
-    public String getSlotTextureLocation() {
+    public ResourceLocation getSlotTextureLocation() {
         return slotTextureLocation;
     }
 
     @Nullable
-    public String getAnimationLocation() {
+    public ResourceLocation getAnimationLocation() {
         return animationLocation;
+    }
+
+    @Nullable
+    public Map<String, ResourceLocation> getSounds() {
+        return sounds;
     }
 
     @Nullable

@@ -1,9 +1,10 @@
 package com.tac.guns.client.event;
 
 import com.tac.guns.GunMod;
+import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.cache.ClientAssetManager;
-import com.tac.guns.client.resource.cache.data.BedrockAnimatedAsset;
+import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.cache.data.ClientGunIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
@@ -30,10 +31,12 @@ public class FirstPersonRenderGunEvent {
         ItemStack stack = event.getItemStack();
         ItemTransforms.TransformType transformType = hand == InteractionHand.MAIN_HAND ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
         if (stack.is(ModItems.GUN.get())) {
-            BedrockAnimatedAsset asset = ClientAssetManager.INSTANCE.getBedrockAnimatedAsset(GunItem.DEFAULT);
-            if (asset != null && asset.model() instanceof BedrockGunModel gunModel) {
-                if (asset.defaultController() != null) {
-                    asset.defaultController().update();
+            ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(GunItem.DEFAULT);
+            BedrockGunModel gunModel = gunIndex.getGunModel();
+            AnimationController controller = gunIndex.getController();
+            if (gunModel != null) {
+                if (controller != null) {
+                    controller.update();
                 }
                 gunModel.render(0, transformType, stack, player, event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
                 event.setCanceled(true);

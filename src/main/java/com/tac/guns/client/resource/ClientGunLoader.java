@@ -1,16 +1,14 @@
 package com.tac.guns.client.resource;
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.cache.ClientAssetManager;
+import com.tac.guns.client.resource.cache.data.ClientAmmoIndex;
 import com.tac.guns.client.resource.cache.data.ClientGunIndex;
-import com.tac.guns.client.resource.loader.DataLoader;
-import com.tac.guns.client.resource.loader.DisplayDataLoader;
-import com.tac.guns.client.resource.loader.TextureLoader;
+import com.tac.guns.client.resource.loader.*;
 import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
-import com.tac.guns.client.resource.pojo.data.GunData;
-import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
 import com.tac.guns.util.GetJarResources;
 import net.minecraft.resources.ResourceLocation;
@@ -26,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -39,16 +38,33 @@ public class ClientGunLoader {
     public static final Path FOLDER = Paths.get("config", GunMod.MOD_ID, "custom");
     private static final Marker MARKER = MarkerManager.getMarker("ClientGunLoader");
     private static final String DEFAULT_GUN_PACK_NAME = "tac_default_gun.zip";
-    private static final Pattern GUNS_PATTERN = Pattern.compile("^(\\w+)/guns/index/(\\w+)\\.json$");
+    private static final Pattern GUNS_INDEX_PATTERN = Pattern.compile("^(\\w+)/guns/index/(\\w+)\\.json$");
+    /**
+     * 储存修改过的客户端 index
+     */
+    private static final Map<ResourceLocation, ClientGunIndex> GUN_INDEX = Maps.newHashMap();
+    private static final Map<ResourceLocation, ClientAmmoIndex> AMMO_INDEX = Maps.newHashMap();
 
     /**
      * 加载客户端数据的入口方法
      */
     public static void initAndReload() {
-        TextureLoader.TMP_REGISTER_TEXTURE.clear();
+        ClientAssetManager.INSTANCE.clearAll();
+
+        GUN_INDEX.clear();
+        AMMO_INDEX.clear();
+
         createFolder();
         checkDefaultPack();
         readZipFiles();
+    }
+
+    public static ClientGunIndex getGunIndex(ResourceLocation registryName) {
+        return GUN_INDEX.get(registryName);
+    }
+
+    public static ClientAmmoIndex getAmmoIndex(ResourceLocation registryName) {
+        return AMMO_INDEX.get(registryName);
     }
 
     private static void createFolder() {
@@ -83,18 +99,50 @@ public class ClientGunLoader {
 
     private static void readZipGunPack(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
+            // 第一次读取
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
-                loadGunFromZipPack(path, zipFile);
+                // 加载全部的 display 文件
+                if (GunDisplayLoader.load(zipFile, path)) {
+                    continue;
+                }
+                // 加载全部的 data 文件
+                if (GunDataLoader.load(zipFile, path)) {
+                    continue;
+                }
+                // 加载全部的 animation 文件
+                if (AnimationLoader.load(zipFile, path)) {
+                    continue;
+                }
+                // 加载全部的 model 文件
+                if (BedrockModelLoader.load(zipFile, path)) {
+                    continue;
+                }
+                // 加载全部的 texture 文件
+                if (TextureLoader.load(zipFile, path)) {
+                    continue;
+                }
+                // 加载全部的 sound 文件
+                if (SoundLoader.load(zipFile, path)) {
+                    continue;
+                }
+            }
+
+            iteration = zipFile.entries();
+            while (iteration.hasMoreElements()) {
+                String path = iteration.nextElement().getName();
+                // 第二次读取，开始抓药方
+                // 加载枪械的 index 文件
+                loadGunIndex(path, zipFile);
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
     }
 
-    private static void loadGunFromZipPack(String path, ZipFile zipFile) throws IOException {
-        Matcher matcher = GUNS_PATTERN.matcher(path);
+    private static void loadGunIndex(String path, ZipFile zipFile) throws IOException {
+        Matcher matcher = GUNS_INDEX_PATTERN.matcher(path);
         if (matcher.find()) {
             String namespace = matcher.group(1);
             String id = matcher.group(2);
@@ -106,20 +154,8 @@ public class ClientGunLoader {
             try (InputStream stream = zipFile.getInputStream(entry)) {
                 // 获取枪械的定义文件
                 ClientGunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), ClientGunIndexPOJO.class);
-
-                // 加载 display 数据
-                GunDisplay display = DisplayDataLoader.loadDisplayData(namespace, id, zipFile);
-
-                // 加载 data 数据
-                GunData gunData = DataLoader.loadDisplayData(namespace, id, zipFile);
-
-                // 加载 index 数据
-                ClientGunIndex index = new ClientGunIndex();
-                index.setName(indexPOJO.getName());
-                index.setTooltip(indexPOJO.getTooltip());
-                index.setDisplay(display);
-                index.setData(gunData);
-                ClientAssetManager.INSTANCE.putGunIndex(new ResourceLocation(namespace, id), index);
+                ResourceLocation registryName = new ResourceLocation(namespace, id);
+                GUN_INDEX.put(registryName, new ClientGunIndex(indexPOJO));
             }
         }
     }

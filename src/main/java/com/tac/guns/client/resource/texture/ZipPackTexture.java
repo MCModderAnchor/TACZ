@@ -25,16 +25,6 @@ public class ZipPackTexture extends AbstractTexture {
         this.texturePath = texturePath;
     }
 
-    public boolean isExist() {
-        try (ZipFile zipFile = new ZipFile(zipFilePath.toFile())) {
-            ZipEntry entry = zipFile.getEntry(String.format("%s/textures/%s", namespace, texturePath));
-            return entry != null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     @Override
     public void load(@Nonnull ResourceManager manager) {
         if (!RenderSystem.isOnRenderThreadOrInit()) {

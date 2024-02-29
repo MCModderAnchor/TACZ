@@ -7,14 +7,7 @@ public class GunData {
     @SerializedName("ammo")
     private ResourceLocation ammoId;
 
-    @SerializedName("sounds")
-    private GunSound sounds;
-
     public ResourceLocation getAmmoId() {
         return ammoId;
-    }
-
-    public GunSound getSounds() {
-        return sounds;
     }
 }
