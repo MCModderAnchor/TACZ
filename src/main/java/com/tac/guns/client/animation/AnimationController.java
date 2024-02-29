@@ -12,10 +12,9 @@ public class AnimationController {
     private final ArrayList<Queue<AnimationPlan>> animationQueue = new ArrayList<>();
     protected List<ObjectAnimation> prototypes;
 
-    protected AnimationController(List<ObjectAnimation> animationprototypes, AnimationListenerSupplier model) {
-        this.prototypes = animationprototypes;
+    protected AnimationController(List<ObjectAnimation> animationPrototypes, AnimationListenerSupplier model) {
+        prototypes = animationPrototypes;
         this.listenerSupplier = model;
-        prototypes = null;
     }
 
     public AnimationListenerSupplier getListenerSupplier() {
@@ -122,18 +121,6 @@ public class AnimationController {
                     }
                 }
             }
-        }
-    }
-
-    public static class AnimationPlan {
-        public String animationName;
-        public ObjectAnimation.PlayType playType;
-        public float transitionTimeS;
-
-        public AnimationPlan(String animationName, ObjectAnimation.PlayType playType, float transitionTimeS) {
-            this.animationName = animationName;
-            this.playType = playType;
-            this.transitionTimeS = transitionTimeS;
         }
     }
 }
