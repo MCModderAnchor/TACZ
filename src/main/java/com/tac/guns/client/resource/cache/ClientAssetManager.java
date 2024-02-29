@@ -8,11 +8,9 @@ import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.BedrockAnimatedModel;
 import com.tac.guns.client.resource.cache.data.BedrockAnimatedAsset;
 import com.tac.guns.client.resource.cache.data.ClientGunIndex;
-import com.tac.guns.client.resource.cache.data.GunTextureSet;
 import com.tac.guns.client.resource.pojo.animation.gltf.RawAnimationStructure;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -30,10 +28,6 @@ public enum ClientAssetManager {
      */
     private final Map<ResourceLocation, BedrockAnimatedAsset> animatedAssets = Maps.newHashMap();
     /**
-     * 储存枪械需要的所有材质的材质注册名，可直接提供给渲染 api 调用。
-     */
-    private final Map<ResourceLocation, GunTextureSet> gunTextureSets = Maps.newHashMap();
-    /**
      * 储存枪械需要的所有声音的注册名。
      */
     private final Map<ResourceLocation, SoundBuffer> soundBuffers = Maps.newHashMap();
@@ -47,10 +41,6 @@ public enum ClientAssetManager {
         animatedAssets.put(registryName, new BedrockAnimatedAsset(model, controller));
     }
 
-    public void putTextureSet(ResourceLocation registryName, GunTextureSet textureSet) {
-        // TODO 缓存材质
-    }
-
     public void putSoundBuffer(ResourceLocation registryName, SoundBuffer soundBuffer) {
         soundBuffers.put(registryName, soundBuffer);
     }
@@ -61,15 +51,6 @@ public enum ClientAssetManager {
 
     public BedrockAnimatedAsset getBedrockAnimatedAsset(ResourceLocation registryName) {
         return animatedAssets.get(registryName);
-    }
-
-    public @Nonnull GunTextureSet getGunTextureSet(ResourceLocation registryName) {
-        return gunTextureSets.compute(registryName, (k, v) -> {
-            if (v == null) {
-                return new GunTextureSet();
-            }
-            return v;
-        });
     }
 
     public SoundBuffer getSoundBuffers(ResourceLocation registryName) {
