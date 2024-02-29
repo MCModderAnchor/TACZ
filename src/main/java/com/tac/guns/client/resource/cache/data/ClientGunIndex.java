@@ -30,6 +30,8 @@ public class ClientGunIndex {
         this.tooltip = gunIndexPOJO.getTooltip();
         GunDisplay display = ClientAssetManager.INSTANCE.getGunDisplay(gunIndexPOJO.getDisplay());
 
+        // FIXME：这里的读取没有做判断
+        // FIXME：如果某些地方读取，应当抛出错误，或者给予默认值
         // 加载材质
         BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(display.getModelLocation());
         // 检查默认材质是否存在，并创建默认的RenderType

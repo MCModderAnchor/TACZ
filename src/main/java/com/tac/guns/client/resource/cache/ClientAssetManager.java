@@ -81,5 +81,6 @@ public enum ClientAssetManager {
      * 清除所有缓存
      */
     public void clearAll() {
+        // TODO：重载时清理缓存
     }
 }

@@ -129,10 +129,10 @@ public class ClientGunLoader {
                 }
             }
 
+            // 第二次读取，开始抓药方
             iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
-                // 第二次读取，开始抓药方
                 // 加载枪械的 index 文件
                 loadGunIndex(path, zipFile);
             }

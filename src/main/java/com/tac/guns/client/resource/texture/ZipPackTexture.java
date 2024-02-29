@@ -36,7 +36,7 @@ public class ZipPackTexture extends AbstractTexture {
 
     private void doLoad() {
         try (ZipFile zipFile = new ZipFile(zipFilePath.toFile())) {
-            ZipEntry entry = zipFile.getEntry(String.format("%s/textures/%s", namespace, texturePath));
+            ZipEntry entry = zipFile.getEntry(String.format("%s/textures/%s.png", namespace, texturePath));
             if (entry == null) {
                 return;
             }
