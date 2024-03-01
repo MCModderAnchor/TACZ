@@ -1,0 +1,11 @@
+{
+    // 枪械的显示名称和工具提示，支持本地化
+    "name": "tac.gun.ak47.name",
+    "tooltip": "tac.gun.ak47.tooltips",
+    // 枪械的本地数据
+    "display": "tac:glock_17_display",
+    // 枪械参数
+    "data": "tac:ak47_data",
+    // 枪械种类，标准待定
+    "type": "rifle"
+}

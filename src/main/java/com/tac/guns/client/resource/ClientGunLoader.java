@@ -43,7 +43,7 @@ public class ClientGunLoader {
      */
     public static final Path FOLDER = Paths.get("config", GunMod.MOD_ID, "custom");
     private static final Marker MARKER = MarkerManager.getMarker("ClientGunLoader");
-    private static final String DEFAULT_GUN_PACK_NAME = "tac_default_gun.zip";
+    private static final String DEFAULT_GUN_PACK_NAME = "tac_default_gun";
     private static final Pattern GUNS_INDEX_PATTERN = Pattern.compile("^(\\w+)/guns/index/(\\w+)\\.json$");
     /**
      * 储存修改过的客户端 index
@@ -91,7 +91,8 @@ public class ClientGunLoader {
     private static void checkDefaultPack() {
         // 不管存不存在，强行覆盖
         String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
-        GetJarResources.copyModFile(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
+
+        GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
     }
 
     private static void readFiles() {
