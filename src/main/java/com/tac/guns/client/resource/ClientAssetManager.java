@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.cache;
+package com.tac.guns.client.resource;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.audio.SoundBuffer;

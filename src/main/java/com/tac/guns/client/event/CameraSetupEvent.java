@@ -6,7 +6,7 @@ import com.tac.guns.GunMod;
 import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
-import com.tac.guns.client.resource.cache.data.ClientGunIndex;
+import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

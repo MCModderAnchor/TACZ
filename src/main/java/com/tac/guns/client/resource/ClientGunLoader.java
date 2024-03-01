@@ -3,13 +3,14 @@ package com.tac.guns.client.resource;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
-import com.tac.guns.client.resource.cache.ClientAssetManager;
-import com.tac.guns.client.resource.cache.data.ClientAmmoIndex;
-import com.tac.guns.client.resource.cache.data.ClientGunIndex;
+import com.tac.guns.client.resource.index.ClientAmmoIndex;
+import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.loader.*;
 import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
+import com.tac.guns.client.resource.pojo.serialize.Vector3fSerializer;
 import com.tac.guns.util.GetJarResources;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +33,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class ClientGunLoader {
-    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).registerTypeAdapter(CubesItem.class, new CubesItem.Deserializer()).create();
+    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+                                                    .registerTypeAdapter(CubesItem.class, new CubesItem.Deserializer())
+                                                    .registerTypeAdapter(Vector3f.class, new Vector3fSerializer())
+                                                    .create();
     /**
      * 放置自定义枪械模型的目录
      */

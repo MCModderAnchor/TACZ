@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
-import com.tac.guns.client.resource.cache.data.ClientGunIndex;
+import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.KeyMapping;

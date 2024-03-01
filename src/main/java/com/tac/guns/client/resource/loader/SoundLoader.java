@@ -3,7 +3,7 @@ package com.tac.guns.client.resource.loader;
 import com.mojang.blaze3d.audio.OggAudioStream;
 import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tac.guns.GunMod;
-import com.tac.guns.client.resource.cache.ClientAssetManager;
+import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;

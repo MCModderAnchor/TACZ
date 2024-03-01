@@ -1,10 +1,9 @@
 package com.tac.guns.client.renderer.tileentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
-import com.tac.guns.client.resource.cache.data.ClientGunIndex;
+import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.model.geom.EntityModelSet;

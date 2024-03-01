@@ -1,7 +1,7 @@
 package com.tac.guns.client.sound;
 
 import com.mojang.blaze3d.audio.SoundBuffer;
-import com.tac.guns.client.resource.cache.ClientAssetManager;
+import com.tac.guns.client.resource.ClientAssetManager;
 import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
