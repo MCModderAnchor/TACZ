@@ -11,6 +11,7 @@ import com.tac.guns.client.resource.loader.*;
 import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
 import com.tac.guns.util.GetJarResources;
+import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -56,7 +57,7 @@ public class ClientGunLoader {
 
         createFolder();
         checkDefaultPack();
-        readZipFiles();
+        readFiles();
     }
 
     public static ClientGunIndex getGunIndex(ResourceLocation registryName) {
@@ -84,7 +85,7 @@ public class ClientGunLoader {
         GetJarResources.copyModFile(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
     }
 
-    private static void readZipFiles() {
+    private static void readFiles() {
         File[] files = FOLDER.toFile().listFiles((dir, name) -> true);
         if (files == null) {
             return;
@@ -93,7 +94,32 @@ public class ClientGunLoader {
             if (file.isFile() && file.getName().endsWith(".zip")) {
                 readZipGunPack(file);
             }
-            // TODO: 读取文件夹格式功能
+            if (file.isDirectory()) {
+                File[] subFiles = file.listFiles((dir, name) -> true);
+                if (subFiles == null) {
+                    return;
+                }
+                for (File namespaceFile : subFiles) {
+                    readDirGunPack(namespaceFile);
+                }
+            }
+        }
+    }
+
+    private static void readDirGunPack(File root) {
+        if (root.isDirectory()) {
+            try {
+                GunDisplayLoader.load(root);
+                GunDataLoader.load(root);
+                AnimationLoader.load(root);
+                BedrockModelLoader.load(root);
+                TextureLoader.load(root);
+                SoundLoader.load(root);
+
+                loadGunIndex(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -157,6 +183,23 @@ public class ClientGunLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 GUN_INDEX.put(registryName, new ClientGunIndex(indexPOJO));
             }
+        }
+    }
+
+    private static void loadGunIndex(File root) throws IOException {
+        Path filePath = root.toPath().resolve("guns/index");
+        if (Files.isDirectory(filePath)) {
+            TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
+                try (InputStream stream = Files.newInputStream(file)) {
+                    // 获取枪械的定义文件
+                    ClientGunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), ClientGunIndexPOJO.class);
+                    GUN_INDEX.put(id, new ClientGunIndex(indexPOJO));
+                } catch (IOException exception) {
+                    GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
+                    exception.printStackTrace();
+                }
+            });
+            Files.walkFileTree(filePath, visitor);
         }
     }
 }
