@@ -3115,6 +3115,26 @@
 					]
 				},
 				{
+					"name": "positioning",
+					"pivot": [-3.025, -8.95, -11.225]
+				},
+				{
+					"name": "ground",
+					"parent": "positioning",
+					"pivot": [-3.025, -8.95, -11.225]
+				},
+				{
+					"name": "fixed",
+					"parent": "positioning",
+					"pivot": [0.45, -1.55, -12],
+					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "thirdperson_hand",
+					"parent": "positioning",
+					"pivot": [-4.85, -0.85, -11.475]
+				},
+				{
 					"name": "camera",
 					"pivot": [0, 8, 12]
 				},
@@ -3122,7 +3142,7 @@
 					"name": "idle_view",
 					"parent": "camera",
 					"pivot": [0, 8, 12],
-					"rotation": [0, 0, -20]
+					"rotation": [0, 0, -3]
 				}
 			]
 		}

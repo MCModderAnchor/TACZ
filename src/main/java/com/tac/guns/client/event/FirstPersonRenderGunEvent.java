@@ -12,6 +12,7 @@ import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
+import com.tac.guns.util.math.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -54,7 +55,7 @@ public class FirstPersonRenderGunEvent {
                 poseStack.translate(0, 1.5f, 0);
                 // 基岩版模型是上下颠倒的，需要翻转过来。
                 poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
-                // 应用枪械动态，如取消原版的bobbing、瞄准时的位移、后坐力的位移等
+                // 应用枪械动态，如第一人称摄像机定位、后坐力的位移等
                 applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel);
                 // 调用模型渲染
                 gunModel.render(0, transformType, stack, player, poseStack, event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
@@ -118,7 +119,7 @@ public class FirstPersonRenderGunEvent {
         poseStack.translate(0, 1.5f, 0);
         for (int f = nodePath.size() - 1; f >= 0; f--) {
             BedrockPart t = nodePath.get(f);
-            float[] q = toQuaternion(-t.xRot * weight, -t.yRot * weight, -t.zRot * weight);
+            float[] q = MathUtil.toQuaternion(-t.xRot * weight, -t.yRot * weight, -t.zRot * weight);
             poseStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
             if (t.getParent() != null)
                 poseStack.translate(-t.x / 16.0F * weight, -t.y / 16.0F * weight, -t.z / 16.0F * weight);
@@ -127,20 +128,5 @@ public class FirstPersonRenderGunEvent {
             }
         }
         poseStack.translate(0, -1.5f, 0);
-    }
-
-    private static float[] toQuaternion(float roll, float pitch, float yaw) {
-        double cy = Math.cos(yaw * 0.5);
-        double sy = Math.sin(yaw * 0.5);
-        double cp = Math.cos(pitch * 0.5);
-        double sp = Math.sin(pitch * 0.5);
-        double cr = Math.cos(roll * 0.5);
-        double sr = Math.sin(roll * 0.5);
-        return new float[]{
-                (float) (cy * cp * sr - sy * sp * cr),
-                (float) (sy * cp * sr + cy * sp * cr),
-                (float) (sy * cp * cr - cy * sp * sr),
-                (float) (cy * cp * cr + sy * sp * sr)
-        };
     }
 }
