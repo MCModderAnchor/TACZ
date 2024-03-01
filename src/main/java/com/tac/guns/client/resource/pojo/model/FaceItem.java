@@ -3,6 +3,8 @@ package com.tac.guns.client.resource.pojo.model;
 import com.google.gson.annotations.SerializedName;
 
 public class FaceItem {
+    public static final FaceItem EMPTY = empty();
+
     @SerializedName("uv")
     private float[] uv;
 
@@ -16,7 +18,7 @@ public class FaceItem {
         return face;
     }
 
-    public static FaceItem empty() {
+    private static FaceItem empty() {
         FaceItem face = new FaceItem();
         face.uv = new float[]{0, 0};
         face.uvSize = new float[]{0, 0};

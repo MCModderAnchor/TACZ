@@ -19,30 +19,30 @@ public class FaceUVsItem {
 
     public static FaceUVsItem singleSouthFace() {
         FaceUVsItem faces = new FaceUVsItem();
-        faces.north = FaceItem.empty();
-        faces.east = FaceItem.empty();
-        faces.west = FaceItem.empty();
+        faces.north = FaceItem.EMPTY;
+        faces.east = FaceItem.EMPTY;
+        faces.west = FaceItem.EMPTY;
         faces.south = FaceItem.single16X();
-        faces.up = FaceItem.empty();
-        faces.down = FaceItem.empty();
+        faces.up = FaceItem.EMPTY;
+        faces.down = FaceItem.EMPTY;
         return faces;
     }
 
     public FaceItem getFace(Direction direction) {
         switch (direction) {
             case EAST:
-                return west == null ? FaceItem.empty() : west;
+                return west == null ? FaceItem.EMPTY : west;
             case WEST:
-                return east == null ? FaceItem.empty() : east;
+                return east == null ? FaceItem.EMPTY : east;
             case NORTH:
-                return north == null ? FaceItem.empty() : north;
+                return north == null ? FaceItem.EMPTY : north;
             case SOUTH:
-                return south == null ? FaceItem.empty() : south;
+                return south == null ? FaceItem.EMPTY : south;
             case UP:
-                return down == null ? FaceItem.empty() : down;
+                return down == null ? FaceItem.EMPTY : down;
             case DOWN:
             default:
-                return up == null ? FaceItem.empty() : up;
+                return up == null ? FaceItem.EMPTY : up;
         }
     }
 }

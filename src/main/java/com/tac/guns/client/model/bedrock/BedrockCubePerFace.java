@@ -11,6 +11,8 @@ import com.tac.guns.client.resource.pojo.model.FaceUVsItem;
 import net.minecraft.core.Direction;
 
 public class BedrockCubePerFace implements BedrockCube {
+    private static final BedrockVertex EMPTY = new BedrockVertex(0, 0, 0, 0.0F, 0.0F);
+    private static final BedrockVertex[] EMPTY_VERTEX = new BedrockVertex[]{EMPTY, EMPTY, EMPTY, EMPTY};
     public final float minX;
     public final float minY;
     public final float minZ;
@@ -61,6 +63,9 @@ public class BedrockCubePerFace implements BedrockCube {
         float v1 = face.getUv()[1];
         float u2 = u1 + face.getUvSize()[0];
         float v2 = v1 + face.getUvSize()[1];
+        if (face == FaceItem.EMPTY) {
+            return new BedrockPolygon(EMPTY_VERTEX, u1, v1, u2, v2, texWidth, texHeight, false, direction);
+        }
         return new BedrockPolygon(positionsIn, u1, v1, u2, v2, texWidth, texHeight, false, direction);
     }
 
