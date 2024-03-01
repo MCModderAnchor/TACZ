@@ -90,12 +90,14 @@ public class FirstPersonRenderGunEvent {
         // 应用定位组的变换（位移和旋转，不包括缩放）
         applyFirstPersonPositioningTransform(poseStack, model);
         // 在应用定位组变换之后应用 display 数据中的缩放，以保证缩放的三轴与模型文件对应。
+        poseStack.translate(0, 1.5f, 0);
         if(gunIndex.getTransform().getScale() != null) {
             Vector3f scale = gunIndex.getTransform().getScale().getFirstPerson();
             if(scale != null) {
                 poseStack.scale(scale.x(), scale.y(), scale.z());
             }
         }
+        poseStack.translate(0, -1.5f, 0);
     }
 
     /**

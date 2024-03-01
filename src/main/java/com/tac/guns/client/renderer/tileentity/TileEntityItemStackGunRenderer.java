@@ -42,24 +42,24 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
             // 反转模型
             poseStack.scale(-1, -1, 1);
             // 应用定位组的变换（位移和旋转，不包括缩放）
-            applyPositioningTransform(transformType, gunModel, poseStack);
-            // 在应用定位组变换之后应用 display 数据中的缩放，以保证缩放的三轴与模型文件对应。
+            applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
+            // 应用 display 数据中的缩放
             applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
             gunModel.render(0, transformType, stack, null, poseStack, pBuffer, pPackedLight, pPackedOverlay);
             poseStack.popPose();
         }
     }
 
-    private void applyPositioningTransform(ItemTransforms.TransformType transformType, BedrockGunModel model, PoseStack poseStack){
+    private void applyPositioningTransform(ItemTransforms.TransformType transformType, TransformScale scale, BedrockGunModel model, PoseStack poseStack){
         switch (transformType){
             case FIXED -> {
-                applyPositioningNodeTransform(model.getFixedOriginPath(), poseStack);
+                applyPositioningNodeTransform(model.getFixedOriginPath(), poseStack, scale.getFixed());
             }
             case GROUND -> {
-                applyPositioningNodeTransform(model.getGroundOriginPath(), poseStack);
+                applyPositioningNodeTransform(model.getGroundOriginPath(), poseStack, scale.getGround());
             }
             case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> {
-                applyPositioningNodeTransform(model.getThirdPersonHandOriginPath(), poseStack);
+                applyPositioningNodeTransform(model.getThirdPersonHandOriginPath(), poseStack, scale.getThirdPerson());
             }
         }
     }
@@ -87,8 +87,9 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
         }
     }
 
-    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack){
+    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, Vector3f scale){
         if(nodePath == null) return;
+        if(scale == null) scale = new Vector3f(1, 1, 1);
         //应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
         poseStack.translate(0, 1.5, 0);
         for (int f = nodePath.size() - 1; f >= 0; f--) {
@@ -96,9 +97,9 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
             float[] q = MathUtil.toQuaternion(-t.xRot, -t.yRot, -t.zRot);
             poseStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
             if (t.getParent() != null)
-                poseStack.translate(-t.x / 16.0F, -t.y / 16.0F, -t.z / 16.0F);
+                poseStack.translate(-t.x * scale.x() / 16.0F, -t.y * scale.y() / 16.0F, -t.z * scale.z() / 16.0F);
             else {
-                poseStack.translate(-t.x / 16.0F, 1.5F - t.y / 16.0F, -t.z / 16.0F);
+                poseStack.translate(-t.x * scale.x() / 16.0F, (1.5F - t.y / 16.0F) * scale.y(), -t.z * scale.z() / 16.0F);
             }
         }
         poseStack.translate(0, -1.5, 0);
