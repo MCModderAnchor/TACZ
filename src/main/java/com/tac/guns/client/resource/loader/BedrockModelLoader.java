@@ -3,14 +3,18 @@ package com.tac.guns.client.resource.loader;
 import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.cache.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
+import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -45,5 +49,21 @@ public final class BedrockModelLoader {
             }
         }
         return false;
+    }
+
+    public static void load(File root) throws IOException {
+        Path modelPath = root.toPath().resolve("models");
+        if (Files.isDirectory(modelPath)) {
+            TacPathVisitor visitor = new TacPathVisitor(modelPath.toFile(), root.getName(), ".json", (id, file) -> {
+                try (InputStream modelFileStream = Files.newInputStream(file)) {
+                    BedrockModelPOJO modelPOJO = GSON.fromJson(new InputStreamReader(modelFileStream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
+                    ClientAssetManager.INSTANCE.putModel(id, modelPOJO);
+                } catch (IOException exception) {
+                    GunMod.LOGGER.warn(MARKER, "Failed to read model file: {}", file);
+                    exception.printStackTrace();
+                }
+            });
+            Files.walkFileTree(modelPath, visitor);
+        }
     }
 }

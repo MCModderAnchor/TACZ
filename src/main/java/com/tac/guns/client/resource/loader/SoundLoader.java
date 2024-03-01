@@ -4,14 +4,18 @@ import com.mojang.blaze3d.audio.OggAudioStream;
 import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.cache.ClientAssetManager;
+import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -44,5 +48,21 @@ public final class SoundLoader {
             }
         }
         return false;
+    }
+
+    public static void load(File root) throws IOException {
+        Path filePath = root.toPath().resolve("sounds");
+        if (Files.isDirectory(filePath)) {
+            TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".ogg", (id, file) -> {
+                try (InputStream stream = Files.newInputStream(file); OggAudioStream audioStream = new OggAudioStream(stream)) {
+                    ByteBuffer bytebuffer = audioStream.readAll();
+                    ClientAssetManager.INSTANCE.putSoundBuffer(id, new SoundBuffer(bytebuffer, audioStream.getFormat()));
+                } catch (IOException exception) {
+                    GunMod.LOGGER.warn(MARKER, "Failed to read sound file: {}", file);
+                    exception.printStackTrace();
+                }
+            });
+            Files.walkFileTree(filePath, visitor);
+        }
     }
 }

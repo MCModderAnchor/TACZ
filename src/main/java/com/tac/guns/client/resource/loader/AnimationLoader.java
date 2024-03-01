@@ -4,14 +4,18 @@ import com.tac.guns.GunMod;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.resource.cache.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.animation.gltf.RawAnimationStructure;
+import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -45,5 +49,21 @@ public final class AnimationLoader {
             }
         }
         return false;
+    }
+
+    public static void load(File root) throws IOException {
+        Path animationPath = root.toPath().resolve("animations");
+        if (Files.isDirectory(animationPath)) {
+            TacPathVisitor visitor = new TacPathVisitor(animationPath.toFile(), root.getName(), ".gltf", (id, file) -> {
+                try (InputStream animationFileStream = Files.newInputStream(file)) {
+                    RawAnimationStructure rawStructure = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), RawAnimationStructure.class);
+                    ClientAssetManager.INSTANCE.putAnimation(id, new AnimationStructure(rawStructure));
+                } catch (IOException exception) {
+                    GunMod.LOGGER.warn(MARKER, "Failed to read animation file: {}", file);
+                    exception.printStackTrace();
+                }
+            });
+            Files.walkFileTree(animationPath, visitor);
+        }
     }
 }
