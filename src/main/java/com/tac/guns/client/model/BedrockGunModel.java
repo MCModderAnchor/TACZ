@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
@@ -23,6 +22,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -31,10 +31,24 @@ import static com.tac.guns.client.model.CommonComponents.*;
 
 public class BedrockGunModel extends BedrockAnimatedModel {
     public static final String IRON_VIEW_NODE = "iron_view";
+    public static final String IDLE_VIEW_NODE = "idle_view";
+    public static final String THIRD_PERSON_HAND_ORIGIN_NODE = "thirdperson_hand";
+    public static final String FIXED_ORIGIN_NODE = "fixed";
+    public static final String GROUND_ORIGIN_NODE = "ground";
     public static final String SCOPE_POS_NODE = "scope_pos";
     public static final String EJECTION_NODE = "ejection";
-    protected final List<BedrockPart> ironSightPath = new ArrayList<>();
-    protected final List<BedrockPart> scopePosPath = new ArrayList<>();
+    // 第一人称机瞄摄像机定位组的路径
+    protected @Nullable List<BedrockPart> ironSightPath;
+    // 第一人称idle状态摄像机定位组的路径
+    protected @Nullable List<BedrockPart> idleSightPath;
+    // 第三人称手部物品渲染原点定位组的路径
+    protected @Nullable List<BedrockPart> thirdPersonHandOriginPath;
+    // 展示框渲染原点定位组的路径
+    protected @Nullable List<BedrockPart> fixedOriginPath;
+    // 地面实体渲染原点定位组的路径
+    protected @Nullable List<BedrockPart> groundOriginPath;
+    // 瞄具配件定位组的路径。其他配件不需要存路径，只需要替换渲染。但是瞄具定位组需要用来辅助第一人称瞄准的摄像机定位。
+    protected @Nullable List<BedrockPart> scopePosPath;
     private final SecondOrderDynamics aimingDynamics = new SecondOrderDynamics(0.45f, 0.8f, 1.2f, 0);
     protected ItemStack currentItem;
     protected LivingEntity currentEntity;
@@ -157,40 +171,14 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             //todo 未安装扩容弹匣时可见
             return null;
         });
-        {
-            ModelRendererWrapper rendererWrapper = modelMap.get(IRON_VIEW_NODE);
-            if (rendererWrapper != null) {
-                BedrockPart it = rendererWrapper.getModelRenderer();
-                Stack<BedrockPart> stack = new Stack<>();
-                do {
-                    stack.push(it);
-                    it = it.getParent();
-                } while (it != null);
-                while (!stack.isEmpty()) {
-                    it = stack.pop();
-                    ironSightPath.add(it);
-                }
-            }
-        }
-        this.setFunctionalRenderer(IRON_VIEW_NODE, bedrockPart -> {
-            bedrockPart.visible = false;
-            return null;
-        });
-        {
-            ModelRendererWrapper rendererWrapper = modelMap.get(SCOPE_POS_NODE);
-            if (rendererWrapper != null) {
-                BedrockPart it = rendererWrapper.getModelRenderer();
-                Stack<BedrockPart> stack = new Stack<>();
-                do {
-                    stack.push(it);
-                    it = it.getParent();
-                } while (it != null);
-                while (!stack.isEmpty()) {
-                    it = stack.pop();
-                    scopePosPath.add(it);
-                }
-            }
-        }
+
+        ironSightPath = getPath(modelMap.get(IRON_VIEW_NODE));
+        idleSightPath = getPath(modelMap.get(IDLE_VIEW_NODE));
+        thirdPersonHandOriginPath = getPath(modelMap.get(THIRD_PERSON_HAND_ORIGIN_NODE));
+        fixedOriginPath = getPath(modelMap.get(FIXED_ORIGIN_NODE));
+        groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
+        scopePosPath = getPath(modelMap.get(SCOPE_POS_NODE));
+
         this.setFunctionalRenderer(SCOPE_POS_NODE, bedrockPart -> {
             bedrockPart.visible = false;
             return (poseStack, transformType, consumer, light, overlay) -> {
@@ -254,10 +242,32 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         return ejectionNormal;
     }
 
+    @Nullable
     public List<BedrockPart> getIronSightPath() {
         return ironSightPath;
     }
 
+    @Nullable
+    public List<BedrockPart> getIdleSightPath() {
+        return idleSightPath;
+    }
+
+    @Nullable
+    public List<BedrockPart> getThirdPersonHandOriginPath() {
+        return thirdPersonHandOriginPath;
+    }
+
+    @Nullable
+    public List<BedrockPart> getFixedOriginPath() {
+        return fixedOriginPath;
+    }
+
+    @Nullable
+    public List<BedrockPart> getGroundOriginPath() {
+        return groundOriginPath;
+    }
+
+    @Nullable
     public List<BedrockPart> getScopePosPath() {
         return scopePosPath;
     }
@@ -282,5 +292,23 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             renderer.renderLeftHand(matrixStack, buffer, combinedLight, player);
         }
         RenderSystem.setShaderTexture(0, oldId);
+    }
+
+    private List<BedrockPart> getPath(ModelRendererWrapper rendererWrapper){
+        if(rendererWrapper == null){
+            return null;
+        }
+        BedrockPart part = rendererWrapper.getModelRenderer();
+        List<BedrockPart> path = new ArrayList<>();
+        Stack<BedrockPart> stack = new Stack<>();
+        do {
+            stack.push(part);
+            part = part.getParent();
+        } while (part != null);
+        while (!stack.isEmpty()) {
+            part = stack.pop();
+            path.add(part);
+        }
+        return path;
     }
 }

@@ -55,7 +55,7 @@ public class FirstPersonRenderGunEvent {
                 // 基岩版模型是上下颠倒的，需要翻转过来。
                 poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
                 // 应用枪械动态，如取消原版的bobbing、瞄准时的位移、后坐力的位移等
-                applyFirstPersonGunMoving(player, stack, gunIndex, poseStack, gunModel);
+                applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel);
                 // 调用模型渲染
                 gunModel.render(0, transformType, stack, player, poseStack, event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
                 // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
@@ -81,67 +81,53 @@ public class FirstPersonRenderGunEvent {
         }
     }
 
-    private static void applyFirstPersonGunMoving(LocalPlayer player,
-                                                  ItemStack gunItemStack,
-                                                  ClientGunIndex gunIndex,
-                                                  PoseStack poseStack,
-                                                  BedrockGunModel model) {
-        applyAimingTransform(gunIndex, poseStack, model);
-    }
-
-    private static void applyAimingTransform(ClientGunIndex gunIndex, PoseStack poseStack, BedrockGunModel model) {
-        //todo v就是瞄准动作的进度
-        float v = 0;
-        //todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。不要删掉注释的代码.
-        if (true) {
-            List<BedrockPart> ironSightPath = model.getIronSightPath();
-            //应用定位组的反向位移、旋转，使定位组的位置就是屏幕中心
-            poseStack.translate(0, 1.5f, 0);
-            for (int f = ironSightPath.size() - 1; f >= 0; f--) {
-                BedrockPart t = ironSightPath.get(f);
-                float[] q = toQuaternion(-t.xRot * v, -t.yRot * v, -t.zRot * v);
-                poseStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
-                if (t.getParent() != null)
-                    poseStack.translate(-t.x / 16.0F * v, -t.y / 16.0F * v, -t.z / 16.0F * v);
-                else {
-                    poseStack.translate(-t.x / 16.0F * v, (1.5F - t.y / 16.0F) * v, -t.z / 16.0F * v);
-                }
+    private static void applyFirstPersonGunTransform(LocalPlayer player,
+                                                     ItemStack gunItemStack,
+                                                     ClientGunIndex gunIndex,
+                                                     PoseStack poseStack,
+                                                     BedrockGunModel model) {
+        // 应用定位组的变换（位移和旋转，不包括缩放）
+        applyFirstPersonPositioningTransform(poseStack, model);
+        // 在应用定位组变换之后应用 display 数据中的缩放，以保证缩放的三轴与模型文件对应。
+        if(gunIndex.getTransform().getScale() != null) {
+            Vector3f scale = gunIndex.getTransform().getScale().getFirstPerson();
+            if(scale != null) {
+                poseStack.scale(scale.x(), scale.y(), scale.z());
             }
-            poseStack.translate(0, -1.5f, 0);
-        } else {
-                /*
-                IOverrideModel scopeModel = OverrideModelManager.getModel(scopeItemStack);
-                if (scopeModel instanceof BedrockAttachmentModel bedrockScopeModel) {
-                    //应用定位组的反向位移、旋转，使定位组的位置就是屏幕中心
-                    matrixStack.translate(0, 1.5f, 0);
-                    for (int f = bedrockScopeModel.scopeViewPath.size() - 1; f >= 0; f--) {
-                        BedrockPart t = bedrockScopeModel.scopeViewPath.get(f);
-                        float[] q = toQuaternion(-t.xRot * v, -t.yRot * v, -t.zRot * v);
-                        matrixStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
-                        if (t.getParent() != null)
-                            matrixStack.translate(-t.x / 16.0F * v, -t.y / 16.0F * v, -t.z / 16.0F * v);
-                        else {
-                            matrixStack.translate(-t.x / 16.0F * v, (1.5F - t.y / 16.0F) * v, -t.z / 16.0F * v);
-                        }
-                    }
-                    for (int f = scopePosPath.size() - 1; f >= 0; f--) {
-                        BedrockPart t = scopePosPath.get(f);
-                        float[] q = toQuaternion(-t.xRot * v, -t.yRot * v, -t.zRot * v);
-                        matrixStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
-                        if (t.getParent() != null)
-                            matrixStack.translate(-t.x / 16.0F * v, -t.y / 16.0F * v, -t.z / 16.0F * v);
-                        else {
-                            matrixStack.translate(-t.x / 16.0F * v, (1.5F - t.y / 16.0F) * v, -t.z / 16.0F * v);
-                        }
-                    }
-                    matrixStack.translate(0, -1.5f, 0);
-                }
-                */
         }
-        //主摄像机的默认位置是(0, 8, 12)
-        poseStack.translate(0, 0.5 * (1 - v), -0.75 * (1 - v));
     }
 
+    /**
+     * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。
+     */
+    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model) {
+        // todo v就是瞄准动作的进度
+        float v = 0;
+        // todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。
+        if (true) {
+            applyPositioningNodeTransform(model.getIronSightPath(), poseStack, v);
+        } else {
+            applyPositioningNodeTransform(model.getScopePosPath(), poseStack, v);
+        }
+        applyPositioningNodeTransform(model.getIdleSightPath(), poseStack, 1 - v);
+    }
+
+    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, float weight){
+        if(nodePath == null) return;
+        //应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
+        poseStack.translate(0, 1.5f, 0);
+        for (int f = nodePath.size() - 1; f >= 0; f--) {
+            BedrockPart t = nodePath.get(f);
+            float[] q = toQuaternion(-t.xRot * weight, -t.yRot * weight, -t.zRot * weight);
+            poseStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
+            if (t.getParent() != null)
+                poseStack.translate(-t.x / 16.0F * weight, -t.y / 16.0F * weight, -t.z / 16.0F * weight);
+            else {
+                poseStack.translate(-t.x / 16.0F * weight, (1.5F - t.y / 16.0F) * weight, -t.z / 16.0F * weight);
+            }
+        }
+        poseStack.translate(0, -1.5f, 0);
+    }
 
     private static float[] toQuaternion(float roll, float pitch, float yaw) {
         double cy = Math.cos(yaw * 0.5);

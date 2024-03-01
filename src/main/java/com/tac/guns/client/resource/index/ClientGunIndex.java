@@ -9,6 +9,7 @@ import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.client.resource.pojo.display.GunModelTexture;
+import com.tac.guns.client.resource.pojo.display.GunTransform;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import net.minecraft.client.renderer.RenderType;
@@ -25,6 +26,7 @@ public class ClientGunIndex {
     private BedrockGunModel gunModel;
     private GunAnimationStateMachine animationStateMachine;
     private Map<String, ResourceLocation> sounds;
+    private GunTransform transform;
 
     public ClientGunIndex(ClientGunIndexPOJO gunIndexPOJO) {
         this.name = gunIndexPOJO.getName();
@@ -61,6 +63,8 @@ public class ClientGunIndex {
 
         // 加载声音
         this.sounds = display.getSounds();
+        // 加载 Transform 数据
+        this.transform = display.getTransform();
     }
 
     public String getName() {
@@ -81,5 +85,9 @@ public class ClientGunIndex {
 
     public ResourceLocation getSounds(String name) {
         return sounds.get(name);
+    }
+
+    public GunTransform getTransform() {
+        return transform;
     }
 }

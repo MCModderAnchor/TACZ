@@ -21,6 +21,9 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
     }
 
+    /**
+     * 负责第一人称以外的枪械模型渲染。第一人称渲染参见 {@link com.tac.guns.client.event.FirstPersonRenderGunEvent}
+     */
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.is(ModItems.GUN.get())) {
