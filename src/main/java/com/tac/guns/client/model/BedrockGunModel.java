@@ -230,21 +230,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         }
     }
 
-    private static float[] toQuaternion(float roll, float pitch, float yaw) {
-        double cy = Math.cos(yaw * 0.5);
-        double sy = Math.sin(yaw * 0.5);
-        double cp = Math.cos(pitch * 0.5);
-        double sp = Math.sin(pitch * 0.5);
-        double cr = Math.cos(roll * 0.5);
-        double sr = Math.sin(roll * 0.5);
-        return new float[]{
-                (float) (cy * cp * sr - sy * sp * cr),
-                (float) (sy * cp * sr + cy * sp * cr),
-                (float) (sy * cp * cr - cy * sp * sr),
-                (float) (cy * cp * cr + sy * sp * sr)
-        };
-    }
-
     public float getEjectionLivingTimeS() {
         return ejectionLivingTimeS;
     }
@@ -269,70 +254,19 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         return ejectionNormal;
     }
 
+    public List<BedrockPart> getIronSightPath() {
+        return ironSightPath;
+    }
+
+    public List<BedrockPart> getScopePosPath() {
+        return scopePosPath;
+    }
+
     public void render(float partialTicks, ItemTransforms.TransformType transformType, ItemStack stack, LivingEntity entity, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {
         currentItem = stack;
         currentEntity = entity;
-
-        matrixStack.pushPose();
-
-        if (transformType.firstPerson()) {
-            //todo v就是瞄准动作的进度
-            float v = 0;
-            //从渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
-            matrixStack.translate(0, 1.5f, 0);
-            //游戏中模型是上下颠倒的，需要翻转过来。
-            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
-            //todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。不要删掉注释的代码.
-            if (true) {
-                //应用定位组的反向位移、旋转，使定位组的位置就是屏幕中心
-                matrixStack.translate(0, 1.5f, 0);
-                for (int f = ironSightPath.size() - 1; f >= 0; f--) {
-                    BedrockPart t = ironSightPath.get(f);
-                    float[] q = toQuaternion(-t.xRot * v, -t.yRot * v, -t.zRot * v);
-                    matrixStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
-                    if (t.getParent() != null)
-                        matrixStack.translate(-t.x / 16.0F * v, -t.y / 16.0F * v, -t.z / 16.0F * v);
-                    else {
-                        matrixStack.translate(-t.x / 16.0F * v, (1.5F - t.y / 16.0F) * v, -t.z / 16.0F * v);
-                    }
-                }
-                matrixStack.translate(0, -1.5f, 0);
-            } else {
-                /*
-                IOverrideModel scopeModel = OverrideModelManager.getModel(scopeItemStack);
-                if (scopeModel instanceof BedrockAttachmentModel bedrockScopeModel) {
-                    //应用定位组的反向位移、旋转，使定位组的位置就是屏幕中心
-                    matrixStack.translate(0, 1.5f, 0);
-                    for (int f = bedrockScopeModel.scopeViewPath.size() - 1; f >= 0; f--) {
-                        BedrockPart t = bedrockScopeModel.scopeViewPath.get(f);
-                        float[] q = toQuaternion(-t.xRot * v, -t.yRot * v, -t.zRot * v);
-                        matrixStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
-                        if (t.getParent() != null)
-                            matrixStack.translate(-t.x / 16.0F * v, -t.y / 16.0F * v, -t.z / 16.0F * v);
-                        else {
-                            matrixStack.translate(-t.x / 16.0F * v, (1.5F - t.y / 16.0F) * v, -t.z / 16.0F * v);
-                        }
-                    }
-                    for (int f = scopePosPath.size() - 1; f >= 0; f--) {
-                        BedrockPart t = scopePosPath.get(f);
-                        float[] q = toQuaternion(-t.xRot * v, -t.yRot * v, -t.zRot * v);
-                        matrixStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
-                        if (t.getParent() != null)
-                            matrixStack.translate(-t.x / 16.0F * v, -t.y / 16.0F * v, -t.z / 16.0F * v);
-                        else {
-                            matrixStack.translate(-t.x / 16.0F * v, (1.5F - t.y / 16.0F) * v, -t.z / 16.0F * v);
-                        }
-                    }
-                    matrixStack.translate(0, -1.5f, 0);
-                }
-                */
-            }
-            //主摄像机的默认位置是(0, 8, 12)
-            matrixStack.translate(0, 0.5 * (1 - v), -0.75 * (1 - v));
-        }
         //调用上层渲染方法
         render(transformType, matrixStack, buffer, light, overlay);
-        matrixStack.popPose();
     }
 
     private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight) {

@@ -1,6 +1,7 @@
 package com.tac.guns.client.renderer.tileentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.resource.cache.data.ClientGunIndex;
