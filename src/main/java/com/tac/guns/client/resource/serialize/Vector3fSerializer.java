@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.pojo.serialize;
+package com.tac.guns.client.resource.serialize;
 
 import com.google.gson.*;
 import com.mojang.math.Vector3f;

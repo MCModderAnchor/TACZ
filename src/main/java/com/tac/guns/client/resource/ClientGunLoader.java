@@ -10,7 +10,7 @@ import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.loader.*;
 import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
-import com.tac.guns.client.resource.pojo.serialize.Vector3fSerializer;
+import com.tac.guns.client.resource.serialize.Vector3fSerializer;
 import com.tac.guns.util.GetJarResources;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
