@@ -91,7 +91,6 @@ public class ClientGunLoader {
     private static void checkDefaultPack() {
         // 不管存不存在，强行覆盖
         String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
-
         GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
     }
 
