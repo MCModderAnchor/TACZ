@@ -25,7 +25,7 @@ public class TacPathVisitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
         if (file.toFile().getName().endsWith(suffix)) {
-            String path = PathHandler.getPath(root, file.toFile(), suffix);
+            String path = PathHandler.getPath(root.toPath(), file, suffix);
             ResourceLocation id = new ResourceLocation(namespace, path);
             consumer.accept(id, file);
         }

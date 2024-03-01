@@ -1,12 +1,11 @@
 package com.tac.guns.util;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public final class PathHandler {
-    public static String getPath(File root, File file, String suffix) {
-        int preLength = root.getPath().length() + 1;
-        String path = file.getPath();
-        String relativePath = path.substring(preLength, path.length() - suffix.length());
-        return relativePath.replace('\\', '/');
+    public static String getPath(Path root, Path file, String suffix) {
+        String relative = root.relativize(file).toString();
+        String relativeWithoutSuffix = relative.substring(0, relative.length() - suffix.length());
+        return relativeWithoutSuffix.replace('\\', '/');
     }
 }
