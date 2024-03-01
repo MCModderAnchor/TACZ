@@ -5,7 +5,7 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
-import com.tac.guns.client.animation.AnimationController;
+import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientGunLoader;
@@ -40,11 +40,11 @@ public class FirstPersonRenderGunEvent {
         if (stack.is(ModItems.GUN.get())) {
             ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(GunItem.DEFAULT);
             BedrockGunModel gunModel = gunIndex.getGunModel();
-            AnimationController controller = gunIndex.getController();
+            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (gunModel != null) {
                 // 在渲染之前，先更新动画，让动画数据写入模型
-                if (controller != null) {
-                    controller.update();
+                if (animationStateMachine != null) {
+                    animationStateMachine.update();
                 }
                 PoseStack poseStack = event.getPoseStack();
                 poseStack.pushPose();
@@ -65,7 +65,7 @@ public class FirstPersonRenderGunEvent {
     }
 
     /**
-     * 当主手拿着枪械物品的时候，取消应用在它上面的 viewBobbing。
+     * 当主手拿着枪械物品的时候，取消应用在它上面的 viewBobbing，以便应用自定义的跑步/走路动画。
      */
     @SubscribeEvent
     public static void cancelItemInHandViewBobbing(RenderItemInHandBobEvent.BobView event){

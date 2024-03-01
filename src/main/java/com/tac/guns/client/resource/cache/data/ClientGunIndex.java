@@ -3,6 +3,7 @@ package com.tac.guns.client.resource.cache.data;
 import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.Animations;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
+import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.cache.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
@@ -22,7 +23,7 @@ public class ClientGunIndex {
     private String name;
     private String tooltip;
     private BedrockGunModel gunModel;
-    private AnimationController controller;
+    private GunAnimationStateMachine animationStateMachine;
     private Map<String, ResourceLocation> sounds;
 
     public ClientGunIndex(ClientGunIndexPOJO gunIndexPOJO) {
@@ -50,8 +51,12 @@ public class ClientGunIndex {
 
         // 加载动画
         if (this.gunModel != null) {
+            // 目前支持的动画为 gltf 动画。此处从缓存取出 gltf 的动画资源。
             AnimationStructure animations = ClientAssetManager.INSTANCE.getAnimations(display.getAnimationLocation());
-            this.controller = Animations.createControllerFromGltf(animations, this.gunModel);
+            // 用 gltf 动画资源创建动画控制器
+            AnimationController controller = Animations.createControllerFromGltf(animations, this.gunModel);
+            // 将动画控制器包装起来
+            this.animationStateMachine = new GunAnimationStateMachine(controller);
         }
 
         // 加载声音
@@ -70,8 +75,8 @@ public class ClientGunIndex {
         return gunModel;
     }
 
-    public AnimationController getController() {
-        return controller;
+    public GunAnimationStateMachine getAnimationStateMachine() {
+        return animationStateMachine;
     }
 
     public ResourceLocation getSounds(String name) {

@@ -1,8 +1,7 @@
 package com.tac.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.tac.guns.client.animation.AnimationController;
-import com.tac.guns.client.animation.ObjectAnimation;
+import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.resource.cache.data.ClientGunIndex;
@@ -35,9 +34,9 @@ public class ReloadKey {
             if (player != null && player.getMainHandItem().is(ModItems.GUN.get())) {
                 ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(GunItem.DEFAULT);
                 BedrockGunModel gunModel = gunIndex.getGunModel();
-                AnimationController controller = gunIndex.getController();
-                if (gunModel != null && controller != null) {
-                    controller.runAnimation(0, "reload_empty", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
+                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+                if (gunModel != null && animationStateMachine != null) {
+                    animationStateMachine.setNoAmmo(true).onGunReload();
                 }
             }
         }

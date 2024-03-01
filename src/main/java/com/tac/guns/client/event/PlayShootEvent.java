@@ -1,7 +1,7 @@
 package com.tac.guns.client.event;
 
-import com.tac.guns.client.animation.AnimationController;
-import com.tac.guns.client.animation.ObjectAnimation;
+import com.tac.guns.api.event.GunShootEvent;
+import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.resource.cache.data.ClientGunIndex;
@@ -13,8 +13,10 @@ import com.tac.guns.network.message.ShootMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
@@ -27,11 +29,14 @@ public class PlayShootEvent {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (player != null && player.getMainHandItem().is(ModItems.GUN.get()) && mc.mouseHandler.isLeftPressed()) {
+            if(MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))){
+                return;
+            }
             ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(GunItem.DEFAULT);
             BedrockGunModel gunModel = gunIndex.getGunModel();
-            AnimationController controller = gunIndex.getController();
-            if (gunModel != null && controller != null) {
-                controller.runAnimation(0, "shoot", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
+            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            if (gunModel != null && animationStateMachine != null) {
+                animationStateMachine.onGunShoot();
             }
             NetworkHandler.CHANNEL.sendToServer(new ShootMessage());
             SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
