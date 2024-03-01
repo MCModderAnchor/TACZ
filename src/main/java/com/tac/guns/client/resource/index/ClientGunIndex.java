@@ -1,11 +1,11 @@
-package com.tac.guns.client.resource.cache.data;
+package com.tac.guns.client.resource.index;
 
 import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.Animations;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.cache.ClientAssetManager;
+import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.client.resource.pojo.display.GunModelTexture;
