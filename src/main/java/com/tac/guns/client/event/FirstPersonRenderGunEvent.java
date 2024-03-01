@@ -46,6 +46,8 @@ public class FirstPersonRenderGunEvent {
                 applyFirstPersonGunMoving(player, stack, gunIndex, poseStack);
                 // 调用模型渲染
                 gunModel.render(0, transformType, stack, player, poseStack, event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+                // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
+                gunModel.cleanAnimationTransform();
                 event.setCanceled(true);
             }
         }

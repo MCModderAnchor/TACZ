@@ -91,6 +91,18 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
             rendererWrapper.setHidden(visible);
     }
 
+    public void cleanAnimationTransform(){
+        for(ModelRendererWrapper rendererWrapper : modelMap.values()){
+            rendererWrapper.setOffsetX(0);
+            rendererWrapper.setOffsetY(0);
+            rendererWrapper.setOffsetZ(0);
+            rendererWrapper.getAdditionalQuaternion().set(0, 0, 0, 1);
+            rendererWrapper.setScaleX(1);
+            rendererWrapper.setScaleY(1);
+            rendererWrapper.setScaleZ(1);
+        }
+    }
+
     /**
      * @param node     想要进行编程渲染流程的 node 名称
      * @param function 输入为 BedrockPart，返回 IModelRenderer 以替换渲染
