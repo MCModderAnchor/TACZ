@@ -90,21 +90,15 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             }
         });
         this.setFunctionalRenderer(BULLET_IN_BARREL, bedrockPart -> {
-            CompoundTag tag = currentItem.getOrCreateTag();
-            int ammoCount = tag.getInt("AmmoCount");
-            bedrockPart.visible = ammoCount != 0;
+            // todo 枪内有弹则渲染
             return null;
         });
         this.setFunctionalRenderer(BULLET_IN_MAG, bedrockPart -> {
-            CompoundTag tag = currentItem.getOrCreateTag();
-            int ammoCount = tag.getInt("AmmoCount");
-            bedrockPart.visible = ammoCount > 1;
+            // todo 枪内子弹数大于 1 则渲染
             return null;
         });
         this.setFunctionalRenderer(BULLET_CHAIN, bedrockPart -> {
-            CompoundTag tag = currentItem.getOrCreateTag();
-            int ammoCount = tag.getInt("AmmoCount");
-            bedrockPart.visible = ammoCount != 0;
+            // todo 枪内有弹则渲染
             return null;
         });
         this.setFunctionalRenderer(MUZZLE_BRAKE, bedrockPart -> {
