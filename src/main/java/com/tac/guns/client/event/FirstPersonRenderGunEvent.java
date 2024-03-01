@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,7 +39,8 @@ public class FirstPersonRenderGunEvent {
         ItemStack stack = event.getItemStack();
         ItemTransforms.TransformType transformType = hand == InteractionHand.MAIN_HAND ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
         if (stack.is(ModItems.GUN.get())) {
-            ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(GunItem.DEFAULT);
+            ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+            ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(gunId);
             BedrockGunModel gunModel = gunIndex.getGunModel();
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (gunModel != null) {
@@ -68,7 +70,7 @@ public class FirstPersonRenderGunEvent {
      * 当主手拿着枪械物品的时候，取消应用在它上面的 viewBobbing，以便应用自定义的跑步/走路动画。
      */
     @SubscribeEvent
-    public static void cancelItemInHandViewBobbing(RenderItemInHandBobEvent.BobView event){
+    public static void cancelItemInHandViewBobbing(RenderItemInHandBobEvent.BobView event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) {
             return;
@@ -83,11 +85,11 @@ public class FirstPersonRenderGunEvent {
                                                   ItemStack gunItemStack,
                                                   ClientGunIndex gunIndex,
                                                   PoseStack poseStack,
-                                                  BedrockGunModel model){
+                                                  BedrockGunModel model) {
         applyAimingTransform(gunIndex, poseStack, model);
     }
 
-    private static void applyAimingTransform(ClientGunIndex gunIndex, PoseStack poseStack, BedrockGunModel model){
+    private static void applyAimingTransform(ClientGunIndex gunIndex, PoseStack poseStack, BedrockGunModel model) {
         //todo v就是瞄准动作的进度
         float v = 0;
         //todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。不要删掉注释的代码.

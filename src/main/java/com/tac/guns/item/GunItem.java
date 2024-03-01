@@ -15,8 +15,6 @@ import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public class GunItem extends Item {
-    public static final ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "ak47");
-
     public GunItem() {
         super(new Properties().stacksTo(1));
     }

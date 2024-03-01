@@ -10,6 +10,7 @@ import com.tac.guns.item.GunItem;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -32,7 +33,8 @@ public class ReloadKey {
         if (RELOAD_KEY.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && player.getMainHandItem().is(ModItems.GUN.get())) {
-                ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(GunItem.DEFAULT);
+                ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+                ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(gunId);
                 BedrockGunModel gunModel = gunIndex.getGunModel();
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (gunModel != null && animationStateMachine != null) {

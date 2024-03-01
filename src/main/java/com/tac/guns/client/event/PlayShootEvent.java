@@ -11,6 +11,7 @@ import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ShootMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -29,10 +30,11 @@ public class PlayShootEvent {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (player != null && player.getMainHandItem().is(ModItems.GUN.get()) && mc.mouseHandler.isLeftPressed()) {
-            if(MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))){
+            if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
                 return;
             }
-            ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(GunItem.DEFAULT);
+            ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+            ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(gunId);
             BedrockGunModel gunModel = gunIndex.getGunModel();
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (gunModel != null && animationStateMachine != null) {
