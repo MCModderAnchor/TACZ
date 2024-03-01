@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -34,9 +35,9 @@ import java.util.zip.ZipFile;
 
 public class ClientGunLoader {
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-                                                    .registerTypeAdapter(CubesItem.class, new CubesItem.Deserializer())
-                                                    .registerTypeAdapter(Vector3f.class, new Vector3fSerializer())
-                                                    .create();
+            .registerTypeAdapter(CubesItem.class, new CubesItem.Deserializer())
+            .registerTypeAdapter(Vector3f.class, new Vector3fSerializer())
+            .create();
     /**
      * 放置自定义枪械模型的目录
      */
@@ -62,6 +63,10 @@ public class ClientGunLoader {
         createFolder();
         checkDefaultPack();
         readFiles();
+    }
+
+    public static Set<ResourceLocation> getAllGuns() {
+        return GUN_INDEX.keySet();
     }
 
     public static ClientGunIndex getGunIndex(ResourceLocation registryName) {
