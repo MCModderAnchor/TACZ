@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class CameraSetupEvent {
     @SubscribeEvent
-    public static void applyCameraAnimation(EntityViewRenderEvent.CameraSetup event) {
+    public static void applyLevelCameraAnimation(EntityViewRenderEvent.CameraSetup event) {
         if (Minecraft.getInstance().player == null) return;
         if (!Minecraft.getInstance().options.bobView) return;
         // todo 把硬编码改掉
@@ -37,7 +37,7 @@ public class CameraSetupEvent {
     }
 
     @SubscribeEvent
-    public static void applyItemLayerCameraAnimation(BeforeRenderHandEvent event) {
+    public static void applyItemInHandCameraAnimation(BeforeRenderHandEvent event) {
         if (!Minecraft.getInstance().options.bobView) return;
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;

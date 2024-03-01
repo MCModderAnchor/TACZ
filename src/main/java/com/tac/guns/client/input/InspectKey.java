@@ -37,7 +37,7 @@ public class InspectKey {
                 BedrockGunModel gunModel = gunIndex.getGunModel();
                 AnimationController controller = gunIndex.getController();
                 if (gunModel != null && controller != null) {
-                    controller.runAnimation(0, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
+                    controller.runAnimation(0, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
                 }
             }
         }
