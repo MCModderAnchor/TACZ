@@ -7,6 +7,7 @@ import com.tac.guns.GunMod;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.loader.GunDataLoader;
 import com.tac.guns.resource.pojo.CommonGunIndexPOJO;
+import com.tac.guns.util.GetJarResources;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;
@@ -45,7 +46,7 @@ public class CommonGunPackLoader {
      */
     public static void init() {
         createFolder();
-        //checkDefaultPack();
+        checkDefaultPack();
     }
 
     /**
@@ -74,8 +75,8 @@ public class CommonGunPackLoader {
 
     private static void checkDefaultPack() {
         // todo 改成可选安装
-        //String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
-        //GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
+        String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
+        GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
     }
 
     private static void createFolder() {

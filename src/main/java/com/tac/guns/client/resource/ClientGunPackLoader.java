@@ -53,7 +53,7 @@ public class ClientGunPackLoader {
      */
     public static void init() {
         createFolder();
-        //checkDefaultPack();
+        checkDefaultPack();
     }
 
     /**
