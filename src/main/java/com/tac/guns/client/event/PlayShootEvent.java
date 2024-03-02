@@ -4,7 +4,6 @@ import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
-import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
@@ -34,15 +33,16 @@ public class PlayShootEvent {
                 return;
             }
             ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-            ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(gunId);
-            BedrockGunModel gunModel = gunIndex.getGunModel();
-            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-            if (gunModel != null && animationStateMachine != null) {
-                animationStateMachine.onGunShoot();
-            }
-            NetworkHandler.CHANNEL.sendToServer(new ShootMessage());
-            SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
-            player.setXRot(player.getXRot() - 0.5f);
+            ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                BedrockGunModel gunModel = gunIndex.getGunModel();
+                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+                if (gunModel != null && animationStateMachine != null) {
+                    animationStateMachine.onGunShoot();
+                }
+                NetworkHandler.CHANNEL.sendToServer(new ShootMessage());
+                SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
+                player.setXRot(player.getXRot() - 0.5f);
+            });
         }
     }
 

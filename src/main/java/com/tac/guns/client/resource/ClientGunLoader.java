@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,12 +70,12 @@ public class ClientGunLoader {
         return GUN_INDEX.keySet();
     }
 
-    public static ClientGunIndex getGunIndex(ResourceLocation registryName) {
-        return GUN_INDEX.get(registryName);
+    public static Optional<ClientGunIndex> getGunIndex(ResourceLocation registryName) {
+        return Optional.of(GUN_INDEX.get(registryName));
     }
 
-    public static ClientAmmoIndex getAmmoIndex(ResourceLocation registryName) {
-        return AMMO_INDEX.get(registryName);
+    public static Optional<ClientAmmoIndex> getAmmoIndex(ResourceLocation registryName) {
+        return Optional.of(AMMO_INDEX.get(registryName));
     }
 
     private static void createFolder() {

@@ -6,7 +6,6 @@ import com.mojang.math.Vector3f;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientGunLoader;
-import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.display.TransformScale;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
@@ -52,19 +51,20 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.is(ModItems.GUN.get())) {
             ResourceLocation gunId = GunItem.getData(stack).getGunId();
-            ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(gunId);
-            BedrockGunModel gunModel = gunIndex.getGunModel();
-            poseStack.pushPose();
-            // 移动到模型原点
-            poseStack.translate(0.5, 2, 0.5);
-            // 反转模型
-            poseStack.scale(-1, -1, 1);
-            // 应用定位组的变换（位移和旋转，不包括缩放）
-            applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
-            // 应用 display 数据中的缩放
-            applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
-            gunModel.render(0, transformType, stack, null, poseStack, pBuffer, pPackedLight, pPackedOverlay);
-            poseStack.popPose();
+            ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                BedrockGunModel gunModel = gunIndex.getGunModel();
+                poseStack.pushPose();
+                // 移动到模型原点
+                poseStack.translate(0.5, 2, 0.5);
+                // 反转模型
+                poseStack.scale(-1, -1, 1);
+                // 应用定位组的变换（位移和旋转，不包括缩放）
+                applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
+                // 应用 display 数据中的缩放
+                applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
+                gunModel.render(0, transformType, stack, null, poseStack, pBuffer, pPackedLight, pPackedOverlay);
+                poseStack.popPose();
+            });
         }
     }
 

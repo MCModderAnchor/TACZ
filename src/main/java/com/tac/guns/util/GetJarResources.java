@@ -69,32 +69,15 @@ public final class GetJarResources {
     }
 
     private static void copyFolder(URI sourceURI, Path targetPath) throws IOException {
-        // 删掉原文件夹，达到强行覆盖的效果
-        Files.walkFileTree(targetPath,
-                new SimpleFileVisitor<>() {
-                    // 先去遍历删除文件
-                    @Override
-                    public FileVisitResult visitFile(Path file,
-                                                     BasicFileAttributes attrs) throws IOException {
-                        Files.delete(file);
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    // 再去遍历删除目录
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir,
-                                                              IOException exc) throws IOException {
-                        Files.delete(dir);
-                        return FileVisitResult.CONTINUE;
-                    }
-                }
-        );
-        // 使用Files.walk()遍历文件夹中的所有内容
+        if (Files.isDirectory(targetPath)) {
+            // 删掉原文件夹，达到强行覆盖的效果
+            deleteFiles(targetPath);
+        }
+        // 使用 Files.walk() 遍历文件夹中的所有内容
         try (Stream<Path> stream = Files.walk(Paths.get(sourceURI), Integer.MAX_VALUE)) {
             stream.forEach(source -> {
                 // 生成目标路径
                 Path target = targetPath.resolve(sourceURI.relativize(source.toUri()).toString());
-
                 try {
                     // 复制文件或文件夹
                     if (Files.isDirectory(source)) {
@@ -103,9 +86,28 @@ public final class GetJarResources {
                         Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace(); // 处理异常，例如权限问题等
+                    // 处理异常，例如权限问题等
+                    e.printStackTrace();
                 }
             });
         }
+    }
+
+    private static void deleteFiles(Path targetPath) throws IOException {
+        Files.walkFileTree(targetPath, new SimpleFileVisitor<>() {
+            // 先去遍历删除文件
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            // 再去遍历删除目录
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 }
