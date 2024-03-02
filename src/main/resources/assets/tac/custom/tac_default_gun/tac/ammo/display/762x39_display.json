@@ -1,0 +1,7 @@
+{
+  // 调用的模型，在包目录下的 models 文件夹中寻找
+  "model": "tac:ammo/762x39",
+  // 渲染模型使用的材质
+  "texture": "tac:ammo/uv/762x39",
+  "slot": "tac:ammo/slot/762x39"
+}

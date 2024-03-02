@@ -1,5 +1,5 @@
 {
-    // 调用的模型，在该包目录下的 models 文件夹中寻找
+    // 调用的模型，在包目录下的 models 文件夹中寻找
     "model": "tac:gun/ak47_geo",
     // 调用的材质列表，用于加载模型材质、模型换肤
     "textures": [
@@ -7,7 +7,7 @@
             // 材质的识别名，default为必须存在，否则枪械加载失败
             // default材质将作为默认材质在渲染时调用
             "id": "default",
-            // 调用的材质的路径，会在该包目录下的 textures 文件夹中寻找
+            // 调用的材质的路径，会在包目录下的 textures 文件夹中寻找
             "location": "tac:gun/uv/ak47",
             // 该材质的显示名，要支持本地化
             "name": "tac.texture.ak47.default.name"
@@ -15,17 +15,17 @@
         {
             // 材质的识别名
             "id": "blue",
-            // 调用的材质的路径，会在该包目录下的 textures 文件夹中寻找
+            // 调用的材质的路径，会在包目录下的 textures 文件夹中寻找
             "location": "gun/uv/ak47_blue",
             // 该材质的显示名，要支持本地化
             "name": "tac.texture.ak47.blue.name"
         }
     ],
-    // GUI/HUD 界面的 2D 材质，在该包目录下的 textures 文件夹中寻找
+    // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找
     "hud": "tac:gun/hud/ak47",
-    // 背包/快捷栏等容器中槽位显示的 2D 材质，在该包目录下的 textures 文件夹中寻找
+    // 背包/快捷栏等容器中槽位显示的 2D 材质，在包目录下的 textures 文件夹中寻找
     "slot": "tac:gun/slot/ak47",
-    // 调用的动画名，会在该包目录下的 animations 文件夹中寻找
+    // 调用的动画名，会在包目录下的 animations 文件夹中寻找
     "animation": "tac:ak47",
     // 调整各个视角下模型的变换参数
     "transform": {
@@ -49,7 +49,7 @@
         // 抛壳渲染存活时间，单位为秒
         "living_time": 1.0
     },
-    // 枪械音效，在本包目录下 sounds 文件夹内寻找
+    // 枪械音效，在包目录下 sounds 文件夹内寻找
     "sounds": {
         "shoot": "tac:ak47_shoot",
         "reload": "tac:ak47_reload",
