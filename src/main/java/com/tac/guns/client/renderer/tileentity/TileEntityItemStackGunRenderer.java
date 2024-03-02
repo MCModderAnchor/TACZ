@@ -70,8 +70,8 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
         }
     }
 
-    private void applyPositioningTransform(ItemTransforms.TransformType transformType, TransformScale scale, BedrockGunModel model, PoseStack poseStack){
-        switch (transformType){
+    private void applyPositioningTransform(ItemTransforms.TransformType transformType, TransformScale scale, BedrockGunModel model, PoseStack poseStack) {
+        switch (transformType) {
             case FIXED -> {
                 applyPositioningNodeTransform(model.getFixedOriginPath(), poseStack, scale.getFixed());
             }
@@ -84,12 +84,12 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
         }
     }
 
-    private void applyScaleTransform(ItemTransforms.TransformType transformType, TransformScale scale, PoseStack poseStack){
-        if(scale == null){
+    private void applyScaleTransform(ItemTransforms.TransformType transformType, TransformScale scale, PoseStack poseStack) {
+        if (scale == null) {
             return;
         }
         Vector3f vector3f = null;
-        switch (transformType){
+        switch (transformType) {
             case FIXED -> {
                 vector3f = scale.getFixed();
             }
@@ -100,16 +100,16 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
                 vector3f = scale.getThirdPerson();
             }
         }
-        if(vector3f != null){
+        if (vector3f != null) {
             poseStack.translate(0, 1.5, 0);
             poseStack.scale(vector3f.x(), vector3f.y(), vector3f.z());
             poseStack.translate(0, -1.5, 0);
         }
     }
 
-    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, Vector3f scale){
-        if(nodePath == null) return;
-        if(scale == null) scale = new Vector3f(1, 1, 1);
+    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, Vector3f scale) {
+        if (nodePath == null) return;
+        if (scale == null) scale = new Vector3f(1, 1, 1);
         //应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
         poseStack.translate(0, 1.5, 0);
         for (int f = nodePath.size() - 1; f >= 0; f--) {

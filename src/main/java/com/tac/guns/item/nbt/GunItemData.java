@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 
 public class GunItemData {
     public static final ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "ak47");
+    public static final ResourceLocation DEFAULT_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "ak47_display");
     public static final String GUN_ID_TAG = "GunId";
     private ResourceLocation gunId = null;
 

@@ -19,7 +19,7 @@ public class ShellEjection {
     private List<Float> angularVelocity;
 
     @SerializedName("living_time")
-    private Float livingTimeS;
+    private Float livingTime;
 
     public ResourceLocation getType() {
         return type;
@@ -37,7 +37,7 @@ public class ShellEjection {
         return angularVelocity;
     }
 
-    public Float getLivingTimeS() {
-        return livingTimeS;
+    public Float getLivingTime() {
+        return livingTime;
     }
 }

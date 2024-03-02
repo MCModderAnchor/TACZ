@@ -1,51 +1,12 @@
 {
-    // 调用的模型，在该包目录下的 models 文件夹中寻找
-    "model": "tac:gun/ai_awp_geo",
-    // 调用的材质列表，用于加载模型材质、模型换肤
-    "textures": [
-        {
-            // 材质的识别名，default为必须存在，否则枪械加载失败
-            // default材质将作为默认材质在渲染时调用
-            "id": "default",
-            // 调用的材质的路径，会在该包目录下的 textures 文件夹中寻找
-            "location": "tac:gun/uv/ai_awp",
-            // 该材质的显示名，要支持本地化
-            "name": "tac.texture.ak47.default.name"
-        }
-    ],
-    // GUI/HUD 界面的 2D 材质，在该包目录下的 textures 文件夹中寻找
-    "hud": "tac:gun/hud/ak47",
-    // 背包/快捷栏等容器中槽位显示的 2D 材质，在该包目录下的 textures 文件夹中寻找
-    "slot": "tac:gun/slot/ai_awp",
-    // 调用的动画名，会在该包目录下的 animations 文件夹中寻找
-    "animation": "tac:ai_awp",
-    // 调整各个视角下模型的变换参数
-    "transform": {
-        "scale": {
-            // 第三人称手部
-            "thirdperson": [0.45, 0.45, 0.4],
-            // 地面实体
-            "ground": [0.45, 0.45, 0.4],
-            // 展示框
-            "fixed": [0.6, 0.6, 0.6]
-        }
-    },
-    // 抛壳的渲染数据
-    "shell": {
-        // 抛壳的运动速度
-        "velocity": [8.0, 1.0, -0.5],
-        // 抛壳随机变化的运动速度，乘 -1~1 后与上面的固定速度叠加
-        "random_velocity": [0.0, 1.5, 0.0],
-        // 抛壳的三轴角速度
-        "angular_velocity": [45.0, -90.0, 15.0],
-        // 抛壳渲染存活时间，单位为秒
-        "living_time": 1.0
-    },
-    // 枪械音效，在本包目录下 sounds 文件夹内寻找
-    "sounds": {
-        "shoot": "tac:ak47_shoot",
-        "reload": "tac:ak47_reload",
-        "inspect": "tac:ak47_inspect",
-        "draw": "tac:ak47_draw"
+  "model": "tac:gun/ai_awp_geo",
+  "textures": [
+    {
+      "id": "default",
+      "location": "tac:gun/uv/ai_awp"
     }
+  ],
+  "hud": "tac:gun/hud/ai_awp",
+  "slot": "tac:gun/slot/ai_awp",
+  "animation": "tac:ai_awp"
 }
