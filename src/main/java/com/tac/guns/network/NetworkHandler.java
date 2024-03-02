@@ -27,7 +27,7 @@ public class NetworkHandler {
     public static void init() {
         CHANNEL.registerMessage(0, ClientMessagePlayerShoot.class, ClientMessagePlayerShoot::encode, ClientMessagePlayerShoot::decode, ClientMessagePlayerShoot::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CHANNEL.registerMessage(0, ServerMessageShoot.class, ServerMessageShoot::encode, ServerMessageShoot::decode, ServerMessageShoot::handle,
+        CHANNEL.registerMessage(1, ServerMessageShoot.class, ServerMessageShoot::encode, ServerMessageShoot::decode, ServerMessageShoot::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
