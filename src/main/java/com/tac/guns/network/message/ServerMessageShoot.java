@@ -19,6 +19,7 @@ public class ServerMessageShoot {
     }
 
     public static void handle(ServerMessageShoot message, Supplier<NetworkEvent.Context> contextSupplier) {
-
+        NetworkEvent.Context context = contextSupplier.get();
+        context.setPacketHandled(true);
     }
 }
