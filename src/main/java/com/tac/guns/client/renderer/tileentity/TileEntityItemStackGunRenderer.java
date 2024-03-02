@@ -3,12 +3,12 @@ package com.tac.guns.client.renderer.tileentity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
+import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.SlotGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.resource.pojo.display.TransformScale;
-import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -35,7 +35,7 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
 
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-        if (stack.is(ModItems.GUN.get())) {
+        if (IGun.isGun(stack)) {
             // 第一人称就不渲染了，交给别的地方
             if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
                 return;

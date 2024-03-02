@@ -1,21 +1,19 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
+import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
-import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
-import com.tac.guns.util.math.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -27,6 +25,8 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
+import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
+
 /**
  * 负责第一人称的枪械模型渲染。其他人称参见 {@link com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer}
  */
@@ -34,41 +34,53 @@ import java.util.List;
 public class FirstPersonRenderGunEvent {
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) {
+        // TODO 先默认只实现主手的渲染
+        if (event.getHand() == InteractionHand.OFF_HAND) {
             return;
         }
-        LocalPlayer player = mc.player;
-        InteractionHand hand = event.getHand();
-        ItemStack stack = event.getItemStack();
-        ItemTransforms.TransformType transformType = hand == InteractionHand.MAIN_HAND ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
-        if (stack.is(ModItems.GUN.get())) {
-            ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-            ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                BedrockGunModel gunModel = gunIndex.getGunModel();
-                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                if (gunModel != null) {
-                    // 在渲染之前，先更新动画，让动画数据写入模型
-                    if (animationStateMachine != null) {
-                        animationStateMachine.update();
-                    }
-                    PoseStack poseStack = event.getPoseStack();
-                    poseStack.pushPose();
-                    // 从渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
-                    poseStack.translate(0, 1.5f, 0);
-                    // 基岩版模型是上下颠倒的，需要翻转过来。
-                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
-                    // 应用枪械动态，如第一人称摄像机定位、后坐力的位移等
-                    applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel);
-                    // 调用模型渲染
-                    gunModel.render(0, transformType, stack, player, poseStack, event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
-                    // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
-                    poseStack.popPose();
-                    gunModel.cleanAnimationTransform();
-                }
-            });
-            event.setCanceled(true);
+
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
         }
+
+        ItemStack stack = event.getItemStack();
+        TransformType transformType;
+        if (event.getHand() == InteractionHand.MAIN_HAND) {
+            transformType = FIRST_PERSON_RIGHT_HAND;
+        } else {
+            transformType = TransformType.FIRST_PERSON_LEFT_HAND;
+        }
+        if (!IGun.isGun(stack)) {
+            return;
+        }
+
+        ResourceLocation gunId = GunItem.getData(player.getItemInHand(event.getHand())).getGunId();
+        ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            BedrockGunModel gunModel = gunIndex.getGunModel();
+            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            if (gunModel == null) {
+                return;
+            }
+            // 在渲染之前，先更新动画，让动画数据写入模型
+            if (animationStateMachine != null) {
+                animationStateMachine.update();
+            }
+            PoseStack poseStack = event.getPoseStack();
+            poseStack.pushPose();
+            // 从渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
+            poseStack.translate(0, 1.5f, 0);
+            // 基岩版模型是上下颠倒的，需要翻转过来。
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
+            // 应用枪械动态，如第一人称摄像机定位、后坐力的位移等
+            applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel);
+            // 调用模型渲染
+            gunModel.render(0, transformType, stack, player, poseStack, event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+            // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
+            poseStack.popPose();
+            gunModel.cleanAnimationTransform();
+        });
+        event.setCanceled(true);
     }
 
     /**
@@ -80,8 +92,7 @@ public class FirstPersonRenderGunEvent {
         if (mc.player == null) {
             return;
         }
-        ItemStack mainHandItem = mc.player.getMainHandItem();
-        if (mainHandItem.is(ModItems.GUN.get())) {
+        if (IGun.mainhandHoldGun(mc.player)) {
             event.setCanceled(true);
         }
     }

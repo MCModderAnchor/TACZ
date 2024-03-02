@@ -4,9 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.client.event.BeforeRenderHandEvent;
+import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
-import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -25,7 +25,7 @@ public class CameraSetupEvent {
         }
         LocalPlayer player = Minecraft.getInstance().player;
         // 目前只有枪械物品有摄像机动画，因此需要进行判断
-        if (player == null || !player.getMainHandItem().is(ModItems.GUN.get())) {
+        if (player == null || !IGun.mainhandHoldGun(player)) {
             return;
         }
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
@@ -51,7 +51,7 @@ public class CameraSetupEvent {
         }
         LocalPlayer player = Minecraft.getInstance().player;
         // 目前只有枪械物品有摄像机动画，因此需要进行判断
-        if (player == null || !player.getMainHandItem().is(ModItems.GUN.get())) {
+        if (player == null || !IGun.mainhandHoldGun(player)) {
             return;
         }
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();

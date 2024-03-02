@@ -1,11 +1,11 @@
 package com.tac.guns.client.event;
 
 import com.tac.guns.api.event.GunShootEvent;
+import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.sound.SoundPlayManager;
-import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
@@ -28,7 +28,7 @@ public class PlayShootEvent {
         }
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player != null && player.getMainHandItem().is(ModItems.GUN.get()) && mc.mouseHandler.isLeftPressed()) {
+        if (player != null && IGun.mainhandHoldGun(player) && mc.mouseHandler.isLeftPressed()) {
             if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
                 return;
             }

@@ -1,8 +1,11 @@
 package com.tac.guns.item;
 
+import com.tac.guns.api.item.IGun;
+import com.tac.guns.api.item.ShootResult;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
 import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
+import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.GunItemData;
 import net.minecraft.client.Minecraft;
@@ -15,6 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
@@ -23,20 +27,20 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class GunItem extends Item {
+public class GunItem extends Item implements IGun {
     public GunItem() {
         super(new Properties().stacksTo(1).tab(ModItems.GUN_TAB));
     }
 
     public static @Nonnull GunItemData getData(@Nonnull ItemStack itemStack) {
-        if (itemStack.getItem() instanceof GunItem) {
+        if (IGun.isGun(itemStack)) {
             return GunItemData.deserialization(itemStack.getOrCreateTag());
         }
         return new GunItemData();
     }
 
     public static ItemStack setData(@Nonnull ItemStack stack, @Nonnull GunItemData data) {
-        if (stack.getItem() instanceof GunItem) {
+        if (IGun.isGun(stack)) {
             GunItemData.serialization(stack.getOrCreateTag(), data);
         }
         return stack;
@@ -79,5 +83,23 @@ public class GunItem extends Item {
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         return true;
+    }
+
+    @Override
+    public boolean isAmmo(ItemStack gun, ItemStack ammo) {
+        return false;
+    }
+
+    @Override
+    public void reload(ItemStack gun) {
+    }
+
+    @Override
+    public ShootResult shoot(LivingEntity shooter, ItemStack gun) {
+        Level world = shooter.level;
+        EntityBullet bullet = new EntityBullet(world, shooter);
+        bullet.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot(), 0.0F, 10, 0);
+        world.addFreshEntity(bullet);
+        return ShootResult.SUCCESS;
     }
 }
