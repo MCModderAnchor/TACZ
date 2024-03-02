@@ -1,5 +1,6 @@
 package com.tac.guns.item;
 
+import com.tac.guns.api.entity.IShooter;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.api.item.ShootResult;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
@@ -95,11 +96,16 @@ public class GunItem extends Item implements IGun {
     }
 
     @Override
-    public ShootResult shoot(LivingEntity shooter, ItemStack gun) {
-        Level world = shooter.level;
-        EntityBullet bullet = new EntityBullet(world, shooter);
-        bullet.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot(), 0.0F, 10, 0);
-        world.addFreshEntity(bullet);
-        return ShootResult.SUCCESS;
+    public ShootResult shoot(LivingEntity entity, ItemStack gun) {
+        if (entity instanceof IShooter shooter) {
+            // TODO 服务端应该检测间隔
+            Level world = entity.level;
+            EntityBullet bullet = new EntityBullet(world, entity);
+            bullet.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0.0F, 10, 0);
+            world.addFreshEntity(bullet);
+            shooter.recordShootTime();
+            return ShootResult.SUCCESS;
+        }
+        return ShootResult.FAIL;
     }
 }

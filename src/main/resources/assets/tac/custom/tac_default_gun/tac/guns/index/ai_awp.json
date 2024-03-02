@@ -2,6 +2,6 @@
   "name": "tac.gun.ai_awp.name",
   "tooltip": "tac.gun.ai_awp.tooltip",
   "display": "tac:ai_awp_display",
-  "data": "tac:ak47_data",
+  "data": "tac:ai_awp_data",
   "type": "rifle"
 }

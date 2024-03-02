@@ -6,6 +6,10 @@ public enum ShootResult {
      */
     SUCCESS,
     /**
+     * 未知原因失败
+     */
+    FAIL,
+    /**
      * 冷却时间还没到
      */
     COOL_DOWN,

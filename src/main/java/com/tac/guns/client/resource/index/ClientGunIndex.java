@@ -8,6 +8,7 @@ import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
+import com.tac.guns.client.resource.pojo.data.GunData;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.client.resource.pojo.display.GunModelTexture;
 import com.tac.guns.client.resource.pojo.display.GunTransform;
@@ -36,13 +37,19 @@ public class ClientGunIndex {
     private Map<String, ResourceLocation> sounds;
     private GunTransform transform;
     private RenderType slotRenderType;
+    /**
+     * 射击间隔，单位是 ms
+     */
+    private long shootInterval;
 
     public static ClientGunIndex getInstance(ClientGunIndexPOJO gunIndexPOJO) throws IllegalArgumentException {
         ClientGunIndex index = new ClientGunIndex();
 
+        GunDisplay display = checkDisplay(gunIndexPOJO);
+        GunData data = checkData(gunIndexPOJO, index);
+
         checkName(gunIndexPOJO, index);
         checkTooltip(gunIndexPOJO, index);
-        GunDisplay display = checkDisplay(gunIndexPOJO);
         checkTextureAndModel(display, index);
         checkSlotTexture(display, index);
         checkAnimation(display, index);
@@ -61,6 +68,28 @@ public class ClientGunIndex {
 
     private static void checkTooltip(ClientGunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
         index.tooltip = gunIndexPOJO.getTooltip();
+    }
+
+    @NotNull
+    private static GunData checkData(ClientGunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
+        ResourceLocation pojoData = gunIndexPOJO.getData();
+        if (pojoData == null) {
+            throw new IllegalArgumentException("index object missing pojoData field");
+        }
+        GunData data = ClientAssetManager.INSTANCE.getGunData(pojoData);
+        if (data == null) {
+            throw new IllegalArgumentException("there is no corresponding data file");
+        }
+        // 如果没有参数，默认每分钟 120 发，也就是 500 毫秒
+        int roundsPerMinute = data.getRoundsPerMinute();
+        if (roundsPerMinute < 1) {
+            index.shootInterval = 500;
+        } else {
+            long shootInterval = 60_000L / roundsPerMinute;
+            // 游戏内最短间隔是 50 毫秒
+            index.shootInterval = Math.max(shootInterval, 50);
+        }
+        return data;
     }
 
     @NotNull
@@ -210,5 +239,9 @@ public class ClientGunIndex {
 
     public RenderType getSlotRenderType() {
         return slotRenderType;
+    }
+
+    public long getShootInterval() {
+        return shootInterval;
     }
 }

@@ -1,5 +1,6 @@
 package com.tac.guns.client.event;
 
+import com.tac.guns.api.entity.IShooter;
 import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
@@ -28,12 +29,15 @@ public class PlayShootEvent {
         }
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player != null && IGun.mainhandHoldGun(player) && mc.mouseHandler.isLeftPressed()) {
-            if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
-                return;
-            }
+        if (mc.mouseHandler.isLeftPressed() && player instanceof IShooter shooter && IGun.mainhandHoldGun(player)) {
             ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
             ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                if ((System.currentTimeMillis() - shooter.getShootTime()) < gunIndex.getShootInterval()) {
+                    return;
+                }
+                if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
+                    return;
+                }
                 BedrockGunModel gunModel = gunIndex.getGunModel();
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (gunModel != null && animationStateMachine != null) {
@@ -42,6 +46,7 @@ public class PlayShootEvent {
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot());
                 SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
                 player.setXRot(player.getXRot() - 0.5f);
+                shooter.recordShootTime();
             });
         }
     }
