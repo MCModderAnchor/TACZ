@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -37,6 +36,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     public static final String GROUND_ORIGIN_NODE = "ground";
     public static final String SCOPE_POS_NODE = "scope_pos";
     public static final String EJECTION_NODE = "ejection";
+    private final SecondOrderDynamics aimingDynamics = new SecondOrderDynamics(0.45f, 0.8f, 1.2f, 0);
     // 第一人称机瞄摄像机定位组的路径
     protected @Nullable List<BedrockPart> ironSightPath;
     // 第一人称idle状态摄像机定位组的路径
@@ -49,7 +49,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> groundOriginPath;
     // 瞄具配件定位组的路径。其他配件不需要存路径，只需要替换渲染。但是瞄具定位组需要用来辅助第一人称瞄准的摄像机定位。
     protected @Nullable List<BedrockPart> scopePosPath;
-    private final SecondOrderDynamics aimingDynamics = new SecondOrderDynamics(0.45f, 0.8f, 1.2f, 0);
     protected ItemStack currentItem;
     protected LivingEntity currentEntity;
     protected Matrix4f ejectionPose = null;
@@ -288,8 +287,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         RenderSystem.setShaderTexture(0, oldId);
     }
 
-    private List<BedrockPart> getPath(ModelRendererWrapper rendererWrapper){
-        if(rendererWrapper == null){
+    private List<BedrockPart> getPath(ModelRendererWrapper rendererWrapper) {
+        if (rendererWrapper == null) {
             return null;
         }
         BedrockPart part = rendererWrapper.getModelRenderer();

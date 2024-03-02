@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 
 public class SoundPlayManager {
     public static void playClientSound(LivingEntity entity, ResourceLocation name, float volume, float pitch) {

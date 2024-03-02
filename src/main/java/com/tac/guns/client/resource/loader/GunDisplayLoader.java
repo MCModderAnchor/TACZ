@@ -1,8 +1,8 @@
 package com.tac.guns.client.resource.loader;
 
 import com.tac.guns.GunMod;
-import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.resource.ClientAssetManager;
+import com.tac.guns.client.resource.ClientGunLoader;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;

@@ -28,7 +28,7 @@ public class ShootMessage {
                 if (entity == null || !entity.getMainHandItem().is(ModItems.GUN.get())) {
                     return;
                 }
-                if(MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, entity.getMainHandItem(), LogicalSide.SERVER))){
+                if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, entity.getMainHandItem(), LogicalSide.SERVER))) {
                     return;
                 }
                 Level world = entity.level;

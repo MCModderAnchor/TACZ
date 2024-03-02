@@ -27,6 +27,7 @@ public class ClientGunIndex {
     private GunAnimationStateMachine animationStateMachine;
     private Map<String, ResourceLocation> sounds;
     private GunTransform transform;
+    private RenderType slotRenderType;
 
     public ClientGunIndex(ClientGunIndexPOJO gunIndexPOJO) {
         this.name = gunIndexPOJO.getName();
@@ -65,6 +66,11 @@ public class ClientGunIndex {
         this.sounds = display.getSounds();
         // 加载 Transform 数据
         this.transform = display.getTransform();
+
+        // 加载 GUI 内枪械图标
+        if (display.getSlotTextureLocation() != null) {
+            this.slotRenderType = RenderType.entityTranslucent(display.getSlotTextureLocation());
+        }
     }
 
     public String getName() {
@@ -89,5 +95,9 @@ public class ClientGunIndex {
 
     public GunTransform getTransform() {
         return transform;
+    }
+
+    public RenderType getSlotRenderType() {
+        return slotRenderType;
     }
 }

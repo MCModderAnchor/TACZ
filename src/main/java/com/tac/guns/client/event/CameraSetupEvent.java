@@ -6,7 +6,6 @@ import com.tac.guns.GunMod;
 import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunLoader;
-import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
@@ -29,18 +28,19 @@ public class CameraSetupEvent {
             return;
         }
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-        ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(gunId);
-        BedrockGunModel gunModel = gunIndex.getGunModel();
-        Quaternion q = gunModel.getCameraAnimationObject().rotationQuaternion;
-        double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
-        double pitch = Math.atan2(2 * (q.r() * q.i() + q.j() * q.k()), 1 - 2 * (q.i() * q.i() + q.j() * q.j()));
-        double roll = Math.atan2(2 * (q.r() * q.k() + q.i() * q.j()), 1 - 2 * (q.j() * q.j() + q.k() * q.k()));
-        yaw = Math.toDegrees(yaw);
-        pitch = Math.toDegrees(pitch);
-        roll = Math.toDegrees(roll);
-        event.setYaw((float) yaw + event.getYaw());
-        event.setPitch((float) pitch + event.getPitch());
-        event.setRoll((float) roll + event.getRoll());
+        ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            BedrockGunModel gunModel = gunIndex.getGunModel();
+            Quaternion q = gunModel.getCameraAnimationObject().rotationQuaternion;
+            double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
+            double pitch = Math.atan2(2 * (q.r() * q.i() + q.j() * q.k()), 1 - 2 * (q.i() * q.i() + q.j() * q.j()));
+            double roll = Math.atan2(2 * (q.r() * q.k() + q.i() * q.j()), 1 - 2 * (q.j() * q.j() + q.k() * q.k()));
+            yaw = Math.toDegrees(yaw);
+            pitch = Math.toDegrees(pitch);
+            roll = Math.toDegrees(roll);
+            event.setYaw((float) yaw + event.getYaw());
+            event.setPitch((float) pitch + event.getPitch());
+            event.setRoll((float) roll + event.getRoll());
+        });
     }
 
     @SubscribeEvent
@@ -53,9 +53,10 @@ public class CameraSetupEvent {
             return;
         }
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-        ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(gunId);
-        BedrockGunModel gunModel = gunIndex.getGunModel();
-        PoseStack poseStack = event.getPoseStack();
-        poseStack.mulPose(gunModel.getCameraAnimationObject().rotationQuaternion);
+        ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            BedrockGunModel gunModel = gunIndex.getGunModel();
+            PoseStack poseStack = event.getPoseStack();
+            poseStack.mulPose(gunModel.getCameraAnimationObject().rotationQuaternion);
+        });
     }
 }

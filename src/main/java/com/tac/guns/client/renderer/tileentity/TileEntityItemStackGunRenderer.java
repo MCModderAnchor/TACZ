@@ -1,16 +1,15 @@
 package com.tac.guns.client.renderer.tileentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.model.SlotGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientGunLoader;
-import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.display.TransformScale;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
-import com.tac.guns.util.math.MathUtil;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,10 +21,14 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.*;
+
 /**
  * 负责第一人称以外的枪械模型渲染。第一人称渲染参见 {@link com.tac.guns.client.event.FirstPersonRenderGunEvent}
  */
 public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRenderer {
+    private static final SlotGunModel SLOT_GUN_MODEL = new SlotGunModel();
+
     public TileEntityItemStackGunRenderer(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
     }
@@ -33,20 +36,37 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.is(ModItems.GUN.get())) {
+            // 第一人称就不渲染了，交给别的地方
+            if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
+                return;
+            }
+
+            // 剩下的渲染
             ResourceLocation gunId = GunItem.getData(stack).getGunId();
-            ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(gunId);
-            BedrockGunModel gunModel = gunIndex.getGunModel();
-            poseStack.pushPose();
-            // 移动到模型原点
-            poseStack.translate(0.5, 2, 0.5);
-            // 反转模型
-            poseStack.scale(-1, -1, 1);
-            // 应用定位组的变换（位移和旋转，不包括缩放）
-            applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
-            // 应用 display 数据中的缩放
-            applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
-            gunModel.render(0, transformType, stack, null, poseStack, pBuffer, pPackedLight, pPackedOverlay);
-            poseStack.popPose();
+            ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                if (transformType == GUI) {
+                    poseStack.pushPose();
+                    poseStack.translate(0.5, 1.5, 0.5);
+                    poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+                    VertexConsumer buffer = pBuffer.getBuffer(gunIndex.getSlotRenderType());
+                    SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    poseStack.popPose();
+                    return;
+                }
+
+                BedrockGunModel gunModel = gunIndex.getGunModel();
+                poseStack.pushPose();
+                // 移动到模型原点
+                poseStack.translate(0.5, 2, 0.5);
+                // 反转模型
+                poseStack.scale(-1, -1, 1);
+                // 应用定位组的变换（位移和旋转，不包括缩放）
+                applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
+                // 应用 display 数据中的缩放
+                applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
+                gunModel.render(0, transformType, stack, null, poseStack, pBuffer, pPackedLight, pPackedOverlay);
+                poseStack.popPose();
+            });
         }
     }
 

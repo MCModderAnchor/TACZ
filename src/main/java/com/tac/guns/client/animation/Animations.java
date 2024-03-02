@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Animations {
-    public static AnimationController createControllerFromGltf(@Nonnull AnimationStructure structure, @Nonnull AnimationListenerSupplier supplier){
-        return new AnimationController(createAnimationFromGltf(structure, (AnimationListenerSupplier[])null), supplier);
+    public static AnimationController createControllerFromGltf(@Nonnull AnimationStructure structure, @Nonnull AnimationListenerSupplier supplier) {
+        return new AnimationController(createAnimationFromGltf(structure, (AnimationListenerSupplier[]) null), supplier);
     }
 
     protected static @Nonnull List<ObjectAnimation> createAnimationFromGltf(@Nonnull AnimationStructure structure, @Nullable AnimationListenerSupplier... suppliers) {

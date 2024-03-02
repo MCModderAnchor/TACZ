@@ -91,8 +91,8 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
             rendererWrapper.setHidden(visible);
     }
 
-    public void cleanAnimationTransform(){
-        for(ModelRendererWrapper rendererWrapper : modelMap.values()){
+    public void cleanAnimationTransform() {
+        for (ModelRendererWrapper rendererWrapper : modelMap.values()) {
             rendererWrapper.setOffsetX(0);
             rendererWrapper.setOffsetY(0);
             rendererWrapper.setOffsetZ(0);

@@ -44,29 +44,30 @@ public class FirstPersonRenderGunEvent {
         ItemTransforms.TransformType transformType = hand == InteractionHand.MAIN_HAND ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
         if (stack.is(ModItems.GUN.get())) {
             ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-            ClientGunIndex gunIndex = ClientGunLoader.getGunIndex(gunId);
-            BedrockGunModel gunModel = gunIndex.getGunModel();
-            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-            if (gunModel != null) {
-                // 在渲染之前，先更新动画，让动画数据写入模型
-                if (animationStateMachine != null) {
-                    animationStateMachine.update();
+            ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                BedrockGunModel gunModel = gunIndex.getGunModel();
+                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+                if (gunModel != null) {
+                    // 在渲染之前，先更新动画，让动画数据写入模型
+                    if (animationStateMachine != null) {
+                        animationStateMachine.update();
+                    }
+                    PoseStack poseStack = event.getPoseStack();
+                    poseStack.pushPose();
+                    // 从渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
+                    poseStack.translate(0, 1.5f, 0);
+                    // 基岩版模型是上下颠倒的，需要翻转过来。
+                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
+                    // 应用枪械动态，如第一人称摄像机定位、后坐力的位移等
+                    applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel);
+                    // 调用模型渲染
+                    gunModel.render(0, transformType, stack, player, poseStack, event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+                    // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
+                    poseStack.popPose();
+                    gunModel.cleanAnimationTransform();
                 }
-                PoseStack poseStack = event.getPoseStack();
-                poseStack.pushPose();
-                // 从渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
-                poseStack.translate(0, 1.5f, 0);
-                // 基岩版模型是上下颠倒的，需要翻转过来。
-                poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
-                // 应用枪械动态，如第一人称摄像机定位、后坐力的位移等
-                applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel);
-                // 调用模型渲染
-                gunModel.render(0, transformType, stack, player, poseStack, event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
-                // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
-                poseStack.popPose();
-                gunModel.cleanAnimationTransform();
-                event.setCanceled(true);
-            }
+            });
+            event.setCanceled(true);
         }
     }
 
@@ -109,8 +110,8 @@ public class FirstPersonRenderGunEvent {
         applyPositioningNodeTransform(model.getIdleSightPath(), poseStack, 1 - v);
     }
 
-    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, float weight){
-        if(nodePath == null) return;
+    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, float weight) {
+        if (nodePath == null) return;
         //应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
         poseStack.translate(0, 1.5f, 0);
         for (int f = nodePath.size() - 1; f >= 0; f--) {
