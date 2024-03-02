@@ -71,11 +71,11 @@ public class ClientGunLoader {
     }
 
     public static Optional<ClientGunIndex> getGunIndex(ResourceLocation registryName) {
-        return Optional.of(GUN_INDEX.get(registryName));
+        return Optional.ofNullable(GUN_INDEX.get(registryName));
     }
 
     public static Optional<ClientAmmoIndex> getAmmoIndex(ResourceLocation registryName) {
-        return Optional.of(AMMO_INDEX.get(registryName));
+        return Optional.ofNullable(AMMO_INDEX.get(registryName));
     }
 
     private static void createFolder() {
@@ -100,9 +100,15 @@ public class ClientGunLoader {
         if (files == null) {
             return;
         }
+        // 需要读取两次，第一次获取所有的资源，第二次才能读取 index
+        readGunAsset(files);
+        readGunIndex(files);
+    }
+
+    private static void readGunAsset(File[] files) {
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".zip")) {
-                readZipGunPack(file);
+                readZipGunAsset(file);
             }
             if (file.isDirectory()) {
                 File[] subFiles = file.listFiles((dir, name) -> true);
@@ -110,13 +116,30 @@ public class ClientGunLoader {
                     return;
                 }
                 for (File namespaceFile : subFiles) {
-                    readDirGunPack(namespaceFile);
+                    readDirGunAsset(namespaceFile);
                 }
             }
         }
     }
 
-    private static void readDirGunPack(File root) {
+    private static void readGunIndex(File[] files) {
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".zip")) {
+                readZipGunIndex(file);
+            }
+            if (file.isDirectory()) {
+                File[] subFiles = file.listFiles((dir, name) -> true);
+                if (subFiles == null) {
+                    return;
+                }
+                for (File namespaceFile : subFiles) {
+                    readDirGunIndex(namespaceFile);
+                }
+            }
+        }
+    }
+
+    private static void readDirGunAsset(File root) {
         if (root.isDirectory()) {
             try {
                 GunDisplayLoader.load(root);
@@ -125,7 +148,15 @@ public class ClientGunLoader {
                 BedrockModelLoader.load(root);
                 TextureLoader.load(root);
                 SoundLoader.load(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    private static void readDirGunIndex(File root) {
+        if (root.isDirectory()) {
+            try {
                 loadGunIndex(root);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -133,9 +164,8 @@ public class ClientGunLoader {
         }
     }
 
-    private static void readZipGunPack(File file) {
+    private static void readZipGunAsset(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
-            // 第一次读取
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
@@ -164,9 +194,15 @@ public class ClientGunLoader {
                     continue;
                 }
             }
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
 
-            // 第二次读取，开始抓药方
-            iteration = zipFile.entries();
+    private static void readZipGunIndex(File file) {
+        try (ZipFile zipFile = new ZipFile(file)) {
+            // 第一次读取
+            Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
                 // 加载枪械的 index 文件
