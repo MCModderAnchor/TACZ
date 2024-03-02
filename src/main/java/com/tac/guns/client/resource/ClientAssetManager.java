@@ -36,6 +36,10 @@ public enum ClientAssetManager {
      * 储存声音
      */
     private final Map<ResourceLocation, SoundBuffer> soundBuffers = Maps.newHashMap();
+    /**
+     * 存储语言
+     */
+    private final Map<String, Map<String, String>> languages = Maps.newHashMap();
 
     public void putGunDisplay(ResourceLocation registryName, GunDisplay display) {
         gunDisplays.put(registryName, display);
@@ -57,6 +61,10 @@ public enum ClientAssetManager {
         soundBuffers.put(registryName, soundBuffer);
     }
 
+    public void putLanguage(String region, Map<String, String> lang) {
+        languages.put(region, lang);
+    }
+
     public GunDisplay getGunDisplay(ResourceLocation registryName) {
         return gunDisplays.get(registryName);
     }
@@ -75,6 +83,10 @@ public enum ClientAssetManager {
 
     public SoundBuffer getSoundBuffers(ResourceLocation registryName) {
         return soundBuffers.get(registryName);
+    }
+
+    public Map<String, String> getLanguages(String region) {
+        return languages.get(region);
     }
 
     /**

@@ -32,10 +32,9 @@ public final class AnimationLoader {
         if (matcher.find()) {
             String namespace = matcher.group(1);
             String path = matcher.group(2);
-            String filePath = String.format("%s/animations/%s.gltf", namespace, path);
-            ZipEntry entry = zipFile.getEntry(filePath);
+            ZipEntry entry = zipFile.getEntry(zipPath);
             if (entry == null) {
-                GunMod.LOGGER.warn(MARKER, "{} file don't exist", filePath);
+                GunMod.LOGGER.warn(MARKER, "{} file don't exist", zipPath);
                 return false;
             }
             try (InputStream animationFileStream = zipFile.getInputStream(entry)) {
@@ -44,7 +43,7 @@ public final class AnimationLoader {
                 ClientAssetManager.INSTANCE.putAnimation(registryName, new AnimationStructure(rawStructure));
             } catch (IOException ioe) {
                 // 可能用来判定错误，打印下
-                GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", filePath);
+                GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", zipPath);
                 ioe.printStackTrace();
             }
         }

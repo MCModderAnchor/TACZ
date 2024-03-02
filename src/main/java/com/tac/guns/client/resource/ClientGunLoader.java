@@ -148,6 +148,7 @@ public class ClientGunLoader {
                 BedrockModelLoader.load(root);
                 TextureLoader.load(root);
                 SoundLoader.load(root);
+                LanguageLoader.load(root);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -193,6 +194,8 @@ public class ClientGunLoader {
                 if (SoundLoader.load(zipFile, path)) {
                     continue;
                 }
+                // 加载语言文件
+                LanguageLoader.load(zipFile, path);
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
