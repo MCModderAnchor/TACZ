@@ -3,6 +3,7 @@ package com.tac.guns.api.item;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+// todo 还是觉得由 GunItem 来实现 IGun 有点别扭。应该有更广泛意义的实现。
 public interface IGun {
     /**
      * 该物品是不是符合要求的弹药

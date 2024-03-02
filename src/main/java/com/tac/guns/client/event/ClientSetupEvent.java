@@ -2,6 +2,7 @@ package com.tac.guns.client.event;
 
 import com.tac.guns.client.input.InspectKey;
 import com.tac.guns.client.input.ReloadKey;
+import com.tac.guns.client.input.ShootKey;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,5 +15,6 @@ public class ClientSetupEvent {
     public static void onClientSetup(FMLClientSetupEvent event) {
         ClientRegistry.registerKeyBinding(InspectKey.INSPECT_KEY);
         ClientRegistry.registerKeyBinding(ReloadKey.RELOAD_KEY);
+        ClientRegistry.registerKeyBinding(ShootKey.SHOOT_KEY);
     }
 }

@@ -6,7 +6,7 @@ import com.tac.guns.GunMod;
 import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -29,7 +29,7 @@ public class CameraSetupEvent {
             return;
         }
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-        ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             Quaternion q = gunModel.getCameraAnimationObject().rotationQuaternion;
             double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
@@ -55,7 +55,7 @@ public class CameraSetupEvent {
             return;
         }
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-        ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             PoseStack poseStack = event.getPoseStack();
             poseStack.mulPose(gunModel.getCameraAnimationObject().rotationQuaternion);

@@ -1,4 +1,4 @@
-package com.tac.guns.mixin;
+package com.tac.guns.mixin.common;
 
 import com.tac.guns.api.entity.IShooter;
 import net.minecraft.world.entity.LivingEntity;

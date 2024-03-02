@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -33,7 +33,7 @@ public class InspectKey {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && IGun.mainhandHoldGun(player)) {
                 ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-                ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
                     BedrockGunModel gunModel = gunIndex.getGunModel();
                     GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                     if (gunModel != null && animationStateMachine != null) {

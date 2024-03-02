@@ -1,8 +1,11 @@
 package com.tac.guns.network.message;
 
+import com.mojang.logging.LogUtils;
 import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.item.GunItem;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;

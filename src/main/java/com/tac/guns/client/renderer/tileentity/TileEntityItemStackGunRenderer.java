@@ -7,7 +7,7 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.SlotGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
-import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.pojo.display.TransformScale;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -43,7 +43,7 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
 
             // 剩下的渲染
             ResourceLocation gunId = GunItem.getData(stack).getGunId();
-            ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
                 if (transformType == GUI) {
                     poseStack.pushPose();
                     poseStack.translate(0.5, 1.5, 0.5);

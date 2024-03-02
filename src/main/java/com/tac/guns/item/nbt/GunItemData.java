@@ -6,11 +6,13 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class GunItemData {
     public static final ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "ak47");
     public static final ResourceLocation DEFAULT_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "ak47_display");
     public static final String GUN_ID_TAG = "GunId";
+    @Nullable
     private ResourceLocation gunId = null;
 
     public static void serialization(@Nonnull CompoundTag nbt, @Nonnull GunItemData data) {
@@ -27,6 +29,7 @@ public class GunItemData {
         return data;
     }
 
+    @Nonnull
     public ResourceLocation getGunId() {
         if (this.gunId == null) {
             return DEFAULT;
@@ -34,7 +37,7 @@ public class GunItemData {
         return gunId;
     }
 
-    public void setGunId(ResourceLocation gunId) {
+    public void setGunId(@Nullable ResourceLocation gunId) {
         this.gunId = gunId;
     }
 }

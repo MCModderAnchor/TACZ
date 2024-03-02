@@ -8,7 +8,7 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
-import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
@@ -60,7 +60,7 @@ public class FirstPersonRenderGunEvent {
         }
 
         ResourceLocation gunId = GunItem.getData(player.getItemInHand(event.getHand())).getGunId();
-        ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (gunModel == null) {

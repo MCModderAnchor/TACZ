@@ -3,9 +3,9 @@ package com.tac.guns.client.resource;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
-import com.tac.guns.client.resource.pojo.data.GunData;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
+import com.tac.guns.resource.pojo.data.GunData;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
@@ -20,10 +20,6 @@ public enum ClientAssetManager {
      * 储存 display 数据
      */
     private final Map<ResourceLocation, GunDisplay> gunDisplays = Maps.newHashMap();
-    /**
-     * 储存 data 数据
-     */
-    private final Map<ResourceLocation, GunData> gunData = Maps.newHashMap();
     /**
      * 储存动画
      */
@@ -45,10 +41,6 @@ public enum ClientAssetManager {
         gunDisplays.put(registryName, display);
     }
 
-    public void putGunData(ResourceLocation registryName, GunData data) {
-        gunData.put(registryName, data);
-    }
-
     public void putAnimation(ResourceLocation registryName, AnimationStructure animation) {
         animations.put(registryName, animation);
     }
@@ -67,10 +59,6 @@ public enum ClientAssetManager {
 
     public GunDisplay getGunDisplay(ResourceLocation registryName) {
         return gunDisplays.get(registryName);
-    }
-
-    public GunData getGunData(ResourceLocation registryName) {
-        return gunData.get(registryName);
     }
 
     public AnimationStructure getAnimations(ResourceLocation registryName) {

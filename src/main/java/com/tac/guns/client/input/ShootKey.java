@@ -1,27 +1,39 @@
-package com.tac.guns.client.event;
+package com.tac.guns.client.input;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.api.entity.IShooter;
 import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
-public class PlayShootEvent {
+public class ShootKey {
+    public static final KeyMapping SHOOT_KEY = new KeyMapping("key.tac.shoot.desc",
+            KeyConflictContext.IN_GAME,
+            KeyModifier.NONE,
+            InputConstants.Type.MOUSE,
+            GLFW.GLFW_MOUSE_BUTTON_LEFT,
+            "key.category.tac");
+
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END && !isInGame()) {
@@ -29,10 +41,10 @@ public class PlayShootEvent {
         }
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (mc.mouseHandler.isLeftPressed() && player instanceof IShooter shooter && IGun.mainhandHoldGun(player)) {
+        if (SHOOT_KEY.isDown() && player instanceof IShooter shooter && IGun.mainhandHoldGun(player)) {
             ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-            ClientGunLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                if ((System.currentTimeMillis() - shooter.getShootTime()) < gunIndex.getShootInterval()) {
+            ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                if ((System.currentTimeMillis() - shooter.getShootTime()) < gunIndex.getGunData().getShootInterval()) {
                     return;
                 }
                 if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {

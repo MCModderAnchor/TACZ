@@ -60,7 +60,7 @@ public class AnimationController {
         run(track, animationName, playType, transitionTimeS);
     }
 
-    private void run(int track, String animationName, ObjectAnimation.PlayType playType, float transitionTimeS) {
+    synchronized private void run(int track, String animationName, ObjectAnimation.PlayType playType, float transitionTimeS) {
         for (ObjectAnimation prototype : prototypes) {
             if (prototype.name.equals(animationName)) {
 
@@ -92,7 +92,7 @@ public class AnimationController {
         }
     }
 
-    public void update() {
+    synchronized public void update() {
         for (int i = 0; i < currentRunners.size(); i++) {
             ObjectAnimationRunner runner = currentRunners.get(i);
             if (runner == null) continue;

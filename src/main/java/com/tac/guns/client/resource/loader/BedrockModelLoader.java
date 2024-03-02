@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.tac.guns.client.resource.ClientGunLoader.GSON;
+import static com.tac.guns.client.resource.ClientGunPackLoader.GSON;
 
 public final class BedrockModelLoader {
     private static final Marker MARKER = MarkerManager.getMarker("BedrockModelLoader");

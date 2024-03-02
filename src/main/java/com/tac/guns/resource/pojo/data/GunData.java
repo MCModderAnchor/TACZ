@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.pojo.data;
+package com.tac.guns.resource.pojo.data;
 
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
@@ -16,5 +16,11 @@ public class GunData {
 
     public int getRoundsPerMinute() {
         return roundsPerMinute;
+    }
+
+    public long getShootInterval(){
+        // 为避免非法运算，随意返回一个默认值。
+        if(roundsPerMinute == 0) return 300;
+        return 60_000L / roundsPerMinute;
     }
 }

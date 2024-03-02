@@ -2,5 +2,6 @@
   "tac.gun.ak47.name": "AK-47",
   "tac.gun.glock_17.name": "Glock 17",
   "tac.gun.ai_awp.name": "AI AWP",
-  "tac.ammo.762x39.name": "7.62x39mm Ammo"
+  "tac.ammo.762x39.name": "7.62x39mm Ammo",
+  "key.tac.shoot.desc": "shoot"
 }

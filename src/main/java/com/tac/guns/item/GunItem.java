@@ -4,11 +4,14 @@ import com.tac.guns.api.entity.IShooter;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.api.item.ShootResult;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
-import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.GunItemData;
+import com.tac.guns.resource.CommonGunPackLoader;
+import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.pojo.data.GunData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
@@ -48,10 +51,11 @@ public class GunItem extends Item implements IGun {
     }
 
     @Override
+    @Nonnull
     @OnlyIn(Dist.CLIENT)
-    public Component getName(ItemStack stack) {
+    public Component getName(@Nonnull ItemStack stack) {
         ResourceLocation gunId = getData(stack).getGunId();
-        Optional<ClientGunIndex> gunIndex = ClientGunLoader.getGunIndex(gunId);
+        Optional<ClientGunIndex> gunIndex = ClientGunPackLoader.getGunIndex(gunId);
         if (gunIndex.isPresent()) {
             return new TranslatableComponent(gunIndex.get().getName());
         }
@@ -60,11 +64,11 @@ public class GunItem extends Item implements IGun {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void fillItemCategory(CreativeModeTab modeTab, NonNullList<ItemStack> stacks) {
+    public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
         if (this.allowdedIn(modeTab)) {
-            ClientGunLoader.getAllGuns().forEach(id -> {
+            ClientGunPackLoader.getAllGuns().forEach(entry -> {
                 GunItemData data = new GunItemData();
-                data.setGunId(id);
+                data.setGunId(entry.getKey());
                 stacks.add(setData(this.getDefaultInstance(), data));
             });
         }
@@ -97,8 +101,16 @@ public class GunItem extends Item implements IGun {
 
     @Override
     public ShootResult shoot(LivingEntity entity, ItemStack gun) {
+        ResourceLocation gunId = GunItem.getData(gun).getGunId();
+        Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
+        if(gunIndexOptional.isEmpty()) {
+            return ShootResult.FAIL;
+        }
+        GunData gunData = gunIndexOptional.get().getGunData();
         if (entity instanceof IShooter shooter) {
-            // TODO 服务端应该检测间隔
+            if ((System.currentTimeMillis() - shooter.getShootTime()) < gunData.getShootInterval()) {
+                return ShootResult.COOL_DOWN;
+            }
             Level world = entity.level;
             EntityBullet bullet = new EntityBullet(world, entity);
             bullet.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0.0F, 10, 0);
