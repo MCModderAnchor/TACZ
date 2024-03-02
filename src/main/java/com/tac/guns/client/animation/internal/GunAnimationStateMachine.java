@@ -24,6 +24,10 @@ public class GunAnimationStateMachine {
         }
     }
 
+    public void onGunDraw() {
+        controller.runAnimation(MAIN_TRACK, "draw", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0);
+    }
+
     public void onGunInspect() {
         controller.runAnimation(MAIN_TRACK, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
     }

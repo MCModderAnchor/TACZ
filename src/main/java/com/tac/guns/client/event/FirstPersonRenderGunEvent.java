@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -32,6 +33,9 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.Transform
  */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class FirstPersonRenderGunEvent {
+    private static int hotbarSelected = -1;
+    private static ItemStack hotbarSelectedStack = ItemStack.EMPTY;
+
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
         // TODO 先默认只实现主手的渲染
@@ -61,6 +65,14 @@ public class FirstPersonRenderGunEvent {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (gunModel == null) {
                 return;
+            }
+            Inventory inventory = player.getInventory();
+            ItemStack inventorySelected = inventory.getSelected();
+            // FIXME 未来切枪，NBT 变了可能有问题
+            if (hotbarSelected != inventory.selected || !ItemStack.matches(inventorySelected, hotbarSelectedStack)) {
+                animationStateMachine.onGunDraw();
+                hotbarSelected = inventory.selected;
+                hotbarSelectedStack = inventorySelected;
             }
             // 在渲染之前，先更新动画，让动画数据写入模型
             if (animationStateMachine != null) {
