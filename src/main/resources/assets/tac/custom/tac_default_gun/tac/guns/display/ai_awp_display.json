@@ -16,7 +16,7 @@
     // GUI/HUD 界面的 2D 材质，在该包目录下的 textures 文件夹中寻找
     "hud": "tac:gun/hud/ak47",
     // 背包/快捷栏等容器中槽位显示的 2D 材质，在该包目录下的 textures 文件夹中寻找
-    "slot": "tac:gun/slot/ak47",
+    "slot": "tac:gun/slot/ai_awp",
     // 调用的动画名，会在该包目录下的 animations 文件夹中寻找
     "animation": "tac:ai_awp",
     // 调整各个视角下模型的变换参数
