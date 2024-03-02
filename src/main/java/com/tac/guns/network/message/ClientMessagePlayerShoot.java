@@ -5,6 +5,7 @@ import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.init.ModItems;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
@@ -12,15 +13,14 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ShootMessage {
-    public static void encode(ShootMessage message, FriendlyByteBuf buf) {
+public class ClientMessagePlayerShoot {
+    public static void encode(ClientMessagePlayerShoot message, FriendlyByteBuf buf) {}
+
+    public static ClientMessagePlayerShoot decode(FriendlyByteBuf buf) {
+        return new ClientMessagePlayerShoot();
     }
 
-    public static ShootMessage decode(FriendlyByteBuf buf) {
-        return new ShootMessage();
-    }
-
-    public static void handle(ShootMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void handle(ClientMessagePlayerShoot message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide().isServer()) {
             context.enqueueWork(() -> {
