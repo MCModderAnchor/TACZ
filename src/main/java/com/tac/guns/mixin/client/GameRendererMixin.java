@@ -1,7 +1,6 @@
 package com.tac.guns.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tac.guns.api.client.event.RenderLevelBobEvent;
 import net.minecraft.client.Camera;
@@ -18,28 +17,29 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class GameRendererMixin {
     @Unique
     private boolean tac$useFovSetting;
+
     @Inject(method = "bobHurt", at = @At("HEAD"), cancellable = true)
-    public void onBobHurt(PoseStack pMatrixStack, float pPartialTicks, CallbackInfo ci){
+    public void onBobHurt(PoseStack pMatrixStack, float pPartialTicks, CallbackInfo ci) {
         boolean cancel;
-        if(!tac$useFovSetting) {
+        if (!tac$useFovSetting) {
             cancel = MinecraftForge.EVENT_BUS.post(new RenderItemInHandBobEvent.BobHurt());
-        }else {
+        } else {
             cancel = MinecraftForge.EVENT_BUS.post(new RenderLevelBobEvent.BobHurt());
         }
-        if(cancel){
+        if (cancel) {
             ci.cancel();
         }
     }
 
     @Inject(method = "bobView", at = @At("HEAD"), cancellable = true)
-    public void onBobView(PoseStack pMatrixStack, float pPartialTicks, CallbackInfo ci){
+    public void onBobView(PoseStack pMatrixStack, float pPartialTicks, CallbackInfo ci) {
         boolean cancel;
-        if(!tac$useFovSetting) {
+        if (!tac$useFovSetting) {
             cancel = MinecraftForge.EVENT_BUS.post(new RenderItemInHandBobEvent.BobView());
-        }else {
+        } else {
             cancel = MinecraftForge.EVENT_BUS.post(new RenderLevelBobEvent.BobView());
         }
-        if(cancel){
+        if (cancel) {
             ci.cancel();
         }
     }
@@ -50,7 +50,7 @@ public class GameRendererMixin {
      * 至于为什么不直接对 renderItemInHand 这个方法 mixin ，是因为安装了 Optifine 之后这个方法就不存在了（
      */
     @Inject(method = "getFov", at = @At("HEAD"))
-    public void switchRenderType(Camera pActiveRenderInfo, float pPartialTicks, boolean pUseFOVSetting, CallbackInfoReturnable<Double> cir){
+    public void switchRenderType(Camera pActiveRenderInfo, float pPartialTicks, boolean pUseFOVSetting, CallbackInfoReturnable<Double> cir) {
         this.tac$useFovSetting = pUseFOVSetting;
     }
 }

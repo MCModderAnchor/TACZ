@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 public class Vector3fSerializer implements JsonDeserializer<Vector3f>, JsonSerializer<Vector3f> {
     @Override
     public Vector3f deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        if(json.isJsonArray()) {
+        if (json.isJsonArray()) {
             JsonArray array = json.getAsJsonArray();
             JsonElement xElement = array.get(0);
             JsonElement yElement = array.get(1);
@@ -18,7 +18,7 @@ public class Vector3fSerializer implements JsonDeserializer<Vector3f>, JsonSeria
             float y = GsonHelper.convertToFloat(yElement, "(array i=1)");
             float z = GsonHelper.convertToFloat(zElement, "(array i=2)");
             return new Vector3f(x, y, z);
-        }else {
+        } else {
             throw new JsonSyntaxException("Expected " + json + " to be a Vector3f because it's not an array");
         }
     }

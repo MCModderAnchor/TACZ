@@ -106,8 +106,8 @@ public class FirstPersonRenderGunEvent {
         applyPositioningNodeTransform(model.getIdleSightPath(), poseStack, 1 - v);
     }
 
-    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, float weight){
-        if(nodePath == null) return;
+    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, float weight) {
+        if (nodePath == null) return;
         //应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
         poseStack.translate(0, 1.5f, 0);
         for (int f = nodePath.size() - 1; f >= 0; f--) {

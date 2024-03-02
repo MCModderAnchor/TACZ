@@ -15,6 +15,7 @@ public class TransformScale {
     @SerializedName("fixed")
     @Nullable
     private Vector3f fixed;
+
     @Nullable
     public Vector3f getThirdPerson() {
         return thirdPerson;

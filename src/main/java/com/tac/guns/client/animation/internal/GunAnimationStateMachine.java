@@ -4,40 +4,40 @@ import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.ObjectAnimation;
 
 public class GunAnimationStateMachine {
+    public static final int MAIN_TRACK = 0;
     protected AnimationController controller;
     protected boolean noAmmo;
-    public static final int MAIN_TRACK = 0;
 
-    public GunAnimationStateMachine(AnimationController controller){
+    public GunAnimationStateMachine(AnimationController controller) {
         this.controller = controller;
     }
 
-    public void onGunShoot(){
+    public void onGunShoot() {
         controller.runAnimation(MAIN_TRACK, "shoot", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
     }
 
-    public void onGunReload(){
-        if(noAmmo) {
+    public void onGunReload() {
+        if (noAmmo) {
             controller.runAnimation(MAIN_TRACK, "reload_empty", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
-        }else {
+        } else {
             controller.runAnimation(MAIN_TRACK, "reload_norm", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
         }
     }
 
-    public void onGunInspect(){
+    public void onGunInspect() {
         controller.runAnimation(MAIN_TRACK, "inspect", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
     }
 
-    public GunAnimationStateMachine setNoAmmo(boolean noAmmo){
+    public GunAnimationStateMachine setNoAmmo(boolean noAmmo) {
         this.noAmmo = noAmmo;
         return this;
     }
 
-    public AnimationController getController(){
+    public AnimationController getController() {
         return controller;
     }
 
-    public void update(){
+    public void update() {
         controller.update();
     }
 }

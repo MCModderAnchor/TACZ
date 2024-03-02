@@ -11,7 +11,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.EnumSet;
 import java.util.stream.Stream;
 
 public final class GetJarResources {
@@ -22,8 +21,8 @@ public final class GetJarResources {
      * 复制本模组的文件到指定文件夹。将强行覆盖原文件。
      *
      * @param srcPath jar 中的源文件地址
-     * @param root 想要复制到的根目录
-     * @param path 复制后的路径
+     * @param root    想要复制到的根目录
+     * @param path    复制后的路径
      */
     public static void copyModFile(String srcPath, Path root, String path) {
         URL url = GunMod.class.getResource(srcPath);
@@ -40,10 +39,10 @@ public final class GetJarResources {
      * 复制本模组的文件夹到指定文件夹。将强行覆盖原文件夹。
      *
      * @param srcPath jar 中的源文件地址
-     * @param root 想要复制到的根目录
-     * @param path 复制后的路径
+     * @param root    想要复制到的根目录
+     * @param path    复制后的路径
      */
-    public static void copyModDirectory(String srcPath, Path root, String path){
+    public static void copyModDirectory(String srcPath, Path root, String path) {
         URL url = GunMod.class.getResource(srcPath);
         try {
             if (url != null) {

@@ -12,7 +12,7 @@ public class GunShootEvent extends Event {
     private final ItemStack gunItemStack;
     private final LogicalSide logicalSide;
 
-    public GunShootEvent(LivingEntity shooter, ItemStack gunItemStack, LogicalSide side){
+    public GunShootEvent(LivingEntity shooter, ItemStack gunItemStack, LogicalSide side) {
         this.shooter = shooter;
         this.gunItemStack = gunItemStack;
         this.logicalSide = side;
@@ -26,7 +26,7 @@ public class GunShootEvent extends Event {
         return gunItemStack;
     }
 
-    public LogicalSide getLogicalSide(){
+    public LogicalSide getLogicalSide() {
         return logicalSide;
     }
 }
