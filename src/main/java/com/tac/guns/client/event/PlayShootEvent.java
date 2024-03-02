@@ -8,7 +8,7 @@ import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
-import com.tac.guns.network.message.ShootMessage;
+import com.tac.guns.network.message.ClientMessagePlayerShoot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -39,7 +39,7 @@ public class PlayShootEvent {
                 if (gunModel != null && animationStateMachine != null) {
                     animationStateMachine.onGunShoot();
                 }
-                NetworkHandler.CHANNEL.sendToServer(new ShootMessage());
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot());
                 SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
                 player.setXRot(player.getXRot() - 0.5f);
             });

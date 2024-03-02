@@ -24,6 +24,7 @@ public class CameraSetupEvent {
             return;
         }
         LocalPlayer player = Minecraft.getInstance().player;
+        // 目前只有枪械物品有摄像机动画，因此需要进行判断
         if (player == null || !player.getMainHandItem().is(ModItems.GUN.get())) {
             return;
         }
@@ -49,6 +50,7 @@ public class CameraSetupEvent {
             return;
         }
         LocalPlayer player = Minecraft.getInstance().player;
+        // 目前只有枪械物品有摄像机动画，因此需要进行判断
         if (player == null || !player.getMainHandItem().is(ModItems.GUN.get())) {
             return;
         }
