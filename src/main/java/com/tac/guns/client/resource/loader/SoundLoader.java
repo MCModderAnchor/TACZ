@@ -31,10 +31,9 @@ public final class SoundLoader {
         if (matcher.find()) {
             String namespace = matcher.group(1);
             String path = matcher.group(2);
-            String filePath = String.format("%s/sounds/%s.ogg", namespace, path);
-            ZipEntry entry = zipFile.getEntry(filePath);
+            ZipEntry entry = zipFile.getEntry(zipPath);
             if (entry == null) {
-                GunMod.LOGGER.warn(MARKER, "{} file don't exist", filePath);
+                GunMod.LOGGER.warn(MARKER, "{} file don't exist", zipPath);
                 return false;
             }
             try (InputStream zipEntryStream = zipFile.getInputStream(entry); OggAudioStream audioStream = new OggAudioStream(zipEntryStream)) {
@@ -43,7 +42,7 @@ public final class SoundLoader {
                 ClientAssetManager.INSTANCE.putSoundBuffer(registryName, new SoundBuffer(bytebuffer, audioStream.getFormat()));
                 return true;
             } catch (IOException ioe) {
-                GunMod.LOGGER.warn(MARKER, "Failed to load sound: {}", filePath);
+                GunMod.LOGGER.warn(MARKER, "Failed to load sound: {}", zipPath);
                 ioe.printStackTrace();
             }
         }

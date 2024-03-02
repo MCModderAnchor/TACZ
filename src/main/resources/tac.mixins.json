@@ -9,6 +9,7 @@
   "client": [
     "client.FirstPersonRendererMixin",
     "client.GameRendererMixin",
+    "client.LanguageMixin",
     "client.PlayerModelMixin"
   ],
   "injectors": {

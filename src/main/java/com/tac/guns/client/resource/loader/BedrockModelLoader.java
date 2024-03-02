@@ -31,10 +31,9 @@ public final class BedrockModelLoader {
         if (matcher.find()) {
             String namespace = matcher.group(1);
             String path = matcher.group(2);
-            String filePath = String.format("%s/models/%s.json", namespace, path);
-            ZipEntry entry = zipFile.getEntry(filePath);
+            ZipEntry entry = zipFile.getEntry(zipPath);
             if (entry == null) {
-                GunMod.LOGGER.warn(MARKER, "{} file don't exist", filePath);
+                GunMod.LOGGER.warn(MARKER, "{} file don't exist", zipPath);
                 return false;
             }
             try (InputStream modelFileStream = zipFile.getInputStream(entry)) {
@@ -44,7 +43,7 @@ public final class BedrockModelLoader {
                 return true;
             } catch (IOException ioe) {
                 // 可能用来判定错误，打印下
-                GunMod.LOGGER.warn(MARKER, "Failed to load model: {}", filePath);
+                GunMod.LOGGER.warn(MARKER, "Failed to load model: {}", zipPath);
                 ioe.printStackTrace();
             }
         }

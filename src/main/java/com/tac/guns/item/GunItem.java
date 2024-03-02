@@ -2,11 +2,15 @@ package com.tac.guns.item;
 
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
 import com.tac.guns.client.resource.ClientGunLoader;
+import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.GunItemData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -16,6 +20,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class GunItem extends Item {
@@ -35,6 +40,17 @@ public class GunItem extends Item {
             GunItemData.serialization(stack.getOrCreateTag(), data);
         }
         return stack;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public Component getName(ItemStack stack) {
+        ResourceLocation gunId = getData(stack).getGunId();
+        Optional<ClientGunIndex> gunIndex = ClientGunLoader.getGunIndex(gunId);
+        if (gunIndex.isPresent()) {
+            return new TranslatableComponent(gunIndex.get().getName());
+        }
+        return super.getName(stack);
     }
 
     @Override
