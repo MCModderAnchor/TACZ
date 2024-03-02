@@ -22,14 +22,14 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/**
+ * 负责第一人称以外的枪械模型渲染。第一人称渲染参见 {@link com.tac.guns.client.event.FirstPersonRenderGunEvent}
+ */
 public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRenderer {
     public TileEntityItemStackGunRenderer(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
     }
 
-    /**
-     * 负责第一人称以外的枪械模型渲染。第一人称渲染参见 {@link com.tac.guns.client.event.FirstPersonRenderGunEvent}
-     */
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.is(ModItems.GUN.get())) {
@@ -94,8 +94,9 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
         poseStack.translate(0, 1.5, 0);
         for (int f = nodePath.size() - 1; f >= 0; f--) {
             BedrockPart t = nodePath.get(f);
-            float[] q = MathUtil.toQuaternion(-t.xRot, -t.yRot, -t.zRot);
-            poseStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
+            poseStack.mulPose(Vector3f.XN.rotation(t.xRot));
+            poseStack.mulPose(Vector3f.YN.rotation(t.yRot));
+            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot));
             if (t.getParent() != null)
                 poseStack.translate(-t.x * scale.x() / 16.0F, -t.y * scale.y() / 16.0F, -t.z * scale.z() / 16.0F);
             else {

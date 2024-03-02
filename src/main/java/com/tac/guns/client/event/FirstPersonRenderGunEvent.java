@@ -27,6 +27,9 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
+/**
+ * 负责第一人称的枪械模型渲染。其他人称参见 {@link com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer}
+ */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class FirstPersonRenderGunEvent {
     @SubscribeEvent
@@ -112,8 +115,9 @@ public class FirstPersonRenderGunEvent {
         poseStack.translate(0, 1.5f, 0);
         for (int f = nodePath.size() - 1; f >= 0; f--) {
             BedrockPart t = nodePath.get(f);
-            float[] q = MathUtil.toQuaternion(-t.xRot * weight, -t.yRot * weight, -t.zRot * weight);
-            poseStack.mulPose(new Quaternion(q[0], q[1], q[2], q[3]));
+            poseStack.mulPose(Vector3f.XN.rotation(t.xRot));
+            poseStack.mulPose(Vector3f.YN.rotation(t.yRot));
+            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot));
             if (t.getParent() != null)
                 poseStack.translate(-t.x / 16.0F * weight, -t.y / 16.0F * weight, -t.z / 16.0F * weight);
             else {
