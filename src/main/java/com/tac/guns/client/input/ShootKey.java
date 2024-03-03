@@ -5,7 +5,6 @@ import com.tac.guns.api.entity.IShooter;
 import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
-import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
@@ -22,7 +21,6 @@ import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
@@ -42,9 +40,14 @@ public class ShootKey {
 
     private static final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
+    private static boolean isRecorded = true;
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
+    public static void onWorldTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END && !isInGame()) {
+            return;
+        }
+        // 如果上一次异步开火的效果还未执行，则直接返回，等待异步开火效果执行
+        if(!isRecorded){
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -67,10 +70,13 @@ public class ShootKey {
                 }
                 // 发送开火的数据包，通知服务器
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot());
+                isRecorded = false;
                 // 开火效果需要延时执行，这样渲染效果更好。
                 scheduledExecutorService.schedule(() -> {
                     // 记录新的开火时间戳
                     shooter.recordShootTime();
+                    //
+                    isRecorded = true;
                     // 动画状态机转移状态
                     GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                     if (animationStateMachine != null) {
