@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.tac.guns.GunMod;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.loader.GunDataLoader;
-import com.tac.guns.resource.pojo.CommonGunIndexPOJO;
+import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.util.GetJarResources;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
@@ -193,7 +193,7 @@ public class CommonGunPackLoader {
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
                 // 获取枪械的定义文件
-                CommonGunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), CommonGunIndexPOJO.class);
+                GunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunIndexPOJO.class);
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
                     GUN_INDEX.put(registryName, CommonGunIndex.getInstance(indexPOJO));
@@ -211,7 +211,7 @@ public class CommonGunPackLoader {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
                     // 获取枪械的定义文件
-                    CommonGunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), CommonGunIndexPOJO.class);
+                    GunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunIndexPOJO.class);
                     GUN_INDEX.put(id, CommonGunIndex.getInstance(indexPOJO));
                 } catch (IOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);

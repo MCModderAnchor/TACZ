@@ -8,9 +8,8 @@ import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.index.ClientAmmoIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.loader.*;
-import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
+import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
-import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.client.resource.serialize.Vector3fSerializer;
 import com.tac.guns.util.GetJarResources;
 import com.tac.guns.util.TacPathVisitor;
@@ -232,7 +231,7 @@ public class ClientGunPackLoader {
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
                 // 获取枪械的定义文件
-                ClientGunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), ClientGunIndexPOJO.class);
+                GunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunIndexPOJO.class);
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
                     GUN_INDEX.put(registryName, ClientGunIndex.getInstance(indexPOJO));
@@ -250,7 +249,7 @@ public class ClientGunPackLoader {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
                     // 获取枪械的定义文件
-                    ClientGunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), ClientGunIndexPOJO.class);
+                    GunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunIndexPOJO.class);
                     GUN_INDEX.put(id, ClientGunIndex.getInstance(indexPOJO));
                 } catch (IOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);

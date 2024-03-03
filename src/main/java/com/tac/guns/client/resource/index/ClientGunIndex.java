@@ -7,7 +7,7 @@ import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientAssetManager;
-import com.tac.guns.client.resource.pojo.ClientGunIndexPOJO;
+import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.client.resource.pojo.display.GunModelTexture;
 import com.tac.guns.client.resource.pojo.display.GunTransform;
@@ -15,8 +15,6 @@ import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonAssetManager;
-import com.tac.guns.resource.index.CommonGunIndex;
-import com.tac.guns.resource.pojo.CommonGunIndexPOJO;
 import com.tac.guns.resource.pojo.data.GunData;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -42,7 +40,7 @@ public class ClientGunIndex {
     private GunData gunData;
     private RenderType slotRenderType;
 
-    public static ClientGunIndex getInstance(ClientGunIndexPOJO clientPojo) throws IllegalArgumentException {
+    public static ClientGunIndex getInstance(GunIndexPOJO clientPojo) throws IllegalArgumentException {
         ClientGunIndex index = new ClientGunIndex();
 
         GunDisplay display = checkDisplay(clientPojo);
@@ -60,18 +58,18 @@ public class ClientGunIndex {
         return index;
     }
 
-    private static void checkName(ClientGunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
+    private static void checkName(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
         index.name = gunIndexPOJO.getName();
         if (StringUtils.isBlank(index.name)) {
             index.name = "custom.tac.gun.error.no_name";
         }
     }
 
-    private static void checkTooltip(ClientGunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
+    private static void checkTooltip(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
         index.tooltip = gunIndexPOJO.getTooltip();
     }
 
-    private static void checkData(ClientGunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
+    private static void checkData(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
         ResourceLocation pojoData = gunIndexPOJO.getData();
         if (pojoData == null) {
             throw new IllegalArgumentException("index object missing pojoData field");
@@ -84,7 +82,7 @@ public class ClientGunIndex {
     }
 
     @NotNull
-    private static GunDisplay checkDisplay(ClientGunIndexPOJO gunIndexPOJO) {
+    private static GunDisplay checkDisplay(GunIndexPOJO gunIndexPOJO) {
         ResourceLocation pojoDisplay = gunIndexPOJO.getDisplay();
         if (pojoDisplay == null) {
             throw new IllegalArgumentException("index object missing display field");

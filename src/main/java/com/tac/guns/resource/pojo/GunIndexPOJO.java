@@ -1,11 +1,11 @@
-package com.tac.guns.client.resource.pojo;
+package com.tac.guns.resource.pojo;
 
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class ClientGunIndexPOJO {
+public class GunIndexPOJO {
     @SerializedName("name")
     private String name;
 
