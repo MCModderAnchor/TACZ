@@ -25,6 +25,9 @@ public class InspectKey {
 
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
+        if(event.getAction() != GLFW.GLFW_PRESS){
+            return;
+        }
         if (INSPECT_KEY.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
             if(player == null){

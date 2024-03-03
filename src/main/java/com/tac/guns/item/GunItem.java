@@ -93,10 +93,6 @@ public class GunItem extends Item implements IGun {
     }
 
     @Override
-    public void reload(ItemStack gun) {
-    }
-
-    @Override
     public void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw) {
         ResourceLocation gunId = GunItem.getData(gun).getGunId();
         Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);

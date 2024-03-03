@@ -15,13 +15,6 @@ public interface IGun {
     boolean isAmmo(ItemStack gun, ItemStack ammo);
 
     /**
-     * 重载弹药时的逻辑
-     *
-     * @param gun 需要重载弹药的枪
-     */
-    void reload(ItemStack gun);
-
-    /**
      * 枪械射击，该方法只在服务端调用
      *
      * @param shooter 射手

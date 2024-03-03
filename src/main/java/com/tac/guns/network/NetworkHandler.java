@@ -1,8 +1,8 @@
 package com.tac.guns.network;
 
 import com.tac.guns.GunMod;
+import com.tac.guns.network.message.ClientMessagePlayerReloadGun;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
-import com.tac.guns.network.message.ServerMessageShoot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -27,8 +27,8 @@ public class NetworkHandler {
     public static void init() {
         CHANNEL.registerMessage(0, ClientMessagePlayerShoot.class, ClientMessagePlayerShoot::encode, ClientMessagePlayerShoot::decode, ClientMessagePlayerShoot::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CHANNEL.registerMessage(1, ServerMessageShoot.class, ServerMessageShoot::encode, ServerMessageShoot::decode, ServerMessageShoot::handle,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(1, ClientMessagePlayerReloadGun.class, ClientMessagePlayerReloadGun::encode, ClientMessagePlayerReloadGun::decode, ClientMessagePlayerReloadGun::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     public static void sendToClientPlayer(Object message, Player player) {

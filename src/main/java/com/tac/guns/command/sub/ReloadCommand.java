@@ -24,11 +24,6 @@ public class ReloadCommand {
 
     private static int reloadAllPack(CommandContext<CommandSourceStack> context) {
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ReloadResourceEvent::reloadAllPack);
-        DistExecutor.safeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
-            CommonGunPackLoader.init();
-            CommonGunPackLoader.reloadAsset();
-            CommonGunPackLoader.reloadIndex();
-        });
         context.getSource().sendSuccess(new TranslatableComponent("commands.tac.reload.success"), true);
         return Command.SINGLE_SUCCESS;
     }
