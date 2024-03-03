@@ -21,9 +21,14 @@ import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class ShootKey {
@@ -33,6 +38,8 @@ public class ShootKey {
             InputConstants.Type.MOUSE,
             GLFW.GLFW_MOUSE_BUTTON_LEFT,
             "key.category.tac");
+
+    private static final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -44,21 +51,33 @@ public class ShootKey {
         if (SHOOT_KEY.isDown() && player instanceof IShooter shooter && IGun.mainhandHoldGun(player)) {
             ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
             ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                if ((System.currentTimeMillis() - shooter.getShootTime()) < gunIndex.getGunData().getShootInterval()) {
+                long shootCoolDown = gunIndex.getGunData().getShootInterval() - (System.currentTimeMillis() - shooter.getShootTime());
+                // 如果开火冷却时间剩余大于 1 个 tick (即 50 ms)，则不能开火。
+                if(shootCoolDown > 50){
                     return;
                 }
+                // 如果开火冷却时间剩余小于 1 个 tick ，则认为玩家已经开火。
+                // 触发开火事件
                 if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
                     return;
                 }
-                BedrockGunModel gunModel = gunIndex.getGunModel();
-                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                if (gunModel != null && animationStateMachine != null) {
-                    animationStateMachine.onGunShoot();
-                }
+                // 发送开火的数据包，通知服务器
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot());
-                SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
-                player.setXRot(player.getXRot() - 0.5f);
-                shooter.recordShootTime();
+                // 开火效果需要延时执行，这样渲染效果更好。
+                scheduledExecutorService.schedule(() -> {
+                    // 记录新的开火时间戳
+                    shooter.recordShootTime();
+                    // 动画状态机转移状态
+                    GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+                    if (animationStateMachine != null) {
+                        animationStateMachine.onGunShoot();
+                    }
+                    // 播放声音、摄像机后坐需要从异步线程上传到主线程执行。
+                    Minecraft.getInstance().submitAsync(() ->{
+                        SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
+                        player.setXRot(player.getXRot() - 0.5f);
+                    });
+                }, shootCoolDown, TimeUnit.MILLISECONDS);
             });
         }
     }
