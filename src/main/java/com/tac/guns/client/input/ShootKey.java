@@ -11,6 +11,7 @@ import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
+import com.tac.guns.util.TimingTool;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -54,6 +55,9 @@ public class ShootKey {
                 long shootCoolDown = gunIndex.getGunData().getShootInterval() - (System.currentTimeMillis() - shooter.getShootTime());
                 // 如果开火冷却时间剩余大于 1 个 tick (即 50 ms)，则不能开火。
                 if(shootCoolDown > 50){
+                    return;
+                }
+                if (TimingTool.isReloadCooldown(shooter, gunIndex.getGunData())) {
                     return;
                 }
                 // 如果开火冷却时间剩余小于 1 个 tick ，则认为玩家已经开火。
