@@ -13,9 +13,14 @@ public interface IClientPlayerGunOperator{
      * 执行客户端切枪逻辑。
      */
     void draw();
+
     void reload();
+
     void inspect();
-    static IClientPlayerGunOperator fromLocalPlayer(LocalPlayer player){
+
+    void fireSelect();
+
+    static IClientPlayerGunOperator fromLocalPlayer(LocalPlayer player) {
         return (IClientPlayerGunOperator) player;
     }
 }

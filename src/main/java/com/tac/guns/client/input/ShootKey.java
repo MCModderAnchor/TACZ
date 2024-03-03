@@ -2,12 +2,13 @@ package com.tac.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
+import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.event.TickEvent;
@@ -25,17 +26,33 @@ public class ShootKey {
             "key.category.tac");
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
+    public static void autoShoot(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END && !isInGame()) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        if(player == null){
+        if (player == null) {
             return;
         }
-        if (SHOOT_KEY.isDown() && IGun.mainhandHoldGun(player)) {
-            IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
+        if (SHOOT_KEY.isDown()) {
+            if (IGun.mainhandHoldGun(player) && IGun.getMainhandFireMode(player) == FireMode.AUTO) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void semiShoot(InputEvent.MouseInputEvent event) {
+        if (isInGame() && SHOOT_KEY.isDown()) {
+            Minecraft mc = Minecraft.getInstance();
+            LocalPlayer player = mc.player;
+            if (player == null) {
+                return;
+            }
+            if (IGun.mainhandHoldGun(player) && IGun.getMainhandFireMode(player) == FireMode.SEMI) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
+            }
         }
     }
 

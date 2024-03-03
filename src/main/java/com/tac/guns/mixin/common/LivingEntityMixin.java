@@ -3,14 +3,18 @@ package com.tac.guns.mixin.common;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.event.GunReloadEvent;
 import com.tac.guns.api.event.GunShootEvent;
+import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.api.network.MyEntityDataSerializers;
+import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.pojo.data.GunData;
 import com.tac.guns.resource.pojo.data.GunReloadData;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Optional;
 
 @Mixin(LivingEntity.class)
@@ -38,7 +43,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         super(pEntityType, pLevel);
     }
 
-    @Shadow protected abstract float tickHeadTurn(float p_21260_, float p_21261_);
+    @Shadow
+    protected abstract float tickHeadTurn(float p_21260_, float p_21261_);
 
     @Unique
     private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, MyEntityDataSerializers.LONG);
@@ -187,8 +193,30 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     }
 
     @Inject(method = "defineSynchedData", at = @At("RETURN"))
-    public void defineSynData(CallbackInfo ci){
+    public void defineSynData(CallbackInfo ci) {
         entityData.define(DATA_SHOOT_COOL_DOWN_ID, -1L);
         entityData.define(DATA_RELOAD_STATE_ID, new ReloadState());
+    }
+
+    @Override
+    public FireMode fireSelect(ItemStack gunItemStack) {
+        // 获取GunData
+        GunItemData gunItemData = GunItem.getData(gunItemStack);
+        ResourceLocation gunId = gunItemData.getGunId();
+        Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
+        if (gunIndexOptional.isEmpty()) {
+            return FireMode.SEMI;
+        }
+        GunData gunData = gunIndexOptional.get().getGunData();
+        if (gunItemStack.getItem() instanceof IGun iGun) {
+            FireMode fireMode = iGun.getFireMode(gunItemStack);
+            List<FireMode> fireModeSet = gunData.getFireModeSet();
+            int nextIndex = (fireModeSet.indexOf(fireMode) + 1) % fireModeSet.size();
+            FireMode nextFireMode = fireModeSet.get(nextIndex);
+            gunItemData.setFireMode(nextFireMode);
+            GunItem.setData(gunItemStack, gunItemData);
+            return nextFireMode;
+        }
+        return FireMode.SEMI;
     }
 }

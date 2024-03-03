@@ -1,5 +1,6 @@
 package com.tac.guns.item;
 
+import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
@@ -96,7 +97,7 @@ public class GunItem extends Item implements IGun {
     public void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw) {
         ResourceLocation gunId = GunItem.getData(gun).getGunId();
         Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
-        if(gunIndexOptional.isEmpty()) {
+        if (gunIndexOptional.isEmpty()) {
             return;
         }
         // todo 获取 GunData 并根据其中的弹道参数创建 EntityBullet
@@ -104,5 +105,11 @@ public class GunItem extends Item implements IGun {
         EntityBullet bullet = new EntityBullet(world, shooter);
         bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 10, 0);
         world.addFreshEntity(bullet);
+    }
+
+    @Override
+    public FireMode getFireMode(ItemStack gun) {
+        // FIXME 应该还需要检查是否允许这种射击类型
+        return GunItem.getData(gun).getFireMode();
     }
 }

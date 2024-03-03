@@ -1,9 +1,9 @@
 package com.tac.guns.api.item;
 
+import com.tac.guns.api.gun.FireMode;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
-// todo 还是觉得由 GunItem 来实现 IGun 有点别扭。应该有更广泛意义的实现。
 public interface IGun {
     /**
      * 该物品是不是符合要求的弹药
@@ -25,6 +25,14 @@ public interface IGun {
     void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw);
 
     /**
+     * 获取开火模式
+     *
+     * @param gun 枪
+     * @return 开火模式
+     */
+    FireMode getFireMode(ItemStack gun);
+
+    /**
      * 该物品是否为枪
      */
     static boolean isGun(ItemStack stack) {
@@ -36,6 +44,17 @@ public interface IGun {
      */
     static boolean mainhandHoldGun(LivingEntity livingEntity) {
         return livingEntity.getMainHandItem().getItem() instanceof IGun;
+    }
+
+    /**
+     * 是否主手持枪
+     */
+    static FireMode getMainhandFireMode(LivingEntity livingEntity) {
+        ItemStack mainhandItem = livingEntity.getMainHandItem();
+        if (mainhandItem.getItem() instanceof IGun iGun) {
+            return iGun.getFireMode(mainhandItem);
+        }
+        return FireMode.SEMI;
     }
 
     /**

@@ -3,6 +3,7 @@ package com.tac.guns.mixin.client;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.event.GunReloadEvent;
+import com.tac.guns.api.event.GunFireSelectEvent;
 import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
@@ -14,6 +15,7 @@ import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessagePlayerReloadGun;
+import com.tac.guns.network.message.ClientMessagePlayerFireSelect;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
@@ -156,5 +158,26 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 animationStateMachine.onGunInspect();
             }
         });
+    }
+
+    @Override
+    public void fireSelect() {
+        // TODO 冷却时间检查，得让动画播放完毕才行
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        if (IGun.mainhandHoldGun(player)) {
+            ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+            ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
+                    return;
+                }
+                // 发送切换开火模式的数据包，通知服务器
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
+                // 动画状态机转移状态
+                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+                if (animationStateMachine != null) {
+                    animationStateMachine.onGunFireSelect();
+                }
+            });
+        }
     }
 }
