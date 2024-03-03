@@ -10,6 +10,12 @@ public class LivingEntityMixin implements IShooter {
     @Unique
     private long tac$ShootTimestamp = -1L;
 
+    @Unique
+    private long tac$DrawTimestamp = -1L;
+
+    @Unique
+    private long tac$ReloadTimestamp = -1L;
+
     @Override
     @Unique
     public void recordShootTime() {
@@ -20,5 +26,27 @@ public class LivingEntityMixin implements IShooter {
     @Unique
     public long getShootTime() {
         return this.tac$ShootTimestamp;
+    }
+
+    @Override
+    @Unique
+    public void recordDrawTime() {
+        this.tac$DrawTimestamp = System.currentTimeMillis();
+    }
+
+    @Override
+    @Unique
+    public long getDrawTime() {
+        return this.tac$DrawTimestamp;
+    }
+
+    @Override
+    public void recordReloadTime() {
+        this.tac$ReloadTimestamp = System.currentTimeMillis();
+    }
+
+    @Override
+    public long getReloadTime() {
+        return this.tac$ReloadTimestamp;
     }
 }

@@ -11,6 +11,7 @@ import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
+import com.tac.guns.util.TimingTool;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -44,7 +45,13 @@ public class ShootKey {
         if (SHOOT_KEY.isDown() && player instanceof IShooter shooter && IGun.mainhandHoldGun(player)) {
             ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
             ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                if ((System.currentTimeMillis() - shooter.getShootTime()) < gunIndex.getGunData().getShootInterval()) {
+                if (TimingTool.isReloadCooldown(shooter, gunIndex.getGunData())) {
+                    return;
+                }
+                if (TimingTool.isShootCooldown(shooter, gunIndex.getGunData())) {
+                    return;
+                }
+                if (TimingTool.isDrawCooldown(shooter, gunIndex.getGunData())) {
                     return;
                 }
                 if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
