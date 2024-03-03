@@ -1,6 +1,7 @@
 package com.tac.guns.api.entity;
 
 import com.tac.guns.api.gun.ShootResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 public interface IGunOperator {
@@ -14,4 +15,7 @@ public interface IGunOperator {
      * @return 本次射击的结果
      */
     ShootResult shoot(ItemStack gunItemStack, float pitch, float yaw);
+    static IGunOperator fromLivingEntity(LivingEntity entity){
+        return (IGunOperator) entity;
+    }
 }

@@ -1,7 +1,7 @@
 package com.tac.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.tac.guns.api.entity.IClientPlayerGunOperator;
+import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IGun;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -27,8 +27,11 @@ public class InspectKey {
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
         if (INSPECT_KEY.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player instanceof IClientPlayerGunOperator gunOperator && IGun.mainhandHoldGun(player)) {
-                gunOperator.inspect();
+            if(player == null){
+                return;
+            }
+            if (IGun.mainhandHoldGun(player)) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).inspect();
             }
         }
     }

@@ -4,8 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
-import com.tac.guns.api.entity.IClientPlayerGunOperator;
-import com.tac.guns.api.entity.IGunOperator;
+import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
@@ -74,9 +73,7 @@ public class FirstPersonRenderGunEvent {
             if (hotbarSelected != inventory.selected || !ItemStack.matches(inventorySelected, hotbarSelectedStack)) {
                 hotbarSelected = inventory.selected;
                 hotbarSelectedStack = inventorySelected;
-                if (player instanceof IClientPlayerGunOperator gunOperator) {
-                    gunOperator.draw();
-                }
+                IClientPlayerGunOperator.fromLocalPlayer(player).draw();
             }
             // 在渲染之前，先更新动画，让动画数据写入模型
             if (animationStateMachine != null) {

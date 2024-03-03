@@ -27,13 +27,13 @@ public class ClientMessagePlayerShoot {
         if (context.getDirection().getReceptionSide().isServer()) {
             context.enqueueWork(() -> {
                 ServerPlayer entity = context.getSender();
-                if (!(entity instanceof IGunOperator gunOperator)) {
+                if(entity == null){
                     return;
                 }
                 if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, entity.getMainHandItem(), LogicalSide.SERVER))) {
                     return;
                 }
-                gunOperator.shoot(entity.getMainHandItem(), entity.getXRot(), entity.getYRot());
+                IGunOperator.fromLivingEntity(entity).shoot(entity.getMainHandItem(), entity.getXRot(), entity.getYRot());
             });
         }
         context.setPacketHandled(true);

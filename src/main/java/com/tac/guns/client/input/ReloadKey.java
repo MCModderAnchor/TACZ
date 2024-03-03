@@ -1,16 +1,11 @@
 package com.tac.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.tac.guns.api.entity.IClientPlayerGunOperator;
+import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
-import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.item.GunItem;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -32,8 +27,11 @@ public class ReloadKey {
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
         if (RELOAD_KEY.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player instanceof IClientPlayerGunOperator gunOperator && IGun.mainhandHoldGun(player)) {
-                gunOperator.reload();
+            if(player == null){
+                return;
+            }
+            if (IGun.mainhandHoldGun(player)) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).reload();
             }
         }
     }

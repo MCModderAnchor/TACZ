@@ -1,12 +1,10 @@
 package com.tac.guns.mixin.client;
 
-import com.tac.guns.api.entity.IClientPlayerGunOperator;
-import com.tac.guns.api.entity.IGunOperator;
+import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
-import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
