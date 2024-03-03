@@ -1,5 +1,6 @@
 package com.tac.guns.client.event;
 
+import com.tac.guns.client.input.FireSelectKey;
 import com.tac.guns.client.input.InspectKey;
 import com.tac.guns.client.input.ReloadKey;
 import com.tac.guns.client.input.ShootKey;
@@ -16,5 +17,6 @@ public class ClientSetupEvent {
         ClientRegistry.registerKeyBinding(InspectKey.INSPECT_KEY);
         ClientRegistry.registerKeyBinding(ReloadKey.RELOAD_KEY);
         ClientRegistry.registerKeyBinding(ShootKey.SHOOT_KEY);
+        ClientRegistry.registerKeyBinding(FireSelectKey.FIRE_SELECT_KEY);
     }
 }

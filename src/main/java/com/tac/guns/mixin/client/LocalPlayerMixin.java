@@ -1,6 +1,7 @@
 package com.tac.guns.mixin.client;
 
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
+import com.tac.guns.api.event.GunFireSelectEvent;
 import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IGun;
@@ -9,6 +10,7 @@ import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
+import com.tac.guns.network.message.ClientMessagePlayerFireSelect;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -42,7 +44,7 @@ public class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public ShootResult shoot() {
         // 如果上一次异步开火的效果还未执行，则直接返回，等待异步开火效果执行
-        if(!tac$IsRecorded){
+        if (!tac$IsRecorded) {
             return ShootResult.COOL_DOWN;
         }
         // todo 判断是否在装弹
@@ -53,7 +55,7 @@ public class LocalPlayerMixin implements IClientPlayerGunOperator {
             ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
                 long shootCoolDown = gunIndex.getGunData().getShootInterval() - (System.currentTimeMillis() - tac$ShootTimestamp);
                 // 如果开火冷却时间剩余大于 1 个 tick (即 50 ms)，则不能开火。
-                if(shootCoolDown > 50){
+                if (shootCoolDown > 50) {
                     return;
                 }
                 // 如果开火冷却时间剩余小于 1 个 tick ，则认为玩家已经开火。
@@ -76,7 +78,7 @@ public class LocalPlayerMixin implements IClientPlayerGunOperator {
                         animationStateMachine.onGunShoot();
                     }
                     // 播放声音、摄像机后坐需要从异步线程上传到主线程执行。
-                    Minecraft.getInstance().submitAsync(() ->{
+                    Minecraft.getInstance().submitAsync(() -> {
                         SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
                         player.setXRot(player.getXRot() - 0.5f);
                     });
@@ -126,5 +128,26 @@ public class LocalPlayerMixin implements IClientPlayerGunOperator {
                 animationStateMachine.onGunInspect();
             }
         });
+    }
+
+    @Override
+    public void fireSelect() {
+        // TODO 冷却时间检查，得让动画播放完毕才行
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        if (IGun.mainhandHoldGun(player)) {
+            ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+            ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
+                    return;
+                }
+                // 发送切换开火模式的数据包，通知服务器
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
+                // 动画状态机转移状态
+                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+                if (animationStateMachine != null) {
+                    animationStateMachine.onGunFireSelect();
+                }
+            });
+        }
     }
 }

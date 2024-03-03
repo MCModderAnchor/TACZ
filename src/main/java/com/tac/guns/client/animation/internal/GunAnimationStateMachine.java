@@ -16,6 +16,9 @@ public class GunAnimationStateMachine {
         controller.runAnimation(MAIN_TRACK, "shoot", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
     }
 
+    public void onGunFireSelect() {
+    }
+
     public void onGunReload() {
         if (noAmmo) {
             controller.runAnimation(MAIN_TRACK, "reload_empty", ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);

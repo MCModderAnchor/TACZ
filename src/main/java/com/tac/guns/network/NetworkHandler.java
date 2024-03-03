@@ -1,6 +1,7 @@
 package com.tac.guns.network;
 
 import com.tac.guns.GunMod;
+import com.tac.guns.network.message.ClientMessagePlayerFireSelect;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
 import com.tac.guns.network.message.ServerMessageShoot;
 import net.minecraft.core.BlockPos;
@@ -29,6 +30,8 @@ public class NetworkHandler {
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(1, ServerMessageShoot.class, ServerMessageShoot::encode, ServerMessageShoot::decode, ServerMessageShoot::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(2, ClientMessagePlayerFireSelect.class, ClientMessagePlayerFireSelect::encode, ClientMessagePlayerFireSelect::decode, ClientMessagePlayerFireSelect::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     public static void sendToClientPlayer(Object message, Player player) {

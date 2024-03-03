@@ -12,6 +12,7 @@ import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.item.GunItem;
+import com.tac.guns.item.nbt.GunItemData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -70,7 +71,7 @@ public class FirstPersonRenderGunEvent {
             Inventory inventory = player.getInventory();
             ItemStack inventorySelected = inventory.getSelected();
             // FIXME 未来切枪，NBT 变了可能有问题
-            if (hotbarSelected != inventory.selected || !ItemStack.matches(inventorySelected, hotbarSelectedStack)) {
+            if (hotbarSelected != inventory.selected || !isSame(inventorySelected, hotbarSelectedStack)) {
                 hotbarSelected = inventory.selected;
                 hotbarSelectedStack = inventorySelected;
                 IClientPlayerGunOperator.fromLocalPlayer(player).draw();
@@ -150,5 +151,14 @@ public class FirstPersonRenderGunEvent {
             }
         }
         poseStack.translate(0, -1.5f, 0);
+    }
+
+    private static boolean isSame(ItemStack gunA, ItemStack gunB) {
+        if (IGun.isGun(gunA) && IGun.isGun(gunB)) {
+            GunItemData dataA = GunItem.getData(gunA);
+            GunItemData dataB = GunItem.getData(gunB);
+            return dataA.getGunId().equals(dataB.getGunId());
+        }
+        return gunA.sameItem(gunB);
     }
 }
