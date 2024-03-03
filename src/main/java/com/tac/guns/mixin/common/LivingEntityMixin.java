@@ -1,12 +1,26 @@
 package com.tac.guns.mixin.common;
 
-import com.tac.guns.api.entity.IShooter;
+import com.tac.guns.api.entity.IGunOperator;
+import com.tac.guns.api.gun.ShootResult;
+import com.tac.guns.api.item.IGun;
+import com.tac.guns.item.GunItem;
+import com.tac.guns.resource.CommonGunPackLoader;
+import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.pojo.data.GunData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.Objects;
+import java.util.Optional;
+
 @Mixin(LivingEntity.class)
-public class LivingEntityMixin implements IShooter {
+public abstract class LivingEntityMixin implements IGunOperator {
+    @Shadow protected abstract float tickHeadTurn(float p_21260_, float p_21261_);
+
     @Unique
     private long tac$ShootTimestamp = -1L;
 
@@ -17,36 +31,35 @@ public class LivingEntityMixin implements IShooter {
     private long tac$ReloadTimestamp = -1L;
 
     @Override
-    @Unique
-    public void recordShootTime() {
-        this.tac$ShootTimestamp = System.currentTimeMillis();
+    public void draw(ItemStack gunItemStack) {
+        // todo
     }
 
     @Override
-    @Unique
-    public long getShootTime() {
-        return this.tac$ShootTimestamp;
+    public void reload(ItemStack gunItemStack) {
+        // todo
     }
 
     @Override
-    @Unique
-    public void recordDrawTime() {
-        this.tac$DrawTimestamp = System.currentTimeMillis();
-    }
-
-    @Override
-    @Unique
-    public long getDrawTime() {
-        return this.tac$DrawTimestamp;
-    }
-
-    @Override
-    public void recordReloadTime() {
-        this.tac$ReloadTimestamp = System.currentTimeMillis();
-    }
-
-    @Override
-    public long getReloadTime() {
-        return this.tac$ReloadTimestamp;
+    public ShootResult shoot(ItemStack gunItemStack, float pitch, float yaw) {
+        // 获取GunData
+        ResourceLocation gunId = GunItem.getData(gunItemStack).getGunId();
+        Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
+        if(gunIndexOptional.isEmpty()) {
+            return ShootResult.FAIL;
+        }
+        GunData gunData = gunIndexOptional.get().getGunData();
+        // 判断射击是否正在冷却
+        if ((System.currentTimeMillis() - tac$ShootTimestamp) < gunData.getShootInterval()) {
+            return ShootResult.COOL_DOWN;
+        }
+        // todo 判断枪械是否有足够的弹药
+        // 调用射击方法
+        if(gunItemStack.getItem() instanceof IGun iGun){
+            iGun.shoot((LivingEntity) (Object) this, gunItemStack, pitch, yaw);
+            tac$ShootTimestamp = System.currentTimeMillis();
+            return ShootResult.SUCCESS;
+        }
+        return ShootResult.FAIL;
     }
 }

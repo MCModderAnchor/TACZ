@@ -1,4 +1,4 @@
-package com.tac.guns.api.item;
+package com.tac.guns.api.gun;
 
 public enum ShootResult {
     /**

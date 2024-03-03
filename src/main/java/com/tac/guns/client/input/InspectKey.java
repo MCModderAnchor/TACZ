@@ -1,17 +1,11 @@
 package com.tac.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.tac.guns.api.entity.IShooter;
+import com.tac.guns.api.entity.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
-import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.item.GunItem;
-import com.tac.guns.util.TimingTool;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -33,24 +27,8 @@ public class InspectKey {
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
         if (INSPECT_KEY.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player instanceof IShooter shooter && IGun.mainhandHoldGun(player)) {
-                ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-                ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                    if (TimingTool.isReloadCooldown(shooter, gunIndex.getGunData())) {
-                        return;
-                    }
-                    if (TimingTool.isShootCooldown(shooter, gunIndex.getGunData())) {
-                        return;
-                    }
-                    if (TimingTool.isDrawCooldown(shooter, gunIndex.getGunData())) {
-                        return;
-                    }
-                    BedrockGunModel gunModel = gunIndex.getGunModel();
-                    GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                    if (gunModel != null && animationStateMachine != null) {
-                        animationStateMachine.onGunInspect();
-                    }
-                });
+            if (player instanceof IClientPlayerGunOperator gunOperator && IGun.mainhandHoldGun(player)) {
+                gunOperator.inspect();
             }
         }
     }

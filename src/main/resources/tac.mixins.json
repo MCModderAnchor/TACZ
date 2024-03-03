@@ -11,6 +11,7 @@
     "client.FirstPersonRendererMixin",
     "client.GameRendererMixin",
     "client.LanguageMixin",
+    "client.LocalPlayerMixin",
     "client.PlayerModelMixin"
   ],
   "injectors": {

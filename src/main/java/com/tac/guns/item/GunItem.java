@@ -1,8 +1,6 @@
 package com.tac.guns.item;
 
-import com.tac.guns.api.entity.IShooter;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.api.item.ShootResult;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
@@ -11,7 +9,6 @@ import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonGunIndex;
-import com.tac.guns.resource.pojo.data.GunData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
@@ -100,24 +97,16 @@ public class GunItem extends Item implements IGun {
     }
 
     @Override
-    public ShootResult shoot(LivingEntity entity, ItemStack gun) {
+    public void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw) {
         ResourceLocation gunId = GunItem.getData(gun).getGunId();
         Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
         if(gunIndexOptional.isEmpty()) {
-            return ShootResult.FAIL;
+            return;
         }
-        GunData gunData = gunIndexOptional.get().getGunData();
-        if (entity instanceof IShooter shooter) {
-            if ((System.currentTimeMillis() - shooter.getShootTime()) < gunData.getShootInterval()) {
-                return ShootResult.COOL_DOWN;
-            }
-            Level world = entity.level;
-            EntityBullet bullet = new EntityBullet(world, entity);
-            bullet.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0.0F, 10, 0);
-            world.addFreshEntity(bullet);
-            shooter.recordShootTime();
-            return ShootResult.SUCCESS;
-        }
-        return ShootResult.FAIL;
+        // todo 获取 GunData 并根据其中的弹道参数创建 EntityBullet
+        Level world = shooter.getLevel();
+        EntityBullet bullet = new EntityBullet(world, shooter);
+        bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 10, 0);
+        world.addFreshEntity(bullet);
     }
 }

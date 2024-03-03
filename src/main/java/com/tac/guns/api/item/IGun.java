@@ -26,9 +26,10 @@ public interface IGun {
      *
      * @param shooter 射手
      * @param gun     枪
-     * @return 射击结果如何
+     * @param pitch   射击的俯仰角(即 xRot )
+     * @param yaw     射击的偏航角(即 yRot )
      */
-    ShootResult shoot(LivingEntity shooter, ItemStack gun);
+    void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw);
 
     /**
      * 该物品是否为枪

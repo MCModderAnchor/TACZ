@@ -4,7 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
-import com.tac.guns.api.entity.IShooter;
+import com.tac.guns.api.entity.IClientPlayerGunOperator;
+import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
@@ -71,11 +72,10 @@ public class FirstPersonRenderGunEvent {
             ItemStack inventorySelected = inventory.getSelected();
             // FIXME 未来切枪，NBT 变了可能有问题
             if (hotbarSelected != inventory.selected || !ItemStack.matches(inventorySelected, hotbarSelectedStack)) {
-                animationStateMachine.onGunDraw();
                 hotbarSelected = inventory.selected;
                 hotbarSelectedStack = inventorySelected;
-                if (player instanceof IShooter shooter) {
-                    shooter.recordDrawTime();
+                if (player instanceof IClientPlayerGunOperator gunOperator) {
+                    gunOperator.draw();
                 }
             }
             // 在渲染之前，先更新动画，让动画数据写入模型
