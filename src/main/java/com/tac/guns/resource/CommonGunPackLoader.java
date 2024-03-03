@@ -52,7 +52,7 @@ public class CommonGunPackLoader {
     /**
      * 读取所有枪包的资源文件
      */
-    public static void reloadAsset(){
+    public static void reloadAsset() {
         CommonAssetManager.INSTANCE.clearAll();
 
         File[] files = FOLDER.toFile().listFiles((dir, name) -> true);
@@ -64,7 +64,7 @@ public class CommonGunPackLoader {
     /**
      * 读取所有枪包的定义文件
      */
-    public static void reloadIndex(){
+    public static void reloadIndex() {
         GUN_INDEX.clear();
 
         File[] files = FOLDER.toFile().listFiles((dir, name) -> true);
@@ -88,16 +88,6 @@ public class CommonGunPackLoader {
                 e.printStackTrace();
             }
         }
-    }
-
-    private static void readFiles() {
-        File[] files = FOLDER.toFile().listFiles((dir, name) -> true);
-        if (files == null) {
-            return;
-        }
-        // 需要读取两次，第一次获取所有的资源，第二次才能读取 index
-        readAsset(files);
-        readGunIndex(files);
     }
 
     private static void readAsset(File[] files) {
