@@ -3079,7 +3079,12 @@
 				{
 					"name": "l",
 					"parent": "root",
-					"pivot": [-9.075, 11.375, -3.425],
+					"pivot": [-9.075, 11.375, -3.425]
+				},
+				{
+					"name": "lefthand_pos",
+					"parent": "l",
+					"pivot": [-3.075, 0.375, -3.425],
 					"cubes": [
 						{
 							"origin": [-11.075, 0.375, -5.425],
@@ -3098,7 +3103,12 @@
 				{
 					"name": "R",
 					"parent": "root",
-					"pivot": [2.925, 11.375, -3.425],
+					"pivot": [2.925, 11.375, -3.425]
+				},
+				{
+					"name": "righthand_pos",
+					"parent": "R",
+					"pivot": [-3.075, 0.375, -3.425],
 					"cubes": [
 						{
 							"origin": [0.925, 0.375, -5.425],
@@ -3143,6 +3153,11 @@
 					"parent": "camera",
 					"pivot": [0, 8, 12],
 					"rotation": [0, 0, -3]
+				},
+				{
+					"name": "iron_view",
+					"parent": "camera",
+					"pivot": [-3.075, 4.425, 12.85]
 				}
 			]
 		}

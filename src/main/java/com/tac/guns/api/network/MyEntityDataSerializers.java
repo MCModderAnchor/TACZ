@@ -26,7 +26,6 @@ public class MyEntityDataSerializers {
         @Override
         public void write(@Nonnull FriendlyByteBuf pBuffer, @Nonnull ReloadState pValue) {
             pBuffer.writeInt(pValue.getStateType().ordinal());
-            pBuffer.writeLong(pValue.getReloadTimestamp());
             pBuffer.writeLong(pValue.getCountDown());
         }
 
@@ -34,7 +33,6 @@ public class MyEntityDataSerializers {
         public @Nonnull ReloadState read(@Nonnull FriendlyByteBuf pBuffer) {
             ReloadState reloadState = new ReloadState();
             reloadState.setStateType(ReloadState.StateType.values()[pBuffer.readInt()]);
-            reloadState.setReloadTimestamp(pBuffer.readLong());
             reloadState.setCountDown(pBuffer.readLong());
             return reloadState;
         }

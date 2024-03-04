@@ -1,45 +1,18 @@
 package com.tac.guns.api.gun;
 
-import com.tac.guns.resource.pojo.data.GunReloadData;
-
 public class ReloadState {
     public static final int NOT_RELOADING_COUNTDOWN = -1;
-    private long reloadTimestamp;
-    private ReloadState.StateType stateType;
-    private long countDown;
+    protected ReloadState.StateType stateType;
+    protected long countDown;
 
     public ReloadState(){
-        reloadTimestamp = -1L;
         stateType = StateType.NOT_RELOADING;
         countDown = NOT_RELOADING_COUNTDOWN;
     }
 
     public ReloadState(ReloadState src){
-        reloadTimestamp = src.reloadTimestamp;
         stateType = src.stateType;
         countDown = src.countDown;
-    }
-
-    public void startReloadEmpty(){
-        reloadTimestamp = System.currentTimeMillis();
-        stateType = StateType.EMPTY_RELOAD_FEEDING;
-    }
-
-    public void startReloadNormal(){
-        reloadTimestamp = System.currentTimeMillis();
-        stateType = StateType.NORMAL_RELOAD_FEEDING;
-    }
-
-    public long getReloadTimestamp() {
-        return reloadTimestamp;
-    }
-
-    public boolean isReloading(){
-        return stateType != StateType.NOT_RELOADING;
-    }
-
-    public boolean isReloadFinished(){
-        return stateType != StateType.EMPTY_RELOAD_FEEDING && stateType != StateType.NORMAL_RELOAD_FEEDING;
     }
 
     /**
@@ -59,10 +32,6 @@ public class ReloadState {
         return countDown;
     }
 
-    public void setReloadTimestamp(long reloadTimestamp) {
-        this.reloadTimestamp = reloadTimestamp;
-    }
-
     public void setStateType(StateType stateType) {
         this.stateType = stateType;
     }
@@ -71,47 +40,10 @@ public class ReloadState {
         this.countDown = countDown;
     }
 
-    public void tick(GunReloadData reloadData){
-        if(reloadTimestamp < 0){
-            return;
-        }
-        long progressTime = System.currentTimeMillis() - reloadTimestamp;
-        if(stateType.isReloadEmpty()){
-            long magFedTime = (long) (reloadData.getEmptyMagFedTime() * 1000);
-            long finishingTime = (long) (reloadData.getEmptyReloadTime() * 1000);
-            if(progressTime < magFedTime){
-                stateType = StateType.EMPTY_RELOAD_FEEDING;
-                countDown = magFedTime - progressTime;
-            }else if(progressTime < finishingTime){
-                stateType = StateType.EMPTY_RELOAD_FINISHING;
-                countDown = finishingTime - progressTime;
-            }else {
-                stateType = StateType.NOT_RELOADING;
-                countDown = NOT_RELOADING_COUNTDOWN;
-            }
-        }else if(stateType.isReloadNormal()){
-            long magFedTime = (long) (reloadData.getNormalMagFedTime() * 1000);
-            long finishingTime = (long) (reloadData.getNormalReloadTime() * 1000);
-            if(progressTime < magFedTime){
-                stateType = StateType.NORMAL_RELOAD_FEEDING;
-                countDown = magFedTime - progressTime;
-            }else if(progressTime < finishingTime){
-                stateType = StateType.NORMAL_RELOAD_FINISHING;
-                countDown = finishingTime - progressTime;
-            }else {
-                stateType = StateType.NOT_RELOADING;
-                countDown = NOT_RELOADING_COUNTDOWN;
-            }
-        }else {
-            stateType = StateType.NOT_RELOADING;
-            countDown = NOT_RELOADING_COUNTDOWN;
-        }
-    }
-
     @Override
     public boolean equals(Object o){
         if(o instanceof ReloadState reloadState){
-            return reloadState.stateType.equals(stateType) && reloadState.countDown == countDown && reloadState.reloadTimestamp == reloadTimestamp;
+            return reloadState.stateType.equals(stateType) && reloadState.countDown == countDown;
         }else {
             return false;
         }
@@ -139,12 +71,31 @@ public class ReloadState {
          */
         NORMAL_RELOAD_FINISHING;
 
-        public boolean isReloadEmpty(){
+        /**
+         * 判断这个状态是否是空仓换弹过程中的其中一个阶段。包括空仓换弹的收尾阶段。
+         */
+        public boolean isReloadingEmpty(){
             return this == EMPTY_RELOAD_FEEDING || this == EMPTY_RELOAD_FINISHING;
         }
 
-        public boolean isReloadNormal(){
+        /**
+         * 判断这个状态是否是战术换弹过程中的其中一个阶段。包括战术换弹的收尾阶段。
+         */
+        public boolean isReloadingNormal(){
             return this == NORMAL_RELOAD_FEEDING || this == NORMAL_RELOAD_FINISHING;
+        }
+        /**
+         * 判断这个状态是否是任意换弹过程中的其中一个阶段。包括任意换弹的收尾阶段。
+         */
+        public boolean isReloading(){
+            return isReloadingEmpty() || isReloadingNormal();
+        }
+
+        /**
+         * 判断这个状态是否是任意换弹过程中的的收尾阶段。
+         */
+        public boolean isReloadFinishing(){
+            return this == StateType.EMPTY_RELOAD_FINISHING || this == StateType.NORMAL_RELOAD_FINISHING;
         }
     }
 }

@@ -929,7 +929,7 @@
 					"pivot": [-8.225, 14.425, -0.7]
 				},
 				{
-					"name": "LeftHand",
+					"name": "lefthand_pos",
 					"parent": "l",
 					"pivot": [-2.225, 3.425, -0.7],
 					"cubes": [
@@ -7318,7 +7318,7 @@
 					"pivot": [3.775, 14.425, -0.7]
 				},
 				{
-					"name": "RightHand",
+					"name": "righthand_pos",
 					"parent": "R",
 					"pivot": [-2.225, 3.425, -0.7],
 					"cubes": [

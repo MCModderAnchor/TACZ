@@ -18,6 +18,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -87,7 +88,7 @@ public class FirstPersonRenderGunEvent {
             // 基岩版模型是上下颠倒的，需要翻转过来。
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
             // 应用枪械动态，如第一人称摄像机定位、后坐力的位移等
-            applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel);
+            applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTicks());
             // 调用模型渲染
             gunModel.render(0, transformType, stack, player, poseStack, event.getMultiBufferSource(), event.getPackedLight(), OverlayTexture.NO_OVERLAY);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
@@ -115,17 +116,23 @@ public class FirstPersonRenderGunEvent {
                                                      ItemStack gunItemStack,
                                                      ClientGunIndex gunIndex,
                                                      PoseStack poseStack,
-                                                     BedrockGunModel model) {
+                                                     BedrockGunModel model,
+                                                     float partialTicks) {
         // 应用定位组的变换（位移和旋转，不包括缩放）
-        applyFirstPersonPositioningTransform(poseStack, model);
+        applyFirstPersonPositioningTransform(poseStack, model, partialTicks);
     }
 
     /**
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。
      */
-    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model) {
-        // todo v就是瞄准动作的进度
-        float v = 0;
+    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, float partialTicks) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if(player == null){
+            return;
+        }
+        float aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress();
+        float oAimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getOClientAimingProgress();
+        float v = Mth.lerp(partialTicks, oAimingProgress, aimingProgress);
         // todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。
         if (true) {
             applyPositioningNodeTransform(model.getIronSightPath(), poseStack, v);

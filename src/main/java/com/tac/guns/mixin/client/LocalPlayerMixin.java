@@ -18,15 +18,21 @@ import com.tac.guns.network.message.ClientMessagePlayerAim;
 import com.tac.guns.network.message.ClientMessagePlayerFireSelect;
 import com.tac.guns.network.message.ClientMessagePlayerReloadGun;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
+import com.tac.guns.resource.CommonGunPackLoader;
+import com.tac.guns.resource.index.CommonGunIndex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -42,13 +48,24 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private long tac$ClientShootTimestamp = -1L;
     @Unique
-    private boolean tac$IsReloadRecorded = true;
+    private boolean tac$IsShootRecorded = true;
+
+    // 瞄准的进度，范围 0 ~ 1
+    @Unique
+    private float tac$ClientAimingProgress = 0;
+    @Unique
+    private float tac$oClientAimingProgress = 0;
+    // 瞄准时间戳，单位 ms
+    @Unique
+    private long tac$ClientAimingTimestamp = -1L;
+    @Unique
+    private boolean tac$ClientIsAiming = false;
 
     @Unique
     @Override
     public ShootResult shoot() {
         // 如果上一次异步开火的效果还未执行，则直接返回，等待异步开火效果执行
-        if (!tac$IsReloadRecorded) {
+        if (!tac$IsShootRecorded) {
             return ShootResult.COOL_DOWN;
         }
         LocalPlayer player = (LocalPlayer) (Object) this;
@@ -69,7 +86,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 coolDown = 0;
             }
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
-            if (reloadState.isReloading()) {
+            if (reloadState.getStateType().isReloading()) {
                 return ShootResult.FAIL;
             }
             // todo 判断是否在 draw
@@ -77,13 +94,13 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
                 return ShootResult.FAIL;
             }
-            tac$IsReloadRecorded = false;
+            tac$IsShootRecorded = false;
             // 开火效果需要延时执行，这样渲染效果更好。
             tac$ScheduledExecutorService.schedule(() -> {
                 // 记录新的开火时间戳
                 tac$ClientShootTimestamp = System.currentTimeMillis();
                 // 转换 isRecord 状态，允许下一个tick的开火检测。
-                tac$IsReloadRecorded = true;
+                tac$IsShootRecorded = true;
                 // 发送开火的数据包，通知服务器。暂时只考虑主手能打枪。
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot(player.getInventory().selected));
                 // 动画状态机转移状态
@@ -106,7 +123,10 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void draw() {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        // todo 重置各个状态
+        // 重制客户端的 shoot 时间戳
+        tac$IsShootRecorded = true;
+        tac$ClientShootTimestamp = -1;
+        // 放映 draw 动画
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
@@ -122,9 +142,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         LocalPlayer player = (LocalPlayer) (Object) this;
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-            // 判断换弹是否未完成
+            // 检查换弹是否未完成
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
-            if (!reloadState.isReloadFinished()) {
+            if (reloadState.getStateType().isReloading()) {
                 return;
             }
             // 判断是否正在开火冷却
@@ -188,10 +208,60 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (IGun.mainhandHoldGun(player)) {
             ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
             ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                // TODO 计时系统
+                // todo 发个 GunAimingEvent
+                // todo 判断能不能瞄准
+                tac$ClientIsAiming = isAim;
+                tac$ClientAimingTimestamp = System.currentTimeMillis();
                 // 发送切换开火模式的数据包，通知服务器
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(player.getInventory().selected, isAim));
             });
         }
+    }
+
+    @Unique
+    @Override
+    public float getClientAimingProgress(){
+        return tac$ClientAimingProgress;
+    }
+
+    @Unique
+    @Override
+    public float getOClientAimingProgress(){
+        return tac$oClientAimingProgress;
+    }
+
+    @Inject(method = "tick", at = @At("RETURN"))
+    public void onTickClientSide(CallbackInfo ci){
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        if(player.getLevel().isClientSide()){
+            tickAimingProgress();
+        }
+    }
+
+    @Unique
+    private void tickAimingProgress(){
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        ItemStack mainHandItem  = player.getMainHandItem();
+        // 如果主手物品不是枪械，则取消瞄准状态并将 aimingProgress 归零，返回。
+        ResourceLocation gunId = GunItem.getData(mainHandItem).getGunId();
+        Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
+        if(gunIndexOptional.isEmpty()){
+            tac$ClientAimingProgress = 0;
+            tac$oClientAimingProgress = 0;
+            return;
+        }
+        tac$oClientAimingProgress = tac$ClientAimingProgress;
+        float aimTime = gunIndexOptional.get().getGunData().getAimTime();
+        float alphaProgress = (System.currentTimeMillis() - tac$ClientAimingTimestamp + 1) / (aimTime * 1000);
+        if(tac$ClientIsAiming){
+            // 处于执行瞄准状态，增加 aimingProgress
+            tac$ClientAimingProgress += alphaProgress;
+            if(tac$ClientAimingProgress > 1) tac$ClientAimingProgress = 1;
+        }else{
+            // 处于取消瞄准状态，减小 aimingProgress
+            tac$ClientAimingProgress -= alphaProgress;
+            if(tac$ClientAimingProgress < 0) tac$ClientAimingProgress = 0;
+        }
+        tac$ClientAimingTimestamp = System.currentTimeMillis();
     }
 }

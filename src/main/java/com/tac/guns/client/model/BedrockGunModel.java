@@ -60,7 +60,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 
     public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version, RenderType renderType) {
         super(pojo, version, renderType);
-        this.setFunctionalRenderer("LeftHand", bedrockPart -> (poseStack, transformType, consumer, light, overlay) -> {
+        this.setFunctionalRenderer("lefthand_pos", bedrockPart -> (poseStack, transformType, consumer, light, overlay) -> {
             if (transformType.firstPerson()) {
                 poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
                 Matrix3f normal = poseStack.last().normal().copy();
@@ -74,7 +74,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 });
             }
         });
-        this.setFunctionalRenderer("RightHand", bedrockPart -> (poseStack, transformType, consumer, light, overlay) -> {
+        this.setFunctionalRenderer("righthand_pos", bedrockPart -> (poseStack, transformType, consumer, light, overlay) -> {
             if (transformType.firstPerson()) {
                 poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
                 Matrix3f normal = poseStack.last().normal().copy();

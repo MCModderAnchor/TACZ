@@ -31,7 +31,7 @@
 					"pivot": [2.6, 14.825, 8]
 				},
 				{
-					"name": "RightHand",
+					"name": "righthand_pos",
 					"parent": "R",
 					"pivot": [-3.4, 3.825, 8],
 					"cubes": [
@@ -6918,7 +6918,7 @@
 					"pivot": [-9.4, 14.825, 8]
 				},
 				{
-					"name": "LeftHand",
+					"name": "lefthand_pos",
 					"parent": "L",
 					"pivot": [-3.4, 3.825, 8],
 					"cubes": [
@@ -6944,6 +6944,11 @@
 					"name": "idle_view",
 					"parent": "camera",
 					"pivot": [0, 8, 16]
+				},
+				{
+					"name": "iron_view",
+					"parent": "camera",
+					"pivot": [-3.4, 5.125, 15.25]
 				},
 				{
 					"name": "positioning",

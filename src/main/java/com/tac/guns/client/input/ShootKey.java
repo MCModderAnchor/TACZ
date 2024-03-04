@@ -46,7 +46,6 @@ public class ShootKey {
     public static void semiShoot(InputEvent.MouseInputEvent event) {
         if (isInGame() && SHOOT_KEY.isDown()) {
             Minecraft mc = Minecraft.getInstance();
-            System.out.println("aaa");
             LocalPlayer player = mc.player;
             if (player == null) {
                 return;

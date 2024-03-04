@@ -24,6 +24,10 @@ public interface IClientPlayerGunOperator {
 
     void aim(boolean isAim);
 
+    float getClientAimingProgress();
+
+    float getOClientAimingProgress();
+
     static IClientPlayerGunOperator fromLocalPlayer(LocalPlayer player) {
         return (IClientPlayerGunOperator) player;
     }

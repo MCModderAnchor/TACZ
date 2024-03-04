@@ -8,14 +8,19 @@ import net.minecraft.world.item.ItemStack;
 
 public interface IGunOperator {
     /**
-     * 获取双端同步的射击的冷却，在客户端改变此值不会影响服务端逻辑。
+     * 获取从服务端同步的射击的冷却
      */
     long getSynShootCoolDown();
 
     /**
-     * 获取双端同步的换弹状态，在客户端改变此值不会影响服务端逻辑。
+     * 获取从服务端同步的换弹状态
      */
     ReloadState getSynReloadState();
+
+    /**
+     * 获取从服务端同步的瞄准进度
+     */
+    float getSynAimingProgress();
 
     void draw(ItemStack gunItemStack);
 
