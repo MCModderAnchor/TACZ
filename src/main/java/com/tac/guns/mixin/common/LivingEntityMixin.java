@@ -197,7 +197,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     public void aim(ItemStack gunItemStack, boolean isAim) {
         // todo 判断当前状态能不能瞄准
         tac$CurrentGunItem = gunItemStack;
-        tac$AimingTimestamp = System.currentTimeMillis();
         tac$IsAiming = isAim;
     }
 
@@ -249,6 +248,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         // currentGunItem 如果为 null，则取消瞄准状态并将 aimingProgress 归零。
         if (tac$CurrentGunItem == null) {
             tac$AimingProgress = 0;
+            tac$AimingTimestamp = System.currentTimeMillis();
             return;
         }
         // 如果获取不到 aimTime，则取消瞄准状态并将 aimingProgress 归零，返回。

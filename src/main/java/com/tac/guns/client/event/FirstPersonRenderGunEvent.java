@@ -13,6 +13,7 @@ import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.item.nbt.GunItemData;
+import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -38,6 +40,10 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.Transform
 public class FirstPersonRenderGunEvent {
     private static int hotbarSelected = -1;
     private static ItemStack hotbarSelectedStack = ItemStack.EMPTY;
+    // 用于生成瞄准动作的运动曲线，使动作看起来更平滑
+    private static final SecondOrderDynamics aimingDynamics = new SecondOrderDynamics(0.75f, 1.2f, 0.5f, 0);
+    private static float oldAimingProgress = 0;
+    private static float aimingProgress = 0;
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
@@ -112,6 +118,16 @@ public class FirstPersonRenderGunEvent {
         }
     }
 
+    @SubscribeEvent
+    public static void tickAimingLerp(TickEvent.ClientTickEvent tickEvent){
+        LocalPlayer player = Minecraft.getInstance().player;
+        if(player == null){
+            return;
+        }
+        oldAimingProgress = aimingProgress;
+        aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress();
+    }
+
     private static void applyFirstPersonGunTransform(LocalPlayer player,
                                                      ItemStack gunItemStack,
                                                      ClientGunIndex gunIndex,
@@ -126,13 +142,8 @@ public class FirstPersonRenderGunEvent {
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。
      */
     private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, float partialTicks) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if(player == null){
-            return;
-        }
-        float aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress();
-        float oAimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getOClientAimingProgress();
-        float v = Mth.lerp(partialTicks, oAimingProgress, aimingProgress);
+        float v = Mth.lerp(partialTicks, oldAimingProgress, aimingProgress);
+        v = aimingDynamics.update(0, v);
         // todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。
         if (true) {
             applyPositioningNodeTransform(model.getIronSightPath(), poseStack, v);

@@ -36,7 +36,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     public static final String GROUND_ORIGIN_NODE = "ground";
     public static final String SCOPE_POS_NODE = "scope_pos";
     public static final String EJECTION_NODE = "ejection";
-    private final SecondOrderDynamics aimingDynamics = new SecondOrderDynamics(0.45f, 0.8f, 1.2f, 0);
     // 第一人称机瞄摄像机定位组的路径
     protected @Nullable List<BedrockPart> ironSightPath;
     // 第一人称idle状态摄像机定位组的路径

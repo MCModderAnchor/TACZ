@@ -55,8 +55,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     // 瞄准的进度，范围 0 ~ 1
     @Unique
     private float tac$ClientAimingProgress = 0;
-    @Unique
-    private float tac$oClientAimingProgress = 0;
     // 瞄准时间戳，单位 ms
     @Unique
     private long tac$ClientAimingTimestamp = -1L;
@@ -216,7 +214,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 // todo 发个 GunAimingEvent
                 // todo 判断能不能瞄准
                 tac$ClientIsAiming = isAim;
-                tac$ClientAimingTimestamp = System.currentTimeMillis();
                 // 发送切换开火模式的数据包，通知服务器
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(player.getInventory().selected, isAim));
             });
@@ -227,12 +224,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public float getClientAimingProgress() {
         return tac$ClientAimingProgress;
-    }
-
-    @Unique
-    @Override
-    public float getOClientAimingProgress() {
-        return tac$oClientAimingProgress;
     }
 
     @Inject(method = "tick", at = @At("RETURN"))
@@ -252,10 +243,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             tac$ClientAimingProgress = 0;
-            tac$oClientAimingProgress = 0;
             return;
         }
-        tac$oClientAimingProgress = tac$ClientAimingProgress;
         float aimTime = gunIndexOptional.get().getGunData().getAimTime();
         float alphaProgress = (System.currentTimeMillis() - tac$ClientAimingTimestamp + 1) / (aimTime * 1000);
         if (tac$ClientIsAiming) {

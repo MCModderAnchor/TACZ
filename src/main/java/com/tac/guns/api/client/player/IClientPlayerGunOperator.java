@@ -26,8 +26,6 @@ public interface IClientPlayerGunOperator {
 
     float getClientAimingProgress();
 
-    float getOClientAimingProgress();
-
     static IClientPlayerGunOperator fromLocalPlayer(LocalPlayer player) {
         return (IClientPlayerGunOperator) player;
     }
