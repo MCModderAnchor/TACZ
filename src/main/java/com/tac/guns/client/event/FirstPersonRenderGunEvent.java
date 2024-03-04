@@ -148,9 +148,9 @@ public class FirstPersonRenderGunEvent {
         poseStack.translate(0, 1.5f, 0);
         for (int f = nodePath.size() - 1; f >= 0; f--) {
             BedrockPart t = nodePath.get(f);
-            poseStack.mulPose(Vector3f.XN.rotation(t.xRot));
-            poseStack.mulPose(Vector3f.YN.rotation(t.yRot));
-            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot));
+            poseStack.mulPose(Vector3f.XN.rotation(t.xRot * weight));
+            poseStack.mulPose(Vector3f.YN.rotation(t.yRot * weight));
+            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot * weight));
             if (t.getParent() != null)
                 poseStack.translate(-t.x / 16.0F * weight, -t.y / 16.0F * weight, -t.z / 16.0F * weight);
             else {

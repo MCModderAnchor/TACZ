@@ -237,7 +237,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         // tick 装弹状态
         ReloadState reloadState = tickReloadState();
         tickAimingProgress();
-        entity.sendMessage(new TextComponent(tac$AimingProgress + ""), UUID.randomUUID());
         // 从服务端同步数据
         this.getEntityData().set(DATA_SHOOT_COOL_DOWN_ID, getShootCoolDown());
         this.getEntityData().set(DATA_RELOAD_STATE_ID, reloadState);
