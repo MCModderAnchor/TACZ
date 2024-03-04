@@ -2,8 +2,8 @@ package com.tac.guns.mixin.client;
 
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
-import com.tac.guns.api.event.GunReloadEvent;
 import com.tac.guns.api.event.GunFireSelectEvent;
+import com.tac.guns.api.event.GunReloadEvent;
 import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
@@ -14,8 +14,9 @@ import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
-import com.tac.guns.network.message.ClientMessagePlayerReloadGun;
+import com.tac.guns.network.message.ClientMessagePlayerAim;
 import com.tac.guns.network.message.ClientMessagePlayerFireSelect;
+import com.tac.guns.network.message.ClientMessagePlayerReloadGun;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
@@ -34,10 +35,10 @@ import java.util.concurrent.TimeUnit;
 
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
-    @Shadow public Input input;
+    @Shadow
+    public Input input;
     @Unique
     private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
-
     @Unique
     private long tac$ClientShootTimestamp = -1L;
     @Unique
@@ -47,28 +48,28 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public ShootResult shoot() {
         // 如果上一次异步开火的效果还未执行，则直接返回，等待异步开火效果执行
-        if(!tac$IsReloadRecorded){
+        if (!tac$IsReloadRecorded) {
             return ShootResult.COOL_DOWN;
         }
         LocalPlayer player = (LocalPlayer) (Object) this;
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
         Optional<ClientGunIndex> gunIndexOptional = ClientGunPackLoader.getGunIndex(gunId);
-        if(gunIndexOptional.isEmpty()){
+        if (gunIndexOptional.isEmpty()) {
             return ShootResult.FAIL;
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
         if (IGun.mainhandHoldGun(player)) {
             long coolDown = gunIndex.getGunData().getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
             // 如果射击冷却大于 1 tick (即 50 ms)，则不允许开火
-            if(coolDown > 50){
+            if (coolDown > 50) {
                 return ShootResult.COOL_DOWN;
             }
             // 如果射击冷却小于 1 tick，则认为玩家已经开火，但开火的客户端效果异步延迟执行。
-            if(coolDown < 0){
+            if (coolDown < 0) {
                 coolDown = 0;
             }
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
-            if(reloadState.isReloading()){
+            if (reloadState.isReloading()) {
                 return ShootResult.FAIL;
             }
             // todo 判断是否在 draw
@@ -91,7 +92,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                     animationStateMachine.onGunShoot();
                 }
                 // 播放声音、摄像机后坐需要从异步线程上传到主线程执行。
-                Minecraft.getInstance().submitAsync(() ->{
+                Minecraft.getInstance().submitAsync(() -> {
                     SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
                     player.setXRot(player.getXRot() - 0.5f);
                 });
@@ -123,11 +124,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             // 判断换弹是否未完成
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
-            if(!reloadState.isReloadFinished()){
+            if (!reloadState.isReloadFinished()) {
                 return;
             }
             // 判断是否正在开火冷却
-            if(IGunOperator.fromLivingEntity(player).getSynShootCoolDown() > 0){
+            if (IGunOperator.fromLivingEntity(player).getSynShootCoolDown() > 0) {
                 return;
             }
             // todo 检查 draw 是否还未完成
@@ -171,12 +172,25 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                     return;
                 }
                 // 发送切换开火模式的数据包，通知服务器
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect(player.getInventory().selected));
                 // 动画状态机转移状态
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (animationStateMachine != null) {
                     animationStateMachine.onGunFireSelect();
                 }
+            });
+        }
+    }
+
+    @Override
+    public void aim(boolean isAim) {
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        if (IGun.mainhandHoldGun(player)) {
+            ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+            ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                // TODO 计时系统
+                // 发送切换开火模式的数据包，通知服务器
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(player.getInventory().selected, isAim));
             });
         }
     }

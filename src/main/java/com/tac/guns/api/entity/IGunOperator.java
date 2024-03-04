@@ -1,7 +1,7 @@
 package com.tac.guns.api.entity;
 
-import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.FireMode;
+import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +32,8 @@ public interface IGunOperator {
      * @return 本次射击的结果
      */
     ShootResult shoot(ItemStack gunItemStack, float pitch, float yaw);
+
+    void aim(ItemStack gunItemStack, boolean isAim);
 
     static IGunOperator fromLivingEntity(LivingEntity entity) {
         return (IGunOperator) entity;
