@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 public interface IGunOperator {
     /**
-     * 获取双端同步的射击时间戳，在客户端改变此值不会影响服务端逻辑。
+     * 获取双端同步的射击的冷却，在客户端改变此值不会影响服务端逻辑。
      */
     long getSynShootCoolDown();
 
