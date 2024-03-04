@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 import com.tac.guns.api.gun.FireMode;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 
 public class GunData {
@@ -25,6 +24,9 @@ public class GunData {
 
     @SerializedName("fire_mode")
     private List<FireMode> fireModeSet;
+
+    @SerializedName("recoil")
+    private GunRecoil recoil;
 
     public ResourceLocation getAmmoId() {
         return ammoId;
@@ -48,6 +50,10 @@ public class GunData {
 
     public List<FireMode> getFireModeSet() {
         return fireModeSet;
+    }
+
+    public GunRecoil getRecoil() {
+        return recoil;
     }
 
     /**
