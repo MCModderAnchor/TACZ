@@ -2,6 +2,8 @@ package com.tac.guns.client.event;
 
 import com.tac.guns.GunMod;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
+import com.tac.guns.api.entity.IGunOperator;
+import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.resource.ClientGunPackLoader;
@@ -28,9 +30,14 @@ public class GameOverlayEvent {
         }
         if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT) {
             LocalPlayer player = Minecraft.getInstance().player;
-            IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             // 瞄准快要完成时，取消准心渲染
-            if(gunOperator.getClientAimingProgress() > 0.9){
+            if(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress() > 0.9){
+                event.setCanceled(true);
+                return;
+            }
+            // 换弹进行时取消准心渲染
+            ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
+            if(reloadState.getStateType().isReloading()){
                 event.setCanceled(true);
                 return;
             }

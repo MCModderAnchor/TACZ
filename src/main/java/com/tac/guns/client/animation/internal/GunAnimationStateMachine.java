@@ -62,17 +62,10 @@ public class GunAnimationStateMachine {
         }
         ObjectAnimationRunner transitionTo = runner.getTransitionTo();
         ObjectAnimation animation = Objects.requireNonNullElse(transitionTo, runner).getAnimation();
-        return checkHideCrossHair(animation.name);
+        return INSPECT_ANIMATION.equals(animation.name);
     }
 
     public void update() {
         controller.update();
-    }
-
-    private boolean checkHideCrossHair(String name){
-        if(name == null){
-            return false;
-        }
-        return RELOAD_EMPTY_ANIMATION.equals(name) || RELOAD_NORMAL_ANIMATION.equals(name) || INSPECT_ANIMATION.equals(name);
     }
 }
