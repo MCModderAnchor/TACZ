@@ -7,9 +7,11 @@ import com.tac.guns.GunMod;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.loader.GunDataLoader;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
+import com.tac.guns.resource.serialize.PairSerializer;
 import com.tac.guns.util.GetJarResources;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -30,7 +32,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class CommonGunPackLoader {
-    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
+    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+            .registerTypeAdapter(Pair.class, new PairSerializer()).create();
 
     private static final Map<ResourceLocation, CommonGunIndex> GUN_INDEX = Maps.newHashMap();
     private static final Marker MARKER = MarkerManager.getMarker("CommonGunPackLoader");

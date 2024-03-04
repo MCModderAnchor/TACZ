@@ -20,6 +20,8 @@ import com.tac.guns.network.message.ClientMessagePlayerReloadGun;
 import com.tac.guns.network.message.ClientMessagePlayerShoot;
 import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.pojo.data.GunData;
+import com.tac.guns.resource.pojo.data.GunRecoil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
@@ -76,7 +78,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
         if (IGun.mainhandHoldGun(player)) {
-            long coolDown = gunIndex.getGunData().getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
+            GunData gunData = gunIndex.getGunData();
+            long coolDown = gunData.getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
             // 如果射击冷却大于 1 tick (即 50 ms)，则不允许开火
             if (coolDown > 50) {
                 return ShootResult.COOL_DOWN;
@@ -111,7 +114,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 // 播放声音、摄像机后坐需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
                     SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
-                    player.setXRot(player.getXRot() - 0.5f);
+                    GunRecoil recoil = gunData.getRecoil();
+                    player.setXRot(player.getXRot() - recoil.getRandomPitch());
+                    player.setYRot(player.getYRot() + recoil.getRandomYaw());
                 });
             }, coolDown, TimeUnit.MILLISECONDS);
             return ShootResult.SUCCESS;
@@ -220,32 +225,32 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
 
     @Unique
     @Override
-    public float getClientAimingProgress(){
+    public float getClientAimingProgress() {
         return tac$ClientAimingProgress;
     }
 
     @Unique
     @Override
-    public float getOClientAimingProgress(){
+    public float getOClientAimingProgress() {
         return tac$oClientAimingProgress;
     }
 
     @Inject(method = "tick", at = @At("RETURN"))
-    public void onTickClientSide(CallbackInfo ci){
+    public void onTickClientSide(CallbackInfo ci) {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        if(player.getLevel().isClientSide()){
+        if (player.getLevel().isClientSide()) {
             tickAimingProgress();
         }
     }
 
     @Unique
-    private void tickAimingProgress(){
+    private void tickAimingProgress() {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        ItemStack mainHandItem  = player.getMainHandItem();
+        ItemStack mainHandItem = player.getMainHandItem();
         // 如果主手物品不是枪械，则取消瞄准状态并将 aimingProgress 归零，返回。
         ResourceLocation gunId = GunItem.getData(mainHandItem).getGunId();
         Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
-        if(gunIndexOptional.isEmpty()){
+        if (gunIndexOptional.isEmpty()) {
             tac$ClientAimingProgress = 0;
             tac$oClientAimingProgress = 0;
             return;
@@ -253,14 +258,14 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         tac$oClientAimingProgress = tac$ClientAimingProgress;
         float aimTime = gunIndexOptional.get().getGunData().getAimTime();
         float alphaProgress = (System.currentTimeMillis() - tac$ClientAimingTimestamp + 1) / (aimTime * 1000);
-        if(tac$ClientIsAiming){
+        if (tac$ClientIsAiming) {
             // 处于执行瞄准状态，增加 aimingProgress
             tac$ClientAimingProgress += alphaProgress;
-            if(tac$ClientAimingProgress > 1) tac$ClientAimingProgress = 1;
-        }else{
+            if (tac$ClientAimingProgress > 1) tac$ClientAimingProgress = 1;
+        } else {
             // 处于取消瞄准状态，减小 aimingProgress
             tac$ClientAimingProgress -= alphaProgress;
-            if(tac$ClientAimingProgress < 0) tac$ClientAimingProgress = 0;
+            if (tac$ClientAimingProgress < 0) tac$ClientAimingProgress = 0;
         }
         tac$ClientAimingTimestamp = System.currentTimeMillis();
     }

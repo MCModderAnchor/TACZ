@@ -23,5 +23,17 @@
   // 抬起动作完成后，枪械可以进行开火、检视等行为。
   "draw_time": 0.35,
   "aim_time": 0.35,
-  "fire_mode": ["semi"]
+  "fire_mode": [
+    "semi"
+  ],
+  "recoil": {
+    "pitch": [
+      5,
+      7
+    ],
+    "yaw": [
+      -0.2,
+      0.2
+    ]
+  }
 }
