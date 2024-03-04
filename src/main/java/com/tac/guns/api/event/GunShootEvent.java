@@ -6,6 +6,9 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
+/**
+ * 生物射击时触发的事件。
+ */
 @Cancelable
 public class GunShootEvent extends Event {
     private final LivingEntity shooter;
