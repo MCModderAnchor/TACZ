@@ -8,6 +8,7 @@ import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.index.ClientAmmoIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.loader.*;
+import com.tac.guns.client.resource.pojo.display.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
 import com.tac.guns.client.resource.serialize.Vector3fSerializer;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
@@ -41,6 +42,7 @@ public class ClientGunPackLoader {
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(CubesItem.class, new CubesItem.Deserializer())
             .registerTypeAdapter(Vector3f.class, new Vector3fSerializer())
+            .registerTypeAdapter(CommonTransformObject.class, new CommonTransformObject.Serializer())
             .create();
 
     private static final Marker MARKER = MarkerManager.getMarker("ClientGunPackLoader");

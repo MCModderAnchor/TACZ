@@ -163,8 +163,9 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
 
                 {
                     //如果当前node是根node(也就是包含于shouldRender中)，则获取其bonesItem，以便后续计算相对位移 offset。
-                    if (shouldRender.contains(rendererWrapper.getModelRenderer()))
+                    if (shouldRender.contains(rendererWrapper.getModelRenderer())) {
                         bonesItem = indexBones.get(nodeName);
+                    }
                 }
 
                 @Override

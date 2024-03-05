@@ -30,6 +30,9 @@ public class GunDisplay {
     @Nullable
     @SerializedName("shell")
     private ShellEjection shellEjection;
+    @Nullable
+    @SerializedName("ica")
+    private AnimationInfluenceCoefficient animationInfluenceCoefficient;
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -67,5 +70,10 @@ public class GunDisplay {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
+    }
+
+    @Nullable
+    public AnimationInfluenceCoefficient getAnimationInfluenceCoefficient() {
+        return animationInfluenceCoefficient;
     }
 }

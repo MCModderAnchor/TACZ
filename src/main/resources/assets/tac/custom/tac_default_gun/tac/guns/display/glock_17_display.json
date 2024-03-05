@@ -27,5 +27,13 @@
         0.4
       ]
     }
+  },
+  "ica": {
+    "iron_view": {
+      "translation": [0.2, 0.2, 0.4]
+    },
+    "scope_view": {
+      "rotation": [0.1, 0.2, 0.2]
+    }
   }
 }

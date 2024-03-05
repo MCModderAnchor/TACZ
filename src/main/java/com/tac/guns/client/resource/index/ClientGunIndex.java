@@ -7,6 +7,7 @@ import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientAssetManager;
+import com.tac.guns.client.resource.pojo.display.AnimationInfluenceCoefficient;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.client.resource.pojo.display.GunModelTexture;
 import com.tac.guns.client.resource.pojo.display.GunTransform;
@@ -42,6 +43,7 @@ public class ClientGunIndex {
     private GunTransform transform;
     private GunData gunData;
     private RenderType slotRenderType;
+    private AnimationInfluenceCoefficient animationInfluenceCoefficient;
 
     private ClientGunIndex() {
     }
@@ -57,6 +59,7 @@ public class ClientGunIndex {
         checkAnimation(display, index);
         checkSounds(display, index);
         checkTransform(display, index);
+        checkAnimationInfluenceCoefficient(display, index);
         return index;
     }
 
@@ -203,6 +206,11 @@ public class ClientGunIndex {
         index.slotRenderType = RenderType.entityTranslucent(slotTexture);
     }
 
+    private static void checkAnimationInfluenceCoefficient(GunDisplay display, ClientGunIndex index){
+        index.animationInfluenceCoefficient = Objects.requireNonNullElse(display.getAnimationInfluenceCoefficient(), new AnimationInfluenceCoefficient());
+        index.animationInfluenceCoefficient.writeDefaultIfNull();
+    }
+
     public String getName() {
         return name;
     }
@@ -234,5 +242,9 @@ public class ClientGunIndex {
 
     public GunData getGunData() {
         return gunData;
+    }
+
+    public AnimationInfluenceCoefficient getAnimationInfluenceCoefficient() {
+        return animationInfluenceCoefficient;
     }
 }
