@@ -30,10 +30,7 @@ public class ClientMessagePlayerDrawGun {
                 if (entity == null) {
                     return;
                 }
-                // todo 玩家暂时只考虑主手枪械能操作。
-                if(message.slotIndex != entity.getInventory().selected){
-                    return;
-                }
+                // todo 验证 slotIndex 是否为允许 draw 的槽位
                 IGunOperator.fromLivingEntity(entity).draw(entity.getInventory().getItem(message.slotIndex));
             });
         }
