@@ -2,7 +2,7 @@ package com.tac.guns.item;
 
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
+import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.entity.EntityBullet;
@@ -66,7 +66,9 @@ public class GunItem extends Item implements IGun {
         if (this.allowdedIn(modeTab)) {
             ClientGunPackLoader.getAllGuns().forEach(entry -> {
                 GunItemData data = new GunItemData();
+                ClientGunIndex index = entry.getValue();
                 data.setGunId(entry.getKey());
+                data.setFireMode(index.getGunData().getFireModeSet().get(0));
                 stacks.add(setData(this.getDefaultInstance(), data));
             });
         }
@@ -78,7 +80,7 @@ public class GunItem extends Item implements IGun {
             @Override
             public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
                 Minecraft minecraft = Minecraft.getInstance();
-                return new TileEntityItemStackGunRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+                return new GunItemRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
             }
         });
     }

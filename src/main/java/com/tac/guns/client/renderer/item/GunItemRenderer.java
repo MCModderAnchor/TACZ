@@ -1,11 +1,11 @@
-package com.tac.guns.client.renderer.tileentity;
+package com.tac.guns.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.model.SlotGunModel;
+import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.pojo.display.TransformScale;
@@ -26,10 +26,10 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.Transform
 /**
  * 负责第一人称以外的枪械模型渲染。第一人称渲染参见 {@link com.tac.guns.client.event.FirstPersonRenderGunEvent}
  */
-public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRenderer {
-    private static final SlotGunModel SLOT_GUN_MODEL = new SlotGunModel();
+public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
+    private static final SlotModel SLOT_GUN_MODEL = new SlotModel();
 
-    public TileEntityItemStackGunRenderer(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
+    public GunItemRenderer(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
     }
 
@@ -65,6 +65,7 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
             }
             // 剩下的渲染
             ResourceLocation gunId = GunItem.getData(stack).getGunId();
+            // TODO 如果没有这个 gunID，应该渲染个什么错误材质提醒别人
             ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
                 if (transformType == GUI) {
                     poseStack.pushPose();

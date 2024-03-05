@@ -11,6 +11,7 @@ import com.tac.guns.client.resource.loader.*;
 import com.tac.guns.client.resource.pojo.display.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
 import com.tac.guns.client.resource.serialize.Vector3fSerializer;
+import com.tac.guns.resource.pojo.AmmoIndexPOJO;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.util.GetJarResources;
 import com.tac.guns.util.TacPathVisitor;
@@ -81,7 +82,7 @@ public class ClientGunPackLoader {
 
         File[] files = FOLDER.toFile().listFiles((dir, name) -> true);
         if (files != null) {
-            readGunIndex(files);
+            readIndex(files);
         }
     }
 
@@ -135,10 +136,10 @@ public class ClientGunPackLoader {
         }
     }
 
-    private static void readGunIndex(File[] files) {
+    private static void readIndex(File[] files) {
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".zip")) {
-                readZipGunIndex(file);
+                readZipIndex(file);
             }
             if (file.isDirectory()) {
                 File[] subFiles = file.listFiles((dir, name) -> true);
@@ -146,7 +147,7 @@ public class ClientGunPackLoader {
                     return;
                 }
                 for (File namespaceFile : subFiles) {
-                    readDirGunIndex(namespaceFile);
+                    readDirIndex(namespaceFile);
                 }
             }
         }
@@ -156,6 +157,7 @@ public class ClientGunPackLoader {
         if (root.isDirectory()) {
             try {
                 GunDisplayLoader.load(root);
+                AmmoDisplayLoader.load(root);
                 AnimationLoader.load(root);
                 BedrockModelLoader.load(root);
                 TextureLoader.load(root);
@@ -167,9 +169,10 @@ public class ClientGunPackLoader {
         }
     }
 
-    private static void readDirGunIndex(File root) {
+    private static void readDirIndex(File root) {
         if (root.isDirectory()) {
             try {
+                loadAmmoIndex(root);
                 loadGunIndex(root);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -184,6 +187,9 @@ public class ClientGunPackLoader {
                 String path = iteration.nextElement().getName();
                 // 加载全部的 display 文件
                 if (GunDisplayLoader.load(zipFile, path)) {
+                    continue;
+                }
+                if (AmmoDisplayLoader.load(zipFile, path)) {
                     continue;
                 }
                 // 加载全部的 animation 文件
@@ -210,13 +216,14 @@ public class ClientGunPackLoader {
         }
     }
 
-    private static void readZipGunIndex(File file) {
+    private static void readZipIndex(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
             // 第一次读取
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
                 // 加载枪械的 index 文件
+                loadAmmoIndex(path, zipFile);
                 loadGunIndex(path, zipFile);
             }
         } catch (IOException ioException) {
@@ -256,6 +263,50 @@ public class ClientGunPackLoader {
                     // 获取枪械的定义文件
                     GunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunIndexPOJO.class);
                     GUN_INDEX.put(id, ClientGunIndex.getInstance(indexPOJO));
+                } catch (IOException exception) {
+                    GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
+                    exception.printStackTrace();
+                } catch (IllegalArgumentException exception) {
+                    GunMod.LOGGER.warn("{} index file read fail!", file);
+                    exception.printStackTrace();
+                }
+            });
+            Files.walkFileTree(filePath, visitor);
+        }
+    }
+
+    private static void loadAmmoIndex(String path, ZipFile zipFile) throws IOException {
+        Matcher matcher = AMMO_INDEX_PATTERN.matcher(path);
+        if (matcher.find()) {
+            String namespace = matcher.group(1);
+            String id = matcher.group(2);
+            ZipEntry entry = zipFile.getEntry(path);
+            if (entry == null) {
+                GunMod.LOGGER.warn(MARKER, "{} file don't exist", path);
+                return;
+            }
+            try (InputStream stream = zipFile.getInputStream(entry)) {
+                // 获取枪械的定义文件
+                AmmoIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AmmoIndexPOJO.class);
+                ResourceLocation registryName = new ResourceLocation(namespace, id);
+                try {
+                    AMMO_INDEX.put(registryName, ClientAmmoIndex.getInstance(indexPOJO));
+                } catch (IllegalArgumentException exception) {
+                    GunMod.LOGGER.warn("{} index file read fail!", path);
+                    exception.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static void loadAmmoIndex(File root) throws IOException {
+        Path filePath = root.toPath().resolve("ammo/index");
+        if (Files.isDirectory(filePath)) {
+            TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
+                try (InputStream stream = Files.newInputStream(file)) {
+                    // 获取枪械的定义文件
+                    AmmoIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AmmoIndexPOJO.class);
+                    AMMO_INDEX.put(id, ClientAmmoIndex.getInstance(indexPOJO));
                 } catch (IOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
                     exception.printStackTrace();

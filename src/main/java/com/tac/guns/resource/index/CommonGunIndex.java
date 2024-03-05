@@ -13,6 +13,9 @@ import java.util.Map;
 public class CommonGunIndex {
     private GunData gunData;
 
+    private CommonGunIndex() {
+    }
+
     public static CommonGunIndex getInstance(GunIndexPOJO gunIndexPOJO) throws IllegalArgumentException {
         CommonGunIndex index = new CommonGunIndex();
         checkData(gunIndexPOJO, index);

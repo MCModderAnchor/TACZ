@@ -6,7 +6,7 @@
       "location": "tac:gun/uv/glock_17"
     }
   ],
-  "hud": "tac:gun/hud/ak47",
+  "hud": "tac:gun/hud/glock_17",
   "slot": "tac:gun/slot/glock_17",
   "animation": "tac:glock_17",
   "transform": {
