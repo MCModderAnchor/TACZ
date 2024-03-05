@@ -9,7 +9,6 @@ import net.minecraftforge.fml.LogicalSide;
 /**
  * 生物切换枪械开火模式时触发的事件
  */
-@Cancelable
 public class GunFireSelectEvent extends Event {
     private final LivingEntity shooter;
     private final ItemStack gunItemStack;
@@ -19,6 +18,11 @@ public class GunFireSelectEvent extends Event {
         this.shooter = shooter;
         this.gunItemStack = gunItemStack;
         this.logicalSide = side;
+    }
+
+    @Override
+    public boolean isCancelable() {
+        return true;
     }
 
     public LivingEntity getShooter() {

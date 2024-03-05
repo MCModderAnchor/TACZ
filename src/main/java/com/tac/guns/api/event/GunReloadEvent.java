@@ -9,7 +9,6 @@ import net.minecraftforge.fml.LogicalSide;
 /**
  * 生物开始更换枪械弹药时触发的事件。
  */
-@Cancelable
 public class GunReloadEvent extends Event {
     private final LivingEntity entity;
     private final ItemStack gunItemStack;
@@ -19,6 +18,11 @@ public class GunReloadEvent extends Event {
         this.entity = entity;
         this.gunItemStack = gunItemStack;
         this.logicalSide = side;
+    }
+
+    @Override
+    public boolean isCancelable() {
+        return true;
     }
 
     public LivingEntity getEntity() {
