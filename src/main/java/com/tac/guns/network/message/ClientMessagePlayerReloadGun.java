@@ -9,18 +9,12 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class ClientMessagePlayerReloadGun {
-    private final int gunItemIndex;
+    public ClientMessagePlayerReloadGun(){}
 
-    public ClientMessagePlayerReloadGun(int gunItemIndex){
-        this.gunItemIndex = gunItemIndex;
-    }
-
-    public static void encode(ClientMessagePlayerReloadGun message, FriendlyByteBuf buf) {
-        buf.writeInt(message.gunItemIndex);
-    }
+    public static void encode(ClientMessagePlayerReloadGun message, FriendlyByteBuf buf) {}
 
     public static ClientMessagePlayerReloadGun decode(FriendlyByteBuf buf) {
-        return new ClientMessagePlayerReloadGun(buf.readInt());
+        return new ClientMessagePlayerReloadGun();
     }
 
     public static void handle(ClientMessagePlayerReloadGun message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -31,12 +25,7 @@ public class ClientMessagePlayerReloadGun {
                 if(entity == null){
                     return;
                 }
-                // 暂时只考虑主手能换弹。
-                if(entity.getInventory().selected != message.gunItemIndex) {
-                    return;
-                }
-                ItemStack gunItem = entity.getInventory().getItem(message.gunItemIndex);
-                IGunOperator.fromLivingEntity(entity).reload(gunItem);
+                IGunOperator.fromLivingEntity(entity).reload();
             });
         }
         context.setPacketHandled(true);

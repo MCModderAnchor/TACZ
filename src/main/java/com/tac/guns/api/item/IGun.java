@@ -4,6 +4,8 @@ import com.tac.guns.api.gun.FireMode;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nullable;
+
 public interface IGun {
     /**
      * 该物品是不是符合要求的弹药
@@ -35,7 +37,10 @@ public interface IGun {
     /**
      * 该物品是否为枪
      */
-    static boolean isGun(ItemStack stack) {
+    static boolean isGun(@Nullable ItemStack stack) {
+        if(stack == null) {
+            return false;
+        }
         return stack.getItem() instanceof IGun;
     }
 

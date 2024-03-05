@@ -9,21 +9,18 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class ClientMessagePlayerAim {
-    private final int gunItemIndex;
     private final boolean isAim;
 
-    public ClientMessagePlayerAim(int gunItemIndex, boolean isAim) {
-        this.gunItemIndex = gunItemIndex;
+    public ClientMessagePlayerAim(boolean isAim) {
         this.isAim = isAim;
     }
 
     public static void encode(ClientMessagePlayerAim message, FriendlyByteBuf buf) {
-        buf.writeInt(message.gunItemIndex);
         buf.writeBoolean(message.isAim);
     }
 
     public static ClientMessagePlayerAim decode(FriendlyByteBuf buf) {
-        return new ClientMessagePlayerAim(buf.readInt(), buf.readBoolean());
+        return new ClientMessagePlayerAim(buf.readBoolean());
     }
 
     public static void handle(ClientMessagePlayerAim message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -34,12 +31,7 @@ public class ClientMessagePlayerAim {
                 if (entity == null) {
                     return;
                 }
-                // 暂时只考虑主手
-                if (entity.getInventory().selected != message.gunItemIndex) {
-                    return;
-                }
-                ItemStack gunItem = entity.getInventory().getItem(message.gunItemIndex);
-                IGunOperator.fromLivingEntity(entity).aim(gunItem, message.isAim);
+                IGunOperator.fromLivingEntity(entity).aim(message.isAim);
             });
         }
         context.setPacketHandled(true);
