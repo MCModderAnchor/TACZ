@@ -16,7 +16,7 @@ import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.GunData;
 import com.tac.guns.resource.pojo.data.GunReloadData;
 import net.minecraft.Util;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -39,7 +39,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator {
@@ -49,6 +48,9 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Shadow
     protected abstract float tickHeadTurn(float p_21260_, float p_21261_);
+
+    @Shadow
+    public abstract boolean removeAllEffects();
 
     @Unique
     private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, MyEntityDataSerializers.LONG);
@@ -123,7 +125,9 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             long coolDown = index.getGunData().getShootInterval() - (System.currentTimeMillis() - tac$ShootTimestamp);
             // 给 5 ms 的窗口时间，以平衡延迟
             coolDown -= 5;
-            if (coolDown < 0) return 0L;
+            if (coolDown < 0) {
+                return 0L;
+            }
             return coolDown;
         }).orElse(-1L);
     }
@@ -263,11 +267,15 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$IsAiming) {
             // 处于执行瞄准状态，增加 aimingProgress
             tac$AimingProgress += alphaProgress;
-            if (tac$AimingProgress > 1) tac$AimingProgress = 1;
+            if (tac$AimingProgress > 1) {
+                tac$AimingProgress = 1;
+            }
         } else {
             // 处于取消瞄准状态，减小 aimingProgress
             tac$AimingProgress -= alphaProgress;
-            if (tac$AimingProgress < 0) tac$AimingProgress = 0;
+            if (tac$AimingProgress < 0) {
+                tac$AimingProgress = 0;
+            }
         }
         tac$AimingTimestamp = System.currentTimeMillis();
     }
@@ -295,11 +303,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         ReloadState.StateType stateType = tac$ReloadStateType;
         long progressTime = System.currentTimeMillis() - tac$ReloadTimestamp;
         if (stateType.isReloadingEmpty()) {
-            long magFedTime = (long) (reloadData.getEmptyMagFedTime() * 1000);
-            long finishingTime = (long) (reloadData.getEmptyReloadTime() * 1000);
-            if (progressTime < magFedTime) {
+            long feedTime = (long) (reloadData.getFeed().getEmptyTime() * 1000);
+            long finishingTime = (long) (reloadData.getCooldown().getEmptyTime() * 1000);
+            if (progressTime < feedTime) {
                 stateType = ReloadState.StateType.EMPTY_RELOAD_FEEDING;
-                countDown = magFedTime - progressTime;
+                countDown = feedTime - progressTime;
             } else if (progressTime < finishingTime) {
                 stateType = ReloadState.StateType.EMPTY_RELOAD_FINISHING;
                 countDown = finishingTime - progressTime;
@@ -307,14 +315,14 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
                 stateType = ReloadState.StateType.NOT_RELOADING;
                 tac$ReloadTimestamp = -1;
             }
-        } else if (stateType.isReloadingNormal()) {
-            long magFedTime = (long) (reloadData.getNormalMagFedTime() * 1000);
-            long finishingTime = (long) (reloadData.getNormalReloadTime() * 1000);
-            if (progressTime < magFedTime) {
-                stateType = ReloadState.StateType.NORMAL_RELOAD_FEEDING;
-                countDown = magFedTime - progressTime;
+        } else if (stateType.isReloadingTactical()) {
+            long feedTime = (long) (reloadData.getFeed().getTacticalTime() * 1000);
+            long finishingTime = (long) (reloadData.getCooldown().getTacticalTime() * 1000);
+            if (progressTime < feedTime) {
+                stateType = ReloadState.StateType.TACTICAL_RELOAD_FEEDING;
+                countDown = feedTime - progressTime;
             } else if (progressTime < finishingTime) {
-                stateType = ReloadState.StateType.NORMAL_RELOAD_FINISHING;
+                stateType = ReloadState.StateType.TACTICAL_RELOAD_FINISHING;
                 countDown = finishingTime - progressTime;
             } else {
                 stateType = ReloadState.StateType.NOT_RELOADING;
@@ -325,13 +333,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$ReloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
                 // todo 更改枪的弹药数
-                entity.sendMessage(new TextComponent("fed!"), Util.NIL_UUID);
+                entity.sendMessage(new TranslatableComponent("message.tac.reload.success"), Util.NIL_UUID);
             }
         }
-        if (tac$ReloadStateType == ReloadState.StateType.NORMAL_RELOAD_FEEDING) {
-            if (stateType == ReloadState.StateType.NORMAL_RELOAD_FINISHING) {
+        if (tac$ReloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
+            if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
                 // todo 更改枪的弹药数
-                entity.sendMessage(new TextComponent("fed!"), Util.NIL_UUID);
+                entity.sendMessage(new TranslatableComponent("message.tac.reload.success"), Util.NIL_UUID);
             }
         }
         // 更新换弹状态缓存

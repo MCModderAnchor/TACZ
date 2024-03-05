@@ -5,12 +5,12 @@ public class ReloadState {
     protected ReloadState.StateType stateType;
     protected long countDown;
 
-    public ReloadState(){
+    public ReloadState() {
         stateType = StateType.NOT_RELOADING;
         countDown = NOT_RELOADING_COUNTDOWN;
     }
 
-    public ReloadState(ReloadState src){
+    public ReloadState(ReloadState src) {
         stateType = src.stateType;
         countDown = src.countDown;
     }
@@ -41,10 +41,10 @@ public class ReloadState {
     }
 
     @Override
-    public boolean equals(Object o){
-        if(o instanceof ReloadState reloadState){
+    public boolean equals(Object o) {
+        if (o instanceof ReloadState reloadState) {
             return reloadState.stateType.equals(stateType) && reloadState.countDown == countDown;
-        }else {
+        } else {
             return false;
         }
     }
@@ -65,37 +65,38 @@ public class ReloadState {
         /**
          * 表示当前换弹状态为 正在进行战术快速换弹 ，并处在填装弹药阶段。
          */
-        NORMAL_RELOAD_FEEDING,
+        TACTICAL_RELOAD_FEEDING,
         /**
          * 表示当前换弹状态为 正在进行战术快速换弹，并处在收尾阶段。
          */
-        NORMAL_RELOAD_FINISHING;
+        TACTICAL_RELOAD_FINISHING;
 
         /**
          * 判断这个状态是否是空仓换弹过程中的其中一个阶段。包括空仓换弹的收尾阶段。
          */
-        public boolean isReloadingEmpty(){
+        public boolean isReloadingEmpty() {
             return this == EMPTY_RELOAD_FEEDING || this == EMPTY_RELOAD_FINISHING;
         }
 
         /**
          * 判断这个状态是否是战术换弹过程中的其中一个阶段。包括战术换弹的收尾阶段。
          */
-        public boolean isReloadingNormal(){
-            return this == NORMAL_RELOAD_FEEDING || this == NORMAL_RELOAD_FINISHING;
+        public boolean isReloadingTactical() {
+            return this == TACTICAL_RELOAD_FEEDING || this == TACTICAL_RELOAD_FINISHING;
         }
+
         /**
          * 判断这个状态是否是任意换弹过程中的其中一个阶段。包括任意换弹的收尾阶段。
          */
-        public boolean isReloading(){
-            return isReloadingEmpty() || isReloadingNormal();
+        public boolean isReloading() {
+            return isReloadingEmpty() || isReloadingTactical();
         }
 
         /**
          * 判断这个状态是否是任意换弹过程中的的收尾阶段。
          */
-        public boolean isReloadFinishing(){
-            return this == StateType.EMPTY_RELOAD_FINISHING || this == StateType.NORMAL_RELOAD_FINISHING;
+        public boolean isReloadFinishing() {
+            return this == StateType.EMPTY_RELOAD_FINISHING || this == StateType.TACTICAL_RELOAD_FINISHING;
         }
     }
 }

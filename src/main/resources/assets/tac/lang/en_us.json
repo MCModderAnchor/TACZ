@@ -2,6 +2,7 @@
   "custom.tac.gun.error.no_name": "Error: No Name",
   "commands.tac.reload.success": "All pack is reload!",
   "message.tac.fire_select.success": "Switched to %s fire mode",
+  "message.tac.reload.success": "The gun has been reloaded",
   "key.category.tac": "Timeless & Classics",
   "key.tac.reload.desc": "Reload",
   "key.tac.inspect.desc": "Inspect",
