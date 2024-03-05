@@ -6,13 +6,13 @@ import net.minecraft.Util;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class ClientMessagePlayerFireSelect {
-    public static void encode(ClientMessagePlayerFireSelect message, FriendlyByteBuf buf) {}
+    public static void encode(ClientMessagePlayerFireSelect message, FriendlyByteBuf buf) {
+    }
 
     public static ClientMessagePlayerFireSelect decode(FriendlyByteBuf buf) {
         return new ClientMessagePlayerFireSelect();

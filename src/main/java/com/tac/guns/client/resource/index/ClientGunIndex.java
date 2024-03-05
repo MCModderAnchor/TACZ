@@ -7,7 +7,6 @@ import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientAssetManager;
-import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.client.resource.pojo.display.GunModelTexture;
 import com.tac.guns.client.resource.pojo.display.GunTransform;
@@ -15,10 +14,13 @@ import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonAssetManager;
+import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.resource.pojo.data.GunData;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+@OnlyIn(Dist.CLIENT)
 public class ClientGunIndex {
     private static final String DEFAULT_TEXTURE_NAME = "default";
     private String name;
@@ -40,13 +43,13 @@ public class ClientGunIndex {
     private GunData gunData;
     private RenderType slotRenderType;
 
+    private ClientGunIndex() {
+    }
+
     public static ClientGunIndex getInstance(GunIndexPOJO clientPojo) throws IllegalArgumentException {
         ClientGunIndex index = new ClientGunIndex();
-
         GunDisplay display = checkDisplay(clientPojo);
-
         checkData(clientPojo, index);
-
         checkName(clientPojo, index);
         checkTooltip(clientPojo, index);
         checkTextureAndModel(display, index);
@@ -54,7 +57,6 @@ public class ClientGunIndex {
         checkAnimation(display, index);
         checkSounds(display, index);
         checkTransform(display, index);
-
         return index;
     }
 
@@ -196,9 +198,6 @@ public class ClientGunIndex {
         // 加载 GUI 内枪械图标
         ResourceLocation slotTexture = Objects.requireNonNullElseGet(display.getSlotTextureLocation(), MissingTextureAtlasSprite::getLocation);
         index.slotRenderType = RenderType.entityTranslucent(slotTexture);
-    }
-
-    private ClientGunIndex() {
     }
 
     public String getName() {

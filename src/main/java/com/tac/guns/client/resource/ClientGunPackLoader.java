@@ -8,12 +8,14 @@ import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.index.ClientAmmoIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.loader.*;
-import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
 import com.tac.guns.client.resource.serialize.Vector3fSerializer;
+import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.util.GetJarResources;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -34,6 +36,7 @@ import java.util.zip.ZipFile;
 
 import static com.tac.guns.resource.CommonGunPackLoader.*;
 
+@OnlyIn(Dist.CLIENT)
 public class ClientGunPackLoader {
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(CubesItem.class, new CubesItem.Deserializer())
@@ -58,7 +61,7 @@ public class ClientGunPackLoader {
     /**
      * 读取所有枪包的资源文件
      */
-    public static void reloadAsset(){
+    public static void reloadAsset() {
         ClientAssetManager.INSTANCE.clearAll();
 
         File[] files = FOLDER.toFile().listFiles((dir, name) -> true);
@@ -70,7 +73,7 @@ public class ClientGunPackLoader {
     /**
      * 读取所有枪包的定义文件
      */
-    public static void reloadIndex(){
+    public static void reloadIndex() {
         GUN_INDEX.clear();
         AMMO_INDEX.clear();
 
@@ -108,7 +111,7 @@ public class ClientGunPackLoader {
     }
 
     private static void checkDefaultPack() {
-        // todo 改成可选安装
+        // TODO 改成可选安装
         String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
         GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
     }

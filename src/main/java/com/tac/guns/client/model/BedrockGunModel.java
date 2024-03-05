@@ -9,7 +9,6 @@ import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
-import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -88,79 +87,79 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             }
         });
         this.setFunctionalRenderer(BULLET_IN_BARREL, bedrockPart -> {
-            // todo 枪内有弹则渲染
+            //TODO 枪内有弹则渲染
             return null;
         });
         this.setFunctionalRenderer(BULLET_IN_MAG, bedrockPart -> {
-            // todo 枪内子弹数大于 1 则渲染
+            //TODO 枪内子弹数大于 1 则渲染
             return null;
         });
         this.setFunctionalRenderer(BULLET_CHAIN, bedrockPart -> {
-            // todo 枪内有弹则渲染
+            //TODO 枪内有弹则渲染
             return null;
         });
         this.setFunctionalRenderer(MUZZLE_BRAKE, bedrockPart -> {
-            //todo 判断枪械是否安装枪口制动器，改变bedrockPart.visible以隐藏或者显示对应模型，下同
+            //TODO 判断枪械是否安装枪口制动器，改变bedrockPart.visible以隐藏或者显示对应模型，下同
             return null;
         });
         this.setFunctionalRenderer(MUZZLE_COMPENSATOR, bedrockPart -> {
-            //todo 安装补偿器时可见
+            //TODO 安装补偿器时可见
             return null;
         });
         this.setFunctionalRenderer(MUZZLE_SILENCER, bedrockPart -> {
-            //todo 安装消音器时可见
+            //TODO 安装消音器时可见
             return null;
         });
         this.setFunctionalRenderer(MUZZLE_DEFAULT, bedrockPart -> {
-            //todo 没有枪口配件时可见
+            //TODO 没有枪口配件时可见
             return null;
         });
         this.setFunctionalRenderer(MOUNT, bedrockPart -> {
-            //todo 安装瞄具时可见
+            //TODO 安装瞄具时可见
             return null;
         });
         this.setFunctionalRenderer(CARRY, bedrockPart -> {
-            //todo 未安装瞄具时可见
+            //TODO 未安装瞄具时可见
             return null;
         });
         this.setFunctionalRenderer(SIGHT_FOLDED, bedrockPart -> {
-            //todo 安装瞄具时可见
+            //TODO 安装瞄具时可见
             return null;
         });
         this.setFunctionalRenderer(SIGHT, bedrockPart -> {
-            //todo 未安装瞄具时可见
+            //TODO 未安装瞄具时可见
             return null;
         });
         this.setFunctionalRenderer(STOCK_LIGHT, bedrockPart -> {
-            //todo 安装轻型枪托时可见
+            //TODO 安装轻型枪托时可见
             return null;
         });
         this.setFunctionalRenderer(STOCK_TACTICAL, bedrockPart -> {
-            //todo 安装战术枪托时可见
+            //TODO 安装战术枪托时可见
             return null;
         });
         this.setFunctionalRenderer(STOCK_HEAVY, bedrockPart -> {
-            //todo 安装重型枪托时可见
+            //TODO 安装重型枪托时可见
             return null;
         });
         this.setFunctionalRenderer(STOCK_DEFAULT, bedrockPart -> {
-            //todo 未安装枪托时可见
+            //TODO 未安装枪托时可见
             return null;
         });
         this.setFunctionalRenderer(MAG_EXTENDED_1, bedrockPart -> {
-            //todo 安装一级扩容弹匣时可见
+            //TODO 安装一级扩容弹匣时可见
             return null;
         });
         this.setFunctionalRenderer(MAG_EXTENDED_2, bedrockPart -> {
-            //todo 安装二级扩容弹匣时可见
+            //TODO 安装二级扩容弹匣时可见
             return null;
         });
         this.setFunctionalRenderer(MAG_EXTENDED_3, bedrockPart -> {
-            //todo 安装三级扩容弹匣时可见
+            //TODO 安装三级扩容弹匣时可见
             return null;
         });
         this.setFunctionalRenderer(MAG_STANDARD, bedrockPart -> {
-            //todo 未安装扩容弹匣时可见
+            //TODO 未安装扩容弹匣时可见
             return null;
         });
 
@@ -174,7 +173,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         this.setFunctionalRenderer(SCOPE_POS_NODE, bedrockPart -> {
             bedrockPart.visible = false;
             return (poseStack, transformType, consumer, light, overlay) -> {
-                //todo 获取当前枪械安装的瞄具，获取其模型并渲染。注释的代码先保留
+                //TODO 获取当前枪械安装的瞄具，获取其模型并渲染。注释的代码先保留
                 /*
                 ItemStack scopeItemStack = Gun.getAttachment(IAttachment.Type.SCOPE, currentItem);
                 if (!scopeItemStack.isEmpty()) {

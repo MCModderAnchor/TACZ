@@ -2,7 +2,13 @@ package com.tac.guns.api.gun;
 
 public class ReloadState {
     public static final int NOT_RELOADING_COUNTDOWN = -1;
+    /**
+     * 换弹状态
+     */
     protected ReloadState.StateType stateType;
+    /**
+     * 换弹状态的剩余时长，毫秒
+     */
     protected long countDown;
 
     public ReloadState() {
@@ -22,6 +28,10 @@ public class ReloadState {
         return stateType;
     }
 
+    public void setStateType(StateType stateType) {
+        this.stateType = stateType;
+    }
+
     /**
      * @return 如果 StateType 为 NOT_RELOADING，则返回 NOT_RELOADING_COUNTDOWN(= -1), 否则返回当前状态剩余的时长，单位为 ms 。
      */
@@ -30,10 +40,6 @@ public class ReloadState {
             return NOT_RELOADING_COUNTDOWN;
         }
         return countDown;
-    }
-
-    public void setStateType(StateType stateType) {
-        this.stateType = stateType;
     }
 
     public void setCountDown(long countDown) {

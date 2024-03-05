@@ -8,7 +8,7 @@ import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.api.network.MyEntityDataSerializers;
+import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonGunPackLoader;
@@ -29,7 +29,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -42,42 +41,24 @@ import java.util.Optional;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator {
-    public LivingEntityMixin(EntityType<?> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
-    }
-
-    @Shadow
-    protected abstract float tickHeadTurn(float p_21260_, float p_21261_);
-
-    @Shadow
-    public abstract boolean removeAllEffects();
-
     @Unique
-    private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, MyEntityDataSerializers.LONG);
-
+    private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
     @Unique
-    private static final EntityDataAccessor<ReloadState> DATA_RELOAD_STATE_ID = SynchedEntityData.defineId(LivingEntity.class, MyEntityDataSerializers.RELOAD_STATE);
-
+    private static final EntityDataAccessor<ReloadState> DATA_RELOAD_STATE_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.RELOAD_STATE);
     @Unique
     private static final EntityDataAccessor<Float> DATA_AIMING_PROGRESS_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-
-    // 开火逻辑的状态缓存
     /**
      * 射击时间戳，射击成功时更新，单位 ms。
      * 用于计算射击的冷却时间。
      */
     @Unique
     private long tac$ShootTimestamp = -1L;
-
-    // 切枪逻辑的状态缓存
     /**
      * 切枪时间戳，在切枪开始时更新，单位 ms。
      * 用于计算切枪进度。切枪进度完成后，才能进行各种操作。
      */
     @Unique
     private long tac$DrawTimestamp = -1L;
-
-    // 瞄准逻辑的状态缓存
     /**
      * 瞄准的进度，范围 0 ~ 1
      */
@@ -95,8 +76,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
      */
     @Unique
     private boolean tac$IsAiming = false;
-
-    // 换弹逻辑的状态缓存
     /**
      * 装弹时间戳，在开始装弹的瞬间更新，单位 ms。
      * 用于在每个 tick 计算: 从开始装弹 到 当前时间点 的时长，并依此计算出换弹的状态和冷却。
@@ -109,13 +88,16 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Unique
     @Nonnull
     private ReloadState.StateType tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
-
     /**
      * 缓存实体当前操作的枪械物品。在切枪时 (draw 方法) 更新。
      */
     @Unique
     @Nullable
     private ItemStack tac$CurrentGunItem = null;
+
+    public LivingEntityMixin(EntityType<?> entityType, Level level) {
+        super(entityType, level);
+    }
 
     @Override
     @Unique
@@ -145,7 +127,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         return gunIndex.map(index -> {
             long coolDown = index.getGunData().getShootInterval() - (System.currentTimeMillis() - tac$ShootTimestamp);
             // 给 5 ms 的窗口时间，以平衡延迟
-            coolDown -= 5;
+            coolDown = coolDown - 5;
             if (coolDown < 0) {
                 return 0L;
             }
@@ -156,27 +138,27 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Unique
     @Override
     public void draw(ItemStack gunItemStack) {
-        tac$CurrentGunItem = gunItemStack;
         // 重置各个状态
+        tac$CurrentGunItem = gunItemStack;
         tac$ShootTimestamp = -1;
         tac$IsAiming = false;
         tac$AimingProgress = 0;
         tac$ReloadTimestamp = -1;
         tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
 
-        if(!IGun.isGun(gunItemStack)){
+        if (!IGun.isGun(gunItemStack)) {
             tac$DrawTimestamp = -1;
-            // todo 执行收枪逻辑
-        }else{
+            // TODO 执行收枪逻辑
+        } else {
             tac$DrawTimestamp = System.currentTimeMillis();
-            // todo 执行切枪逻辑
+            // TODO 执行切枪逻辑
         }
     }
 
     @Unique
     @Override
     public void reload() {
-        if(tac$CurrentGunItem == null){
+        if (tac$CurrentGunItem == null) {
             return;
         }
         LivingEntity entity = (LivingEntity) (Object) this;
@@ -190,12 +172,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             if (getShootCoolDown() != 0) {
                 return;
             }
-            // todo 检查 draw 是否还未完成
+            // TODO 检查 draw 是否还未完成
             // 触发装弹事件
             if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
                 return;
             }
-            // todo 根据枪内子弹数量初始化换弹状态 ，此处默认空仓换弹
+            // TODO 根据枪内子弹数量初始化换弹状态，此处默认空仓换弹
             tac$ReloadStateType = ReloadState.StateType.EMPTY_RELOAD_FEEDING;
             tac$ReloadTimestamp = System.currentTimeMillis();
         });
@@ -204,7 +186,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Unique
     @Override
     public ShootResult shoot(float pitch, float yaw) {
-        if(tac$CurrentGunItem == null){
+        if (tac$CurrentGunItem == null) {
             return ShootResult.FAIL;
         }
         // 判断射击是否正在冷却
@@ -219,13 +201,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$ReloadStateType.isReloading()) {
             return ShootResult.FAIL;
         }
-        // todo 检查 draw 是否还未完成
+        // TODO 检查 draw 是否还未完成
         LivingEntity entity = (LivingEntity) (Object) this;
         // 触发射击事件
         if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
             return ShootResult.FAIL;
         }
-        // todo 判断枪械是否有足够的弹药
+        // TODO 判断枪械是否有足够的弹药
         // 调用射击方法
         if (tac$CurrentGunItem.getItem() instanceof IGun iGun) {
             iGun.shoot(entity, tac$CurrentGunItem, pitch, yaw);
@@ -238,27 +220,27 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Unique
     @Override
     public void aim(boolean isAim) {
-        // todo 判断当前状态能不能瞄准
+        // TODO 判断当前状态能不能瞄准
         tac$IsAiming = isAim;
     }
 
     @Unique
     @Override
     public FireMode fireSelect() {
-        if(tac$CurrentGunItem == null){
+        if (tac$CurrentGunItem == null) {
             return FireMode.UNKNOWN;
         }
-        // 获取GunData
+        // 获取 GunData
         GunItemData gunItemData = GunItem.getData(tac$CurrentGunItem);
         ResourceLocation gunId = gunItemData.getGunId();
         LivingEntity entity = (LivingEntity) (Object) this;
         Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
-            return FireMode.SEMI;
+            return FireMode.UNKNOWN;
         }
         GunData gunData = gunIndexOptional.get().getGunData();
         if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
-            return FireMode.SEMI;
+            return FireMode.UNKNOWN;
         }
         if (tac$CurrentGunItem.getItem() instanceof IGun iGun) {
             FireMode fireMode = iGun.getFireMode(tac$CurrentGunItem);
@@ -269,7 +251,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             GunItem.setData(tac$CurrentGunItem, gunItemData);
             return nextFireMode;
         }
-        return FireMode.SEMI;
+        return FireMode.UNKNOWN;
     }
 
     @Inject(method = "tick", at = @At(value = "RETURN"))
@@ -373,13 +355,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         // 更新枪内弹药
         if (tac$ReloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
-                // todo 更改枪的弹药数
+                // TODO 更改枪的弹药数
                 entity.sendMessage(new TranslatableComponent("message.tac.reload.success"), Util.NIL_UUID);
             }
         }
         if (tac$ReloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
-                // todo 更改枪的弹药数
+                // TODO 更改枪的弹药数
                 entity.sendMessage(new TranslatableComponent("message.tac.reload.success"), Util.NIL_UUID);
             }
         }

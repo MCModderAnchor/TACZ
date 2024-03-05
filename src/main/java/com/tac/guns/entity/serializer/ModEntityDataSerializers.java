@@ -1,22 +1,24 @@
-package com.tac.guns.api.network;
+package com.tac.guns.entity.serializer;
 
 import com.tac.guns.api.gun.ReloadState;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.syncher.EntityDataSerializers;
 
 import javax.annotation.Nonnull;
 
-public class MyEntityDataSerializers {
+public class ModEntityDataSerializers {
     public static final EntityDataSerializer<Long> LONG = new EntityDataSerializer<>() {
+        @Override
         public void write(FriendlyByteBuf buf, @Nonnull Long value) {
             buf.writeLong(value);
         }
 
+        @Override
         public @Nonnull Long read(FriendlyByteBuf buf) {
             return buf.readLong();
         }
 
+        @Override
         public @Nonnull Long copy(@Nonnull Long value) {
             return value;
         }
@@ -42,9 +44,4 @@ public class MyEntityDataSerializers {
             return new ReloadState(pValue);
         }
     };
-
-    static {
-        EntityDataSerializers.registerSerializer(LONG);
-        EntityDataSerializers.registerSerializer(RELOAD_STATE);
-    }
 }

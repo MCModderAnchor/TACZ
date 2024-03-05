@@ -38,10 +38,10 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.Transform
  */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class FirstPersonRenderGunEvent {
-    private static int hotbarSelected = -1;
-    private static ItemStack hotbarSelectedStack = ItemStack.EMPTY;
     // 用于生成瞄准动作的运动曲线，使动作看起来更平滑
-    private static final SecondOrderDynamics aimingDynamics = new SecondOrderDynamics(0.75f, 1.2f, 0.5f, 0);
+    private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(0.75f, 1.2f, 0.5f, 0);
+    private static ItemStack oldHotbarSelectedStack = ItemStack.EMPTY;
+    private static int oldHotbarSelected = -1;
     private static float oldAimingProgress = 0;
     private static float aimingProgress = 0;
 
@@ -51,21 +51,21 @@ public class FirstPersonRenderGunEvent {
         if (event.getHand() == InteractionHand.OFF_HAND) {
             return;
         }
-
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             return;
         }
-
         ItemStack stack = event.getItemStack();
+        if (!IGun.isGun(stack)) {
+            return;
+        }
+
+        // 获取 TransformType
         TransformType transformType;
         if (event.getHand() == InteractionHand.MAIN_HAND) {
             transformType = FIRST_PERSON_RIGHT_HAND;
         } else {
             transformType = TransformType.FIRST_PERSON_LEFT_HAND;
-        }
-        if (!IGun.isGun(stack)) {
-            return;
         }
 
         ResourceLocation gunId = GunItem.getData(player.getItemInHand(event.getHand())).getGunId();
@@ -77,10 +77,9 @@ public class FirstPersonRenderGunEvent {
             }
             Inventory inventory = player.getInventory();
             ItemStack inventorySelected = inventory.getSelected();
-            // FIXME 未来切枪，NBT 变了可能有问题
-            if (hotbarSelected != inventory.selected || !isSame(inventorySelected, hotbarSelectedStack)) {
-                hotbarSelected = inventory.selected;
-                hotbarSelectedStack = inventorySelected;
+            if (oldHotbarSelected != inventory.selected || !isSame(inventorySelected, oldHotbarSelectedStack)) {
+                oldHotbarSelected = inventory.selected;
+                oldHotbarSelectedStack = inventorySelected;
                 IClientPlayerGunOperator.fromLocalPlayer(player).draw();
             }
             // 在渲染之前，先更新动画，让动画数据写入模型
@@ -89,7 +88,7 @@ public class FirstPersonRenderGunEvent {
             }
             PoseStack poseStack = event.getPoseStack();
             poseStack.pushPose();
-            // 从渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
+            // 从渲染原点 (0, 24, 0) 移动到模型原点 (0, 0, 0)
             poseStack.translate(0, 1.5f, 0);
             // 基岩版模型是上下颠倒的，需要翻转过来。
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
@@ -119,21 +118,17 @@ public class FirstPersonRenderGunEvent {
     }
 
     @SubscribeEvent
-    public static void tickAimingLerp(TickEvent.ClientTickEvent tickEvent){
+    public static void tickAimingLerp(TickEvent.ClientTickEvent tickEvent) {
         LocalPlayer player = Minecraft.getInstance().player;
-        if(player == null){
+        if (player == null) {
             return;
         }
         oldAimingProgress = aimingProgress;
         aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress();
     }
 
-    private static void applyFirstPersonGunTransform(LocalPlayer player,
-                                                     ItemStack gunItemStack,
-                                                     ClientGunIndex gunIndex,
-                                                     PoseStack poseStack,
-                                                     BedrockGunModel model,
-                                                     float partialTicks) {
+    private static void applyFirstPersonGunTransform(LocalPlayer player, ItemStack gunItemStack, ClientGunIndex gunIndex,
+                                                     PoseStack poseStack, BedrockGunModel model, float partialTicks) {
         // 应用定位组的变换（位移和旋转，不包括缩放）
         applyFirstPersonPositioningTransform(poseStack, model, partialTicks);
     }
@@ -142,35 +137,41 @@ public class FirstPersonRenderGunEvent {
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。
      */
     private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, float partialTicks) {
-        float v = Mth.lerp(partialTicks, oldAimingProgress, aimingProgress);
-        v = aimingDynamics.update(0, v);
-        // todo 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组"iron_sight"应用位移。下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。
+        float weight = Mth.lerp(partialTicks, oldAimingProgress, aimingProgress);
+        weight = AIMING_DYNAMICS.update(0, weight);
+        // TODO 判断是否安装瞄具，上半部分是未安装瞄具时，根据机瞄定位组 "iron_sight" 应用位移。
+        // TODO 下半部分是安装瞄具时，应用瞄具定位组和瞄具模型内定位组的位移。
         if (true) {
-            applyPositioningNodeTransform(model.getIronSightPath(), poseStack, v);
+            applyPositioningNodeTransform(model.getIronSightPath(), poseStack, weight);
         } else {
-            applyPositioningNodeTransform(model.getScopePosPath(), poseStack, v);
+            applyPositioningNodeTransform(model.getScopePosPath(), poseStack, weight);
         }
-        applyPositioningNodeTransform(model.getIdleSightPath(), poseStack, 1 - v);
+        applyPositioningNodeTransform(model.getIdleSightPath(), poseStack, 1 - weight);
     }
 
     private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, float weight) {
-        if (nodePath == null) return;
-        //应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
+        if (nodePath == null) {
+            return;
+        }
+        // 应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
         poseStack.translate(0, 1.5f, 0);
-        for (int f = nodePath.size() - 1; f >= 0; f--) {
-            BedrockPart t = nodePath.get(f);
-            poseStack.mulPose(Vector3f.XN.rotation(t.xRot * weight));
-            poseStack.mulPose(Vector3f.YN.rotation(t.yRot * weight));
-            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot * weight));
-            if (t.getParent() != null)
-                poseStack.translate(-t.x / 16.0F * weight, -t.y / 16.0F * weight, -t.z / 16.0F * weight);
-            else {
-                poseStack.translate(-t.x / 16.0F * weight, (1.5F - t.y / 16.0F) * weight, -t.z / 16.0F * weight);
+        for (int i = nodePath.size() - 1; i >= 0; i--) {
+            BedrockPart part = nodePath.get(i);
+            poseStack.mulPose(Vector3f.XN.rotation(part.xRot * weight));
+            poseStack.mulPose(Vector3f.YN.rotation(part.yRot * weight));
+            poseStack.mulPose(Vector3f.ZN.rotation(part.zRot * weight));
+            if (part.getParent() != null) {
+                poseStack.translate(-part.x / 16.0F * weight, -part.y / 16.0F * weight, -part.z / 16.0F * weight);
+            } else {
+                poseStack.translate(-part.x / 16.0F * weight, (1.5F - part.y / 16.0F) * weight, -part.z / 16.0F * weight);
             }
         }
         poseStack.translate(0, -1.5f, 0);
     }
 
+    /**
+     * 判断两个枪械 ID 是否相同
+     */
     private static boolean isSame(ItemStack gunA, ItemStack gunB) {
         if (IGun.isGun(gunA) && IGun.isGun(gunB)) {
             GunItemData dataA = GunItem.getData(gunA);

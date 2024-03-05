@@ -99,7 +99,7 @@ public class GunItem extends Item implements IGun {
     public void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw) {
         ResourceLocation gunId = GunItem.getData(gun).getGunId();
         CommonGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-            // todo 获取 GunData 并根据其中的弹道参数创建 EntityBullet
+            // TODO 获取 GunData 并根据其中的弹道参数创建 EntityBullet
             Level world = shooter.getLevel();
             EntityBullet bullet = new EntityBullet(world, shooter);
             InaccuracyState.StateType inaccuracyState = InaccuracyState.getInaccuracyState(shooter);

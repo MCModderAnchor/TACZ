@@ -4,14 +4,11 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.tac.guns.client.event.ReloadResourceEvent;
-import com.tac.guns.resource.CommonGunPackLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-
-import java.util.function.Supplier;
 
 public class ReloadCommand {
     private static final String RELOAD_NAME = "reload";

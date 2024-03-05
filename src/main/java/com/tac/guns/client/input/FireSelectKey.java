@@ -24,7 +24,7 @@ public class FireSelectKey {
             "key.category.tac");
 
     @SubscribeEvent
-    public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
+    public static void onFireSelectPress(InputEvent.KeyInputEvent event) {
         if (FIRE_SELECT_KEY.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {

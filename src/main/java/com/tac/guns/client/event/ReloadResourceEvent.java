@@ -3,7 +3,6 @@ package com.tac.guns.client.event;
 import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.resource.CommonGunPackLoader;
-import com.tac.guns.resource.index.CommonGunIndex;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;

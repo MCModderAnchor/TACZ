@@ -18,6 +18,7 @@ public class GunMod {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
+        ModEntities.DATA_SERIALIZERS.register(bus);
         ModSounds.SOUNDS.register(bus);
     }
 }

@@ -40,19 +40,22 @@ import java.util.concurrent.TimeUnit;
 
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
-    @Shadow
-    public Input input;
     @Unique
     private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
+    @Shadow
+    public Input input;
     @Unique
     private long tac$ClientShootTimestamp = -1L;
     @Unique
     private boolean tac$IsShootRecorded = true;
-
-    // 瞄准的进度，范围 0 ~ 1
+    /**
+     * 瞄准的进度，范围 0 ~ 1
+     */
     @Unique
     private float tac$ClientAimingProgress = 0;
-    // 瞄准时间戳，单位 ms
+    /**
+     * 瞄准时间戳，单位 ms
+     */
     @Unique
     private long tac$ClientAimingTimestamp = -1L;
     @Unique
@@ -87,7 +90,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (reloadState.getStateType().isReloading()) {
                 return ShootResult.FAIL;
             }
-            // todo 判断是否在 draw
+            // TODO 判断是否在 draw
             // 触发开火事件
             if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
                 return ShootResult.FAIL;
@@ -108,7 +111,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 }
                 // 播放声音、摄像机后坐需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
-                    SoundPlayManager.playClientSound(player, gunIndex.getSounds("shoot"), 1.0f, 0.8f);
+                    // TODO 应该发包，让周围的玩家都能听到
+                    SoundPlayManager.playShootSound(player, gunIndex);
                     GunRecoil recoil = gunData.getRecoil();
                     player.setXRot(player.getXRot() - recoil.getRandomPitch());
                     player.setYRot(player.getYRot() + recoil.getRandomYaw());
@@ -156,7 +160,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (IGunOperator.fromLivingEntity(player).getSynShootCoolDown() > 0) {
                 return;
             }
-            // todo 检查 draw 是否还未完成
+            // TODO 检查 draw 是否还未完成
             // 触发换弹事件
             if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
                 return;
@@ -165,7 +169,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                // todo 判断枪内是否有余弹
+                // TODO 判断枪内是否有余弹
                 animationStateMachine.setNoAmmo(true);
                 animationStateMachine.onGunReload();
             }
@@ -176,7 +180,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void inspect() {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        // todo 检测是否在开火、装弹、切枪、检视
+        // TODO 检测是否在开火、装弹、切枪、检视
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
@@ -213,8 +217,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (IGun.mainhandHoldGun(player)) {
             ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
             ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                // todo 发个 GunAimingEvent
-                // todo 判断能不能瞄准
+                // TODO 发个 GunAimingEvent
+                // TODO 判断能不能瞄准
                 tac$ClientIsAiming = isAim;
                 // 发送切换开火模式的数据包，通知服务器
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(isAim));

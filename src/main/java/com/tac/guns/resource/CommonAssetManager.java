@@ -8,6 +8,7 @@ import java.util.Map;
 
 public enum CommonAssetManager {
     INSTANCE;
+
     /**
      * 储存 data 数据
      */

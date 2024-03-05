@@ -7,9 +7,10 @@ public class SecondOrderDynamics {
     public static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(15, Thread::new);
 
     static {
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < 15; i++) {
             executorService.execute(() -> {
             });
+        }
     }
 
     private final float k1;
@@ -52,11 +53,11 @@ public class SecondOrderDynamics {
 
     private void update() {
         while (true) {
-            float T = 0.05f;
-            float xd = (target - px) / T;
-            float y = py + T * pyd;
+            float t = 0.05f;
+            float xd = (target - px) / t;
+            float y = py + t * pyd;
 
-            pyd = pyd + T * (px + k3 * xd - py - k1 * pyd) / k2;
+            pyd = pyd + t * (px + k3 * xd - py - k1 * pyd) / k2;
             px = target;
             py = y;
 

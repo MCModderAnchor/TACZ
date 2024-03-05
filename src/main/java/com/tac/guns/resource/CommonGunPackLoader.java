@@ -34,15 +34,14 @@ import java.util.zip.ZipFile;
 public class CommonGunPackLoader {
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(Pair.class, new PairSerializer()).create();
-
-    private static final Map<ResourceLocation, CommonGunIndex> GUN_INDEX = Maps.newHashMap();
-    private static final Marker MARKER = MarkerManager.getMarker("CommonGunPackLoader");
     /**
      * 放置自定义枪械模型的目录
      */
     public static final Path FOLDER = Paths.get("config", GunMod.MOD_ID, "custom");
     public static final String DEFAULT_GUN_PACK_NAME = "tac_default_gun";
     public static final Pattern GUNS_INDEX_PATTERN = Pattern.compile("^(\\w+)/guns/index/(\\w+)\\.json$");
+    private static final Map<ResourceLocation, CommonGunIndex> GUN_INDEX = Maps.newHashMap();
+    private static final Marker MARKER = MarkerManager.getMarker("CommonGunPackLoader");
 
     /**
      * 创建存放枪包的文件夹、放入默认枪包
@@ -77,7 +76,7 @@ public class CommonGunPackLoader {
     }
 
     private static void checkDefaultPack() {
-        // todo 改成可选安装
+        // TODO 改成可选安装
         String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
         GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
     }

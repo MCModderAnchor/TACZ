@@ -25,29 +25,29 @@ public class GameOverlayEvent {
      */
     @SubscribeEvent(receiveCanceled = true)
     public static void onRenderOverlay(RenderGameOverlayEvent.PreLayer event) {
-        if(Minecraft.getInstance().player == null){
+        if (Minecraft.getInstance().player == null) {
             return;
         }
         if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT) {
             LocalPlayer player = Minecraft.getInstance().player;
             // 瞄准快要完成时，取消准心渲染
-            if(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress() > 0.9){
+            if (IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress() > 0.9) {
                 event.setCanceled(true);
                 return;
             }
             // 换弹进行时取消准心渲染
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
-            if(reloadState.getStateType().isReloading()){
+            if (reloadState.getStateType().isReloading()) {
                 event.setCanceled(true);
                 return;
             }
             // 播放的动画需要隐藏准心时，取消准心渲染
             ItemStack stack = player.getMainHandItem();
-            if(IGun.isGun(stack)){
+            if (IGun.isGun(stack)) {
                 ResourceLocation gunId = GunItem.getData(stack).getGunId();
                 ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
                     GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                    if(animationStateMachine.shouldHideCrossHair()){
+                    if (animationStateMachine.shouldHideCrossHair()) {
                         event.setCanceled(true);
                     }
                 });

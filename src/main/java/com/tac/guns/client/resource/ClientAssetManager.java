@@ -5,15 +5,16 @@ import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.resource.pojo.display.GunDisplay;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
-import com.tac.guns.resource.pojo.data.GunData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Map;
 
 /**
  * 缓存 Map 的键统一为 ResourceLocation，其 namespace 为枪包的根目录的下一级文件夹的名称， path 为资源对应的 id 。
- * 举例来说，如果需要获取枪包中 "tac/index"
  */
+@OnlyIn(Dist.CLIENT)
 public enum ClientAssetManager {
     INSTANCE;
     /**
@@ -81,6 +82,6 @@ public enum ClientAssetManager {
      * 清除所有缓存
      */
     public void clearAll() {
-        // TODO：重载时清理缓存
+        // TODO 重载时清理缓存
     }
 }

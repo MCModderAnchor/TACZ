@@ -43,8 +43,9 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
 
     @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "HEAD"))
     private void setRotationAnglesHead(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
-        if (!(entityIn instanceof Player))
+        if (!(entityIn instanceof Player)) {
             return;
+        }
 
         this.tac$resetAll(this.head);
         this.tac$resetAll(this.hat);
@@ -90,8 +91,9 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
 
     @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "TAIL"))
     private void setRotationAnglesTail(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
-        if (!(entityIn instanceof Player))
+        if (!(entityIn instanceof Player)) {
             return;
+        }
 
         // Dirty Hack，用于清除默认的手臂旋转
         @SuppressWarnings("all")

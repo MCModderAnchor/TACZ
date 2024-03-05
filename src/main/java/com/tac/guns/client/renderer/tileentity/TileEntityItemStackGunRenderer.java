@@ -33,6 +33,29 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
     }
 
+    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, Vector3f scale) {
+        if (nodePath == null) {
+            return;
+        }
+        if (scale == null) {
+            scale = new Vector3f(1, 1, 1);
+        }
+        // 应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
+        poseStack.translate(0, 1.5, 0);
+        for (int i = nodePath.size() - 1; i >= 0; i--) {
+            BedrockPart t = nodePath.get(i);
+            poseStack.mulPose(Vector3f.XN.rotation(t.xRot));
+            poseStack.mulPose(Vector3f.YN.rotation(t.yRot));
+            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot));
+            if (t.getParent() != null) {
+                poseStack.translate(-t.x * scale.x() / 16.0F, -t.y * scale.y() / 16.0F, -t.z * scale.z() / 16.0F);
+            } else {
+                poseStack.translate(-t.x * scale.x() / 16.0F, (1.5F - t.y / 16.0F) * scale.y(), -t.z * scale.z() / 16.0F);
+            }
+        }
+        poseStack.translate(0, -1.5, 0);
+    }
+
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (IGun.isGun(stack)) {
@@ -40,7 +63,6 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
             if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
                 return;
             }
-
             // 剩下的渲染
             ResourceLocation gunId = GunItem.getData(stack).getGunId();
             ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
@@ -53,7 +75,6 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
                     poseStack.popPose();
                     return;
                 }
-
                 BedrockGunModel gunModel = gunIndex.getGunModel();
                 poseStack.pushPose();
                 // 移动到模型原点
@@ -105,24 +126,5 @@ public class TileEntityItemStackGunRenderer extends BlockEntityWithoutLevelRende
             poseStack.scale(vector3f.x(), vector3f.y(), vector3f.z());
             poseStack.translate(0, -1.5, 0);
         }
-    }
-
-    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, Vector3f scale) {
-        if (nodePath == null) return;
-        if (scale == null) scale = new Vector3f(1, 1, 1);
-        //应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
-        poseStack.translate(0, 1.5, 0);
-        for (int f = nodePath.size() - 1; f >= 0; f--) {
-            BedrockPart t = nodePath.get(f);
-            poseStack.mulPose(Vector3f.XN.rotation(t.xRot));
-            poseStack.mulPose(Vector3f.YN.rotation(t.yRot));
-            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot));
-            if (t.getParent() != null)
-                poseStack.translate(-t.x * scale.x() / 16.0F, -t.y * scale.y() / 16.0F, -t.z * scale.z() / 16.0F);
-            else {
-                poseStack.translate(-t.x * scale.x() / 16.0F, (1.5F - t.y / 16.0F) * scale.y(), -t.z * scale.z() / 16.0F);
-            }
-        }
-        poseStack.translate(0, -1.5, 0);
     }
 }

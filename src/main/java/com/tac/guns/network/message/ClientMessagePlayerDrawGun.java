@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 public class ClientMessagePlayerDrawGun {
     private final int slotIndex;
 
-    public ClientMessagePlayerDrawGun(int slotIndex){
+    public ClientMessagePlayerDrawGun(int slotIndex) {
         this.slotIndex = slotIndex;
     }
 
@@ -30,7 +30,7 @@ public class ClientMessagePlayerDrawGun {
                 if (entity == null) {
                     return;
                 }
-                // todo 验证 slotIndex 是否为允许 draw 的槽位
+                // TODO 验证 slotIndex 是否为允许 draw 的槽位
                 IGunOperator.fromLivingEntity(entity).draw(entity.getInventory().getItem(message.slotIndex));
             });
         }

@@ -3,15 +3,16 @@ package com.tac.guns.network.message;
 import com.tac.guns.api.entity.IGunOperator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class ClientMessagePlayerReloadGun {
-    public ClientMessagePlayerReloadGun(){}
+    public ClientMessagePlayerReloadGun() {
+    }
 
-    public static void encode(ClientMessagePlayerReloadGun message, FriendlyByteBuf buf) {}
+    public static void encode(ClientMessagePlayerReloadGun message, FriendlyByteBuf buf) {
+    }
 
     public static ClientMessagePlayerReloadGun decode(FriendlyByteBuf buf) {
         return new ClientMessagePlayerReloadGun();
@@ -22,7 +23,7 @@ public class ClientMessagePlayerReloadGun {
         if (context.getDirection().getReceptionSide().isServer()) {
             context.enqueueWork(() -> {
                 ServerPlayer entity = context.getSender();
-                if(entity == null){
+                if (entity == null) {
                     return;
                 }
                 IGunOperator.fromLivingEntity(entity).reload();

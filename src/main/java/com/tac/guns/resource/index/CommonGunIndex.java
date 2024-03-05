@@ -10,9 +10,7 @@ public class CommonGunIndex {
 
     public static CommonGunIndex getInstance(GunIndexPOJO gunIndexPOJO) throws IllegalArgumentException {
         CommonGunIndex index = new CommonGunIndex();
-
         checkData(gunIndexPOJO, index);
-
         return index;
     }
 
@@ -25,6 +23,7 @@ public class CommonGunIndex {
         if (data == null) {
             throw new IllegalArgumentException("there is no corresponding data file");
         }
+        // TODO 更多的 Data 检查
         index.gunData = data;
     }
 

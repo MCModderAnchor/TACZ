@@ -24,13 +24,13 @@ public class InspectKey {
             "key.category.tac");
 
     @SubscribeEvent
-    public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
-        if(event.getAction() != GLFW.GLFW_PRESS){
+    public static void onInspectPress(InputEvent.KeyInputEvent event) {
+        if (event.getAction() != GLFW.GLFW_PRESS) {
             return;
         }
         if (INSPECT_KEY.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if(player == null){
+            if (player == null) {
                 return;
             }
             if (IGun.mainhandHoldGun(player)) {

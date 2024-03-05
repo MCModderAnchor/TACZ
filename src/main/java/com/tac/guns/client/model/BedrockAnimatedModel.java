@@ -87,8 +87,9 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
 
     public void setVisible(String bone, boolean visible) {
         ModelRendererWrapper rendererWrapper = modelMap.get(bone);
-        if (rendererWrapper != null)
+        if (rendererWrapper != null) {
             rendererWrapper.setHidden(visible);
+        }
     }
 
     public void cleanAnimationTransform() {
@@ -302,9 +303,9 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
 
             if (functionalRenderer != null) {
                 @Nullable IModelRenderer renderer = functionalRenderer.apply(this);
-                if (renderer != null)
+                if (renderer != null) {
                     renderer.render(poseStack, transformType, consumer, light, overlay);
-                else {
+                } else {
                     if (this.visible) {
                         super.compile(poseStack.last(), consumer, light, overlay, red, green, blue, alpha);
                         for (BedrockPart part : this.children) {
@@ -343,8 +344,9 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
 
         @Override
         public AnimationListener supplyListeners(String nodeName, ObjectAnimationChannel.ChannelType type) {
-            if (!nodeName.equals(CAMERA_NODE_NAME))
+            if (!nodeName.equals(CAMERA_NODE_NAME)) {
                 return null;
+            }
             if (type.equals(ObjectAnimationChannel.ChannelType.TRANSLATION)) {
                 return new AnimationListener() {
                     @Override
