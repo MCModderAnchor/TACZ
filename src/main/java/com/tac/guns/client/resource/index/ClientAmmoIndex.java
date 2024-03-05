@@ -18,6 +18,7 @@ public class ClientAmmoIndex {
     private String name;
     private BedrockAmmoModel ammoModel;
     private RenderType slotRenderType;
+    private int stackSize;
 
     private ClientAmmoIndex() {
     }
@@ -28,6 +29,7 @@ public class ClientAmmoIndex {
         checkName(clientPojo, index);
         checkTextureAndModel(display, index);
         checkSlotTexture(display, index);
+        checkStackSize(clientPojo, index);
         return index;
     }
 
@@ -87,6 +89,13 @@ public class ClientAmmoIndex {
         index.slotRenderType = RenderType.entityTranslucent(slotTexture);
     }
 
+    private static void checkStackSize(AmmoIndexPOJO clientPojo, ClientAmmoIndex index) {
+        if (clientPojo.getStackSize() < 1) {
+            index.stackSize = 1;
+        }
+        index.stackSize = clientPojo.getStackSize();
+    }
+
     public String getName() {
         return name;
     }
@@ -97,5 +106,9 @@ public class ClientAmmoIndex {
 
     public RenderType getSlotRenderType() {
         return slotRenderType;
+    }
+
+    public int getStackSize() {
+        return stackSize;
     }
 }

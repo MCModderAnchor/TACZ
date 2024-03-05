@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 public class AmmoDisplay {
     @SerializedName("model")
     private ResourceLocation modelLocation;
-    @SerializedName("textures")
+    @SerializedName("texture")
     private ResourceLocation modelTexture;
     @Nullable
     @SerializedName("slot")

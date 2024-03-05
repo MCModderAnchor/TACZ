@@ -9,6 +9,7 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
+import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.item.GunItem;
@@ -34,7 +35,7 @@ import java.util.List;
 import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
 
 /**
- * 负责第一人称的枪械模型渲染。其他人称参见 {@link com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer}
+ * 负责第一人称的枪械模型渲染。其他人称参见 {@link GunItemRenderer}
  */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class FirstPersonRenderGunEvent {
