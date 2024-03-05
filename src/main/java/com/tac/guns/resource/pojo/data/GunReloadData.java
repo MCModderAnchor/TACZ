@@ -4,15 +4,15 @@ import com.google.gson.annotations.SerializedName;
 
 public class GunReloadData {
     @SerializedName("type")
-    private String type;
+    private FeedType type = FeedType.MAGAZINE;
 
     @SerializedName("feed")
-    private GunReloadTime feed;
+    private GunReloadTime feed = new GunReloadTime();
 
     @SerializedName("cooldown")
-    private GunReloadTime cooldown;
+    private GunReloadTime cooldown = new GunReloadTime();
 
-    public String getType() {
+    public FeedType getType() {
         return type;
     }
 

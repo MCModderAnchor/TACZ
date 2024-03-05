@@ -5,10 +5,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class GunRecoil {
     @SerializedName("pitch")
-    private Pair<Float, Float> pitch;
+    private Pair<Float, Float> pitch = Pair.of(0.5f, 0.7f);
 
     @SerializedName("yaw")
-    private Pair<Float, Float> yaw;
+    private Pair<Float, Float> yaw = Pair.of(-0.1f, 0.1f);
 
     public Pair<Float, Float> getPitch() {
         return pitch;

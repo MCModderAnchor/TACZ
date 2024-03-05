@@ -12,17 +12,20 @@ import javax.annotation.Nullable;
 public class GunItemData {
     public static final ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "ak47");
     public static final ResourceLocation DEFAULT_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "ak47_display");
+    public static final ResourceLocation DEFAULT_DATA = new ResourceLocation(GunMod.MOD_ID, "ak47_data");
     public static final String GUN_ID_TAG = "GunId";
     public static final String GUN_FIRE_MODE_TAG = "GunFireMode";
     @Nullable
     private ResourceLocation gunId = null;
-    private FireMode fireMode = FireMode.SEMI;
+    private FireMode fireMode = FireMode.UNKNOWN;
 
     public static void serialization(@Nonnull CompoundTag nbt, @Nonnull GunItemData data) {
         if (data.gunId != null) {
             nbt.putString(GUN_ID_TAG, data.gunId.toString());
         }
-        nbt.putString(GUN_FIRE_MODE_TAG, data.fireMode.name());
+        if (data.fireMode != null) {
+            nbt.putString(GUN_FIRE_MODE_TAG, data.fireMode.name());
+        }
     }
 
     public static @Nonnull GunItemData deserialization(@Nonnull CompoundTag nbt) {

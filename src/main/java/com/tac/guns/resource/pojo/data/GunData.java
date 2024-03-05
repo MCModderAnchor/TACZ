@@ -4,36 +4,54 @@ import com.google.gson.annotations.SerializedName;
 import com.tac.guns.api.gun.FireMode;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class GunData {
     @SerializedName("ammo")
-    private ResourceLocation ammoId;
+    private ResourceLocation ammoId = null;
+
+    @SerializedName("ammo_amount")
+    private int ammoAmount = 30;
+
+    @SerializedName("bolt")
+    private Bolt bolt = Bolt.OPEN_BOLT;
 
     @SerializedName("rpm")
-    private int roundsPerMinute;
+    private int roundsPerMinute = 300;
 
     @SerializedName("draw_time")
-    private float drawTime;
+    private float drawTime = 0.35f;
 
     @SerializedName("aim_time")
-    private float aimTime;
+    private float aimTime = 0.2f;
 
     @SerializedName("reload")
-    private GunReloadData reloadData;
+    private GunReloadData reloadData = new GunReloadData();
 
     @SerializedName("fire_mode")
-    private List<FireMode> fireModeSet;
+    private List<FireMode> fireModeSet = Collections.singletonList(FireMode.UNKNOWN);
 
     @SerializedName("recoil")
-    private GunRecoil recoil;
+    private GunRecoil recoil = new GunRecoil();
 
     @SerializedName("inaccuracy")
-    private Map<String, Float> inaccuracy;
+    private Map<InaccuracyType, Float> inaccuracy = null;
+
+    @SerializedName("move_speed")
+    private MoveSpeed moveSpeed = new MoveSpeed();
 
     public ResourceLocation getAmmoId() {
         return ammoId;
+    }
+
+    public int getAmmoAmount() {
+        return ammoAmount;
+    }
+
+    public Bolt getBolt() {
+        return bolt;
     }
 
     public int getRoundsPerMinute() {
@@ -60,8 +78,20 @@ public class GunData {
         return recoil;
     }
 
-    public float getInaccuracy(String type) {
+    public Map<InaccuracyType, Float> getInaccuracy() {
+        return inaccuracy;
+    }
+
+    public void setInaccuracy(Map<InaccuracyType, Float> inaccuracy) {
+        this.inaccuracy = inaccuracy;
+    }
+
+    public float getInaccuracy(InaccuracyType type) {
         return inaccuracy.get(type);
+    }
+
+    public MoveSpeed getMoveSpeed() {
+        return moveSpeed;
     }
 
     /**

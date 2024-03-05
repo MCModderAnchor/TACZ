@@ -17,22 +17,5 @@
   "fire_mode": [
     "auto",
     "semi"
-  ],
-  "recoil": {
-    "pitch": [
-      0.5,
-      0.8
-    ],
-    "yaw": [
-      -0.1,
-      0.1
-    ]
-  },
-  "inaccuracy": {
-    "stand": 2,
-    "move": 4,
-    "sneak": 1,
-    "lie": 0.5,
-    "aim": 0.2
-  }
+  ]
 }

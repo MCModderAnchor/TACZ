@@ -1,7 +1,6 @@
 package com.tac.guns.item;
 
 import com.tac.guns.api.gun.FireMode;
-import com.tac.guns.api.gun.InaccuracyState;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
@@ -10,12 +9,11 @@ import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonGunPackLoader;
-import net.minecraft.Util;
+import com.tac.guns.resource.pojo.data.InaccuracyType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -102,9 +100,8 @@ public class GunItem extends Item implements IGun {
             // TODO 获取 GunData 并根据其中的弹道参数创建 EntityBullet
             Level world = shooter.getLevel();
             EntityBullet bullet = new EntityBullet(world, shooter);
-            InaccuracyState.StateType inaccuracyState = InaccuracyState.getInaccuracyState(shooter);
-            shooter.sendMessage(new TextComponent(inaccuracyState.getName()), Util.NIL_UUID);
-            float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState.getName());
+            InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
+            float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
             bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 10, inaccuracy);
             world.addFreshEntity(bullet);
         });
