@@ -5,6 +5,7 @@ import com.tac.guns.api.gun.FireMode;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
+import java.util.Map;
 
 public class GunData {
     @SerializedName("ammo")
@@ -27,6 +28,9 @@ public class GunData {
 
     @SerializedName("recoil")
     private GunRecoil recoil;
+
+    @SerializedName("inaccuracy")
+    private Map<String, Float> inaccuracy;
 
     public ResourceLocation getAmmoId() {
         return ammoId;
@@ -54,6 +58,10 @@ public class GunData {
 
     public GunRecoil getRecoil() {
         return recoil;
+    }
+
+    public float getInaccuracy(String type) {
+        return inaccuracy.get(type);
     }
 
     /**

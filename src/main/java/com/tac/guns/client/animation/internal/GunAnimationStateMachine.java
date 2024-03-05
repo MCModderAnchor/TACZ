@@ -10,7 +10,7 @@ public class GunAnimationStateMachine {
     public static final int MAIN_TRACK = 0;
     public static final String SHOOT_ANIMATION = "shoot";
     public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";
-    public static final String RELOAD_NORMAL_ANIMATION = "reload_norm";
+    public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";
     public static final String DRAW_ANIMATION = "draw";
     public static final String INSPECT_ANIMATION = "inspect";
     protected AnimationController controller;
@@ -31,7 +31,7 @@ public class GunAnimationStateMachine {
         if (noAmmo) {
             controller.runAnimation(MAIN_TRACK, RELOAD_EMPTY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
         } else {
-            controller.runAnimation(MAIN_TRACK, RELOAD_NORMAL_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
+            controller.runAnimation(MAIN_TRACK, RELOAD_TACTICAL_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
         }
     }
 
@@ -55,9 +55,9 @@ public class GunAnimationStateMachine {
     /**
      * @return 返回当前正在播放的动画是否需要隐藏准心。
      */
-    public boolean shouldHideCrossHair(){
+    public boolean shouldHideCrossHair() {
         ObjectAnimationRunner runner = controller.getAnimation(MAIN_TRACK);
-        if(runner == null || (!runner.isRunning() && !runner.isTransitioning())){
+        if (runner == null || (!runner.isRunning() && !runner.isTransitioning())) {
             return false;
         }
         ObjectAnimationRunner transitionTo = runner.getTransitionTo();

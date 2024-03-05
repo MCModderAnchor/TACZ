@@ -1,6 +1,7 @@
 package com.tac.guns.item;
 
 import com.tac.guns.api.gun.FireMode;
+import com.tac.guns.api.gun.InaccuracyState;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.tileentity.TileEntityItemStackGunRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
@@ -9,11 +10,12 @@ import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonGunPackLoader;
-import com.tac.guns.resource.index.CommonGunIndex;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -96,15 +98,16 @@ public class GunItem extends Item implements IGun {
     @Override
     public void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw) {
         ResourceLocation gunId = GunItem.getData(gun).getGunId();
-        Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
-        if (gunIndexOptional.isEmpty()) {
-            return;
-        }
-        // todo 获取 GunData 并根据其中的弹道参数创建 EntityBullet
-        Level world = shooter.getLevel();
-        EntityBullet bullet = new EntityBullet(world, shooter);
-        bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 10, 0);
-        world.addFreshEntity(bullet);
+        CommonGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            // todo 获取 GunData 并根据其中的弹道参数创建 EntityBullet
+            Level world = shooter.getLevel();
+            EntityBullet bullet = new EntityBullet(world, shooter);
+            InaccuracyState.StateType inaccuracyState = InaccuracyState.getInaccuracyState(shooter);
+            shooter.sendMessage(new TextComponent(inaccuracyState.getName()), Util.NIL_UUID);
+            float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState.getName());
+            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 10, inaccuracy);
+            world.addFreshEntity(bullet);
+        });
     }
 
     @Override
