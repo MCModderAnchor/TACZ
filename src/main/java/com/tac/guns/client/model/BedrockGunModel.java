@@ -115,6 +115,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             return null;
         });
         this.setFunctionalRenderer(MOUNT, bedrockPart -> {
+            bedrockPart.visible = false;
             //TODO 安装瞄具时可见
             return null;
         });

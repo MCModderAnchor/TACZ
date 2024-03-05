@@ -887,6 +887,11 @@
 					"pivot": [-3.075, -2.625, -6.425]
 				},
 				{
+					"name": "iron_view",
+					"parent": "g17",
+					"pivot": [-3.075, 4.425, 12.85]
+				},
+				{
 					"name": "g17_default_gun",
 					"parent": "g17",
 					"pivot": [-3.075, 0.375, -11.425]
@@ -3145,19 +3150,13 @@
 					"pivot": [-3.1, -1.775, -9.375]
 				},
 				{
-					"name": "camera",
-					"pivot": [0, 8, 12]
-				},
-				{
 					"name": "idle_view",
-					"parent": "camera",
 					"pivot": [0, 8, 12],
 					"rotation": [0, 0, -3]
 				},
 				{
-					"name": "iron_view",
-					"parent": "camera",
-					"pivot": [-3.075, 4.425, 12.85]
+					"name": "camera",
+					"pivot": [0, 8, 12]
 				}
 			]
 		}

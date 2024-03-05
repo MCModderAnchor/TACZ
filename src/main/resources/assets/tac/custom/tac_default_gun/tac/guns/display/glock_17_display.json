@@ -30,10 +30,12 @@
   },
   "ica": {
     "iron_view": {
-      "translation": [0.2, 0.2, 0.4]
+      "translation": [0.5, 0.5, 0.5],
+      "rotation": [0.5, 0.5, 0.5]
     },
     "scope_view": {
-      "rotation": [0.1, 0.2, 0.2]
+      "translation": [0.5, 0.5, 0.5],
+      "rotation": [0.5, 0.5, 0.5]
     }
   }
 }

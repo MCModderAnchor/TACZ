@@ -21,6 +21,12 @@
 					"pivot": [-2.225, 3.425, 1.3]
 				},
 				{
+					"name": "iron_view",
+					"parent": "bone2",
+					"pivot": [-2.225, 6.625, 8.675],
+					"rotation": [0.75, 0, 0]
+				},
+				{
 					"name": "AKM",
 					"parent": "bone2",
 					"pivot": [-2.225, -4.575, -0.7]
@@ -7337,18 +7343,11 @@
 					]
 				},
 				{
-					"name": "camera",
+					"name": "idle_view",
 					"pivot": [0, 8, 12]
 				},
 				{
-					"name": "iron_view",
-					"parent": "camera",
-					"pivot": [-2.225, 6.625, 8.675],
-					"rotation": [0.75, 0, 0]
-				},
-				{
-					"name": "idle_view",
-					"parent": "camera",
+					"name": "camera",
 					"pivot": [0, 8, 12]
 				},
 				{
