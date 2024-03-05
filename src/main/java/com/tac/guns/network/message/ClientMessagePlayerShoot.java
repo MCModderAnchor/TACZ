@@ -12,18 +12,12 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class ClientMessagePlayerShoot {
-    private final int gunItemIndex;
+    public ClientMessagePlayerShoot(){}
 
-    public ClientMessagePlayerShoot(int gunItemIndex){
-        this.gunItemIndex = gunItemIndex;
-    }
-
-    public static void encode(ClientMessagePlayerShoot message, FriendlyByteBuf buf) {
-        buf.writeInt(message.gunItemIndex);
-    }
+    public static void encode(ClientMessagePlayerShoot message, FriendlyByteBuf buf) {}
 
     public static ClientMessagePlayerShoot decode(FriendlyByteBuf buf) {
-        return new ClientMessagePlayerShoot(buf.readInt());
+        return new ClientMessagePlayerShoot();
     }
 
     public static void handle(ClientMessagePlayerShoot message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -34,12 +28,7 @@ public class ClientMessagePlayerShoot {
                 if(entity == null){
                     return;
                 }
-                // 暂时只考虑主手能打枪。
-                if(entity.getInventory().selected != message.gunItemIndex) {
-                    return;
-                }
-                ItemStack gunItem = entity.getInventory().getItem(message.gunItemIndex);
-                IGunOperator.fromLivingEntity(entity).shoot(gunItem, entity.getXRot(), entity.getYRot());
+                IGunOperator.fromLivingEntity(entity).shoot(entity.getXRot(), entity.getYRot());
             });
         }
         context.setPacketHandled(true);

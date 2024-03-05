@@ -39,7 +39,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator {
@@ -60,36 +59,57 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     private static final EntityDataAccessor<Float> DATA_AIMING_PROGRESS_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
 
     // 开火逻辑的状态缓存
-    // 射击时间戳，单位 ms
+    /**
+     * 射击时间戳，射击成功时更新，单位 ms。
+     * 用于计算射击的冷却时间。
+     */
     @Unique
     private long tac$ShootTimestamp = -1L;
-    @Unique
-    @Nullable
-    private ItemStack tac$ShootingGun = null;
 
     // 切枪逻辑的状态缓存
-    // 切枪时间戳，单位 ms
+    /**
+     * 切枪时间戳，在切枪开始时更新，单位 ms。
+     * 用于计算切枪进度。切枪进度完成后，才能进行各种操作。
+     */
     @Unique
     private long tac$DrawTimestamp = -1L;
 
     // 瞄准逻辑的状态缓存
-    // 瞄准的进度，范围 0 ~ 1
+    /**
+     * 瞄准的进度，范围 0 ~ 1
+     */
     @Unique
     private float tac$AimingProgress = 0;
-    // 瞄准时间戳，单位 ms
+    /**
+     * 瞄准时间戳，在每个 tick 更新，单位 ms。
+     * 用于在每个 tick 计算: 距离上一次更新 aimingProgress 的时长，并依此计算 aimingProgress 的增量。
+     */
     @Unique
     private long tac$AimingTimestamp = -1L;
+    /**
+     * 为 true 时表示正在 执行瞄准 状态，aimingProgress 会在每个 tick 叠加，
+     * 为 false 时表示正在 取消瞄准 状态，aimingProgress 会在每个 tick 递减。
+     */
     @Unique
     private boolean tac$IsAiming = false;
 
     // 换弹逻辑的状态缓存
-    // 装弹时间戳，单位 ms
+    /**
+     * 装弹时间戳，在开始装弹的瞬间更新，单位 ms。
+     * 用于在每个 tick 计算: 从开始装弹 到 当前时间点 的时长，并依此计算出换弹的状态和冷却。
+     */
     @Unique
     private long tac$ReloadTimestamp = -1;
+    /**
+     * 装填状态的缓存。会在每个 tick 进行更新。
+     */
     @Unique
     @Nonnull
     private ReloadState.StateType tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
 
+    /**
+     * 缓存实体当前操作的枪械物品。在切枪时 (draw 方法) 更新。
+     */
     @Unique
     @Nullable
     private ItemStack tac$CurrentGunItem = null;
@@ -114,10 +134,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Unique
     private long getShootCoolDown() {
-        if (tac$ShootingGun == null) {
+        if (tac$CurrentGunItem == null) {
             return 0;
         }
-        ResourceLocation gunId = GunItem.getData(tac$ShootingGun).getGunId();
+        ResourceLocation gunId = GunItem.getData(tac$CurrentGunItem).getGunId();
         Optional<CommonGunIndex> gunIndex = CommonGunPackLoader.getGunIndex(gunId);
         return gunIndex.map(index -> {
             long coolDown = index.getGunData().getShootInterval() - (System.currentTimeMillis() - tac$ShootTimestamp);
@@ -131,14 +151,31 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Unique
     @Override
     public void draw(ItemStack gunItemStack) {
-        // todo
+        tac$CurrentGunItem = gunItemStack;
+        // 重置各个状态
+        tac$ShootTimestamp = -1;
+        tac$IsAiming = false;
+        tac$AimingProgress = 0;
+        tac$ReloadTimestamp = -1;
+        tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
+
+        if(!IGun.isGun(gunItemStack)){
+            tac$DrawTimestamp = -1;
+            // todo 执行收枪逻辑
+        }else{
+            tac$DrawTimestamp = System.currentTimeMillis();
+            // todo 执行切枪逻辑
+        }
     }
 
     @Unique
     @Override
-    public void reload(ItemStack gunItemStack) {
+    public void reload() {
+        if(tac$CurrentGunItem == null){
+            return;
+        }
         LivingEntity entity = (LivingEntity) (Object) this;
-        ResourceLocation gunId = GunItem.getData(gunItemStack).getGunId();
+        ResourceLocation gunId = GunItem.getData(tac$CurrentGunItem).getGunId();
         CommonGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             // 检查换弹是否还未完成
             if (tac$ReloadStateType.isReloading()) {
@@ -150,19 +187,21 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             }
             // todo 检查 draw 是否还未完成
             // 触发装弹事件
-            if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(entity, gunItemStack, LogicalSide.SERVER))) {
+            if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
                 return;
             }
             // todo 根据枪内子弹数量初始化换弹状态 ，此处默认空仓换弹
             tac$ReloadStateType = ReloadState.StateType.EMPTY_RELOAD_FEEDING;
             tac$ReloadTimestamp = System.currentTimeMillis();
-            tac$CurrentGunItem = gunItemStack;
         });
     }
 
     @Unique
     @Override
-    public ShootResult shoot(ItemStack gunItemStack, float pitch, float yaw) {
+    public ShootResult shoot(float pitch, float yaw) {
+        if(tac$CurrentGunItem == null){
+            return ShootResult.FAIL;
+        }
         // 判断射击是否正在冷却
         long coolDown = getShootCoolDown();
         if (coolDown == -1) {
@@ -178,14 +217,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         // todo 检查 draw 是否还未完成
         LivingEntity entity = (LivingEntity) (Object) this;
         // 触发射击事件
-        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, gunItemStack, LogicalSide.SERVER))) {
+        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
             return ShootResult.FAIL;
         }
         // todo 判断枪械是否有足够的弹药
         // 调用射击方法
-        if (gunItemStack.getItem() instanceof IGun iGun) {
-            tac$ShootingGun = gunItemStack;
-            iGun.shoot(entity, gunItemStack, pitch, yaw);
+        if (tac$CurrentGunItem.getItem() instanceof IGun iGun) {
+            iGun.shoot(entity, tac$CurrentGunItem, pitch, yaw);
             tac$ShootTimestamp = System.currentTimeMillis();
             return ShootResult.SUCCESS;
         }
@@ -194,17 +232,19 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Unique
     @Override
-    public void aim(ItemStack gunItemStack, boolean isAim) {
+    public void aim(boolean isAim) {
         // todo 判断当前状态能不能瞄准
-        tac$CurrentGunItem = gunItemStack;
         tac$IsAiming = isAim;
     }
 
     @Unique
     @Override
-    public FireMode fireSelect(ItemStack gunItemStack) {
+    public FireMode fireSelect() {
+        if(tac$CurrentGunItem == null){
+            return FireMode.UNKNOWN;
+        }
         // 获取GunData
-        GunItemData gunItemData = GunItem.getData(gunItemStack);
+        GunItemData gunItemData = GunItem.getData(tac$CurrentGunItem);
         ResourceLocation gunId = gunItemData.getGunId();
         LivingEntity entity = (LivingEntity) (Object) this;
         Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
@@ -212,16 +252,16 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             return FireMode.SEMI;
         }
         GunData gunData = gunIndexOptional.get().getGunData();
-        if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(entity, gunItemStack, LogicalSide.SERVER))) {
+        if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
             return FireMode.SEMI;
         }
-        if (gunItemStack.getItem() instanceof IGun iGun) {
-            FireMode fireMode = iGun.getFireMode(gunItemStack);
+        if (tac$CurrentGunItem.getItem() instanceof IGun iGun) {
+            FireMode fireMode = iGun.getFireMode(tac$CurrentGunItem);
             List<FireMode> fireModeSet = gunData.getFireModeSet();
             int nextIndex = (fireModeSet.indexOf(fireMode) + 1) % fireModeSet.size();
             FireMode nextFireMode = fireModeSet.get(nextIndex);
             gunItemData.setFireMode(nextFireMode);
-            GunItem.setData(gunItemStack, gunItemData);
+            GunItem.setData(tac$CurrentGunItem, gunItemData);
             return nextFireMode;
         }
         return FireMode.SEMI;
@@ -230,11 +270,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Inject(method = "tick", at = @At(value = "RETURN"))
     private void onTickServerSide(CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        // 以下 tick 逻辑仅发生在服务端，因此如果为客户端调用，返回。
+        // 如果为客户端调用，返回。
         if (entity.getLevel().isClientSide()) {
             return;
         }
-        // tick 装弹状态
+        // 完成各种 tick 任务
         ReloadState reloadState = tickReloadState();
         tickAimingProgress();
         // 从服务端同步数据

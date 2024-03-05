@@ -12,18 +12,10 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class ClientMessagePlayerFireSelect {
-    private final int gunItemIndex;
-
-    public ClientMessagePlayerFireSelect(int gunItemIndex) {
-        this.gunItemIndex = gunItemIndex;
-    }
-
-    public static void encode(ClientMessagePlayerFireSelect message, FriendlyByteBuf buf) {
-        buf.writeInt(message.gunItemIndex);
-    }
+    public static void encode(ClientMessagePlayerFireSelect message, FriendlyByteBuf buf) {}
 
     public static ClientMessagePlayerFireSelect decode(FriendlyByteBuf buf) {
-        return new ClientMessagePlayerFireSelect(buf.readInt());
+        return new ClientMessagePlayerFireSelect();
     }
 
     public static void handle(ClientMessagePlayerFireSelect message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -34,12 +26,7 @@ public class ClientMessagePlayerFireSelect {
                 if (entity == null) {
                     return;
                 }
-                // 暂时只考虑主手
-                if (entity.getInventory().selected != message.gunItemIndex) {
-                    return;
-                }
-                ItemStack gunItem = entity.getInventory().getItem(message.gunItemIndex);
-                FireMode fireMode = IGunOperator.fromLivingEntity(entity).fireSelect(gunItem);
+                FireMode fireMode = IGunOperator.fromLivingEntity(entity).fireSelect();
                 entity.sendMessage(new TranslatableComponent("message.tac.fire_select.success", fireMode.name()), Util.NIL_UUID);
             });
         }

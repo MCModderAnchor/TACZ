@@ -24,22 +24,24 @@ public interface IGunOperator {
 
     void draw(ItemStack gunItemStack);
 
-    void reload(ItemStack gunItemStack);
+    void reload();
 
-    FireMode fireSelect(ItemStack gunItemStack);
+    FireMode fireSelect();
 
     /**
      * 从实体的位置，向指定的方向开枪
      *
-     * @param gunItemStack 枪物品
      * @param pitch        开火方向的俯仰角(即 xRot )
      * @param yaw          开火方向的偏航角(即 yRot )
      * @return 本次射击的结果
      */
-    ShootResult shoot(ItemStack gunItemStack, float pitch, float yaw);
+    ShootResult shoot(float pitch, float yaw);
 
-    void aim(ItemStack gunItemStack, boolean isAim);
+    void aim(boolean isAim);
 
+    /**
+     * LivingEntity 通过 Mixin 的方式实现了这个接口
+     */
     static IGunOperator fromLivingEntity(LivingEntity entity) {
         return (IGunOperator) entity;
     }

@@ -26,6 +26,9 @@ public interface IClientPlayerGunOperator {
 
     float getClientAimingProgress();
 
+    /**
+     * LocalPlayer 通过 Mixin 的方式实现了这个接口
+     */
     static IClientPlayerGunOperator fromLocalPlayer(LocalPlayer player) {
         return (IClientPlayerGunOperator) player;
     }

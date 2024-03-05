@@ -14,10 +14,7 @@ import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.network.NetworkHandler;
-import com.tac.guns.network.message.ClientMessagePlayerAim;
-import com.tac.guns.network.message.ClientMessagePlayerFireSelect;
-import com.tac.guns.network.message.ClientMessagePlayerReloadGun;
-import com.tac.guns.network.message.ClientMessagePlayerShoot;
+import com.tac.guns.network.message.*;
 import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.GunData;
@@ -103,7 +100,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 // 转换 isRecord 状态，允许下一个tick的开火检测。
                 tac$IsShootRecorded = true;
                 // 发送开火的数据包，通知服务器。暂时只考虑主手能打枪。
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot(player.getInventory().selected));
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot());
                 // 动画状态机转移状态
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (animationStateMachine != null) {
@@ -126,9 +123,14 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void draw() {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        // 重制客户端的 shoot 时间戳
+        // 重置客户端的 shoot 时间戳
         tac$IsShootRecorded = true;
         tac$ClientShootTimestamp = -1;
+        // 重置客户端瞄准状态
+        tac$ClientIsAiming = false;
+        tac$ClientAimingProgress = 0;
+        // 发包通知服务器
+        NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun(player.getInventory().selected));
         // 放映 draw 动画
         ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
@@ -160,7 +162,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 return;
             }
             // 发包通知服务器
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun(player.getInventory().selected));
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
                 // todo 判断枪内是否有余弹
@@ -195,7 +197,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                     return;
                 }
                 // 发送切换开火模式的数据包，通知服务器
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect(player.getInventory().selected));
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
                 // 动画状态机转移状态
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (animationStateMachine != null) {
@@ -215,7 +217,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 // todo 判断能不能瞄准
                 tac$ClientIsAiming = isAim;
                 // 发送切换开火模式的数据包，通知服务器
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(player.getInventory().selected, isAim));
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(isAim));
             });
         }
     }
@@ -250,11 +252,15 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (tac$ClientIsAiming) {
             // 处于执行瞄准状态，增加 aimingProgress
             tac$ClientAimingProgress += alphaProgress;
-            if (tac$ClientAimingProgress > 1) tac$ClientAimingProgress = 1;
+            if (tac$ClientAimingProgress > 1) {
+                tac$ClientAimingProgress = 1;
+            }
         } else {
             // 处于取消瞄准状态，减小 aimingProgress
             tac$ClientAimingProgress -= alphaProgress;
-            if (tac$ClientAimingProgress < 0) tac$ClientAimingProgress = 0;
+            if (tac$ClientAimingProgress < 0) {
+                tac$ClientAimingProgress = 0;
+            }
         }
         tac$ClientAimingTimestamp = System.currentTimeMillis();
     }

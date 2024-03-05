@@ -17,5 +17,6 @@ public enum FireMode {
      * 多连发
      */
     @SerializedName("burst")
-    BURST
+    BURST,
+    UNKNOWN
 }
