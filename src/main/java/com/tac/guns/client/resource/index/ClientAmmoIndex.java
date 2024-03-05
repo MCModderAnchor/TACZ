@@ -90,10 +90,7 @@ public class ClientAmmoIndex {
     }
 
     private static void checkStackSize(AmmoIndexPOJO clientPojo, ClientAmmoIndex index) {
-        if (clientPojo.getStackSize() < 1) {
-            index.stackSize = 1;
-        }
-        index.stackSize = clientPojo.getStackSize();
+        index.stackSize = Math.max(clientPojo.getStackSize(), 1);
     }
 
     public String getName() {

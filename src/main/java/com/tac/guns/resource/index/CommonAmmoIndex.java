@@ -10,9 +10,11 @@ public class CommonAmmoIndex {
 
     public static CommonAmmoIndex getInstance(AmmoIndexPOJO ammoIndexPOJO) throws IllegalArgumentException {
         CommonAmmoIndex index = new CommonAmmoIndex();
-        if (ammoIndexPOJO.getStackSize() < 1) {
-            index.stackSize = 1;
-        }
+        index.stackSize = Math.max(ammoIndexPOJO.getStackSize(), 1);
         return index;
+    }
+
+    public int getStackSize() {
+        return stackSize;
     }
 }
