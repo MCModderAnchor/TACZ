@@ -21,6 +21,11 @@ public class GunShootEvent extends Event {
         this.logicalSide = side;
     }
 
+    @Override
+    public boolean isCancelable() {
+        return true;
+    }
+
     public LivingEntity getShooter() {
         return shooter;
     }
