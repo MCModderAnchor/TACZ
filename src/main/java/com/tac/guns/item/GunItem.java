@@ -66,7 +66,9 @@ public class GunItem extends Item implements IGun {
         if (this.allowdedIn(modeTab)) {
             ClientGunPackLoader.getAllGuns().forEach(entry -> {
                 GunItemData data = new GunItemData();
+                ClientGunIndex index = entry.getValue();
                 data.setGunId(entry.getKey());
+                data.setFireMode(index.getGunData().getFireModeSet().get(0));
                 stacks.add(setData(this.getDefaultInstance(), data));
             });
         }

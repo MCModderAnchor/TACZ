@@ -42,6 +42,7 @@ public class ClientGunIndex {
     private GunTransform transform;
     private GunData gunData;
     private RenderType slotRenderType;
+    private ResourceLocation hudTexture;
 
     private ClientGunIndex() {
     }
@@ -54,6 +55,7 @@ public class ClientGunIndex {
         checkTooltip(clientPojo, index);
         checkTextureAndModel(display, index);
         checkSlotTexture(display, index);
+        checkHUDTexture(display, index);
         checkAnimation(display, index);
         checkSounds(display, index);
         checkTransform(display, index);
@@ -203,6 +205,10 @@ public class ClientGunIndex {
         index.slotRenderType = RenderType.entityTranslucent(slotTexture);
     }
 
+    private static void checkHUDTexture(GunDisplay display, ClientGunIndex index) {
+        index.hudTexture = Objects.requireNonNullElseGet(display.getHudTextureLocation(), MissingTextureAtlasSprite::getLocation);
+    }
+
     public String getName() {
         return name;
     }
@@ -230,6 +236,10 @@ public class ClientGunIndex {
 
     public RenderType getSlotRenderType() {
         return slotRenderType;
+    }
+
+    public ResourceLocation getHUDTexture() {
+        return hudTexture;
     }
 
     public GunData getGunData() {
