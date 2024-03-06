@@ -7,7 +7,6 @@ import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.player.LocalPlayer;
@@ -22,7 +21,7 @@ public class GunHudOverlay {
     private static final ResourceLocation SEMI = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_semi.png");
     private static final ResourceLocation AUTO = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_auto.png");
     private static final ResourceLocation BURST = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_burst.png");
-    private static DecimalFormat CURRENT_AMMO_FORMAT = new DecimalFormat("000");
+    private static final DecimalFormat CURRENT_AMMO_FORMAT = new DecimalFormat("000");
 
     public static void render(ForgeIngameGui gui, PoseStack poseStack, float partialTick, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
@@ -31,14 +30,14 @@ public class GunHudOverlay {
             return;
         }
         ItemStack stack = player.getMainHandItem();
-        if (!IGun.isGun(stack)) {
+        if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
 
-        int currentAmmoCount = GunItem.getData(stack).getCurrentAmmoCount();
+        int currentAmmoCount = iGun.getCurrentAmmoCount(stack);
         String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(currentAmmoCount);
         String countB = "9999";
-        ResourceLocation gunId = GunItem.getData(stack).getGunId();
+        ResourceLocation gunId = iGun.getGunId(stack);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             // 竖线
             GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 32, 0xFFFFFFFF);

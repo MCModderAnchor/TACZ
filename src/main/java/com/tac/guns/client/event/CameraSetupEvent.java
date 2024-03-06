@@ -7,10 +7,9 @@ import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,11 +24,14 @@ public class CameraSetupEvent {
         }
         LocalPlayer player = Minecraft.getInstance().player;
         // 目前只有枪械物品有摄像机动画，因此需要进行判断
-        if (player == null || !IGun.mainhandHoldGun(player)) {
+        if (player == null) {
             return;
         }
-        ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        ItemStack stack = player.getMainHandItem();
+        if (!(stack.getItem() instanceof IGun iGun)) {
+            return;
+        }
+        ClientGunPackLoader.getGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             Quaternion q = gunModel.getCameraAnimationObject().rotationQuaternion;
             double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
@@ -51,11 +53,14 @@ public class CameraSetupEvent {
         }
         LocalPlayer player = Minecraft.getInstance().player;
         // 目前只有枪械物品有摄像机动画，因此需要进行判断
-        if (player == null || !IGun.mainhandHoldGun(player)) {
+        if (player == null) {
             return;
         }
-        ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        ItemStack stack = player.getMainHandItem();
+        if (!(stack.getItem() instanceof IGun iGun)) {
+            return;
+        }
+        ClientGunPackLoader.getGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             PoseStack poseStack = event.getPoseStack();
             poseStack.mulPose(gunModel.getCameraAnimationObject().rotationQuaternion);

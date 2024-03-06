@@ -14,8 +14,6 @@ import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.display.CommonTransformObject;
-import com.tac.guns.item.GunItem;
-import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -60,7 +58,7 @@ public class FirstPersonRenderGunEvent {
             return;
         }
         ItemStack stack = event.getItemStack();
-        if (!IGun.isGun(stack)) {
+        if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
 
@@ -72,7 +70,7 @@ public class FirstPersonRenderGunEvent {
             transformType = TransformType.FIRST_PERSON_LEFT_HAND;
         }
 
-        ResourceLocation gunId = GunItem.getData(player.getItemInHand(event.getHand())).getGunId();
+        ResourceLocation gunId = iGun.getGunId(stack);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
@@ -167,7 +165,7 @@ public class FirstPersonRenderGunEvent {
         for (int i = nodePath.size() - 1; i >= 0; i--) {
             BedrockPart part = nodePath.get(i);
             // 如果需要削弱动画 则应用反相的额外旋转参数
-            if(ica != null){
+            if (ica != null) {
                 Quaternion q = part.additionalQuaternion;
                 double pitch = Math.atan2(2 * (q.r() * q.i() + q.j() * q.k()), 1 - 2 * (q.i() * q.i() + q.j() * q.j()));
                 double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
@@ -181,7 +179,7 @@ public class FirstPersonRenderGunEvent {
             poseStack.mulPose(Vector3f.YN.rotation(part.yRot * weight));
             poseStack.mulPose(Vector3f.ZN.rotation(part.zRot * weight));
             // 如果需要削弱动画，则应用反向的额外位移参数
-            if(ica != null){
+            if (ica != null) {
                 poseStack.translate(
                         -part.offsetX * weight * (1 - ica.getTranslation().x()),
                         -part.offsetY * weight * (1 - ica.getTranslation().y()),
@@ -202,10 +200,8 @@ public class FirstPersonRenderGunEvent {
      * 判断两个枪械 ID 是否相同
      */
     private static boolean isSame(ItemStack gunA, ItemStack gunB) {
-        if (IGun.isGun(gunA) && IGun.isGun(gunB)) {
-            GunItemData dataA = GunItem.getData(gunA);
-            GunItemData dataB = GunItem.getData(gunB);
-            return dataA.getGunId().equals(dataB.getGunId());
+        if (gunA.getItem() instanceof IGun iGunA && gunB.getItem() instanceof IGun iGunB) {
+            return iGunA.getGunId(gunA).equals(iGunB.getGunId(gunB));
         }
         return gunA.sameItem(gunB);
     }

@@ -9,7 +9,6 @@ import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.pojo.display.TransformScale;
-import com.tac.guns.item.GunItem;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -58,38 +57,39 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-        if (IGun.isGun(stack)) {
-            // 第一人称就不渲染了，交给别的地方
-            if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
+        if (!(stack.getItem() instanceof IGun iGun)) {
+            return;
+        }
+        // 第一人称就不渲染了，交给别的地方
+        if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
+            return;
+        }
+        // 剩下的渲染
+        ResourceLocation gunId = iGun.getGunId(stack);
+        // TODO 如果没有这个 gunID，应该渲染个什么错误材质提醒别人
+        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            if (transformType == GUI) {
+                poseStack.pushPose();
+                poseStack.translate(0.5, 1.5, 0.5);
+                poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+                VertexConsumer buffer = pBuffer.getBuffer(gunIndex.getSlotRenderType());
+                SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                poseStack.popPose();
                 return;
             }
-            // 剩下的渲染
-            ResourceLocation gunId = GunItem.getData(stack).getGunId();
-            // TODO 如果没有这个 gunID，应该渲染个什么错误材质提醒别人
-            ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                if (transformType == GUI) {
-                    poseStack.pushPose();
-                    poseStack.translate(0.5, 1.5, 0.5);
-                    poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
-                    VertexConsumer buffer = pBuffer.getBuffer(gunIndex.getSlotRenderType());
-                    SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                    poseStack.popPose();
-                    return;
-                }
-                BedrockGunModel gunModel = gunIndex.getGunModel();
-                poseStack.pushPose();
-                // 移动到模型原点
-                poseStack.translate(0.5, 2, 0.5);
-                // 反转模型
-                poseStack.scale(-1, -1, 1);
-                // 应用定位组的变换（位移和旋转，不包括缩放）
-                applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
-                // 应用 display 数据中的缩放
-                applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
-                gunModel.render(0, transformType, stack, null, poseStack, pBuffer, pPackedLight, pPackedOverlay);
-                poseStack.popPose();
-            });
-        }
+            BedrockGunModel gunModel = gunIndex.getGunModel();
+            poseStack.pushPose();
+            // 移动到模型原点
+            poseStack.translate(0.5, 2, 0.5);
+            // 反转模型
+            poseStack.scale(-1, -1, 1);
+            // 应用定位组的变换（位移和旋转，不包括缩放）
+            applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
+            // 应用 display 数据中的缩放
+            applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
+            gunModel.render(0, transformType, stack, null, poseStack, pBuffer, pPackedLight, pPackedOverlay);
+            poseStack.popPose();
+        });
     }
 
     private void applyPositioningTransform(ItemTransforms.TransformType transformType, TransformScale scale, BedrockGunModel model, PoseStack poseStack) {

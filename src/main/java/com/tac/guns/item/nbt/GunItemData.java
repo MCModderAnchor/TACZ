@@ -2,91 +2,82 @@ package com.tac.guns.item.nbt;
 
 import com.tac.guns.GunMod;
 import com.tac.guns.api.gun.FireMode;
+import com.tac.guns.api.item.IGun;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class GunItemData {
-    public static final ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "ak47");
-    public static final ResourceLocation DEFAULT_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "ak47_display");
-    public static final ResourceLocation DEFAULT_DATA = new ResourceLocation(GunMod.MOD_ID, "ak47_data");
+public interface GunItemData extends IGun {
+    ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "ak47");
+    ResourceLocation DEFAULT_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "ak47_display");
+    ResourceLocation DEFAULT_DATA = new ResourceLocation(GunMod.MOD_ID, "ak47_data");
 
-    public static final String GUN_ID_TAG = "GunId";
-    public static final String GUN_FIRE_MODE_TAG = "GunFireMode";
-    public static final String GUN_MAX_AMMO_COUNT_TAG = "GunMaxAmmoCount";
-    public static final String GUN_CURRENT_AMMO_COUNT_TAG = "GunCurrentAmmoCount";
+    String GUN_ID_TAG = "GunId";
+    String GUN_FIRE_MODE_TAG = "GunFireMode";
+    String GUN_CURRENT_AMMO_COUNT_TAG = "GunCurrentAmmoCount";
 
-    private @Nullable ResourceLocation gunId = null;
-    private FireMode fireMode = FireMode.UNKNOWN;
-    private int maxAmmoCount = 1;
-    private int currentAmmoCount = 1;
-
-    public static void serialization(@Nonnull CompoundTag nbt, @Nonnull GunItemData data) {
-        if (data.gunId != null) {
-            nbt.putString(GUN_ID_TAG, data.gunId.toString());
-        }
-        if (data.fireMode != null) {
-            nbt.putString(GUN_FIRE_MODE_TAG, data.fireMode.name());
-        }
-        nbt.putInt(GUN_MAX_AMMO_COUNT_TAG, data.maxAmmoCount);
-        nbt.putInt(GUN_CURRENT_AMMO_COUNT_TAG, data.currentAmmoCount);
-    }
-
-    public static @Nonnull GunItemData deserialization(@Nonnull CompoundTag nbt) {
-        GunItemData data = new GunItemData();
-        if (nbt.contains(GUN_ID_TAG, Tag.TAG_STRING)) {
-            data.gunId = ResourceLocation.tryParse(nbt.getString(GUN_ID_TAG));
-        }
-        if (nbt.contains(GUN_FIRE_MODE_TAG, Tag.TAG_STRING)) {
-            data.fireMode = FireMode.valueOf(nbt.getString(GUN_FIRE_MODE_TAG));
-        }
-        if (nbt.contains(GUN_MAX_AMMO_COUNT_TAG, Tag.TAG_INT)) {
-            data.maxAmmoCount = nbt.getInt(GUN_MAX_AMMO_COUNT_TAG);
-        }
-        if (nbt.contains(GUN_CURRENT_AMMO_COUNT_TAG, Tag.TAG_INT)) {
-            data.currentAmmoCount = nbt.getInt(GUN_CURRENT_AMMO_COUNT_TAG);
-        }
-        return data;
-    }
-
+    @Override
     @Nonnull
-    public ResourceLocation getGunId() {
-        return Objects.requireNonNullElse(this.gunId, DEFAULT);
+    default ResourceLocation getGunId(ItemStack gun) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (nbt.contains(GUN_ID_TAG, Tag.TAG_STRING)) {
+            ResourceLocation gunId = ResourceLocation.tryParse(nbt.getString(GUN_ID_TAG));
+            return Objects.requireNonNullElse(gunId, DEFAULT);
+        }
+        return DEFAULT;
     }
 
-    public void setGunId(@Nullable ResourceLocation gunId) {
-        this.gunId = gunId;
+    @Override
+    default void setGunId(ItemStack gun, @Nullable ResourceLocation gunId) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (gunId != null) {
+            nbt.putString(GUN_ID_TAG, gunId.toString());
+            return;
+        }
+        nbt.putString(GUN_ID_TAG, DEFAULT.toString());
     }
 
-    public FireMode getFireMode() {
-        return fireMode;
+    @Override
+    default FireMode getFireMode(ItemStack gun) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (nbt.contains(GUN_FIRE_MODE_TAG, Tag.TAG_STRING)) {
+            return FireMode.valueOf(nbt.getString(GUN_FIRE_MODE_TAG));
+        }
+        return FireMode.UNKNOWN;
     }
 
-    public void setFireMode(FireMode fireMode) {
-        this.fireMode = fireMode;
+    @Override
+    default void setFireMode(ItemStack gun, @Nullable FireMode fireMode) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (fireMode != null) {
+            nbt.putString(GUN_FIRE_MODE_TAG, fireMode.name());
+            return;
+        }
+        nbt.putString(GUN_FIRE_MODE_TAG, FireMode.UNKNOWN.name());
     }
 
-    public int getMaxAmmoCount() {
-        return maxAmmoCount;
+    @Override
+    default int getCurrentAmmoCount(ItemStack gun) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (nbt.contains(GUN_CURRENT_AMMO_COUNT_TAG, Tag.TAG_INT)) {
+            return nbt.getInt(GUN_CURRENT_AMMO_COUNT_TAG);
+        }
+        return 0;
     }
 
-    public void setMaxAmmoCount(int maxAmmoCount) {
-        this.maxAmmoCount = maxAmmoCount;
+    @Override
+    default void setCurrentAmmoCount(ItemStack gun, int ammoCount) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        nbt.putInt(GUN_CURRENT_AMMO_COUNT_TAG, Math.max(ammoCount, 0));
     }
 
-    public int getCurrentAmmoCount() {
-        return currentAmmoCount;
-    }
-
-    public void setCurrentAmmoCount(int ammoCount) {
-        this.currentAmmoCount = Math.min(ammoCount, this.maxAmmoCount);
-    }
-
-    public void reduceCurrentAmmoCount() {
-        this.currentAmmoCount = Math.max(this.currentAmmoCount - 1, 0);
+    @Override
+    default void reduceCurrentAmmoCount(ItemStack gun) {
+        setCurrentAmmoCount(gun, getCurrentAmmoCount(gun) - 1);
     }
 }

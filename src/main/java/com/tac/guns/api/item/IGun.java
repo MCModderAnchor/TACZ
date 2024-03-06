@@ -1,6 +1,7 @@
 package com.tac.guns.api.item;
 
 import com.tac.guns.api.gun.FireMode;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -43,32 +44,14 @@ public interface IGun {
     }
 
     /**
-     * 该物品是不是符合要求的弹药
+     * 获取枪械 ID
      *
-     * @param gun  需要匹配的弹药的枪械
-     * @param ammo 输入的待检测物品
-     * @return 是否是该枪支的合法弹药
+     * @param gun 输入物品
+     * @return 枪械 ID
      */
-    boolean isAmmo(ItemStack gun, ItemStack ammo);
+    ResourceLocation getGunId(ItemStack gun);
 
-    /**
-     * 枪械射击，该方法只在服务端调用
-     *
-     * @param shooter 射手
-     * @param gun     枪
-     * @param pitch   射击的俯仰角(即 xRot )
-     * @param yaw     射击的偏航角(即 yRot )
-     */
-    void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw);
-
-    /**
-     * 换弹时，此处执行物品的换弹逻辑
-     *
-     * @param shooter   射手
-     * @param gun       枪
-     * @param ammoCount 塞入的子弹数量
-     */
-    void reload(LivingEntity shooter, ItemStack gun, int ammoCount);
+    void setGunId(ItemStack gun, @Nullable ResourceLocation gunId);
 
     /**
      * 获取开火模式
@@ -77,4 +60,12 @@ public interface IGun {
      * @return 开火模式
      */
     FireMode getFireMode(ItemStack gun);
+
+    void setFireMode(ItemStack gun, @Nullable FireMode fireMode);
+
+    int getCurrentAmmoCount(ItemStack gun);
+
+    void setCurrentAmmoCount(ItemStack gun, int ammoCount);
+
+    void reduceCurrentAmmoCount(ItemStack gun);
 }
