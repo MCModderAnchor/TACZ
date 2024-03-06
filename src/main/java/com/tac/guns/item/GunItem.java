@@ -98,7 +98,11 @@ public class GunItem extends Item implements IGun {
 
     @Override
     public boolean isAmmo(ItemStack gun, ItemStack ammo) {
-        return false;
+        ResourceLocation gunId = GunItem.getData(gun).getGunId();
+        ResourceLocation ammoId = AmmoItem.getData(ammo).getAmmoId();
+        return CommonGunPackLoader.getGunIndex(gunId)
+                .map(gunIndex -> gunIndex.getGunData().getAmmoId().equals(ammoId))
+                .orElse(false);
     }
 
     @Override
@@ -130,7 +134,6 @@ public class GunItem extends Item implements IGun {
 
     @Override
     public FireMode getFireMode(ItemStack gun) {
-        // FIXME 应该还需要检查是否允许这种射击类型
         return GunItem.getData(gun).getFireMode();
     }
 }

@@ -7,11 +7,13 @@ import com.tac.guns.api.event.GunReloadEvent;
 import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
+import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
+import com.tac.guns.item.AmmoItem;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.network.NetworkHandler;
@@ -22,11 +24,11 @@ import com.tac.guns.resource.pojo.data.GunData;
 import com.tac.guns.resource.pojo.data.GunRecoil;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
@@ -47,19 +49,14 @@ import java.util.concurrent.TimeUnit;
 public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
-    @Shadow
-    public Input input;
-
-    @Shadow
-    public abstract void rideTick();
 
     @Shadow
     public abstract void sendMessage(Component pComponent, UUID pSenderUUID);
 
     @Unique
-    private long tac$ClientShootTimestamp = -1L;
+    private volatile long tac$ClientShootTimestamp = -1L;
     @Unique
-    private boolean tac$IsShootRecorded = true;
+    private volatile boolean tac$IsShootRecorded = true;
     /**
      * 瞄准的进度，范围 0 ~ 1
      */
@@ -177,7 +174,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void reload() {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+        GunItemData gunItemData = GunItem.getData(player.getMainHandItem());
+        ResourceLocation gunId = gunItemData.getGunId();
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             // 检查换弹是否未完成
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
@@ -188,6 +186,28 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (IGunOperator.fromLivingEntity(player).getSynShootCoolDown() > 0) {
                 return;
             }
+            // 弹药简单检查
+            if (this.checkAmmo()) {
+                // 满弹检查也放这，这样创造模式玩家随意随便换弹
+                // 满弹不需要换
+                if (gunItemData.getCurrentAmmoCount() >= gunItemData.getMaxAmmoCount()) {
+                    return;
+                }
+
+                // 背包弹药检查
+                boolean hasAmmo = false;
+                Inventory inventory = player.getInventory();
+                for (int i = 0; i < inventory.getContainerSize(); i++) {
+                    ItemStack item = inventory.getItem(i);
+                    if (IAmmo.isAmmo(item) && gunIndex.getGunData().getAmmoId().equals(AmmoItem.getData(item).getAmmoId())) {
+                        hasAmmo = true;
+                        break;
+                    }
+                }
+                if (!hasAmmo) {
+                    return;
+                }
+            }
             // TODO 检查 draw 是否还未完成
             // 触发换弹事件
             if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
@@ -197,8 +217,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                // TODO 判断枪内是否有余弹
-                animationStateMachine.setNoAmmo(true);
+                animationStateMachine.setNoAmmo(gunItemData.getCurrentAmmoCount() <= 0);
                 animationStateMachine.onGunReload();
             }
         });

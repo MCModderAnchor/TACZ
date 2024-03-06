@@ -34,8 +34,16 @@ public interface IGunOperator {
      */
     void draw(ItemStack gunItemStack);
 
+    /**
+     * 服务端换弹逻辑
+     */
     void reload();
 
+    /**
+     * 服务端切换开火模式的逻辑
+     *
+     * @return 切换后的开火模式
+     */
     FireMode fireSelect();
 
     /**
@@ -47,7 +55,17 @@ public interface IGunOperator {
      */
     ShootResult shoot(float pitch, float yaw);
 
+    /**
+     * 服务端，该操作者是否受弹药数影响
+     *
+     * @return 如果为 false，那么开火不会检查弹药，也不会消耗枪械弹药
+     */
     boolean checkAmmo();
 
+    /**
+     * 服务端，应用瞄准的逻辑
+     *
+     * @param isAim 是否瞄准
+     */
     void aim(boolean isAim);
 }
