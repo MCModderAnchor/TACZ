@@ -1,5 +1,6 @@
 package com.tac.guns.item;
 
+import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
@@ -16,11 +17,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -70,5 +75,18 @@ public class GunItem extends Item implements GunItemData {
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         return true;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> components, TooltipFlag flag) {
+        if (stack.getItem() instanceof IGun iGun) {
+            ClientGunPackLoader.getGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
+                String tooltipKey = gunIndex.getTooltip();
+                if (tooltipKey != null) {
+                    components.add(new TranslatableComponent(tooltipKey));
+                }
+            });
+        }
     }
 }
