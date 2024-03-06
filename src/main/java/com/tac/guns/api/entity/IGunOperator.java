@@ -47,5 +47,7 @@ public interface IGunOperator {
      */
     ShootResult shoot(float pitch, float yaw);
 
+    boolean checkAmmo();
+
     void aim(boolean isAim);
 }

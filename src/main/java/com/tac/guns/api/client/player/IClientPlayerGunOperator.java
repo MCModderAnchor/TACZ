@@ -21,6 +21,8 @@ public interface IClientPlayerGunOperator {
      */
     ShootResult shoot();
 
+    boolean checkAmmo();
+
     /**
      * 执行客户端切枪逻辑。
      */

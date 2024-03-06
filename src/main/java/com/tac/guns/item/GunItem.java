@@ -1,5 +1,6 @@
 package com.tac.guns.item;
 
+import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
@@ -9,6 +10,7 @@ import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonGunPackLoader;
+import com.tac.guns.resource.pojo.data.GunData;
 import com.tac.guns.resource.pojo.data.InaccuracyType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -66,9 +68,13 @@ public class GunItem extends Item implements IGun {
         if (this.allowdedIn(modeTab)) {
             ClientGunPackLoader.getAllGuns().forEach(entry -> {
                 GunItemData data = new GunItemData();
-                ClientGunIndex index = entry.getValue();
+                GunData gunData = entry.getValue().getGunData();
+
                 data.setGunId(entry.getKey());
-                data.setFireMode(index.getGunData().getFireModeSet().get(0));
+                data.setFireMode(gunData.getFireModeSet().get(0));
+                data.setMaxAmmoCount(gunData.getAmmoAmount());
+                data.setCurrentAmmoCount(gunData.getAmmoAmount());
+
                 stacks.add(setData(this.getDefaultInstance(), data));
             });
         }
@@ -97,8 +103,8 @@ public class GunItem extends Item implements IGun {
 
     @Override
     public void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw) {
-        ResourceLocation gunId = GunItem.getData(gun).getGunId();
-        CommonGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        GunItemData gunItemData = GunItem.getData(gun);
+        CommonGunPackLoader.getGunIndex(gunItemData.getGunId()).ifPresent(gunIndex -> {
             // TODO 获取 GunData 并根据其中的弹道参数创建 EntityBullet
             Level world = shooter.getLevel();
             EntityBullet bullet = new EntityBullet(world, shooter);
@@ -106,7 +112,20 @@ public class GunItem extends Item implements IGun {
             float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
             bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 10, inaccuracy);
             world.addFreshEntity(bullet);
+
+            // 削减弹药数
+            if (shooter instanceof IGunOperator operator && operator.checkAmmo()) {
+                gunItemData.reduceCurrentAmmoCount();
+                GunItem.setData(gun, gunItemData);
+            }
         });
+    }
+
+    @Override
+    public void reload(LivingEntity shooter, ItemStack gun, int ammoCount) {
+        GunItemData gunItemData = GunItem.getData(gun);
+        gunItemData.setCurrentAmmoCount(gunItemData.getCurrentAmmoCount() + ammoCount);
+        GunItem.setData(gun, gunItemData);
     }
 
     @Override

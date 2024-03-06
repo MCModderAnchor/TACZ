@@ -32,7 +32,7 @@ public interface IGun {
         if (mainhandItem.getItem() instanceof IGun iGun) {
             return iGun.getFireMode(mainhandItem);
         }
-        return FireMode.SEMI;
+        return FireMode.UNKNOWN;
     }
 
     /**
@@ -60,6 +60,15 @@ public interface IGun {
      * @param yaw     射击的偏航角(即 yRot )
      */
     void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw);
+
+    /**
+     * 换弹时，此处执行物品的换弹逻辑
+     *
+     * @param shooter   射手
+     * @param gun       枪
+     * @param ammoCount 塞入的子弹数量
+     */
+    void reload(LivingEntity shooter, ItemStack gun, int ammoCount);
 
     /**
      * 获取开火模式

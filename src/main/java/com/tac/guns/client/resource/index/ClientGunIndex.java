@@ -85,9 +85,7 @@ public class ClientGunIndex {
         if (data == null) {
             throw new IllegalArgumentException("there is no corresponding data file");
         }
-        if (data.getRoundsPerMinute() < 1) {
-            throw new IllegalArgumentException("rpm count must >= 1");
-        }
+        // 剩下的不需要校验了，前面服务端已经校验过了
         index.gunData = data;
     }
 

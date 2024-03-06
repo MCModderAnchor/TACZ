@@ -16,10 +16,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 
+import java.text.DecimalFormat;
+
 public class GunHudOverlay {
     private static final ResourceLocation SEMI = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_semi.png");
     private static final ResourceLocation AUTO = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_auto.png");
     private static final ResourceLocation BURST = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_burst.png");
+    private static DecimalFormat CURRENT_AMMO_FORMAT = new DecimalFormat("000");
 
     public static void render(ForgeIngameGui gui, PoseStack poseStack, float partialTick, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
@@ -32,7 +35,8 @@ public class GunHudOverlay {
             return;
         }
 
-        String countA = "943";
+        int currentAmmoCount = GunItem.getData(stack).getCurrentAmmoCount();
+        String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(currentAmmoCount);
         String countB = "9999";
         ResourceLocation gunId = GunItem.getData(stack).getGunId();
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
@@ -42,7 +46,7 @@ public class GunHudOverlay {
             // 数字
             poseStack.pushPose();
             poseStack.scale(1.5f, 1.5f, 1);
-            mc.font.drawShadow(poseStack, countA, (width - 70) / 1.5f, (height - 43) / 1.5f, 0xFFFFFF);
+            mc.font.drawShadow(poseStack, currentAmmoCountText, (width - 70) / 1.5f, (height - 43) / 1.5f, 0xFFFFFF);
             poseStack.popPose();
 
             poseStack.pushPose();

@@ -1,6 +1,7 @@
 {
   "ammo": "tac:762x39",
   "rpm": 37,
+  "ammo_amount": 10,
   "reload": {
     "type": "magazine",
     "feed": {

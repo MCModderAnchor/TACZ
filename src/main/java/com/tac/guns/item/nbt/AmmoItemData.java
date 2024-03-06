@@ -11,8 +11,10 @@ import javax.annotation.Nullable;
 public class AmmoItemData {
     public static final ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "762x39");
     public static final ResourceLocation DEFAULT_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "762x39_display");
+
     public static final String AMMO_ID_TAG = "AmmoId";
     public static final String AMMO_STACK_TAG = "AmmoStack";
+
     @Nullable
     private ResourceLocation ammoId = null;
     private int ammoStack = 1;

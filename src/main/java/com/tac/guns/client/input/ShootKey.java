@@ -4,9 +4,11 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
+import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -50,8 +52,14 @@ public class ShootKey {
             if (player == null) {
                 return;
             }
-            if (IGun.mainhandHoldGun(player) && IGun.getMainhandFireMode(player) == FireMode.SEMI) {
-                IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
+            if (IGun.mainhandHoldGun(player)) {
+                FireMode fireMode = IGun.getMainhandFireMode(player);
+                if (fireMode == FireMode.UNKNOWN) {
+                    player.sendMessage(new TranslatableComponent("message.tac.fire_select.fail"), Util.NIL_UUID);
+                }
+                if (fireMode == FireMode.SEMI) {
+                    IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
+                }
             }
         }
     }

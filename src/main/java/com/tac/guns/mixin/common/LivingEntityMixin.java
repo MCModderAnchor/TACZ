@@ -24,11 +24,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -41,6 +43,9 @@ import java.util.Optional;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator {
+    @Shadow
+    protected abstract int increaseAirSupply(int pCurrentAir);
+
     @Unique
     private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
     @Unique
@@ -180,6 +185,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             // TODO 根据枪内子弹数量初始化换弹状态，此处默认空仓换弹
             tac$ReloadStateType = ReloadState.StateType.EMPTY_RELOAD_FEEDING;
             tac$ReloadTimestamp = System.currentTimeMillis();
+            // TODO 换弹，没有完成玩家物品栏检查
+            if (tac$CurrentGunItem.getItem() instanceof IGun iGun) {
+                iGun.reload(entity, tac$CurrentGunItem, gunIndex.getGunData().getAmmoAmount());
+            }
         });
     }
 
@@ -189,32 +198,50 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$CurrentGunItem == null) {
             return ShootResult.FAIL;
         }
-        // 判断射击是否正在冷却
-        long coolDown = getShootCoolDown();
-        if (coolDown == -1) {
-            return ShootResult.FAIL;
-        }
-        if (coolDown > 0) {
-            return ShootResult.COOL_DOWN;
-        }
-        // 检查是否正在换弹
-        if (tac$ReloadStateType.isReloading()) {
-            return ShootResult.FAIL;
-        }
-        // TODO 检查 draw 是否还未完成
-        LivingEntity entity = (LivingEntity) (Object) this;
-        // 触发射击事件
-        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
-            return ShootResult.FAIL;
-        }
-        // TODO 判断枪械是否有足够的弹药
-        // 调用射击方法
         if (tac$CurrentGunItem.getItem() instanceof IGun iGun) {
+            // 判断射击是否正在冷却
+            long coolDown = getShootCoolDown();
+            if (coolDown == -1) {
+                return ShootResult.FAIL;
+            }
+            if (coolDown > 0) {
+                return ShootResult.COOL_DOWN;
+            }
+            // 检查是否正在换弹
+            if (tac$ReloadStateType.isReloading()) {
+                return ShootResult.FAIL;
+            }
+            LivingEntity entity = (LivingEntity) (Object) this;
+            // 创造模式不判断子弹数
+            if (checkAmmo()) {
+                GunItemData gunItemData = GunItem.getData(tac$CurrentGunItem);
+                if (gunItemData.getCurrentAmmoCount() < 1) {
+                    this.sendMessage(new TranslatableComponent("message.tac.shoot.no_ammo"), Util.NIL_UUID);
+                    return ShootResult.NO_AMMO;
+                }
+            }
+            // TODO 检查 draw 是否还未完成
+            // 触发射击事件
+            if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
+                return ShootResult.FAIL;
+            }
+            // TODO 判断枪械是否有足够的弹药
+            // 调用射击方法
             iGun.shoot(entity, tac$CurrentGunItem, pitch, yaw);
             tac$ShootTimestamp = System.currentTimeMillis();
             return ShootResult.SUCCESS;
         }
         return ShootResult.FAIL;
+    }
+
+    @Unique
+    @Override
+    public boolean checkAmmo() {
+        LivingEntity entity = (LivingEntity) (Object) this;
+        if (entity instanceof Player player) {
+            return !player.isCreative();
+        }
+        return true;
     }
 
     @Unique

@@ -1,5 +1,6 @@
 package com.tac.guns.resource.index;
 
+import com.google.common.collect.Maps;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonAssetManager;
@@ -59,12 +60,12 @@ public class CommonGunIndex {
 
     private static void checkInaccuracy(GunData data) {
         GunData defaultData = CommonAssetManager.INSTANCE.getGunData(GunItemData.DEFAULT_DATA);
-        Map<InaccuracyType, Float> dataInaccuracy = defaultData.getInaccuracy();
+        Map<InaccuracyType, Float> defaultInaccuracy = Maps.newHashMap(defaultData.getInaccuracy());
         Map<InaccuracyType, Float> readInaccuracy = data.getInaccuracy();
         if (readInaccuracy == null || readInaccuracy.isEmpty()) {
-            data.setInaccuracy(dataInaccuracy);
+            data.setInaccuracy(defaultInaccuracy);
         } else {
-            dataInaccuracy.forEach(readInaccuracy::putIfAbsent);
+            defaultInaccuracy.forEach(readInaccuracy::putIfAbsent);
         }
     }
 

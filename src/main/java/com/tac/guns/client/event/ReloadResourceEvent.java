@@ -28,11 +28,12 @@ public class ReloadResourceEvent {
         {
             ClientGunPackLoader.init();
             // 先加载全部资源文件
-            ClientGunPackLoader.reloadAsset();
             CommonGunPackLoader.reloadAsset();
+            ClientGunPackLoader.reloadAsset();
             // 再加载定义文件
-            ClientGunPackLoader.reloadIndex();
+            // 先加载服务端，让其校验数据
             CommonGunPackLoader.reloadIndex();
+            ClientGunPackLoader.reloadIndex();
         }
         watch.stop();
         GunMod.LOGGER.info("Model loading time: {} ms", watch.getTime(TimeUnit.MICROSECONDS) / 1000.0);

@@ -13,15 +13,19 @@ import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.item.GunItem;
+import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.*;
 import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.GunData;
 import com.tac.guns.resource.pojo.data.GunRecoil;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,6 +38,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +49,13 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
     @Shadow
     public Input input;
+
+    @Shadow
+    public abstract void rideTick();
+
+    @Shadow
+    public abstract void sendMessage(Component pComponent, UUID pSenderUUID);
+
     @Unique
     private long tac$ClientShootTimestamp = -1L;
     @Unique
@@ -75,7 +87,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return ShootResult.FAIL;
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
-        if (IGun.mainhandHoldGun(player)) {
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (mainhandItem.getItem() instanceof IGun) {
             GunData gunData = gunIndex.getGunData();
             long coolDown = gunData.getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
             // 如果射击冷却大于 1 tick (即 50 ms)，则不允许开火
@@ -89,6 +102,14 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
             if (reloadState.getStateType().isReloading()) {
                 return ShootResult.FAIL;
+            }
+            // 判断子弹数
+            if (this.checkAmmo()) {
+                GunItemData gunItemData = GunItem.getData(mainhandItem);
+                if (gunItemData.getCurrentAmmoCount() < 1) {
+                    this.sendMessage(new TranslatableComponent("message.tac.shoot.no_ammo"), Util.NIL_UUID);
+                    return ShootResult.NO_AMMO;
+                }
             }
             // TODO 判断是否在 draw
             // 触发开火事件
@@ -121,6 +142,13 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return ShootResult.SUCCESS;
         }
         return ShootResult.FAIL;
+    }
+
+    @Unique
+    @Override
+    public boolean checkAmmo() {
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        return !player.isCreative();
     }
 
     @Unique
