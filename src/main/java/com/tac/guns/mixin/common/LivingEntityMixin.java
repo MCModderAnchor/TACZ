@@ -7,6 +7,7 @@ import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
+import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.serializer.ModEntityDataSerializers;
@@ -16,6 +17,7 @@ import com.tac.guns.resource.pojo.data.GunData;
 import com.tac.guns.resource.pojo.data.GunReloadData;
 import com.tac.guns.resource.pojo.data.InaccuracyType;
 import net.minecraft.Util;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -28,7 +30,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -44,10 +49,7 @@ import java.util.Optional;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Shadow
-    public abstract void rideTick();
-
-    @Shadow
-    public abstract boolean randomTeleport(double pX, double pY, double pZ, boolean p_20988_);
+    public abstract <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing);
 
     @Unique
     private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
@@ -186,12 +188,28 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             if (getShootCoolDown() != 0) {
                 return;
             }
-            // 超出或达到上限，不换弹
             int currentAmmoCount = iGun.getCurrentAmmoCount(tac$CurrentGunItem);
+            // 超出或达到上限，不换弹
             if (currentAmmoCount >= gunIndex.getGunData().getAmmoAmount()) {
                 return;
             }
             // TODO 检查 draw 是否还未完成
+            // 检查弹药
+            if (this.checkAmmo()) {
+                boolean hasAmmo = this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map(cap -> {
+                    // 背包检查
+                    for (int i = 0; i < cap.getSlots(); i++) {
+                        ItemStack checkAmmoStack = cap.getStackInSlot(i);
+                        if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(tac$CurrentGunItem, checkAmmoStack)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }).orElse(false);
+                if (!hasAmmo) {
+                    return;
+                }
+            }
             // 触发装弹事件
             if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
                 return;
@@ -411,17 +429,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         // 更新枪内弹药
         if (tac$ReloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
-                // TODO 更改枪的弹药数
-                // TODO 没有完成玩家物品栏检查
-                iGun.setCurrentAmmoCount(tac$CurrentGunItem, gunData.getAmmoAmount());
+                iGun.setCurrentAmmoCount(tac$CurrentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
                 entity.sendMessage(new TranslatableComponent("message.tac.reload.success"), Util.NIL_UUID);
             }
         }
         if (tac$ReloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
-                // TODO 更改枪的弹药数
-                // TODO 没有完成玩家物品栏检查
-                iGun.setCurrentAmmoCount(tac$CurrentGunItem, gunData.getAmmoAmount());
+                iGun.setCurrentAmmoCount(tac$CurrentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
                 entity.sendMessage(new TranslatableComponent("message.tac.reload.success"), Util.NIL_UUID);
             }
         }
@@ -431,6 +445,30 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         reloadState.setStateType(stateType);
         reloadState.setCountDown(countDown);
         return reloadState;
+    }
+
+    @Unique
+    private int getAndExtractNeedAmmoCount(IGun iGun, int maxAmmoCount) {
+        int currentAmmoCount = iGun.getCurrentAmmoCount(tac$CurrentGunItem);
+        if (this.checkAmmo()) {
+            return this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map(cap -> {
+                // 子弹数量检查
+                int needAmmoCount = maxAmmoCount - currentAmmoCount;
+                // 背包检查
+                for (int i = 0; i < cap.getSlots(); i++) {
+                    ItemStack checkAmmoStack = cap.getStackInSlot(i);
+                    if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(tac$CurrentGunItem, checkAmmoStack)) {
+                        ItemStack extractItem = cap.extractItem(i, needAmmoCount, false);
+                        needAmmoCount = needAmmoCount - extractItem.getCount();
+                        if (needAmmoCount <= 0) {
+                            break;
+                        }
+                    }
+                }
+                return maxAmmoCount - needAmmoCount;
+            }).orElse(currentAmmoCount);
+        }
+        return maxAmmoCount;
     }
 
     @Inject(method = "defineSynchedData", at = @At("RETURN"))

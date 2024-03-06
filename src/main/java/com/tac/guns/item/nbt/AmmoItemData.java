@@ -41,6 +41,7 @@ public interface AmmoItemData extends IAmmo {
         nbt.putString(AMMO_ID_TAG, DEFAULT.toString());
     }
 
+    @Override
     default int getAmmoStack(ItemStack ammo) {
         CompoundTag nbt = ammo.getOrCreateTag();
         if (nbt.contains(AMMO_STACK_TAG, Tag.TAG_INT)) {
@@ -49,11 +50,13 @@ public interface AmmoItemData extends IAmmo {
         return 1;
     }
 
+    @Override
     default void setAmmoStack(ItemStack ammo, int ammoStackCount) {
         CompoundTag nbt = ammo.getOrCreateTag();
         nbt.putInt(AMMO_STACK_TAG, Math.max(ammoStackCount, 1));
     }
 
+    @Override
     default boolean isAmmoOfGun(ItemStack gun, ItemStack ammo) {
         if (gun.getItem() instanceof IGun iGun && ammo.getItem() instanceof IAmmo iAmmo) {
             ResourceLocation gunId = iGun.getGunId(gun);

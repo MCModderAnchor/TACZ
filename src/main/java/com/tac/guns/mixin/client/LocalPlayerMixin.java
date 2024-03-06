@@ -48,7 +48,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
 
     @Shadow
-    public abstract void sendMessage(Component pComponent, UUID pSenderUUID);
+    public abstract void sendMessage(Component pComponent, UUID uuid);
 
     @Unique
     private volatile long tac$ClientShootTimestamp = -1L;
