@@ -13,9 +13,6 @@ import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
-import com.tac.guns.item.AmmoItem;
-import com.tac.guns.item.GunItem;
-import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.*;
 import com.tac.guns.resource.CommonGunPackLoader;
@@ -51,7 +48,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
 
     @Shadow
-    public abstract void sendMessage(Component pComponent, UUID pSenderUUID);
+    public abstract void sendMessage(Component pComponent, UUID uuid);
 
     @Unique
     private volatile long tac$ClientShootTimestamp = -1L;
@@ -78,13 +75,17 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return ShootResult.COOL_DOWN;
         }
         LocalPlayer player = (LocalPlayer) (Object) this;
-        ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+        // 暂定为主手
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            return ShootResult.FAIL;
+        }
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
         Optional<ClientGunIndex> gunIndexOptional = ClientGunPackLoader.getGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             return ShootResult.FAIL;
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
-        ItemStack mainhandItem = player.getMainHandItem();
         if (mainhandItem.getItem() instanceof IGun) {
             GunData gunData = gunIndex.getGunData();
             long coolDown = gunData.getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
@@ -101,16 +102,13 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 return ShootResult.FAIL;
             }
             // 判断子弹数
-            if (this.checkAmmo()) {
-                GunItemData gunItemData = GunItem.getData(mainhandItem);
-                if (gunItemData.getCurrentAmmoCount() < 1) {
-                    this.sendMessage(new TranslatableComponent("message.tac.shoot.no_ammo"), Util.NIL_UUID);
-                    return ShootResult.NO_AMMO;
-                }
+            if (this.checkAmmo() && iGun.getCurrentAmmoCount(mainhandItem) < 1) {
+                this.sendMessage(new TranslatableComponent("message.tac.shoot.no_ammo"), Util.NIL_UUID);
+                return ShootResult.NO_AMMO;
             }
             // TODO 判断是否在 draw
             // 触发开火事件
-            if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
+            if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, mainhandItem, LogicalSide.CLIENT))) {
                 return ShootResult.FAIL;
             }
             tac$IsShootRecorded = false;
@@ -152,6 +150,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void draw() {
         LocalPlayer player = (LocalPlayer) (Object) this;
+        // 暂定为主手
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            return;
+        }
         // 重置客户端的 shoot 时间戳
         tac$IsShootRecorded = true;
         tac$ClientShootTimestamp = -1;
@@ -161,7 +164,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         // 发包通知服务器
         NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun(player.getInventory().selected));
         // 放映 draw 动画
-        ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
@@ -174,8 +177,12 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void reload() {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        GunItemData gunItemData = GunItem.getData(player.getMainHandItem());
-        ResourceLocation gunId = gunItemData.getGunId();
+        // 暂定为主手
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             // 检查换弹是否未完成
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
@@ -190,16 +197,15 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (this.checkAmmo()) {
                 // 满弹检查也放这，这样创造模式玩家随意随便换弹
                 // 满弹不需要换
-                if (gunItemData.getCurrentAmmoCount() >= gunItemData.getMaxAmmoCount()) {
+                if (iGun.getCurrentAmmoCount(mainhandItem) >= gunIndex.getGunData().getAmmoAmount()) {
                     return;
                 }
-
                 // 背包弹药检查
                 boolean hasAmmo = false;
                 Inventory inventory = player.getInventory();
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
-                    ItemStack item = inventory.getItem(i);
-                    if (IAmmo.isAmmo(item) && gunIndex.getGunData().getAmmoId().equals(AmmoItem.getData(item).getAmmoId())) {
+                    ItemStack checkAmmo = inventory.getItem(i);
+                    if (checkAmmo.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(mainhandItem, checkAmmo)) {
                         hasAmmo = true;
                         break;
                     }
@@ -217,7 +223,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                animationStateMachine.setNoAmmo(gunItemData.getCurrentAmmoCount() <= 0);
+                animationStateMachine.setNoAmmo(iGun.getCurrentAmmoCount(mainhandItem) <= 0);
                 animationStateMachine.onGunReload();
             }
         });
@@ -227,8 +233,13 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void inspect() {
         LocalPlayer player = (LocalPlayer) (Object) this;
+        // 暂定为主手
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            return;
+        }
         // TODO 检测是否在开火、装弹、切枪、检视
-        ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
@@ -241,36 +252,42 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     public void fireSelect() {
         // TODO 冷却时间检查，得让动画播放完毕才行
         LocalPlayer player = (LocalPlayer) (Object) this;
-        if (IGun.mainhandHoldGun(player)) {
-            ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-            ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
-                    return;
-                }
-                // 发送切换开火模式的数据包，通知服务器
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
-                // 动画状态机转移状态
-                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                if (animationStateMachine != null) {
-                    animationStateMachine.onGunFireSelect();
-                }
-            });
+        // 暂定为主手
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            return;
         }
+        if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
+        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            // 发送切换开火模式的数据包，通知服务器
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
+            // 动画状态机转移状态
+            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            if (animationStateMachine != null) {
+                animationStateMachine.onGunFireSelect();
+            }
+        });
     }
 
     @Override
     public void aim(boolean isAim) {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        if (IGun.mainhandHoldGun(player)) {
-            ResourceLocation gunId = GunItem.getData(player.getMainHandItem()).getGunId();
-            ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                // TODO 发个 GunAimingEvent
-                // TODO 判断能不能瞄准
-                tac$ClientIsAiming = isAim;
-                // 发送切换开火模式的数据包，通知服务器
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(isAim));
-            });
+        // 暂定为主手
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            return;
         }
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
+        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            // TODO 发个 GunAimingEvent
+            // TODO 判断能不能瞄准
+            tac$ClientIsAiming = isAim;
+            // 发送切换开火模式的数据包，通知服务器
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(isAim));
+        });
     }
 
     @Unique
@@ -290,9 +307,13 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private void tickAimingProgress() {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        ItemStack mainHandItem = player.getMainHandItem();
+        ItemStack mainhandItem = player.getMainHandItem();
         // 如果主手物品不是枪械，则取消瞄准状态并将 aimingProgress 归零，返回。
-        ResourceLocation gunId = GunItem.getData(mainHandItem).getGunId();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            tac$ClientAimingProgress = 0;
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
         Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             tac$ClientAimingProgress = 0;

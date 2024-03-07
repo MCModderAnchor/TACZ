@@ -1,5 +1,6 @@
 package com.tac.guns.api.item;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -14,4 +15,20 @@ public interface IAmmo {
         }
         return stack.getItem() instanceof IAmmo;
     }
+
+    /**
+     * 获取弹药 ID
+     *
+     * @param ammo 输入物品
+     * @return 弹药 ID
+     */
+    ResourceLocation getAmmoId(ItemStack ammo);
+
+    void setAmmoId(ItemStack gun, @Nullable ResourceLocation ammoId);
+
+    int getAmmoStack(ItemStack ammo);
+
+    void setAmmoStack(ItemStack ammo, int ammoStackCount);
+
+    boolean isAmmoOfGun(ItemStack gun, ItemStack ammo);
 }

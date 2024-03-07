@@ -1,17 +1,12 @@
 package com.tac.guns.item;
 
-import com.tac.guns.api.entity.IGunOperator;
-import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
-import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.GunItemData;
-import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.pojo.data.GunData;
-import com.tac.guns.resource.pojo.data.InaccuracyType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
@@ -22,39 +17,28 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class GunItem extends Item implements IGun {
+public class GunItem extends Item implements GunItemData {
     public GunItem() {
         super(new Properties().stacksTo(1).tab(ModItems.GUN_TAB));
-    }
-
-    public static @Nonnull GunItemData getData(@Nonnull ItemStack itemStack) {
-        if (IGun.isGun(itemStack)) {
-            return GunItemData.deserialization(itemStack.getOrCreateTag());
-        }
-        return new GunItemData();
-    }
-
-    public static ItemStack setData(@Nonnull ItemStack stack, @Nonnull GunItemData data) {
-        if (IGun.isGun(stack)) {
-            GunItemData.serialization(stack.getOrCreateTag(), data);
-        }
-        return stack;
     }
 
     @Override
     @Nonnull
     @OnlyIn(Dist.CLIENT)
     public Component getName(@Nonnull ItemStack stack) {
-        ResourceLocation gunId = getData(stack).getGunId();
+        ResourceLocation gunId = this.getGunId(stack);
         Optional<ClientGunIndex> gunIndex = ClientGunPackLoader.getGunIndex(gunId);
         if (gunIndex.isPresent()) {
             return new TranslatableComponent(gunIndex.get().getName());
@@ -67,15 +51,12 @@ public class GunItem extends Item implements IGun {
     public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
         if (this.allowdedIn(modeTab)) {
             ClientGunPackLoader.getAllGuns().forEach(entry -> {
-                GunItemData data = new GunItemData();
                 GunData gunData = entry.getValue().getGunData();
-
-                data.setGunId(entry.getKey());
-                data.setFireMode(gunData.getFireModeSet().get(0));
-                data.setMaxAmmoCount(gunData.getAmmoAmount());
-                data.setCurrentAmmoCount(gunData.getAmmoAmount());
-
-                stacks.add(setData(this.getDefaultInstance(), data));
+                ItemStack itemStack = this.getDefaultInstance();
+                this.setGunId(itemStack, entry.getKey());
+                this.setFireMode(itemStack, gunData.getFireModeSet().get(0));
+                this.setCurrentAmmoCount(itemStack, gunData.getAmmoAmount());
+                stacks.add(itemStack);
             });
         }
     }
@@ -97,43 +78,15 @@ public class GunItem extends Item implements IGun {
     }
 
     @Override
-    public boolean isAmmo(ItemStack gun, ItemStack ammo) {
-        ResourceLocation gunId = GunItem.getData(gun).getGunId();
-        ResourceLocation ammoId = AmmoItem.getData(ammo).getAmmoId();
-        return CommonGunPackLoader.getGunIndex(gunId)
-                .map(gunIndex -> gunIndex.getGunData().getAmmoId().equals(ammoId))
-                .orElse(false);
-    }
-
-    @Override
-    public void shoot(LivingEntity shooter, ItemStack gun, float pitch, float yaw) {
-        GunItemData gunItemData = GunItem.getData(gun);
-        CommonGunPackLoader.getGunIndex(gunItemData.getGunId()).ifPresent(gunIndex -> {
-            // TODO 获取 GunData 并根据其中的弹道参数创建 EntityBullet
-            Level world = shooter.getLevel();
-            EntityBullet bullet = new EntityBullet(world, shooter);
-            InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
-            float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
-            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 10, inaccuracy);
-            world.addFreshEntity(bullet);
-
-            // 削减弹药数
-            if (shooter instanceof IGunOperator operator && operator.checkAmmo()) {
-                gunItemData.reduceCurrentAmmoCount();
-                GunItem.setData(gun, gunItemData);
-            }
-        });
-    }
-
-    @Override
-    public void reload(LivingEntity shooter, ItemStack gun, int ammoCount) {
-        GunItemData gunItemData = GunItem.getData(gun);
-        gunItemData.setCurrentAmmoCount(gunItemData.getCurrentAmmoCount() + ammoCount);
-        GunItem.setData(gun, gunItemData);
-    }
-
-    @Override
-    public FireMode getFireMode(ItemStack gun) {
-        return GunItem.getData(gun).getFireMode();
+    @OnlyIn(Dist.CLIENT)
+    public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> components, TooltipFlag flag) {
+        if (stack.getItem() instanceof IGun iGun) {
+            ClientGunPackLoader.getGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
+                String tooltipKey = gunIndex.getTooltip();
+                if (tooltipKey != null) {
+                    components.add(new TranslatableComponent(tooltipKey));
+                }
+            });
+        }
     }
 }

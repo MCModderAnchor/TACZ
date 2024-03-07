@@ -7,7 +7,6 @@ import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.item.GunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -43,15 +42,16 @@ public class GameOverlayEvent {
             }
             // 播放的动画需要隐藏准心时，取消准心渲染
             ItemStack stack = player.getMainHandItem();
-            if (IGun.isGun(stack)) {
-                ResourceLocation gunId = GunItem.getData(stack).getGunId();
-                ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-                    GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                    if (animationStateMachine.shouldHideCrossHair()) {
-                        event.setCanceled(true);
-                    }
-                });
+            if (!(stack.getItem() instanceof IGun iGun)) {
+                return;
             }
+            ResourceLocation gunId = iGun.getGunId(stack);
+            ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+                if (animationStateMachine.shouldHideCrossHair()) {
+                    event.setCanceled(true);
+                }
+            });
         }
     }
 }

@@ -6,7 +6,6 @@ import com.mojang.math.Vector3f;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.item.AmmoItem;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -26,8 +25,8 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-        if (IAmmo.isAmmo(stack)) {
-            ResourceLocation ammoId = AmmoItem.getData(stack).getAmmoId();
+        if (stack.getItem() instanceof IAmmo iAmmo) {
+            ResourceLocation ammoId = iAmmo.getAmmoId(stack);
             // TODO 如果没有这个 ammoID，应该渲染个什么错误材质提醒别人
             ClientGunPackLoader.getAmmoIndex(ammoId).ifPresent(ammoIndex -> {
                 poseStack.pushPose();

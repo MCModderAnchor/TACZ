@@ -1,7 +1,9 @@
 {
   "tac.gun.ak47.name": "AK-47",
+  "tac.gun.ak47.tooltip": "§7A gas-operated assault rifle that is chambered for the 7.62×39mm cartridge.\nDeveloped in the Soviet Union by Russian small-arms designer Mikhail Kalashnikov",
   "tac.gun.glock_17.name": "Glock 17",
-  "tac.gun.ai_awp.name": "AI AWP",
+  "tac.gun.ai_awp.name": "Accuracy International AWM",
+  "tac.gun.ai_awp.tooltip": "§7A bolt-action sniper rifle manufactured by Accuracy International designed for magnum rifle cartridges.",
   "tac.ammo.762x39.name": "7.62x39mm Ammo",
   "key.tac.shoot.desc": "shoot"
 }

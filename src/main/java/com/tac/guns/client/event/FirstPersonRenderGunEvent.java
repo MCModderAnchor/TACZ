@@ -62,7 +62,7 @@ public class FirstPersonRenderGunEvent {
             return;
         }
         ItemStack stack = event.getItemStack();
-        if (!IGun.isGun(stack)) {
+        if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
 
@@ -74,7 +74,7 @@ public class FirstPersonRenderGunEvent {
             transformType = TransformType.FIRST_PERSON_LEFT_HAND;
         }
 
-        ResourceLocation gunId = GunItem.getData(player.getItemInHand(event.getHand())).getGunId();
+        ResourceLocation gunId = iGun.getGunId(stack);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
@@ -276,10 +276,8 @@ public class FirstPersonRenderGunEvent {
      * 判断两个枪械 ID 是否相同
      */
     private static boolean isSame(ItemStack gunA, ItemStack gunB) {
-        if (IGun.isGun(gunA) && IGun.isGun(gunB)) {
-            GunItemData dataA = GunItem.getData(gunA);
-            GunItemData dataB = GunItem.getData(gunB);
-            return dataA.getGunId().equals(dataB.getGunId());
+        if (gunA.getItem() instanceof IGun iGunA && gunB.getItem() instanceof IGun iGunB) {
+            return iGunA.getGunId(gunA).equals(iGunB.getGunId(gunB));
         }
         return gunA.sameItem(gunB);
     }
