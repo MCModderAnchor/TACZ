@@ -6939,7 +6939,7 @@
 				{
 					"name": "constraint",
 					"parent": "bone5",
-					"pivot": [-3.4, 6.55, -8.175]
+					"pivot": [-3.4, 4.65, -31.375]
 				},
 				{
 					"name": "camera",

@@ -44,10 +44,10 @@ public class AnimationInfluenceCoefficient {
             ironView.rotation = new Vector3f(0.2f, 0.2f, 0.2f);
         }
         if(scopeView.translation == null){
-            ironView.translation = new Vector3f(0.2f, 0.2f, 0.2f);
+            scopeView.translation = new Vector3f(0.2f, 0.2f, 0.2f);
         }
         if(scopeView.rotation == null){
-            ironView.rotation = new Vector3f(0.2f, 0.2f, 0.2f);
+            scopeView.rotation = new Vector3f(0.2f, 0.2f, 0.2f);
         }
     }
 }
