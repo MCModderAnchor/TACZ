@@ -10,5 +10,6 @@
   "key.tac.shoot.desc": "Shoot",
   "key.tac.fire_select.desc": "Fire Select",
   "key.tac.aim.desc": "Aim",
-  "itemGroup.tab.tac.gun": "Timeless & Classics"
+  "itemGroup.tab.tac.gun": "Timeless & Classics",
+  "block.tac.gun_smith_table": "Gun Smith Table"
 }

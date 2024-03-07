@@ -317,7 +317,7 @@ public class BedrockModel {
         this.renderType = renderType;
     }
 
-    protected void render(ItemTransforms.TransformType transformType, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {
+    public void render(ItemTransforms.TransformType transformType, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {
         matrixStack.pushPose();
         VertexConsumer builder = buffer.getBuffer(renderType);
         for (BedrockPart model : shouldRender) {

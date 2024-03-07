@@ -1,5 +1,6 @@
 package com.tac.guns;
 
+import com.tac.guns.init.ModBlocks;
 import com.tac.guns.init.ModEntities;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.init.ModSounds;
@@ -16,6 +17,8 @@ public class GunMod {
 
     public GunMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModBlocks.BLOCKS.register(bus);
+        ModBlocks.TILE_ENTITIES.register(bus);
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
         ModEntities.DATA_SERIALIZERS.register(bus);
