@@ -34,6 +34,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     public static final String FIXED_ORIGIN_NODE = "fixed";
     public static final String GROUND_ORIGIN_NODE = "ground";
     public static final String SCOPE_POS_NODE = "scope_pos";
+    public static final String CONSTRAINT_NODE = "constraint";
     public static final String EJECTION_NODE = "ejection";
     // 第一人称机瞄摄像机定位组的路径
     protected @Nullable List<BedrockPart> ironSightPath;
@@ -47,6 +48,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> groundOriginPath;
     // 瞄具配件定位组的路径。其他配件不需要存路径，只需要替换渲染。但是瞄具定位组需要用来辅助第一人称瞄准的摄像机定位。
     protected @Nullable List<BedrockPart> scopePosPath;
+    protected @Nullable List<BedrockPart> constraintPath;
     protected ItemStack currentItem;
     protected LivingEntity currentEntity;
     protected Matrix4f ejectionPose = null;
@@ -170,6 +172,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         fixedOriginPath = getPath(modelMap.get(FIXED_ORIGIN_NODE));
         groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
         scopePosPath = getPath(modelMap.get(SCOPE_POS_NODE));
+        constraintPath = getPath(modelMap.get(CONSTRAINT_NODE));
 
         this.setFunctionalRenderer(SCOPE_POS_NODE, bedrockPart -> {
             bedrockPart.visible = false;
@@ -262,6 +265,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     public List<BedrockPart> getScopePosPath() {
         return scopePosPath;
+    }
+
+    @Nullable
+    public List<BedrockPart> getConstraintPath(){
+        return constraintPath;
     }
 
     public void render(float partialTicks, ItemTransforms.TransformType transformType, ItemStack stack, LivingEntity entity, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {

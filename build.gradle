@@ -32,7 +32,7 @@ mixin {
 minecraft {
     mappings channel: 'parchment', version: '2022.05.22-1.18.2'
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {

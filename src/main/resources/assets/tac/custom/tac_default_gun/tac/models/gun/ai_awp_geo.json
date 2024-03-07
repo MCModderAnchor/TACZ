@@ -16,16 +16,6 @@
 					"pivot": [-3.4, -0.175, 9]
 				},
 				{
-					"name": "camera",
-					"parent": "bone5",
-					"pivot": [0, 8, 12]
-				},
-				{
-					"name": "iron_view",
-					"parent": "camera",
-					"pivot": [-3.4, 5.125, 15.25]
-				},
-				{
 					"name": "AWP",
 					"parent": "bone5",
 					"pivot": [-3.4, -0.175, 9]
@@ -6947,7 +6937,22 @@
 					]
 				},
 				{
+					"name": "constraint",
+					"parent": "bone5",
+					"pivot": [-3.4, 6.55, -8.175]
+				},
+				{
+					"name": "camera",
+					"pivot": [0, 8, 12]
+				},
+				{
+					"name": "iron_view",
+					"parent": "camera",
+					"pivot": [-3.4, 5.125, 15.25]
+				},
+				{
 					"name": "idle_view",
+					"parent": "camera",
 					"pivot": [0, 8, 16]
 				},
 				{

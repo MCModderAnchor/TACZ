@@ -65,14 +65,14 @@
         // 机瞄视角下的动画影响系数，可为空，默认全部为 0.2。以下任意数值未填都默认 0.2。
         // 可定义的值有 translation、rotation
         "iron_view": {
-            "translation": [0.2, 0.2, 0.7],
-            "rotation": [0.1, 0.2, 0.2]
+            "translation": [0.2, 0.2, 0.5],
+            "rotation": [0.1, 0.1, 0.1]
         },
         // 瞄具视角下的动画影响系数，可为空，默认全部为 0.2。以下任意数值未填都默认 0.2。
         // 可定义的值有 translation、rotation
         "scope_view": {
-            "translation": [0.2, 0.2, 0.6],
-            "rotation": [0.1, 0.2, 0.2]
+            "translation": [0.2, 0.2, 0.2],
+            "rotation": [0.2, 0.2, 0.2]
         }
     }
 }
