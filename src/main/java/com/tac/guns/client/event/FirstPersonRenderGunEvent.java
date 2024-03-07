@@ -15,8 +15,6 @@ import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.display.CommonTransformObject;
-import com.tac.guns.item.GunItem;
-import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
@@ -149,7 +147,7 @@ public class FirstPersonRenderGunEvent {
         // 配合约束系数，计算约束位移需要的反向位移
         Vector3f inverseTranslation = originTranslation.copy();
         inverseTranslation.sub(animatedTranslation);
-        inverseTranslation.mul(1 - multiplier.getTranslation().x(), 1 - multiplier.getTranslation().x(), 1 - multiplier.getTranslation().x());
+        inverseTranslation.mul(1 - multiplier.getTranslation().x(), 1 - multiplier.getTranslation().y(), 1 - multiplier.getTranslation().z());
         // 计算约束旋转需要的反向旋转。因需要插值，获取的是欧拉角
         Vector3f inverseRotation = rotation.copy();
         inverseRotation.mul(multiplier.getRotation().x() - 1, multiplier.getRotation().y() - 1, multiplier.getRotation().z() - 1);

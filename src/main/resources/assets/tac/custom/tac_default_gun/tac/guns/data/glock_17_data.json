@@ -6,11 +6,11 @@
     "type": "magazine",
     "feed": {
       "empty": 1.63,
-      "tactical": 1.135
+      "tactical": 1.05
     },
     "cooldown": {
       "empty": 1.88,
-      "tactical": 1.6
+      "tactical": 1.5
     }
   },
   "draw_time": 0.35,
