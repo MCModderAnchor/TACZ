@@ -252,7 +252,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         LivingEntity entity = (LivingEntity) (Object) this;
         // 创造模式不判断子弹数
         if (checkAmmo() && iGun.getCurrentAmmoCount(tac$CurrentGunItem) < 1) {
-            this.sendMessage(new TranslatableComponent("message.tac.shoot.no_ammo"), Util.NIL_UUID);
             return ShootResult.NO_AMMO;
         }
         // TODO 检查 draw 是否还未完成

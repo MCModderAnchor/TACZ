@@ -19,11 +19,9 @@ import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.GunData;
 import com.tac.guns.resource.pojo.data.GunRecoil;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -103,7 +101,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             }
             // 判断子弹数
             if (this.checkAmmo() && iGun.getCurrentAmmoCount(mainhandItem) < 1) {
-                this.sendMessage(new TranslatableComponent("message.tac.shoot.no_ammo"), Util.NIL_UUID);
                 return ShootResult.NO_AMMO;
             }
             // TODO 判断是否在 draw

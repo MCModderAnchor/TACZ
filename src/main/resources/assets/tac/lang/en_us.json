@@ -3,7 +3,6 @@
   "commands.tac.reload.success": "All pack is reload!",
   "message.tac.fire_select.success": "Switched to %s fire mode",
   "message.tac.fire_select.fail": "Unknown fire mode, unable to shoot",
-  "message.tac.shoot.no_ammo": "No Ammo!",
   "message.tac.reload.success": "The gun has been reloaded",
   "key.category.tac": "Timeless & Classics",
   "key.tac.reload.desc": "Reload",
