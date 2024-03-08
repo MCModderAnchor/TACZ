@@ -34,19 +34,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
 
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
-
-    @Shadow
-    public abstract void sendMessage(Component pComponent, UUID uuid);
 
     @Unique
     private volatile long tac$ClientShootTimestamp = -1L;
@@ -65,6 +65,19 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private boolean tac$ClientIsAiming = false;
 
+    /**
+     * 这个状态锁表示：任意时刻，正在进行的枪械操作只能为一个。
+     * 主要用于防止客户端操作表现效果重复执行。
+     */
+    @Unique
+    private boolean tac$ClientStateLock = false;
+    /**
+     * 用于跳过状态锁上锁 到 服务端数据更新的这段延迟...
+     */
+    @Unique
+    @Nullable
+    private Predicate<IGunOperator> tac$LockedCondition = null;
+
     @Unique
     @Override
     public ShootResult shoot() {
@@ -73,7 +86,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return ShootResult.COOL_DOWN;
         }
         LocalPlayer player = (LocalPlayer) (Object) this;
-        // 暂定为主手
+        // 暂定为只有主手能开枪
         ItemStack mainhandItem = player.getMainHandItem();
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
             return ShootResult.FAIL;
@@ -91,23 +104,27 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (coolDown > 50) {
                 return ShootResult.COOL_DOWN;
             }
-            // 如果射击冷却小于 1 tick，则认为玩家已经开火，但开火的客户端效果异步延迟执行。
             if (coolDown < 0) {
                 coolDown = 0;
             }
-            ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
-            if (reloadState.getStateType().isReloading()) {
+            // 因为开火冷却检测用了特别定制的方法，所以不检查状态锁，而是手动检查是否换弹、切枪
+            IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
+            if(gunOperator.getSynReloadState().getStateType().isReloading()){
+                return ShootResult.FAIL;
+            }
+            if(gunOperator.getSynDrawCoolDown() != 0){
                 return ShootResult.FAIL;
             }
             // 判断子弹数
             if (this.checkAmmo() && iGun.getCurrentAmmoCount(mainhandItem) < 1) {
                 return ShootResult.NO_AMMO;
             }
-            // TODO 判断是否在 draw
             // 触发开火事件
             if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, mainhandItem, LogicalSide.CLIENT))) {
                 return ShootResult.FAIL;
             }
+            // 切换状态锁，不允许换弹、检视等行为进行。
+            lockState(operator -> operator.getSynShootCoolDown() > 0);
             tac$IsShootRecorded = false;
             // 开火效果需要延时执行，这样渲染效果更好。
             tac$ScheduledExecutorService.schedule(() -> {
@@ -136,6 +153,10 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         return ShootResult.FAIL;
     }
 
+    /**
+     * 判断玩家换弹时是否需要检查背包中的子弹、射击时是否消耗子弹。
+     * 通常来说，创造模式下的玩家不需要检查。
+     */
     @Unique
     @Override
     public boolean checkAmmo() {
@@ -152,6 +173,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
             return;
         }
+        // 锁上状态锁
+        lockState(operator -> operator.getSynDrawCoolDown() > 0);
         // 重置客户端的 shoot 时间戳
         tac$IsShootRecorded = true;
         tac$ClientShootTimestamp = -1;
@@ -174,20 +197,15 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void reload() {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        // 暂定为主手
+        // 暂定只有主手可以装弹
         ItemStack mainhandItem = player.getMainHandItem();
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-            // 检查换弹是否未完成
-            ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
-            if (reloadState.getStateType().isReloading()) {
-                return;
-            }
-            // 判断是否正在开火冷却
-            if (IGunOperator.fromLivingEntity(player).getSynShootCoolDown() > 0) {
+            // 检查状态锁
+            if(tac$ClientStateLock){
                 return;
             }
             // 弹药简单检查
@@ -211,7 +229,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                     return;
                 }
             }
-            // TODO 检查 draw 是否还未完成
+            // 锁上状态锁
+            lockState(operator -> operator.getSynReloadState().getStateType().isReloading());
             // 触发换弹事件
             if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
                 return;
@@ -230,12 +249,15 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void inspect() {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        // 暂定为主手
+        // 暂定只有主手可以检视
         ItemStack mainhandItem = player.getMainHandItem();
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
             return;
         }
-        // TODO 检测是否在开火、装弹、切枪、检视
+        // 检查状态锁
+        if(tac$ClientStateLock){
+            return;
+        }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
@@ -247,7 +269,10 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
 
     @Override
     public void fireSelect() {
-        // TODO 冷却时间检查，得让动画播放完毕才行
+        // 检查状态锁
+        if(tac$ClientStateLock){
+            return;
+        }
         LocalPlayer player = (LocalPlayer) (Object) this;
         // 暂定为主手
         ItemStack mainhandItem = player.getMainHandItem();
@@ -293,11 +318,18 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         return tac$ClientAimingProgress;
     }
 
-    @Inject(method = "tick", at = @At("RETURN"))
+    @Unique
+    private void lockState(@Nullable Predicate<IGunOperator> lockedCondition){
+        tac$ClientStateLock = true;
+        tac$LockedCondition = lockedCondition;
+    }
+
+    @Inject(method = "tick", at = @At("HEAD"))
     public void onTickClientSide(CallbackInfo ci) {
         LocalPlayer player = (LocalPlayer) (Object) this;
         if (player.getLevel().isClientSide()) {
             tickAimingProgress();
+            tickStateLock();
         }
     }
 
@@ -332,5 +364,32 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             }
         }
         tac$ClientAimingTimestamp = System.currentTimeMillis();
+    }
+
+    /**
+     * 此方法每 tick 执行一次，判断是否应当释放状态锁。
+     */
+    @Unique
+    private void tickStateLock(){
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
+        ReloadState reloadState = gunOperator.getSynReloadState();
+        // 如果还没完成上锁，则不能释放状态锁
+        if(tac$LockedCondition != null && !tac$LockedCondition.test(gunOperator)){
+            return;
+        }
+        tac$LockedCondition = null;
+        if(reloadState.getStateType().isReloading()){
+            return;
+        }
+        long shootCoolDown = gunOperator.getSynShootCoolDown();
+        if(shootCoolDown > 0){
+            return;
+        }
+        if(gunOperator.getSynDrawCoolDown() > 0){
+            return;
+        }
+        // 释放状态锁
+        tac$ClientStateLock = false;
     }
 }

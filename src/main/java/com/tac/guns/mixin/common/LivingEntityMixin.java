@@ -57,6 +57,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     private static final EntityDataAccessor<ReloadState> DATA_RELOAD_STATE_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.RELOAD_STATE);
     @Unique
     private static final EntityDataAccessor<Float> DATA_AIMING_PROGRESS_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
+    @Unique
+    private static final EntityDataAccessor<Long> DATA_DRAW_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
     /**
      * 射击时间戳，射击成功时更新，单位 ms。
      * 用于计算射击的冷却时间。
@@ -117,6 +119,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Override
     @Unique
+    public long getSynDrawCoolDown(){
+        return this.getEntityData().get(DATA_DRAW_COOL_DOWN_ID);
+    }
+
+    @Override
+    @Unique
     public ReloadState getSynReloadState() {
         return this.getEntityData().get(DATA_RELOAD_STATE_ID);
     }
@@ -149,6 +157,27 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     }
 
     @Unique
+    private long getDrawCoolDown(){
+        if (tac$CurrentGunItem == null) {
+            return 0;
+        }
+        if (!(tac$CurrentGunItem.getItem() instanceof IGun iGun)) {
+            return 0;
+        }
+        ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
+        Optional<CommonGunIndex> gunIndex = CommonGunPackLoader.getGunIndex(gunId);
+        return gunIndex.map(index -> {
+            long coolDown = (long)(index.getGunData().getDrawTime() * 1000) - (System.currentTimeMillis() - tac$DrawTimestamp);
+            // 给 5 ms 的窗口时间，以平衡延迟
+            coolDown = coolDown - 5;
+            if (coolDown < 0) {
+                return 0L;
+            }
+            return coolDown;
+        }).orElse(-1L);
+    }
+
+    @Unique
     @Override
     public void draw(ItemStack gunItemStack) {
         // 重置各个状态
@@ -164,7 +193,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             // TODO 执行收枪逻辑
         } else {
             tac$DrawTimestamp = System.currentTimeMillis();
-            // TODO 执行切枪逻辑
         }
     }
 
@@ -188,8 +216,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             if (getShootCoolDown() != 0) {
                 return;
             }
+            // 检查是否在切枪
+            if (getDrawCoolDown() != 0){
+                return;
+            }
             int currentAmmoCount = iGun.getCurrentAmmoCount(tac$CurrentGunItem);
-            // TODO 检查 draw 是否还未完成
             // 检查弹药
             if (this.checkAmmo()) {
                 // 超出或达到上限，不换弹
@@ -249,12 +280,15 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$ReloadStateType.isReloading()) {
             return ShootResult.FAIL;
         }
+        // 检查是否在切枪
+        if (getDrawCoolDown() != 0){
+            return ShootResult.FAIL;
+        }
         LivingEntity entity = (LivingEntity) (Object) this;
         // 创造模式不判断子弹数
         if (checkAmmo() && iGun.getCurrentAmmoCount(tac$CurrentGunItem) < 1) {
             return ShootResult.NO_AMMO;
         }
-        // TODO 检查 draw 是否还未完成
         // 触发射击事件
         if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
             return ShootResult.FAIL;
@@ -293,7 +327,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Unique
     @Override
     public void aim(boolean isAim) {
-        // TODO 判断当前状态能不能瞄准
         tac$IsAiming = isAim;
     }
 
@@ -335,6 +368,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         tickAimingProgress();
         // 从服务端同步数据
         this.getEntityData().set(DATA_SHOOT_COOL_DOWN_ID, getShootCoolDown());
+        this.getEntityData().set(DATA_DRAW_COOL_DOWN_ID, getDrawCoolDown());
         this.getEntityData().set(DATA_RELOAD_STATE_ID, reloadState);
         this.getEntityData().set(DATA_AIMING_PROGRESS_ID, tac$AimingProgress);
     }
@@ -475,5 +509,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         entityData.define(DATA_SHOOT_COOL_DOWN_ID, -1L);
         entityData.define(DATA_RELOAD_STATE_ID, new ReloadState());
         entityData.define(DATA_AIMING_PROGRESS_ID, 0f);
+        entityData.define(DATA_DRAW_COOL_DOWN_ID, -1L);
     }
 }

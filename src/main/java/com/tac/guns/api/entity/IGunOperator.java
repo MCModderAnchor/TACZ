@@ -20,6 +20,11 @@ public interface IGunOperator {
     long getSynShootCoolDown();
 
     /**
+     * 获取从服务端同步的切枪的冷却
+     */
+    long getSynDrawCoolDown();
+
+    /**
      * 获取从服务端同步的换弹状态
      */
     ReloadState getSynReloadState();
