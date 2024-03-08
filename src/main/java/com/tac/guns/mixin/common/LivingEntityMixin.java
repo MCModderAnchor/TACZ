@@ -189,13 +189,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
                 return;
             }
             int currentAmmoCount = iGun.getCurrentAmmoCount(tac$CurrentGunItem);
-            // 超出或达到上限，不换弹
-            if (currentAmmoCount >= gunIndex.getGunData().getAmmoAmount()) {
-                return;
-            }
             // TODO 检查 draw 是否还未完成
             // 检查弹药
             if (this.checkAmmo()) {
+                // 超出或达到上限，不换弹
+                if (currentAmmoCount >= gunIndex.getGunData().getAmmoAmount()) {
+                    return;
+                }
                 boolean hasAmmo = this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map(cap -> {
                     // 背包检查
                     for (int i = 0; i < cap.getSlots(); i++) {
@@ -214,14 +214,14 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
                 return;
             }
-            // 空仓换弹
+            // 空仓换弹，初始化用于 tick 的状态
             if (currentAmmoCount <= 0) {
                 tac$ReloadStateType = ReloadState.StateType.EMPTY_RELOAD_FEEDING;
                 tac$ReloadTimestamp = System.currentTimeMillis();
                 return;
             }
-            // 战术换弹
-            if (currentAmmoCount < gunIndex.getGunData().getAmmoAmount()) {
+            // 战术换弹，初始化用于 tick 的状态
+            if (currentAmmoCount <= gunIndex.getGunData().getAmmoAmount()) {
                 tac$ReloadStateType = ReloadState.StateType.TACTICAL_RELOAD_FEEDING;
                 tac$ReloadTimestamp = System.currentTimeMillis();
             }
