@@ -41,5 +41,5 @@ public interface IClientPlayerGunOperator {
 
     void aim(boolean isAim);
 
-    float getClientAimingProgress();
+    float getClientAimingProgress(float partialTicks);
 }

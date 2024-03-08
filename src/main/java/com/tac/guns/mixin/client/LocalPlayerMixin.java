@@ -23,6 +23,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -57,6 +58,10 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
      */
     @Unique
     private float tac$ClientAimingProgress = 0;
+    /**
+     * 上一个 tick 的瞄准进度，用于插值，范围 0 ~ 1
+     */
+    private static float tac$OldAimingProgress = 0;
     /**
      * 瞄准时间戳，单位 ms
      */
@@ -181,6 +186,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         // 重置客户端瞄准状态
         tac$ClientIsAiming = false;
         tac$ClientAimingProgress = 0;
+        tac$OldAimingProgress = 0;
         // 发包通知服务器
         NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun(player.getInventory().selected));
         // 放映 draw 动画
@@ -314,8 +320,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
 
     @Unique
     @Override
-    public float getClientAimingProgress() {
-        return tac$ClientAimingProgress;
+    public float getClientAimingProgress(float partialTicks) {
+        return Mth.lerp(partialTicks, tac$OldAimingProgress, tac$ClientAimingProgress);
     }
 
     @Unique
@@ -340,16 +346,19 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         // 如果主手物品不是枪械，则取消瞄准状态并将 aimingProgress 归零，返回。
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
             tac$ClientAimingProgress = 0;
+            tac$OldAimingProgress = 0;
             return;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             tac$ClientAimingProgress = 0;
+            tac$OldAimingProgress = 0;
             return;
         }
         float aimTime = gunIndexOptional.get().getGunData().getAimTime();
         float alphaProgress = (System.currentTimeMillis() - tac$ClientAimingTimestamp + 1) / (aimTime * 1000);
+        tac$OldAimingProgress = tac$ClientAimingProgress;
         if (tac$ClientIsAiming) {
             // 处于执行瞄准状态，增加 aimingProgress
             tac$ClientAimingProgress += alphaProgress;

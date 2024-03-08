@@ -46,8 +46,6 @@ public class FirstPersonRenderGunEvent {
     private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(0.75f, 1.2f, 0.5f, 0);
     private static ItemStack oldHotbarSelectedStack = ItemStack.EMPTY;
     private static int oldHotbarSelected = -1;
-    private static float oldAimingProgress = 0;
-    private static float aimingProgress = 0;
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
@@ -121,21 +119,10 @@ public class FirstPersonRenderGunEvent {
         }
     }
 
-    @SubscribeEvent
-    public static void tickAimingLerp(TickEvent.ClientTickEvent tickEvent) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) {
-            return;
-        }
-        oldAimingProgress = aimingProgress;
-        aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress();
-    }
-
     private static void applyFirstPersonGunTransform(LocalPlayer player, ItemStack gunItemStack, ClientGunIndex gunIndex,
                                                      PoseStack poseStack, BedrockGunModel model, float partialTicks) {
         // 配合运动曲线，计算瞄准进度
-        float aimingProgress = Mth.lerp(partialTicks, oldAimingProgress, FirstPersonRenderGunEvent.aimingProgress);
-        aimingProgress = AIMING_DYNAMICS.update(0, aimingProgress);
+        float aimingProgress = AIMING_DYNAMICS.update(0, IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
         // 获取枪械动画约束系数
         // TODO 判断是否安装瞄具，
         CommonTransformObject multiplier = gunIndex.getAnimationInfluenceCoefficient().getIronView();

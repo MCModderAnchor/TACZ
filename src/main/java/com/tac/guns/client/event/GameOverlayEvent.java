@@ -30,7 +30,7 @@ public class GameOverlayEvent {
         if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT) {
             LocalPlayer player = Minecraft.getInstance().player;
             // 瞄准快要完成时，取消准心渲染
-            if (IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress() > 0.9) {
+            if (IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(event.getPartialTicks()) > 0.9) {
                 event.setCanceled(true);
                 return;
             }
