@@ -179,16 +179,16 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Unique
     @Override
-    public void draw(ItemStack gunItemStack) {
+    public void draw(ItemStack itemStack) {
         // 重置各个状态
-        tac$CurrentGunItem = gunItemStack;
+        tac$CurrentGunItem = itemStack;
         tac$ShootTimestamp = -1;
         tac$IsAiming = false;
         tac$AimingProgress = 0;
         tac$ReloadTimestamp = -1;
         tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
 
-        if (!IGun.isGun(gunItemStack)) {
+        if (!IGun.isGun(itemStack)) {
             tac$DrawTimestamp = -1;
             // TODO 执行收枪逻辑
         } else {

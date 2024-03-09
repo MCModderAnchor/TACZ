@@ -2,6 +2,7 @@ package com.tac.guns.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.logging.LogUtils;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.tac.guns.client.animation.AnimationListener;
@@ -221,8 +222,13 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     // 计算 yaw（绕 z 轴的旋转角）
                     float yaw = (float) Math.atan2(m[1], m[0]);
                     // 因为模型是上下颠倒的，因此此处roll轴的旋转需要进行取反
-                    // 此处不使用forge的Quaternion构造方法是因为这玩意儿竟然是用单位元四元数连乘三轴旋转四元数，这样和欧拉角有什么区别....
-                    toQuaternion(-roll, pitch, yaw, rendererWrapper.getAdditionalQuaternion());
+                    // 要减去模型组的初始旋转值，写入相对值。
+                    toQuaternion(
+                            -roll - rendererWrapper.getRotateAngleX(),
+                            pitch - rendererWrapper.getRotateAngleY(),
+                            yaw - rendererWrapper.getRotateAngleZ(),
+                            rendererWrapper.getAdditionalQuaternion()
+                    );
                 }
 
                 @Override
