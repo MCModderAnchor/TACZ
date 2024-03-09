@@ -91,7 +91,7 @@ public class BedrockCubeBox implements BedrockCube {
                 float z = vertex.pos.z() / 16.0F;
                 Vector4f vector4f = new Vector4f(x, y, z, 1.0F);
                 vector4f.transform(matrix4f);
-                consumer.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.u, vertex.v, light, overlay, nx, ny, nz);
+                consumer.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.u, vertex.v, overlay, light, nx, ny, nz);
             }
         }
     }
