@@ -54,7 +54,9 @@
     // 枪械音效，在包目录下 sounds 文件夹内寻找，不建议为空
     "sounds": {
         "shoot": "tac:ak47_shoot",
-        "reload": "tac:ak47_reload",
+        "dry_fire": "tac:ak47_dry_fire",
+        "reload_empty": "tac:ak47_reload_empty",
+        "reload_tactical": "tac:ak47_reload_tactical",
         "inspect": "tac:ak47_inspect",
         "draw": "tac:ak47_draw"
     },

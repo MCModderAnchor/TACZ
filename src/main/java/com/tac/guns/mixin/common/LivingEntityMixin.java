@@ -48,6 +48,7 @@ import java.util.Optional;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator {
+    @Override
     @Shadow
     public abstract <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing);
 

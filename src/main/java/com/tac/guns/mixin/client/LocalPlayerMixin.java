@@ -21,7 +21,6 @@ import com.tac.guns.resource.pojo.data.GunData;
 import com.tac.guns.resource.pojo.data.GunRecoil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
@@ -29,7 +28,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,11 +35,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 @Mixin(LocalPlayer.class)
@@ -114,14 +110,16 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             }
             // 因为开火冷却检测用了特别定制的方法，所以不检查状态锁，而是手动检查是否换弹、切枪
             IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
-            if(gunOperator.getSynReloadState().getStateType().isReloading()){
+            if (gunOperator.getSynReloadState().getStateType().isReloading()) {
                 return ShootResult.FAIL;
             }
-            if(gunOperator.getSynDrawCoolDown() != 0){
+            if (gunOperator.getSynDrawCoolDown() != 0) {
                 return ShootResult.FAIL;
             }
             // 判断子弹数
             if (this.checkAmmo() && iGun.getCurrentAmmoCount(mainhandItem) < 1) {
+                // FIXME 有问题，会连续触发
+                SoundPlayManager.playDryFireSound(player, gunIndex);
                 return ShootResult.NO_AMMO;
             }
             // 触发开火事件
@@ -192,6 +190,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         // 放映 draw 动画
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            SoundPlayManager.playDrawSound(player, gunIndex);
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
                 animationStateMachine.onGunDraw();
@@ -211,7 +210,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
             // 检查状态锁
-            if(tac$ClientStateLock){
+            if (tac$ClientStateLock) {
                 return;
             }
             // 弹药简单检查
@@ -245,7 +244,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                animationStateMachine.setNoAmmo(iGun.getCurrentAmmoCount(mainhandItem) <= 0);
+                boolean noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
+                SoundPlayManager.playReloadSound(player, gunIndex, noAmmo);
+                animationStateMachine.setNoAmmo(noAmmo);
                 animationStateMachine.onGunReload();
             }
         });
@@ -261,11 +262,12 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return;
         }
         // 检查状态锁
-        if(tac$ClientStateLock){
+        if (tac$ClientStateLock) {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+            SoundPlayManager.playInspectSound(player, gunIndex);
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
                 animationStateMachine.onGunInspect();
@@ -276,7 +278,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void fireSelect() {
         // 检查状态锁
-        if(tac$ClientStateLock){
+        if (tac$ClientStateLock) {
             return;
         }
         LocalPlayer player = (LocalPlayer) (Object) this;
@@ -325,7 +327,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     }
 
     @Unique
-    private void lockState(@Nullable Predicate<IGunOperator> lockedCondition){
+    private void lockState(@Nullable Predicate<IGunOperator> lockedCondition) {
         tac$ClientStateLock = true;
         tac$LockedCondition = lockedCondition;
     }
@@ -379,23 +381,23 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
      * 此方法每 tick 执行一次，判断是否应当释放状态锁。
      */
     @Unique
-    private void tickStateLock(){
+    private void tickStateLock() {
         LocalPlayer player = (LocalPlayer) (Object) this;
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
         ReloadState reloadState = gunOperator.getSynReloadState();
         // 如果还没完成上锁，则不能释放状态锁
-        if(tac$LockedCondition != null && !tac$LockedCondition.test(gunOperator)){
+        if (tac$LockedCondition != null && !tac$LockedCondition.test(gunOperator)) {
             return;
         }
         tac$LockedCondition = null;
-        if(reloadState.getStateType().isReloading()){
+        if (reloadState.getStateType().isReloading()) {
             return;
         }
         long shootCoolDown = gunOperator.getSynShootCoolDown();
-        if(shootCoolDown > 0){
+        if (shootCoolDown > 0) {
             return;
         }
-        if(gunOperator.getSynDrawCoolDown() > 0){
+        if (gunOperator.getSynDrawCoolDown() > 0) {
             return;
         }
         // 释放状态锁
