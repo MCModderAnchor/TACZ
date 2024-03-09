@@ -1,0 +1,6 @@
+{
+  "model": "tac:ammo/30_06",
+  "texture": "tac:ammo/uv/762x39",
+  "slot": "tac:ammo/slot/30_06"
+}
+    
