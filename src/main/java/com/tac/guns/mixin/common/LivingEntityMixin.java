@@ -120,7 +120,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Override
     @Unique
-    public long getSynDrawCoolDown(){
+    public long getSynDrawCoolDown() {
         return this.getEntityData().get(DATA_DRAW_COOL_DOWN_ID);
     }
 
@@ -158,7 +158,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     }
 
     @Unique
-    private long getDrawCoolDown(){
+    private long getDrawCoolDown() {
         if (tac$CurrentGunItem == null) {
             return 0;
         }
@@ -168,7 +168,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
         Optional<CommonGunIndex> gunIndex = CommonGunPackLoader.getGunIndex(gunId);
         return gunIndex.map(index -> {
-            long coolDown = (long)(index.getGunData().getDrawTime() * 1000) - (System.currentTimeMillis() - tac$DrawTimestamp);
+            long coolDown = (long) (index.getGunData().getDrawTime() * 1000) - (System.currentTimeMillis() - tac$DrawTimestamp);
             // 给 5 ms 的窗口时间，以平衡延迟
             coolDown = coolDown - 5;
             if (coolDown < 0) {
@@ -218,7 +218,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
                 return;
             }
             // 检查是否在切枪
-            if (getDrawCoolDown() != 0){
+            if (getDrawCoolDown() != 0) {
                 return;
             }
             int currentAmmoCount = iGun.getCurrentAmmoCount(tac$CurrentGunItem);
@@ -282,7 +282,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             return ShootResult.FAIL;
         }
         // 检查是否在切枪
-        if (getDrawCoolDown() != 0){
+        if (getDrawCoolDown() != 0) {
             return ShootResult.FAIL;
         }
         LivingEntity entity = (LivingEntity) (Object) this;
@@ -304,7 +304,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             EntityBullet bullet = new EntityBullet(world, shooter);
             InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
             float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
-            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 10, inaccuracy);
+            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 2.5f, inaccuracy);
             world.addFreshEntity(bullet);
             // 削减弹药数
             if (this.checkAmmo()) {
