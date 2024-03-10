@@ -1,0 +1,4 @@
+{
+  // 配件在背包/快捷栏等容器中槽位显示的 2D 材质
+  "slot": "tac:attachment/slot/lpvo_1_6"
+}

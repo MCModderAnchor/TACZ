@@ -1,0 +1,25 @@
+{
+  // 指示这个皮肤是属于哪个配件的
+  "parent": "tac:lpvo_1_6",
+  // 皮肤类，枪械可以限定皮肤类。
+  // 可以为任意字符串。
+  "class": "common",
+  // 皮肤的显示名称
+  "name": "tac.attachment.lpvo_1_6.blue.name",
+  // 如果只是换材质，可以复用原模型
+  "model": "tac:attachment/lpvo_1_6_geo",
+  "texture": "tac:attachment/uv/lpvo_1_6_blue",
+  // 调整各个视角下模型的变换参数，可为空
+  "transform": {
+    // 只有缩放需要在这里指定，旋转和位移使用模型内定位组。
+    // 可以为空，若为空，则不缩放模型。
+    "scale": {
+      // 第三人称手部
+      "thirdperson": [0.45, 0.45, 0.45],
+      // 地面实体
+      "ground": [0.45, 0.45, 0.45],
+      // 展示框
+      "fixed": [0.6, 0.6, 0.6]
+    }
+  }
+}
