@@ -3,7 +3,7 @@
   "parent": "tac:lpvo_1_6",
   // 皮肤类，枪械可以限定皮肤类。
   // 可以为任意字符串。
-  "class": "common",
+  "class": "textured",
   // 皮肤的显示名称
   "name": "tac.attachment.lpvo_1_6.blue.name",
   // 如果只是换材质，可以复用原模型

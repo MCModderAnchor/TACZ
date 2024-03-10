@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.pojo.display;
+package com.tac.guns.client.resource.pojo;
 
 import com.google.gson.*;
 import com.mojang.math.Vector3f;
@@ -9,11 +9,11 @@ import java.lang.reflect.Type;
 
 public class CommonTransformObject {
     @Nullable
-    protected Vector3f translation;
+    public Vector3f translation;
     @Nullable
-    protected Vector3f rotation;
+    public Vector3f rotation;
     @Nullable
-    protected Vector3f scale;
+    public Vector3f scale;
 
     public CommonTransformObject(){}
 

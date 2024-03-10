@@ -8,7 +8,7 @@ import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.client.resource.pojo.display.TransformScale;
+import com.tac.guns.client.resource.pojo.TransformScale;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
