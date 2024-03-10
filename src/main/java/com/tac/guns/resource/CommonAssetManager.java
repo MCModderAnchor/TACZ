@@ -1,7 +1,7 @@
 package com.tac.guns.resource;
 
 import com.google.common.collect.Maps;
-import com.tac.guns.resource.pojo.data.GunData;
+import com.tac.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;

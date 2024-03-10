@@ -2,7 +2,7 @@ package com.tac.guns.client.resource.index;
 
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.resource.ClientAssetManager;
-import com.tac.guns.client.resource.pojo.display.AmmoDisplay;
+import com.tac.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.resource.pojo.AmmoIndexPOJO;

@@ -5,8 +5,8 @@ import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
-import com.tac.guns.resource.pojo.data.GunData;
-import com.tac.guns.resource.pojo.data.InaccuracyType;
+import com.tac.guns.resource.pojo.data.gun.GunData;
+import com.tac.guns.resource.pojo.data.gun.InaccuracyType;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;

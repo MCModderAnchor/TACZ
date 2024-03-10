@@ -1,7 +1,8 @@
-package com.tac.guns.client.resource.pojo.display;
+package com.tac.guns.client.resource.pojo.display.gun;
 
 import com.google.gson.annotations.SerializedName;
 import com.mojang.math.Vector3f;
+import com.tac.guns.client.resource.pojo.display.CommonTransformObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

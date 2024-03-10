@@ -3,7 +3,7 @@ package com.tac.guns.client.resource.loader;
 import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.client.resource.pojo.display.AmmoDisplay;
+import com.tac.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;

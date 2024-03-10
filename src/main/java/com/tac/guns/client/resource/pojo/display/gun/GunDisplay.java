@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.pojo.display;
+package com.tac.guns.client.resource.pojo.display.gun;
 
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
