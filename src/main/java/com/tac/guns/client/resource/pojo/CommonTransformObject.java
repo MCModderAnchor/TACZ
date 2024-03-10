@@ -1,4 +1,4 @@
-package com.tac.guns.client.resource.pojo.display;
+package com.tac.guns.client.resource.pojo;
 
 import com.google.gson.*;
 import com.mojang.math.Vector3f;

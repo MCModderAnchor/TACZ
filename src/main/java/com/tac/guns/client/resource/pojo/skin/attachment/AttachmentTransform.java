@@ -1,9 +1,9 @@
-package com.tac.guns.client.resource.pojo.display.gun;
+package com.tac.guns.client.resource.pojo.skin.attachment;
 
 import com.google.gson.annotations.SerializedName;
 import com.tac.guns.client.resource.pojo.TransformScale;
 
-public class GunTransform {
+public class AttachmentTransform {
     @SerializedName("scale")
     private TransformScale scale;
 
