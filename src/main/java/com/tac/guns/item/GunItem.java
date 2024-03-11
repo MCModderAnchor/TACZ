@@ -5,6 +5,7 @@ import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModItems;
+import com.tac.guns.item.builder.GunItemBuilder;
 import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.client.Minecraft;
@@ -52,10 +53,11 @@ public class GunItem extends Item implements GunItemData {
         if (this.allowdedIn(modeTab)) {
             ClientGunPackLoader.getAllGuns().forEach(entry -> {
                 GunData gunData = entry.getValue().getGunData();
-                ItemStack itemStack = this.getDefaultInstance();
-                this.setGunId(itemStack, entry.getKey());
-                this.setFireMode(itemStack, gunData.getFireModeSet().get(0));
-                this.setCurrentAmmoCount(itemStack, gunData.getAmmoAmount());
+                ItemStack itemStack = GunItemBuilder.create()
+                        .setId(entry.getKey())
+                        .setFireMode(gunData.getFireModeSet().get(0))
+                        .setAmmoCount(gunData.getAmmoAmount())
+                        .build();
                 stacks.add(itemStack);
             });
         }

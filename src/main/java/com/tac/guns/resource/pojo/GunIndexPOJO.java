@@ -19,6 +19,9 @@ public class GunIndexPOJO {
     @SerializedName("data")
     private ResourceLocation data;
 
+    @SerializedName("type")
+    private String type;
+
     public String getName() {
         return name;
     }
@@ -34,5 +37,9 @@ public class GunIndexPOJO {
 
     public ResourceLocation getData() {
         return data;
+    }
+
+    public String getType() {
+        return type;
     }
 }

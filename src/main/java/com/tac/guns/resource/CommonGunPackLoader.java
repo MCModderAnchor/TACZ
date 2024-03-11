@@ -4,11 +4,14 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tac.guns.GunMod;
+import com.tac.guns.crafting.GunSmithTableIngredient;
+import com.tac.guns.crafting.GunSmithTableResult;
 import com.tac.guns.resource.index.CommonAmmoIndex;
 import com.tac.guns.resource.index.CommonAttachmentIndex;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.loader.AttachmentDataLoader;
 import com.tac.guns.resource.loader.GunDataLoader;
+import com.tac.guns.resource.loader.RecipeLoader;
 import com.tac.guns.resource.pojo.AmmoIndexPOJO;
 import com.tac.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
@@ -38,7 +41,10 @@ import java.util.zip.ZipFile;
 
 public class CommonGunPackLoader {
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-            .registerTypeAdapter(Pair.class, new PairSerializer()).create();
+            .registerTypeAdapter(Pair.class, new PairSerializer())
+            .registerTypeAdapter(GunSmithTableIngredient.class, new GunSmithTableIngredient.Serializer())
+            .registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResult.Serializer())
+            .create();
     /**
      * 放置自定义枪械模型的目录
      */
@@ -82,6 +88,17 @@ public class CommonGunPackLoader {
         File[] files = FOLDER.toFile().listFiles((dir, name) -> true);
         if (files != null) {
             readIndex(files);
+        }
+    }
+
+    /**
+     * 读取所有枪包的定义文件
+     */
+    public static void reloadRecipes() {
+        CommonAssetManager.INSTANCE.clearRecipes();
+        File[] files = FOLDER.toFile().listFiles((dir, name) -> true);
+        if (files != null) {
+            readRecipes(files);
         }
     }
 
@@ -156,7 +173,7 @@ public class CommonGunPackLoader {
                     return;
                 }
                 for (File namespaceFile : subFiles) {
-                    readIndex(namespaceFile);
+                    readDirIndex(namespaceFile);
                 }
             }
         }
@@ -178,12 +195,53 @@ public class CommonGunPackLoader {
         }
     }
 
-    private static void readIndex(File root) {
+    private static void readDirIndex(File root) {
         if (root.isDirectory()) {
             try {
                 loadAmmoIndex(root);
                 loadGunIndex(root);
                 loadAttachmentIndex(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void readRecipes(File[] files) {
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".zip")) {
+                readZipRecipes(file);
+            }
+            if (file.isDirectory()) {
+                File[] subFiles = file.listFiles((dir, name) -> true);
+                if (subFiles == null) {
+                    return;
+                }
+                for (File namespaceFile : subFiles) {
+                    readDirRecipes(namespaceFile);
+                }
+            }
+        }
+    }
+
+    private static void readZipRecipes(File file) {
+        try (ZipFile zipFile = new ZipFile(file)) {
+            // 第一次读取
+            Enumeration<? extends ZipEntry> iteration = zipFile.entries();
+            while (iteration.hasMoreElements()) {
+                String path = iteration.nextElement().getName();
+                // 加载枪械的 recipe 文件
+                RecipeLoader.load(zipFile, path);
+            }
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
+
+    private static void readDirRecipes(File root) {
+        if (root.isDirectory()) {
+            try {
+                RecipeLoader.load(root);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -330,7 +388,7 @@ public class CommonGunPackLoader {
         return Optional.ofNullable(AMMO_INDEX.get(registryName));
     }
 
-    public static Optional<CommonAttachmentIndex> getAttachmentIndex(ResourceLocation registryName){
+    public static Optional<CommonAttachmentIndex> getAttachmentIndex(ResourceLocation registryName) {
         return Optional.ofNullable(ATTACHMENT_INDEX.get(registryName));
     }
 }

@@ -8,17 +8,23 @@ import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.InaccuracyType;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
 public class CommonGunIndex {
     private GunData gunData;
+    private String type;
 
     private CommonGunIndex() {
     }
 
     public static CommonGunIndex getInstance(GunIndexPOJO gunIndexPOJO) throws IllegalArgumentException {
         CommonGunIndex index = new CommonGunIndex();
+        if (StringUtils.isBlank(gunIndexPOJO.getType())) {
+            throw new IllegalArgumentException("index object missing type field");
+        }
+        index.type = gunIndexPOJO.getType();
         checkData(gunIndexPOJO, index);
         return index;
     }
@@ -71,5 +77,9 @@ public class CommonGunIndex {
 
     public GunData getGunData() {
         return gunData;
+    }
+
+    public String getType() {
+        return type;
     }
 }

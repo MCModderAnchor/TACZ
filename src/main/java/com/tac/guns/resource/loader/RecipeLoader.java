@@ -1,9 +1,10 @@
 package com.tac.guns.resource.loader;
 
 import com.tac.guns.GunMod;
+import com.tac.guns.crafting.GunSmithTableRecipe;
 import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.CommonGunPackLoader;
-import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tac.guns.resource.pojo.data.recipe.TableRecipe;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;
@@ -21,12 +22,12 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public final class AttachmentDataLoader {
-    private static final Marker MARKER = MarkerManager.getMarker("AttachmentDataLoader");
-    private static final Pattern DATA_PATTERN = Pattern.compile("^(\\w+)/attachments/data/([\\w/]+)\\.json$");
+public final class RecipeLoader {
+    private static final Marker MARKER = MarkerManager.getMarker("RecipeLoader");
+    private static final Pattern RECIPES_PATTERN = Pattern.compile("^(\\w+)/recipes/([\\w/]+)\\.json$");
 
     public static boolean load(ZipFile zipFile, String zipPath) throws IOException {
-        Matcher matcher = DATA_PATTERN.matcher(zipPath);
+        Matcher matcher = RECIPES_PATTERN.matcher(zipPath);
         if (matcher.find()) {
             String namespace = matcher.group(1);
             String path = matcher.group(2);
@@ -37,8 +38,8 @@ public final class AttachmentDataLoader {
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
-                AttachmentData data = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentData.class);
-                CommonAssetManager.INSTANCE.putAttachmentData(registryName, data);
+                TableRecipe tableRecipe = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), TableRecipe.class);
+                CommonAssetManager.INSTANCE.putRecipe(registryName, new GunSmithTableRecipe(registryName, tableRecipe));
                 return true;
             }
         }
@@ -46,14 +47,14 @@ public final class AttachmentDataLoader {
     }
 
     public static void load(File root) throws IOException {
-        Path filePath = root.toPath().resolve("attachments/data");
+        Path filePath = root.toPath().resolve("recipes");
         if (Files.isDirectory(filePath)) {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
-                    AttachmentData data = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentData.class);
-                    CommonAssetManager.INSTANCE.putAttachmentData(id, data);
+                    TableRecipe tableRecipe = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), TableRecipe.class);
+                    CommonAssetManager.INSTANCE.putRecipe(id, new GunSmithTableRecipe(id, tableRecipe));
                 } catch (IOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read data file: {}", file);
+                    GunMod.LOGGER.warn(MARKER, "Failed to read recipe file: {}", file);
                     exception.printStackTrace();
                 }
             });

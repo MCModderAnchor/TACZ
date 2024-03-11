@@ -1,5 +1,6 @@
 {
   "name": "tac.gun.glock_17.name",
   "display": "tac:glock_17_display",
-  "data": "tac:glock_17_data"
+  "data": "tac:glock_17_data",
+  "type": "pistol"
 }

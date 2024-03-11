@@ -1,6 +1,7 @@
 package com.tac.guns.resource;
 
 import com.google.common.collect.Maps;
+import com.tac.guns.crafting.GunSmithTableRecipe;
 import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +18,8 @@ public enum CommonAssetManager {
 
     private final Map<ResourceLocation, AttachmentData> attachmentData = Maps.newHashMap();
 
+    private final Map<ResourceLocation, GunSmithTableRecipe> gunSmithTableRecipes = Maps.newHashMap();
+
     public void putGunData(ResourceLocation registryName, GunData data) {
         gunData.put(registryName, data);
     }
@@ -29,11 +32,19 @@ public enum CommonAssetManager {
         attachmentData.put(registryName, data);
     }
 
+    public void putRecipe(ResourceLocation registryName, GunSmithTableRecipe recipe) {
+        gunSmithTableRecipes.put(registryName, recipe);
+    }
+
     public AttachmentData getAttachmentData(ResourceLocation registryName) {
         return attachmentData.get(registryName);
     }
 
     public void clearAll() {
         // TODO：重载时清理缓存
+    }
+
+    public void clearRecipes() {
+        gunSmithTableRecipes.clear();
     }
 }

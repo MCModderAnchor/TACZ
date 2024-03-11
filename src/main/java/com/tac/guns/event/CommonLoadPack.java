@@ -14,5 +14,6 @@ public class CommonLoadPack {
         CommonGunPackLoader.init();
         CommonGunPackLoader.reloadAsset();
         CommonGunPackLoader.reloadIndex();
+        CommonGunPackLoader.reloadRecipes();
     }
 }

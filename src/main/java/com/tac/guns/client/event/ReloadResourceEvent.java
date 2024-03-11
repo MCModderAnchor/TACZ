@@ -34,6 +34,8 @@ public class ReloadResourceEvent {
             // 先加载服务端，让其校验数据
             CommonGunPackLoader.reloadIndex();
             ClientGunPackLoader.reloadIndex();
+            // 合成表最后
+            CommonGunPackLoader.reloadRecipes();
         }
         watch.stop();
         GunMod.LOGGER.info("Model loading time: {} ms", watch.getTime(TimeUnit.MICROSECONDS) / 1000.0);

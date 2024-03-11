@@ -1,9 +1,6 @@
 package com.tac.guns;
 
-import com.tac.guns.init.ModBlocks;
-import com.tac.guns.init.ModEntities;
-import com.tac.guns.init.ModItems;
-import com.tac.guns.init.ModSounds;
+import com.tac.guns.init.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -22,6 +19,7 @@ public class GunMod {
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
         ModEntities.DATA_SERIALIZERS.register(bus);
+        ModRecipe.RECIPE_SERIALIZERS.register(bus);
         ModSounds.SOUNDS.register(bus);
     }
 }
