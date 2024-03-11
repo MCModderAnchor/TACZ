@@ -9,8 +9,9 @@ public class AttachmentData {
     @SerializedName("weight")
     private float weight;
     @SerializedName("ads_addend")
-    private float adsAddend;
+    private float adsAddendTime;
     @SerializedName("recoil_modifier")
+    @Nullable
     private RecoilModifier recoilModifier;
     @SerializedName("silence")
     private float silence = SILENCE_DEFAULT_VALUE;
@@ -28,10 +29,11 @@ public class AttachmentData {
         return weight;
     }
 
-    public float getAdsAddend() {
-        return adsAddend;
+    public float getAdsAddendTime() {
+        return adsAddendTime;
     }
 
+    @Nullable
     public RecoilModifier getRecoilModifier() {
         return recoilModifier;
     }

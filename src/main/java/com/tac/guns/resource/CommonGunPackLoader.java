@@ -5,9 +5,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tac.guns.GunMod;
 import com.tac.guns.resource.index.CommonAmmoIndex;
+import com.tac.guns.resource.index.CommonAttachmentIndex;
 import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.loader.AttachmentDataLoader;
 import com.tac.guns.resource.loader.GunDataLoader;
 import com.tac.guns.resource.pojo.AmmoIndexPOJO;
+import com.tac.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.resource.serialize.PairSerializer;
 import com.tac.guns.util.GetJarResources;
@@ -43,8 +46,10 @@ public class CommonGunPackLoader {
     public static final String DEFAULT_GUN_PACK_NAME = "tac_default_gun";
     public static final Pattern GUNS_INDEX_PATTERN = Pattern.compile("^(\\w+)/guns/index/(\\w+)\\.json$");
     public static final Pattern AMMO_INDEX_PATTERN = Pattern.compile("^(\\w+)/ammo/index/(\\w+)\\.json$");
+    public static final Pattern ATTACHMENT_INDEX_PATTERN = Pattern.compile("^(\\w+)/attachment/index/(\\w+)\\.json$");
     private static final Map<ResourceLocation, CommonGunIndex> GUN_INDEX = Maps.newHashMap();
     private static final Map<ResourceLocation, CommonAmmoIndex> AMMO_INDEX = Maps.newHashMap();
+    private static final Map<ResourceLocation, CommonAttachmentIndex> ATTACHMENT_INDEX = Maps.newHashMap();
     private static final Marker MARKER = MarkerManager.getMarker("CommonGunPackLoader");
 
     /**
@@ -119,8 +124,10 @@ public class CommonGunPackLoader {
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
-                // 加载全部的 data 文件
+                // 加载枪械 data 文件
                 GunDataLoader.load(zipFile, path);
+                // 加载配件 data 文件
+                AttachmentDataLoader.load(zipFile, path);
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
@@ -131,6 +138,7 @@ public class CommonGunPackLoader {
         if (root.isDirectory()) {
             try {
                 GunDataLoader.load(root);
+                AttachmentDataLoader.load(root);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -163,6 +171,7 @@ public class CommonGunPackLoader {
                 // 加载枪械的 index 文件
                 loadAmmoIndex(path, zipFile);
                 loadGunIndex(path, zipFile);
+                loadAttachmentIndex(path, zipFile);
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
@@ -174,6 +183,7 @@ public class CommonGunPackLoader {
             try {
                 loadAmmoIndex(root);
                 loadGunIndex(root);
+                loadAttachmentIndex(root);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -268,11 +278,59 @@ public class CommonGunPackLoader {
         }
     }
 
+    private static void loadAttachmentIndex(String path, ZipFile zipFile) throws IOException {
+        Matcher matcher = GUNS_INDEX_PATTERN.matcher(path);
+        if (matcher.find()) {
+            String namespace = matcher.group(1);
+            String id = matcher.group(2);
+            ZipEntry entry = zipFile.getEntry(path);
+            if (entry == null) {
+                GunMod.LOGGER.warn(MARKER, "{} file don't exist", path);
+                return;
+            }
+            try (InputStream stream = zipFile.getInputStream(entry)) {
+                // 获取枪械的定义文件
+                AttachmentIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentIndexPOJO.class);
+                ResourceLocation registryName = new ResourceLocation(namespace, id);
+                try {
+                    ATTACHMENT_INDEX.put(registryName, CommonAttachmentIndex.getInstance(indexPOJO));
+                } catch (IllegalArgumentException exception) {
+                    GunMod.LOGGER.warn("{} index file read fail!", path);
+                    exception.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static void loadAttachmentIndex(File root) throws IOException {
+        Path filePath = root.toPath().resolve("attachments/index");
+        if (Files.isDirectory(filePath)) {
+            TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
+                try (InputStream stream = Files.newInputStream(file)) {
+                    // 获取枪械的定义文件
+                    AttachmentIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentIndexPOJO.class);
+                    ATTACHMENT_INDEX.put(id, CommonAttachmentIndex.getInstance(indexPOJO));
+                } catch (IOException exception) {
+                    GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
+                    exception.printStackTrace();
+                } catch (IllegalArgumentException exception) {
+                    GunMod.LOGGER.warn("{} index file read fail!", file);
+                    exception.printStackTrace();
+                }
+            });
+            Files.walkFileTree(filePath, visitor);
+        }
+    }
+
     public static Optional<CommonGunIndex> getGunIndex(ResourceLocation registryName) {
         return Optional.ofNullable(GUN_INDEX.get(registryName));
     }
 
     public static Optional<CommonAmmoIndex> getAmmoIndex(ResourceLocation registryName) {
         return Optional.ofNullable(AMMO_INDEX.get(registryName));
+    }
+
+    public static Optional<CommonAttachmentIndex> getAttachmentIndex(ResourceLocation registryName){
+        return Optional.ofNullable(ATTACHMENT_INDEX.get(registryName));
     }
 }

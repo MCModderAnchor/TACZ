@@ -49,12 +49,12 @@ public class ClientGunIndex {
     private ClientGunIndex() {
     }
 
-    public static ClientGunIndex getInstance(GunIndexPOJO clientPojo) throws IllegalArgumentException {
+    public static ClientGunIndex getInstance(GunIndexPOJO gunIndexPOJO) throws IllegalArgumentException {
         ClientGunIndex index = new ClientGunIndex();
-        GunDisplay display = checkDisplay(clientPojo);
-        checkData(clientPojo, index);
-        checkName(clientPojo, index);
-        checkTooltip(clientPojo, index);
+        GunDisplay display = checkDisplay(gunIndexPOJO);
+        checkData(gunIndexPOJO, index);
+        checkName(gunIndexPOJO, index);
+        checkTooltip(gunIndexPOJO, index);
         checkTextureAndModel(display, index);
         checkSlotTexture(display, index);
         checkHUDTexture(display, index);
