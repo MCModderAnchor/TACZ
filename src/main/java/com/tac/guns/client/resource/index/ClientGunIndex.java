@@ -9,15 +9,13 @@ import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.display.gun.AnimationInfluenceCoefficient;
 import com.tac.guns.client.resource.pojo.display.gun.GunDisplay;
-import com.tac.guns.client.resource.pojo.display.gun.GunModelTexture;
 import com.tac.guns.client.resource.pojo.display.gun.GunTransform;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
-import com.tac.guns.item.nbt.GunItemData;
 import com.tac.guns.resource.CommonAssetManager;
+import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.resource.pojo.data.gun.GunData;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,14 +24,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientGunIndex {
-    private static final String DEFAULT_TEXTURE_NAME = "default";
     private String name;
     @Nullable
     private String tooltip;
@@ -42,8 +37,9 @@ public class ClientGunIndex {
     private Map<String, ResourceLocation> sounds;
     private GunTransform transform;
     private GunData gunData;
-    private RenderType slotRenderType;
     private AnimationInfluenceCoefficient animationInfluenceCoefficient;
+    private ResourceLocation modelTexture;
+    private ResourceLocation slotTexture;
     private ResourceLocation hudTexture;
 
     private ClientGunIndex() {
@@ -68,7 +64,7 @@ public class ClientGunIndex {
     private static void checkName(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
         index.name = gunIndexPOJO.getName();
         if (StringUtils.isBlank(index.name)) {
-            index.name = "custom.tac.gun.error.no_name";
+            index.name = "custom.tac.error.no_name";
         }
     }
 
@@ -112,23 +108,19 @@ public class ClientGunIndex {
         if (modelPOJO == null) {
             throw new IllegalArgumentException("there is no corresponding model file");
         }
-
-        // 检查材质
-        List<GunModelTexture> textures = getAndCheckTextures(display);
         // 检查默认材质是否存在
-        Optional<GunModelTexture> defaultOptional = textures.stream().filter(texture -> DEFAULT_TEXTURE_NAME.equals(texture.getId())).findAny();
-        if (defaultOptional.isEmpty()) {
-            throw new IllegalArgumentException("there is no default texture, please add a default texture");
+        ResourceLocation textureLocation = display.getModelTexture();
+        if(textureLocation == null){
+            throw new IllegalArgumentException("missing default texture");
         }
-        // 创建默认的 RenderType
-        RenderType renderType = RenderType.itemEntityTranslucentCull(defaultOptional.get().getLocation());
+        index.modelTexture = textureLocation;
         // 先判断是不是 1.10.0 版本基岩版模型文件
         if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
-            index.gunModel = new BedrockGunModel(modelPOJO, BedrockVersion.LEGACY, renderType);
+            index.gunModel = new BedrockGunModel(modelPOJO, BedrockVersion.LEGACY);
         }
         // 判定是不是 1.12.0 版本基岩版模型文件
         if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
-            index.gunModel = new BedrockGunModel(modelPOJO, BedrockVersion.NEW, renderType);
+            index.gunModel = new BedrockGunModel(modelPOJO, BedrockVersion.NEW);
         }
 
         if (index.gunModel == null) {
@@ -136,35 +128,15 @@ public class ClientGunIndex {
         }
     }
 
-    @NotNull
-    private static List<GunModelTexture> getAndCheckTextures(GunDisplay display) {
-        List<GunModelTexture> textures = display.getModelTextures();
-        if (textures == null) {
-            throw new IllegalArgumentException("display object missing textures field");
-        }
-        if (textures.isEmpty()) {
-            throw new IllegalArgumentException("display object's textures field is empty");
-        }
-        textures.forEach(t -> {
-            if (StringUtils.isBlank(t.getId())) {
-                throw new IllegalArgumentException("textures missing id field");
-            }
-            if (t.getLocation() == null) {
-                throw new IllegalArgumentException("textures missing location field");
-            }
-        });
-        return textures;
-    }
-
     private static void checkAnimation(GunDisplay display, ClientGunIndex index) {
         ResourceLocation location = display.getAnimationLocation();
         if (location == null) {
-            location = GunItemData.DEFAULT;
+            location = DefaultAssets.DEFAULT_GUN_ID;
         }
         // 目前支持的动画为 gltf 动画。此处从缓存取出 gltf 的动画资源。
         AnimationStructure animations = ClientAssetManager.INSTANCE.getAnimations(location);
         if (animations == null) {
-            animations = Objects.requireNonNull(ClientAssetManager.INSTANCE.getAnimations(GunItemData.DEFAULT));
+            animations = Objects.requireNonNull(ClientAssetManager.INSTANCE.getAnimations(DefaultAssets.DEFAULT_GUN_ID));
         }
         // 用 gltf 动画资源创建动画控制器
         AnimationController controller = Animations.createControllerFromGltf(animations, index.gunModel);
@@ -174,7 +146,7 @@ public class ClientGunIndex {
 
     private static void checkSounds(GunDisplay display, ClientGunIndex index) {
         Map<String, ResourceLocation> soundMaps = display.getSounds();
-        GunDisplay defaultDisplay = ClientAssetManager.INSTANCE.getGunDisplay(GunItemData.DEFAULT_DISPLAY);
+        GunDisplay defaultDisplay = ClientAssetManager.INSTANCE.getGunDisplay(DefaultAssets.DEFAULT_GUN_DISPLAY);
         Map<String, ResourceLocation> defaultSoundMaps = Objects.requireNonNull(defaultDisplay.getSounds());
         if (soundMaps == null || soundMaps.isEmpty()) {
             index.sounds = defaultSoundMaps;
@@ -192,7 +164,7 @@ public class ClientGunIndex {
 
     private static void checkTransform(GunDisplay display, ClientGunIndex index) {
         GunTransform readTransform = display.getTransform();
-        GunDisplay defaultDisplay = ClientAssetManager.INSTANCE.getGunDisplay(GunItemData.DEFAULT_DISPLAY);
+        GunDisplay defaultDisplay = ClientAssetManager.INSTANCE.getGunDisplay(DefaultAssets.DEFAULT_GUN_DISPLAY);
         if (readTransform == null || readTransform.getScale() == null) {
             index.transform = Objects.requireNonNull(defaultDisplay.getTransform());
         } else {
@@ -202,8 +174,7 @@ public class ClientGunIndex {
 
     private static void checkSlotTexture(GunDisplay display, ClientGunIndex index) {
         // 加载 GUI 内枪械图标
-        ResourceLocation slotTexture = Objects.requireNonNullElseGet(display.getSlotTextureLocation(), MissingTextureAtlasSprite::getLocation);
-        index.slotRenderType = RenderType.entityTranslucent(slotTexture);
+        index.slotTexture = Objects.requireNonNullElseGet(display.getSlotTextureLocation(), MissingTextureAtlasSprite::getLocation);
     }
 
     private static void checkAnimationInfluenceCoefficient(GunDisplay display, ClientGunIndex index) {
@@ -240,12 +211,16 @@ public class ClientGunIndex {
         return transform;
     }
 
-    public RenderType getSlotRenderType() {
-        return slotRenderType;
+    public ResourceLocation getSlotTexture() {
+        return slotTexture;
     }
 
     public ResourceLocation getHUDTexture() {
         return hudTexture;
+    }
+
+    public ResourceLocation getModelTexture() {
+        return modelTexture;
     }
 
     public GunData getGunData() {

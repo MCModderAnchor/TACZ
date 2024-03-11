@@ -1,5 +1,5 @@
 {
-  "custom.tac.gun.error.no_name": "Error: No Name",
+  "custom.tac.error.no_name": "Error: No Name",
   "commands.tac.reload.success": "All pack is reload!",
   "message.tac.fire_select.success": "Switched to %s fire mode",
   "message.tac.fire_select.fail": "Unknown fire mode, unable to shoot",

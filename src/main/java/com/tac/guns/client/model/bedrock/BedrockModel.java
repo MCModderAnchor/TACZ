@@ -3,11 +3,8 @@ package com.tac.guns.client.model.bedrock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tac.guns.client.resource.pojo.model.*;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,20 +24,18 @@ public class BedrockModel {
      * 哪些模型需要渲染。加载进父骨骼的子骨骼是不需要渲染的
      */
     protected final List<BedrockPart> shouldRender = new LinkedList<>();
-    protected RenderType renderType;
     /**
      * 委托到渲染结束时执行的渲染器，用于特殊部分的渲染，如手臂
      */
     protected List<IModelRenderer> delegateRenderers = new ArrayList<>();
 
-    public BedrockModel(BedrockModelPOJO pojo, BedrockVersion version, RenderType renderType) {
+    public BedrockModel(BedrockModelPOJO pojo, BedrockVersion version) {
         if (version == BedrockVersion.LEGACY) {
             loadLegacyModel(pojo);
         }
         if (version == BedrockVersion.NEW) {
             loadNewModel(pojo);
         }
-        this.renderType = renderType;
     }
 
     public void delegateRender(IModelRenderer renderer) {
@@ -309,17 +304,8 @@ public class BedrockModel {
         return (float) (degree * Math.PI / 180);
     }
 
-    public RenderType getRenderType() {
-        return renderType;
-    }
-
-    public void setRenderType(@Nonnull RenderType renderType) {
-        this.renderType = renderType;
-    }
-
-    public void render(ItemTransforms.TransformType transformType, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {
+    public void render(ItemTransforms.TransformType transformType, PoseStack matrixStack, VertexConsumer builder, int light, int overlay) {
         matrixStack.pushPose();
-        VertexConsumer builder = buffer.getBuffer(renderType);
         for (BedrockPart model : shouldRender) {
             model.render(matrixStack, transformType, builder, light, overlay);
         }

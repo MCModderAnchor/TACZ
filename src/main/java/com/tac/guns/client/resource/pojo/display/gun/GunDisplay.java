@@ -10,8 +10,8 @@ import java.util.Map;
 public class GunDisplay {
     @SerializedName("model")
     private ResourceLocation modelLocation;
-    @SerializedName("textures")
-    private List<GunModelTexture> modelTextures;
+    @SerializedName("texture")
+    private ResourceLocation modelTexture;
     @Nullable
     @SerializedName("hud")
     private ResourceLocation hudTextureLocation;
@@ -38,8 +38,8 @@ public class GunDisplay {
         return modelLocation;
     }
 
-    public List<GunModelTexture> getModelTextures() {
-        return modelTextures;
+    public ResourceLocation getModelTexture() {
+        return modelTexture;
     }
 
     @Nullable

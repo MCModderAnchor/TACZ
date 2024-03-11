@@ -4,8 +4,10 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoDisplay;
+import com.tac.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tac.guns.client.resource.pojo.display.gun.GunDisplay;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
+import com.tac.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,6 +25,11 @@ public enum ClientAssetManager {
      */
     private final Map<ResourceLocation, GunDisplay> gunDisplays = Maps.newHashMap();
     private final Map<ResourceLocation, AmmoDisplay> ammoDisplays = Maps.newHashMap();
+    private final Map<ResourceLocation, AttachmentDisplay> attachmentDisplays = Maps.newHashMap();
+    /**
+     * 储存 skin数据
+     */
+    private final Map<ResourceLocation, AttachmentSkin> attachmentSkins = Maps.newHashMap();
     /**
      * 储存动画
      */
@@ -48,6 +55,14 @@ public enum ClientAssetManager {
         ammoDisplays.put(registryName, display);
     }
 
+    public void putAttachmentDisplay(ResourceLocation registryName, AttachmentDisplay display){
+        attachmentDisplays.put(registryName, display);
+    }
+
+    public void putAttachmentSkin(ResourceLocation registryName, AttachmentSkin display){
+        attachmentSkins.put(registryName, display);
+    }
+
     public void putAnimation(ResourceLocation registryName, AnimationStructure animation) {
         animations.put(registryName, animation);
     }
@@ -70,6 +85,14 @@ public enum ClientAssetManager {
 
     public AmmoDisplay getAmmoDisplay(ResourceLocation registryName) {
         return ammoDisplays.get(registryName);
+    }
+
+    public AttachmentDisplay getAttachmentDisplay(ResourceLocation registryName){
+        return attachmentDisplays.get(registryName);
+    }
+
+    public AttachmentSkin getAttachmentSkin(ResourceLocation registryName){
+        return attachmentSkins.get(registryName);
     }
 
     public AnimationStructure getAnimations(ResourceLocation registryName) {

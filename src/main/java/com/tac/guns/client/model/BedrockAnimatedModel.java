@@ -2,7 +2,6 @@ package com.tac.guns.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.logging.LogUtils;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.tac.guns.client.animation.AnimationListener;
@@ -15,7 +14,6 @@ import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.client.resource.pojo.model.BonesItem;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 
 import javax.annotation.Nonnull;
@@ -25,8 +23,8 @@ import java.util.function.Function;
 public class BedrockAnimatedModel extends BedrockModel implements AnimationListenerSupplier {
     private final CameraAnimationObject cameraAnimationObject = new CameraAnimationObject();
 
-    public BedrockAnimatedModel(BedrockModelPOJO pojo, BedrockVersion version, RenderType renderType) {
-        super(pojo, version, renderType);
+    public BedrockAnimatedModel(BedrockModelPOJO pojo, BedrockVersion version) {
+        super(pojo, version);
         // 初始化相机动画对象
         ModelRendererWrapper cameraRendererWrapper = modelMap.get(CameraAnimationObject.CAMERA_NODE_NAME);
         if (cameraRendererWrapper != null) {

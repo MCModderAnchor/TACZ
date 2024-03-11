@@ -1,26 +1,8 @@
 {
-    // 调用的模型，在包目录下的 models 文件夹中寻找，不可为空
+    // 默认的模型，在包目录下的 models 文件夹中寻找，不可为空
     "model": "tac:gun/ak47_geo",
-    // 调用的材质列表，用于加载模型材质、模型换肤，不可为空
-    "textures": [
-        {
-            // 材质的识别名，default为必须存在，否则枪械加载失败
-            // default材质将作为默认材质在渲染时调用
-            "id": "default",
-            // 调用的材质的路径，会在包目录下的 textures 文件夹中寻找
-            "location": "tac:gun/uv/ak47",
-            // 该材质的显示名，要支持本地化
-            "name": "tac.texture.ak47.default.name"
-        },
-        {
-            // 材质的识别名
-            "id": "blue",
-            // 调用的材质的路径，会在包目录下的 textures 文件夹中寻找
-            "location": "gun/uv/ak47_blue",
-            // 该材质的显示名，要支持本地化
-            "name": "tac.texture.ak47.blue.name"
-        }
-    ],
+    // 默认材质，不可为空
+    "texture": "tac:gun/uv/ak47",
     // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
     "hud": "tac:gun/hud/ak47",
     // 背包/快捷栏等容器中槽位显示的 2D 材质，在包目录下的 textures 文件夹中寻找，不建议为空

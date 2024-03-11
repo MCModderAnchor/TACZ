@@ -17,7 +17,7 @@ import java.util.Objects;
 public class ClientAmmoIndex {
     private String name;
     private BedrockAmmoModel ammoModel;
-    private RenderType slotRenderType;
+    private ResourceLocation slotTextureLocation;
     private int stackSize;
 
     private ClientAmmoIndex() {
@@ -36,7 +36,7 @@ public class ClientAmmoIndex {
     private static void checkName(AmmoIndexPOJO ammoIndexPOJO, ClientAmmoIndex index) {
         index.name = ammoIndexPOJO.getName();
         if (StringUtils.isBlank(index.name)) {
-            index.name = "custom.tac.gun.error.no_name";
+            index.name = "custom.tac.error.no_name";
         }
     }
 
@@ -85,8 +85,7 @@ public class ClientAmmoIndex {
 
     private static void checkSlotTexture(AmmoDisplay display, ClientAmmoIndex index) {
         // 加载 GUI 内枪械图标
-        ResourceLocation slotTexture = Objects.requireNonNullElseGet(display.getSlotTextureLocation(), MissingTextureAtlasSprite::getLocation);
-        index.slotRenderType = RenderType.entityTranslucent(slotTexture);
+        index.slotTextureLocation = Objects.requireNonNullElseGet(display.getSlotTextureLocation(), MissingTextureAtlasSprite::getLocation);
     }
 
     private static void checkStackSize(AmmoIndexPOJO clientPojo, ClientAmmoIndex index) {
@@ -101,8 +100,8 @@ public class ClientAmmoIndex {
         return ammoModel;
     }
 
-    public RenderType getSlotRenderType() {
-        return slotRenderType;
+    public ResourceLocation getSlotTextureLocation() {
+        return slotTextureLocation;
     }
 
     public int getStackSize() {

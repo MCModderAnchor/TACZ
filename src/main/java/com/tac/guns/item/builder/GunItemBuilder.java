@@ -3,14 +3,14 @@ package com.tac.guns.item.builder;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.init.ModItems;
-import com.tac.guns.item.nbt.GunItemData;
+import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public final class GunItemBuilder {
     private int count = 1;
     private int ammoCount = 0;
-    private ResourceLocation gunId = GunItemData.DEFAULT;
+    private ResourceLocation gunId = DefaultAssets.DEFAULT_GUN_ID;
     private FireMode fireMode = FireMode.UNKNOWN;
 
     private GunItemBuilder() {

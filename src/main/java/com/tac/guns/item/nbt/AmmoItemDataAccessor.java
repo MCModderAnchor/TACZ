@@ -1,9 +1,9 @@
 package com.tac.guns.item.nbt;
 
-import com.tac.guns.GunMod;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.resource.CommonGunPackLoader;
+import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -13,10 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public interface AmmoItemData extends IAmmo {
-    ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "762x39");
-    ResourceLocation DEFAULT_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "762x39_display");
-
+public interface AmmoItemDataAccessor extends IAmmo {
     String AMMO_ID_TAG = "AmmoId";
     String AMMO_STACK_TAG = "AmmoStack";
 
@@ -26,9 +23,9 @@ public interface AmmoItemData extends IAmmo {
         CompoundTag nbt = ammo.getOrCreateTag();
         if (nbt.contains(AMMO_ID_TAG, Tag.TAG_STRING)) {
             ResourceLocation gunId = ResourceLocation.tryParse(nbt.getString(AMMO_ID_TAG));
-            return Objects.requireNonNullElse(gunId, DEFAULT);
+            return Objects.requireNonNullElse(gunId, DefaultAssets.DEFAULT_AMMO_ID);
         }
-        return DEFAULT;
+        return DefaultAssets.DEFAULT_AMMO_ID;
     }
 
     @Override
@@ -38,7 +35,7 @@ public interface AmmoItemData extends IAmmo {
             nbt.putString(AMMO_ID_TAG, ammoId.toString());
             return;
         }
-        nbt.putString(AMMO_ID_TAG, DEFAULT.toString());
+        nbt.putString(AMMO_ID_TAG, DefaultAssets.DEFAULT_AMMO_ID.toString());
     }
 
     @Override

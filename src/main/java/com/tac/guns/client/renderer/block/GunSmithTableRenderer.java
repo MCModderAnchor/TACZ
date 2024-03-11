@@ -37,8 +37,7 @@ public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableB
         }
         try (InputStream stream = Minecraft.getInstance().getResourceManager().getResource(MODEL_LOCATION).getInputStream()) {
             BedrockModelPOJO pojo = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
-            RenderType renderType = RenderType.entityTranslucent(TEXTURE_LOCATION);
-            MODEL = new BedrockModel(pojo, BedrockVersion.NEW, renderType);
+            MODEL = new BedrockModel(pojo, BedrockVersion.NEW);
         } catch (IOException ioException) {
             ioException.fillInStackTrace();
         }
@@ -58,13 +57,18 @@ public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableB
         poseStack.translate(0.5, 1.5, 0.5);
         poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
         poseStack.mulPose(Vector3f.YN.rotationDegrees(90 - facing.get2DDataValue() * 90));
-        MODEL.render(ItemTransforms.TransformType.NONE, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+        RenderType renderType = RenderType.entityTranslucent(TEXTURE_LOCATION);
+        MODEL.render(ItemTransforms.TransformType.NONE, poseStack, bufferIn.getBuffer(renderType), combinedLightIn, combinedOverlayIn);
         poseStack.popPose();
     }
 
     @Nullable
     public static BedrockModel getModel() {
         return MODEL;
+    }
+
+    public static ResourceLocation getTextureLocation(){
+        return TEXTURE_LOCATION;
     }
 
     @Override

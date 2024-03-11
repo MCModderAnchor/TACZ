@@ -2,6 +2,7 @@ package com.tac.guns.client.model;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
@@ -49,17 +50,16 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     // 瞄具配件定位组的路径。其他配件不需要存路径，只需要替换渲染。但是瞄具定位组需要用来辅助第一人称瞄准的摄像机定位。
     protected @Nullable List<BedrockPart> scopePosPath;
     protected @Nullable List<BedrockPart> constraintPath;
-    protected ItemStack currentItem;
-    protected LivingEntity currentEntity;
     protected Matrix4f ejectionPose = null;
     protected Matrix3f ejectionNormal = null;
     protected Vector3f ejectionVelocity = null;
     protected Vector3f ejectionRandomVelocity = null;
     protected Vector3f ejectionAngularVelocity = null;
     protected float ejectionLivingTimeS = 0;
+    private ItemStack currentItem;
 
-    public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version, RenderType renderType) {
-        super(pojo, version, renderType);
+    public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version) {
+        super(pojo, version);
         this.setFunctionalRenderer("lefthand_pos", bedrockPart -> (poseStack, transformType, consumer, light, overlay) -> {
             if (transformType.firstPerson()) {
                 poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
@@ -70,7 +70,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                     PoseStack poseStack2 = new PoseStack();
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
-                    renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, Minecraft.getInstance().renderBuffers().bufferSource(), light1);
+                    renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, light1);
                 });
             }
         });
@@ -84,7 +84,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                     PoseStack poseStack2 = new PoseStack();
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
-                    renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.RIGHT, poseStack2, Minecraft.getInstance().renderBuffers().bufferSource(), light1);
+                    renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.RIGHT, poseStack2, light1);
                 });
             }
         });
@@ -98,22 +98,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         });
         this.setFunctionalRenderer(BULLET_CHAIN, bedrockPart -> {
             //TODO 枪内有弹则渲染
-            return null;
-        });
-        this.setFunctionalRenderer(MUZZLE_BRAKE, bedrockPart -> {
-            //TODO 判断枪械是否安装枪口制动器，改变bedrockPart.visible以隐藏或者显示对应模型，下同
-            return null;
-        });
-        this.setFunctionalRenderer(MUZZLE_COMPENSATOR, bedrockPart -> {
-            //TODO 安装补偿器时可见
-            return null;
-        });
-        this.setFunctionalRenderer(MUZZLE_SILENCER, bedrockPart -> {
-            //TODO 安装消音器时可见
-            return null;
-        });
-        this.setFunctionalRenderer(MUZZLE_DEFAULT, bedrockPart -> {
-            //TODO 没有枪口配件时可见
             return null;
         });
         this.setFunctionalRenderer(MOUNT, bedrockPart -> {
@@ -131,22 +115,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         });
         this.setFunctionalRenderer(SIGHT, bedrockPart -> {
             //TODO 未安装瞄具时可见
-            return null;
-        });
-        this.setFunctionalRenderer(STOCK_LIGHT, bedrockPart -> {
-            //TODO 安装轻型枪托时可见
-            return null;
-        });
-        this.setFunctionalRenderer(STOCK_TACTICAL, bedrockPart -> {
-            //TODO 安装战术枪托时可见
-            return null;
-        });
-        this.setFunctionalRenderer(STOCK_HEAVY, bedrockPart -> {
-            //TODO 安装重型枪托时可见
-            return null;
-        });
-        this.setFunctionalRenderer(STOCK_DEFAULT, bedrockPart -> {
-            //TODO 未安装枪托时可见
             return null;
         });
         this.setFunctionalRenderer(MAG_EXTENDED_1, bedrockPart -> {
@@ -272,17 +240,15 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         return constraintPath;
     }
 
-    public void render(float partialTicks, ItemTransforms.TransformType transformType, ItemStack stack, LivingEntity entity, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {
-        currentItem = stack;
-        currentEntity = entity;
-        //调用上层渲染方法
-        render(transformType, matrixStack, buffer, light, overlay);
+    public void render(ItemTransforms.TransformType transformType, ItemStack itemStack, PoseStack matrixStack, VertexConsumer builder, int light, int overlay) {
+
     }
 
-    private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight) {
+    private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight) {
         Minecraft mc = Minecraft.getInstance();
         EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
         PlayerRenderer renderer = (PlayerRenderer) renderManager.getRenderer(player);
+        MultiBufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         int oldId = RenderSystem.getShaderTexture(0);
         RenderSystem.setShaderTexture(0, player.getSkinTextureLocation());
 
