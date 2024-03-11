@@ -2,13 +2,13 @@ package com.tac.guns.item.builder;
 
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.init.ModItems;
-import com.tac.guns.item.nbt.GunItemData;
+import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public final class AmmoItemBuilder {
     private int count = 1;
-    private ResourceLocation gunId = GunItemData.DEFAULT;
+    private ResourceLocation gunId = DefaultAssets.DEFAULT_AMMO_ID;
 
     private AmmoItemBuilder() {
     }
