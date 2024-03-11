@@ -81,7 +81,7 @@ public interface GunItemDataAccessor extends IGun {
 
     @Override
     @Nonnull
-    default ItemStack getAttachment(ItemStack gun, AttachmentType type){
+    default ItemStack getAttachment(ItemStack gun, AttachmentType type) {
         CompoundTag nbt = gun.getOrCreateTag();
         String key = GUN_ATTACHMENT_BASE + type;
         if (nbt.contains(key, Tag.TAG_COMPOUND)) {
@@ -91,9 +91,11 @@ public interface GunItemDataAccessor extends IGun {
     }
 
     @Override
-    default void setAttachment(@Nonnull ItemStack gun, @Nonnull AttachmentType type, @Nonnull ItemStack attachment){
+    default void setAttachment(@Nonnull ItemStack gun, @Nonnull AttachmentType type, @Nonnull ItemStack attachment) {
         CompoundTag nbt = gun.getOrCreateTag();
         String key = GUN_ATTACHMENT_BASE + type;
-        nbt.put(key, attachment.getOrCreateTag());
+        CompoundTag attachmentTag = new CompoundTag();
+        attachment.save(attachmentTag);
+        nbt.put(key, attachmentTag);
     }
 }
