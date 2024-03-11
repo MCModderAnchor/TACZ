@@ -29,8 +29,12 @@ public class SoundPlayManager {
         }
     }
 
-    public static void playInspectSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        SoundPlayManager.playClientSound(entity, gunIndex.getSounds("inspect"), 1.0f, 1.0f);
+    public static void playInspectSound(LivingEntity entity, ClientGunIndex gunIndex, boolean noAmmo) {
+        if (noAmmo) {
+            SoundPlayManager.playClientSound(entity, gunIndex.getSounds("inspect_empty"), 1.0f, 1.0f);
+        } else {
+            SoundPlayManager.playClientSound(entity, gunIndex.getSounds("inspect"), 1.0f, 1.0f);
+        }
     }
 
     public static void playDrawSound(LivingEntity entity, ClientGunIndex gunIndex) {

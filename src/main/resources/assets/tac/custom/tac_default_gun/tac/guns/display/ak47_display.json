@@ -53,12 +53,13 @@
     },
     // 枪械音效，在包目录下 sounds 文件夹内寻找，不建议为空
     "sounds": {
-        "shoot": "tac:ak47_shoot",
-        "dry_fire": "tac:ak47_dry_fire",
-        "reload_empty": "tac:ak47_reload_empty",
-        "reload_tactical": "tac:ak47_reload_tactical",
-        "inspect": "tac:ak47_inspect",
-        "draw": "tac:ak47_draw"
+        "shoot": "tac:ak47/ak47_shoot",
+        "dry_fire": "tac:ak47/ak47_dry_fire",
+        "reload_empty": "tac:ak47/ak47_reload_empty",
+        "reload_tactical": "tac:ak47/ak47_reload_tactical",
+        "inspect": "tac:ak47/ak47_inspect",
+        "inspect_empty": "tac:ak47/ak47_inspect_empty",
+        "draw": "tac:ak47/ak47_draw"
     },
     // Influence Coefficient of Animation 的缩写，可为空，若为空则填入默认值。
     // 表示各个第一人称定位（如机瞄摄像机定位、开镜摄像机定位）下 动画的影响系数

@@ -13,6 +13,7 @@ public class GunAnimationStateMachine {
     public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";
     public static final String DRAW_ANIMATION = "draw";
     public static final String INSPECT_ANIMATION = "inspect";
+    public static final String INSPECT_EMPTY_ANIMATION = "inspect_empty";
     protected AnimationController controller;
     protected boolean noAmmo;
 
@@ -40,7 +41,11 @@ public class GunAnimationStateMachine {
     }
 
     public void onGunInspect() {
-        controller.runAnimation(MAIN_TRACK, INSPECT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
+        if (noAmmo) {
+            controller.runAnimation(MAIN_TRACK, INSPECT_EMPTY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
+        } else {
+            controller.runAnimation(MAIN_TRACK, INSPECT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
+        }
     }
 
     public GunAnimationStateMachine setNoAmmo(boolean noAmmo) {

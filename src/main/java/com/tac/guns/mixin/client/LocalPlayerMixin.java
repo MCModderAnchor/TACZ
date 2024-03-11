@@ -267,9 +267,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
-            SoundPlayManager.playInspectSound(player, gunIndex);
+            boolean noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
+            SoundPlayManager.playInspectSound(player, gunIndex, noAmmo);
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
+                animationStateMachine.setNoAmmo(noAmmo);
                 animationStateMachine.onGunInspect();
             }
         });

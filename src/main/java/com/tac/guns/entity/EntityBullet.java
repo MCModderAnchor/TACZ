@@ -10,7 +10,13 @@ import net.minecraft.world.phys.EntityHitResult;
 
 public class EntityBullet extends ThrowableProjectile {
     public static final EntityType<EntityBullet> TYPE = EntityType.Builder.<EntityBullet>of(EntityBullet::new, MobCategory.MISC)
-            .sized(0.0625F, 0.0625F).clientTrackingRange(6).updateInterval(10).build("bullet");
+            .noSummon()
+            .noSave()
+            .fireImmune()
+            .sized(0.0625F, 0.0625F)
+            .clientTrackingRange(4)
+            .updateInterval(20)
+            .build("bullet");
 
     public EntityBullet(EntityType<? extends ThrowableProjectile> type, Level worldIn) {
         super(type, worldIn);
