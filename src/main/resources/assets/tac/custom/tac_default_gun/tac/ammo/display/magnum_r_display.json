@@ -1,0 +1,5 @@
+{
+  "model": "tac:ammo/762x39",
+  "texture": "tac:ammo/uv/762x39",
+  "slot": "tac:ammo/slot/magnum_r"
+}
