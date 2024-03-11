@@ -3,6 +3,7 @@ package com.tac.guns.crafting;
 import com.tac.guns.init.ModRecipe;
 import com.tac.guns.resource.pojo.data.recipe.TableRecipe;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -11,7 +12,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class GunSmithTableRecipe implements Recipe<GunSmithTableContainer> {
+public class GunSmithTableRecipe implements Recipe<Inventory> {
     private final ResourceLocation id;
     private final GunSmithTableResult result;
     private final List<GunSmithTableIngredient> inputs;
@@ -27,12 +28,14 @@ public class GunSmithTableRecipe implements Recipe<GunSmithTableContainer> {
     }
 
     @Override
-    public boolean matches(GunSmithTableContainer container, Level level) {
+    public boolean matches(Inventory playerInventory, Level level) {
+        // TODO
         return false;
     }
 
     @Override
-    public ItemStack assemble(GunSmithTableContainer pContainer) {
+    public ItemStack assemble(Inventory playerInventory) {
+        // TODO
         return ItemStack.EMPTY;
     }
 

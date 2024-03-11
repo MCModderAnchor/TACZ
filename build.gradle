@@ -93,10 +93,23 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 Maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "Mod Maven"
+        url = "https://modmaven.k-4u.nl"
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
+
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }

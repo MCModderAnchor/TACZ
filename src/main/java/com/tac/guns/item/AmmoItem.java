@@ -1,10 +1,14 @@
 package com.tac.guns.item;
 
+import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.client.renderer.item.AmmoItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientAmmoIndex;
 import com.tac.guns.init.ModItems;
+import com.tac.guns.item.builder.AmmoItemBuilder;
 import com.tac.guns.item.nbt.AmmoItemData;
+import com.tac.guns.resource.CommonGunPackLoader;
+import com.tac.guns.resource.index.CommonAmmoIndex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
@@ -29,7 +33,11 @@ public class AmmoItem extends Item implements AmmoItemData {
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        return this.getAmmoStack(stack);
+        if (stack.getItem() instanceof IAmmo iAmmo) {
+            return CommonGunPackLoader.getAmmoIndex(iAmmo.getAmmoId(stack))
+                    .map(CommonAmmoIndex::getStackSize).orElse(1);
+        }
+        return 1;
     }
 
     @Override
@@ -49,9 +57,7 @@ public class AmmoItem extends Item implements AmmoItemData {
     public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
         if (this.allowdedIn(modeTab)) {
             ClientGunPackLoader.getAllAmmo().forEach(entry -> {
-                ItemStack itemStack = this.getDefaultInstance();
-                this.setAmmoId(itemStack, entry.getKey());
-                this.setAmmoStack(itemStack, entry.getValue().getStackSize());
+                ItemStack itemStack = AmmoItemBuilder.create().setId(entry.getKey()).build();
                 stacks.add(itemStack);
             });
         }

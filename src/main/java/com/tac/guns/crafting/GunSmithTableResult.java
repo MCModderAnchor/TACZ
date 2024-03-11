@@ -1,6 +1,7 @@
 package com.tac.guns.crafting;
 
 import com.google.gson.*;
+import com.tac.guns.item.builder.AmmoItemBuilder;
 import com.tac.guns.item.builder.GunItemBuilder;
 import com.tac.guns.resource.CommonGunPackLoader;
 import net.minecraft.network.FriendlyByteBuf;
@@ -52,16 +53,26 @@ public class GunSmithTableResult {
                     count = Math.max(GsonHelper.getAsInt(jsonObject, "count"), 1);
                 }
                 if (GUN.equals(typeName)) {
-                    final int countIn = count;
-                    return CommonGunPackLoader.getGunIndex(id).map(gunIndex -> {
-                        ItemStack itemStack = GunItemBuilder.create().setCount(countIn).setId(id).setAmmoCount(0)
-                                .setFireMode(gunIndex.getGunData().getFireModeSet().get(0)).build();
-                        String group = gunIndex.getType();
-                        return new GunSmithTableResult(itemStack, group);
-                    }).orElse(new GunSmithTableResult(ItemStack.EMPTY, ""));
+                    return getGunStack(id, count);
+                }
+                if (AMMO.equals(typeName)) {
+                    return getAmmoStack(id, count);
                 }
             }
             return new GunSmithTableResult(ItemStack.EMPTY, "");
+        }
+
+        private GunSmithTableResult getGunStack(ResourceLocation id, int count) {
+            return CommonGunPackLoader.getGunIndex(id).map(gunIndex -> {
+                ItemStack itemStack = GunItemBuilder.create().setCount(count).setId(id).setAmmoCount(0)
+                        .setFireMode(gunIndex.getGunData().getFireModeSet().get(0)).build();
+                String group = gunIndex.getType();
+                return new GunSmithTableResult(itemStack, group);
+            }).orElse(new GunSmithTableResult(ItemStack.EMPTY, ""));
+        }
+
+        private GunSmithTableResult getAmmoStack(ResourceLocation id, int count) {
+            return new GunSmithTableResult(AmmoItemBuilder.create().setCount(count).setId(id).build(), "ammo");
         }
     }
 }

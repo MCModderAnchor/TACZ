@@ -32,12 +32,16 @@ public enum CommonAssetManager {
         attachmentData.put(registryName, data);
     }
 
+    public AttachmentData getAttachmentData(ResourceLocation registryName) {
+        return attachmentData.get(registryName);
+    }
+
     public void putRecipe(ResourceLocation registryName, GunSmithTableRecipe recipe) {
         gunSmithTableRecipes.put(registryName, recipe);
     }
 
-    public AttachmentData getAttachmentData(ResourceLocation registryName) {
-        return attachmentData.get(registryName);
+    public Map<ResourceLocation, GunSmithTableRecipe> getAllRecipe() {
+        return gunSmithTableRecipes;
     }
 
     public void clearAll() {

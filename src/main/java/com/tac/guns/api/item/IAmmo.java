@@ -26,9 +26,5 @@ public interface IAmmo {
 
     void setAmmoId(ItemStack gun, @Nullable ResourceLocation ammoId);
 
-    int getAmmoStack(ItemStack ammo);
-
-    void setAmmoStack(ItemStack ammo, int ammoStackCount);
-
     boolean isAmmoOfGun(ItemStack gun, ItemStack ammo);
 }

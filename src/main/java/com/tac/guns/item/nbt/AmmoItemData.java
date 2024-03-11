@@ -18,7 +18,6 @@ public interface AmmoItemData extends IAmmo {
     ResourceLocation DEFAULT_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "762x39_display");
 
     String AMMO_ID_TAG = "AmmoId";
-    String AMMO_STACK_TAG = "AmmoStack";
 
     @Override
     @Nonnull
@@ -39,21 +38,6 @@ public interface AmmoItemData extends IAmmo {
             return;
         }
         nbt.putString(AMMO_ID_TAG, DEFAULT.toString());
-    }
-
-    @Override
-    default int getAmmoStack(ItemStack ammo) {
-        CompoundTag nbt = ammo.getOrCreateTag();
-        if (nbt.contains(AMMO_STACK_TAG, Tag.TAG_INT)) {
-            return Math.max(nbt.getInt(AMMO_STACK_TAG), 1);
-        }
-        return 1;
-    }
-
-    @Override
-    default void setAmmoStack(ItemStack ammo, int ammoStackCount) {
-        CompoundTag nbt = ammo.getOrCreateTag();
-        nbt.putInt(AMMO_STACK_TAG, Math.max(ammoStackCount, 1));
     }
 
     @Override
