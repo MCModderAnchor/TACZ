@@ -4,23 +4,23 @@
       "item": {
         "tag": "forge:ingots/iron"
       },
-      "count": 38
-    },
-    {
-      "item": {
-        "tag": "forge:gems/lapis"
-      },
       "count": 6
     },
     {
       "item": {
-        "tag": "minecraft:logs"
+        "tag": "forge:gems/lapis"
+      }
+    },
+    {
+      "item": {
+        "tag": "forge:gunpowder"
       },
-      "count": 8
+      "count": 12
     }
   ],
   "result": {
-    "type": "gun",
-    "id": "tac:ak47"
+    "type": "ammo",
+    "id": "tac:308",
+    "count": 60
   }
 }
