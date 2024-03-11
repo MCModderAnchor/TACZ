@@ -98,7 +98,7 @@ public class FirstPersonRenderGunEvent {
             applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTicks());
             // 调用模型渲染
             VertexConsumer vertexConsumer = event.getMultiBufferSource().getBuffer(RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture()));
-            gunModel.render(transformType, poseStack, vertexConsumer, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+            gunModel.render(transformType, stack, poseStack, vertexConsumer, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
             poseStack.popPose();
             gunModel.cleanAnimationTransform();

@@ -89,7 +89,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             // 应用 display 数据中的缩放
             applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
             VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture()));
-            gunModel.render(transformType, poseStack, vertexConsumer, pPackedLight, pPackedOverlay);
+            gunModel.render(transformType, stack, poseStack, vertexConsumer, pPackedLight, pPackedOverlay);
             poseStack.popPose();
         });
     }

@@ -1,6 +1,7 @@
 package com.tac.guns.resource.pojo;
 
 import com.google.gson.annotations.SerializedName;
+import com.tac.guns.api.attachment.AttachmentType;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;

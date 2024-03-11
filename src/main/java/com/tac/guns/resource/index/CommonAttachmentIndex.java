@@ -2,7 +2,7 @@ package com.tac.guns.resource.index;
 
 import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.pojo.AttachmentIndexPOJO;
-import com.tac.guns.resource.pojo.AttachmentType;
+import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.resources.ResourceLocation;
 

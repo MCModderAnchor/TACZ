@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 public final class AmmoItemBuilder {
     private int count = 1;
-    private ResourceLocation gunId = DefaultAssets.DEFAULT_AMMO_ID;
+    private ResourceLocation ammoId = DefaultAssets.DEFAULT_AMMO_ID;
 
     private AmmoItemBuilder() {
     }
@@ -23,14 +23,14 @@ public final class AmmoItemBuilder {
     }
 
     public AmmoItemBuilder setId(ResourceLocation id) {
-        this.gunId = id;
+        this.ammoId = id;
         return this;
     }
 
     public ItemStack build() {
         ItemStack ammo = new ItemStack(ModItems.AMMO.get(), this.count);
         if (ammo.getItem() instanceof IAmmo iAmmo) {
-            iAmmo.setAmmoId(ammo, this.gunId);
+            iAmmo.setAmmoId(ammo, this.ammoId);
         }
         return ammo;
     }

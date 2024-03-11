@@ -1,5 +1,6 @@
 package com.tac.guns.item.nbt;
 
+import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.resource.DefaultAssets;
@@ -16,6 +17,7 @@ public interface GunItemDataAccessor extends IGun {
     String GUN_ID_TAG = "GunId";
     String GUN_FIRE_MODE_TAG = "GunFireMode";
     String GUN_CURRENT_AMMO_COUNT_TAG = "GunCurrentAmmoCount";
+    String GUN_ATTACHMENT_BASE = "Attachment";
 
     @Override
     @Nonnull
@@ -75,5 +77,23 @@ public interface GunItemDataAccessor extends IGun {
     @Override
     default void reduceCurrentAmmoCount(ItemStack gun) {
         setCurrentAmmoCount(gun, getCurrentAmmoCount(gun) - 1);
+    }
+
+    @Override
+    @Nonnull
+    default ItemStack getAttachment(ItemStack gun, AttachmentType type){
+        CompoundTag nbt = gun.getOrCreateTag();
+        String key = GUN_ATTACHMENT_BASE + type;
+        if (nbt.contains(key, Tag.TAG_COMPOUND)) {
+            return ItemStack.of(nbt.getCompound(key));
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    default void setAttachment(@Nonnull ItemStack gun, @Nonnull AttachmentType type, @Nonnull ItemStack attachment){
+        CompoundTag nbt = gun.getOrCreateTag();
+        String key = GUN_ATTACHMENT_BASE + type;
+        nbt.put(key, attachment.getOrCreateTag());
     }
 }

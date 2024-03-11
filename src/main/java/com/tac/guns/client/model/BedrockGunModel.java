@@ -6,8 +6,12 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import com.tac.guns.api.attachment.AttachmentType;
+import com.tac.guns.api.item.IAttachment;
+import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
+import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import net.minecraft.client.Minecraft;
@@ -17,6 +21,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Stack;
 
 import static com.tac.guns.client.model.CommonComponents.*;
@@ -101,8 +107,10 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             return null;
         });
         this.setFunctionalRenderer(MOUNT, bedrockPart -> {
-            bedrockPart.visible = false;
-            //TODO 安装瞄具时可见
+            if(currentItem != null && currentItem.getItem() instanceof IGun iGun) {
+                ItemStack scopeItem = iGun.getAttachment(currentItem, AttachmentType.SCOPE);
+                bedrockPart.visible = !scopeItem.isEmpty();
+            }
             return null;
         });
         this.setFunctionalRenderer(CARRY, bedrockPart -> {
@@ -145,26 +153,29 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         this.setFunctionalRenderer(SCOPE_POS_NODE, bedrockPart -> {
             bedrockPart.visible = false;
             return (poseStack, transformType, consumer, light, overlay) -> {
-                //TODO 获取当前枪械安装的瞄具，获取其模型并渲染。注释的代码先保留
-                /*
-                ItemStack scopeItemStack = Gun.getAttachment(IAttachment.Type.SCOPE, currentItem);
-                if (!scopeItemStack.isEmpty()) {
-                    IOverrideModel scopeModel = OverrideModelManager.getModel(scopeItemStack);
-                    if (scopeModel instanceof BedrockAttachmentModel bedrockScopeModel) {
-                        Matrix3f normal = poseStack.last().normal().copy();
-                        Matrix4f pose = poseStack.last().pose().copy();
-                        //和枪械模型共用缓冲区的都需要代理到渲染结束后渲染
-                        this.delegateRender((poseStack1, transformType1, consumer1, light1, overlay1) -> {
-                            PoseStack poseStack2 = new PoseStack();
-                            poseStack2.last().normal().mul(normal);
-                            poseStack2.last().pose().multiply(pose);
-                            //从bedrock model的渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
-                            poseStack2.translate(0, -1.5f, 0);
-                            bedrockScopeModel.render(transformType1, poseStack2, Minecraft.getInstance().renderBuffers().bufferSource(), light1, overlay1);
+                if(currentItem != null && currentItem.getItem() instanceof IGun iGun){
+                    ItemStack scopeItem = iGun.getAttachment(currentItem, AttachmentType.SCOPE);
+                    if(scopeItem.getItem() instanceof IAttachment iAttachment){
+                        ResourceLocation attachmentId = iAttachment.getAttachmentId(scopeItem);
+                        ClientGunPackLoader.getAttachmentIndex(attachmentId).ifPresent(attachmentIndex -> {
+                            BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
+                            ResourceLocation texture = attachmentIndex.getModelTexture();
+                            Matrix3f normal = poseStack.last().normal().copy();
+                            Matrix4f pose = poseStack.last().pose().copy();
+                            //和枪械模型共用缓冲区的都需要代理到渲染结束后渲染
+                            this.delegateRender((poseStack1, transformType1, consumer1, light1, overlay1) -> {
+                                PoseStack poseStack2 = new PoseStack();
+                                poseStack2.last().normal().mul(normal);
+                                poseStack2.last().pose().multiply(pose);
+                                //从bedrock model的渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
+                                poseStack2.translate(0, -1.5f, 0);
+                                MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+                                VertexConsumer buffer = bufferSource.getBuffer(RenderType.itemEntityTranslucentCull(texture));
+                                model.render(transformType1, poseStack2, buffer, light1, overlay1);
+                            });
                         });
                     }
                 }
-                */
             };
         });
         this.setFunctionalRenderer(EJECTION_NODE, bedrockPart -> {
@@ -241,7 +252,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     }
 
     public void render(ItemTransforms.TransformType transformType, ItemStack itemStack, PoseStack matrixStack, VertexConsumer builder, int light, int overlay) {
-
+        currentItem = itemStack;
+        super.render(transformType, matrixStack, builder, light, overlay);
     }
 
     private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight) {

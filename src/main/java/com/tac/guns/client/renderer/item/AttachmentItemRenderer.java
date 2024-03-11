@@ -28,7 +28,6 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.getItem() instanceof IAttachment iAttachment) {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(stack);
-            // TODO 如果没有这个 ammoID，应该渲染个什么错误材质提醒别人
             ClientGunPackLoader.getAttachmentIndex(attachmentId).ifPresent(attachmentIndex -> {
                 poseStack.pushPose();
                 poseStack.translate(0.5, 1.5, 0.5);
