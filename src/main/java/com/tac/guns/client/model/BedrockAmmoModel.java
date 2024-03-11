@@ -7,6 +7,6 @@ import net.minecraft.client.renderer.RenderType;
 
 public class BedrockAmmoModel extends BedrockModel {
     public BedrockAmmoModel(BedrockModelPOJO pojo, BedrockVersion version, RenderType renderType) {
-        super(pojo, version, renderType);
+        super(pojo, version);
     }
 }

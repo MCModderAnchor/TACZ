@@ -17,8 +17,8 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     public static final String SCOPE_VIEW_NODE = "scope_view";
     protected final List<BedrockPart> scopeViewPath = new ArrayList<>();
 
-    public BedrockAttachmentModel(BedrockModelPOJO pojo, BedrockVersion version, RenderType renderType) {
-        super(pojo, version, renderType);
+    public BedrockAttachmentModel(BedrockModelPOJO pojo, BedrockVersion version) {
+        super(pojo, version);
         {
             ModelRendererWrapper rendererWrapper = modelMap.get(SCOPE_VIEW_NODE);
             if (rendererWrapper != null) {
@@ -38,9 +38,5 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             bedrockPart.visible = false;
             return null;
         });
-    }
-
-    public void render(ItemTransforms.TransformType transformType, PoseStack matrixStack, MultiBufferSource buffer, int light, int overlay) {
-        super.render(transformType, matrixStack, buffer, light, overlay);
     }
 }

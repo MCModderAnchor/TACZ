@@ -26,7 +26,7 @@ public interface IGun {
     }
 
     /**
-     * 是否主手持枪
+     * 获取主手枪械的开火模式
      */
     static FireMode getMainhandFireMode(LivingEntity livingEntity) {
         ItemStack mainhandItem = livingEntity.getMainHandItem();

@@ -1,8 +1,8 @@
 package com.tac.guns.item.nbt;
 
-import com.tac.guns.GunMod;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -12,11 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public interface GunItemData extends IGun {
-    ResourceLocation DEFAULT = new ResourceLocation(GunMod.MOD_ID, "ak47");
-    ResourceLocation DEFAULT_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "ak47_display");
-    ResourceLocation DEFAULT_DATA = new ResourceLocation(GunMod.MOD_ID, "ak47_data");
-
+public interface GunItemDataAccessor extends IGun {
     String GUN_ID_TAG = "GunId";
     String GUN_FIRE_MODE_TAG = "GunFireMode";
     String GUN_CURRENT_AMMO_COUNT_TAG = "GunCurrentAmmoCount";
@@ -27,9 +23,9 @@ public interface GunItemData extends IGun {
         CompoundTag nbt = gun.getOrCreateTag();
         if (nbt.contains(GUN_ID_TAG, Tag.TAG_STRING)) {
             ResourceLocation gunId = ResourceLocation.tryParse(nbt.getString(GUN_ID_TAG));
-            return Objects.requireNonNullElse(gunId, DEFAULT);
+            return Objects.requireNonNullElse(gunId, DefaultAssets.DEFAULT_GUN_ID);
         }
-        return DEFAULT;
+        return DefaultAssets.DEFAULT_GUN_ID;
     }
 
     @Override
@@ -39,7 +35,7 @@ public interface GunItemData extends IGun {
             nbt.putString(GUN_ID_TAG, gunId.toString());
             return;
         }
-        nbt.putString(GUN_ID_TAG, DEFAULT.toString());
+        nbt.putString(GUN_ID_TAG, DefaultAssets.DEFAULT_GUN_ID.toString());
     }
 
     @Override

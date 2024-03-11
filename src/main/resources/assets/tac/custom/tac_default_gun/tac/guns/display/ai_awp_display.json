@@ -1,11 +1,6 @@
 {
   "model": "tac:gun/ai_awp_geo",
-  "textures": [
-    {
-      "id": "default",
-      "location": "tac:gun/uv/ai_awp"
-    }
-  ],
+  "texture": "tac:gun/uv/ai_awp",
   "hud": "tac:gun/hud/ai_awp",
   "slot": "tac:gun/slot/ai_awp",
   "animation": "tac:ai_awp",

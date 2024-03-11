@@ -12,6 +12,7 @@ import com.tac.guns.client.resource.pojo.TransformScale;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.resources.ResourceLocation;
@@ -72,7 +73,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.pushPose();
                 poseStack.translate(0.5, 1.5, 0.5);
                 poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
-                VertexConsumer buffer = pBuffer.getBuffer(gunIndex.getSlotRenderType());
+                VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(gunIndex.getSlotTexture()));
                 SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
                 poseStack.popPose();
                 return;
@@ -87,7 +88,8 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
             // 应用 display 数据中的缩放
             applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
-            gunModel.render(0, transformType, stack, null, poseStack, pBuffer, pPackedLight, pPackedOverlay);
+            VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture()));
+            gunModel.render(transformType, poseStack, vertexConsumer, pPackedLight, pPackedOverlay);
             poseStack.popPose();
         });
     }

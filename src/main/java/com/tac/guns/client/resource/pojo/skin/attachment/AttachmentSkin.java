@@ -6,8 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 public class AttachmentSkin {
     @SerializedName("parent")
     private ResourceLocation parent;
-    @SerializedName("class")
-    private String skinClass;
     @SerializedName("name")
     private String name;
     @SerializedName("model")
@@ -19,10 +17,6 @@ public class AttachmentSkin {
 
     public ResourceLocation getParent() {
         return parent;
-    }
-
-    public String getSkinClass() {
-        return skinClass;
     }
 
     public String getName() {

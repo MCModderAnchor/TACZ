@@ -6,7 +6,7 @@ import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.builder.GunItemBuilder;
-import com.tac.guns.item.nbt.GunItemData;
+import com.tac.guns.item.nbt.GunItemDataAccessor;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class GunItem extends Item implements GunItemData {
+public class GunItem extends Item implements GunItemDataAccessor {
     public GunItem() {
         super(new Properties().stacksTo(1).tab(ModItems.GUN_TAB));
     }

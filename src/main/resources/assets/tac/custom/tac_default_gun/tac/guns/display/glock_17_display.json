@@ -1,11 +1,6 @@
 {
   "model": "tac:gun/glock_17_geo",
-  "textures": [
-    {
-      "id": "default",
-      "location": "tac:gun/uv/glock_17"
-    }
-  ],
+  "texture": "tac:gun/uv/glock_17",
   "hud": "tac:gun/hud/glock_17",
   "slot": "tac:gun/slot/glock_17",
   "animation": "tac:glock_17",
