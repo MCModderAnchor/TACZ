@@ -102,6 +102,12 @@ repositories {
         name = "Mod Maven"
         url = "https://modmaven.k-4u.nl"
     }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -109,6 +115,9 @@ dependencies {
 
     compileOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
+
+    runtimeOnly fg.deobf("curse.maven:cloth-config-348521:4973439")
+    runtimeOnly fg.deobf("curse.maven:free-cam-557076:5081890")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
