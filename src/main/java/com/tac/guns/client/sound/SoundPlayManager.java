@@ -16,6 +16,11 @@ import static com.tac.guns.resource.DefaultAssets.*;
 
 @OnlyIn(Dist.CLIENT)
 public class SoundPlayManager {
+    /**
+     * 用于阻止连发时，反复播放 DryFire 音效
+     */
+    private static boolean DRY_SOUND_TRACK = true;
+
     public static void playClientSound(LivingEntity entity, ResourceLocation name, float volume, float pitch) {
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getSoundManager().play(new GunSoundInstance(ModSounds.GUN.get(), SoundSource.PLAYERS, volume, pitch, entity, name));
@@ -26,7 +31,17 @@ public class SoundPlayManager {
     }
 
     public static void playDryFireSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        playClientSound(entity, gunIndex.getSounds(DRY_FIRE_SOUND), 1.0f, 1.0f);
+        if (DRY_SOUND_TRACK) {
+            playClientSound(entity, gunIndex.getSounds(DRY_FIRE_SOUND), 1.0f, 1.0f);
+            DRY_SOUND_TRACK = false;
+        }
+    }
+
+    /**
+     * 只有松开鼠标时，才会重置
+     */
+    public static void resetDryFireSound() {
+        DRY_SOUND_TRACK = true;
     }
 
     public static void playReloadSound(LivingEntity entity, ClientGunIndex gunIndex, boolean noAmmo) {

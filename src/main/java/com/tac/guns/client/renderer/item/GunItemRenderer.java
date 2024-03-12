@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -61,14 +62,13 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
-        // 第一人称就不渲染了，交给别的地方
-        if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
-            return;
-        }
-        // 剩下的渲染
         ResourceLocation gunId = iGun.getGunId(stack);
-        // TODO 如果没有这个 gunID，应该渲染个什么错误材质提醒别人
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        ClientGunPackLoader.getGunIndex(gunId).ifPresentOrElse(gunIndex -> {
+            // 第一人称就不渲染了，交给别的地方
+            if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
+                return;
+            }
+            // GUI 特殊渲染
             if (transformType == GUI) {
                 poseStack.pushPose();
                 poseStack.translate(0.5, 1.5, 0.5);
@@ -78,6 +78,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.popPose();
                 return;
             }
+            // 剩下的渲染
             BedrockGunModel gunModel = gunIndex.getGunModel();
             poseStack.pushPose();
             // 移动到模型原点
@@ -90,6 +91,14 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
             VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture()));
             gunModel.render(poseStack, transformType, vertexConsumer, pPackedLight, pPackedOverlay);
+            poseStack.popPose();
+        }, () -> {
+            // 没有这个 ammoID，渲染个错误材质提醒别人
+            poseStack.pushPose();
+            poseStack.translate(0.5, 1.5, 0.5);
+            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
+            SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
             poseStack.popPose();
         });
     }

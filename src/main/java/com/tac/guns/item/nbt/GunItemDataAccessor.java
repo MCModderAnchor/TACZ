@@ -25,9 +25,9 @@ public interface GunItemDataAccessor extends IGun {
         CompoundTag nbt = gun.getOrCreateTag();
         if (nbt.contains(GUN_ID_TAG, Tag.TAG_STRING)) {
             ResourceLocation gunId = ResourceLocation.tryParse(nbt.getString(GUN_ID_TAG));
-            return Objects.requireNonNullElse(gunId, DefaultAssets.DEFAULT_GUN_ID);
+            return Objects.requireNonNullElse(gunId, DefaultAssets.EMPTY_GUN_ID);
         }
-        return DefaultAssets.DEFAULT_GUN_ID;
+        return DefaultAssets.EMPTY_GUN_ID;
     }
 
     @Override

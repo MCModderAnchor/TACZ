@@ -57,6 +57,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     /**
      * 上一个 tick 的瞄准进度，用于插值，范围 0 ~ 1
      */
+    @Unique
     private static float tac$OldAimingProgress = 0;
     /**
      * 瞄准时间戳，单位 ms
@@ -118,7 +119,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             }
             // 判断子弹数
             if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && iGun.getCurrentAmmoCount(mainhandItem) < 1) {
-                // FIXME 有问题，会连续触发
                 SoundPlayManager.playDryFireSound(player, gunIndex);
                 return ShootResult.NO_AMMO;
             }

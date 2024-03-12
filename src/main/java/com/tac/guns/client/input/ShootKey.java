@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.client.sound.SoundPlayManager;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -46,6 +47,10 @@ public class ShootKey {
 
     @SubscribeEvent
     public static void semiShoot(InputEvent.MouseInputEvent event) {
+        // 松开鼠标，重置 DryFire 状态
+        if (event.getAction() == GLFW.GLFW_RELEASE) {
+            SoundPlayManager.resetDryFireSound();
+        }
         if (isInGame() && SHOOT_KEY.isDown()) {
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;

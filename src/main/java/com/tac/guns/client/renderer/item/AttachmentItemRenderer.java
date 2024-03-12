@@ -7,12 +7,15 @@ import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.resource.ClientGunPackLoader;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -29,32 +32,38 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.getItem() instanceof IAttachment iAttachment) {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(stack);
-            ClientGunPackLoader.getAttachmentIndex(attachmentId).ifPresent(attachmentIndex -> {
-                if(transformType.equals(ItemTransforms.TransformType.GUI)) {
-                    poseStack.pushPose();
-                    poseStack.translate(0.5, 1.5, 0.5);
-                    poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            poseStack.pushPose();
+            if(transformType == ItemTransforms.TransformType.GUI) {
+                poseStack.translate(0.5, 1.5, 0.5);
+                poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            } if(transformType != ItemTransforms.TransformType.NONE) {
+                // 移动到模型原点
+                poseStack.translate(0.5, 2, 0.5);
+                // 反转模型
+                poseStack.scale(-1, -1, 1);
+                if(transformType == ItemTransforms.TransformType.FIXED){
+                    poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
+                }
+            }else {
+                // 用于在枪上渲染配件时。从渲染原点(0, 24, 0) 挪动到模型原点
+                poseStack.translate(0, -1.5f, 0);
+            }
+            ClientGunPackLoader.getAttachmentIndex(attachmentId).ifPresentOrElse(attachmentIndex -> {
+                if(transformType == ItemTransforms.TransformType.GUI) {
                     VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
                     SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                    poseStack.popPose();
-                    return;
+                }else {
+                    BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
+                    ResourceLocation texture = attachmentIndex.getModelTexture();
+                    VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(texture));
+                    model.render(poseStack, transformType, vertexConsumer, pPackedLight, pPackedOverlay);
                 }
-                poseStack.pushPose();
-                if(transformType != ItemTransforms.TransformType.NONE) {
-                    // 移动到模型原点
-                    poseStack.translate(0.5, 2, 0.5);
-                    // 反转模型
-                    poseStack.scale(-1, -1, 1);
-                    if(transformType == ItemTransforms.TransformType.FIXED){
-                        poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
-                    }
-                }
-                BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
-                ResourceLocation texture = attachmentIndex.getModelTexture();
-                VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(texture));
-                model.render(poseStack, transformType, vertexConsumer, pPackedLight, pPackedOverlay);
-                poseStack.popPose();
+            }, ()->{
+                // 没有这个 attachmentId，渲染黑紫材质以提醒
+                VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
+                SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
             });
+            poseStack.popPose();
         }
     }
 }
