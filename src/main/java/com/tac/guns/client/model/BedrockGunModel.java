@@ -144,31 +144,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                         scopeRenderer.render(poseStack2, transformType1, light1, overlay1);
                     });
                 }
-                /*
-                if(currentItem != null && currentItem.getItem() instanceof IGun iGun){
-                    ItemStack scopeItem = iGun.getAttachment(currentItem, AttachmentType.SCOPE);
-                    if(scopeItem.getItem() instanceof IAttachment iAttachment){
-                        ResourceLocation attachmentId = iAttachment.getAttachmentId(scopeItem);
-                        ClientGunPackLoader.getAttachmentIndex(attachmentId).ifPresent(attachmentIndex -> {
-                            BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
-                            ResourceLocation texture = attachmentIndex.getModelTexture();
-                            Matrix3f normal = poseStack.last().normal().copy();
-                            Matrix4f pose = poseStack.last().pose().copy();
-                            //和枪械模型共用缓冲区的都需要代理到渲染结束后渲染
-                            this.delegateRender((poseStack1, transformType1, consumer1, light1, overlay1) -> {
-                                PoseStack poseStack2 = new PoseStack();
-                                poseStack2.last().normal().mul(normal);
-                                poseStack2.last().pose().multiply(pose);
-                                //从bedrock model的渲染原点(0, 24, 0)移动到模型原点(0, 0, 0)
-                                poseStack2.translate(0, -1.5f, 0);
-                                MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-                                VertexConsumer buffer = bufferSource.getBuffer(RenderType.itemEntityTranslucentCull(texture));
-                                model.render(transformType1, poseStack2, buffer, light1, overlay1);
-                            });
-                        });
-                    }
-                }
-                */
             };
         });
         for (ModelRendererWrapper rendererWrapper : modelMap.values()) {

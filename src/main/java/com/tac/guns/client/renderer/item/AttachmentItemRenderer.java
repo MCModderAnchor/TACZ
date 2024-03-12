@@ -36,17 +36,21 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
             if(transformType == ItemTransforms.TransformType.GUI) {
                 poseStack.translate(0.5, 1.5, 0.5);
                 poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
-            } if(transformType != ItemTransforms.TransformType.NONE) {
-                // 移动到模型原点
-                poseStack.translate(0.5, 2, 0.5);
-                // 反转模型
-                poseStack.scale(-1, -1, 1);
-                if(transformType == ItemTransforms.TransformType.FIXED){
-                    poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
-                }
             }else {
-                // 用于在枪上渲染配件时。从渲染原点(0, 24, 0) 挪动到模型原点
-                poseStack.translate(0, -1.5f, 0);
+                // 渲染物品时有 (-0.5, -0.5, -0.5)的位移，需要将其逆转
+                poseStack.translate(0.5, 0.5, 0.5);
+                if(transformType != ItemTransforms.TransformType.NONE) {
+                    // 基岩版模型渲染原点位于 (0, 24, 0)
+                    poseStack.translate(0, 1.5, 0);
+                    // 反转模型
+                    poseStack.scale(-1, -1, 1);
+                    if(transformType == ItemTransforms.TransformType.FIXED){
+                        poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
+                    }
+                }else { // TransformType.NONE 用于在枪上渲染配件
+                    // 基岩版模型渲染原点位于 (0, 24, 0)
+                    poseStack.translate(0, -1.5f, 0);
+                }
             }
             ClientGunPackLoader.getAttachmentIndex(attachmentId).ifPresentOrElse(attachmentIndex -> {
                 if(transformType == ItemTransforms.TransformType.GUI) {
