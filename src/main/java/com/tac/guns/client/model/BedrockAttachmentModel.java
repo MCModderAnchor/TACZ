@@ -1,9 +1,13 @@
 package com.tac.guns.client.model;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
+import com.tac.guns.client.resource.pojo.TransformScale;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 
 import java.util.ArrayList;
 import java.util.List;

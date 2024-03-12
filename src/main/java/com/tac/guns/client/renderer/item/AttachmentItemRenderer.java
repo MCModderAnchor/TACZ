@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import com.tac.guns.api.item.IAttachment;
+import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -29,11 +30,29 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (stack.getItem() instanceof IAttachment iAttachment) {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(stack);
             ClientGunPackLoader.getAttachmentIndex(attachmentId).ifPresent(attachmentIndex -> {
+                if(transformType.equals(ItemTransforms.TransformType.GUI)) {
+                    poseStack.pushPose();
+                    poseStack.translate(0.5, 1.5, 0.5);
+                    poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+                    VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
+                    SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    poseStack.popPose();
+                    return;
+                }
                 poseStack.pushPose();
-                poseStack.translate(0.5, 1.5, 0.5);
-                poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
-                VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
-                SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                if(transformType != ItemTransforms.TransformType.NONE) {
+                    // 移动到模型原点
+                    poseStack.translate(0.5, 2, 0.5);
+                    // 反转模型
+                    poseStack.scale(-1, -1, 1);
+                    if(transformType == ItemTransforms.TransformType.FIXED){
+                        poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
+                    }
+                }
+                BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
+                ResourceLocation texture = attachmentIndex.getModelTexture();
+                VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(texture));
+                model.render(poseStack, transformType, vertexConsumer, pPackedLight, pPackedOverlay);
                 poseStack.popPose();
             });
         }

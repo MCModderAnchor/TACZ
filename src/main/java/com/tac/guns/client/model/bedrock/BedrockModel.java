@@ -2,6 +2,7 @@ package com.tac.guns.client.model.bedrock;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.tac.guns.client.model.IModelRenderer;
 import com.tac.guns.client.resource.pojo.model.*;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BedrockModel {
+public class BedrockModel implements IModelRenderer{
     /**
      * 存储 ModelRender 子模型的 HashMap
      */
@@ -304,7 +305,7 @@ public class BedrockModel {
         return (float) (degree * Math.PI / 180);
     }
 
-    public void render(ItemTransforms.TransformType transformType, PoseStack matrixStack, VertexConsumer builder, int light, int overlay) {
+    public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, VertexConsumer builder, int light, int overlay) {
         matrixStack.pushPose();
         for (BedrockPart model : shouldRender) {
             model.render(matrixStack, transformType, builder, light, overlay);

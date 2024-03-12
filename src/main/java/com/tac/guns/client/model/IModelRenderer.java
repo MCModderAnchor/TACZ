@@ -1,4 +1,4 @@
-package com.tac.guns.client.model.bedrock;
+package com.tac.guns.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

@@ -58,7 +58,7 @@ public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableB
         poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
         poseStack.mulPose(Vector3f.YN.rotationDegrees(90 - facing.get2DDataValue() * 90));
         RenderType renderType = RenderType.entityTranslucent(TEXTURE_LOCATION);
-        MODEL.render(ItemTransforms.TransformType.NONE, poseStack, bufferIn.getBuffer(renderType), combinedLightIn, combinedOverlayIn);
+        MODEL.render(poseStack, ItemTransforms.TransformType.NONE, bufferIn.getBuffer(renderType), combinedLightIn, combinedOverlayIn);
         poseStack.popPose();
     }
 

@@ -9,7 +9,6 @@ import com.tac.guns.client.animation.AnimationListenerSupplier;
 import com.tac.guns.client.animation.ObjectAnimationChannel;
 import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
-import com.tac.guns.client.model.bedrock.IModelRenderer;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
