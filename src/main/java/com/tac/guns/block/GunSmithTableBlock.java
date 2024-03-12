@@ -3,6 +3,8 @@ package com.tac.guns.block;
 import com.tac.guns.block.entity.GunSmithTableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +35,19 @@ public class GunSmithTableBlock extends BaseEntityBlock {
     public GunSmithTableBlock() {
         super(Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(2.0F, 3.0F).noOcclusion());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, BedPart.FOOT));
+    }
+
+    @Override
+    public InteractionResult use(BlockState pState, Level level, BlockPos pos, Player player, InteractionHand pHand, BlockHitResult pHit) {
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        } else {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof GunSmithTableBlockEntity gunSmithTable) {
+                player.openMenu(gunSmithTable);
+            }
+            return InteractionResult.CONSUME;
+        }
     }
 
     @Override

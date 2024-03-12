@@ -20,6 +20,7 @@ public class GunMod {
         ModEntities.ENTITY_TYPES.register(bus);
         ModEntities.DATA_SERIALIZERS.register(bus);
         ModRecipe.RECIPE_SERIALIZERS.register(bus);
+        ModContainer.CONTAINER_TYPE.register(bus);
         ModSounds.SOUNDS.register(bus);
     }
 }
