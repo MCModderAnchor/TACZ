@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -28,15 +29,18 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.getItem() instanceof IAmmo iAmmo) {
             ResourceLocation ammoId = iAmmo.getAmmoId(stack);
-            // TODO 如果没有这个 ammoID，应该渲染个什么错误材质提醒别人
-            ClientGunPackLoader.getAmmoIndex(ammoId).ifPresent(ammoIndex -> {
-                poseStack.pushPose();
-                poseStack.translate(0.5, 1.5, 0.5);
-                poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            poseStack.pushPose();
+            poseStack.translate(0.5, 1.5, 0.5);
+            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            ClientGunPackLoader.getAmmoIndex(ammoId).ifPresentOrElse(ammoIndex -> {
                 VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(ammoIndex.getSlotTextureLocation()));
                 SLOT_AMMO_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                poseStack.popPose();
+            }, () -> {
+                // 没有这个 ammoID，渲染个错误材质提醒别人
+                VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
+                SLOT_AMMO_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
             });
+            poseStack.popPose();
         }
     }
 }

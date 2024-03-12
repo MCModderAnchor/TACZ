@@ -102,8 +102,9 @@ public class FirstPersonRenderGunEvent {
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
             poseStack.popPose();
             gunModel.cleanAnimationTransform();
+            // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
+            event.setCanceled(true);
         });
-        event.setCanceled(true);
     }
 
     /**
@@ -193,13 +194,14 @@ public class FirstPersonRenderGunEvent {
 
     /**
      * 获取动画约束点的变换数据。
-     * @param originTranslation 用于输出约束点的原坐标
+     *
+     * @param originTranslation   用于输出约束点的原坐标
      * @param animatedTranslation 用于输出约束点经过动画变换之后的坐标
-     * @param rotation 用于输出约束点的旋转
+     * @param rotation            用于输出约束点的旋转
      */
     private static void getAnimationConstraintTransform(List<BedrockPart> nodePath, @Nonnull Vector3f originTranslation, @Nonnull Vector3f animatedTranslation,
-                                                        @Nonnull Vector3f rotation){
-        if(nodePath == null){
+                                                        @Nonnull Vector3f rotation) {
+        if (nodePath == null) {
             return;
         }
         // 约束点动画变换矩阵

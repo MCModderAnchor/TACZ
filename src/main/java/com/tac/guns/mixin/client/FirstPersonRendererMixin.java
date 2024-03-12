@@ -3,6 +3,7 @@ package com.tac.guns.mixin.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.client.resource.ClientGunPackLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -29,17 +30,20 @@ public class FirstPersonRendererMixin {
         MinecraftForge.EVENT_BUS.post(new BeforeRenderHandEvent(pMatrixStack));
     }
 
-    @Inject(method = "tick",at = @At("RETURN"))
-    public void cancelEquippedProgress(CallbackInfo ci){
-        if(Minecraft.getInstance().player == null) {
+    @Inject(method = "tick", at = @At("RETURN"))
+    public void cancelEquippedProgress(CallbackInfo ci) {
+        if (Minecraft.getInstance().player == null) {
             return;
         }
         ItemStack mainHandItemStack = Minecraft.getInstance().player.getMainHandItem();
-        if(IGun.getIGunOrNull(mainHandItemStack) == null) {
+        IGun iGun = IGun.getIGunOrNull(mainHandItemStack);
+        if (iGun == null) {
             return;
         }
-        mainHandItem = mainHandItemStack;
-        mainHandHeight = 1.0f;
-        oMainHandHeight = 0f;
+        ClientGunPackLoader.getGunIndex(iGun.getGunId(mainHandItemStack)).ifPresent(index -> {
+            mainHandItem = mainHandItemStack;
+            mainHandHeight = 1.0f;
+            oMainHandHeight = 0f;
+        });
     }
 }
