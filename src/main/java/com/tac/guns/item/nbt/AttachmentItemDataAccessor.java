@@ -20,9 +20,9 @@ public interface AttachmentItemDataAccessor extends IAttachment {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
         if (nbt.contains(ATTACHMENT_ID_TAG, Tag.TAG_STRING)) {
             ResourceLocation attachmentId = ResourceLocation.tryParse(nbt.getString(ATTACHMENT_ID_TAG));
-            return Objects.requireNonNullElse(attachmentId, DefaultAssets.DEFAULT_ATTACHMENT_ID);
+            return Objects.requireNonNullElse(attachmentId, DefaultAssets.EMPTY_ATTACHMENT_ID);
         }
-        return DefaultAssets.DEFAULT_ATTACHMENT_ID;
+        return DefaultAssets.EMPTY_ATTACHMENT_ID;
     }
 
     default void setAttachmentId(ItemStack attachmentStack, @Nullable ResourceLocation attachmentId){

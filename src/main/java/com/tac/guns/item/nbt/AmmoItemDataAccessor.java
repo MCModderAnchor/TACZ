@@ -22,9 +22,9 @@ public interface AmmoItemDataAccessor extends IAmmo {
         CompoundTag nbt = ammo.getOrCreateTag();
         if (nbt.contains(AMMO_ID_TAG, Tag.TAG_STRING)) {
             ResourceLocation gunId = ResourceLocation.tryParse(nbt.getString(AMMO_ID_TAG));
-            return Objects.requireNonNullElse(gunId, DefaultAssets.DEFAULT_AMMO_ID);
+            return Objects.requireNonNullElse(gunId, DefaultAssets.EMPTY_AMMO_ID);
         }
-        return DefaultAssets.DEFAULT_AMMO_ID;
+        return DefaultAssets.EMPTY_AMMO_ID;
     }
 
     @Override
