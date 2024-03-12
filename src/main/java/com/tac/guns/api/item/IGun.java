@@ -11,13 +11,17 @@ import javax.annotation.Nullable;
 
 public interface IGun {
     /**
-     * 该物品是否为枪
+     * @return 如果物品类型为 IGun 则返回显式转换后的实例，否则返回 null。
      */
-    static boolean isGun(@Nullable ItemStack stack) {
+    @Nullable
+    static IGun getIGunOrNull(@Nullable ItemStack stack) {
         if (stack == null) {
-            return false;
+            return null;
         }
-        return stack.getItem() instanceof IGun;
+        if (stack.getItem() instanceof IGun iGun){
+            return iGun;
+        }
+        return null;
     }
 
     /**

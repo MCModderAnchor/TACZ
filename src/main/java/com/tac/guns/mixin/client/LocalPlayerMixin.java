@@ -117,7 +117,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 return ShootResult.FAIL;
             }
             // 判断子弹数
-            if (this.checkAmmo() && iGun.getCurrentAmmoCount(mainhandItem) < 1) {
+            if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && iGun.getCurrentAmmoCount(mainhandItem) < 1) {
                 // FIXME 有问题，会连续触发
                 SoundPlayManager.playDryFireSound(player, gunIndex);
                 return ShootResult.NO_AMMO;
@@ -154,17 +154,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return ShootResult.SUCCESS;
         }
         return ShootResult.FAIL;
-    }
-
-    /**
-     * 判断玩家换弹时是否需要检查背包中的子弹、射击时是否消耗子弹。
-     * 通常来说，创造模式下的玩家不需要检查。
-     */
-    @Unique
-    @Override
-    public boolean checkAmmo() {
-        LocalPlayer player = (LocalPlayer) (Object) this;
-        return !player.isCreative();
     }
 
     @Unique
@@ -214,7 +203,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 return;
             }
             // 弹药简单检查
-            if (this.checkAmmo()) {
+            if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
                 // 满弹检查也放这，这样创造模式玩家随意随便换弹
                 // 满弹不需要换
                 if (iGun.getCurrentAmmoCount(mainhandItem) >= gunIndex.getGunData().getAmmoAmount()) {

@@ -35,7 +35,7 @@ public class FirstPersonRendererMixin {
             return;
         }
         ItemStack mainHandItemStack = Minecraft.getInstance().player.getMainHandItem();
-        if(!IGun.isGun(mainHandItemStack)) {
+        if(IGun.getIGunOrNull(mainHandItemStack) == null) {
             return;
         }
         mainHandItem = mainHandItemStack;

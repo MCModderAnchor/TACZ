@@ -65,7 +65,7 @@ public interface IGunOperator {
      *
      * @return 如果为 false，那么开火不会检查弹药，也不会消耗枪械弹药
      */
-    boolean checkAmmo();
+    boolean needCheckAmmo();
 
     /**
      * 服务端，应用瞄准的逻辑

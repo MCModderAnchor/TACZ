@@ -189,7 +189,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         tac$ReloadTimestamp = -1;
         tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
 
-        if (!IGun.isGun(itemStack)) {
+        if (IGun.getIGunOrNull(itemStack) == null) {
             tac$DrawTimestamp = -1;
             // TODO 执行收枪逻辑
         } else {
@@ -223,7 +223,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             }
             int currentAmmoCount = iGun.getCurrentAmmoCount(tac$CurrentGunItem);
             // 检查弹药
-            if (this.checkAmmo()) {
+            if (this.needCheckAmmo()) {
                 // 超出或达到上限，不换弹
                 if (currentAmmoCount >= gunIndex.getGunData().getAmmoAmount()) {
                     return;
@@ -287,7 +287,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         }
         LivingEntity entity = (LivingEntity) (Object) this;
         // 创造模式不判断子弹数
-        if (checkAmmo() && iGun.getCurrentAmmoCount(tac$CurrentGunItem) < 1) {
+        if (needCheckAmmo() && iGun.getCurrentAmmoCount(tac$CurrentGunItem) < 1) {
             return ShootResult.NO_AMMO;
         }
         // 触发射击事件
@@ -307,7 +307,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 2.5f, inaccuracy);
             world.addFreshEntity(bullet);
             // 削减弹药数
-            if (this.checkAmmo()) {
+            if (this.needCheckAmmo()) {
                 iGun.reduceCurrentAmmoCount(tac$CurrentGunItem);
             }
         });
@@ -317,7 +317,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Unique
     @Override
-    public boolean checkAmmo() {
+    public boolean needCheckAmmo() {
         LivingEntity entity = (LivingEntity) (Object) this;
         if (entity instanceof Player player) {
             return !player.isCreative();
@@ -484,7 +484,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Unique
     private int getAndExtractNeedAmmoCount(IGun iGun, int maxAmmoCount) {
         int currentAmmoCount = iGun.getCurrentAmmoCount(tac$CurrentGunItem);
-        if (this.checkAmmo()) {
+        if (this.needCheckAmmo()) {
             return this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map(cap -> {
                 // 子弹数量检查
                 int needAmmoCount = maxAmmoCount - currentAmmoCount;
