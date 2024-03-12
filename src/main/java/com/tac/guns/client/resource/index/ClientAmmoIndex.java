@@ -25,12 +25,19 @@ public class ClientAmmoIndex {
 
     public static ClientAmmoIndex getInstance(AmmoIndexPOJO clientPojo) throws IllegalArgumentException {
         ClientAmmoIndex index = new ClientAmmoIndex();
+        checkIndex(clientPojo, index);
         AmmoDisplay display = checkDisplay(clientPojo);
         checkName(clientPojo, index);
         checkTextureAndModel(display, index);
         checkSlotTexture(display, index);
         checkStackSize(clientPojo, index);
         return index;
+    }
+
+    private static void checkIndex(AmmoIndexPOJO ammoIndexPOJO, ClientAmmoIndex index) {
+        if (ammoIndexPOJO == null) {
+            throw new IllegalArgumentException("index object file is empty");
+        }
     }
 
     private static void checkName(AmmoIndexPOJO ammoIndexPOJO, ClientAmmoIndex index) {

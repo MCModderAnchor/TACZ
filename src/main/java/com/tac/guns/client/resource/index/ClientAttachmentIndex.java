@@ -18,16 +18,24 @@ public class ClientAttachmentIndex {
     private BedrockAttachmentModel attachmentModel;
     private ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
+
     private ClientAttachmentIndex() {
     }
 
     public static ClientAttachmentIndex getInstance(AttachmentIndexPOJO indexPOJO) throws IllegalArgumentException {
         ClientAttachmentIndex index = new ClientAttachmentIndex();
+        checkIndex(indexPOJO, index);
         AttachmentDisplay display = checkDisplay(indexPOJO);
         checkName(indexPOJO, index);
         checkSlotTexture(display, index);
         checkTextureAndModel(display, index);
         return index;
+    }
+
+    private static void checkIndex(AttachmentIndexPOJO attachmentIndexPOJO, ClientAttachmentIndex index) {
+        if (attachmentIndexPOJO == null) {
+            throw new IllegalArgumentException("index object file is empty");
+        }
     }
 
     @NotNull
@@ -50,11 +58,11 @@ public class ClientAttachmentIndex {
         }
     }
 
-    private static void checkSlotTexture(AttachmentDisplay display, ClientAttachmentIndex index){
+    private static void checkSlotTexture(AttachmentDisplay display, ClientAttachmentIndex index) {
         index.slotTexture = Objects.requireNonNullElseGet(display.getSlotTextureLocation(), MissingTextureAtlasSprite::getLocation);
     }
 
-    private static void checkTextureAndModel(AttachmentDisplay display, ClientAttachmentIndex index)  {
+    private static void checkTextureAndModel(AttachmentDisplay display, ClientAttachmentIndex index) {
         // 检查模型
         ResourceLocation modelLocation = display.getModel();
         if (modelLocation == null) {
@@ -66,7 +74,7 @@ public class ClientAttachmentIndex {
         }
         // 检查默认材质是否存在
         ResourceLocation textureLocation = display.getTexture();
-        if(textureLocation == null){
+        if (textureLocation == null) {
             throw new IllegalArgumentException("missing default texture");
         }
         index.modelTexture = textureLocation;
@@ -84,7 +92,7 @@ public class ClientAttachmentIndex {
         }
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
@@ -96,7 +104,7 @@ public class ClientAttachmentIndex {
         return modelTexture;
     }
 
-    public ResourceLocation getSlotTexture(){
+    public ResourceLocation getSlotTexture() {
         return slotTexture;
     }
 }

@@ -47,6 +47,7 @@ public class ClientGunIndex {
 
     public static ClientGunIndex getInstance(GunIndexPOJO gunIndexPOJO) throws IllegalArgumentException {
         ClientGunIndex index = new ClientGunIndex();
+        checkIndex(gunIndexPOJO, index);
         GunDisplay display = checkDisplay(gunIndexPOJO);
         checkData(gunIndexPOJO, index);
         checkName(gunIndexPOJO, index);
@@ -59,6 +60,12 @@ public class ClientGunIndex {
         checkTransform(display, index);
         checkAnimationInfluenceCoefficient(display, index);
         return index;
+    }
+
+    private static void checkIndex(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
+        if (gunIndexPOJO == null) {
+            throw new IllegalArgumentException("index object file is empty");
+        }
     }
 
     private static void checkName(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
@@ -110,7 +117,7 @@ public class ClientGunIndex {
         }
         // 检查默认材质是否存在
         ResourceLocation textureLocation = display.getModelTexture();
-        if(textureLocation == null){
+        if (textureLocation == null) {
             throw new IllegalArgumentException("missing default texture");
         }
         index.modelTexture = textureLocation;

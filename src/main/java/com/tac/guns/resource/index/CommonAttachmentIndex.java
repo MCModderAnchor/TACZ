@@ -1,8 +1,8 @@
 package com.tac.guns.resource.index;
 
+import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.pojo.AttachmentIndexPOJO;
-import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.resources.ResourceLocation;
 
@@ -10,7 +10,7 @@ public class CommonAttachmentIndex {
     private AttachmentData data;
     private AttachmentType type;
 
-    private CommonAttachmentIndex(){
+    private CommonAttachmentIndex() {
     }
 
     public static CommonAttachmentIndex getInstance(AttachmentIndexPOJO attachmentIndexPOJO) throws IllegalArgumentException {
@@ -20,8 +20,11 @@ public class CommonAttachmentIndex {
         return index;
     }
 
-    private static void checkIndex(AttachmentIndexPOJO attachmentIndexPOJO, CommonAttachmentIndex index){
-        if(attachmentIndexPOJO.getType() == null){
+    private static void checkIndex(AttachmentIndexPOJO attachmentIndexPOJO, CommonAttachmentIndex index) {
+        if (attachmentIndexPOJO == null) {
+            throw new IllegalArgumentException("index object file is empty");
+        }
+        if (attachmentIndexPOJO.getType() == null) {
             throw new IllegalArgumentException("attachment type must be nonnull.");
         }
         index.type = attachmentIndexPOJO.getType();

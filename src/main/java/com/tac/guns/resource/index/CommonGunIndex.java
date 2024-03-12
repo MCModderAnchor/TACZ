@@ -21,12 +21,19 @@ public class CommonGunIndex {
 
     public static CommonGunIndex getInstance(GunIndexPOJO gunIndexPOJO) throws IllegalArgumentException {
         CommonGunIndex index = new CommonGunIndex();
+        checkIndex(gunIndexPOJO, index);
+        checkData(gunIndexPOJO, index);
+        return index;
+    }
+
+    private static void checkIndex(GunIndexPOJO gunIndexPOJO, CommonGunIndex index) {
+        if (gunIndexPOJO == null) {
+            throw new IllegalArgumentException("index object file is empty");
+        }
         if (StringUtils.isBlank(gunIndexPOJO.getType())) {
             throw new IllegalArgumentException("index object missing type field");
         }
         index.type = gunIndexPOJO.getType();
-        checkData(gunIndexPOJO, index);
-        return index;
     }
 
     private static void checkData(GunIndexPOJO gunIndexPOJO, CommonGunIndex index) {
