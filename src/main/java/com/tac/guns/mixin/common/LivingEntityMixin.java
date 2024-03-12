@@ -11,6 +11,7 @@ import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.serializer.ModEntityDataSerializers;
+import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.gun.GunData;
@@ -45,6 +46,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+
+import static com.tac.guns.resource.DefaultAssets.SHOOT_SOUND;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator {
@@ -306,6 +309,9 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
             bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 2.5f, inaccuracy);
             world.addFreshEntity(bullet);
+            // 播放声音
+            // TODO 配置文件决定衰减距离
+            NetworkHandler.sendSoundToNearby(shooter, 64, gunId, SHOOT_SOUND, 1.0f, 1.0f);
             // 削减弹药数
             if (this.checkAmmo()) {
                 iGun.reduceCurrentAmmoCount(tac$CurrentGunItem);

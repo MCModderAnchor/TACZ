@@ -42,7 +42,6 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            args '--username', 'mayday_memory'
             mods {
                 tac {
                     source sourceSets.main
@@ -53,7 +52,7 @@ minecraft {
         client2 {
             parent minecraft.runs.client
             workingDirectory project.file('run/client_b')
-            args '--username', 'tartaric_acid'
+            args '--username', 'mayday_memory'
             mods {
                 touhoulittlemaid {
                     source sourceSets.main

@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -34,6 +35,8 @@ public class NetworkHandler {
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(4, ClientMessagePlayerDrawGun.class, ClientMessagePlayerDrawGun::encode, ClientMessagePlayerDrawGun::decode, ClientMessagePlayerDrawGun::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(5, ServerMessageSound.class, ServerMessageSound::encode, ServerMessageSound::decode, ServerMessageSound::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
     public static void sendToClientPlayer(Object message, Player player) {
@@ -69,6 +72,16 @@ public class NetworkHandler {
             ws.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
                     .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 192 * 192)
                     .forEach(p -> CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), toSend));
+        }
+    }
+
+    public static void sendSoundToNearby(LivingEntity sourceEntity, int distance, ResourceLocation gunId, String soundName, float volume, float pitch) {
+        if (sourceEntity.level instanceof ServerLevel serverLevel) {
+            BlockPos pos = sourceEntity.blockPosition();
+            ServerMessageSound soundMessage = new ServerMessageSound(sourceEntity.getId(), gunId, soundName, volume, pitch);
+            serverLevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
+                    .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < distance * distance)
+                    .forEach(p -> CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), soundMessage));
         }
     }
 }

@@ -1,12 +1,20 @@
 package com.tac.guns.client.sound;
 
+import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModSounds;
+import com.tac.guns.network.message.ServerMessageSound;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+import static com.tac.guns.resource.DefaultAssets.*;
+
+@OnlyIn(Dist.CLIENT)
 public class SoundPlayManager {
     public static void playClientSound(LivingEntity entity, ResourceLocation name, float volume, float pitch) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -14,30 +22,45 @@ public class SoundPlayManager {
     }
 
     public static void playShootSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        SoundPlayManager.playClientSound(entity, gunIndex.getSounds("shoot"), 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
+        playClientSound(entity, gunIndex.getSounds(SHOOT_SOUND), 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
     }
 
     public static void playDryFireSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        SoundPlayManager.playClientSound(entity, gunIndex.getSounds("dry_fire"), 1.0f, 1.0f);
+        playClientSound(entity, gunIndex.getSounds(DRY_FIRE_SOUND), 1.0f, 1.0f);
     }
 
     public static void playReloadSound(LivingEntity entity, ClientGunIndex gunIndex, boolean noAmmo) {
         if (noAmmo) {
-            SoundPlayManager.playClientSound(entity, gunIndex.getSounds("reload_empty"), 1.0f, 1.0f);
+            playClientSound(entity, gunIndex.getSounds(RELOAD_EMPTY_SOUND), 1.0f, 1.0f);
         } else {
-            SoundPlayManager.playClientSound(entity, gunIndex.getSounds("reload_tactical"), 1.0f, 1.0f);
+            playClientSound(entity, gunIndex.getSounds(RELOAD_TACTICAL_SOUND), 1.0f, 1.0f);
         }
     }
 
     public static void playInspectSound(LivingEntity entity, ClientGunIndex gunIndex, boolean noAmmo) {
         if (noAmmo) {
-            SoundPlayManager.playClientSound(entity, gunIndex.getSounds("inspect_empty"), 1.0f, 1.0f);
+            playClientSound(entity, gunIndex.getSounds(INSPECT_EMPTY_SOUND), 1.0f, 1.0f);
         } else {
-            SoundPlayManager.playClientSound(entity, gunIndex.getSounds("inspect"), 1.0f, 1.0f);
+            playClientSound(entity, gunIndex.getSounds(INSPECT_SOUND), 1.0f, 1.0f);
         }
     }
 
     public static void playDrawSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        SoundPlayManager.playClientSound(entity, gunIndex.getSounds("draw"), 1.0f, 1.0f);
+        playClientSound(entity, gunIndex.getSounds(DRAW_SOUND), 1.0f, 1.0f);
+    }
+
+    public static void playMessageSound(ServerMessageSound message) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null || !(level.getEntity(message.getEntityId()) instanceof LivingEntity livingEntity)) {
+            return;
+        }
+        ResourceLocation gunId = message.getGunId();
+        ClientGunPackLoader.getGunIndex(gunId).ifPresent(index -> {
+            ResourceLocation soundId = index.getSounds(message.getSoundName());
+            if (soundId == null) {
+                return;
+            }
+            playClientSound(livingEntity, soundId, message.getVolume(), message.getPitch());
+        });
     }
 }

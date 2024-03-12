@@ -144,8 +144,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 }
                 // 播放声音、摄像机后坐需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
-                    // TODO 应该发包，让周围的玩家都能听到
-                    SoundPlayManager.playShootSound(player, gunIndex);
                     GunRecoil recoil = gunData.getRecoil();
                     player.setXRot(player.getXRot() - recoil.getRandomPitch());
                     player.setYRot(player.getYRot() + recoil.getRandomYaw());
