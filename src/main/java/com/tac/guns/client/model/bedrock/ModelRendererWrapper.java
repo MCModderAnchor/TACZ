@@ -4,6 +4,7 @@ package com.tac.guns.client.model.bedrock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
+import com.tac.guns.client.model.IModelRenderer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 
 public class ModelRendererWrapper implements IModelRenderer {

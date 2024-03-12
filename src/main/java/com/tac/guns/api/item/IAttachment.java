@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface IAttachment {
@@ -21,6 +22,7 @@ public interface IAttachment {
         return null;
     }
 
+    @Nonnull
     ResourceLocation getAttachmentId(ItemStack attachmentStack);
-    void setAttachmentId(ItemStack attachmentStack, @Nullable ResourceLocation gunId);
+    void setAttachmentId(ItemStack attachmentStack, @Nullable ResourceLocation attachmentId);
 }

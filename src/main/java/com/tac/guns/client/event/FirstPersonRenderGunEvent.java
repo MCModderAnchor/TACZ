@@ -4,13 +4,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import com.tac.guns.GunMod;
+import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
+import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.model.ISimpleRenderer;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
@@ -20,6 +22,7 @@ import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -33,6 +36,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
@@ -96,9 +100,12 @@ public class FirstPersonRenderGunEvent {
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
             // 应用枪械动态，如第一人称摄像机定位、后坐力的位移等
             applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTicks());
-            // 调用模型渲染
+            // 准备配件渲染
+            ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
+            gunModel.setScopeRenderer(wrapAttachmentRenderer(scopeItem));
+            // 调用枪械模型渲染
             VertexConsumer vertexConsumer = event.getMultiBufferSource().getBuffer(RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture()));
-            gunModel.render(transformType, stack, poseStack, vertexConsumer, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+            gunModel.render(poseStack, transformType, vertexConsumer, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
             poseStack.popPose();
             gunModel.cleanAnimationTransform();
@@ -246,14 +253,9 @@ public class FirstPersonRenderGunEvent {
             originMatrix.multiply(Vector3f.XP.rotation(part.xRot));
 
         }
-        // 应该直接获取矩阵的平移量，但是 Matrix4f 的成员是私有的。不想写 Access Transformer 所以用 Vector4f 来从矩阵里取位移信息。
-        Vector4f originPoint = new Vector4f(0, 0, 0, 1);
-        originPoint.transform(originMatrix);
-        Vector4f alphaPoint = new Vector4f(0, 0, 0, 1);
-        alphaPoint.transform(animeMatrix);
         // 把变换数据写入输出
-        animatedTranslation.set(alphaPoint.x(), alphaPoint.y(), alphaPoint.z());
-        originTranslation.set(originPoint.x(), originPoint.y(), originPoint.z());
+        animatedTranslation.set(animeMatrix.m03, animeMatrix.m13, animeMatrix.m23);
+        originTranslation.set(originMatrix.m03, originMatrix.m13, originMatrix.m23);
         Vector3f animatedRotation = MathUtil.getEulerAngles(animeMatrix);
         Vector3f originRotation = MathUtil.getEulerAngles(originMatrix);
         animatedRotation.sub(originRotation);
@@ -268,5 +270,17 @@ public class FirstPersonRenderGunEvent {
             return iGunA.getGunId(gunA).equals(iGunB.getGunId(gunB));
         }
         return gunA.sameItem(gunB);
+    }
+
+    @Nullable
+    private static ISimpleRenderer wrapAttachmentRenderer(@Nonnull ItemStack attachmentItem){
+        if(attachmentItem.isEmpty() || IAttachment.getIAttachmentOrNull(attachmentItem) == null){
+            return null;
+        }
+        return (poseStack, transformType, light, overlay) -> {
+            MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+            // 直接调用配件的 ISTER 进行渲染
+            Minecraft.getInstance().getItemRenderer().renderStatic(attachmentItem, TransformType.NONE, light, overlay, poseStack, bufferSource, 0);
+        };
     }
 }

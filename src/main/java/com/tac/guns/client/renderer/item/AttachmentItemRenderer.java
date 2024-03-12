@@ -4,8 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import com.tac.guns.api.item.IAttachment;
+import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.resource.ClientGunPackLoader;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -13,6 +15,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -30,13 +33,37 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (stack.getItem() instanceof IAttachment iAttachment) {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(stack);
             poseStack.pushPose();
-            poseStack.translate(0.5, 1.5, 0.5);
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            if(transformType == ItemTransforms.TransformType.GUI) {
+                poseStack.translate(0.5, 1.5, 0.5);
+                poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            }else {
+                // 渲染物品时有 (-0.5, -0.5, -0.5)的位移，需要将其逆转
+                poseStack.translate(0.5, 0.5, 0.5);
+                if(transformType != ItemTransforms.TransformType.NONE) {
+                    // 基岩版模型渲染原点位于 (0, 24, 0)
+                    poseStack.translate(0, 1.5, 0);
+                    // 反转模型
+                    poseStack.scale(-1, -1, 1);
+                    if(transformType == ItemTransforms.TransformType.FIXED){
+                        poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
+                    }
+                }else { // TransformType.NONE 用于在枪上渲染配件
+                    // 基岩版模型渲染原点位于 (0, 24, 0)
+                    poseStack.translate(0, -1.5f, 0);
+                }
+            }
             ClientGunPackLoader.getAttachmentIndex(attachmentId).ifPresentOrElse(attachmentIndex -> {
-                VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
-                SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
-            }, () -> {
-                // 没有这个 ammoID，渲染个错误材质提醒别人
+                if(transformType == ItemTransforms.TransformType.GUI) {
+                    VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
+                    SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                }else {
+                    BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
+                    ResourceLocation texture = attachmentIndex.getModelTexture();
+                    VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(texture));
+                    model.render(poseStack, transformType, vertexConsumer, pPackedLight, pPackedOverlay);
+                }
+            }, ()->{
+                // 没有这个 attachmentId，渲染黑紫材质以提醒
                 VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
                 SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
             });

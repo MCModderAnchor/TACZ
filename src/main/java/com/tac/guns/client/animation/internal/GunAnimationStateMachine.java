@@ -67,7 +67,7 @@ public class GunAnimationStateMachine {
         }
         ObjectAnimationRunner transitionTo = runner.getTransitionTo();
         ObjectAnimation animation = Objects.requireNonNullElse(transitionTo, runner).getAnimation();
-        return INSPECT_ANIMATION.equals(animation.name);
+        return INSPECT_ANIMATION.equals(animation.name) || INSPECT_EMPTY_ANIMATION.equals(animation.name);
     }
 
     public void update() {
