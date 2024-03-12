@@ -1,19 +1,24 @@
 package com.tac.guns.api.item;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
 public interface IAttachment {
     /**
-     * 该物品是否为配件
+     * @return 如果物品类型为 IAttachment 则返回显式转换后的实例，否则返回 null。
      */
-    static boolean isAttachment(@Nullable ItemStack stack) {
+    @Nullable
+    static IAttachment getIAttachmentOrNull(@Nullable ItemStack stack) {
         if (stack == null) {
-            return false;
+            return null;
         }
-        return stack.getItem() instanceof IAttachment;
+        if (stack.getItem() instanceof IAttachment iAttachment){
+            return iAttachment;
+        }
+        return null;
     }
 
     ResourceLocation getAttachmentId(ItemStack attachmentStack);

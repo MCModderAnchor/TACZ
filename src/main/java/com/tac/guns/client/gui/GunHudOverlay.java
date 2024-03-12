@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
+import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IGun;
@@ -51,7 +52,7 @@ public class GunHudOverlay {
 
 
         // 玩家背包弹药数
-        if (clientPlayerGunOperator.checkAmmo()) {
+        if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
             // 0.2 秒检查一次
             if ((System.currentTimeMillis() - checkAmmoTimestamp) > 200) {
                 Inventory inventory = player.getInventory();

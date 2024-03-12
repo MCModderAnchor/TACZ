@@ -7,13 +7,17 @@ import javax.annotation.Nullable;
 
 public interface IAmmo {
     /**
-     * 该物品是否为弹药
+     * @return 如果物品类型为 IAttachment 则返回显式转换后的实例，否则返回 null。
      */
-    static boolean isAmmo(@Nullable ItemStack stack) {
+    @Nullable
+    static IAmmo getIAmmoOrNull(@Nullable ItemStack stack) {
         if (stack == null) {
-            return false;
+            return null;
         }
-        return stack.getItem() instanceof IAmmo;
+        if (stack.getItem() instanceof IAmmo iAmmo){
+            return iAmmo;
+        }
+        return null;
     }
 
     /**

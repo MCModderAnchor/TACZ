@@ -22,13 +22,6 @@ public interface IClientPlayerGunOperator {
     ShootResult shoot();
 
     /**
-     * 客户端弹药消耗检查
-     *
-     * @return 如果为 false，不检查弹药消耗，也不会向服务端发包
-     */
-    boolean checkAmmo();
-
-    /**
      * 执行客户端切枪逻辑。
      */
     void draw();
