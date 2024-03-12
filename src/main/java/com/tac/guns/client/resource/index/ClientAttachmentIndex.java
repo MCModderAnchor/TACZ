@@ -1,16 +1,18 @@
 package com.tac.guns.client.resource.index;
 
+import com.google.common.collect.Maps;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
-import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
-import com.tac.guns.client.resource.pojo.model.BedrockVersion;
+import com.tac.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
 import com.tac.guns.resource.pojo.AttachmentIndexPOJO;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class ClientAttachmentIndex {
@@ -18,17 +20,19 @@ public class ClientAttachmentIndex {
     private BedrockAttachmentModel attachmentModel;
     private ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
+    private final Map<ResourceLocation, ClientAttachmentSkinIndex> skinIndexMap = Maps.newHashMap();
 
     private ClientAttachmentIndex() {
     }
 
-    public static ClientAttachmentIndex getInstance(AttachmentIndexPOJO indexPOJO) throws IllegalArgumentException {
+    public static ClientAttachmentIndex getInstance(ResourceLocation registryName, AttachmentIndexPOJO indexPOJO) throws IllegalArgumentException {
         ClientAttachmentIndex index = new ClientAttachmentIndex();
         checkIndex(indexPOJO, index);
         AttachmentDisplay display = checkDisplay(indexPOJO);
         checkName(indexPOJO, index);
         checkSlotTexture(display, index);
         checkTextureAndModel(display, index);
+        checkSkins(registryName, index);
         return index;
     }
 
@@ -68,27 +72,25 @@ public class ClientAttachmentIndex {
         if (modelLocation == null) {
             throw new IllegalArgumentException("display object missing model field");
         }
-        BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(modelLocation);
-        if (modelPOJO == null) {
-            throw new IllegalArgumentException("there is no corresponding model file");
+        index.attachmentModel = ClientAssetManager.INSTANCE.getOrLoadAttachmentModel(modelLocation);
+        if (index.attachmentModel == null) {
+            throw new IllegalArgumentException("there is no model data in the model file");
         }
-        // 检查默认材质是否存在
+        // 检查默认材质
         ResourceLocation textureLocation = display.getTexture();
         if (textureLocation == null) {
             throw new IllegalArgumentException("missing default texture");
         }
         index.modelTexture = textureLocation;
-        // 先判断是不是 1.10.0 版本基岩版模型文件
-        if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
-            index.attachmentModel = new BedrockAttachmentModel(modelPOJO, BedrockVersion.LEGACY);
-        }
-        // 判定是不是 1.12.0 版本基岩版模型文件
-        if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
-            index.attachmentModel = new BedrockAttachmentModel(modelPOJO, BedrockVersion.NEW);
-        }
+    }
 
-        if (index.attachmentModel == null) {
-            throw new IllegalArgumentException("there is no model data in the model file");
+    private static void checkSkins(ResourceLocation registryName, ClientAttachmentIndex index){
+        Map<ResourceLocation, AttachmentSkin> skins = ClientAssetManager.INSTANCE.getAttachmentSkins(registryName);
+        if(skins != null){
+            for(Map.Entry<ResourceLocation, AttachmentSkin> entry : skins.entrySet()){
+                ClientAttachmentSkinIndex skinIndex = ClientAttachmentSkinIndex.getInstance(entry.getValue());
+                index.skinIndexMap.put(entry.getKey(), skinIndex);
+            }
         }
     }
 
@@ -106,5 +108,13 @@ public class ClientAttachmentIndex {
 
     public ResourceLocation getSlotTexture() {
         return slotTexture;
+    }
+
+    @Nullable
+    public ClientAttachmentSkinIndex getSkinIndex(@Nullable ResourceLocation skinName){
+        if(skinName == null){
+            return null;
+        }
+        return skinIndexMap.get(skinName);
     }
 }

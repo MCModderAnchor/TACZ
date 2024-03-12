@@ -14,7 +14,9 @@ public final class DefaultAssets {
 
     public static ResourceLocation DEFAULT_ATTACHMENT_ID = new ResourceLocation(GunMod.MOD_ID, "lpvo_1_6");
     public static ResourceLocation EMPTY_ATTACHMENT_ID = new ResourceLocation(GunMod.MOD_ID, "empty");
-    public static ResourceLocation DEFAULT_AMMO_DISPLAY = new ResourceLocation(GunMod.MOD_ID, "762x39_display");
+
+    public static ResourceLocation DEFAULT_ATTACHMENT_SKIN_ID = new ResourceLocation(GunMod.MOD_ID, "lpvo_1_6_blue");
+    public static ResourceLocation EMPTY_ATTACHMENT_SKIN_ID = new ResourceLocation(GunMod.MOD_ID, "empty");
 
     public static String SHOOT_SOUND = "shoot";
     public static String DRY_FIRE_SOUND = "dry_fire";

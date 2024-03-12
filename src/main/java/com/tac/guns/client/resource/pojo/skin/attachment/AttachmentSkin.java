@@ -12,9 +12,6 @@ public class AttachmentSkin {
     private ResourceLocation model;
     @SerializedName("texture")
     private ResourceLocation texture;
-    @SerializedName("transform")
-    private AttachmentTransform transform;
-
     public ResourceLocation getParent() {
         return parent;
     }
@@ -29,9 +26,5 @@ public class AttachmentSkin {
 
     public ResourceLocation getTexture() {
         return texture;
-    }
-
-    public AttachmentTransform getTransform() {
-        return transform;
     }
 }

@@ -25,4 +25,7 @@ public interface IAttachment {
     @Nonnull
     ResourceLocation getAttachmentId(ItemStack attachmentStack);
     void setAttachmentId(ItemStack attachmentStack, @Nullable ResourceLocation attachmentId);
+    @Nullable
+    ResourceLocation getSkinId(ItemStack attachmentStack);
+    void setSkinId(ItemStack attachmentStack, @Nullable ResourceLocation skinId);
 }

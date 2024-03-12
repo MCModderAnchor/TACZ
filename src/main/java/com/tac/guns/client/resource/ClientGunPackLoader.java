@@ -359,7 +359,7 @@ public class ClientGunPackLoader {
                 AttachmentIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentIndexPOJO.class);
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
-                    ATTACHMENT_INDEX.put(registryName, ClientAttachmentIndex.getInstance(indexPOJO));
+                    ATTACHMENT_INDEX.put(registryName, ClientAttachmentIndex.getInstance(registryName, indexPOJO));
                 } catch (IllegalArgumentException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", path);
                     exception.printStackTrace();
@@ -375,7 +375,7 @@ public class ClientGunPackLoader {
                 try (InputStream stream = Files.newInputStream(file)) {
                     // 获取枪械的定义文件
                     AttachmentIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentIndexPOJO.class);
-                    ATTACHMENT_INDEX.put(id, ClientAttachmentIndex.getInstance(indexPOJO));
+                    ATTACHMENT_INDEX.put(id, ClientAttachmentIndex.getInstance(id, indexPOJO));
                 } catch (IOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
                     exception.printStackTrace();

@@ -13,6 +13,7 @@ import java.util.Objects;
 
 public interface AttachmentItemDataAccessor extends IAttachment {
     String ATTACHMENT_ID_TAG = "AttachmentId";
+    String SKIN_ID_TAG = "Skin";
 
     @Override
     @Nonnull
@@ -25,6 +26,7 @@ public interface AttachmentItemDataAccessor extends IAttachment {
         return DefaultAssets.EMPTY_ATTACHMENT_ID;
     }
 
+    @Override
     default void setAttachmentId(ItemStack attachmentStack, @Nullable ResourceLocation attachmentId){
         CompoundTag nbt = attachmentStack.getOrCreateTag();
         if (attachmentId != null) {
@@ -32,5 +34,25 @@ public interface AttachmentItemDataAccessor extends IAttachment {
             return;
         }
         nbt.putString(ATTACHMENT_ID_TAG, DefaultAssets.DEFAULT_ATTACHMENT_ID.toString());
+    }
+
+    @Override
+    @Nullable
+    default ResourceLocation getSkinId(ItemStack attachmentStack){
+        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        if (nbt.contains(SKIN_ID_TAG, Tag.TAG_STRING)) {
+            return ResourceLocation.tryParse(nbt.getString(SKIN_ID_TAG));
+        }
+        return null;
+    }
+
+    @Override
+    default void setSkinId(ItemStack attachmentStack, @Nullable ResourceLocation skinId){
+        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        if (skinId != null) {
+            nbt.putString(SKIN_ID_TAG, skinId.toString());
+        }else {
+            nbt.remove(SKIN_ID_TAG);
+        }
     }
 }

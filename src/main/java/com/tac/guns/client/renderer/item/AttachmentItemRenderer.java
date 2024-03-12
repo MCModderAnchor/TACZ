@@ -7,6 +7,7 @@ import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.resource.ClientGunPackLoader;
+import com.tac.guns.client.resource.index.ClientAttachmentSkinIndex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -57,10 +58,19 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                     VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
                     SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
                 }else {
-                    BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
-                    ResourceLocation texture = attachmentIndex.getModelTexture();
-                    VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(texture));
-                    model.render(poseStack, transformType, vertexConsumer, pPackedLight, pPackedOverlay);
+                    ResourceLocation skinId = iAttachment.getSkinId(stack);
+                    ClientAttachmentSkinIndex skinIndex = attachmentIndex.getSkinIndex(skinId);
+                    if(skinIndex != null){ // 有皮肤则渲染皮肤
+                        BedrockAttachmentModel model = skinIndex.getModel();
+                        ResourceLocation texture = skinIndex.getTexture();
+                        VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(texture));
+                        model.render(poseStack, transformType, vertexConsumer, pPackedLight, pPackedOverlay);
+                    }else { // 没有皮肤，渲染默认模型
+                        BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
+                        ResourceLocation texture = attachmentIndex.getModelTexture();
+                        VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(texture));
+                        model.render(poseStack, transformType, vertexConsumer, pPackedLight, pPackedOverlay);
+                    }
                 }
             }, ()->{
                 // 没有这个 attachmentId，渲染黑紫材质以提醒

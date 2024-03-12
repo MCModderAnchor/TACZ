@@ -2,6 +2,7 @@ package com.tac.guns.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.tac.guns.command.sub.AttachmentSkinTestCommand;
 import com.tac.guns.command.sub.AttachmentTestCommand;
 import com.tac.guns.command.sub.ReloadCommand;
 import net.minecraft.commands.CommandSourceStack;
@@ -15,6 +16,7 @@ public class RootCommand {
                 .requires((source -> source.hasPermission(2)));
         root.then(ReloadCommand.get());
         root.then(AttachmentTestCommand.get());
+        root.then(AttachmentSkinTestCommand.get());
         dispatcher.register(root);
     }
 }
