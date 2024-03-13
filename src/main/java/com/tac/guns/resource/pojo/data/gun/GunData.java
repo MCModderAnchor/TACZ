@@ -45,7 +45,7 @@ public class GunData {
 
     @Nullable
     @SerializedName("allow_attachments")
-    private AttachmentPass allowAttachments;
+    private List<AttachmentPass> allowAttachments;
 
     public ResourceLocation getAmmoId() {
         return ammoId;
@@ -100,7 +100,7 @@ public class GunData {
     }
 
     @Nullable
-    public AttachmentPass getAllowAttachments() {
+    public List<AttachmentPass> getAllowAttachments() {
         return allowAttachments;
     }
 
