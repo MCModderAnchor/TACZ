@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -390,5 +391,17 @@ public class CommonGunPackLoader {
 
     public static Optional<CommonAttachmentIndex> getAttachmentIndex(ResourceLocation registryName) {
         return Optional.ofNullable(ATTACHMENT_INDEX.get(registryName));
+    }
+
+    public static Set<Map.Entry<ResourceLocation, CommonGunIndex>> getAllGuns(){
+        return GUN_INDEX.entrySet();
+    }
+
+    public static Set<Map.Entry<ResourceLocation, CommonAmmoIndex>> getAllAmmo(){
+        return AMMO_INDEX.entrySet();
+    }
+
+    public static Set<Map.Entry<ResourceLocation, CommonAttachmentIndex>> getAllAttachments(){
+        return ATTACHMENT_INDEX.entrySet();
     }
 }

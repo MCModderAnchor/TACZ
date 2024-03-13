@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Map;
 
 public class GunDisplay {

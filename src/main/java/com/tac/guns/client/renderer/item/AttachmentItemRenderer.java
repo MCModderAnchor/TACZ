@@ -3,12 +3,11 @@ package com.tac.guns.client.renderer.item;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.SlotModel;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientAttachmentSkinIndex;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -16,7 +15,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -53,7 +51,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                     poseStack.translate(0, -1.5f, 0);
                 }
             }
-            ClientGunPackLoader.getAttachmentIndex(attachmentId).ifPresentOrElse(attachmentIndex -> {
+            TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresentOrElse(attachmentIndex -> {
                 if(transformType == ItemTransforms.TransformType.GUI) {
                     VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
                     SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);

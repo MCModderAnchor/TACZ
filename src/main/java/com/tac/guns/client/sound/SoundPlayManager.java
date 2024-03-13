@@ -1,6 +1,6 @@
 package com.tac.guns.client.sound;
 
-import com.tac.guns.client.resource.ClientGunPackLoader;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModSounds;
 import com.tac.guns.network.message.ServerMessageSound;
@@ -70,7 +70,7 @@ public class SoundPlayManager {
             return;
         }
         ResourceLocation gunId = message.getGunId();
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(index -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(index -> {
             ResourceLocation soundId = index.getSounds(message.getSoundName());
             if (soundId == null) {
                 return;

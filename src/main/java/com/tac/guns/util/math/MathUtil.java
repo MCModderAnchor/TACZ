@@ -4,8 +4,6 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 
-import javax.annotation.Nonnull;
-
 public class MathUtil {
     public static double magnificationToFovMultiplier(double magnification, double currentFov) {
         double currentTan = Math.tan(Math.toRadians(currentFov / 2));

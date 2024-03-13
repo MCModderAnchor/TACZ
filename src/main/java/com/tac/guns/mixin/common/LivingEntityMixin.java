@@ -1,5 +1,6 @@
 package com.tac.guns.mixin.common;
 
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.event.GunFireSelectEvent;
 import com.tac.guns.api.event.GunReloadEvent;
@@ -12,7 +13,6 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import com.tac.guns.network.NetworkHandler;
-import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunReloadData;
@@ -148,7 +148,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             return 0;
         }
         ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
-        Optional<CommonGunIndex> gunIndex = CommonGunPackLoader.getGunIndex(gunId);
+        Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
         return gunIndex.map(index -> {
             long coolDown = index.getGunData().getShootInterval() - (System.currentTimeMillis() - tac$ShootTimestamp);
             // 给 5 ms 的窗口时间，以平衡延迟
@@ -169,7 +169,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             return 0;
         }
         ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
-        Optional<CommonGunIndex> gunIndex = CommonGunPackLoader.getGunIndex(gunId);
+        Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
         return gunIndex.map(index -> {
             long coolDown = (long) (index.getGunData().getDrawTime() * 1000) - (System.currentTimeMillis() - tac$DrawTimestamp);
             // 给 5 ms 的窗口时间，以平衡延迟
@@ -211,7 +211,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         }
         LivingEntity entity = (LivingEntity) (Object) this;
         ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
-        CommonGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
             // 检查换弹是否还未完成
             if (tac$ReloadStateType.isReloading()) {
                 return;
@@ -301,7 +301,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         // 调用射击方法
         ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
         LivingEntity shooter = (LivingEntity) (Object) this;
-        CommonGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
             // TODO 获取 GunData 并根据其中的弹道参数创建 EntityBullet
             Level world = shooter.getLevel();
             EntityBullet bullet = new EntityBullet(world, shooter);
@@ -352,7 +352,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         }
         // 应用切换逻辑
         ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
-        return CommonGunPackLoader.getGunIndex(gunId).map(gunIndex -> {
+        return TimelessAPI.getCommonGunIndex(gunId).map(gunIndex -> {
             FireMode fireMode = iGun.getFireMode(tac$CurrentGunItem);
             List<FireMode> fireModeSet = gunIndex.getGunData().getFireModeSet();
             // 即使玩家拿的是没有的 FireMode，这里也能切换到正常情况
@@ -390,7 +390,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         }
         // 如果获取不到 gunIndex，则取消瞄准状态并将 aimingProgress 归零，返回。
         ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
-        Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
+        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             tac$AimingProgress = 0;
             return;
@@ -429,7 +429,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         }
         // 获取当前枪械的 ReloadData。如果没有则返回。
         ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
-        Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
+        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             return reloadState;
         }

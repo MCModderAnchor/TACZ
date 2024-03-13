@@ -1,6 +1,7 @@
 package com.tac.guns.resource.pojo.data.gun;
 
 import com.google.gson.annotations.SerializedName;
+import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.gun.FireMode;
 import net.minecraft.resources.ResourceLocation;
 
@@ -41,6 +42,9 @@ public class GunData {
 
     @SerializedName("move_speed")
     private MoveSpeed moveSpeed = new MoveSpeed();
+
+    @SerializedName("allow_attachments")
+    private List<AttachmentType> allowAttachments = Collections.emptyList();
 
     public ResourceLocation getAmmoId() {
         return ammoId;
@@ -92,6 +96,10 @@ public class GunData {
 
     public MoveSpeed getMoveSpeed() {
         return moveSpeed;
+    }
+
+    public List<AttachmentType> getAllowAttachments() {
+        return allowAttachments;
     }
 
     /**

@@ -88,7 +88,7 @@ public class ClientGunIndex {
         if (data == null) {
             throw new IllegalArgumentException("there is no corresponding data file");
         }
-        // 剩下的不需要校验了，前面服务端已经校验过了
+        // 剩下的不需要校验了，Common的读取逻辑中已经校验过了
         index.gunData = data;
     }
 

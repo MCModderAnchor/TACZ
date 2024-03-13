@@ -1,8 +1,8 @@
 package com.tac.guns.init;
 
 import com.tac.guns.GunMod;
-import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import com.tac.guns.entity.EntityBullet;
+import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.DeferredRegister;

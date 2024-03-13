@@ -1,5 +1,6 @@
 package com.tac.guns.mixin.client;
 
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.event.GunFireSelectEvent;
@@ -10,12 +11,10 @@ import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.*;
-import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunRecoil;
@@ -94,7 +93,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return ShootResult.FAIL;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        Optional<ClientGunIndex> gunIndexOptional = ClientGunPackLoader.getGunIndex(gunId);
+        Optional<ClientGunIndex> gunIndexOptional = TimelessAPI.getClientGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             return ShootResult.FAIL;
         }
@@ -176,7 +175,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun(player.getInventory().selected));
         // 放映 draw 动画
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             SoundPlayManager.playDrawSound(player, gunIndex);
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
@@ -195,7 +194,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             // 检查状态锁
             if (tac$ClientStateLock) {
                 return;
@@ -253,7 +252,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             boolean noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
             SoundPlayManager.playInspectSound(player, gunIndex, noAmmo);
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
@@ -280,7 +279,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             // 发送切换开火模式的数据包，通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
             // 动画状态机转移状态
@@ -300,7 +299,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             // TODO 发个 GunAimingEvent
             // TODO 判断能不能瞄准
             tac$ClientIsAiming = isAim;
@@ -341,7 +340,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        Optional<CommonGunIndex> gunIndexOptional = CommonGunPackLoader.getGunIndex(gunId);
+        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             tac$ClientAimingProgress = 0;
             tac$OldAimingProgress = 0;

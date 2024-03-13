@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
@@ -15,7 +16,6 @@ import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.ISimpleRenderer;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.util.math.MathUtil;
@@ -75,7 +75,7 @@ public class FirstPersonRenderGunEvent {
         }
 
         ResourceLocation gunId = iGun.getGunId(stack);
-        ClientGunPackLoader.getGunIndex(gunId).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (gunModel == null) {

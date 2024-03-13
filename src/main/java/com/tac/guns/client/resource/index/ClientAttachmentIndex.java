@@ -5,7 +5,9 @@ import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tac.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
+import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.pojo.AttachmentIndexPOJO;
+import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +22,7 @@ public class ClientAttachmentIndex {
     private BedrockAttachmentModel attachmentModel;
     private ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
+    private AttachmentData data;
     private final Map<ResourceLocation, ClientAttachmentSkinIndex> skinIndexMap = Maps.newHashMap();
 
     private ClientAttachmentIndex() {
@@ -29,6 +32,7 @@ public class ClientAttachmentIndex {
         ClientAttachmentIndex index = new ClientAttachmentIndex();
         checkIndex(indexPOJO, index);
         AttachmentDisplay display = checkDisplay(indexPOJO);
+        checkData(indexPOJO, index);
         checkName(indexPOJO, index);
         checkSlotTexture(display, index);
         checkTextureAndModel(display, index);
@@ -53,6 +57,19 @@ public class ClientAttachmentIndex {
             throw new IllegalArgumentException("there is no corresponding display file");
         }
         return display;
+    }
+
+    private static void checkData(AttachmentIndexPOJO indexPOJO, ClientAttachmentIndex index) {
+        ResourceLocation dataId = indexPOJO.getData();
+        if (dataId == null) {
+            throw new IllegalArgumentException("index object missing pojoData field");
+        }
+        AttachmentData data = CommonAssetManager.INSTANCE.getAttachmentData(dataId);
+        if (data == null) {
+            throw new IllegalArgumentException("there is no corresponding data file");
+        }
+        // 剩下的不需要校验了，Common的读取逻辑中已经校验过了
+        index.data = data;
     }
 
     private static void checkName(AttachmentIndexPOJO indexPOJO, ClientAttachmentIndex index) {

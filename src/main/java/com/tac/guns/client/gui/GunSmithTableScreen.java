@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.client.gui.components.ResultButton;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
@@ -39,7 +40,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         super.init();
         this.clearWidgets();
         int i = 0;
-        for (Map.Entry<ResourceLocation, ClientGunIndex> entry : ClientGunPackLoader.getAllGuns()) {
+        for (Map.Entry<ResourceLocation, ClientGunIndex> entry : TimelessAPI.getAllClientGunIndex()) {
             int yOffset = topPos + 21 + 17 * i;
             ItemStack buttonStack = GunItemBuilder.create().setId(entry.getKey()).build();
             this.addRenderableWidget(new ResultButton(leftPos + 192 + 22, yOffset, buttonStack, b -> {

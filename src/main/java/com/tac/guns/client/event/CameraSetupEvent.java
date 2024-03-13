@@ -3,10 +3,10 @@ package com.tac.guns.client.event;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 import com.tac.guns.GunMod;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +31,7 @@ public class CameraSetupEvent {
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
-        ClientGunPackLoader.getGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             Quaternion q = gunModel.getCameraAnimationObject().rotationQuaternion;
             double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
@@ -60,7 +60,7 @@ public class CameraSetupEvent {
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
-        ClientGunPackLoader.getGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             PoseStack poseStack = event.getPoseStack();
             poseStack.mulPose(gunModel.getCameraAnimationObject().rotationQuaternion);

@@ -3,9 +3,9 @@ package com.tac.guns.client.renderer.item;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.client.model.SlotModel;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -32,7 +32,7 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.pushPose();
             poseStack.translate(0.5, 1.5, 0.5);
             poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
-            ClientGunPackLoader.getAmmoIndex(ammoId).ifPresentOrElse(ammoIndex -> {
+            TimelessAPI.getClientAmmoIndex(ammoId).ifPresentOrElse(ammoIndex -> {
                 VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(ammoIndex.getSlotTextureLocation()));
                 SLOT_AMMO_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
             }, () -> {

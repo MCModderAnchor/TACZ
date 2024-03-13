@@ -3,12 +3,16 @@ package com.tac.guns.client.renderer.item;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
+import com.tac.guns.api.TimelessAPI;
+import com.tac.guns.api.attachment.AttachmentType;
+import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.model.ISimpleRenderer;
 import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.pojo.TransformScale;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.*;
@@ -63,7 +68,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(stack);
-        ClientGunPackLoader.getGunIndex(gunId).ifPresentOrElse(gunIndex -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresentOrElse(gunIndex -> {
             // 第一人称就不渲染了，交给别的地方
             if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
                 return;
@@ -89,6 +94,10 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
             // 应用 display 数据中的缩放
             applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
+            // 准备配件的渲染
+            ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
+            gunModel.setScopeRenderer(wrapAttachmentRenderer(scopeItem));
+            // 渲染枪械模型
             VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture()));
             gunModel.render(poseStack, transformType, vertexConsumer, pPackedLight, pPackedOverlay);
             poseStack.popPose();
@@ -138,5 +147,17 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.scale(vector3f.x(), vector3f.y(), vector3f.z());
             poseStack.translate(0, -1.5, 0);
         }
+    }
+
+    @Nullable
+    private ISimpleRenderer wrapAttachmentRenderer(@Nonnull ItemStack attachmentItem){
+        if(attachmentItem.isEmpty() || IAttachment.getIAttachmentOrNull(attachmentItem) == null){
+            return null;
+        }
+        return (poseStack, transformType, light, overlay) -> {
+            MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+            // 直接调用配件的 ISTER 进行渲染
+            Minecraft.getInstance().getItemRenderer().renderStatic(attachmentItem, ItemTransforms.TransformType.NONE, light, overlay, poseStack, bufferSource, 0);
+        };
     }
 }

@@ -1,9 +1,9 @@
 package com.tac.guns.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -40,7 +40,7 @@ public class FirstPersonRendererMixin {
         if (iGun == null) {
             return;
         }
-        ClientGunPackLoader.getGunIndex(iGun.getGunId(mainHandItemStack)).ifPresent(index -> {
+        TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItemStack)).ifPresent(index -> {
             mainHandItem = mainHandItemStack;
             mainHandHeight = 1.0f;
             oMainHandHeight = 0f;

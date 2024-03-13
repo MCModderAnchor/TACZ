@@ -1,5 +1,6 @@
 package com.tac.guns.item;
 
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
@@ -40,7 +41,7 @@ public class GunItem extends Item implements GunItemDataAccessor {
     @OnlyIn(Dist.CLIENT)
     public Component getName(@Nonnull ItemStack stack) {
         ResourceLocation gunId = this.getGunId(stack);
-        Optional<ClientGunIndex> gunIndex = ClientGunPackLoader.getGunIndex(gunId);
+        Optional<ClientGunIndex> gunIndex = TimelessAPI.getClientGunIndex(gunId);
         if (gunIndex.isPresent()) {
             return new TranslatableComponent(gunIndex.get().getName());
         }
@@ -51,7 +52,7 @@ public class GunItem extends Item implements GunItemDataAccessor {
     @OnlyIn(Dist.CLIENT)
     public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
         if (this.allowdedIn(modeTab)) {
-            ClientGunPackLoader.getAllGuns().forEach(entry -> {
+            TimelessAPI.getAllClientGunIndex().forEach(entry -> {
                 GunData gunData = entry.getValue().getGunData();
                 ItemStack itemStack = GunItemBuilder.create()
                         .setId(entry.getKey())
@@ -83,7 +84,7 @@ public class GunItem extends Item implements GunItemDataAccessor {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> components, TooltipFlag flag) {
         if (stack.getItem() instanceof IGun iGun) {
-            ClientGunPackLoader.getGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
+            TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
                 String tooltipKey = gunIndex.getTooltip();
                 if (tooltipKey != null) {
                     components.add(new TranslatableComponent(tooltipKey));

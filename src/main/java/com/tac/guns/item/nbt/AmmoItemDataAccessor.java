@@ -1,8 +1,8 @@
 package com.tac.guns.item.nbt;
 
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -42,7 +42,7 @@ public interface AmmoItemDataAccessor extends IAmmo {
         if (gun.getItem() instanceof IGun iGun && ammo.getItem() instanceof IAmmo iAmmo) {
             ResourceLocation gunId = iGun.getGunId(gun);
             ResourceLocation ammoId = iAmmo.getAmmoId(ammo);
-            return CommonGunPackLoader.getGunIndex(gunId).map(gunIndex -> gunIndex.getGunData().getAmmoId().equals(ammoId)).orElse(false);
+            return TimelessAPI.getCommonGunIndex(gunId).map(gunIndex -> gunIndex.getGunData().getAmmoId().equals(ammoId)).orElse(false);
         }
         return false;
     }

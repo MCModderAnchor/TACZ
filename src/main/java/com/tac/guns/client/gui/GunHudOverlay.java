@@ -3,12 +3,12 @@ package com.tac.guns.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.GunMod;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.player.LocalPlayer;
@@ -71,7 +71,7 @@ public class GunHudOverlay {
         String inventoryAmmoCountText = INVENTORY_AMMO_FORMAT.format(cacheInventoryAmmoCount);
 
 
-        ClientGunPackLoader.getGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
             // 竖线
             GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 32, 0xFFFFFFFF);
 

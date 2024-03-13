@@ -1,8 +1,8 @@
 package com.tac.guns.item;
 
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.client.renderer.item.AttachmentItemRenderer;
 import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.client.resource.index.ClientAmmoIndex;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.AttachmentItemDataAccessor;
@@ -33,7 +33,7 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
     @OnlyIn(Dist.CLIENT)
     public Component getName(@Nonnull ItemStack stack) {
         ResourceLocation attachmentId = this.getAttachmentId(stack);
-        Optional<ClientAttachmentIndex> attachmentIndex = ClientGunPackLoader.getAttachmentIndex(attachmentId);
+        Optional<ClientAttachmentIndex> attachmentIndex = TimelessAPI.getClientAttachmentIndex(attachmentId);
         if (attachmentIndex.isPresent()) {
             return new TranslatableComponent(attachmentIndex.get().getName());
         }
@@ -44,7 +44,7 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
     @OnlyIn(Dist.CLIENT)
     public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
         if (this.allowdedIn(modeTab)) {
-            ClientGunPackLoader.getAllAttachments().forEach(entry -> {
+            TimelessAPI.getAllClientAttachmentIndex().forEach(entry -> {
                 ItemStack itemStack = this.getDefaultInstance();
                 this.setAttachmentId(itemStack, entry.getKey());
                 stacks.add(itemStack);

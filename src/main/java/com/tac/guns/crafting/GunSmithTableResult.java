@@ -1,9 +1,9 @@
 package com.tac.guns.crafting;
 
 import com.google.gson.*;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.item.builder.AmmoItemBuilder;
 import com.tac.guns.item.builder.GunItemBuilder;
-import com.tac.guns.resource.CommonGunPackLoader;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -63,7 +63,7 @@ public class GunSmithTableResult {
         }
 
         private GunSmithTableResult getGunStack(ResourceLocation id, int count) {
-            return CommonGunPackLoader.getGunIndex(id).map(gunIndex -> {
+            return TimelessAPI.getCommonGunIndex(id).map(gunIndex -> {
                 ItemStack itemStack = GunItemBuilder.create().setCount(count).setId(id).setAmmoCount(0)
                         .setFireMode(gunIndex.getGunData().getFireModeSet().get(0)).build();
                 String group = gunIndex.getType();
