@@ -4,6 +4,8 @@ import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientAmmoIndex;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
+import com.tac.guns.crafting.GunSmithTableRecipe;
+import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.CommonGunPackLoader;
 import com.tac.guns.resource.index.CommonAmmoIndex;
 import com.tac.guns.resource.index.CommonAttachmentIndex;
@@ -18,56 +20,64 @@ import java.util.Set;
 
 public final class TimelessAPI {
     @OnlyIn(Dist.CLIENT)
-    public static Optional<ClientGunIndex> getClientGunIndex(ResourceLocation gunId){
+    public static Optional<ClientGunIndex> getClientGunIndex(ResourceLocation gunId) {
         return ClientGunPackLoader.getGunIndex(gunId);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Optional<ClientAttachmentIndex> getClientAttachmentIndex(ResourceLocation attachmentId){
+    public static Optional<ClientAttachmentIndex> getClientAttachmentIndex(ResourceLocation attachmentId) {
         return ClientGunPackLoader.getAttachmentIndex(attachmentId);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Optional<ClientAmmoIndex> getClientAmmoIndex(ResourceLocation ammoId){
+    public static Optional<ClientAmmoIndex> getClientAmmoIndex(ResourceLocation ammoId) {
         return ClientGunPackLoader.getAmmoIndex(ammoId);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Set<Map.Entry<ResourceLocation, ClientGunIndex>> getAllClientGunIndex(){
+    public static Set<Map.Entry<ResourceLocation, ClientGunIndex>> getAllClientGunIndex() {
         return ClientGunPackLoader.getAllGuns();
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Set<Map.Entry<ResourceLocation, ClientAmmoIndex>> getAllClientAmmoIndex(){
+    public static Set<Map.Entry<ResourceLocation, ClientAmmoIndex>> getAllClientAmmoIndex() {
         return ClientGunPackLoader.getAllAmmo();
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Set<Map.Entry<ResourceLocation, ClientAttachmentIndex>> getAllClientAttachmentIndex(){
+    public static Set<Map.Entry<ResourceLocation, ClientAttachmentIndex>> getAllClientAttachmentIndex() {
         return ClientGunPackLoader.getAllAttachments();
     }
 
-    public static Optional<CommonGunIndex> getCommonGunIndex(ResourceLocation gunId){
+    public static Optional<CommonGunIndex> getCommonGunIndex(ResourceLocation gunId) {
         return CommonGunPackLoader.getGunIndex(gunId);
     }
 
-    public static Optional<CommonAttachmentIndex> getCommonAttachmentIndex(ResourceLocation attachmentId){
+    public static Optional<CommonAttachmentIndex> getCommonAttachmentIndex(ResourceLocation attachmentId) {
         return CommonGunPackLoader.getAttachmentIndex(attachmentId);
     }
 
-    public static Optional<CommonAmmoIndex> getCommonAmmoIndex(ResourceLocation ammoId){
+    public static Optional<CommonAmmoIndex> getCommonAmmoIndex(ResourceLocation ammoId) {
         return CommonGunPackLoader.getAmmoIndex(ammoId);
     }
 
-    public static Set<Map.Entry<ResourceLocation, CommonGunIndex>> getAllCommonGunIndex(){
+    public static Optional<GunSmithTableRecipe> getRecipe(ResourceLocation recipeId) {
+        return CommonAssetManager.INSTANCE.getRecipe(recipeId);
+    }
+
+    public static Set<Map.Entry<ResourceLocation, CommonGunIndex>> getAllCommonGunIndex() {
         return CommonGunPackLoader.getAllGuns();
     }
 
-    public static Set<Map.Entry<ResourceLocation, CommonAmmoIndex>> getAllCommonAmmoIndex(){
+    public static Set<Map.Entry<ResourceLocation, CommonAmmoIndex>> getAllCommonAmmoIndex() {
         return CommonGunPackLoader.getAllAmmo();
     }
 
-    public static Set<Map.Entry<ResourceLocation, CommonAttachmentIndex>> getAllCommonAttachmentIndex(){
+    public static Set<Map.Entry<ResourceLocation, CommonAttachmentIndex>> getAllCommonAttachmentIndex() {
         return CommonGunPackLoader.getAllAttachments();
+    }
+
+    public static Map<ResourceLocation, GunSmithTableRecipe> getAllRecipes() {
+        return CommonAssetManager.INSTANCE.getAllRecipes();
     }
 }

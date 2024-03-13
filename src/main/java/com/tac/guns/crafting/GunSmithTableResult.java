@@ -3,11 +3,13 @@ package com.tac.guns.crafting;
 import com.google.gson.*;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.item.builder.AmmoItemBuilder;
+import com.tac.guns.item.builder.AttachmentItemBuilder;
 import com.tac.guns.item.builder.GunItemBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
 
@@ -30,6 +32,18 @@ public class GunSmithTableResult {
 
     public String getGroup() {
         return group;
+    }
+
+    public boolean isGun() {
+        return GUN.equals(group);
+    }
+
+    public boolean isAmmo() {
+        return AMMO.equals(group);
+    }
+
+    public boolean isAttachment() {
+        return ATTACHMENT.equals(group);
     }
 
     public static void toNetwork(FriendlyByteBuf buffer, GunSmithTableResult result) {
@@ -58,8 +72,11 @@ public class GunSmithTableResult {
                 if (AMMO.equals(typeName)) {
                     return getAmmoStack(id, count);
                 }
+                if (ATTACHMENT.equals(typeName)) {
+                    return getAttachmentStack(id, count);
+                }
             }
-            return new GunSmithTableResult(ItemStack.EMPTY, "");
+            return new GunSmithTableResult(ItemStack.EMPTY, StringUtils.EMPTY);
         }
 
         private GunSmithTableResult getGunStack(ResourceLocation id, int count) {
@@ -68,11 +85,15 @@ public class GunSmithTableResult {
                         .setFireMode(gunIndex.getGunData().getFireModeSet().get(0)).build();
                 String group = gunIndex.getType();
                 return new GunSmithTableResult(itemStack, group);
-            }).orElse(new GunSmithTableResult(ItemStack.EMPTY, ""));
+            }).orElse(new GunSmithTableResult(ItemStack.EMPTY, StringUtils.EMPTY));
         }
 
         private GunSmithTableResult getAmmoStack(ResourceLocation id, int count) {
-            return new GunSmithTableResult(AmmoItemBuilder.create().setCount(count).setId(id).build(), "ammo");
+            return new GunSmithTableResult(AmmoItemBuilder.create().setCount(count).setId(id).build(), GunSmithTableResult.AMMO);
+        }
+
+        private GunSmithTableResult getAttachmentStack(ResourceLocation id, int count) {
+            return new GunSmithTableResult(AttachmentItemBuilder.create().setCount(count).setId(id).build(), GunSmithTableResult.ATTACHMENT);
         }
     }
 }

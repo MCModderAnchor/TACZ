@@ -2,8 +2,8 @@ package com.tac.guns.compat.jei;
 
 import com.google.common.collect.Lists;
 import com.tac.guns.GunMod;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.init.ModItems;
-import com.tac.guns.resource.CommonAssetManager;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -24,7 +24,7 @@ public class GunModPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(GunSmithTableCategory.GUN_SMITH_TABLE, Lists.newArrayList(CommonAssetManager.INSTANCE.getAllRecipe().values()));
+        registration.addRecipes(GunSmithTableCategory.GUN_SMITH_TABLE, Lists.newArrayList(TimelessAPI.getAllRecipes().values()));
     }
 
     @Override

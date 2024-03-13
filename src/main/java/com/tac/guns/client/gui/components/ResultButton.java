@@ -6,10 +6,13 @@ import com.tac.guns.GunMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ResultButton extends Button {
@@ -40,14 +43,21 @@ public class ResultButton extends Button {
                 blit(poseStack, this.x, this.y, 32, 144, this.width, this.height, 256, 256);
             }
         }
-        Minecraft.getInstance().getItemRenderer().renderGuiItem(this.stack, this.x + 1, this.y);
-        Minecraft.getInstance().font.draw(poseStack, this.stack.getHoverName(), this.x + 22, this.y + 4, 0xFFFFFF);
+        Minecraft mc = Minecraft.getInstance();
+        mc.getItemRenderer().renderGuiItem(this.stack, this.x + 1, this.y);
+        Component hoverName = this.stack.getHoverName();
+        List<FormattedCharSequence> split = mc.font.split(hoverName, 60);
+        mc.font.draw(poseStack, split.get(0), this.x + 22, this.y + 4, 0xFFFFFF);
     }
 
     @Override
     public void onPress() {
         this.isSelected = true;
         this.onPress.onPress(this);
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public void renderTooltips(Consumer<ItemStack> consumer) {

@@ -7,6 +7,7 @@ import com.tac.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
+import java.util.Optional;
 
 public enum CommonAssetManager {
     INSTANCE;
@@ -40,7 +41,11 @@ public enum CommonAssetManager {
         gunSmithTableRecipes.put(registryName, recipe);
     }
 
-    public Map<ResourceLocation, GunSmithTableRecipe> getAllRecipe() {
+    public Optional<GunSmithTableRecipe> getRecipe(ResourceLocation recipeId) {
+        return Optional.ofNullable(gunSmithTableRecipes.get(recipeId));
+    }
+
+    public Map<ResourceLocation, GunSmithTableRecipe> getAllRecipes() {
         return gunSmithTableRecipes;
     }
 
