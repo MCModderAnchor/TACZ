@@ -32,14 +32,17 @@ public final class TimelessAPI {
         return ClientGunPackLoader.getAmmoIndex(ammoId);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static Set<Map.Entry<ResourceLocation, ClientGunIndex>> getAllClientGunIndex(){
         return ClientGunPackLoader.getAllGuns();
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static Set<Map.Entry<ResourceLocation, ClientAmmoIndex>> getAllClientAmmoIndex(){
         return ClientGunPackLoader.getAllAmmo();
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static Set<Map.Entry<ResourceLocation, ClientAttachmentIndex>> getAllClientAttachmentIndex(){
         return ClientGunPackLoader.getAllAttachments();
     }

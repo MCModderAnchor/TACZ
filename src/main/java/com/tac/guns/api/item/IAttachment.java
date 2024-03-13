@@ -1,5 +1,6 @@
 package com.tac.guns.api.item;
 
+import com.tac.guns.api.attachment.AttachmentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -27,4 +28,6 @@ public interface IAttachment {
     @Nullable
     ResourceLocation getSkinId(ItemStack attachmentStack);
     void setSkinId(ItemStack attachmentStack, @Nullable ResourceLocation skinId);
+    @Nonnull
+    AttachmentType getType(ItemStack attachmentStack);
 }

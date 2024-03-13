@@ -78,5 +78,9 @@ public interface IGun {
     @Nonnull
     ItemStack getAttachment(ItemStack gun, AttachmentType type);
 
-    void setAttachment(@Nonnull ItemStack gun, @Nonnull AttachmentType type, @Nonnull ItemStack attachment);
+    void setAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment);
+
+    boolean allowAttachment(ItemStack gun, ItemStack attachmentItem);
+
+    boolean allowAttachmentType(ItemStack gun, AttachmentType type);
 }

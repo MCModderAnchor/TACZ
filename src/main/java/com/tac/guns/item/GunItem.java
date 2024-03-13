@@ -1,13 +1,15 @@
 package com.tac.guns.item;
 
 import com.tac.guns.api.TimelessAPI;
+import com.tac.guns.api.attachment.AttachmentType;
+import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.builder.GunItemBuilder;
 import com.tac.guns.item.nbt.GunItemDataAccessor;
+import com.tac.guns.resource.pojo.data.gun.AttachmentPass;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -27,6 +29,7 @@ import net.minecraftforge.client.IItemRenderProperties;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -82,7 +85,7 @@ public class GunItem extends Item implements GunItemDataAccessor {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> components, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level pLevel, @Nonnull List<Component> components, @Nonnull TooltipFlag flag) {
         if (stack.getItem() instanceof IGun iGun) {
             TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
                 String tooltipKey = gunIndex.getTooltip();
@@ -90,6 +93,45 @@ public class GunItem extends Item implements GunItemDataAccessor {
                     components.add(new TranslatableComponent(tooltipKey));
                 }
             });
+        }
+    }
+
+    @Override
+    public boolean allowAttachment(ItemStack gun, ItemStack attachmentItem) {
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+        IGun iGun = IGun.getIGunOrNull(gun);
+        if (iGun != null && iAttachment != null) {
+            AttachmentType type = iAttachment.getType(attachmentItem);
+            ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
+            return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
+                EnumMap<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
+                if(map == null) {
+                    return false;
+                }
+                AttachmentPass pass = map.get(type);
+                if(pass == null) {
+                    return false;
+                }
+                return pass.isAllow(attachmentId);
+            }).orElse(false);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean allowAttachmentType(ItemStack gun, AttachmentType type) {
+        IGun iGun = IGun.getIGunOrNull(gun);
+        if (iGun != null) {
+            return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
+                EnumMap<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
+                if(map == null) {
+                    return false;
+                }
+                return map.containsKey(type);
+            }).orElse(false);
+        } else {
+            return false;
         }
     }
 }

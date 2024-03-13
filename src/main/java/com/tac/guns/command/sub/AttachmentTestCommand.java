@@ -27,7 +27,7 @@ public class AttachmentTestCommand {
             ServerPlayer player = context.getSource().getPlayerOrException();
             ItemStack itemStack = player.getMainHandItem();
             if(itemStack.getItem() instanceof IGun iGun){
-                iGun.setAttachment(itemStack, AttachmentType.SCOPE, AttachmentItemBuilder.create().build());
+                iGun.setAttachment(itemStack, AttachmentItemBuilder.create().build());
             }
         } catch (CommandSyntaxException e) {
             throw new RuntimeException(e);

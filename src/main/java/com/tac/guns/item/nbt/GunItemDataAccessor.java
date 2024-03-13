@@ -2,6 +2,7 @@ package com.tac.guns.item.nbt;
 
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.gun.FireMode;
+import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
@@ -82,6 +83,9 @@ public interface GunItemDataAccessor extends IGun {
     @Override
     @Nonnull
     default ItemStack getAttachment(ItemStack gun, AttachmentType type) {
+        if (!allowAttachmentType(gun, type)) {
+            return ItemStack.EMPTY;
+        }
         CompoundTag nbt = gun.getOrCreateTag();
         String key = GUN_ATTACHMENT_BASE + type;
         if (nbt.contains(key, Tag.TAG_COMPOUND)) {
@@ -91,9 +95,16 @@ public interface GunItemDataAccessor extends IGun {
     }
 
     @Override
-    default void setAttachment(@Nonnull ItemStack gun, @Nonnull AttachmentType type, @Nonnull ItemStack attachment) {
+    default void setAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment) {
+        if (!allowAttachment(gun, attachment)) {
+            return;
+        }
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachment);
+        if (iAttachment == null){
+            return;
+        }
         CompoundTag nbt = gun.getOrCreateTag();
-        String key = GUN_ATTACHMENT_BASE + type;
+        String key = GUN_ATTACHMENT_BASE + iAttachment.getType(attachment);
         CompoundTag attachmentTag = new CompoundTag();
         attachment.save(attachmentTag);
         nbt.put(key, attachmentTag);

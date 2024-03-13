@@ -1,11 +1,14 @@
 package com.tac.guns.resource.pojo.data.gun;
 
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
+import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.gun.FireMode;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +46,8 @@ public class GunData {
     @SerializedName("move_speed")
     private MoveSpeed moveSpeed = new MoveSpeed();
 
-    @Nullable
     @SerializedName("allow_attachments")
-    private List<AttachmentPass> allowAttachments;
+    private EnumMap<AttachmentType, AttachmentPass> allowAttachments = Maps.newEnumMap(AttachmentType.class);
 
     public ResourceLocation getAmmoId() {
         return ammoId;
@@ -100,8 +102,12 @@ public class GunData {
     }
 
     @Nullable
-    public List<AttachmentPass> getAllowAttachments() {
+    public EnumMap<AttachmentType, AttachmentPass> getAllowAttachments() {
         return allowAttachments;
+    }
+
+    public boolean allowAttachmentType(AttachmentType type){
+        return allowAttachments.containsKey(type);
     }
 
     /**
