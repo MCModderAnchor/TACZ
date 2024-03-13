@@ -29,8 +29,8 @@ import net.minecraftforge.client.IItemRenderProperties;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -104,7 +104,7 @@ public class GunItem extends Item implements GunItemDataAccessor {
             AttachmentType type = iAttachment.getType(attachmentItem);
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
             return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
-                EnumMap<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
+                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
                 if(map == null) {
                     return false;
                 }
@@ -124,7 +124,7 @@ public class GunItem extends Item implements GunItemDataAccessor {
         IGun iGun = IGun.getIGunOrNull(gun);
         if (iGun != null) {
             return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
-                EnumMap<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
+                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
                 if(map == null) {
                     return false;
                 }

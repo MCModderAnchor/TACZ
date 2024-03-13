@@ -47,7 +47,7 @@ public class GunData {
     private MoveSpeed moveSpeed = new MoveSpeed();
 
     @SerializedName("allow_attachments")
-    private EnumMap<AttachmentType, AttachmentPass> allowAttachments = Maps.newEnumMap(AttachmentType.class);
+    private Map<AttachmentType, AttachmentPass> allowAttachments = Maps.newEnumMap(AttachmentType.class);
 
     public ResourceLocation getAmmoId() {
         return ammoId;
@@ -102,7 +102,7 @@ public class GunData {
     }
 
     @Nullable
-    public EnumMap<AttachmentType, AttachmentPass> getAllowAttachments() {
+    public Map<AttachmentType, AttachmentPass> getAllowAttachments() {
         return allowAttachments;
     }
 
