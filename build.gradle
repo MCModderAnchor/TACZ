@@ -102,6 +102,16 @@ repositories {
         name = "Mod Maven"
         url = "https://modmaven.k-4u.nl"
     }
+    maven {
+        // cloth config api
+        url "https://maven.shedaniel.me/"
+    }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -109,6 +119,8 @@ dependencies {
 
     compileOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
+
+    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
