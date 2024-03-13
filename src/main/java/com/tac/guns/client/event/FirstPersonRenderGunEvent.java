@@ -132,33 +132,11 @@ public class FirstPersonRenderGunEvent {
                                                      PoseStack poseStack, BedrockGunModel model, float partialTicks) {
         // 配合运动曲线，计算瞄准进度
         float aimingProgress = AIMING_DYNAMICS.update(0, IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
-        // 获取枪械动画约束系数
-        // TODO 判断是否安装瞄具，
-        CommonTransformObject multiplier = gunIndex.getAnimationInfluenceCoefficient().getIronView();
-        // 获取动画约束点的变换信息
-        Vector3f originTranslation = new Vector3f();
-        Vector3f animatedTranslation = new Vector3f();
-        Vector3f rotation = new Vector3f();
-        getAnimationConstraintTransform(model.getConstraintPath(), originTranslation, animatedTranslation, rotation);
-        // 配合约束系数，计算约束位移需要的反向位移
-        Vector3f inverseTranslation = originTranslation.copy();
-        inverseTranslation.sub(animatedTranslation);
-        inverseTranslation.mul(1 - multiplier.getTranslation().x(), 1 - multiplier.getTranslation().y(), 1 - multiplier.getTranslation().z());
-        // 计算约束旋转需要的反向旋转。因需要插值，获取的是欧拉角
-        Vector3f inverseRotation = rotation.copy();
-        inverseRotation.mul(multiplier.getRotation().x() - 1, multiplier.getRotation().y() - 1, multiplier.getRotation().z() - 1);
         // 应用定位组的变换（位移和旋转，不包括缩放）
         applyFirstPersonPositioningTransform(poseStack, model, partialTicks, aimingProgress);
-        // 约束旋转
-        poseStack.translate(animatedTranslation.x(), animatedTranslation.y() + 1.5f, animatedTranslation.z());
-        poseStack.mulPose(Vector3f.XP.rotation(inverseRotation.x() * aimingProgress));
-        poseStack.mulPose(Vector3f.YP.rotation(inverseRotation.y() * aimingProgress));
-        poseStack.mulPose(Vector3f.ZP.rotation(inverseRotation.z() * aimingProgress));
-        poseStack.translate(-animatedTranslation.x(), -animatedTranslation.y() - 1.5f, -animatedTranslation.z());
-        // 约束位移
-        poseStack.last().pose().translate(new Vector3f(
-                -inverseTranslation.x() * aimingProgress, -inverseTranslation.y() * aimingProgress, inverseTranslation.z() * aimingProgress
-        ));
+        // 应用动画约束变换
+        CommonTransformObject ica = gunIndex.getAnimationInfluenceCoefficient().getIronView();
+        applyAnimationConstraintTransform(poseStack, model.getConstraintPath(), aimingProgress, ica);
     }
 
     /**
@@ -260,6 +238,38 @@ public class FirstPersonRenderGunEvent {
         Vector3f originRotation = MathUtil.getEulerAngles(originMatrix);
         animatedRotation.sub(originRotation);
         rotation.set(animatedRotation.x(), animatedRotation.y(), animatedRotation.z());
+    }
+
+    /**
+     * 应用动画约束变换。
+     * @param multiplier 旋转、位移各轴的动画权重，范围皆为 0~1，0 则完全不受动画影响，1 则完全受到动画控制。
+     * @param weight 控制约束变换的权重，用于插值。
+     */
+    public static void applyAnimationConstraintTransform(PoseStack poseStack, List<BedrockPart> nodePath, float weight,
+                                                         CommonTransformObject multiplier){
+        // TODO 判断是否安装瞄具，
+        // 获取动画约束点的变换信息
+        Vector3f originTranslation = new Vector3f();
+        Vector3f animatedTranslation = new Vector3f();
+        Vector3f rotation = new Vector3f();
+        getAnimationConstraintTransform(nodePath, originTranslation, animatedTranslation, rotation);
+        // 配合约束系数，计算约束位移需要的反向位移
+        Vector3f inverseTranslation = originTranslation.copy();
+        inverseTranslation.sub(animatedTranslation);
+        inverseTranslation.mul(1 - multiplier.getTranslation().x(), 1 - multiplier.getTranslation().y(), 1 - multiplier.getTranslation().z());
+        // 计算约束旋转需要的反向旋转。因需要插值，获取的是欧拉角
+        Vector3f inverseRotation = rotation.copy();
+        inverseRotation.mul(multiplier.getRotation().x() - 1, multiplier.getRotation().y() - 1, multiplier.getRotation().z() - 1);
+        // 约束旋转
+        poseStack.translate(animatedTranslation.x(), animatedTranslation.y() + 1.5f, animatedTranslation.z());
+        poseStack.mulPose(Vector3f.XP.rotation(inverseRotation.x() * weight));
+        poseStack.mulPose(Vector3f.YP.rotation(inverseRotation.y() * weight));
+        poseStack.mulPose(Vector3f.ZP.rotation(inverseRotation.z() * weight));
+        poseStack.translate(-animatedTranslation.x(), -animatedTranslation.y() - 1.5f, -animatedTranslation.z());
+        // 约束位移
+        poseStack.last().pose().translate(new Vector3f(
+                -inverseTranslation.x() * weight, -inverseTranslation.y() * weight, inverseTranslation.z() * weight
+        ));
     }
 
     /**
