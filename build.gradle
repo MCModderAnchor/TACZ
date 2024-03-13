@@ -103,6 +103,10 @@ repositories {
         url = "https://modmaven.k-4u.nl"
     }
     maven {
+        // cloth config api
+        url "https://maven.shedaniel.me/"
+    }
+    maven {
         url "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
@@ -116,8 +120,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
 
-    runtimeOnly fg.deobf("curse.maven:cloth-config-348521:4973439")
-    runtimeOnly fg.deobf("curse.maven:free-cam-557076:5081890")
+    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
