@@ -48,12 +48,6 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     @Override
     public void tick() {
         super.tick();
-
-//        if(!level.isClientSide()){
-//            ((ServerLevel) level).sendParticles(ParticleTypes.CLOUD, this.getX(), this.getY(), this.getZ(),
-//                    1, 0, 0, 0, 0);
-//        }
-
         if (this.tickCount > 100) {
             this.discard();
         }
@@ -97,6 +91,5 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
         if (entity != null) {
             this.setOwner(entity);
         }
-
     }
 }
