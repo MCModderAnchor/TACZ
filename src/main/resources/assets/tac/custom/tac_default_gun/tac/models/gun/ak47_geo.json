@@ -7356,6 +7356,30 @@
 					"pivot": [-2.225, 6.325, 8.675]
 				},
 				{
+					"name": "refit_view",
+					"parent": "camera",
+					"pivot": [18, 5, -2],
+					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "refit_muzzle_view",
+					"parent": "camera",
+					"pivot": [6, 5, -31],
+					"rotation": [0, 150, 0]
+				},
+				{
+					"name": "refit_stock_view",
+					"parent": "camera",
+					"pivot": [10, 5, 13],
+					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "refit_scope_view",
+					"parent": "camera",
+					"pivot": [8, 8, 9],
+					"rotation": [0, 50, 0]
+				},
+				{
 					"name": "positioning",
 					"pivot": [-3.025, -8.95, -11.225]
 				},
