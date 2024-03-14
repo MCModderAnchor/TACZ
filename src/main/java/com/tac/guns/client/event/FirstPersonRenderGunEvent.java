@@ -12,6 +12,7 @@ import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
+import com.tac.guns.client.gui.GunRefitScreen;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.ISimpleRenderer;
 import com.tac.guns.client.model.bedrock.BedrockPart;
@@ -32,6 +33,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -50,6 +52,14 @@ public class FirstPersonRenderGunEvent {
     private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(0.75f, 1.2f, 0.5f, 0);
     private static ItemStack oldHotbarSelectedStack = ItemStack.EMPTY;
     private static int oldHotbarSelected = -1;
+
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent event){
+        // 更新改装界面枪械的转移
+        if(Minecraft.getInstance().screen instanceof GunRefitScreen){
+
+        }
+    }
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {

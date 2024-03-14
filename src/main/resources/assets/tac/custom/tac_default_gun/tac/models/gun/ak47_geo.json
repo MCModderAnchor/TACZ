@@ -7,8 +7,8 @@
 				"texture_width": 128,
 				"texture_height": 128,
 				"visible_bounds_width": 6,
-				"visible_bounds_height": 4,
-				"visible_bounds_offset": [0, 1, 0]
+				"visible_bounds_height": 5,
+				"visible_bounds_offset": [0, 0.5, 0]
 			},
 			"bones": [
 				{
@@ -7342,42 +7342,37 @@
 					]
 				},
 				{
-					"name": "camera",
-					"pivot": [0, 8, 12]
-				},
-				{
 					"name": "idle_view",
-					"parent": "camera",
 					"pivot": [0, 8, 12]
 				},
 				{
 					"name": "iron_view",
-					"parent": "camera",
 					"pivot": [-2.225, 6.325, 8.675]
 				},
 				{
 					"name": "refit_view",
-					"parent": "camera",
 					"pivot": [18, 5, -2],
 					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "refit_muzzle_view",
-					"parent": "camera",
 					"pivot": [6, 5, -31],
 					"rotation": [0, 150, 0]
 				},
 				{
 					"name": "refit_stock_view",
-					"parent": "camera",
 					"pivot": [10, 5, 13],
 					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "refit_scope_view",
-					"parent": "camera",
 					"pivot": [8, 8, 9],
 					"rotation": [0, 50, 0]
+				},
+				{
+					"name": "camera",
+					"pivot": [0, 8, 12],
+					"rotation": [0, 0, 40]
 				},
 				{
 					"name": "positioning",
