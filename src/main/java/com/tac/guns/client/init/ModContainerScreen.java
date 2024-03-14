@@ -1,6 +1,8 @@
 package com.tac.guns.client.init;
 
+import com.tac.guns.client.gui.GunRefitScreen;
 import com.tac.guns.client.gui.GunSmithTableScreen;
+import com.tac.guns.inventory.GunRefitMenu;
 import com.tac.guns.inventory.GunSmithTableMenu;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,5 +15,6 @@ public class ModContainerScreen {
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent evt) {
         evt.enqueueWork(() -> MenuScreens.register(GunSmithTableMenu.TYPE, GunSmithTableScreen::new));
+        evt.enqueueWork(() -> MenuScreens.register(GunRefitMenu.TYPE, GunRefitScreen::new));
     }
 }
