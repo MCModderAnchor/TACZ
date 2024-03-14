@@ -7,6 +7,7 @@ import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
+import com.tac.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -14,11 +15,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class GameOverlayEvent {
+    private static boolean isRefitScreen = false;
     /**
      * 当玩家手上拿着枪时，播放特定动画、或瞄准时需要隐藏准心
      */
@@ -40,6 +43,11 @@ public class GameOverlayEvent {
                 event.setCanceled(true);
                 return;
             }
+            // 打开枪械改装界面的时候，取消准心渲染
+            if (isRefitScreen) {
+                event.setCanceled(true);
+                return;
+            }
             // 播放的动画需要隐藏准心时，取消准心渲染
             ItemStack stack = player.getMainHandItem();
             if (!(stack.getItem() instanceof IGun iGun)) {
@@ -53,5 +61,11 @@ public class GameOverlayEvent {
                 }
             });
         }
+    }
+
+    @SubscribeEvent
+    public static void onRenderTick(TickEvent.RenderTickEvent event){
+        // 奇迹的是，RenderGameOverlayEvent.PreLayer 事件中，screen还未被赋值...
+        isRefitScreen = Minecraft.getInstance().screen instanceof GunRefitScreen;
     }
 }

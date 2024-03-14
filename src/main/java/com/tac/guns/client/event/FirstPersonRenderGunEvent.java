@@ -19,6 +19,7 @@ import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
+import com.tac.guns.util.math.Easing;
 import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
@@ -50,15 +51,50 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.Transform
 public class FirstPersonRenderGunEvent {
     // 用于生成瞄准动作的运动曲线，使动作看起来更平滑
     private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(0.75f, 1.2f, 0.5f, 0);
+
+    // 用于切枪逻辑
     private static ItemStack oldHotbarSelectedStack = ItemStack.EMPTY;
     private static int oldHotbarSelected = -1;
 
-    @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event){
-        // 更新改装界面枪械的转移
-        if(Minecraft.getInstance().screen instanceof GunRefitScreen){
+    // 用于械改装界面枪械视角变换的插值。
+    private static float refitScreenTransformProgress = 1;
+    private static long refitScreenTransformTimestamp = 0;
+    private static float refitScreenOpeningProgress = 0;
+    private static long refitScreenOpeningTimestamp = -1;
+    private static boolean isRefitScreen = false;
+    private static AttachmentType refitScreenViewOld = AttachmentType.NONE;
+    private static AttachmentType refitScreenViewNew = AttachmentType.NONE;
+    private static final float REFIT_SCREEN_TRANSFORM_TIMES = 0.4f;
 
+    public static boolean changeRefitScreenView(AttachmentType attachmentType){
+        if(refitScreenTransformProgress != 1 || refitScreenOpeningProgress != 1) return false;
+        refitScreenViewOld = refitScreenViewNew;
+        refitScreenViewNew = attachmentType;
+        refitScreenTransformProgress = 0;
+        refitScreenTransformTimestamp = System.currentTimeMillis();
+        return true;
+    }
+
+    @SubscribeEvent
+    public static void onRenderTick(TickEvent.RenderTickEvent event){
+        // tick refit screen opening progress
+        if (refitScreenOpeningTimestamp == -1) {
+            refitScreenOpeningTimestamp = System.currentTimeMillis();
         }
+        if (Minecraft.getInstance().screen instanceof GunRefitScreen) {
+            isRefitScreen = true;
+            refitScreenOpeningProgress += (System.currentTimeMillis() - refitScreenOpeningTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
+            if (refitScreenOpeningProgress > 1) {
+                refitScreenOpeningProgress = 1;
+            }
+        } else {
+            isRefitScreen = false;
+            refitScreenOpeningProgress -= (System.currentTimeMillis() - refitScreenOpeningTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
+            if (refitScreenOpeningProgress < 0){
+                refitScreenOpeningProgress = 0;
+            }
+        }
+        refitScreenOpeningTimestamp = System.currentTimeMillis();
     }
 
     @SubscribeEvent
@@ -113,9 +149,14 @@ public class FirstPersonRenderGunEvent {
             // 准备配件渲染
             ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
             gunModel.setScopeRenderer(wrapAttachmentRenderer(scopeItem));
+            // 如果正在打开改装界面，则取消手臂渲染
+            boolean renderHand = gunModel.getRenderHand();
+            if(refitScreenOpeningProgress != 0) gunModel.setRenderHand(false);
             // 调用枪械模型渲染
             VertexConsumer vertexConsumer = event.getMultiBufferSource().getBuffer(RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture()));
             gunModel.render(poseStack, transformType, vertexConsumer, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+            // 恢复手臂渲染
+            gunModel.setRenderHand(renderHand);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
             poseStack.popPose();
             gunModel.cleanAnimationTransform();
@@ -140,26 +181,35 @@ public class FirstPersonRenderGunEvent {
 
     private static void applyFirstPersonGunTransform(LocalPlayer player, ItemStack gunItemStack, ClientGunIndex gunIndex,
                                                      PoseStack poseStack, BedrockGunModel model, float partialTicks) {
+        // 配合运动曲线，计算改装枪口的打开进度
+        float refitWeight;
+        if (isRefitScreen) {
+            refitWeight = (float) Easing.easeOutCubic(refitScreenOpeningProgress);
+        }else {
+            refitWeight = (float) (1 - Easing.easeOutCubic(1 - refitScreenOpeningProgress));
+        }
         // 配合运动曲线，计算瞄准进度
         float aimingProgress = AIMING_DYNAMICS.update(0, IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
         // 应用定位组的变换（位移和旋转，不包括缩放）
-        applyFirstPersonPositioningTransform(poseStack, model, partialTicks, aimingProgress);
+        applyFirstPersonPositioningTransform(poseStack, model, aimingProgress, 1 - refitWeight);
+        // 应用枪械改装视角定位组的变换
+        applyRefitScreenTransform(poseStack, model, refitWeight);
         // 应用动画约束变换
         CommonTransformObject ica = gunIndex.getAnimationInfluenceCoefficient().getIronView();
-        applyAnimationConstraintTransform(poseStack, model.getConstraintPath(), aimingProgress, ica);
+        applyAnimationConstraintTransform(poseStack, model.getConstraintPath(), aimingProgress * (1 - refitWeight), ica);
     }
 
     /**
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。会在几个摄像机定位之间插值。
      */
-    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, float partialTicks, float aimingProgress) {
+    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, float aimingProgress, float weight) {
         // TODO 判断是否安装瞄具，
         if (true) {
-            applyPositioningNodeTransform(model.getIronSightPath(), poseStack, aimingProgress);
+            applyPositioningNodeTransform(model.getIronSightPath(), poseStack, aimingProgress * weight);
         } else {
-            applyPositioningNodeTransform(model.getScopePosPath(), poseStack, aimingProgress);
+            applyPositioningNodeTransform(model.getScopePosPath(), poseStack, aimingProgress * weight);
         }
-        applyPositioningNodeTransform(model.getIdleSightPath(), poseStack, 1 - aimingProgress);
+        applyPositioningNodeTransform(model.getIdleSightPath(), poseStack, (1 - aimingProgress) * weight);
     }
 
     /**
@@ -280,6 +330,10 @@ public class FirstPersonRenderGunEvent {
         poseStack.last().pose().translate(new Vector3f(
                 -inverseTranslation.x() * weight, -inverseTranslation.y() * weight, inverseTranslation.z() * weight
         ));
+    }
+
+    public static void applyRefitScreenTransform(PoseStack poseStack, BedrockGunModel model, float weight){
+        applyPositioningNodeTransform(model.getRefitViewPath(), poseStack, weight);
     }
 
     /**

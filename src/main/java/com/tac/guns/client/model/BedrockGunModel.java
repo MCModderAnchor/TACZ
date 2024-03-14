@@ -31,7 +31,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     public static final String GROUND_ORIGIN_NODE = "ground";
     public static final String SCOPE_POS_NODE = "scope_pos";
     public static final String CONSTRAINT_NODE = "constraint";
-    public static final String EJECTION_NODE = "ejection";
+    public static final String REFIT_VIEW_NODE = "refit_view";
     // 第一人称机瞄摄像机定位组的路径
     protected @Nullable List<BedrockPart> ironSightPath;
     // 第一人称idle状态摄像机定位组的路径
@@ -44,13 +44,20 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> groundOriginPath;
     // 瞄具配件定位组的路径。其他配件不需要存路径，只需要替换渲染。但是瞄具定位组需要用来辅助第一人称瞄准的摄像机定位。
     protected @Nullable List<BedrockPart> scopePosPath;
+    // 动画约束组的路径
     protected @Nullable List<BedrockPart> constraintPath;
+    // 枪械改装 Overview 视角定位组路径
+    protected @Nullable List<BedrockPart> refitViewPath;
     private ISimpleRenderer scopeRenderer;
+    private boolean renderHand = true;
 
     public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
         this.setFunctionalRenderer("lefthand_pos", bedrockPart -> (poseStack, transformType, consumer, light, overlay) -> {
             if (transformType.firstPerson()) {
+                if (!renderHand) {
+                    return;
+                }
                 poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
                 Matrix3f normal = poseStack.last().normal().copy();
                 Matrix4f pose = poseStack.last().pose().copy();
@@ -65,6 +72,9 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         });
         this.setFunctionalRenderer("righthand_pos", bedrockPart -> (poseStack, transformType, consumer, light, overlay) -> {
             if (transformType.firstPerson()) {
+                if (!renderHand) {
+                    return;
+                }
                 poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
                 Matrix3f normal = poseStack.last().normal().copy();
                 Matrix4f pose = poseStack.last().pose().copy();
@@ -129,6 +139,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
         scopePosPath = getPath(modelMap.get(SCOPE_POS_NODE));
         constraintPath = getPath(modelMap.get(CONSTRAINT_NODE));
+        refitViewPath = getPath(modelMap.get(REFIT_VIEW_NODE));
 
         this.setFunctionalRenderer(SCOPE_POS_NODE, bedrockPart -> {
             bedrockPart.visible = false;
@@ -190,6 +201,19 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     public List<BedrockPart> getConstraintPath(){
         return constraintPath;
+    }
+
+    @Nullable
+    public List<BedrockPart> getRefitViewPath(){
+        return refitViewPath;
+    }
+
+    public void setRenderHand(boolean renderHand){
+        this.renderHand = renderHand;
+    }
+
+    public boolean getRenderHand(){
+        return renderHand;
     }
 
     private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight) {
