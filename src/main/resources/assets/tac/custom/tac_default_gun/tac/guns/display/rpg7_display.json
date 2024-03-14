@@ -1,0 +1,12 @@
+{
+  "model": "tac:gun/rpg7_geo",
+  "texture": "tac:gun/uv/rpg7",
+  "hud": "tac:gun/hud/rpg7",
+  "slot": "tac:gun/slot/rpg7",
+  "animation": "tac:rpg7",
+  "sounds": {
+    "reload_empty": "tac:rpg7/rpg7_reload",
+    "inspect": "tac:rpg7/rpg7_inspect",
+    "draw": "tac:rpg7/rpg7_draw"
+  }
+}

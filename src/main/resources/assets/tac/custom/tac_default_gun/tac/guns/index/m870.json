@@ -1,0 +1,6 @@
+{
+  "name": "tac.gun.m870.name",
+  "display": "tac:m870_display",
+  "data": "tac:ak47_data",
+  "type": "shotgun"
+}

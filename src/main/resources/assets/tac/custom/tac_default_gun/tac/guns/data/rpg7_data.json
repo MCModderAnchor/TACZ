@@ -1,0 +1,35 @@
+{
+  "ammo": "tac:9mm",
+  "rpm": 30,
+  "ammo_amount": 1,
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 1.63,
+      "tactical": 1.05
+    },
+    "cooldown": {
+      "empty": 1.88,
+      "tactical": 1.5
+    }
+  },
+  "draw_time": 0.35,
+  "aim_time": 0.17,
+  "fire_mode": [
+    "semi"
+  ],
+  "recoil": {
+    // 竖直方向偏转，会在两个数值之间取随机数
+    // 遵循游戏内坐标系，上为正
+    "pitch": [
+      0.5,
+      0.7
+    ],
+    // 水平方向偏转，会在两个数值之间取随机数
+    // 遵循游戏内坐标系，右为正
+    "yaw": [
+      -0.8,
+      0.2
+    ]
+  }
+}

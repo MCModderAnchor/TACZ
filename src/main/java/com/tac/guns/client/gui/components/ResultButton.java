@@ -46,7 +46,7 @@ public class ResultButton extends Button {
         Minecraft mc = Minecraft.getInstance();
         mc.getItemRenderer().renderGuiItem(this.stack, this.x + 1, this.y);
         Component hoverName = this.stack.getHoverName();
-        List<FormattedCharSequence> split = mc.font.split(hoverName, 60);
+        List<FormattedCharSequence> split = mc.font.split(hoverName, 70);
         mc.font.draw(poseStack, split.get(0), this.x + 22, this.y + 4, 0xFFFFFF);
     }
 

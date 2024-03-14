@@ -14,5 +14,6 @@
   "itemGroup.tab.tac.gun": "Timeless & Classics",
   "block.tac.gun_smith_table": "Gun Smith Table",
   "gui.tac.gun_smith_table.preview": "Preview",
-  "gui.tac.gun_smith_table.ingredient": "Ingredient: "
+  "gui.tac.gun_smith_table.ingredient": "Ingredient: ",
+  "gui.tac.gun_smith_table.craft": "Craft"
 }

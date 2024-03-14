@@ -1,0 +1,6 @@
+{
+  "model": "tac:gun/m249_geo",
+  "texture": "tac:gun/uv/m249",
+  "slot": "tac:gun/slot/m249",
+  "hud": "tac:gun/hud/m249"
+}

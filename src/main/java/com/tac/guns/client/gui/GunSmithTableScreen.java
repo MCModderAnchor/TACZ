@@ -16,10 +16,14 @@ import com.tac.guns.crafting.GunSmithTableIngredient;
 import com.tac.guns.crafting.GunSmithTableRecipe;
 import com.tac.guns.crafting.GunSmithTableResult;
 import com.tac.guns.inventory.GunSmithTableMenu;
+import com.tac.guns.network.NetworkHandler;
+import com.tac.guns.network.message.ClientMessageCraft;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -50,6 +54,9 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
     private int indexPage;
     private @Nullable GunSmithTableRecipe selectedRecipe;
+    private @Nullable Int2IntArrayMap playerIngredientCount;
+
+    private int scale = 70;
 
     public GunSmithTableScreen(GunSmithTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -63,6 +70,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
         this.indexPage = 0;
         this.selectedRecipe = this.getSelectedRecipe(this.selectedRecipeList.get(0));
+        this.getPlayerIngredientCount(this.selectedRecipe);
     }
 
     private void classifyRecipes() {
@@ -81,6 +89,27 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         return TimelessAPI.getAllRecipes().get(recipeId);
     }
 
+    private void getPlayerIngredientCount(GunSmithTableRecipe recipe) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        List<GunSmithTableIngredient> ingredients = recipe.getInputs();
+        int size = ingredients.size();
+        this.playerIngredientCount = new Int2IntArrayMap(size);
+        for (int i = 0; i < size; i++) {
+            GunSmithTableIngredient ingredient = ingredients.get(i);
+            Inventory inventory = player.getInventory();
+            int count = 0;
+            for (ItemStack stack : inventory.items) {
+                if (!stack.isEmpty() && ingredient.getIngredient().test(stack)) {
+                    count = count + stack.getCount();
+                }
+            }
+            playerIngredientCount.put(i, count);
+        }
+    }
+
     @Override
     protected void init() {
         super.init();
@@ -89,6 +118,16 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         this.addTypeButtons();
         this.addIndexPageButtons();
         this.addIndexButtons();
+        this.addScaleButtons();
+        this.addCraftButton();
+    }
+
+    private void addCraftButton() {
+        this.addRenderableWidget(new ImageButton(leftPos + 289, topPos + 162, 48, 18, 138, 164, 18, TEXTURE, b -> {
+            if (this.selectedRecipe != null) {
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessageCraft(this.selectedRecipe.getId(), this.menu.containerId));
+            }
+        }));
     }
 
     private void addIndexButtons() {
@@ -104,6 +143,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             TimelessAPI.getRecipe(selectedRecipeList.get(finalIndex)).ifPresent(recipe -> {
                 ResultButton button = addRenderableWidget(new ResultButton(leftPos + 144, yOffset, recipe.getOutput(), b -> {
                     this.selectedRecipe = recipe;
+                    this.getPlayerIngredientCount(this.selectedRecipe);
                     this.init();
                 }));
                 if (this.selectedRecipe != null && recipe.getId().equals(this.selectedRecipe.getId())) {
@@ -119,7 +159,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             if (typeIndex >= recipes.size()) {
                 return;
             }
-            String type = recipeKeys.get(i);
+            String type = recipeKeys.get(typeIndex);
             int xOffset = leftPos + 157 + 24 * i;
             List<ResourceLocation> recipeIdGroups = recipes.get(type);
             if (recipeIdGroups.isEmpty()) {
@@ -133,6 +173,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                     this.selectedRecipeList = recipes.get(type);
                     this.indexPage = 0;
                     this.selectedRecipe = getSelectedRecipe(this.selectedRecipeList.get(0));
+                    this.getPlayerIngredientCount(this.selectedRecipe);
                     this.init();
                 });
                 if (this.selectedType.equals(type)) {
@@ -152,7 +193,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         }));
         this.addRenderableWidget(new ImageButton(leftPos + 143, topPos + 171, 96, 6, 40, 186, 6, TEXTURE, b -> {
             if (selectedRecipeList != null && !selectedRecipeList.isEmpty()) {
-                int maxIndexPage = (selectedRecipeList.size() - 1) / 5;
+                int maxIndexPage = (selectedRecipeList.size() - 1) / 6;
                 if (this.indexPage < maxIndexPage) {
                     this.indexPage++;
                     this.init();
@@ -163,8 +204,29 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
     private void addTypePageButtons() {
         this.addRenderableWidget(new ImageButton(leftPos + 136, topPos + 4, 18, 20, 0, 162, 20, TEXTURE, b -> {
+            if (this.typePage > 0) {
+                this.typePage--;
+                this.init();
+            }
         }));
         this.addRenderableWidget(new ImageButton(leftPos + 327, topPos + 4, 18, 20, 20, 162, 20, TEXTURE, b -> {
+            int maxIndexPage = (recipes.size() - 1) / 7;
+            if (this.typePage < maxIndexPage) {
+                this.typePage++;
+                this.init();
+            }
+        }));
+    }
+
+    private void addScaleButtons() {
+        this.addRenderableWidget(new ImageButton(leftPos + 5, topPos + 5, 10, 10, 188, 173, 10, TEXTURE, b -> {
+            this.scale = Math.min(this.scale + 20, 200);
+        }));
+        this.addRenderableWidget(new ImageButton(leftPos + 17, topPos + 5, 10, 10, 200, 173, 10, TEXTURE, b -> {
+            this.scale = Math.max(this.scale - 20, 10);
+        }));
+        this.addRenderableWidget(new ImageButton(leftPos + 29, topPos + 5, 10, 10, 212, 173, 10, TEXTURE, b -> {
+            this.scale = 70;
         }));
     }
 
@@ -174,49 +236,60 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         drawModCenteredString(poseStack, font, new TranslatableComponent("gui.tac.gun_smith_table.preview"), leftPos + 108, topPos + 5, 0x555555);
         font.draw(poseStack, new TranslatableComponent(String.format("tac.type.%s.name", selectedType)), leftPos + 150, topPos + 32, 0x555555);
         font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.ingredient"), leftPos + 254, topPos + 50, 0x555555);
+        drawModCenteredString(poseStack, font, new TranslatableComponent("gui.tac.gun_smith_table.craft"), leftPos + 312, topPos + 167, 0xFFFFFF);
         if (this.selectedRecipe != null) {
             this.renderLeftModel(this.selectedRecipe);
         }
         if (selectedRecipeList != null && !selectedRecipeList.isEmpty()) {
-            renderIngredient();
+            renderIngredient(poseStack);
         }
         this.renderables.stream().filter(w -> w instanceof ResultButton)
                 .forEach(w -> ((ResultButton) w).renderTooltips(stack -> this.renderTooltip(poseStack, stack, mouseX, mouseY)));
     }
 
-    private void renderIngredient() {
+    private void renderIngredient(PoseStack poseStack) {
         if (this.selectedRecipe == null) {
             return;
         }
         List<GunSmithTableIngredient> inputs = this.selectedRecipe.getInputs();
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 4; j++) {
-                int index = i * 4 + j;
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 2; j++) {
+                int index = i * 2 + j;
                 if (index >= inputs.size()) {
                     return;
                 }
-                int offsetX = leftPos + 254 + 20 * j;
-                int offsetY = topPos + 62 + 20 * i;
+                int offsetX = leftPos + 254 + 45 * j;
+                int offsetY = topPos + 62 + 17 * i;
 
                 GunSmithTableIngredient smithTableIngredient = inputs.get(index);
                 Ingredient ingredient = smithTableIngredient.getIngredient();
-                int count = smithTableIngredient.getCount();
 
                 ItemStack[] items = ingredient.getItems();
                 int itemIndex = ((int) (System.currentTimeMillis() / 1_000)) % items.length;
                 ItemStack item = items[itemIndex];
                 this.itemRenderer.renderAndDecorateFakeItem(item, offsetX, offsetY);
-                itemRenderer.renderGuiItemDecorations(font, item, offsetX, offsetY, String.valueOf(count));
+
+                poseStack.pushPose();
+                poseStack.translate(0, 0, 200);
+                poseStack.scale(0.5f, 0.5f, 1);
+
+                int count = smithTableIngredient.getCount();
+                int hasCount = 0;
+                if (playerIngredientCount != null && index < playerIngredientCount.size()) {
+                    hasCount = playerIngredientCount.get(index);
+                }
+                int color = count <= hasCount ? 0xFFFFFF : 0xFF0000;
+                font.draw(poseStack, String.format("%d/%d", count, hasCount), (offsetX + 17) * 2, (offsetY + 10) * 2, color);
+                poseStack.popPose();
             }
         }
     }
 
     @SuppressWarnings("deprecation")
     private void renderLeftModel(GunSmithTableRecipe recipe) {
-        float scale = 70;
         float rotationPeriod = 8f;
         int xPos = leftPos + 60;
-        int yPos = topPos + 65;
+        int yPos = topPos + 50;
         int startX = leftPos + 3;
         int startY = topPos + 16;
         int width = 128;
@@ -237,7 +310,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         PoseStack posestack = RenderSystem.getModelViewStack();
         posestack.pushPose();
-        posestack.translate(xPos, yPos, 100);
+        posestack.translate(xPos, yPos, -50);
         posestack.translate(8.0D, 8.0D, 0.0D);
         posestack.scale(1.0F, -1.0F, 1.0F);
         posestack.scale(scale, scale, scale);
@@ -274,5 +347,10 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     public static void drawModCenteredString(PoseStack poseStack, Font font, Component component, int pX, int pY, int color) {
         FormattedCharSequence text = component.getVisualOrderText();
         font.draw(poseStack, text, (float) (pX - font.width(text) / 2), (float) pY, color);
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 }
