@@ -1,8 +1,11 @@
 {
+  "tac.type.ammo.name": "子弹",
+  "tac.type.pistol.name": "手枪",
+  "tac.type.rifle.name": "步枪",
   "tac.gun.ak47.name": "AK-47 突击步枪",
-  "tac.gun.ak47.tooltip": "§7卡拉什尼科夫自动步枪是由前苏联枪械设计师米哈伊尔·季莫费耶维奇·卡拉什尼科夫设计的突击步枪",
+  "tac.gun.ak47.tooltip": "卡拉什尼科夫自动步枪是由前苏联枪械设计师米哈伊尔·季莫费耶维奇·卡拉什尼科夫设计的突击步枪",
   "tac.gun.glock_17.name": "格洛克 17 手枪",
   "tac.gun.ai_awp.name": "精密国际 AWM 狙击步枪",
-  "tac.gun.ai_awp.tooltip": "§7英国精密国际研发的北极作战系列的狙击步枪",
+  "tac.gun.ai_awp.tooltip": "英国精密国际研发的北极作战系列的狙击步枪",
   "tac.ammo.762x39.name": "7.62×39毫米步枪弹"
 }

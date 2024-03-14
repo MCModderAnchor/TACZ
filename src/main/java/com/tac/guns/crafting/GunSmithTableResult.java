@@ -34,18 +34,6 @@ public class GunSmithTableResult {
         return group;
     }
 
-    public boolean isGun() {
-        return GUN.equals(group);
-    }
-
-    public boolean isAmmo() {
-        return AMMO.equals(group);
-    }
-
-    public boolean isAttachment() {
-        return ATTACHMENT.equals(group);
-    }
-
     public static void toNetwork(FriendlyByteBuf buffer, GunSmithTableResult result) {
         buffer.writeItem(result.result);
         buffer.writeUtf(result.group);

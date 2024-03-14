@@ -21,7 +21,7 @@ public class ResultButton extends Button {
     private boolean isSelected = false;
 
     public ResultButton(int pX, int pY, ItemStack stack, Button.OnPress onPress) {
-        super(pX, pY, 83, 16, TextComponent.EMPTY, onPress);
+        super(pX, pY, 94, 16, TextComponent.EMPTY, onPress);
         this.stack = stack;
     }
 
@@ -32,15 +32,15 @@ public class ResultButton extends Button {
         RenderSystem.enableDepthTest();
         if (isSelected) {
             if (isHoveredOrFocused()) {
-                blit(poseStack, this.x - 1, this.y - 1, 31, 164, this.width + 2, this.height + 2, 256, 256);
+                blit(poseStack, this.x - 1, this.y - 1, 52, 229, this.width + 2, this.height + 2, 256, 256);
             } else {
-                blit(poseStack, this.x, this.y, 32, 165, this.width, this.height, 256, 256);
+                blit(poseStack, this.x, this.y, 53, 230, this.width, this.height, 256, 256);
             }
         } else {
             if (isHoveredOrFocused()) {
-                blit(poseStack, this.x - 1, this.y - 1, 31, 143, this.width + 2, this.height + 2, 256, 256);
+                blit(poseStack, this.x - 1, this.y - 1, 52, 211, this.width + 2, this.height + 2, 256, 256);
             } else {
-                blit(poseStack, this.x, this.y, 32, 144, this.width, this.height, 256, 256);
+                blit(poseStack, this.x, this.y, 53, 212, this.width, this.height, 256, 256);
             }
         }
         Minecraft mc = Minecraft.getInstance();
