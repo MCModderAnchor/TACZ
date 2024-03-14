@@ -13,6 +13,7 @@ import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.client.resource.pojo.model.BonesItem;
+import com.tac.guns.util.math.MathUtil;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 
 import javax.annotation.Nonnull;
@@ -29,9 +30,8 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
         if (cameraRendererWrapper != null) {
             if (shouldRender.contains(cameraRendererWrapper.getModelRenderer())) {
                 cameraAnimationObject.cameraBone = indexBones.get(CameraAnimationObject.CAMERA_NODE_NAME);
-            } else {
-                cameraAnimationObject.cameraRenderer = cameraRendererWrapper;
             }
+            cameraAnimationObject.cameraRenderer = cameraRendererWrapper;
         }
     }
 
@@ -230,7 +230,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
 
                 @Override
                 public float[] recover() {
-                    return new float[]{0, 0, 0, 1};
+                    return MathUtil.toQuaternion(-rendererWrapper.getRotateAngleX(), rendererWrapper.getRotateAngleY(), rendererWrapper.getRotateAngleZ());
                 }
 
                 @Override
@@ -407,12 +407,17 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                         但唯独pitch是反的(也就是说唯独pitch是摄像机的旋转数值)。
                         最终需要存入rotationQuaternion的是世界箱体的旋转，因此roll yaw取反，pitch不需要
                         */
-                        toQuaternion(-roll, pitch, -yaw, rotationQuaternion);
+                        toQuaternion(
+                                -roll - cameraRenderer.getRotateAngleX(),
+                                pitch - cameraRenderer.getRotateAngleY(),
+                                -yaw + cameraRenderer.getRotateAngleZ(),
+                                rotationQuaternion
+                        );
                     }
 
                     @Override
                     public float[] recover() {
-                        return new float[]{0, 0, 0, 1f};
+                        return MathUtil.toQuaternion(-cameraRenderer.getRotateAngleX(), cameraRenderer.getRotateAngleY(), cameraRenderer.getRotateAngleZ());
                     }
 
                     @Override
