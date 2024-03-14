@@ -1,7 +1,6 @@
 {
-    // 枪械的显示名称和工具提示，支持本地化
+    // 枪械的显示名称，支持本地化
     "name": "tac.gun.ak47.name",
-    "tooltip": "tac.gun.ak47.tooltip",
     // 枪械的本地数据
     "display": "tac:ak47_display",
     // 枪械参数

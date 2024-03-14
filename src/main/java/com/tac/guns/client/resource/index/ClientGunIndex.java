@@ -23,15 +23,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientGunIndex {
     private String name;
-    @Nullable
-    private String tooltip;
     private BedrockGunModel gunModel;
     private GunAnimationStateMachine animationStateMachine;
     private Map<String, ResourceLocation> sounds;
@@ -51,7 +48,6 @@ public class ClientGunIndex {
         GunDisplay display = checkDisplay(gunIndexPOJO);
         checkData(gunIndexPOJO, index);
         checkName(gunIndexPOJO, index);
-        checkTooltip(gunIndexPOJO, index);
         checkTextureAndModel(display, index);
         checkSlotTexture(display, index);
         checkHUDTexture(display, index);
@@ -73,10 +69,6 @@ public class ClientGunIndex {
         if (StringUtils.isBlank(index.name)) {
             index.name = "custom.tac.error.no_name";
         }
-    }
-
-    private static void checkTooltip(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
-        index.tooltip = gunIndexPOJO.getTooltip();
     }
 
     private static void checkData(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
@@ -195,11 +187,6 @@ public class ClientGunIndex {
 
     public String getName() {
         return name;
-    }
-
-    @Nullable
-    public String getTooltip() {
-        return tooltip;
     }
 
     public BedrockGunModel getGunModel() {

@@ -21,15 +21,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -84,19 +80,6 @@ public class GunItem extends Item implements GunItemDataAccessor {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level pLevel, @Nonnull List<Component> components, @Nonnull TooltipFlag flag) {
-        if (stack.getItem() instanceof IGun iGun) {
-            TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
-                String tooltipKey = gunIndex.getTooltip();
-                if (tooltipKey != null) {
-                    components.add(new TranslatableComponent(tooltipKey));
-                }
-            });
-        }
-    }
-
-    @Override
     public boolean allowAttachment(ItemStack gun, ItemStack attachmentItem) {
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
         IGun iGun = IGun.getIGunOrNull(gun);
@@ -105,11 +88,11 @@ public class GunItem extends Item implements GunItemDataAccessor {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
             return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
                 Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
-                if(map == null) {
+                if (map == null) {
                     return false;
                 }
                 AttachmentPass pass = map.get(type);
-                if(pass == null) {
+                if (pass == null) {
                     return false;
                 }
                 return pass.isAllow(attachmentId);
@@ -125,7 +108,7 @@ public class GunItem extends Item implements GunItemDataAccessor {
         if (iGun != null) {
             return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
                 Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
-                if(map == null) {
+                if (map == null) {
                     return false;
                 }
                 return map.containsKey(type);
