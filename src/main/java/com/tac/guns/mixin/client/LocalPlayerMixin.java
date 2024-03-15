@@ -143,6 +143,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 }
                 // 播放声音、摄像机后坐需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
+                    // 触发 shot，停止播放声音
+                    SoundPlayManager.stopPlayGunSound();
                     GunRecoil recoil = gunData.getRecoil();
                     player.setXRot(player.getXRot() - recoil.getRandomPitch());
                     player.setYRot(player.getYRot() + recoil.getRandomYaw());
@@ -156,6 +158,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     @Override
     public void draw() {
+        // 触发 draw，先停止播放声音
+        SoundPlayManager.stopPlayGunSound();
         LocalPlayer player = (LocalPlayer) (Object) this;
         // 暂定为主手
         ItemStack mainhandItem = player.getMainHandItem();
@@ -231,6 +235,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
                 boolean noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
+                // 触发 reload，停止播放声音
+                SoundPlayManager.stopPlayGunSound();
                 SoundPlayManager.playReloadSound(player, gunIndex, noAmmo);
                 animationStateMachine.setNoAmmo(noAmmo);
                 animationStateMachine.onGunReload();
@@ -254,6 +260,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             boolean noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
+            // 触发 inspect，停止播放声音
+            SoundPlayManager.stopPlayGunSound();
             SoundPlayManager.playInspectSound(player, gunIndex, noAmmo);
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {

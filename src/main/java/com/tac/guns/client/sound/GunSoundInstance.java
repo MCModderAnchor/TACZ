@@ -27,6 +27,10 @@ public class GunSoundInstance extends EntityBoundSoundInstance {
         }
     }
 
+    public void setStop() {
+        this.stop();
+    }
+
     @Nullable
     public SoundBuffer getSoundBuffer() {
         return ClientAssetManager.INSTANCE.getSoundBuffers(this.registryName);

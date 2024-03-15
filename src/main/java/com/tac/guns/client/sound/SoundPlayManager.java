@@ -21,9 +21,22 @@ public class SoundPlayManager {
      */
     private static boolean DRY_SOUND_TRACK = true;
 
-    public static void playClientSound(LivingEntity entity, ResourceLocation name, float volume, float pitch) {
+    /**
+     * 临时缓存，用于停止播放的
+     */
+    private static GunSoundInstance tmpSoundInstance = null;
+
+    public static GunSoundInstance playClientSound(LivingEntity entity, ResourceLocation name, float volume, float pitch) {
         Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getSoundManager().play(new GunSoundInstance(ModSounds.GUN.get(), SoundSource.PLAYERS, volume, pitch, entity, name));
+        GunSoundInstance instance = new GunSoundInstance(ModSounds.GUN.get(), SoundSource.PLAYERS, volume, pitch, entity, name);
+        minecraft.getSoundManager().play(instance);
+        return instance;
+    }
+
+    public static void stopPlayGunSound() {
+        if (tmpSoundInstance != null) {
+            tmpSoundInstance.setStop();
+        }
     }
 
     public static void playShootSound(LivingEntity entity, ClientGunIndex gunIndex) {
@@ -46,22 +59,22 @@ public class SoundPlayManager {
 
     public static void playReloadSound(LivingEntity entity, ClientGunIndex gunIndex, boolean noAmmo) {
         if (noAmmo) {
-            playClientSound(entity, gunIndex.getSounds(RELOAD_EMPTY_SOUND), 1.0f, 1.0f);
+            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(RELOAD_EMPTY_SOUND), 1.0f, 1.0f);
         } else {
-            playClientSound(entity, gunIndex.getSounds(RELOAD_TACTICAL_SOUND), 1.0f, 1.0f);
+            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(RELOAD_TACTICAL_SOUND), 1.0f, 1.0f);
         }
     }
 
     public static void playInspectSound(LivingEntity entity, ClientGunIndex gunIndex, boolean noAmmo) {
         if (noAmmo) {
-            playClientSound(entity, gunIndex.getSounds(INSPECT_EMPTY_SOUND), 1.0f, 1.0f);
+            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(INSPECT_EMPTY_SOUND), 1.0f, 1.0f);
         } else {
-            playClientSound(entity, gunIndex.getSounds(INSPECT_SOUND), 1.0f, 1.0f);
+            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(INSPECT_SOUND), 1.0f, 1.0f);
         }
     }
 
     public static void playDrawSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        playClientSound(entity, gunIndex.getSounds(DRAW_SOUND), 1.0f, 1.0f);
+        tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(DRAW_SOUND), 1.0f, 1.0f);
     }
 
     public static void playMessageSound(ServerMessageSound message) {
