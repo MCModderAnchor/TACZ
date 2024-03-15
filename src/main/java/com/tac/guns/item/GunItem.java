@@ -6,6 +6,7 @@ import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientGunIndex;
+import com.tac.guns.client.tab.CustomTab;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.builder.GunItemBuilder;
 import com.tac.guns.item.nbt.GunItemDataAccessor;
@@ -32,7 +33,7 @@ import java.util.function.Consumer;
 
 public class GunItem extends Item implements GunItemDataAccessor {
     public GunItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.GUN_TAB));
+        super(new Properties().stacksTo(1).tab(ModItems.OTHER_TAB));
     }
 
     @Override
@@ -50,15 +51,19 @@ public class GunItem extends Item implements GunItemDataAccessor {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
-        if (this.allowdedIn(modeTab)) {
+        if (modeTab instanceof CustomTab tab) {
+            String key = tab.getKey();
             TimelessAPI.getAllClientGunIndex().forEach(entry -> {
-                GunData gunData = entry.getValue().getGunData();
-                ItemStack itemStack = GunItemBuilder.create()
-                        .setId(entry.getKey())
-                        .setFireMode(gunData.getFireModeSet().get(0))
-                        .setAmmoCount(gunData.getAmmoAmount())
-                        .build();
-                stacks.add(itemStack);
+                ClientGunIndex index = entry.getValue();
+                if (key.equals(index.getType())) {
+                    GunData gunData = index.getGunData();
+                    ItemStack itemStack = GunItemBuilder.create()
+                            .setId(entry.getKey())
+                            .setFireMode(gunData.getFireModeSet().get(0))
+                            .setAmmoCount(gunData.getAmmoAmount())
+                            .build();
+                    stacks.add(itemStack);
+                }
             });
         }
     }

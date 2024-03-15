@@ -10,7 +10,9 @@ import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.loader.*;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
+import com.tac.guns.client.resource.pojo.CustomTabPOJO;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
+import com.tac.guns.client.resource.serialize.ItemStackSerializer;
 import com.tac.guns.client.resource.serialize.Vector3fSerializer;
 import com.tac.guns.resource.pojo.AmmoIndexPOJO;
 import com.tac.guns.resource.pojo.AttachmentIndexPOJO;
@@ -18,6 +20,7 @@ import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.util.GetJarResources;
 import com.tac.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.Marker;
@@ -46,6 +49,7 @@ public class ClientGunPackLoader {
             .registerTypeAdapter(CubesItem.class, new CubesItem.Deserializer())
             .registerTypeAdapter(Vector3f.class, new Vector3fSerializer())
             .registerTypeAdapter(CommonTransformObject.class, new CommonTransformObject.Serializer())
+            .registerTypeAdapter(ItemStack.class, new ItemStackSerializer())
             .create();
 
     private static final Marker MARKER = MarkerManager.getMarker("ClientGunPackLoader");
@@ -98,7 +102,7 @@ public class ClientGunPackLoader {
         return AMMO_INDEX.entrySet();
     }
 
-    public static Set<Map.Entry<ResourceLocation, ClientAttachmentIndex>> getAllAttachments(){
+    public static Set<Map.Entry<ResourceLocation, ClientAttachmentIndex>> getAllAttachments() {
         return ATTACHMENT_INDEX.entrySet();
     }
 
@@ -177,6 +181,7 @@ public class ClientGunPackLoader {
                 TextureLoader.load(root);
                 SoundLoader.load(root);
                 LanguageLoader.load(root);
+                CustomTabLoader.load(root);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -207,11 +212,11 @@ public class ClientGunPackLoader {
                 if (AmmoDisplayLoader.load(zipFile, path)) {
                     continue;
                 }
-                if (AttachmentDisplayLoader.load(zipFile, path)){
+                if (AttachmentDisplayLoader.load(zipFile, path)) {
                     continue;
                 }
                 // 加载全部的 skin 文件
-                if (AttachmentSkinLoader.load(zipFile, path)){
+                if (AttachmentSkinLoader.load(zipFile, path)) {
                     continue;
                 }
                 // 加载全部的 animation 文件
@@ -231,7 +236,11 @@ public class ClientGunPackLoader {
                     continue;
                 }
                 // 加载语言文件
-                LanguageLoader.load(zipFile, path);
+                if (LanguageLoader.load(zipFile, path)) {
+                    continue;
+                }
+                // 加载创造模式标签页
+                CustomTabLoader.load(zipFile, path);
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();

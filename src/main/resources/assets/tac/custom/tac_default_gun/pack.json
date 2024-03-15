@@ -1,0 +1,17 @@
+{
+  // 版本
+  "version": "1",
+  // 名称，支持本地化
+  "name": "pack.tac.tac_default_gun.name",
+  // 描述文本，支持本地化
+  "desc": "pack.tac.tac_default_gun.desc",
+  // 许可证
+  "license": "CC BY-NC-ND 4.0",
+  // 作者
+  "author": [
+    "基喵",
+    "空格"
+  ],
+  // 日期：ISO 8601 标准，即 YYYY-MM-DD
+  "date": "1919-08-10"
+}

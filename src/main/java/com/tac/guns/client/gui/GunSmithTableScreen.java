@@ -110,6 +110,13 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         }
     }
 
+    public void updateIngredientCount() {
+        if (this.selectedRecipe != null) {
+            this.getPlayerIngredientCount(selectedRecipe);
+        }
+        this.init();
+    }
+
     @Override
     protected void init() {
         super.init();
@@ -124,7 +131,21 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
     private void addCraftButton() {
         this.addRenderableWidget(new ImageButton(leftPos + 289, topPos + 162, 48, 18, 138, 164, 18, TEXTURE, b -> {
-            if (this.selectedRecipe != null) {
+            if (this.selectedRecipe != null && playerIngredientCount != null) {
+                // 检查是否能合成，不能就不发包
+                List<GunSmithTableIngredient> inputs = selectedRecipe.getInputs();
+                int size = inputs.size();
+                for (int i = 0; i < size; i++) {
+                    if (i >= playerIngredientCount.size()) {
+                        return;
+                    }
+                    int hasCount = playerIngredientCount.get(i);
+                    int needCount = inputs.get(i).getCount();
+                    // 拥有数量小于需求数量，不发包
+                    if (hasCount < needCount) {
+                        return;
+                    }
+                }
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessageCraft(this.selectedRecipe.getId(), this.menu.containerId));
             }
         }));
