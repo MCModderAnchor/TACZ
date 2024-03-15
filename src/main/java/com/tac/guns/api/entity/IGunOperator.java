@@ -73,4 +73,10 @@ public interface IGunOperator {
      * @param isAim 是否瞄准
      */
     void aim(boolean isAim);
+
+    void setKnockbackStrength(double strength);
+
+    void resetKnockbackStrength();
+
+    double getKnockbackStrength();
 }
