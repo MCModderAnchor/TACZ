@@ -2,6 +2,8 @@ package com.tac.guns.inventory;
 
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.crafting.GunSmithTableIngredient;
+import com.tac.guns.network.NetworkHandler;
+import com.tac.guns.network.message.ServerMessageCraft;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -66,6 +68,7 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
             ItemHandlerHelper.giveItemToPlayer(player, recipe.getResultItem().copy());
             // 更新，否则客户端显示不正确
             player.inventoryMenu.broadcastChanges();
+            NetworkHandler.sendToClientPlayer(new ServerMessageCraft(this.containerId), player);
         }));
     }
 }
