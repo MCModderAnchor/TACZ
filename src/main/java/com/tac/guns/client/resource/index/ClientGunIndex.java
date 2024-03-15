@@ -38,6 +38,7 @@ public class ClientGunIndex {
     private ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
     private ResourceLocation hudTexture;
+    private String type;
 
     private ClientGunIndex() {
     }
@@ -62,6 +63,10 @@ public class ClientGunIndex {
         if (gunIndexPOJO == null) {
             throw new IllegalArgumentException("index object file is empty");
         }
+        if (StringUtils.isBlank(gunIndexPOJO.getType())) {
+            throw new IllegalArgumentException("index object missing type field");
+        }
+        index.type = gunIndexPOJO.getType();
     }
 
     private static void checkName(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
@@ -183,6 +188,10 @@ public class ClientGunIndex {
 
     private static void checkHUDTexture(GunDisplay display, ClientGunIndex index) {
         index.hudTexture = Objects.requireNonNullElseGet(display.getHudTextureLocation(), MissingTextureAtlasSprite::getLocation);
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getName() {

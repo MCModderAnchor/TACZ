@@ -5,10 +5,11 @@ import com.tac.guns.item.AmmoItem;
 import com.tac.guns.item.AttachmentItem;
 import com.tac.guns.item.GunItem;
 import com.tac.guns.item.GunSmithTableItem;
+import com.tac.guns.item.builder.AmmoItemBuilder;
+import com.tac.guns.item.builder.AttachmentItemBuilder;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -17,22 +18,22 @@ import javax.annotation.Nonnull;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GunMod.MOD_ID);
-    public static CreativeModeTab GUN_TAB = new CreativeModeTab("tab.tac.gun") {
+    public static CreativeModeTab OTHER_TAB = new CreativeModeTab("tab.tac.other") {
         @Override
         public @Nonnull ItemStack makeIcon() {
-            return Items.ACACIA_BOAT.getDefaultInstance();
+            return ModItems.GUN_SMITH_TABLE.get().getDefaultInstance();
         }
     };
-    public static CreativeModeTab AMMO_TAB = new CreativeModeTab("tab.tac.gun") {
+    public static CreativeModeTab AMMO_TAB = new CreativeModeTab("tab.tac.ammo") {
         @Override
         public @Nonnull ItemStack makeIcon() {
-            return Items.ACACIA_DOOR.getDefaultInstance();
+            return AmmoItemBuilder.create().build();
         }
     };
     public static CreativeModeTab ATTACHMENT_TAB = new CreativeModeTab("tab.tac.attachment") {
         @Override
         public @Nonnull ItemStack makeIcon() {
-            return Items.ACACIA_LEAVES.getDefaultInstance();
+            return AttachmentItemBuilder.create().build();
         }
     };
 

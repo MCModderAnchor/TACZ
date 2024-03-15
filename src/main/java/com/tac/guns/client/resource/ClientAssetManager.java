@@ -5,6 +5,7 @@ import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.resource.pojo.CustomTabPOJO;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tac.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tac.guns.client.resource.pojo.display.gun.GunDisplay;
@@ -24,6 +25,10 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public enum ClientAssetManager {
     INSTANCE;
+    /**
+     * 创造模式标签页
+     */
+    private final Map<String, CustomTabPOJO> customTabs = Maps.newHashMap();
     /**
      * 储存 display 数据
      */
@@ -50,10 +55,14 @@ public enum ClientAssetManager {
      * 存储语言
      */
     private final Map<String, Map<String, String>> languages = Maps.newHashMap();
-    
+
     private final Map<ResourceLocation, BedrockAttachmentModel> tempAttachmentModelMap = Maps.newHashMap();
-    
+
     private final Map<ResourceLocation, BedrockGunModel> tempGunModelMap = Maps.newHashMap();
+
+    public void putAllCustomTab(Map<String, CustomTabPOJO> tabs) {
+        customTabs.putAll(tabs);
+    }
 
     public void putGunDisplay(ResourceLocation registryName, GunDisplay display) {
         gunDisplays.put(registryName, display);
@@ -63,13 +72,13 @@ public enum ClientAssetManager {
         ammoDisplays.put(registryName, display);
     }
 
-    public void putAttachmentDisplay(ResourceLocation registryName, AttachmentDisplay display){
+    public void putAttachmentDisplay(ResourceLocation registryName, AttachmentDisplay display) {
         attachmentDisplays.put(registryName, display);
     }
 
-    public void putAttachmentSkin(ResourceLocation registryName, AttachmentSkin skin){
-        attachmentSkins.compute(skin.getParent(), (name, map)->{
-            if(map == null){
+    public void putAttachmentSkin(ResourceLocation registryName, AttachmentSkin skin) {
+        attachmentSkins.compute(skin.getParent(), (name, map) -> {
+            if (map == null) {
                 map = Maps.newHashMap();
             }
             map.put(registryName, skin);
@@ -102,11 +111,11 @@ public enum ClientAssetManager {
     }
 
     @Nullable
-    public AttachmentDisplay getAttachmentDisplay(ResourceLocation registryName){
+    public AttachmentDisplay getAttachmentDisplay(ResourceLocation registryName) {
         return attachmentDisplays.get(registryName);
     }
 
-    public Map<ResourceLocation, AttachmentSkin> getAttachmentSkins(ResourceLocation registryName){
+    public Map<ResourceLocation, AttachmentSkin> getAttachmentSkins(ResourceLocation registryName) {
         return attachmentSkins.get(registryName);
     }
 
@@ -126,21 +135,25 @@ public enum ClientAssetManager {
         return languages.get(region);
     }
 
+    public Map<String, CustomTabPOJO> getAllCustomTabs() {
+        return customTabs;
+    }
+
     /**
      * @return 如果模型缓存中没有对应模型、模型 POJO 缓存也没有对应的 POJO，则返回 null。
      */
     @Nullable
-    public BedrockAttachmentModel getOrLoadAttachmentModel(ResourceLocation modelLocation){
+    public BedrockAttachmentModel getOrLoadAttachmentModel(ResourceLocation modelLocation) {
         BedrockAttachmentModel model = tempAttachmentModelMap.get(modelLocation);
-        if(model != null){
+        if (model != null) {
             return model;
         }
         BedrockModelPOJO modelPOJO = getModels(modelLocation);
-        if(modelPOJO == null){
+        if (modelPOJO == null) {
             return null;
         }
         BedrockAttachmentModel attachmentModel = getAttachmentModel(modelPOJO);
-        if(attachmentModel == null) {
+        if (attachmentModel == null) {
             return null;
         }
         tempAttachmentModelMap.put(modelLocation, attachmentModel);

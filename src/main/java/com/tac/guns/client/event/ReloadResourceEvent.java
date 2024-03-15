@@ -2,6 +2,7 @@ package com.tac.guns.client.event;
 
 import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.ClientGunPackLoader;
+import com.tac.guns.client.tab.CustomTabManager;
 import com.tac.guns.resource.CommonGunPackLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -34,8 +35,10 @@ public class ReloadResourceEvent {
             // 先加载服务端，让其校验数据
             CommonGunPackLoader.reloadIndex();
             ClientGunPackLoader.reloadIndex();
-            // 合成表最后
+            // 合成表
             CommonGunPackLoader.reloadRecipes();
+            // 创造模式标签页
+            CustomTabManager.initAndReload();
         }
         watch.stop();
         GunMod.LOGGER.info("Model loading time: {} ms", watch.getTime(TimeUnit.MICROSECONDS) / 1000.0);
