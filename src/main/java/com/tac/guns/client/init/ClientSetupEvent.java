@@ -1,6 +1,7 @@
 package com.tac.guns.client.init;
 
 import com.tac.guns.GunMod;
+import com.tac.guns.client.animation.thrid.ThirdPersonManager;
 import com.tac.guns.client.gui.GunHudOverlay;
 import com.tac.guns.client.input.*;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,5 +29,8 @@ public class ClientSetupEvent {
         event.enqueueWork(() -> {
             OverlayRegistry.registerOverlayTop("TAC HUD Overlay", GunHudOverlay::render);
         });
+
+        // 注册自己的的硬编码第三人称动画
+        event.enqueueWork(ThirdPersonManager::registerInner);
     }
 }

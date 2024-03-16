@@ -10,6 +10,7 @@
   "client": [
     "client.FirstPersonRendererMixin",
     "client.GameRendererMixin",
+    "client.HumanoidModelMixin",
     "client.LanguageMixin",
     "client.LocalPlayerMixin",
     "client.PlayerModelMixin"

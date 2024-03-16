@@ -18,6 +18,9 @@ public class GunDisplay {
     @SerializedName("slot")
     private ResourceLocation slotTextureLocation;
     @Nullable
+    @SerializedName("third_person_animation")
+    private String thirdPersonAnimation;
+    @Nullable
     @SerializedName("animation")
     private ResourceLocation animationLocation;
     @Nullable
@@ -54,6 +57,11 @@ public class GunDisplay {
     @Nullable
     public ResourceLocation getAnimationLocation() {
         return animationLocation;
+    }
+
+    @Nullable
+    public String getThirdPersonAnimation() {
+        return thirdPersonAnimation;
     }
 
     @Nullable

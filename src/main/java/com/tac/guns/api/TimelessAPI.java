@@ -1,5 +1,7 @@
 package com.tac.guns.api;
 
+import com.tac.guns.api.client.animation.IThirdPersonAnimation;
+import com.tac.guns.client.animation.thrid.ThirdPersonManager;
 import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientAmmoIndex;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
@@ -79,5 +81,9 @@ public final class TimelessAPI {
 
     public static Map<ResourceLocation, GunSmithTableRecipe> getAllRecipes() {
         return CommonAssetManager.INSTANCE.getAllRecipes();
+    }
+
+    public static void registerThirdPersonAnimation(String name, IThirdPersonAnimation animation) {
+        ThirdPersonManager.register(name, animation);
     }
 }

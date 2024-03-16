@@ -29,6 +29,7 @@ import java.util.Objects;
 @OnlyIn(Dist.CLIENT)
 public class ClientGunIndex {
     private String name;
+    private String thirdPersonAnimation = "empty";
     private BedrockGunModel gunModel;
     private GunAnimationStateMachine animationStateMachine;
     private Map<String, ResourceLocation> sounds;
@@ -146,6 +147,9 @@ public class ClientGunIndex {
         AnimationController controller = Animations.createControllerFromGltf(animations, index.gunModel);
         // 将动画控制器包装起来
         index.animationStateMachine = new GunAnimationStateMachine(controller);
+        if (StringUtils.isNoneBlank(display.getThirdPersonAnimation())) {
+            index.thirdPersonAnimation = display.getThirdPersonAnimation();
+        }
     }
 
     private static void checkSounds(GunDisplay display, ClientGunIndex index) {
@@ -232,5 +236,9 @@ public class ClientGunIndex {
 
     public AnimationInfluenceCoefficient getAnimationInfluenceCoefficient() {
         return animationInfluenceCoefficient;
+    }
+
+    public String getThirdPersonAnimation() {
+        return thirdPersonAnimation;
     }
 }
