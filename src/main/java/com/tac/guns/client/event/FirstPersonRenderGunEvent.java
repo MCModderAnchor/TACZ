@@ -9,7 +9,6 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
-import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.gui.GunRefitScreen;
@@ -18,11 +17,11 @@ import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
+import com.tac.guns.util.math.Easing;
 import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -32,12 +31,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
@@ -49,7 +46,7 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.Transform
 public class FirstPersonRenderGunEvent {
     // 用于生成瞄准动作的运动曲线，使动作看起来更平滑
     private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(0.75f, 1.2f, 0.5f, 0);
-    // 用于打开改装时枪械运动的平滑
+    // 用于打开改装界面时枪械运动的平滑
     private static final SecondOrderDynamics REFIT_OPENING_DYNAMICS = new SecondOrderDynamics(1f, 1.2f, 0.5f, 0);
 
     // 用于切枪逻辑
@@ -141,10 +138,8 @@ public class FirstPersonRenderGunEvent {
         float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(GunRefitScreen.getOpeningProgress());
         // 配合运动曲线，计算瞄准进度
         float aimingProgress = AIMING_DYNAMICS.update(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
-        // 应用定位组的变换（位移和旋转，不包括缩放）
-        applyFirstPersonPositioningTransform(poseStack, model, aimingProgress, 1 - refitScreenOpeningProgress);
-        // 应用枪械改装视角定位组的变换
-        applyRefitScreenTransform(poseStack, model, refitScreenOpeningProgress);
+        // 应用各种摄像机定位组的变换（默认持枪、瞄准、改装界面等）
+        applyFirstPersonPositioningTransform(poseStack, model, aimingProgress, refitScreenOpeningProgress);
         // 应用动画约束变换
         CommonTransformObject ica = gunIndex.getAnimationInfluenceCoefficient().getIronView();
         applyAnimationConstraintTransform(poseStack, model.getConstraintPath(), aimingProgress * (1 - refitScreenOpeningProgress), ica);
@@ -153,39 +148,59 @@ public class FirstPersonRenderGunEvent {
     /**
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。会在几个摄像机定位之间插值。
      */
-    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, float aimingProgress, float weight) {
+    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, float aimingProgress,
+                                                             float refitScreenOpeningProgress) {
+        // 应用瞄准定位
         // TODO 判断是否安装瞄具，
-        if (true) {
-            applyPositioningNodeTransform(model.getIronSightPath(), poseStack, aimingProgress * weight);
-        } else {
-            applyPositioningNodeTransform(model.getScopePosPath(), poseStack, aimingProgress * weight);
+        List<BedrockPart> idleNodePath = model.getIdleSightPath();
+        List<BedrockPart> aimingNodePath = model.getIronSightPath();
+        Matrix4f transformMatrix = getPositioningNodeInverse(idleNodePath);
+        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(aimingNodePath), transformMatrix, aimingProgress);
+        // 应用改装界面开启时的定位插值
+        float refitTransformProgress = (float) Easing.easeOutCubic(GunRefitScreen.getTransformProgress());
+        AttachmentType oldType = GunRefitScreen.getOldTransformType();
+        AttachmentType currentType = GunRefitScreen.getCurrentTransformType();
+        // FIXME 这段测试用的，删掉
+        if(oldType == AttachmentType.GRIP){
+            oldType = AttachmentType.NONE;
         }
-        applyPositioningNodeTransform(model.getIdleSightPath(), poseStack, (1 - aimingProgress) * weight);
+        if(currentType == AttachmentType.GRIP){
+            currentType = AttachmentType.NONE;
+        }
+        // END_FIXME
+        List<BedrockPart> fromNode = model.getRefitAttachmentViewPath(oldType);
+        List<BedrockPart> toNode = model.getRefitAttachmentViewPath(currentType);
+        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(fromNode), transformMatrix, refitScreenOpeningProgress);
+        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(toNode), transformMatrix, refitScreenOpeningProgress * refitTransformProgress);
+        // 应用变换到 PoseStack
+        poseStack.translate(0, 1.5f, 0);
+        poseStack.mulPoseMatrix(transformMatrix);
+        poseStack.translate(0, -1.5f, 0);
     }
 
     /**
-     * 应用摄像机定位组的变换。这个方法是为客户端定制的，它能指定变换的权重（用于插值），也能削弱第一人称动画的效果。
+     * 获取摄像机定位组的反相矩阵
      */
-    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, float weight) {
-        if (nodePath == null) {
-            return;
-        }
-        // 应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
-        poseStack.translate(0, 1.5f, 0);
-        for (int i = nodePath.size() - 1; i >= 0; i--) {
-            BedrockPart part = nodePath.get(i);
-            // 应用反向的旋转
-            poseStack.mulPose(Vector3f.XN.rotation(part.xRot * weight));
-            poseStack.mulPose(Vector3f.YN.rotation(part.yRot * weight));
-            poseStack.mulPose(Vector3f.ZN.rotation(part.zRot * weight));
-            // 应用反向的位移
-            if (part.getParent() != null) {
-                poseStack.translate(-part.x / 16.0F * weight, -part.y / 16.0F * weight, -part.z / 16.0F * weight);
-            } else {
-                poseStack.translate(-part.x / 16.0F * weight, (1.5F - part.y / 16.0F) * weight, -part.z / 16.0F * weight);
+    @Nonnull
+    private static Matrix4f getPositioningNodeInverse(List<BedrockPart> nodePath){
+        Matrix4f matrix4f = new Matrix4f();
+        matrix4f.setIdentity();
+        if(nodePath != null) {
+            for (int i = nodePath.size() - 1; i >= 0; i--) {
+                BedrockPart part = nodePath.get(i);
+                // 计算反向的旋转
+                matrix4f.multiply(Vector3f.XN.rotation(part.xRot));
+                matrix4f.multiply(Vector3f.YN.rotation(part.yRot));
+                matrix4f.multiply(Vector3f.ZN.rotation(part.zRot));
+                // 计算反向的位移
+                if (part.getParent() != null) {
+                    matrix4f.multiplyWithTranslation(-part.x / 16.0F, -part.y / 16.0F, -part.z / 16.0F);
+                } else {
+                    matrix4f.multiplyWithTranslation(-part.x / 16.0F, (1.5F - part.y / 16.0F), -part.z / 16.0F);
+                }
             }
         }
-        poseStack.translate(0, -1.5f, 0);
+        return matrix4f;
     }
 
     /**
@@ -281,10 +296,6 @@ public class FirstPersonRenderGunEvent {
         poseStack.last().pose().translate(new Vector3f(
                 -inverseTranslation.x() * weight, -inverseTranslation.y() * weight, inverseTranslation.z() * weight
         ));
-    }
-
-    public static void applyRefitScreenTransform(PoseStack poseStack, BedrockGunModel model, float weight){
-        applyPositioningNodeTransform(model.getRefitViewPath(), poseStack, weight);
     }
 
     /**

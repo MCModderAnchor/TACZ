@@ -331,7 +331,7 @@ public class BedrockModel implements IModelRenderer {
         delegateRenderers = new ArrayList<>();
     }
 
-    protected List<BedrockPart> getPath(ModelRendererWrapper rendererWrapper) {
+    protected List<BedrockPart> getPath(@Nullable ModelRendererWrapper rendererWrapper) {
         if (rendererWrapper == null) {
             return null;
         }
