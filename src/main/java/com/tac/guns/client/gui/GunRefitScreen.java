@@ -1,29 +1,29 @@
 package com.tac.guns.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.client.gui.components.refit.RefitSlotButton;
 import com.tac.guns.inventory.GunRefitMenu;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
-    private int selectedSlot = -1;
+    private static int selectedSlot = -1;
     private static float refitScreenTransformProgress = 1;
     private static long refitScreenTransformTimestamp = -1;
     private static AttachmentType oldTransformType = AttachmentType.NONE;
@@ -34,8 +34,11 @@ public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
 
     public GunRefitScreen(GunRefitMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
-        refitScreenTransformTimestamp = System.currentTimeMillis();
+        selectedSlot = -1;
         refitScreenTransformProgress = 1;
+        refitScreenTransformTimestamp = System.currentTimeMillis();
+        oldTransformType = AttachmentType.NONE;
+        currentTransformType = AttachmentType.NONE;
     }
 
     @Override
@@ -44,23 +47,30 @@ public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
         this.imageHeight = height;
         super.init();
         this.clearWidgets();
-        // 改装窗口完全打开才渲染组件
-        if (refitScreenOpeningProgress != 1) {
-            return;
-        }
-        int rightMargin = 8;
         int i = 0;
+        // 添加配件槽位
         for(AttachmentType type : AttachmentType.values()){
             if (type == AttachmentType.NONE) {
                 continue;
             }
-            rightMargin += 18;
-            int index = i;
-            i++;
-            addRenderableWidget(new RefitSlotButton(leftPos + width - rightMargin, topPos + 8, ItemStack.EMPTY, type, b -> {
-                sendButtonClick(index);
-            }));
+            addRenderableWidget(getRefitSlotButton(type, i++));
         }
+    }
+
+    @NotNull
+    private RefitSlotButton getRefitSlotButton(AttachmentType type, int index) {
+        RefitSlotButton button = new RefitSlotButton(leftPos + width - 18 * (index + 1), topPos + 8, ItemStack.EMPTY, type, b -> {
+            AttachmentType transformType = getTransformTypeFromIndex(index);
+            if (changeRefitScreenView(transformType)) {
+                sendButtonClick(index);
+                selectedSlot = index;
+                init();
+            }
+        });
+        if (selectedSlot == index) {
+            button.setSelected(true);
+        }
+        return button;
     }
 
     @Override
@@ -75,13 +85,12 @@ public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
         MultiPlayerGameMode gameMode = this.getMinecraft().gameMode;
         if (gameMode != null) {
             gameMode.handleInventoryButtonClick(this.menu.containerId, buttonId);
-            selectedSlot = buttonId;
         }
     }
 
     @SubscribeEvent
     public static void tickInterpolation(TickEvent.RenderTickEvent event){
-        // tick refit screen opening progress
+        // tick opening progress
         if (refitScreenOpeningTimestamp == -1) {
             refitScreenOpeningTimestamp = System.currentTimeMillis();
         }
@@ -97,9 +106,48 @@ public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
             }
         }
         refitScreenOpeningTimestamp = System.currentTimeMillis();
+        // tick transform progress
+        if (refitScreenTransformTimestamp == -1) {
+            refitScreenTransformTimestamp = System.currentTimeMillis();
+        }
+        refitScreenTransformProgress += (System.currentTimeMillis() - refitScreenTransformTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
+        if (refitScreenTransformProgress > 1) {
+            refitScreenTransformProgress = 1;
+        }
+        refitScreenTransformTimestamp = System.currentTimeMillis();
     }
 
-    public static float getRefitScreenOpeningProgress(){
+    public static float getOpeningProgress(){
         return refitScreenOpeningProgress;
+    }
+
+    public static AttachmentType getOldTransformType(){
+        return oldTransformType;
+    }
+
+    public static AttachmentType getCurrentTransformType(){
+        return currentTransformType;
+    }
+
+    public static float getTransformProgress(){
+        return refitScreenTransformProgress;
+    }
+
+    private static AttachmentType getTransformTypeFromIndex(int index){
+        if (index < AttachmentType.NONE.ordinal()) {
+            return AttachmentType.values()[index];
+        }
+        return AttachmentType.values()[index + 1];
+    }
+
+    private static boolean changeRefitScreenView(AttachmentType attachmentType){
+        if (refitScreenTransformProgress != 1 || refitScreenOpeningProgress != 1) {
+            return false;
+        }
+        oldTransformType = currentTransformType;
+        currentTransformType = attachmentType;
+        refitScreenTransformProgress = 0;
+        refitScreenTransformTimestamp = System.currentTimeMillis();
+        return true;
     }
 }

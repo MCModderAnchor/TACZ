@@ -87,7 +87,7 @@ public interface GunItemDataAccessor extends IGun {
             return ItemStack.EMPTY;
         }
         CompoundTag nbt = gun.getOrCreateTag();
-        String key = GUN_ATTACHMENT_BASE + type;
+        String key = GUN_ATTACHMENT_BASE + type.name();
         if (nbt.contains(key, Tag.TAG_COMPOUND)) {
             return ItemStack.of(nbt.getCompound(key));
         }
@@ -104,7 +104,7 @@ public interface GunItemDataAccessor extends IGun {
             return;
         }
         CompoundTag nbt = gun.getOrCreateTag();
-        String key = GUN_ATTACHMENT_BASE + iAttachment.getType(attachment);
+        String key = GUN_ATTACHMENT_BASE + iAttachment.getType(attachment).name();
         CompoundTag attachmentTag = new CompoundTag();
         attachment.save(attachmentTag);
         nbt.put(key, attachmentTag);
