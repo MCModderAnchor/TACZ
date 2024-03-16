@@ -25,10 +25,7 @@ public class ReloadKey {
 
     @SubscribeEvent
     public static void onReloadPress(InputEvent.KeyInputEvent event) {
-        if (event.getAction() != GLFW.GLFW_PRESS) {
-            return;
-        }
-        if (RELOAD_KEY.isDown()) {
+        if (event.getAction() == GLFW.GLFW_PRESS && RELOAD_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
                 return;

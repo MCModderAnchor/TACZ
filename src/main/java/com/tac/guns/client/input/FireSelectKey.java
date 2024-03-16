@@ -25,7 +25,7 @@ public class FireSelectKey {
 
     @SubscribeEvent
     public static void onFireSelectPress(InputEvent.KeyInputEvent event) {
-        if (FIRE_SELECT_KEY.isDown()) {
+        if (event.getAction() == GLFW.GLFW_PRESS && FIRE_SELECT_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
                 return;

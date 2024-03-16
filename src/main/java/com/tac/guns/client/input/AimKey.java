@@ -10,6 +10,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
@@ -38,6 +39,21 @@ public class AimKey {
                     IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void cancelAim(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
+        if (!(player instanceof IClientPlayerGunOperator operator)) {
+            return;
+        }
+        if (operator.isAim() && !isInGame()) {
+            IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
         }
     }
 

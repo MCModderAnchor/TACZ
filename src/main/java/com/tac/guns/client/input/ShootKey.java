@@ -47,11 +47,12 @@ public class ShootKey {
 
     @SubscribeEvent
     public static void semiShoot(InputEvent.MouseInputEvent event) {
-        // 松开鼠标，重置 DryFire 状态
-        if (event.getAction() == GLFW.GLFW_RELEASE) {
-            SoundPlayManager.resetDryFireSound();
-        }
-        if (isInGame() && SHOOT_KEY.isDown()) {
+        if (isInGame() && SHOOT_KEY.matchesMouse(event.getButton())) {
+            // 松开鼠标，重置 DryFire 状态
+            if (event.getAction() == GLFW.GLFW_RELEASE) {
+                SoundPlayManager.resetDryFireSound();
+                return;
+            }
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
             if (player == null) {
