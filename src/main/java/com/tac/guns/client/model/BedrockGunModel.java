@@ -206,11 +206,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 };
             });
         }
-        for (ModelRendererWrapper rendererWrapper : modelMap.values()) {
-            if (rendererWrapper.getModelRenderer().name != null && rendererWrapper.getModelRenderer().name.endsWith("_illuminated")) {
-                rendererWrapper.getModelRenderer().illuminated = true;
-            }
-        }
     }
 
     @Nullable

@@ -3,5 +3,13 @@
   "model": "tac:ammo/762x39",
   // 渲染模型使用的材质
   "texture": "tac:ammo/uv/762x39",
-  "slot": "tac:ammo/slot/762x39"
+  // GUI 格子中显示
+  "slot": "tac:ammo/slot/762x39",
+  // 子弹实体
+  "entity": {
+    // 模型
+    "model": "tac:ammo_entity/rpg_rocket",
+    // 材质
+    "texture": "tac:ammo_entity/rpg_rocket"
+  }
 }

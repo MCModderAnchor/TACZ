@@ -14,6 +14,7 @@ import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.client.resource.pojo.model.BonesItem;
 import com.tac.guns.util.math.MathUtil;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 
 import javax.annotation.Nonnull;
@@ -301,6 +302,12 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
 
         @Override
         public void render(PoseStack poseStack, ItemTransforms.TransformType transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
+            int cubePackedLight = light;
+            if (illuminated) {
+                // 最大亮度
+                cubePackedLight = LightTexture.pack(15, 15);
+            }
+
             poseStack.pushPose();
             poseStack.translate(this.offsetX, this.offsetY, this.offsetZ);
             this.translateAndRotateAndScale(poseStack);
@@ -308,20 +315,20 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
             if (functionalRenderer != null) {
                 @Nullable IModelRenderer renderer = functionalRenderer.apply(this);
                 if (renderer != null) {
-                    renderer.render(poseStack, transformType, consumer, light, overlay);
+                    renderer.render(poseStack, transformType, consumer, cubePackedLight, overlay);
                 } else {
                     if (this.visible) {
-                        super.compile(poseStack.last(), consumer, light, overlay, red, green, blue, alpha);
+                        super.compile(poseStack.last(), consumer, cubePackedLight, overlay, red, green, blue, alpha);
                         for (BedrockPart part : this.children) {
-                            part.render(poseStack, transformType, consumer, light, overlay, red, green, blue, alpha);
+                            part.render(poseStack, transformType, consumer, cubePackedLight, overlay, red, green, blue, alpha);
                         }
                     }
                 }
             } else {
                 if (this.visible) {
-                    super.compile(poseStack.last(), consumer, light, overlay, red, green, blue, alpha);
+                    super.compile(poseStack.last(), consumer, cubePackedLight, overlay, red, green, blue, alpha);
                     for (BedrockPart part : this.children) {
-                        part.render(poseStack, transformType, consumer, light, overlay, red, green, blue, alpha);
+                        part.render(poseStack, transformType, consumer, cubePackedLight, overlay, red, green, blue, alpha);
                     }
                 }
             }

@@ -44,6 +44,12 @@ public class BedrockModel implements IModelRenderer {
         if (version == BedrockVersion.NEW) {
             loadNewModel(pojo);
         }
+        // 应用发光
+        for (ModelRendererWrapper rendererWrapper : modelMap.values()) {
+            if (rendererWrapper.getModelRenderer().name != null && rendererWrapper.getModelRenderer().name.endsWith("_illuminated")) {
+                rendererWrapper.getModelRenderer().illuminated = true;
+            }
+        }
     }
 
     public void delegateRender(IModelRenderer renderer) {

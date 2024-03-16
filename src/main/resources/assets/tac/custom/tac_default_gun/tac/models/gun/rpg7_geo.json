@@ -2549,8 +2549,9 @@
 					]
 				},
 				{
-					"name": "camera",
-					"pivot": [2.8, 8.15, 5.075],
+					"name": "aaa_illuminated",
+					"parent": "root",
+					"pivot": [0, 0, 0],
 					"cubes": [
 						{
 							"origin": [-2, 0, 0],
@@ -2565,6 +2566,10 @@
 							}
 						}
 					]
+				},
+				{
+					"name": "camera",
+					"pivot": [2.8, 8.15, 5.075]
 				},
 				{
 					"name": "idle_view",
