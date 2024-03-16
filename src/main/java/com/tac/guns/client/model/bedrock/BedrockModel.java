@@ -5,14 +5,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tac.guns.client.model.IModelRenderer;
 import com.tac.guns.client.resource.pojo.model.*;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class BedrockModel implements IModelRenderer{
+public class BedrockModel implements IModelRenderer {
     /**
      * 存储 ModelRender 子模型的 HashMap
      */
@@ -29,6 +28,14 @@ public class BedrockModel implements IModelRenderer{
      * 委托到渲染结束时执行的渲染器，用于特殊部分的渲染，如手臂
      */
     protected List<IModelRenderer> delegateRenderers = new ArrayList<>();
+    /**
+     * 模型的中心点
+     */
+    protected @Nullable Vec3 offset = null;
+    /**
+     * 模型的大小
+     */
+    protected @Nullable Vec2 size = null;
 
     public BedrockModel(BedrockModelPOJO pojo, BedrockVersion version) {
         if (version == BedrockVersion.LEGACY) {
@@ -63,8 +70,10 @@ public class BedrockModel implements IModelRenderer{
         float offsetX = offset.get(0);
         float offsetY = offset.get(1);
         float offsetZ = offset.get(2);
+        this.offset = new Vec3(offsetX, offsetY, offsetZ);
         float width = description.getVisibleBoundsWidth() / 2.0f;
         float height = description.getVisibleBoundsHeight() / 2.0f;
+        this.size = new Vec2(width, height);
 
         // 往 indexBones 里面注入数据，为后续坐标转换做参考
         for (BonesItem bones : pojo.getGeometryModelNew().getBones()) {
@@ -172,8 +181,10 @@ public class BedrockModel implements IModelRenderer{
         float offsetX = offset.get(0);
         float offsetY = offset.get(1);
         float offsetZ = offset.get(2);
+        this.offset = new Vec3(offsetX, offsetY, offsetZ);
         float width = pojo.getGeometryModelLegacy().getVisibleBoundsWidth() / 2.0f;
         float height = pojo.getGeometryModelLegacy().getVisibleBoundsHeight() / 2.0f;
+        this.size = new Vec2(width, height);
 
         // 往 indexBones 里面注入数据，为后续坐标转换做参考
         for (BonesItem bones : pojo.getGeometryModelLegacy().getBones()) {
@@ -305,6 +316,7 @@ public class BedrockModel implements IModelRenderer{
         return (float) (degree * Math.PI / 180);
     }
 
+    @Override
     public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, VertexConsumer builder, int light, int overlay) {
         matrixStack.pushPose();
         for (BedrockPart model : shouldRender) {
@@ -317,5 +329,33 @@ public class BedrockModel implements IModelRenderer{
             renderer.render(matrixStack, transformType, builder, light, overlay);
         }
         delegateRenderers = new ArrayList<>();
+    }
+
+    protected List<BedrockPart> getPath(ModelRendererWrapper rendererWrapper) {
+        if (rendererWrapper == null) {
+            return null;
+        }
+        BedrockPart part = rendererWrapper.getModelRenderer();
+        List<BedrockPart> path = new ArrayList<>();
+        Stack<BedrockPart> stack = new Stack<>();
+        do {
+            stack.push(part);
+            part = part.getParent();
+        } while (part != null);
+        while (!stack.isEmpty()) {
+            part = stack.pop();
+            path.add(part);
+        }
+        return path;
+    }
+
+    @Nullable
+    public Vec3 getOffset() {
+        return offset;
+    }
+
+    @Nullable
+    public Vec2 getSize() {
+        return size;
     }
 }
