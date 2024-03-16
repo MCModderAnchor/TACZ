@@ -6946,16 +6946,6 @@
 					"pivot": [0, 8, 12]
 				},
 				{
-					"name": "iron_view",
-					"parent": "camera",
-					"pivot": [-3.4, 5.125, 15.25]
-				},
-				{
-					"name": "idle_view",
-					"parent": "camera",
-					"pivot": [0, 8, 16]
-				},
-				{
 					"name": "positioning",
 					"pivot": [-3.025, -8.95, -11.225]
 				},
@@ -6975,6 +6965,38 @@
 					"parent": "positioning",
 					"pivot": [-4.4, 0.05, 7.175],
 					"rotation": [0, -15, 0]
+				},
+				{
+					"name": "views",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "iron_view",
+					"parent": "views",
+					"pivot": [-3.4, 5.125, 15.25]
+				},
+				{
+					"name": "idle_view",
+					"parent": "views",
+					"pivot": [0, 8, 16]
+				},
+				{
+					"name": "refit_view",
+					"parent": "views",
+					"pivot": [27, 1, -11],
+					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "refit_muzzle_view",
+					"parent": "views",
+					"pivot": [8.95, 3.675, -39.75],
+					"rotation": [0, 120, 0]
+				},
+				{
+					"name": "refit_scope_view",
+					"parent": "views",
+					"pivot": [8, 4, 8.95],
+					"rotation": [0, 50, 0]
 				}
 			]
 		}

@@ -6011,30 +6011,40 @@
 					]
 				},
 				{
+					"name": "views",
+					"pivot": [0, 8, 12]
+				},
+				{
 					"name": "idle_view",
+					"parent": "views",
 					"pivot": [0, 8, 12]
 				},
 				{
 					"name": "iron_view",
+					"parent": "views",
 					"pivot": [-2.225, 6.325, 8.675]
 				},
 				{
 					"name": "refit_view",
+					"parent": "views",
 					"pivot": [18, 5, -2],
 					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "refit_muzzle_view",
+					"parent": "views",
 					"pivot": [10, 5, -22],
 					"rotation": [0, 120, 0]
 				},
 				{
 					"name": "refit_stock_view",
+					"parent": "views",
 					"pivot": [10, 5, 9],
 					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "refit_scope_view",
+					"parent": "views",
 					"pivot": [8, 8, 9],
 					"rotation": [0, 50, 0]
 				},

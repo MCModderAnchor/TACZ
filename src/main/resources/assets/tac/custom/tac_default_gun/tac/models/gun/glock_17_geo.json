@@ -3147,23 +3147,44 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [-4.1, -1.775, -9.375],
-					"rotation": [0, -15, 0]
+					"pivot": [-3.1, -1.775, -9.375]
 				},
 				{
 					"name": "camera",
 					"pivot": [0, 8, 12]
 				},
 				{
-					"name": "idle_view",
-					"parent": "camera",
-					"pivot": [0, 8, 12],
-					"rotation": [0, 0, -3]
+					"name": "views",
+					"pivot": [0, 0, 0]
 				},
 				{
 					"name": "iron_view",
-					"parent": "camera",
+					"parent": "views",
 					"pivot": [-3.075, 4.425, 12.85]
+				},
+				{
+					"name": "idle_view",
+					"parent": "views",
+					"pivot": [-6, 8, 12],
+					"rotation": [0, 0, -30]
+				},
+				{
+					"name": "refit_view",
+					"parent": "views",
+					"pivot": [18, 0, -13],
+					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "refit_muzzle_view",
+					"parent": "views",
+					"pivot": [10, 2.975, -30.325],
+					"rotation": [0, 120, 0]
+				},
+				{
+					"name": "refit_scope_view",
+					"parent": "views",
+					"pivot": [8, 5, -10],
+					"rotation": [0, 90, 0]
 				}
 			]
 		}

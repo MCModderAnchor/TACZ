@@ -150,24 +150,18 @@ public class FirstPersonRenderGunEvent {
      */
     private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, float aimingProgress,
                                                              float refitScreenOpeningProgress) {
+        Matrix4f transformMatrix = new Matrix4f();
+        transformMatrix.setIdentity();
         // 应用瞄准定位
         // TODO 判断是否安装瞄具，
         List<BedrockPart> idleNodePath = model.getIdleSightPath();
         List<BedrockPart> aimingNodePath = model.getIronSightPath();
-        Matrix4f transformMatrix = getPositioningNodeInverse(idleNodePath);
-        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(aimingNodePath), transformMatrix, aimingProgress);
-        // 应用改装界面开启时的定位插值
+        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(idleNodePath), transformMatrix, (1 - refitScreenOpeningProgress));
+        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(aimingNodePath), transformMatrix, (1 - refitScreenOpeningProgress) * aimingProgress);
+        // 应用改装界面开启时的定位
         float refitTransformProgress = (float) Easing.easeOutCubic(GunRefitScreen.getTransformProgress());
         AttachmentType oldType = GunRefitScreen.getOldTransformType();
         AttachmentType currentType = GunRefitScreen.getCurrentTransformType();
-        // FIXME 这段测试用的，删掉
-        if(oldType == AttachmentType.GRIP){
-            oldType = AttachmentType.NONE;
-        }
-        if(currentType == AttachmentType.GRIP){
-            currentType = AttachmentType.NONE;
-        }
-        // END_FIXME
         List<BedrockPart> fromNode = model.getRefitAttachmentViewPath(oldType);
         List<BedrockPart> toNode = model.getRefitAttachmentViewPath(currentType);
         MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(fromNode), transformMatrix, refitScreenOpeningProgress);
