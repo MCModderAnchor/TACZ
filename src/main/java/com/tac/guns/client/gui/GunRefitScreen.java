@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
@@ -121,12 +122,14 @@ public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
         return refitScreenOpeningProgress;
     }
 
+    @Nonnull
     public static AttachmentType getOldTransformType(){
-        return oldTransformType;
+        return Objects.requireNonNullElse(oldTransformType, AttachmentType.NONE);
     }
 
+    @Nonnull
     public static AttachmentType getCurrentTransformType(){
-        return currentTransformType;
+        return Objects.requireNonNullElse(currentTransformType, AttachmentType.NONE);
     }
 
     public static float getTransformProgress(){

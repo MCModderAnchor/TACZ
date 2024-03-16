@@ -22,20 +22,23 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
 import static com.tac.guns.client.model.CommonComponents.*;
 
 public class BedrockGunModel extends BedrockAnimatedModel {
-    public static final String IRON_VIEW_NODE = "iron_view";
-    public static final String IDLE_VIEW_NODE = "idle_view";
-    public static final String REFIT_VIEW_NODE = "refit_view";
-    public static final String THIRD_PERSON_HAND_ORIGIN_NODE = "thirdperson_hand";
-    public static final String FIXED_ORIGIN_NODE = "fixed";
-    public static final String GROUND_ORIGIN_NODE = "ground";
-    public static final String CONSTRAINT_NODE = "constraint";
-    public static final String ATTACHMENT_POS_SUFFIX = "_pos";
+    private static final String IRON_VIEW_NODE = "iron_view";
+    private static final String IDLE_VIEW_NODE = "idle_view";
+    private static final String REFIT_VIEW_NODE = "refit_view";
+    private static final String THIRD_PERSON_HAND_ORIGIN_NODE = "thirdperson_hand";
+    private static final String FIXED_ORIGIN_NODE = "fixed";
+    private static final String GROUND_ORIGIN_NODE = "ground";
+    private static final String CONSTRAINT_NODE = "constraint";
+    private static final String ATTACHMENT_POS_SUFFIX = "_pos";
+    private static final String REFIT_VIEW_PREFIX = "refit_";
+    private static final String REFIT_VIEW_SUFFIX = "_view";
     // 第一人称机瞄摄像机定位组的路径
     protected @Nullable List<BedrockPart> ironSightPath;
     // 第一人称idle状态摄像机定位组的路径
@@ -50,8 +53,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> scopePosPath;
     // 动画约束组的路径
     protected @Nullable List<BedrockPart> constraintPath;
-    // 枪械改装 Overview 视角定位组路径
-    protected @Nullable List<BedrockPart> refitViewPath;
+    protected final @Nonnull EnumMap<AttachmentType, List<BedrockPart>> refitAttachmentViewPath = Maps.newEnumMap(AttachmentType.class);
     private boolean renderHand = true;
     private ItemStack currentGunItem;
     private final EnumMap<AttachmentType, ItemStack> currentAttachmentItem = Maps.newEnumMap(AttachmentType.class);
@@ -167,7 +169,15 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
         scopePosPath = getPath(modelMap.get(AttachmentType.SCOPE.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
         constraintPath = getPath(modelMap.get(CONSTRAINT_NODE));
-        refitViewPath = getPath(modelMap.get(REFIT_VIEW_NODE));
+        // 缓存改装UI下各个配件的特写视角定位组
+        for(AttachmentType type : AttachmentType.values()){
+            if (type == AttachmentType.NONE) {
+                refitAttachmentViewPath.put(type, getPath(modelMap.get(REFIT_VIEW_NODE)));
+                continue;
+            }
+            String nodeName = REFIT_VIEW_PREFIX + type.name().toLowerCase() + REFIT_VIEW_SUFFIX;
+            refitAttachmentViewPath.put(type, getPath(modelMap.get(nodeName)));
+        }
 
         // 准备各个配件的渲染
         for(AttachmentType type : AttachmentType.values()){
@@ -239,8 +249,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     }
 
     @Nullable
-    public List<BedrockPart> getRefitViewPath(){
-        return refitViewPath;
+    public List<BedrockPart> getRefitAttachmentViewPath(AttachmentType type){
+        return refitAttachmentViewPath.get(type);
     }
 
     public void setRenderHand(boolean renderHand){
