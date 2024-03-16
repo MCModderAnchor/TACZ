@@ -231,22 +231,4 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         }
         RenderSystem.setShaderTexture(0, oldId);
     }
-
-    private List<BedrockPart> getPath(ModelRendererWrapper rendererWrapper) {
-        if (rendererWrapper == null) {
-            return null;
-        }
-        BedrockPart part = rendererWrapper.getModelRenderer();
-        List<BedrockPart> path = new ArrayList<>();
-        Stack<BedrockPart> stack = new Stack<>();
-        do {
-            stack.push(part);
-            part = part.getParent();
-        } while (part != null);
-        while (!stack.isEmpty()) {
-            part = stack.pop();
-            path.add(part);
-        }
-        return path;
-    }
 }

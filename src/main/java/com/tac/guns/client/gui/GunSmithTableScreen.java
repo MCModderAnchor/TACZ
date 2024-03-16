@@ -315,6 +315,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         int startY = topPos + 16;
         int width = 128;
         int height = 99;
+        float rotPitch = 15;
 
         Window window = Minecraft.getInstance().getWindow();
         double windowGuiScale = window.getGuiScale();
@@ -336,6 +337,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         posestack.scale(1.0F, -1.0F, 1.0F);
         posestack.scale(scale, scale, scale);
         float rot = (System.currentTimeMillis() % (int) (rotationPeriod * 1000)) * (360f / (rotationPeriod * 1000));
+        posestack.mulPose(Vector3f.XP.rotationDegrees(rotPitch));
         posestack.mulPose(Vector3f.YP.rotationDegrees(rot));
         RenderSystem.applyModelViewMatrix();
         PoseStack tmpPose = new PoseStack();

@@ -1,6 +1,5 @@
 {
   "model": "tac:ammo/9mm",
-  "texture": "tac:ammo/uv/762x39",
+  "texture": "tac:ammo/uv/9mm",
   "slot": "tac:ammo/slot/9mm"
 }
-    
