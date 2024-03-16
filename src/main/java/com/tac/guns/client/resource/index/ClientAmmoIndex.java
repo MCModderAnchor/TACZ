@@ -3,6 +3,7 @@ package com.tac.guns.client.resource.index;
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoDisplay;
+import com.tac.guns.client.resource.pojo.display.ammo.AmmoEntityDisplay;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.resource.pojo.AmmoIndexPOJO;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -18,6 +20,8 @@ public class ClientAmmoIndex {
     private BedrockAmmoModel ammoModel;
     private ResourceLocation modelTextureLocation;
     private ResourceLocation slotTextureLocation;
+    private @Nullable BedrockAmmoModel ammoEntityModel;
+    private @Nullable ResourceLocation ammoEntityTextureLocation;
     private int stackSize;
 
     private ClientAmmoIndex() {
@@ -31,6 +35,7 @@ public class ClientAmmoIndex {
         checkTextureAndModel(display, index);
         checkSlotTexture(display, index);
         checkStackSize(clientPojo, index);
+        checkAmmoEntity(display, index);
         return index;
     }
 
@@ -94,6 +99,26 @@ public class ClientAmmoIndex {
         index.slotTextureLocation = Objects.requireNonNullElseGet(display.getSlotTextureLocation(), MissingTextureAtlasSprite::getLocation);
     }
 
+    private static void checkAmmoEntity(AmmoDisplay display, ClientAmmoIndex index) {
+        AmmoEntityDisplay ammoEntity = display.getAmmoEntity();
+        if (ammoEntity != null && ammoEntity.getModelLocation() != null && ammoEntity.getModelTexture() != null) {
+            index.ammoEntityTextureLocation = ammoEntity.getModelTexture();
+            ResourceLocation modelLocation = ammoEntity.getModelLocation();
+            BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(modelLocation);
+            if (modelPOJO == null) {
+                return;
+            }
+            // 先判断是不是 1.10.0 版本基岩版模型文件
+            if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+                index.ammoEntityModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.LEGACY);
+            }
+            // 判定是不是 1.12.0 版本基岩版模型文件
+            if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+                index.ammoEntityModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.NEW);
+            }
+        }
+    }
+
     private static void checkStackSize(AmmoIndexPOJO clientPojo, ClientAmmoIndex index) {
         index.stackSize = Math.max(clientPojo.getStackSize(), 1);
     }
@@ -116,5 +141,15 @@ public class ClientAmmoIndex {
 
     public int getStackSize() {
         return stackSize;
+    }
+
+    @Nullable
+    public BedrockAmmoModel getAmmoEntityModel() {
+        return ammoEntityModel;
+    }
+
+    @Nullable
+    public ResourceLocation getAmmoEntityTextureLocation() {
+        return ammoEntityTextureLocation;
     }
 }
