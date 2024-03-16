@@ -16,6 +16,7 @@ public class RefitSlotButton extends Button {
     private static final ResourceLocation TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_slot.png");
     private final ItemStack stack;
     private final AttachmentType type;
+    private boolean selected = false;
 
     public RefitSlotButton(int pX, int pY, ItemStack stack, AttachmentType type, Button.OnPress onPress) {
         super(pX, pY, 18, 18, TextComponent.EMPTY, onPress);
@@ -28,7 +29,7 @@ public class RefitSlotButton extends Button {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, TEXTURE);
         RenderSystem.enableDepthTest();
-        if (isHoveredOrFocused()) {
+        if (isHoveredOrFocused() || selected) {
             blit(poseStack, x, y, 0, 0, width, height, 18, 18);
         }else {
             blit(poseStack, x + 1, y + 1, 1, 1, width - 2, height - 2, 18, 18);
@@ -39,8 +40,7 @@ public class RefitSlotButton extends Button {
         return type;
     }
 
-    @Override
-    public void onPress() {
-        this.onPress.onPress(this);
+    public void setSelected(boolean selected){
+        this.selected = selected;
     }
 }

@@ -46,7 +46,7 @@ public class SecondOrderDynamics {
      * @param T abandoned.
      * @return processed y value
      */
-    public float update(float T, float x) {
+    public float update(float x) {
         target = x;
         return py + 0.05f * pyd;
     }

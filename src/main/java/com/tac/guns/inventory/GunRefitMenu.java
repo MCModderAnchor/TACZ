@@ -6,6 +6,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 
+import javax.annotation.Nonnull;
+
 public class GunRefitMenu extends AbstractContainerMenu {
     public static final MenuType<GunRefitMenu> TYPE = IForgeMenuType.create((windowId, inv, data) -> new GunRefitMenu(windowId, inv));
 
@@ -14,7 +16,7 @@ public class GunRefitMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean clickMenuButton(Player player, int id) {
+    public boolean clickMenuButton(@Nonnull Player player, int id) {
         return super.clickMenuButton(player, id);
     }
 

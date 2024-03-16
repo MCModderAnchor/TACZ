@@ -43,6 +43,8 @@ import java.util.function.Predicate;
 public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
+    @Unique
+    private static final Predicate<IGunOperator> tac$ShootLockedCondition = operator -> operator.getSynShootCoolDown() > 0;
 
     @Unique
     private volatile long tac$ClientShootTimestamp = -1L;
@@ -71,7 +73,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
      * 主要用于防止客户端操作表现效果重复执行。
      */
     @Unique
-    private boolean tac$ClientStateLock = false;
+    private volatile boolean tac$ClientStateLock = false;
     /**
      * 用于跳过状态锁上锁 到 服务端数据更新的这段延迟...
      */
@@ -85,6 +87,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         // 如果上一次异步开火的效果还未执行，则直接返回，等待异步开火效果执行
         if (!tac$IsShootRecorded) {
             return ShootResult.COOL_DOWN;
+        }
+        // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
+        if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null){
+            tac$IsShootRecorded = true;
+            return ShootResult.FAIL;
         }
         LocalPlayer player = (LocalPlayer) (Object) this;
         // 暂定为只有主手能开枪
@@ -126,14 +133,19 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 return ShootResult.FAIL;
             }
             // 切换状态锁，不允许换弹、检视等行为进行。
-            lockState(operator -> operator.getSynShootCoolDown() > 0);
+            lockState(tac$ShootLockedCondition);
             tac$IsShootRecorded = false;
             // 开火效果需要延时执行，这样渲染效果更好。
             tac$ScheduledExecutorService.schedule(() -> {
-                // 记录新的开火时间戳
-                tac$ClientShootTimestamp = System.currentTimeMillis();
                 // 转换 isRecord 状态，允许下一个tick的开火检测。
                 tac$IsShootRecorded = true;
+                // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
+                if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null){
+                    tac$IsShootRecorded = true;
+                    return;
+                }
+                // 记录新的开火时间戳
+                tac$ClientShootTimestamp = System.currentTimeMillis();
                 // 发送开火的数据包，通知服务器。暂时只考虑主手能打枪。
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot());
                 // 动画状态机转移状态
