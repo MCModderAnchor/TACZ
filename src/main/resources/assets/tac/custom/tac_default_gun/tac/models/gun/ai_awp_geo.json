@@ -6973,7 +6973,8 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [-3.4, 0.05, 7.175]
+					"pivot": [-4.4, 0.05, 7.175],
+					"rotation": [0, -15, 0]
 				}
 			]
 		}
