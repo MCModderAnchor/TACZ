@@ -14,12 +14,10 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.gui.GunRefitScreen;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.model.ISimpleRenderer;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
-import com.tac.guns.util.math.Easing;
 import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
@@ -57,34 +55,6 @@ public class FirstPersonRenderGunEvent {
     // 用于切枪逻辑
     private static ItemStack oldHotbarSelectedStack = ItemStack.EMPTY;
     private static int oldHotbarSelected = -1;
-
-    // 用于械改装界面枪械视角变换的插值。
-    private static float refitScreenTransformProgress = 1;
-    private static long refitScreenTransformTimestamp = -1;
-    private static AttachmentType refitScreenViewOld = AttachmentType.NONE;
-    private static AttachmentType refitScreenViewNew = AttachmentType.NONE;
-
-    public static boolean changeRefitScreenView(AttachmentType attachmentType){
-        if(refitScreenTransformProgress != 1) return false;
-        refitScreenViewOld = refitScreenViewNew;
-        refitScreenViewNew = attachmentType;
-        refitScreenTransformProgress = 0;
-        refitScreenTransformTimestamp = System.currentTimeMillis();
-        return true;
-    }
-
-    @SubscribeEvent
-    public static void onRenderTick(TickEvent.RenderTickEvent event){
-        // tick refit screen transform
-        if (refitScreenTransformTimestamp == -1) {
-            refitScreenTransformTimestamp = System.currentTimeMillis();
-        }
-        if (Minecraft.getInstance().screen instanceof GunRefitScreen) {
-
-        }else{
-
-        }
-    }
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
@@ -135,15 +105,12 @@ public class FirstPersonRenderGunEvent {
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
             // 应用枪械动态，如第一人称摄像机定位、后坐力的位移等
             applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTicks());
-            // 准备配件渲染
-            ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
-            gunModel.setScopeRenderer(wrapAttachmentRenderer(scopeItem));
             // 如果正在打开改装界面，则取消手臂渲染
             boolean renderHand = gunModel.getRenderHand();
-            if(GunRefitScreen.getRefitScreenOpeningProgress() != 0) gunModel.setRenderHand(false);
+            if(GunRefitScreen.getOpeningProgress() != 0) gunModel.setRenderHand(false);
             // 调用枪械模型渲染
             VertexConsumer vertexConsumer = event.getMultiBufferSource().getBuffer(RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture()));
-            gunModel.render(poseStack, transformType, vertexConsumer, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+            gunModel.render(poseStack, stack, transformType, vertexConsumer, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
             // 恢复手臂渲染
             gunModel.setRenderHand(renderHand);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
@@ -171,7 +138,7 @@ public class FirstPersonRenderGunEvent {
     private static void applyFirstPersonGunTransform(LocalPlayer player, ItemStack gunItemStack, ClientGunIndex gunIndex,
                                                      PoseStack poseStack, BedrockGunModel model, float partialTicks) {
         // 配合运动曲线，计算改装枪口的打开进度
-        float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(GunRefitScreen.getRefitScreenOpeningProgress());
+        float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(GunRefitScreen.getOpeningProgress());
         // 配合运动曲线，计算瞄准进度
         float aimingProgress = AIMING_DYNAMICS.update(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
         // 应用定位组的变换（位移和旋转，不包括缩放）
@@ -328,17 +295,5 @@ public class FirstPersonRenderGunEvent {
             return iGunA.getGunId(gunA).equals(iGunB.getGunId(gunB));
         }
         return gunA.sameItem(gunB);
-    }
-
-    @Nullable
-    private static ISimpleRenderer wrapAttachmentRenderer(@Nonnull ItemStack attachmentItem){
-        if(attachmentItem.isEmpty() || IAttachment.getIAttachmentOrNull(attachmentItem) == null){
-            return null;
-        }
-        return (poseStack, transformType, light, overlay) -> {
-            MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-            // 直接调用配件的 ISTER 进行渲染
-            Minecraft.getInstance().getItemRenderer().renderStatic(attachmentItem, TransformType.NONE, light, overlay, poseStack, bufferSource, 0);
-        };
     }
 }
