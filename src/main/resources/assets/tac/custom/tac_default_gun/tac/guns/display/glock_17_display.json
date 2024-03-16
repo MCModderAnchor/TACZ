@@ -28,7 +28,8 @@
     "reload_tactical": "tac:glock_17/glock17_reload_tactical",
     "inspect": "tac:glock_17/glock17_inspect",
     "inspect_empty": "tac:glock_17/glock17_inspect_empty",
-    "draw": "tac:glock_17/glock17_draw"
+    "draw": "tac:glock_17/glock17_draw",
+    "shoot": "tac:glock_17/glock17_shoot"
   },
   "ica": {
     "iron_view": {
