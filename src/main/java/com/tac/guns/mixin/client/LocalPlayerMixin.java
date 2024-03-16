@@ -399,4 +399,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         // 释放状态锁
         tac$ClientStateLock = false;
     }
+
+    @Override
+    public boolean isAim() {
+        return this.tac$ClientIsAiming;
+    }
 }

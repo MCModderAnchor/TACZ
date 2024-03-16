@@ -26,10 +26,7 @@ public class RefitKey {
 
     @SubscribeEvent
     public static void onInspectPress(InputEvent.KeyInputEvent event) {
-        if (event.getAction() != GLFW.GLFW_PRESS) {
-            return;
-        }
-        if (REFIT_KEY.isDown()) {
+        if (event.getAction() == GLFW.GLFW_PRESS && REFIT_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
                 return;
