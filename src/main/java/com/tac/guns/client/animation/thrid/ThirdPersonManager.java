@@ -7,12 +7,10 @@ import java.util.Map;
 
 public final class ThirdPersonManager {
     private static final Map<String, IThirdPersonAnimation> CACHE = Maps.newHashMap();
-    private static final IThirdPersonAnimation EMPTY = new EmptyAnimation();
+    private static final IThirdPersonAnimation DEFAULT = new DefaultAnimation();
 
     public static void registerInner() {
-        register("empty", EMPTY);
-        register("rifle", new RifleAnimation());
-        register("pistol", new PistolAnimation());
+        register("default", DEFAULT);
     }
 
     public static void register(String name, IThirdPersonAnimation animation) {
@@ -20,6 +18,6 @@ public final class ThirdPersonManager {
     }
 
     public static IThirdPersonAnimation getAnimation(String name) {
-        return CACHE.getOrDefault(name, EMPTY);
+        return CACHE.getOrDefault(name, DEFAULT);
     }
 }

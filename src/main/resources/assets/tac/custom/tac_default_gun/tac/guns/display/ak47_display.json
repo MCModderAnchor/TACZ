@@ -9,8 +9,8 @@
     "slot": "tac:gun/slot/ak47",
     // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空
     "animation": "tac:ak47",
-    // 第三人称动画，硬编码，只能选择已有类型
-    "third_person_animation": "rifle",
+    // 第三人称动画，硬编码，只能选择已有类型，默认只有 default
+    "third_person_animation": "default",
     // 调整各个视角下模型的变换参数，可为空
     "transform": {
         // 暂时只有缩放需要在这里指定，旋转和位移使用模型内定位组。
