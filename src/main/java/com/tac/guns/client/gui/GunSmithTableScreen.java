@@ -12,10 +12,14 @@ import com.tac.guns.GunMod;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.client.gui.components.ResultButton;
 import com.tac.guns.client.gui.components.TypeButton;
+import com.tac.guns.client.resource.ClientAssetManager;
+import com.tac.guns.client.resource.pojo.CustomTabPOJO;
 import com.tac.guns.crafting.GunSmithTableIngredient;
 import com.tac.guns.crafting.GunSmithTableRecipe;
 import com.tac.guns.crafting.GunSmithTableResult;
 import com.tac.guns.inventory.GunSmithTableMenu;
+import com.tac.guns.item.builder.AmmoItemBuilder;
+import com.tac.guns.item.builder.AttachmentItemBuilder;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessageCraft;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -186,22 +190,27 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             if (recipeIdGroups.isEmpty()) {
                 continue;
             }
-            ResourceLocation recipeId = recipeIdGroups.get(0);
-            TimelessAPI.getRecipe(recipeId).ifPresent(recipe -> {
-                GunSmithTableResult recipeResult = recipe.getResult();
-                TypeButton typeButton = new TypeButton(xOffset, topPos + 2, recipeResult.getResult(), b -> {
-                    this.selectedType = type;
-                    this.selectedRecipeList = recipes.get(type);
-                    this.indexPage = 0;
-                    this.selectedRecipe = getSelectedRecipe(this.selectedRecipeList.get(0));
-                    this.getPlayerIngredientCount(this.selectedRecipe);
-                    this.init();
-                });
-                if (this.selectedType.equals(type)) {
-                    typeButton.setSelected(true);
-                }
-                this.addRenderableWidget(typeButton);
+            CustomTabPOJO tabPOJO = ClientAssetManager.INSTANCE.getAllCustomTabs().get(type);
+            ItemStack icon = ItemStack.EMPTY;
+            if (tabPOJO != null) {
+                icon = tabPOJO.getIconStack();
+            } else if (GunSmithTableResult.AMMO.equals(type)) {
+                icon = AmmoItemBuilder.create().build();
+            } else if (GunSmithTableResult.ATTACHMENT.equals(type)) {
+                icon = AttachmentItemBuilder.create().build();
+            }
+            TypeButton typeButton = new TypeButton(xOffset, topPos + 2, icon, b -> {
+                this.selectedType = type;
+                this.selectedRecipeList = recipes.get(type);
+                this.indexPage = 0;
+                this.selectedRecipe = getSelectedRecipe(this.selectedRecipeList.get(0));
+                this.getPlayerIngredientCount(this.selectedRecipe);
+                this.init();
             });
+            if (this.selectedType.equals(type)) {
+                typeButton.setSelected(true);
+            }
+            this.addRenderableWidget(typeButton);
         }
     }
 
