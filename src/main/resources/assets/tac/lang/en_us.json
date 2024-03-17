@@ -18,5 +18,6 @@
   "item.tac.ammo_box": "Ammo Box",
   "gui.tac.gun_smith_table.preview": "Preview",
   "gui.tac.gun_smith_table.ingredient": "Ingredient: ",
-  "gui.tac.gun_smith_table.craft": "Craft"
+  "gui.tac.gun_smith_table.craft": "Craft",
+  "tooltip.tac.ammo_box.count": "Count: %d"
 }

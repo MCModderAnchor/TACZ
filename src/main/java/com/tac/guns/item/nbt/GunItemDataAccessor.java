@@ -100,7 +100,7 @@ public interface GunItemDataAccessor extends IGun {
             return;
         }
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachment);
-        if (iAttachment == null){
+        if (iAttachment == null) {
             return;
         }
         CompoundTag nbt = gun.getOrCreateTag();

@@ -16,7 +16,7 @@ public class AttachmentData {
     @SerializedName("silence")
     private float silence = SILENCE_DEFAULT_VALUE;
 
-    public boolean isSilencer(){
+    public boolean isSilencer() {
         return silence == SILENCE_DEFAULT_VALUE;
     }
 

@@ -12,6 +12,7 @@ public class AttachmentSkin {
     private ResourceLocation model;
     @SerializedName("texture")
     private ResourceLocation texture;
+
     public ResourceLocation getParent() {
         return parent;
     }

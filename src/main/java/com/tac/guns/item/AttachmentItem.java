@@ -4,7 +4,6 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.client.renderer.item.AttachmentItemRenderer;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.nbt.AttachmentItemDataAccessor;
@@ -70,10 +69,10 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
     @Nonnull
     public AttachmentType getType(ItemStack attachmentStack) {
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-        if(iAttachment != null){
+        if (iAttachment != null) {
             ResourceLocation id = iAttachment.getAttachmentId(attachmentStack);
             return TimelessAPI.getCommonAttachmentIndex(id).map(CommonAttachmentIndex::getType).orElse(AttachmentType.NONE);
-        }else{
+        } else {
             return AttachmentType.NONE;
         }
     }

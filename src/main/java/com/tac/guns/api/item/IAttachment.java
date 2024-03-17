@@ -16,7 +16,7 @@ public interface IAttachment {
         if (stack == null) {
             return null;
         }
-        if (stack.getItem() instanceof IAttachment iAttachment){
+        if (stack.getItem() instanceof IAttachment iAttachment) {
             return iAttachment;
         }
         return null;
@@ -24,10 +24,14 @@ public interface IAttachment {
 
     @Nonnull
     ResourceLocation getAttachmentId(ItemStack attachmentStack);
+
     void setAttachmentId(ItemStack attachmentStack, @Nullable ResourceLocation attachmentId);
+
     @Nullable
     ResourceLocation getSkinId(ItemStack attachmentStack);
+
     void setSkinId(ItemStack attachmentStack, @Nullable ResourceLocation skinId);
+
     @Nonnull
     AttachmentType getType(ItemStack attachmentStack);
 }

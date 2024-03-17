@@ -24,7 +24,8 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.List;
 
 import static com.tac.guns.client.model.CommonComponents.*;
 
@@ -39,6 +40,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String ATTACHMENT_POS_SUFFIX = "_pos";
     private static final String REFIT_VIEW_PREFIX = "refit_";
     private static final String REFIT_VIEW_SUFFIX = "_view";
+    protected final @Nonnull EnumMap<AttachmentType, List<BedrockPart>> refitAttachmentViewPath = Maps.newEnumMap(AttachmentType.class);
+    private final EnumMap<AttachmentType, ItemStack> currentAttachmentItem = Maps.newEnumMap(AttachmentType.class);
     // 第一人称机瞄摄像机定位组的路径
     protected @Nullable List<BedrockPart> ironSightPath;
     // 第一人称idle状态摄像机定位组的路径
@@ -53,10 +56,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> scopePosPath;
     // 动画约束组的路径
     protected @Nullable List<BedrockPart> constraintPath;
-    protected final @Nonnull EnumMap<AttachmentType, List<BedrockPart>> refitAttachmentViewPath = Maps.newEnumMap(AttachmentType.class);
     private boolean renderHand = true;
     private ItemStack currentGunItem;
-    private final EnumMap<AttachmentType, ItemStack> currentAttachmentItem = Maps.newEnumMap(AttachmentType.class);
 
     public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
@@ -170,7 +171,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         scopePosPath = getPath(modelMap.get(AttachmentType.SCOPE.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
         constraintPath = getPath(modelMap.get(CONSTRAINT_NODE));
         // 缓存改装UI下各个配件的特写视角定位组
-        for(AttachmentType type : AttachmentType.values()){
+        for (AttachmentType type : AttachmentType.values()) {
             if (type == AttachmentType.NONE) {
                 refitAttachmentViewPath.put(type, getPath(modelMap.get(REFIT_VIEW_NODE)));
                 continue;
@@ -180,7 +181,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         }
 
         // 准备各个配件的渲染
-        for(AttachmentType type : AttachmentType.values()){
+        for (AttachmentType type : AttachmentType.values()) {
             if (type == AttachmentType.NONE) {
                 continue;
             }
@@ -189,7 +190,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 bedrockPart.visible = false;
                 return (poseStack, transformType, light, overlay) -> {
                     ItemStack attachmentItem = currentAttachmentItem.get(type);
-                    if(attachmentItem != null && !attachmentItem.isEmpty()){
+                    if (attachmentItem != null && !attachmentItem.isEmpty()) {
                         Matrix3f normal = poseStack.last().normal().copy();
                         Matrix4f pose = poseStack.last().pose().copy();
                         //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染
@@ -239,21 +240,21 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     }
 
     @Nullable
-    public List<BedrockPart> getConstraintPath(){
+    public List<BedrockPart> getConstraintPath() {
         return constraintPath;
     }
 
     @Nullable
-    public List<BedrockPart> getRefitAttachmentViewPath(AttachmentType type){
+    public List<BedrockPart> getRefitAttachmentViewPath(AttachmentType type) {
         return refitAttachmentViewPath.get(type);
     }
 
-    public void setRenderHand(boolean renderHand){
-        this.renderHand = renderHand;
+    public boolean getRenderHand() {
+        return renderHand;
     }
 
-    public boolean getRenderHand(){
-        return renderHand;
+    public void setRenderHand(boolean renderHand) {
+        this.renderHand = renderHand;
     }
 
     public void render(PoseStack matrixStack, ItemStack gunItem, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {

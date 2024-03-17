@@ -8,6 +8,7 @@ import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IAmmo;
+import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.api.item.IGun;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -61,6 +62,9 @@ public class GunHudOverlay {
                     ItemStack inventoryItem = inventory.getItem(i);
                     if (inventoryItem.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(stack, inventoryItem)) {
                         cacheInventoryAmmoCount += inventoryItem.getCount();
+                    }
+                    if (inventoryItem.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(stack, inventoryItem)) {
+                        cacheInventoryAmmoCount += iAmmoBox.getAmmoCount(inventoryItem);
                     }
                 }
                 checkAmmoTimestamp = System.currentTimeMillis();

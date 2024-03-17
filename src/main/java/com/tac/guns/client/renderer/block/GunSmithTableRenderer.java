@@ -43,6 +43,15 @@ public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableB
         }
     }
 
+    @Nullable
+    public static BedrockModel getModel() {
+        return MODEL;
+    }
+
+    public static ResourceLocation getTextureLocation() {
+        return TEXTURE_LOCATION;
+    }
+
     @Override
     public void render(GunSmithTableBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         if (MODEL == null) {
@@ -60,15 +69,6 @@ public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableB
         RenderType renderType = RenderType.entityTranslucent(TEXTURE_LOCATION);
         MODEL.render(poseStack, ItemTransforms.TransformType.NONE, renderType, combinedLightIn, combinedOverlayIn);
         poseStack.popPose();
-    }
-
-    @Nullable
-    public static BedrockModel getModel() {
-        return MODEL;
-    }
-
-    public static ResourceLocation getTextureLocation(){
-        return TEXTURE_LOCATION;
     }
 
     @Override

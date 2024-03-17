@@ -15,7 +15,7 @@ public class AttachmentPass {
     @SerializedName("black_list")
     private List<ResourceLocation> blackList;
 
-    public boolean isAllow(ResourceLocation attachmentId){
+    public boolean isAllow(ResourceLocation attachmentId) {
         if (whiteList != null && !whiteList.contains(attachmentId)) {
             return false;
         }

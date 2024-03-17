@@ -77,6 +77,11 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         this.getPlayerIngredientCount(this.selectedRecipe);
     }
 
+    public static void drawModCenteredString(PoseStack poseStack, Font font, Component component, int pX, int pY, int color) {
+        FormattedCharSequence text = component.getVisualOrderText();
+        font.draw(poseStack, text, (float) (pX - font.width(text) / 2), (float) pY, color);
+    }
+
     private void classifyRecipes() {
         TimelessAPI.getAllRecipes().forEach((id, recipe) -> {
             GunSmithTableResult result = recipe.getResult();
@@ -374,11 +379,6 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         blit(poseStack, leftPos, topPos, 0, 0, 134, 187);
         RenderSystem.setShaderTexture(0, TEXTURE);
         blit(poseStack, leftPos + 136, topPos + 27, 0, 0, 208, 160);
-    }
-
-    public static void drawModCenteredString(PoseStack poseStack, Font font, Component component, int pX, int pY, int color) {
-        FormattedCharSequence text = component.getVisualOrderText();
-        font.draw(poseStack, text, (float) (pX - font.width(text) / 2), (float) pY, color);
     }
 
     @Override

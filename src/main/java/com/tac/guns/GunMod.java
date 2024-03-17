@@ -1,8 +1,11 @@
 package com.tac.guns;
 
+import com.tac.guns.config.GeneralConfig;
 import com.tac.guns.init.*;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +16,8 @@ public class GunMod {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public GunMod() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GeneralConfig.init());
+
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ModBlocks.BLOCKS.register(bus);
         ModBlocks.TILE_ENTITIES.register(bus);

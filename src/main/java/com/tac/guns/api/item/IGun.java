@@ -18,7 +18,7 @@ public interface IGun {
         if (stack == null) {
             return null;
         }
-        if (stack.getItem() instanceof IGun iGun){
+        if (stack.getItem() instanceof IGun iGun) {
             return iGun;
         }
         return null;

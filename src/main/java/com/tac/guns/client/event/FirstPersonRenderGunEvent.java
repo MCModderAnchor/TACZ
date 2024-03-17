@@ -109,7 +109,7 @@ public class FirstPersonRenderGunEvent {
             applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTicks());
             // 如果正在打开改装界面，则取消手臂渲染
             boolean renderHand = gunModel.getRenderHand();
-            if(GunRefitScreen.getOpeningProgress() != 0) gunModel.setRenderHand(false);
+            if (GunRefitScreen.getOpeningProgress() != 0) gunModel.setRenderHand(false);
             // 调用枪械模型渲染
             RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
             gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
@@ -206,10 +206,10 @@ public class FirstPersonRenderGunEvent {
      * 获取摄像机定位组的反相矩阵
      */
     @Nonnull
-    private static Matrix4f getPositioningNodeInverse(List<BedrockPart> nodePath){
+    private static Matrix4f getPositioningNodeInverse(List<BedrockPart> nodePath) {
         Matrix4f matrix4f = new Matrix4f();
         matrix4f.setIdentity();
-        if(nodePath != null) {
+        if (nodePath != null) {
             for (int i = nodePath.size() - 1; i >= 0; i--) {
                 BedrockPart part = nodePath.get(i);
                 // 计算反向的旋转
@@ -292,11 +292,12 @@ public class FirstPersonRenderGunEvent {
 
     /**
      * 应用动画约束变换。
+     *
      * @param multiplier 旋转、位移各轴的动画权重，范围皆为 0~1，0 则完全不受动画影响，1 则完全受到动画控制。
-     * @param weight 控制约束变换的权重，用于插值。
+     * @param weight     控制约束变换的权重，用于插值。
      */
     public static void applyAnimationConstraintTransform(PoseStack poseStack, List<BedrockPart> nodePath, float weight,
-                                                         CommonTransformObject multiplier){
+                                                         CommonTransformObject multiplier) {
         // TODO 判断是否安装瞄具，
         // 获取动画约束点的变换信息
         Vector3f originTranslation = new Vector3f();

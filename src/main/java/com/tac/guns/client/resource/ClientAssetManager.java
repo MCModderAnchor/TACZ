@@ -60,6 +60,20 @@ public enum ClientAssetManager {
 
     private final Map<ResourceLocation, BedrockGunModel> tempGunModelMap = Maps.newHashMap();
 
+    @Nullable
+    private static BedrockAttachmentModel getAttachmentModel(BedrockModelPOJO modelPOJO) {
+        BedrockAttachmentModel attachmentModel = null;
+        // 先判断是不是 1.10.0 版本基岩版模型文件
+        if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+            attachmentModel = new BedrockAttachmentModel(modelPOJO, BedrockVersion.LEGACY);
+        }
+        // 判定是不是 1.12.0 版本基岩版模型文件
+        if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+            attachmentModel = new BedrockAttachmentModel(modelPOJO, BedrockVersion.NEW);
+        }
+        return attachmentModel;
+    }
+
     public void putAllCustomTab(Map<String, CustomTabPOJO> tabs) {
         customTabs.putAll(tabs);
     }
@@ -157,20 +171,6 @@ public enum ClientAssetManager {
             return null;
         }
         tempAttachmentModelMap.put(modelLocation, attachmentModel);
-        return attachmentModel;
-    }
-
-    @Nullable
-    private static BedrockAttachmentModel getAttachmentModel(BedrockModelPOJO modelPOJO) {
-        BedrockAttachmentModel attachmentModel = null;
-        // 先判断是不是 1.10.0 版本基岩版模型文件
-        if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
-            attachmentModel = new BedrockAttachmentModel(modelPOJO, BedrockVersion.LEGACY);
-        }
-        // 判定是不是 1.12.0 版本基岩版模型文件
-        if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
-            attachmentModel = new BedrockAttachmentModel(modelPOJO, BedrockVersion.NEW);
-        }
         return attachmentModel;
     }
 

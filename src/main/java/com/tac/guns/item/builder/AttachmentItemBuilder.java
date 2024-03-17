@@ -28,7 +28,7 @@ public class AttachmentItemBuilder {
         return this;
     }
 
-    public AttachmentItemBuilder setSkinId(ResourceLocation skinId){
+    public AttachmentItemBuilder setSkinId(ResourceLocation skinId) {
         this.skinId = skinId;
         return this;
     }

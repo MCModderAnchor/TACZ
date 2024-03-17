@@ -31,7 +31,7 @@ public class MathUtil {
         };
     }
 
-    public static float[] inverseQuaternion(float[] quaternion){
+    public static float[] inverseQuaternion(float[] quaternion) {
         float[] result = new float[4];
         // 求共轭
         result[0] = -quaternion[0];
@@ -84,7 +84,7 @@ public class MathUtil {
         return result;
     }
 
-    public static Quaternion toQuaternion(float[] q){
+    public static Quaternion toQuaternion(float[] q) {
         return new Quaternion(q[0], q[1], q[2], q[3]);
     }
 
@@ -124,18 +124,15 @@ public class MathUtil {
         return new Quaternion(rx, ry, rz, rw);
     }
 
-    public static Vector3f getEulerAngles(Matrix4f matrix){
+    public static Vector3f getEulerAngles(Matrix4f matrix) {
         double sy = Math.sqrt(matrix.m00 * matrix.m00 + matrix.m10 * matrix.m10);
         boolean singular = sy < 1e-6;
         double x, y, z;
-        if (!singular)
-        {
+        if (!singular) {
             x = Math.atan2(matrix.m21, matrix.m22);
             y = Math.atan2(-matrix.m20, sy);
             z = Math.atan2(matrix.m10, matrix.m00);
-        }
-        else
-        {
+        } else {
             x = Math.atan2(-matrix.m12, matrix.m11);
             y = Math.atan2(-matrix.m20, sy);
             z = 0;
@@ -145,6 +142,7 @@ public class MathUtil {
 
     /**
      * 在两个变换矩阵之间插值。
+     *
      * @param resultMatrix 输出结果将乘进此矩阵
      */
     public static void applyMatrixLerp(Matrix4f fromMatrix, Matrix4f toMatrix, Matrix4f resultMatrix, float alpha) {

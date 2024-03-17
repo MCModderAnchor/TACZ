@@ -10,7 +10,6 @@ import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.loader.*;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
-import com.tac.guns.client.resource.pojo.CustomTabPOJO;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
 import com.tac.guns.client.resource.serialize.ItemStackSerializer;
 import com.tac.guns.client.resource.serialize.Vector3fSerializer;
