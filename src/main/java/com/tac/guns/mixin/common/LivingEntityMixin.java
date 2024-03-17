@@ -9,10 +9,12 @@ import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAmmo;
+import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import com.tac.guns.network.NetworkHandler;
+import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunReloadData;
@@ -241,6 +243,9 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
                     for (int i = 0; i < cap.getSlots(); i++) {
                         ItemStack checkAmmoStack = cap.getStackInSlot(i);
                         if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(tac$CurrentGunItem, checkAmmoStack)) {
+                            return true;
+                        }
+                        if (checkAmmoStack.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(tac$CurrentGunItem, checkAmmoStack)) {
                             return true;
                         }
                     }
@@ -505,6 +510,19 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
                     if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(tac$CurrentGunItem, checkAmmoStack)) {
                         ItemStack extractItem = cap.extractItem(i, needAmmoCount, false);
                         needAmmoCount = needAmmoCount - extractItem.getCount();
+                        if (needAmmoCount <= 0) {
+                            break;
+                        }
+                    }
+                    if (checkAmmoStack.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(tac$CurrentGunItem, checkAmmoStack)) {
+                        int boxAmmoCount = iAmmoBox.getAmmoCount(checkAmmoStack);
+                        int extractCount = Math.min(boxAmmoCount, needAmmoCount);
+                        int remainCount = boxAmmoCount - extractCount;
+                        iAmmoBox.setAmmoCount(checkAmmoStack, remainCount);
+                        if (remainCount <= 0) {
+                            iAmmoBox.setAmmoId(checkAmmoStack, DefaultAssets.EMPTY_AMMO_ID);
+                        }
+                        needAmmoCount = needAmmoCount - extractCount;
                         if (needAmmoCount <= 0) {
                             break;
                         }

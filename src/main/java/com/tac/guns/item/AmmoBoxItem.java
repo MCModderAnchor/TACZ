@@ -6,11 +6,10 @@ import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.builder.AmmoItemBuilder;
+import com.tac.guns.item.nbt.AmmoBoxItemDataAccessor;
 import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -32,14 +31,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class AmmoBoxItem extends Item implements DyeableLeatherItem, IAmmoBox {
+public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItemDataAccessor {
     public static final ResourceLocation PROPERTY_NAME = new ResourceLocation(GunMod.MOD_ID, "ammo_statue");
     private static final int MAX_STACK = 5;
     private static final int OPEN = 0;
     private static final int CLOSE = 1;
-
-    private static final String AMMO_ID_TAG = "AmmoId";
-    private static final String AMMO_COUNT_TAG = "AmmoCount";
 
     public AmmoBoxItem() {
         super(new Properties().stacksTo(1).tab(ModItems.OTHER_TAB));
@@ -134,36 +130,6 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, IAmmoBox {
 
     private void playInsertSound(Entity entity) {
         entity.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + entity.getLevel().getRandom().nextFloat() * 0.4F);
-    }
-
-    @Override
-    public ResourceLocation getAmmoId(ItemStack ammoBox) {
-        CompoundTag tag = ammoBox.getOrCreateTag();
-        if (tag.contains(AMMO_ID_TAG, Tag.TAG_STRING)) {
-            return new ResourceLocation(tag.getString(AMMO_ID_TAG));
-        }
-        return DefaultAssets.EMPTY_AMMO_ID;
-    }
-
-    @Override
-    public void setAmmoId(ItemStack ammoBox, ResourceLocation ammoId) {
-        CompoundTag tag = ammoBox.getOrCreateTag();
-        tag.putString(AMMO_ID_TAG, ammoId.toString());
-    }
-
-    @Override
-    public int getAmmoCount(ItemStack ammoBox) {
-        CompoundTag tag = ammoBox.getOrCreateTag();
-        if (tag.contains(AMMO_COUNT_TAG, Tag.TAG_INT)) {
-            return tag.getInt(AMMO_COUNT_TAG);
-        }
-        return 0;
-    }
-
-    @Override
-    public void setAmmoCount(ItemStack ammoBox, int count) {
-        CompoundTag tag = ammoBox.getOrCreateTag();
-        tag.putInt(AMMO_COUNT_TAG, count);
     }
 
     @OnlyIn(Dist.CLIENT)

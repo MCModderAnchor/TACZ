@@ -11,4 +11,6 @@ public interface IAmmoBox {
     void setAmmoId(ItemStack ammoBox, ResourceLocation ammoId);
 
     void setAmmoCount(ItemStack ammoBox, int count);
+
+    boolean isAmmoBoxOfGun(ItemStack gun, ItemStack ammoBox);
 }

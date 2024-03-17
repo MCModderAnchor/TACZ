@@ -9,6 +9,7 @@ import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAmmo;
+import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.resource.index.ClientGunIndex;
@@ -89,7 +90,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return ShootResult.COOL_DOWN;
         }
         // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
-        if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null){
+        if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null) {
             tac$IsShootRecorded = true;
             return ShootResult.FAIL;
         }
@@ -140,7 +141,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 // 转换 isRecord 状态，允许下一个tick的开火检测。
                 tac$IsShootRecorded = true;
                 // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
-                if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null){
+                if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null) {
                     tac$IsShootRecorded = true;
                     return;
                 }
@@ -228,6 +229,10 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
                     ItemStack checkAmmo = inventory.getItem(i);
                     if (checkAmmo.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(mainhandItem, checkAmmo)) {
+                        hasAmmo = true;
+                        break;
+                    }
+                    if (checkAmmo.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(mainhandItem, checkAmmo)) {
                         hasAmmo = true;
                         break;
                     }
