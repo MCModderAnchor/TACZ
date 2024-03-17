@@ -76,13 +76,11 @@ public class GunRefitScreen extends Screen {
 
     @Override
     public void render(PoseStack poseStack, int pMouseX, int pMouseY, float partialTick) {
-        for (int i = 0; i < 6; i++) {
-            if (i >= matchAttachments.size()) {
-                break;
-            }
-            ItemStack itemStack = matchAttachments.get(i);
+        int i = 0;
+        for (ItemStack itemStack : matchAttachments.values()) {
             int yOffset = 64 + 20 * i;
             itemRenderer.renderGuiItem(itemStack, this.width - 24, yOffset);
+            i++;
         }
         super.render(poseStack, pMouseX, pMouseY, partialTick);
     }
