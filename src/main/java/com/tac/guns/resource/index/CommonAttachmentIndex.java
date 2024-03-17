@@ -39,9 +39,6 @@ public class CommonAttachmentIndex {
         if (data == null) {
             throw new IllegalArgumentException("there is no corresponding data file");
         }
-        if (data.getFov() <= 0) {
-            throw new IllegalArgumentException("fov must > 0");
-        }
         index.data = data;
     }
 

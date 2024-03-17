@@ -47,7 +47,7 @@ public class GameRendererMixin {
     /**
      * 是一个 hack 实现。因为 getFov 这个方法只有在构建 投影矩阵 的时候调用。
      * 因此可以根据 getFov 中的 pUseFovSetting 来判断当前准备渲染 Level 还是渲染 HandWithItem 。
-     * 至于为什么不直接对 renderItemInHand 这个方法 mixin ，是因为安装了 Optifine 之后这个方法就不存在了（
+     * 至于为什么不直接对 renderItemInHand 这个方法 mixin ，是因为安装了 Optifine 之后，这个方法的内容被大幅度修改了。
      */
     @Inject(method = "getFov", at = @At("HEAD"))
     public void switchRenderType(Camera pActiveRenderInfo, float pPartialTicks, boolean pUseFOVSetting, CallbackInfoReturnable<Double> cir) {
