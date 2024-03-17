@@ -21,7 +21,7 @@ public class AttachmentData {
     @SerializedName("fov")
     private float fov = 70;
 
-    public boolean isSilencer(){
+    public boolean isSilencer() {
         return silence == SILENCE_DEFAULT_VALUE;
     }
 

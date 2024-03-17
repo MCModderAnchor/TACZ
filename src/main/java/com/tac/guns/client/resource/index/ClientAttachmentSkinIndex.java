@@ -11,10 +11,10 @@ public class ClientAttachmentSkinIndex {
     private ResourceLocation texture;
     private String name;
 
-    private ClientAttachmentSkinIndex(){
+    private ClientAttachmentSkinIndex() {
     }
 
-    public static ClientAttachmentSkinIndex getInstance(AttachmentSkin skinPojo){
+    public static ClientAttachmentSkinIndex getInstance(AttachmentSkin skinPojo) {
         ClientAttachmentSkinIndex index = new ClientAttachmentSkinIndex();
         checkIndex(skinPojo, index);
         checkTextureAndModel(skinPojo, index);

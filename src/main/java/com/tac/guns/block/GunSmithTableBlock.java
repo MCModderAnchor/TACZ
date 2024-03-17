@@ -37,6 +37,10 @@ public class GunSmithTableBlock extends BaseEntityBlock {
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, BedPart.FOOT));
     }
 
+    private static Direction getNeighbourDirection(BedPart bedPart, Direction direction) {
+        return bedPart == BedPart.FOOT ? direction : direction.getOpposite();
+    }
+
     @Override
     public InteractionResult use(BlockState pState, Level level, BlockPos pos, Player player, InteractionHand pHand, BlockHitResult pHit) {
         if (level.isClientSide) {
@@ -107,10 +111,6 @@ public class GunSmithTableBlock extends BaseEntityBlock {
         } else {
             return super.updateShape(state, direction, facingState, level, currentPos, facingPos);
         }
-    }
-
-    private static Direction getNeighbourDirection(BedPart bedPart, Direction direction) {
-        return bedPart == BedPart.FOOT ? direction : direction.getOpposite();
     }
 
     @Override

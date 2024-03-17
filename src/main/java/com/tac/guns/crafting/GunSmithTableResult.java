@@ -26,14 +26,6 @@ public class GunSmithTableResult {
         this.group = group;
     }
 
-    public ItemStack getResult() {
-        return result;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
     public static void toNetwork(FriendlyByteBuf buffer, GunSmithTableResult result) {
         buffer.writeItem(result.result);
         buffer.writeUtf(result.group);
@@ -41,6 +33,14 @@ public class GunSmithTableResult {
 
     public static GunSmithTableResult fromNetwork(FriendlyByteBuf buffer) {
         return new GunSmithTableResult(buffer.readItem(), buffer.readUtf());
+    }
+
+    public ItemStack getResult() {
+        return result;
+    }
+
+    public String getGroup() {
+        return group;
     }
 
     public static class Serializer implements JsonDeserializer<GunSmithTableResult> {

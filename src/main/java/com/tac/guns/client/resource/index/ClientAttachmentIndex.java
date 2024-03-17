@@ -18,12 +18,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ClientAttachmentIndex {
+    private final Map<ResourceLocation, ClientAttachmentSkinIndex> skinIndexMap = Maps.newHashMap();
     private String name;
     private BedrockAttachmentModel attachmentModel;
     private ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
     private AttachmentData data;
-    private final Map<ResourceLocation, ClientAttachmentSkinIndex> skinIndexMap = Maps.newHashMap();
 
     private ClientAttachmentIndex() {
     }
@@ -101,10 +101,10 @@ public class ClientAttachmentIndex {
         index.modelTexture = textureLocation;
     }
 
-    private static void checkSkins(ResourceLocation registryName, ClientAttachmentIndex index){
+    private static void checkSkins(ResourceLocation registryName, ClientAttachmentIndex index) {
         Map<ResourceLocation, AttachmentSkin> skins = ClientAssetManager.INSTANCE.getAttachmentSkins(registryName);
-        if(skins != null){
-            for(Map.Entry<ResourceLocation, AttachmentSkin> entry : skins.entrySet()){
+        if (skins != null) {
+            for (Map.Entry<ResourceLocation, AttachmentSkin> entry : skins.entrySet()) {
                 ClientAttachmentSkinIndex skinIndex = ClientAttachmentSkinIndex.getInstance(entry.getValue());
                 index.skinIndexMap.put(entry.getKey(), skinIndex);
             }
@@ -128,8 +128,8 @@ public class ClientAttachmentIndex {
     }
 
     @Nullable
-    public ClientAttachmentSkinIndex getSkinIndex(@Nullable ResourceLocation skinName){
-        if(skinName == null){
+    public ClientAttachmentSkinIndex getSkinIndex(@Nullable ResourceLocation skinName) {
+        if (skinName == null) {
             return null;
         }
         return skinIndexMap.get(skinName);

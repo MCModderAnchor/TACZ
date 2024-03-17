@@ -16,14 +16,6 @@ public class GunSmithTableIngredient {
         this.count = count;
     }
 
-    public Ingredient getIngredient() {
-        return ingredient;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
     public static void toNetwork(FriendlyByteBuf buffer, GunSmithTableIngredient ingredient) {
         ingredient.ingredient.toNetwork(buffer);
         buffer.writeVarInt(ingredient.count);
@@ -31,6 +23,14 @@ public class GunSmithTableIngredient {
 
     public static GunSmithTableIngredient fromNetwork(FriendlyByteBuf buffer) {
         return new GunSmithTableIngredient(Ingredient.fromNetwork(buffer), buffer.readVarInt());
+    }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
+
+    public int getCount() {
+        return count;
     }
 
     public static class Serializer implements JsonDeserializer<GunSmithTableIngredient> {

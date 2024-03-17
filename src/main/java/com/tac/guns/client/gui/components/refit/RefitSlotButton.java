@@ -31,16 +31,16 @@ public class RefitSlotButton extends Button {
         RenderSystem.enableDepthTest();
         if (isHoveredOrFocused() || selected) {
             blit(poseStack, x, y, 0, 0, width, height, 18, 18);
-        }else {
+        } else {
             blit(poseStack, x + 1, y + 1, 1, 1, width - 2, height - 2, 18, 18);
         }
     }
 
-    public AttachmentType getType(){
+    public AttachmentType getType() {
         return type;
     }
 
-    public void setSelected(boolean selected){
+    public void setSelected(boolean selected) {
         this.selected = selected;
     }
 }

@@ -8,7 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +105,7 @@ public class GunData {
         return allowAttachments;
     }
 
-    public boolean allowAttachmentType(AttachmentType type){
+    public boolean allowAttachmentType(AttachmentType type) {
         return allowAttachments.containsKey(type);
     }
 

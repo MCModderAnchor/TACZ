@@ -39,6 +39,14 @@ public class ServerMessageSound {
         return new ServerMessageSound(entityId, soundId, soundName, volume, pitch);
     }
 
+    public static void handle(ServerMessageSound message, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        if (context.getDirection().getReceptionSide().isClient()) {
+            context.enqueueWork(() -> SoundPlayManager.playMessageSound(message));
+        }
+        context.setPacketHandled(true);
+    }
+
     public int getEntityId() {
         return entityId;
     }
@@ -57,13 +65,5 @@ public class ServerMessageSound {
 
     public float getPitch() {
         return pitch;
-    }
-
-    public static void handle(ServerMessageSound message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isClient()) {
-            context.enqueueWork(() -> SoundPlayManager.playMessageSound(message));
-        }
-        context.setPacketHandled(true);
     }
 }

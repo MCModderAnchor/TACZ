@@ -53,10 +53,6 @@ import static com.tac.guns.resource.DefaultAssets.SHOOT_SOUND;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator {
-    @Override
-    @Shadow
-    public abstract <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing);
-
     @Unique
     private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
     @Unique
@@ -117,10 +113,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
      */
     @Unique
     private double tac$KnockbackStrength = -1;
-
     public LivingEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
+
+    @Override
+    @Shadow
+    public abstract <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing);
 
     @Override
     @Unique
@@ -544,12 +543,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Override
     @Unique
-    public void setKnockbackStrength(double strength) {
-        this.tac$KnockbackStrength = strength;
-    }
-
-    @Override
-    @Unique
     public void resetKnockbackStrength() {
         this.tac$KnockbackStrength = -1;
     }
@@ -558,5 +551,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Unique
     public double getKnockbackStrength() {
         return this.tac$KnockbackStrength;
+    }
+
+    @Override
+    @Unique
+    public void setKnockbackStrength(double strength) {
+        this.tac$KnockbackStrength = strength;
     }
 }

@@ -3,7 +3,6 @@ package com.tac.guns.item;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.client.renderer.item.AmmoItemRenderer;
-import com.tac.guns.client.resource.ClientGunPackLoader;
 import com.tac.guns.client.resource.index.ClientAmmoIndex;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.item.builder.AmmoItemBuilder;

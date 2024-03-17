@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class GameOverlayEvent {
     private static boolean isRefitScreen = false;
+
     /**
      * 当玩家手上拿着枪时，播放特定动画、或瞄准时需要隐藏准心
      */
@@ -64,7 +65,7 @@ public class GameOverlayEvent {
     }
 
     @SubscribeEvent
-    public static void onRenderTick(TickEvent.RenderTickEvent event){
+    public static void onRenderTick(TickEvent.RenderTickEvent event) {
         // 奇迹的是，RenderGameOverlayEvent.PreLayer 事件中，screen还未被赋值...
         isRefitScreen = Minecraft.getInstance().screen instanceof GunRefitScreen;
     }

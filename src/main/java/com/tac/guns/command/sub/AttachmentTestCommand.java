@@ -4,7 +4,6 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.item.builder.AttachmentItemBuilder;
 import net.minecraft.commands.CommandSourceStack;
@@ -26,7 +25,7 @@ public class AttachmentTestCommand {
         try {
             ServerPlayer player = context.getSource().getPlayerOrException();
             ItemStack itemStack = player.getMainHandItem();
-            if(itemStack.getItem() instanceof IGun iGun){
+            if (itemStack.getItem() instanceof IGun iGun) {
                 iGun.setAttachment(itemStack, AttachmentItemBuilder.create().build());
             }
         } catch (CommandSyntaxException e) {

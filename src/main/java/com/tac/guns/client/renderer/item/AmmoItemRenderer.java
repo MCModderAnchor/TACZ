@@ -30,6 +30,26 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
     }
 
+    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack) {
+        if (nodePath == null) {
+            return;
+        }
+        // 应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
+        poseStack.translate(0, 1.5, 0);
+        for (int i = nodePath.size() - 1; i >= 0; i--) {
+            BedrockPart t = nodePath.get(i);
+            poseStack.mulPose(Vector3f.XN.rotation(t.xRot));
+            poseStack.mulPose(Vector3f.YN.rotation(t.yRot));
+            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot));
+            if (t.getParent() != null) {
+                poseStack.translate(-t.x / 16.0F, -t.y / 16.0F, -t.z / 16.0F);
+            } else {
+                poseStack.translate(-t.x / 16.0F, (1.5F - t.y / 16.0F), -t.z / 16.0F);
+            }
+        }
+        poseStack.translate(0, -1.5, 0);
+    }
+
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.getItem() instanceof IAmmo iAmmo) {
@@ -56,25 +76,5 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
             });
             poseStack.popPose();
         }
-    }
-
-    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack) {
-        if (nodePath == null) {
-            return;
-        }
-        // 应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
-        poseStack.translate(0, 1.5, 0);
-        for (int i = nodePath.size() - 1; i >= 0; i--) {
-            BedrockPart t = nodePath.get(i);
-            poseStack.mulPose(Vector3f.XN.rotation(t.xRot));
-            poseStack.mulPose(Vector3f.YN.rotation(t.yRot));
-            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot));
-            if (t.getParent() != null) {
-                poseStack.translate(-t.x / 16.0F, -t.y / 16.0F, -t.z / 16.0F);
-            } else {
-                poseStack.translate(-t.x / 16.0F, (1.5F - t.y / 16.0F), -t.z / 16.0F);
-            }
-        }
-        poseStack.translate(0, -1.5, 0);
     }
 }

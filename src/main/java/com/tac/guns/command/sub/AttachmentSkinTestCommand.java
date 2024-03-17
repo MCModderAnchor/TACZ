@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.item.builder.AttachmentItemBuilder;
 import net.minecraft.commands.CommandSourceStack;
@@ -30,7 +29,7 @@ public class AttachmentSkinTestCommand {
             ResourceLocation skinId = ResourceLocation.tryParse(skinName);
             ServerPlayer player = context.getSource().getPlayerOrException();
             ItemStack itemStack = player.getMainHandItem();
-            if(itemStack.getItem() instanceof IGun iGun){
+            if (itemStack.getItem() instanceof IGun iGun) {
                 iGun.setAttachment(itemStack, AttachmentItemBuilder.create().setSkinId(skinId).build());
             }
         } catch (CommandSyntaxException e) {

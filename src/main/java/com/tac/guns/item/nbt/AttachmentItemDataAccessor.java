@@ -17,7 +17,7 @@ public interface AttachmentItemDataAccessor extends IAttachment {
 
     @Override
     @Nonnull
-    default ResourceLocation getAttachmentId(ItemStack attachmentStack){
+    default ResourceLocation getAttachmentId(ItemStack attachmentStack) {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
         if (nbt.contains(ATTACHMENT_ID_TAG, Tag.TAG_STRING)) {
             ResourceLocation attachmentId = ResourceLocation.tryParse(nbt.getString(ATTACHMENT_ID_TAG));
@@ -27,7 +27,7 @@ public interface AttachmentItemDataAccessor extends IAttachment {
     }
 
     @Override
-    default void setAttachmentId(ItemStack attachmentStack, @Nullable ResourceLocation attachmentId){
+    default void setAttachmentId(ItemStack attachmentStack, @Nullable ResourceLocation attachmentId) {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
         if (attachmentId != null) {
             nbt.putString(ATTACHMENT_ID_TAG, attachmentId.toString());
@@ -38,7 +38,7 @@ public interface AttachmentItemDataAccessor extends IAttachment {
 
     @Override
     @Nullable
-    default ResourceLocation getSkinId(ItemStack attachmentStack){
+    default ResourceLocation getSkinId(ItemStack attachmentStack) {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
         if (nbt.contains(SKIN_ID_TAG, Tag.TAG_STRING)) {
             return ResourceLocation.tryParse(nbt.getString(SKIN_ID_TAG));
@@ -47,11 +47,11 @@ public interface AttachmentItemDataAccessor extends IAttachment {
     }
 
     @Override
-    default void setSkinId(ItemStack attachmentStack, @Nullable ResourceLocation skinId){
+    default void setSkinId(ItemStack attachmentStack, @Nullable ResourceLocation skinId) {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
         if (skinId != null) {
             nbt.putString(SKIN_ID_TAG, skinId.toString());
-        }else {
+        } else {
             nbt.remove(SKIN_ID_TAG);
         }
     }

@@ -46,7 +46,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
     @Unique
     private static final Predicate<IGunOperator> tac$ShootLockedCondition = operator -> operator.getSynShootCoolDown() > 0;
-
+    /**
+     * 上一个 tick 的瞄准进度，用于插值，范围 0 ~ 1
+     */
+    @Unique
+    private static float tac$OldAimingProgress = 0;
     @Unique
     private volatile long tac$ClientShootTimestamp = -1L;
     @Unique
@@ -56,11 +60,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
      */
     @Unique
     private float tac$ClientAimingProgress = 0;
-    /**
-     * 上一个 tick 的瞄准进度，用于插值，范围 0 ~ 1
-     */
-    @Unique
-    private static float tac$OldAimingProgress = 0;
     /**
      * 瞄准时间戳，单位 ms
      */

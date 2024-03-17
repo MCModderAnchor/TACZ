@@ -393,15 +393,15 @@ public class CommonGunPackLoader {
         return Optional.ofNullable(ATTACHMENT_INDEX.get(registryName));
     }
 
-    public static Set<Map.Entry<ResourceLocation, CommonGunIndex>> getAllGuns(){
+    public static Set<Map.Entry<ResourceLocation, CommonGunIndex>> getAllGuns() {
         return GUN_INDEX.entrySet();
     }
 
-    public static Set<Map.Entry<ResourceLocation, CommonAmmoIndex>> getAllAmmo(){
+    public static Set<Map.Entry<ResourceLocation, CommonAmmoIndex>> getAllAmmo() {
         return AMMO_INDEX.entrySet();
     }
 
-    public static Set<Map.Entry<ResourceLocation, CommonAttachmentIndex>> getAllAttachments(){
+    public static Set<Map.Entry<ResourceLocation, CommonAttachmentIndex>> getAllAttachments() {
         return ATTACHMENT_INDEX.entrySet();
     }
 }

@@ -74,9 +74,9 @@ public interface IGunOperator {
      */
     void aim(boolean isAim);
 
-    void setKnockbackStrength(double strength);
-
     void resetKnockbackStrength();
 
     double getKnockbackStrength();
+
+    void setKnockbackStrength(double strength);
 }
