@@ -15,6 +15,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
+import static com.tac.guns.util.InputExtraCheck.isInGame;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class AimKey {
     public static final KeyMapping AIM_KEY = new KeyMapping("key.tac.aim.desc",
@@ -55,23 +57,5 @@ public class AimKey {
         if (operator.isAim() && !isInGame()) {
             IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
         }
-    }
-
-    private static boolean isInGame() {
-        Minecraft mc = Minecraft.getInstance();
-        // 不能是加载界面
-        if (mc.getOverlay() != null) {
-            return false;
-        }
-        // 不能打开任何 GUI
-        if (mc.screen != null) {
-            return false;
-        }
-        // 当前窗口捕获鼠标操作
-        if (!mc.mouseHandler.isMouseGrabbed()) {
-            return false;
-        }
-        // 选择了当前窗口
-        return mc.isWindowActive();
     }
 }

@@ -14,6 +14,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
+import static com.tac.guns.util.InputExtraCheck.isInGame;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class ReloadKey {
     public static final KeyMapping RELOAD_KEY = new KeyMapping("key.tac.reload.desc",
@@ -25,7 +27,7 @@ public class ReloadKey {
 
     @SubscribeEvent
     public static void onReloadPress(InputEvent.KeyInputEvent event) {
-        if (event.getAction() == GLFW.GLFW_PRESS && RELOAD_KEY.matches(event.getKey(), event.getScanCode())) {
+        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && RELOAD_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
                 return;

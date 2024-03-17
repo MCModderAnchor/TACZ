@@ -14,6 +14,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
+import static com.tac.guns.util.InputExtraCheck.isInGame;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class RefitKey {
     public static final KeyMapping REFIT_KEY = new KeyMapping("key.tac.refit.desc",
@@ -25,7 +27,7 @@ public class RefitKey {
 
     @SubscribeEvent
     public static void onInspectPress(InputEvent.KeyInputEvent event) {
-        if (event.getAction() == GLFW.GLFW_PRESS && REFIT_KEY.matches(event.getKey(), event.getScanCode())) {
+        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && REFIT_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
                 return;
