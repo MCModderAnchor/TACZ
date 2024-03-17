@@ -1,15 +1,15 @@
 package com.tac.guns.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.attachment.AttachmentType;
+import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.client.gui.components.refit.RefitSlotButton;
-import com.tac.guns.inventory.GunRefitMenu;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.network.chat.Component;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,25 +17,29 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
-public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
-    private static int selectedSlot = -1;
+public class GunRefitScreen extends Screen {
+    private static AttachmentType selectedType = AttachmentType.NONE;
+
     private static float refitScreenTransformProgress = 1;
     private static long refitScreenTransformTimestamp = -1;
     private static AttachmentType oldTransformType = AttachmentType.NONE;
     private static AttachmentType currentTransformType = AttachmentType.NONE;
     private static float refitScreenOpeningProgress = 0;
     private static long refitScreenOpeningTimestamp = -1;
+
     private static final float REFIT_SCREEN_TRANSFORM_TIMES = 0.25f;
 
-    public GunRefitScreen(GunRefitMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title);
-        selectedSlot = -1;
+    private final Int2ObjectMap<ItemStack> matchAttachments = new Int2ObjectOpenHashMap<>();
+
+    public GunRefitScreen() {
+        super(new TextComponent("Gun Refit Screen"));
         refitScreenTransformProgress = 1;
         refitScreenTransformTimestamp = System.currentTimeMillis();
         oldTransformType = AttachmentType.NONE;
@@ -44,53 +48,84 @@ public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
 
     @Override
     protected void init() {
-        this.imageWidth = width;
-        this.imageHeight = height;
         super.init();
         this.clearWidgets();
-        int i = 0;
+        this.matchAttachments.clear();
+
         // 添加配件槽位
-        for(AttachmentType type : AttachmentType.values()){
+        int i = 0;
+        for (AttachmentType type : AttachmentType.values()) {
             if (type == AttachmentType.NONE) {
                 continue;
             }
             addRenderableWidget(getRefitSlotButton(type, i++));
         }
+
+        // 存入显示配件
+        if (selectedType != AttachmentType.NONE && getMinecraft().player != null) {
+            Inventory inventory = getMinecraft().player.getInventory();
+            for (int j = 0; j < inventory.getContainerSize(); j++) {
+                ItemStack inventoryItem = inventory.getItem(j);
+                IAttachment attachment = IAttachment.getIAttachmentOrNull(inventoryItem);
+                if (attachment != null && attachment.getType(inventoryItem) == selectedType) {
+                    matchAttachments.put(j, inventoryItem);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void render(PoseStack poseStack, int pMouseX, int pMouseY, float partialTick) {
+        for (int i = 0; i < 6; i++) {
+            if (i >= matchAttachments.size()) {
+                break;
+            }
+            ItemStack itemStack = matchAttachments.get(i);
+            int yOffset = 64 + 20 * i;
+            itemRenderer.renderGuiItem(itemStack, this.width - 24, yOffset);
+        }
+        super.render(poseStack, pMouseX, pMouseY, partialTick);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            for (int i = 0; i < 6; i++) {
+                if (i >= matchAttachments.size()) {
+                    break;
+                }
+                int xOffset = this.width - 24;
+                int yOffset = 64 + 20 * i;
+                int xEnd = xOffset + 16;
+                int yEnd = yOffset + 16;
+                boolean xInRange = xOffset <= mouseX && mouseX <= xEnd;
+                boolean yInRange = yOffset <= mouseY && mouseY <= yEnd;
+                if (xInRange && yInRange) {
+                    // TODO：点击事件，发包到服务端
+                    break;
+                }
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @NotNull
     private RefitSlotButton getRefitSlotButton(AttachmentType type, int index) {
-        RefitSlotButton button = new RefitSlotButton(leftPos + width - 18 * (index + 1), topPos + 8, ItemStack.EMPTY, type, b -> {
+        RefitSlotButton button = new RefitSlotButton(width - 18 * (index + 1), 8, ItemStack.EMPTY, type, b -> {
             AttachmentType transformType = getTransformTypeFromIndex(index);
             if (changeRefitScreenView(transformType)) {
-                sendButtonClick(index);
-                selectedSlot = index;
+                selectedType = transformType;
                 init();
             }
         });
-        if (selectedSlot == index) {
+        if (selectedType == type) {
             button.setSelected(true);
         }
         return button;
     }
 
-    @Override
-    protected void renderLabels(@Nonnull PoseStack poseStack, int mouseX, int mouseY) {
-    }
-
-    @Override
-    protected void renderBg(@Nonnull PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
-    }
-
-    private void sendButtonClick(int buttonId) {
-        MultiPlayerGameMode gameMode = this.getMinecraft().gameMode;
-        if (gameMode != null) {
-            gameMode.handleInventoryButtonClick(this.menu.containerId, buttonId);
-        }
-    }
-
     @SubscribeEvent
-    public static void tickInterpolation(TickEvent.RenderTickEvent event){
+    public static void tickInterpolation(TickEvent.RenderTickEvent event) {
         // tick opening progress
         if (refitScreenOpeningTimestamp == -1) {
             refitScreenOpeningTimestamp = System.currentTimeMillis();
@@ -102,7 +137,7 @@ public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
             }
         } else {
             refitScreenOpeningProgress -= (System.currentTimeMillis() - refitScreenOpeningTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
-            if (refitScreenOpeningProgress < 0){
+            if (refitScreenOpeningProgress < 0) {
                 refitScreenOpeningProgress = 0;
             }
         }
@@ -118,32 +153,32 @@ public class GunRefitScreen extends AbstractContainerScreen<GunRefitMenu> {
         refitScreenTransformTimestamp = System.currentTimeMillis();
     }
 
-    public static float getOpeningProgress(){
+    public static float getOpeningProgress() {
         return refitScreenOpeningProgress;
     }
 
     @Nonnull
-    public static AttachmentType getOldTransformType(){
+    public static AttachmentType getOldTransformType() {
         return Objects.requireNonNullElse(oldTransformType, AttachmentType.NONE);
     }
 
     @Nonnull
-    public static AttachmentType getCurrentTransformType(){
+    public static AttachmentType getCurrentTransformType() {
         return Objects.requireNonNullElse(currentTransformType, AttachmentType.NONE);
     }
 
-    public static float getTransformProgress(){
+    public static float getTransformProgress() {
         return refitScreenTransformProgress;
     }
 
-    private static AttachmentType getTransformTypeFromIndex(int index){
+    private static AttachmentType getTransformTypeFromIndex(int index) {
         if (index < AttachmentType.NONE.ordinal()) {
             return AttachmentType.values()[index];
         }
         return AttachmentType.values()[index + 1];
     }
 
-    private static boolean changeRefitScreenView(AttachmentType attachmentType){
+    private static boolean changeRefitScreenView(AttachmentType attachmentType) {
         if (refitScreenTransformProgress != 1 || refitScreenOpeningProgress != 1) {
             return false;
         }

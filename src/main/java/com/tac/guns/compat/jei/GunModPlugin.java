@@ -38,7 +38,6 @@ public class GunModPlugin implements IModPlugin {
         registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.AMMO.get(), GunModSubtype.getAmmoSubtype());
     }
 
-
     @Override
     public ResourceLocation getPluginUid() {
         return UID;

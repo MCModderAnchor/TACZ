@@ -2,8 +2,7 @@ package com.tac.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.network.NetworkHandler;
-import com.tac.guns.network.message.ClientMessageRefit;
+import com.tac.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -32,7 +31,7 @@ public class RefitKey {
                 return;
             }
             if (IGun.mainhandHoldGun(player) && Minecraft.getInstance().screen == null) {
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessageRefit());
+                Minecraft.getInstance().setScreen(new GunRefitScreen());
             }
         }
     }
