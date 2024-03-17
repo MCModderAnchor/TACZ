@@ -19,5 +19,5 @@
   "gui.tac.gun_smith_table.preview": "Preview",
   "gui.tac.gun_smith_table.ingredient": "Ingredient: ",
   "gui.tac.gun_smith_table.craft": "Craft",
-  "tooltip.tac.ammo_box.count": "Ammo Count: %d"
+  "tooltip.tac.ammo_box.count": "Count: %d"
 }
