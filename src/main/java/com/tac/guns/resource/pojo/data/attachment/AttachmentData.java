@@ -15,11 +15,6 @@ public class AttachmentData {
     private RecoilModifier recoilModifier;
     @SerializedName("silence")
     private float silence = SILENCE_DEFAULT_VALUE;
-    @SerializedName("zoom")
-    @Nullable
-    private float[] zoom;
-    @SerializedName("fov")
-    private float fov = 70;
 
     public boolean isSilencer() {
         return silence == SILENCE_DEFAULT_VALUE;
@@ -40,14 +35,5 @@ public class AttachmentData {
 
     public float getSilence() {
         return silence;
-    }
-
-    @Nullable
-    public float[] getZoom() {
-        return zoom;
-    }
-
-    public float getFov() {
-        return fov;
     }
 }

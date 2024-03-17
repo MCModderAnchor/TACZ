@@ -3,6 +3,8 @@ package com.tac.guns.client.resource.pojo.display.attachment;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nullable;
+
 public class AttachmentDisplay {
     @SerializedName("slot")
     private ResourceLocation slotTextureLocation;
@@ -12,6 +14,13 @@ public class AttachmentDisplay {
 
     @SerializedName("texture")
     private ResourceLocation texture;
+
+    @SerializedName("zoom")
+    @Nullable
+    private float[] zoom;
+
+    @SerializedName("fov")
+    private float fov = 70;
 
     public ResourceLocation getSlotTextureLocation() {
         return slotTextureLocation;
@@ -23,5 +32,14 @@ public class AttachmentDisplay {
 
     public ResourceLocation getTexture() {
         return texture;
+    }
+
+    @Nullable
+    public float[] getZoom() {
+        return zoom;
+    }
+
+    public float getFov() {
+        return fov;
     }
 }

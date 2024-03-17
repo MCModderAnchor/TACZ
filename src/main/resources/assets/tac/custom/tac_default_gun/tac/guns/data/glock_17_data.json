@@ -1,6 +1,6 @@
 {
   "ammo": "tac:9mm",
-  "rpm": 900,
+  "rpm": 800,
   "ammo_amount": 17,
   "reload": {
     "type": "magazine",

@@ -9,12 +9,15 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
+import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.gui.GunRefitScreen;
+import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
+import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.util.math.Easing;
@@ -35,7 +38,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
 
@@ -45,7 +50,7 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.Transform
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class FirstPersonRenderGunEvent {
     // 用于生成瞄准动作的运动曲线，使动作看起来更平滑
-    private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(0.75f, 1.2f, 0.5f, 0);
+    private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(1.2f, 1.2f, 0.5f, 0);
     // 用于打开改装界面时枪械运动的平滑
     private static final SecondOrderDynamics REFIT_OPENING_DYNAMICS = new SecondOrderDynamics(1f, 1.2f, 0.5f, 0);
 
@@ -106,8 +111,8 @@ public class FirstPersonRenderGunEvent {
             boolean renderHand = gunModel.getRenderHand();
             if (GunRefitScreen.getOpeningProgress() != 0) gunModel.setRenderHand(false);
             // 调用枪械模型渲染
-            VertexConsumer vertexConsumer = event.getMultiBufferSource().getBuffer(RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture()));
-            gunModel.render(poseStack, stack, transformType, vertexConsumer, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+            RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
+            gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
             // 恢复手臂渲染
             gunModel.setRenderHand(renderHand);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
@@ -139,7 +144,7 @@ public class FirstPersonRenderGunEvent {
         // 配合运动曲线，计算瞄准进度
         float aimingProgress = AIMING_DYNAMICS.update(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
         // 应用各种摄像机定位组的变换（默认持枪、瞄准、改装界面等）
-        applyFirstPersonPositioningTransform(poseStack, model, aimingProgress, refitScreenOpeningProgress);
+        applyFirstPersonPositioningTransform(poseStack, model, gunItemStack, aimingProgress, refitScreenOpeningProgress);
         // 应用动画约束变换
         CommonTransformObject ica = gunIndex.getAnimationInfluenceCoefficient().getIronView();
         applyAnimationConstraintTransform(poseStack, model.getConstraintPath(), aimingProgress * (1 - refitScreenOpeningProgress), ica);
@@ -148,14 +153,39 @@ public class FirstPersonRenderGunEvent {
     /**
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。会在几个摄像机定位之间插值。
      */
-    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, float aimingProgress,
+    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, ItemStack stack, float aimingProgress,
                                                              float refitScreenOpeningProgress) {
+        IGun iGun = IGun.getIGunOrNull(stack);
+        if (iGun == null) {
+            return;
+        }
         Matrix4f transformMatrix = new Matrix4f();
         transformMatrix.setIdentity();
         // 应用瞄准定位
-        // TODO 判断是否安装瞄具，
         List<BedrockPart> idleNodePath = model.getIdleSightPath();
-        List<BedrockPart> aimingNodePath = model.getIronSightPath();
+        List<BedrockPart> aimingNodePath = null;
+        ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
+        if (scopeItem.isEmpty()) {
+            // 未安装瞄具，使用机瞄定位组
+            aimingNodePath = model.getIronSightPath();
+        } else {
+            // 安装瞄具，组合瞄具定位组和瞄具视野定位组
+            List<BedrockPart> scopeNodePath = model.getScopePosPath();
+            if (scopeNodePath != null) {
+                aimingNodePath = new ArrayList<>(scopeNodePath);
+                IAttachment iAttachment = IAttachment.getIAttachmentOrNull(scopeItem);
+                if (iAttachment != null) {
+                    ResourceLocation scopeId = iAttachment.getAttachmentId(scopeItem);
+                    Optional<ClientAttachmentIndex> indexOptional = TimelessAPI.getClientAttachmentIndex(scopeId);
+                    if(indexOptional.isPresent()){
+                        BedrockAttachmentModel attachmentModel = indexOptional.get().getAttachmentModel();
+                        if (attachmentModel.getScopeViewPath() != null) {
+                            aimingNodePath.addAll(attachmentModel.getScopeViewPath());
+                        }
+                    }
+                }
+            }
+        }
         MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(idleNodePath), transformMatrix, (1 - refitScreenOpeningProgress));
         MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(aimingNodePath), transformMatrix, (1 - refitScreenOpeningProgress) * aimingProgress);
         // 应用改装界面开启时的定位

@@ -33,7 +33,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
                 poseStack.translate(0, 1.5, 0);
                 poseStack.scale(-1, -1, 1);
                 VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucentCull(textureLocation));
-                ammoEntityModel.render(poseStack, ItemTransforms.TransformType.GROUND, consumer, packedLight, OverlayTexture.NO_OVERLAY);
+                ammoEntityModel.render(poseStack, ItemTransforms.TransformType.GROUND, RenderType.entityTranslucentCull(textureLocation), packedLight, OverlayTexture.NO_OVERLAY);
                 poseStack.popPose();
             }
         });

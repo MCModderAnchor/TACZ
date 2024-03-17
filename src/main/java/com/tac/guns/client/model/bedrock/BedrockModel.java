@@ -2,8 +2,11 @@ package com.tac.guns.client.model.bedrock;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.tac.guns.client.model.IModelRenderer;
+import com.tac.guns.client.model.IFunctionalRenderer;
 import com.tac.guns.client.resource.pojo.model.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -11,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class BedrockModel implements IModelRenderer {
+public class BedrockModel{
     /**
      * 存储 ModelRender 子模型的 HashMap
      */
@@ -27,7 +30,7 @@ public class BedrockModel implements IModelRenderer {
     /**
      * 委托到渲染结束时执行的渲染器，用于特殊部分的渲染，如手臂
      */
-    protected List<IModelRenderer> delegateRenderers = new ArrayList<>();
+    protected List<IFunctionalRenderer> delegateRenderers = new ArrayList<>();
     /**
      * 模型的中心点
      */
@@ -52,7 +55,7 @@ public class BedrockModel implements IModelRenderer {
         }
     }
 
-    public void delegateRender(IModelRenderer renderer) {
+    public void delegateRender(IFunctionalRenderer renderer) {
         delegateRenderers.add(renderer);
     }
 
@@ -322,17 +325,19 @@ public class BedrockModel implements IModelRenderer {
         return (float) (degree * Math.PI / 180);
     }
 
-    @Override
-    public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, VertexConsumer builder, int light, int overlay) {
+    public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer builder = bufferSource.getBuffer(renderType);
+
         matrixStack.pushPose();
         for (BedrockPart model : shouldRender) {
             model.render(matrixStack, transformType, builder, light, overlay);
         }
-
         matrixStack.popPose();
+        bufferSource.endBatch(renderType);
 
-        for (IModelRenderer renderer : delegateRenderers) {
-            renderer.render(matrixStack, transformType, builder, light, overlay);
+        for (IFunctionalRenderer renderer : delegateRenderers) {
+            renderer.render(matrixStack, transformType, light, overlay);
         }
         delegateRenderers = new ArrayList<>();
     }

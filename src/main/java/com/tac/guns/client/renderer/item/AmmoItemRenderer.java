@@ -63,8 +63,7 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
                     // 再移动 0.5 格到中心
                     poseStack.translate(0, -0.5, 0);
                     applyPositioningNodeTransform(ammoModel.getFixedOriginPath(), poseStack);
-                    VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(ammoIndex.getModelTextureLocation()));
-                    ammoModel.render(poseStack, transformType, buffer, pPackedLight, pPackedOverlay);
+                    ammoModel.render(poseStack, transformType, RenderType.entityTranslucent(ammoIndex.getModelTextureLocation()), pPackedLight, pPackedOverlay);
                 } else {
                     VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(ammoIndex.getSlotTextureLocation()));
                     SLOT_AMMO_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);

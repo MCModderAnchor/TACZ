@@ -107,7 +107,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
      * @param node     想要进行编程渲染流程的 node 名称
      * @param function 输入为 BedrockPart，返回 IModelRenderer 以替换渲染
      */
-    public void setFunctionalRenderer(String node, Function<BedrockPart, IModelRenderer> function) {
+    public void setFunctionalRenderer(String node, Function<BedrockPart, IFunctionalRenderer> function) {
         ModelRendererWrapper wrapper = modelMap.get(node);
         if (wrapper == null) {
             FunctionalBedrockPart functionalPart = new FunctionalBedrockPart(function, node);
@@ -271,14 +271,14 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
      * visible的优先级低于FunctionalBedrockPart，当visible为false的时候，仍然会执行functionalRenderers
      */
     protected static class FunctionalBedrockPart extends BedrockPart {
-        public @Nullable Function<BedrockPart, IModelRenderer> functionalRenderer;
+        public @Nullable Function<BedrockPart, IFunctionalRenderer> functionalRenderer;
 
-        public FunctionalBedrockPart(@Nullable Function<BedrockPart, IModelRenderer> functionalRenderer, @Nonnull String name) {
+        public FunctionalBedrockPart(@Nullable Function<BedrockPart, IFunctionalRenderer> functionalRenderer, @Nonnull String name) {
             super(name);
             this.functionalRenderer = functionalRenderer;
         }
 
-        public FunctionalBedrockPart(@Nullable Function<BedrockPart, IModelRenderer> functionalRenderer, @Nonnull BedrockPart part) {
+        public FunctionalBedrockPart(@Nullable Function<BedrockPart, IFunctionalRenderer> functionalRenderer, @Nonnull BedrockPart part) {
             super(part.name);
             this.cubes.addAll(part.cubes);
             this.children.addAll(part.children);
@@ -309,13 +309,12 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
             }
 
             poseStack.pushPose();
-            poseStack.translate(this.offsetX, this.offsetY, this.offsetZ);
             this.translateAndRotateAndScale(poseStack);
 
             if (functionalRenderer != null) {
-                @Nullable IModelRenderer renderer = functionalRenderer.apply(this);
+                @Nullable IFunctionalRenderer renderer = functionalRenderer.apply(this);
                 if (renderer != null) {
-                    renderer.render(poseStack, transformType, consumer, cubePackedLight, overlay);
+                    renderer.render(poseStack, transformType, cubePackedLight, overlay);
                 } else {
                     if (this.visible) {
                         super.compile(poseStack.last(), consumer, cubePackedLight, overlay, red, green, blue, alpha);

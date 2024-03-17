@@ -169,6 +169,11 @@ public class GunRefitScreen extends Screen {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
+
     @NotNull
     private RefitSlotButton getRefitSlotButton(AttachmentType type, int index) {
         RefitSlotButton button = new RefitSlotButton(width - 18 * (index + 1), 8, ItemStack.EMPTY, type, b -> {
