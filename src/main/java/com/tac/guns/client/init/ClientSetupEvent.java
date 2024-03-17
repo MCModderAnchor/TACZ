@@ -4,6 +4,10 @@ import com.tac.guns.GunMod;
 import com.tac.guns.client.animation.thrid.ThirdPersonManager;
 import com.tac.guns.client.gui.GunHudOverlay;
 import com.tac.guns.client.input.*;
+import com.tac.guns.init.ModItems;
+import com.tac.guns.item.AmmoBoxItem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.gui.OverlayRegistry;
@@ -32,5 +36,12 @@ public class ClientSetupEvent {
 
         // 注册自己的的硬编码第三人称动画
         event.enqueueWork(ThirdPersonManager::registerInner);
+
+        // 注册颜色
+        event.enqueueWork(() -> Minecraft.getInstance().getItemColors().register(AmmoBoxItem::getColor, ModItems.AMMO_BOX.get()));
+
+        // 注册变种
+        // noinspection deprecation
+        event.enqueueWork(() -> ItemProperties.register(ModItems.AMMO_BOX.get(), AmmoBoxItem.PROPERTY_NAME, AmmoBoxItem::getStatue));
     }
 }

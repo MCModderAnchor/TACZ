@@ -1,0 +1,10 @@
+{
+  "overrides": [
+    {
+      "predicate": {
+        "tac:ammo_statue": 1
+      },
+      "model": "tac:item/ammo_box_open"
+    }
+  ]
+}

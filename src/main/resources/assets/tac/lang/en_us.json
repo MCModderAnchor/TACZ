@@ -15,6 +15,7 @@
   "itemGroup.tab.tac.ammo": "TAC | Ammo",
   "itemGroup.tab.tac.attachment": "TAC | Attachment",
   "block.tac.gun_smith_table": "Gun Smith Table",
+  "item.tac.ammo_box": "Ammo Box",
   "gui.tac.gun_smith_table.preview": "Preview",
   "gui.tac.gun_smith_table.ingredient": "Ingredient: ",
   "gui.tac.gun_smith_table.craft": "Craft"
