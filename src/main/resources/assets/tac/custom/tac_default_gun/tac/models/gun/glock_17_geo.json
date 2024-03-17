@@ -3147,7 +3147,8 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [-3.1, -1.775, -9.375]
+					"pivot": [-1.6, -1.775, -9.375],
+					"rotation": [0, -15, 0]
 				},
 				{
 					"name": "camera",
