@@ -81,11 +81,6 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (result.getEntity() instanceof LivingEntity livingEntity) {
-            if (this.hasExplosion) {
-                createExplosion(this, 10, 1, result.getLocation());
-                this.discard();
-                return;
-            }
             // 取消无敌时间
             livingEntity.invulnerableTime = 0;
             // 取消击退效果
@@ -93,7 +88,8 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
                 operator.setKnockbackStrength(this.knockback);
                 livingEntity.hurt(DamageSource.thrown(this, this.getOwner()), this.damageAmount);
                 if (this.hasExplosion) {
-                    this.level.explode(this, this.getX(), this.getY(), this.getZ(), this.explosionRadius, Explosion.BlockInteraction.NONE);
+                    createExplosion(this, 10, 1.5F, result.getLocation());
+                    this.discard();
                 }
                 operator.resetKnockbackStrength();
             }
@@ -105,7 +101,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     @Override
     protected void onHitBlock(@NotNull BlockHitResult hitResult) {
         if (this.hasExplosion) {
-            createExplosion(this, 10, 1, hitResult.getLocation());
+            createExplosion(this, 10, 1.5F, hitResult.getLocation());
             this.discard();
             return;
         }
