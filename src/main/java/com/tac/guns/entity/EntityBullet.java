@@ -3,9 +3,15 @@ package com.tac.guns.entity;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
+import com.tac.guns.util.explosion.IExplosionDamageable;
+import com.tac.guns.util.explosion.IExplosionProvider;
+import com.tac.guns.util.explosion.ProjectileExplosion;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -17,8 +23,12 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 public class EntityBullet extends ThrowableProjectile implements IEntityAdditionalSpawnData {
     public static final EntityType<EntityBullet> TYPE = EntityType.Builder.<EntityBullet>of(EntityBullet::new, MobCategory.MISC)
@@ -71,6 +81,11 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (result.getEntity() instanceof LivingEntity livingEntity) {
+            if (this.hasExplosion) {
+                createExplosion(this, 10, 1, result.getLocation());
+                this.discard();
+                return;
+            }
             // 取消无敌时间
             livingEntity.invulnerableTime = 0;
             // 取消击退效果
@@ -88,9 +103,11 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult hitResult) {
+    protected void onHitBlock(@NotNull BlockHitResult hitResult) {
         if (this.hasExplosion) {
-            this.level.explode(this, this.getX(), this.getY(), this.getZ(), this.explosionRadius, Explosion.BlockInteraction.NONE);
+            createExplosion(this, 10, 1, hitResult.getLocation());
+            this.discard();
+            return;
         }
         super.onHitBlock(hitResult);
         this.discard();
@@ -143,5 +160,52 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     @Override
     public boolean ownedBy(Entity entity) {
         return super.ownedBy(entity);
+    }
+
+    public static void createExplosion(Entity entity, float power, float radius, @Nullable Vec3 hitVec) {
+        Level level = entity.level;
+        if (level.isClientSide())
+            return;
+
+        Explosion.BlockInteraction mode = Explosion.BlockInteraction.NONE;
+        DamageSource source = null;
+        if (entity instanceof IExplosionProvider) {
+            source = ((IExplosionProvider) entity).createDamageSource();
+        }
+
+        ProjectileExplosion explosion;
+        if (hitVec == null)
+            explosion = new ProjectileExplosion(level, entity, source, null, entity.getX(), entity.getY(), entity.getZ(), power, radius, mode);
+        else
+            explosion = new ProjectileExplosion(level, entity, source, null, hitVec.x(), hitVec.y(), hitVec.z(), power, radius, mode);
+
+        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(level, explosion))
+            return;
+
+        // Do explosion logic
+        explosion.explode();
+        explosion.finalizeExplosion(true);
+
+        if (mode == Explosion.BlockInteraction.NONE) {
+            explosion.clearToBlow();
+        }
+
+        // Send event to blocks that are exploded (none if mode is none)
+        explosion.getToBlow().forEach(pos ->
+        {
+            if (level.getBlockState(pos).getBlock() instanceof IExplosionDamageable) {
+                ((IExplosionDamageable) level.getBlockState(pos).getBlock()).onProjectileExploded(level, level.getBlockState(pos), pos, entity);
+            }
+        });
+
+        for (ServerPlayer player : ((ServerLevel) level).players()) {
+            if (hitVec == null) {
+                if (player.distanceToSqr(entity.getX(), entity.getY(), entity.getZ()) < 4096)
+                    player.connection.send(new ClientboundExplodePacket(entity.getX(), entity.getY(), entity.getZ(), radius, explosion.getToBlow(), explosion.getHitPlayers().get(player)));
+            } else {
+                if (player.distanceToSqr(hitVec.x(), hitVec.y(), hitVec.z()) < 4096)
+                    player.connection.send(new ClientboundExplodePacket(hitVec.x(), hitVec.y(), hitVec.z(), radius, explosion.getToBlow(), explosion.getHitPlayers().get(player)));
+            }
+        }
     }
 }
