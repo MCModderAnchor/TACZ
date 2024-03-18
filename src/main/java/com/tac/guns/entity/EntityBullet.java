@@ -34,7 +34,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     private ResourceLocation ammoId = DefaultAssets.EMPTY_AMMO_ID;
     private int life = 200;
     private float gravity = 0;
-    private float hurtAmount = 5;
+    private float damageAmount = 5;
     private float knockback = 0;
     private boolean hasExplosion = false;
     private float explosionRadius = 3;
@@ -48,7 +48,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
         this.ammoId = ammoId;
         this.life = Mth.clamp((int) (data.getLifeSecond() * 20), 1, Integer.MAX_VALUE);
         this.gravity = Mth.clamp(data.getGravity(), 0, Float.MAX_VALUE);
-        this.hurtAmount = Mth.clamp(data.getHurtAmount(), 0, Float.MAX_VALUE);
+        this.damageAmount = Mth.clamp(data.getDamageAmount(), 0, Float.MAX_VALUE);
         this.knockback = Mth.clamp(data.getKnockback(), 0, Float.MAX_VALUE);
         if (data.getExplosionData() != null) {
             this.hasExplosion = true;
@@ -76,7 +76,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
             // 取消击退效果
             if (livingEntity instanceof IGunOperator operator) {
                 operator.setKnockbackStrength(this.knockback);
-                livingEntity.hurt(DamageSource.thrown(this, this.getOwner()), this.hurtAmount);
+                livingEntity.hurt(DamageSource.thrown(this, this.getOwner()), this.damageAmount);
                 if (this.hasExplosion) {
                     this.level.explode(this, this.getX(), this.getY(), this.getZ(), this.explosionRadius, Explosion.BlockInteraction.NONE);
                 }

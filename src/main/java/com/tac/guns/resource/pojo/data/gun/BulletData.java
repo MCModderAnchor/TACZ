@@ -7,8 +7,8 @@ public class BulletData {
     @SerializedName("life")
     private float lifeSecond = 10f;
 
-    @SerializedName("hurt")
-    private float hurtAmount = 5;
+    @SerializedName("damage")
+    private float damageAmount = 5;
 
     @SerializedName("speed")
     private float speed = 5;
@@ -26,8 +26,8 @@ public class BulletData {
         return lifeSecond;
     }
 
-    public float getHurtAmount() {
-        return hurtAmount;
+    public float getDamageAmount() {
+        return damageAmount;
     }
 
     public float getSpeed() {
