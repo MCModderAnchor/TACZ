@@ -24,6 +24,9 @@ public class GunData {
     @SerializedName("rpm")
     private int roundsPerMinute = 300;
 
+    @SerializedName("bullet")
+    private BulletData bulletData = new BulletData();
+
     @SerializedName("draw_time")
     private float drawTime = 0.35f;
 
@@ -62,6 +65,10 @@ public class GunData {
 
     public int getRoundsPerMinute() {
         return roundsPerMinute;
+    }
+
+    public BulletData getBulletData() {
+        return bulletData;
     }
 
     public float getDrawTime() {
