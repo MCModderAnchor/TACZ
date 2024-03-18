@@ -1,17 +1,15 @@
 package com.tac.guns.entity;
 
 import com.tac.guns.api.entity.IGunOperator;
+import com.tac.guns.config.sub.AmmoConfig;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
-import com.tac.guns.util.explosion.IExplosionDamageable;
-import com.tac.guns.util.explosion.IExplosionProvider;
 import com.tac.guns.util.explosion.ProjectileExplosion;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -23,12 +21,10 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
 
 public class EntityBullet extends ThrowableProjectile implements IEntityAdditionalSpawnData {
     public static final EntityType<EntityBullet> TYPE = EntityType.Builder.<EntityBullet>of(EntityBullet::new, MobCategory.MISC)
@@ -47,6 +43,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     private float damageAmount = 5;
     private float knockback = 0;
     private boolean hasExplosion = false;
+    private float explosionDamage = 3;
     private float explosionRadius = 3;
 
     public EntityBullet(EntityType<? extends ThrowableProjectile> type, Level worldIn) {
@@ -62,7 +59,8 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
         this.knockback = Mth.clamp(data.getKnockback(), 0, Float.MAX_VALUE);
         if (data.getExplosionData() != null) {
             this.hasExplosion = true;
-            this.explosionRadius = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
+            this.explosionDamage = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
+            this.explosionRadius = Mth.clamp(data.getExplosionData().getDamage(), 0, Float.MAX_VALUE);
         }
     }
 
@@ -87,11 +85,10 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
             if (livingEntity instanceof IGunOperator operator) {
                 operator.setKnockbackStrength(this.knockback);
                 livingEntity.hurt(DamageSource.thrown(this, this.getOwner()), this.damageAmount);
-                if (this.hasExplosion) {
-                    createExplosion(this, 10, 1.5F, result.getLocation());
-                    this.discard();
-                }
                 operator.resetKnockbackStrength();
+                if (this.hasExplosion) {
+                    createExplosion(this, this.explosionDamage, this.explosionRadius);
+                }
             }
         }
         super.onHitEntity(result);
@@ -101,8 +98,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     @Override
     protected void onHitBlock(@NotNull BlockHitResult hitResult) {
         if (this.hasExplosion) {
-            createExplosion(this, 10, 1.5F, hitResult.getLocation());
-            this.discard();
+            createExplosion(this, this.explosionDamage, this.explosionRadius);
             return;
         }
         super.onHitBlock(hitResult);
@@ -158,50 +154,34 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
         return super.ownedBy(entity);
     }
 
-    public static void createExplosion(Entity entity, float power, float radius, @Nullable Vec3 hitVec) {
-        Level level = entity.level;
-        if (level.isClientSide())
+    public static void createExplosion(Entity exploder, float damage, float radius) {
+        // 客户端不执行
+        if (!(exploder.level instanceof ServerLevel level)) {
             return;
-
-        Explosion.BlockInteraction mode = Explosion.BlockInteraction.NONE;
-        DamageSource source = null;
-        if (entity instanceof IExplosionProvider) {
-            source = ((IExplosionProvider) entity).createDamageSource();
         }
-
-        ProjectileExplosion explosion;
-        if (hitVec == null)
-            explosion = new ProjectileExplosion(level, entity, source, null, entity.getX(), entity.getY(), entity.getZ(), power, radius, mode);
-        else
-            explosion = new ProjectileExplosion(level, entity, source, null, hitVec.x(), hitVec.y(), hitVec.z(), power, radius, mode);
-
-        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(level, explosion))
+        // 依据配置文件读取方块破坏方式
+        Explosion.BlockInteraction mode = Explosion.BlockInteraction.NONE;
+        if (AmmoConfig.EXPLOSIVE_AMMO_DESTROYS_BLOCKS.get()) {
+            mode = Explosion.BlockInteraction.BREAK;
+        }
+        // 创建爆炸
+        ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null,
+                exploder.getX(), exploder.getY(), exploder.getZ(), damage, radius, mode);
+        // 监听 forge 事件
+        if (ForgeEventFactory.onExplosionStart(level, explosion)) {
             return;
-
-        // Do explosion logic
+        }
+        // 执行爆炸逻辑
         explosion.explode();
         explosion.finalizeExplosion(true);
-
         if (mode == Explosion.BlockInteraction.NONE) {
             explosion.clearToBlow();
         }
-
-        // Send event to blocks that are exploded (none if mode is none)
-        explosion.getToBlow().forEach(pos ->
-        {
-            if (level.getBlockState(pos).getBlock() instanceof IExplosionDamageable) {
-                ((IExplosionDamageable) level.getBlockState(pos).getBlock()).onProjectileExploded(level, level.getBlockState(pos), pos, entity);
-            }
+        // 客户端发包，发送爆炸相关信息
+        level.players().stream().filter(player -> player.distanceTo(exploder) < AmmoConfig.EXPLOSIVE_AMMO_VISIBLE_DISTANCE.get()).forEach(player -> {
+            ClientboundExplodePacket packet = new ClientboundExplodePacket(exploder.getX(), exploder.getY(), exploder.getZ(),
+                    radius, explosion.getToBlow(), explosion.getHitPlayers().get(player));
+            player.connection.send(packet);
         });
-
-        for (ServerPlayer player : ((ServerLevel) level).players()) {
-            if (hitVec == null) {
-                if (player.distanceToSqr(entity.getX(), entity.getY(), entity.getZ()) < 4096)
-                    player.connection.send(new ClientboundExplodePacket(entity.getX(), entity.getY(), entity.getZ(), radius, explosion.getToBlow(), explosion.getHitPlayers().get(player)));
-            } else {
-                if (player.distanceToSqr(hitVec.x(), hitVec.y(), hitVec.z()) < 4096)
-                    player.connection.send(new ClientboundExplodePacket(hitVec.x(), hitVec.y(), hitVec.z(), radius, explosion.getToBlow(), explosion.getHitPlayers().get(player)));
-            }
-        }
     }
 }

@@ -6,9 +6,9 @@
     // 寿命，单位秒
     "life": 20,
     // 速度 m/s
-    "speed": 2,
+    "speed": 1,
     // 重力
-    "gravity": 0.01,
+    "gravity": 0.005,
     // 是否爆炸，没有此字段时为 false
     "explosion": {
       "radius": 5

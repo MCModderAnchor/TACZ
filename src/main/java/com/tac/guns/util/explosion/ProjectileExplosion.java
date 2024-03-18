@@ -1,7 +1,7 @@
 package com.tac.guns.util.explosion;
 
 import com.google.common.collect.Sets;
-import com.tac.guns.init.ModTags;
+import com.tac.guns.config.sub.AmmoConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -31,7 +31,6 @@ import java.util.function.Function;
 
 public class ProjectileExplosion extends Explosion {
     private static final ExplosionDamageCalculator DEFAULT_CONTEXT = new ExplosionDamageCalculator();
-
     private final Level level;
     private final double x;
     private final double y;
@@ -42,7 +41,7 @@ public class ProjectileExplosion extends Explosion {
     private final ExplosionDamageCalculator damageCalculator;
 
     public ProjectileExplosion(Level level, Entity exploder, @Nullable DamageSource source, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float power, float radius, Explosion.BlockInteraction mode) {
-        super(level, exploder, source, damageCalculator, x, y, z, radius, false, mode);
+        super(level, exploder, source, damageCalculator, x, y, z, radius, AmmoConfig.EXPLOSIVE_AMMO_FIRE.get(), mode);
         this.level = level;
         this.x = x;
         this.y = y;
@@ -56,13 +55,11 @@ public class ProjectileExplosion extends Explosion {
     private static BlockHitResult rayTraceBlocks(Level level, ClipContext context) {
         return performRayTrace(context, (rayTraceContext, blockPos) -> {
             BlockState blockState = level.getBlockState(blockPos);
-            boolean pass = blockState.is(ModTags.bullet_ignore);
-            if (pass) return null;
-
+            // TODO 这里可以添加抵消爆炸的方块
             return getBlockHitResult(level, rayTraceContext, blockPos, blockState);
         }, (rayTraceContext) -> {
-            Vec3 Vec3 = rayTraceContext.getFrom().subtract(rayTraceContext.getTo());
-            return BlockHitResult.miss(rayTraceContext.getTo(), Direction.getNearest(Vec3.x, Vec3.y, Vec3.z), new BlockPos(rayTraceContext.getTo()));
+            Vec3 vec3 = rayTraceContext.getFrom().subtract(rayTraceContext.getTo());
+            return BlockHitResult.miss(rayTraceContext.getTo(), Direction.getNearest(vec3.x, vec3.y, vec3.z), new BlockPos(rayTraceContext.getTo()));
         });
     }
 
@@ -83,18 +80,18 @@ public class ProjectileExplosion extends Explosion {
     private static <T> T performRayTrace(ClipContext context, BiFunction<ClipContext, BlockPos, T> hitFunction, Function<ClipContext, T> missFactory) {
         Vec3 startVec = context.getFrom();
         Vec3 endVec = context.getTo();
-        if (startVec.equals(endVec)) {
-            return missFactory.apply(context);
-        } else {
+        if (!startVec.equals(endVec)) {
             double startX = Mth.lerp(-0.0000001, endVec.x, startVec.x);
             double startY = Mth.lerp(-0.0000001, endVec.y, startVec.y);
             double startZ = Mth.lerp(-0.0000001, endVec.z, startVec.z);
             double endX = Mth.lerp(-0.0000001, startVec.x, endVec.x);
             double endY = Mth.lerp(-0.0000001, startVec.y, endVec.y);
             double endZ = Mth.lerp(-0.0000001, startVec.z, endVec.z);
+
             int blockX = Mth.floor(endX);
             int blockY = Mth.floor(endY);
             int blockZ = Mth.floor(endZ);
+
             BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(blockX, blockY, blockZ);
             T t = hitFunction.apply(context, mutablePos);
             if (t != null) {
@@ -136,9 +133,8 @@ public class ProjectileExplosion extends Explosion {
                     return t1;
                 }
             }
-
-            return missFactory.apply(context);
         }
+        return missFactory.apply(context);
     }
 
     @Override
@@ -201,8 +197,9 @@ public class ProjectileExplosion extends Explosion {
         Vec3 explosionPos = new Vec3(this.x, this.y, this.z);
 
         for (Entity entity : entities) {
-            if (entity.ignoreExplosion())
+            if (entity.ignoreExplosion()) {
                 continue;
+            }
 
             AABB boundingBox = entity.getBoundingBox();
             BlockHitResult result;
@@ -248,8 +245,9 @@ public class ProjectileExplosion extends Explosion {
                 deltaZ -= this.z;
             }
 
-            if (strength > 1.0D)
+            if (strength > 1.0D) {
                 continue;
+            }
 
             double distanceToExplosion = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
@@ -258,7 +256,7 @@ public class ProjectileExplosion extends Explosion {
                 deltaY /= distanceToExplosion;
                 deltaZ /= distanceToExplosion;
             } else {
-                // Fixes an issue where explosion exactly on the player would cause no damage
+                // 修复了恰好在玩家身上爆炸不会造成伤害的问题
                 deltaX = 0.0;
                 deltaY = 1.0;
                 deltaZ = 0.0;
@@ -271,10 +269,13 @@ public class ProjectileExplosion extends Explosion {
                 damage = (float) ProtectionEnchantment.getExplosionKnockbackAfterDampener((LivingEntity) entity, damage);
             }
 
-            entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * damage * radius / 5, deltaY * damage * radius / 5, deltaZ * damage * radius / 5));
-            if (entity instanceof Player player) {
-                if (!player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
-                    this.getHitPlayers().put(player, new Vec3(deltaX * damage * radius / 5, deltaY * damage * radius / 5, deltaZ * damage * radius / 5));
+            // 启用击退效果
+            if (AmmoConfig.EXPLOSIVE_AMMO_KNOCK_BACK.get()) {
+                entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * damage * radius / 5, deltaY * damage * radius / 5, deltaZ * damage * radius / 5));
+                if (entity instanceof Player player) {
+                    if (!player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
+                        this.getHitPlayers().put(player, new Vec3(deltaX * damage * radius / 5, deltaY * damage * radius / 5, deltaZ * damage * radius / 5));
+                    }
                 }
             }
         }
