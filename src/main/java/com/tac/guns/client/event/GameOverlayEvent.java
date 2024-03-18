@@ -1,5 +1,9 @@
 package com.tac.guns.client.event;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
@@ -10,6 +14,7 @@ import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,9 +24,16 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import static com.tac.guns.util.RenderHelper.blit;
+
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class GameOverlayEvent {
+    private static final ResourceLocation HIT_ICON = new ResourceLocation(GunMod.MOD_ID, "textures/hud/hit_marker.png");
+    private static final long KEEP_TIME = 200;
     private static boolean isRefitScreen = false;
+    private static long hitTimestamp = -1L;
+    private static long killTimestamp = -1L;
 
     /**
      * 当玩家手上拿着枪时，播放特定动画、或瞄准时需要隐藏准心
@@ -33,6 +45,11 @@ public class GameOverlayEvent {
         }
         if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT) {
             LocalPlayer player = Minecraft.getInstance().player;
+
+            if (IGun.mainhandHoldGun(player)) {
+                renderHitMarker(event.getMatrixStack(), event.getWindow());
+            }
+
             // 瞄准快要完成时，取消准心渲染
             if (IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(event.getPartialTicks()) > 0.9) {
                 event.setCanceled(true);
@@ -68,5 +85,49 @@ public class GameOverlayEvent {
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
         // 奇迹的是，RenderGameOverlayEvent.PreLayer 事件中，screen还未被赋值...
         isRefitScreen = Minecraft.getInstance().screen instanceof GunRefitScreen;
+    }
+
+    private static void renderHitMarker(PoseStack poseStack, Window window) {
+        long remainHitTime = System.currentTimeMillis() - hitTimestamp;
+        long remainKillTime = System.currentTimeMillis() - killTimestamp;
+        float offset = 0;
+        float fadeTime;
+
+        if (remainKillTime > KEEP_TIME) {
+            if (remainHitTime > KEEP_TIME) {
+                return;
+            } else {
+                fadeTime = remainHitTime;
+            }
+        } else {
+            // 最大位移为 4 像素
+            offset = (remainKillTime * 4f) / KEEP_TIME;
+            fadeTime = remainKillTime;
+        }
+
+        int width = window.getGuiScaledWidth();
+        int height = window.getGuiScaledHeight();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, HIT_ICON);
+
+        float x = width / 2f - 8;
+        float y = height / 2f - 8;
+
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1 - fadeTime / KEEP_TIME);
+
+        blit(poseStack, x - offset, y - offset, 0, 0, 8, 8, 16, 16);
+        blit(poseStack, x + 8 + offset, y - offset, 8, 0, 8, 8, 16, 16);
+        blit(poseStack, x - offset, y + 8 + offset, 0, 8, 8, 8, 16, 16);
+        blit(poseStack, x + 8 + offset, y + 8 + offset, 8, 8, 8, 8, 16, 16);
+    }
+
+    public static void markHitTimestamp() {
+        GameOverlayEvent.hitTimestamp = System.currentTimeMillis();
+    }
+
+    public static void markKillTimestamp() {
+        GameOverlayEvent.killTimestamp = System.currentTimeMillis();
     }
 }

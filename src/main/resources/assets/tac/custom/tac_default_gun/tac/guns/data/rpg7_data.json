@@ -1,5 +1,5 @@
 {
-  "ammo": "tac:9mm",
+  "ammo": "tac:rpg_rocket",
   "rpm": 30,
   "ammo_amount": 1,
   "reload": {

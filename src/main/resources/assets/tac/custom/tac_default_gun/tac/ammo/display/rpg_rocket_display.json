@@ -1,0 +1,12 @@
+{
+  "model": "tac:ammo_entity/rpg_rocket",
+  "texture": "tac:ammo_entity/rpg_rocket",
+  "slot": "tac:ammo/slot/rpg_rocket",
+  // 子弹实体
+  "entity": {
+    // 模型
+    "model": "tac:ammo_entity/rpg_rocket",
+    // 材质
+    "texture": "tac:ammo_entity/rpg_rocket"
+  }
+}

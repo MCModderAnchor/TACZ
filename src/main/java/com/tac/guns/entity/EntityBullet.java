@@ -102,4 +102,9 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     public ResourceLocation getAmmoId() {
         return ammoId;
     }
+
+    @Override
+    public boolean ownedBy(Entity entity) {
+        return super.ownedBy(entity);
+    }
 }
