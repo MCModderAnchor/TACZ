@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:fences",
+    "#minecraft:leaves",
+    "minecraft:iron_bars"
+  ]
+}
