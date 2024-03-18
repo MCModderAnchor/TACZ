@@ -1,7 +1,19 @@
 {
-  "ammo": "tac:9mm",
+  "ammo": "tac:rpg_rocket",
   "rpm": 30,
   "ammo_amount": 1,
+  "bullet": {
+    // 寿命，单位秒
+    "life": 20,
+    // 速度 m/s
+    "speed": 2,
+    // 重力
+    "gravity": 0.01,
+    // 是否爆炸，没有此字段时为 false
+    "explosion": {
+      "radius": 5
+    }
+  },
   "reload": {
     "type": "magazine",
     "feed": {

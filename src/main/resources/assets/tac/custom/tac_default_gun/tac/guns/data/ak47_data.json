@@ -7,6 +7,23 @@
   "bolt": "open_bolt",
   // 每分钟射出弹药量，最大不应超过 1200
   "rpm": 700,
+  // 子弹实体属性
+  "bullet": {
+    // 寿命，单位秒
+    "life": 10,
+    // 伤害
+    "damage": 5,
+    // 速度 m/s
+    "speed": 10,
+    // 重力
+    "gravity": 0,
+    // 击退效果
+    "knockback": 0
+    // 是否爆炸，没有此字段时为 false
+    //"explosion": {
+    //  "radius": 5
+    //}
+  },
   // 换弹相关
   "reload": {
     // magazine 是弹匣供弹，manual 是手动供弹

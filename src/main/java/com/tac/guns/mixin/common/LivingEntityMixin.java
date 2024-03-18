@@ -16,6 +16,7 @@ import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.pojo.data.gun.BulletData;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunReloadData;
 import com.tac.guns.resource.pojo.data.gun.InaccuracyType;
@@ -26,6 +27,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -113,6 +115,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
      */
     @Unique
     private double tac$KnockbackStrength = -1;
+
     public LivingEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
@@ -306,17 +309,17 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
             return ShootResult.FAIL;
         }
-        // TODO 判断枪械是否有足够的弹药
         // 调用射击方法
         ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
         LivingEntity shooter = (LivingEntity) (Object) this;
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
-            // TODO 获取 GunData 并根据其中的弹道参数创建 EntityBullet
             Level world = shooter.getLevel();
-            EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId());
+            BulletData bulletData = gunIndex.getBulletData();
+            EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
             InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
             float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
-            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, 10f, inaccuracy);
+            float speed = Mth.clamp(bulletData.getSpeed(), 0, Float.MAX_VALUE);
+            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
             world.addFreshEntity(bullet);
             // 播放声音
             // TODO 配置文件决定衰减距离

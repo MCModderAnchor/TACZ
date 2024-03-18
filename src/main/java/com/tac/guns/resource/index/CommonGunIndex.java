@@ -5,6 +5,7 @@ import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
+import com.tac.guns.resource.pojo.data.gun.BulletData;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.InaccuracyType;
 import net.minecraft.resources.ResourceLocation;
@@ -84,6 +85,10 @@ public class CommonGunIndex {
 
     public GunData getGunData() {
         return gunData;
+    }
+
+    public BulletData getBulletData() {
+        return gunData.getBulletData();
     }
 
     public String getType() {
