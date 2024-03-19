@@ -8,8 +8,10 @@ import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.tab.CustomTab;
 import com.tac.guns.init.ModItems;
+import com.tac.guns.inventory.tooltip.GunTooltip;
 import com.tac.guns.item.builder.GunItemBuilder;
 import com.tac.guns.item.nbt.GunItemDataAccessor;
+import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.gun.AttachmentPass;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.client.Minecraft;
@@ -19,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -121,5 +124,18 @@ public class GunItem extends Item implements GunItemDataAccessor {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        if (stack.getItem() instanceof IGun iGun) {
+            Optional<CommonGunIndex> optional = TimelessAPI.getCommonGunIndex(this.getGunId(stack));
+            if (optional.isPresent()) {
+                CommonGunIndex gunIndex = optional.get();
+                ResourceLocation ammoId = gunIndex.getGunData().getAmmoId();
+                return Optional.of(new GunTooltip(stack, iGun, ammoId, gunIndex));
+            }
+        }
+        return Optional.empty();
     }
 }

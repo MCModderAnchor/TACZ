@@ -5,8 +5,10 @@ import com.tac.guns.client.animation.thrid.ThirdPersonManager;
 import com.tac.guns.client.gui.GunHudOverlay;
 import com.tac.guns.client.input.*;
 import com.tac.guns.client.tooltip.ClientAmmoBoxTooltip;
+import com.tac.guns.client.tooltip.ClientGunTooltip;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.inventory.tooltip.AmmoBoxTooltip;
+import com.tac.guns.inventory.tooltip.GunTooltip;
 import com.tac.guns.item.AmmoBoxItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -48,6 +50,7 @@ public class ClientSetupEvent {
         event.enqueueWork(() -> ItemProperties.register(ModItems.AMMO_BOX.get(), AmmoBoxItem.PROPERTY_NAME, AmmoBoxItem::getStatue));
 
         // 注册文本提示
+        event.enqueueWork(() -> MinecraftForgeClient.registerTooltipComponentFactory(GunTooltip.class, ClientGunTooltip::new));
         event.enqueueWork(() -> MinecraftForgeClient.registerTooltipComponentFactory(AmmoBoxTooltip.class, ClientAmmoBoxTooltip::new));
     }
 }
