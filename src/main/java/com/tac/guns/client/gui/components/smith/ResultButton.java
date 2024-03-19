@@ -1,4 +1,4 @@
-package com.tac.guns.client.gui.components;
+package com.tac.guns.client.gui.components.smith;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
