@@ -25,6 +25,7 @@ import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EntityBullet extends ThrowableProjectile implements IEntityAdditionalSpawnData {
     public static final EntityType<EntityBullet> TYPE = EntityType.Builder.<EntityBullet>of(EntityBullet::new, MobCategory.MISC)
@@ -99,7 +100,6 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     protected void onHitBlock(@NotNull BlockHitResult hitResult) {
         if (this.hasExplosion) {
             createExplosion(this, this.explosionDamage, this.explosionRadius);
-            return;
         }
         super.onHitBlock(hitResult);
         this.discard();
@@ -150,7 +150,10 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     }
 
     @Override
-    public boolean ownedBy(Entity entity) {
+    public boolean ownedBy(@Nullable Entity entity) {
+        if (entity == null) {
+            return false;
+        }
         return super.ownedBy(entity);
     }
 
