@@ -2,6 +2,7 @@ package com.tac.guns.client.resource.index;
 
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.resource.ClientAssetManager;
+import com.tac.guns.client.resource.loader.ShellDisplay;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoEntityDisplay;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
@@ -22,6 +23,8 @@ public class ClientAmmoIndex {
     private ResourceLocation slotTextureLocation;
     private @Nullable BedrockAmmoModel ammoEntityModel;
     private @Nullable ResourceLocation ammoEntityTextureLocation;
+    private @Nullable BedrockAmmoModel shellModel;
+    private @Nullable ResourceLocation shellTextureLocation;
     private int stackSize;
 
     private ClientAmmoIndex() {
@@ -36,6 +39,7 @@ public class ClientAmmoIndex {
         checkSlotTexture(display, index);
         checkStackSize(clientPojo, index);
         checkAmmoEntity(display, index);
+        checkShell(display, index);
         return index;
     }
 
@@ -119,6 +123,26 @@ public class ClientAmmoIndex {
         }
     }
 
+    private static void checkShell(AmmoDisplay display, ClientAmmoIndex index) {
+        ShellDisplay shellDisplay = display.getShellDisplay();
+        if (shellDisplay != null && shellDisplay.getModelLocation() != null && shellDisplay.getModelTexture() != null) {
+            index.shellTextureLocation = shellDisplay.getModelTexture();
+            ResourceLocation modelLocation = shellDisplay.getModelLocation();
+            BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(modelLocation);
+            if (modelPOJO == null) {
+                return;
+            }
+            // 先判断是不是 1.10.0 版本基岩版模型文件
+            if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+                index.shellModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.LEGACY);
+            }
+            // 判定是不是 1.12.0 版本基岩版模型文件
+            if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+                index.shellModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.NEW);
+            }
+        }
+    }
+
     private static void checkStackSize(AmmoIndexPOJO clientPojo, ClientAmmoIndex index) {
         index.stackSize = Math.max(clientPojo.getStackSize(), 1);
     }
@@ -151,5 +175,15 @@ public class ClientAmmoIndex {
     @Nullable
     public ResourceLocation getAmmoEntityTextureLocation() {
         return ammoEntityTextureLocation;
+    }
+
+    @Nullable
+    public BedrockAmmoModel getShellModel() {
+        return shellModel;
+    }
+
+    @Nullable
+    public ResourceLocation getShellTextureLocation() {
+        return shellTextureLocation;
     }
 }

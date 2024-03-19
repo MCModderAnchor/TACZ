@@ -1,7 +1,6 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
@@ -13,6 +12,7 @@ import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.gui.GunRefitScreen;
+import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
@@ -20,9 +20,12 @@ import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
+import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
+import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.util.math.Easing;
 import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.SecondOrderDynamics;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
@@ -41,6 +44,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
 
@@ -53,7 +57,8 @@ public class FirstPersonRenderGunEvent {
     private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(1.2f, 1.2f, 0.5f, 0);
     // 用于打开改装界面时枪械运动的平滑
     private static final SecondOrderDynamics REFIT_OPENING_DYNAMICS = new SecondOrderDynamics(1f, 1.2f, 0.5f, 0);
-
+    // 抛壳队列
+    private static final ConcurrentLinkedDeque<Pair<Long, Vector3f>> SHELL_QUEUE = new ConcurrentLinkedDeque<>();
     // 用于切枪逻辑
     private static ItemStack oldHotbarSelectedStack = ItemStack.EMPTY;
     private static int oldHotbarSelected = -1;
@@ -109,10 +114,14 @@ public class FirstPersonRenderGunEvent {
             applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTicks());
             // 如果正在打开改装界面，则取消手臂渲染
             boolean renderHand = gunModel.getRenderHand();
-            if (GunRefitScreen.getOpeningProgress() != 0) gunModel.setRenderHand(false);
+            if (GunRefitScreen.getOpeningProgress() != 0) {
+                gunModel.setRenderHand(false);
+            }
             // 调用枪械模型渲染
             RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
             gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+            // 渲染抛壳
+            renderShell(gunIndex, gunModel, poseStack, transformType, event.getPackedLight());
             // 恢复手臂渲染
             gunModel.setRenderHand(renderHand);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
@@ -120,6 +129,69 @@ public class FirstPersonRenderGunEvent {
             gunModel.cleanAnimationTransform();
             // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
             event.setCanceled(true);
+        });
+    }
+
+    private static void checkShellQueue(long lifeTime) {
+        if (!SHELL_QUEUE.isEmpty()) {
+            long first = SHELL_QUEUE.peekFirst().left();
+            if ((System.currentTimeMillis() - first) > lifeTime) {
+                SHELL_QUEUE.pollFirst();
+                checkShellQueue(lifeTime);
+            }
+        }
+    }
+
+    private static void renderShell(ClientGunIndex gunIndex, BedrockGunModel gunModel, PoseStack poseStack, TransformType transformType, int packLight) {
+        ShellEjection shellEjection = gunIndex.getShellEjection();
+        if (shellEjection == null) {
+            SHELL_QUEUE.clear();
+            return;
+        }
+        TimelessAPI.getClientAmmoIndex(DefaultAssets.DEFAULT_AMMO_ID).ifPresent(ammoIndex -> {
+            BedrockAmmoModel model = ammoIndex.getShellModel();
+            if (model == null) {
+                return;
+            }
+            ResourceLocation location = ammoIndex.getShellTextureLocation();
+            if (location == null) {
+                return;
+            }
+            long lifeTime = (long) (shellEjection.getLivingTime() * 1000);
+
+            // 检查有没有需要踢出去的队列
+            checkShellQueue(lifeTime);
+            // 将原点放置在抛壳定位点处
+            applyPositioningNodeTransform(gunModel.getShellOriginPath(), poseStack);
+            // 各种参数的获取
+            Vector3f initialVelocity = shellEjection.getInitialVelocity();
+            Vector3f acceleration = shellEjection.getAcceleration();
+            Vector3f angularVelocity = shellEjection.getAngularVelocity();
+            // 渲染抛壳
+            for (Pair<Long, Vector3f> data : SHELL_QUEUE) {
+                poseStack.pushPose();
+
+                long remindTime = System.currentTimeMillis() - data.left();
+                double time = remindTime / 1000.0;
+                Vector3f right = data.right();
+                double x = (initialVelocity.x() + right.x()) * time + 0.5 * acceleration.x() * time * time;
+                double y = (initialVelocity.y() + right.y()) * time + 0.5 * acceleration.y() * time * time;
+                double z = (initialVelocity.z() + right.z()) * time + 0.5 * acceleration.z() * time * time;
+                poseStack.translate(-x, -y, z);
+
+                double xw = time * angularVelocity.x();
+                double yw = time * angularVelocity.y();
+                double zw = time * angularVelocity.z();
+                poseStack.translate(0, 1.5, 0);
+                poseStack.mulPose(Vector3f.XN.rotationDegrees((float) xw));
+                poseStack.mulPose(Vector3f.YN.rotationDegrees((float) yw));
+                poseStack.mulPose(Vector3f.ZP.rotationDegrees((float) zw));
+                poseStack.translate(0, -1.5, 0);
+
+                model.render(poseStack, transformType, RenderType.itemEntityTranslucentCull(location), packLight, OverlayTexture.NO_OVERLAY);
+
+                poseStack.popPose();
+            }
         });
     }
 
@@ -177,7 +249,7 @@ public class FirstPersonRenderGunEvent {
                 if (iAttachment != null) {
                     ResourceLocation scopeId = iAttachment.getAttachmentId(scopeItem);
                     Optional<ClientAttachmentIndex> indexOptional = TimelessAPI.getClientAttachmentIndex(scopeId);
-                    if(indexOptional.isPresent()){
+                    if (indexOptional.isPresent()) {
                         BedrockAttachmentModel attachmentModel = indexOptional.get().getAttachmentModel();
                         if (attachmentModel.getScopeViewPath() != null) {
                             aimingNodePath.addAll(attachmentModel.getScopeViewPath());
@@ -323,6 +395,14 @@ public class FirstPersonRenderGunEvent {
         ));
     }
 
+    public static void markFire(Vector3f randomVelocity) {
+        double xRandom = Math.random() * randomVelocity.x();
+        double yRandom = Math.random() * randomVelocity.y();
+        double zRandom = Math.random() * randomVelocity.z();
+        Vector3f vector3f = new Vector3f((float) xRandom, (float) yRandom, (float) zRandom);
+        SHELL_QUEUE.offerLast(Pair.of(System.currentTimeMillis(), vector3f));
+    }
+
     /**
      * 判断两个枪械 ID 是否相同
      */
@@ -331,5 +411,20 @@ public class FirstPersonRenderGunEvent {
             return iGunA.getGunId(gunA).equals(iGunB.getGunId(gunB));
         }
         return gunA.sameItem(gunB);
+    }
+
+    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack) {
+        if (nodePath == null) {
+            return;
+        }
+        // 抛壳原点为定位组
+        for (int i = nodePath.size() - 1; i >= 0; i--) {
+            BedrockPart t = nodePath.get(i);
+            if (t.getParent() != null) {
+                poseStack.translate(t.x / 16.0F, t.y / 16.0F, t.z / 16.0F);
+            } else {
+                poseStack.translate(t.x / 16.0F, (t.y / 16.0F - 1.5), t.z / 16.0F);
+            }
+        }
     }
 }

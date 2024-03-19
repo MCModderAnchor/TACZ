@@ -10,6 +10,7 @@ import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.display.gun.AnimationInfluenceCoefficient;
 import com.tac.guns.client.resource.pojo.display.gun.GunDisplay;
 import com.tac.guns.client.resource.pojo.display.gun.GunTransform;
+import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.resource.CommonAssetManager;
@@ -22,6 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +42,7 @@ public class ClientGunIndex {
     private ResourceLocation slotTexture;
     private ResourceLocation hudTexture;
     private String type;
+    private @Nullable ShellEjection shellEjection;
 
     private ClientGunIndex() {
     }
@@ -57,6 +60,7 @@ public class ClientGunIndex {
         checkSounds(display, index);
         checkTransform(display, index);
         checkAnimationInfluenceCoefficient(display, index);
+        checkShellEjection(display, index);
         return index;
     }
 
@@ -194,6 +198,10 @@ public class ClientGunIndex {
         index.hudTexture = Objects.requireNonNullElseGet(display.getHudTextureLocation(), MissingTextureAtlasSprite::getLocation);
     }
 
+    private static void checkShellEjection(GunDisplay display, ClientGunIndex index) {
+        index.shellEjection = display.getShellEjection();
+    }
+
     public String getType() {
         return type;
     }
@@ -240,5 +248,10 @@ public class ClientGunIndex {
 
     public String getThirdPersonAnimation() {
         return thirdPersonAnimation;
+    }
+
+    @Nullable
+    public ShellEjection getShellEjection() {
+        return shellEjection;
     }
 }

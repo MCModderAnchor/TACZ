@@ -1,43 +1,41 @@
 package com.tac.guns.client.resource.pojo.display.gun;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.resources.ResourceLocation;
-
-import java.util.List;
+import com.mojang.math.Vector3f;
 
 public class ShellEjection {
-    @SerializedName("type")
-    private ResourceLocation type;
-
-    @SerializedName("velocity")
-    private List<Float> velocity;
+    @SerializedName("initial_velocity")
+    private Vector3f initialVelocity = new Vector3f(8.0f, 5.0f, -0.5f);
 
     @SerializedName("random_velocity")
-    private List<Float> randomVelocity;
+    private Vector3f randomVelocity = new Vector3f(2.5f, 1.5f, 0.25f);
+
+    @SerializedName("acceleration")
+    private Vector3f acceleration = new Vector3f(0, -20f, 0);
 
     @SerializedName("angular_velocity")
-    private List<Float> angularVelocity;
+    private Vector3f angularVelocity = new Vector3f(-720, -720, 90);
 
     @SerializedName("living_time")
-    private Float livingTime;
+    private float livingTime = 1.0f;
 
-    public ResourceLocation getType() {
-        return type;
+    public Vector3f getInitialVelocity() {
+        return initialVelocity;
     }
 
-    public List<Float> getVelocity() {
-        return velocity;
-    }
-
-    public List<Float> getRandomVelocity() {
+    public Vector3f getRandomVelocity() {
         return randomVelocity;
     }
 
-    public List<Float> getAngularVelocity() {
+    public Vector3f getAcceleration() {
+        return acceleration;
+    }
+
+    public Vector3f getAngularVelocity() {
         return angularVelocity;
     }
 
-    public Float getLivingTime() {
+    public float getLivingTime() {
         return livingTime;
     }
 }

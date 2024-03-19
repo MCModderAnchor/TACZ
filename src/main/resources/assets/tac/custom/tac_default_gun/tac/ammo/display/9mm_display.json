@@ -1,5 +1,9 @@
 {
   "model": "tac:ammo/9mm",
   "texture": "tac:ammo/uv/9mm",
-  "slot": "tac:ammo/slot/9mm"
+  "slot": "tac:ammo/slot/9mm",
+  "shell": {
+    "model": "tac:shell/762x39_shell",
+    "texture": "tac:shell/762x39_shell"
+  }
 }

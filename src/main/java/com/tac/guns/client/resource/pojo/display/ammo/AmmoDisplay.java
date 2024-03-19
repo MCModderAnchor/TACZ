@@ -1,6 +1,7 @@
 package com.tac.guns.client.resource.pojo.display.ammo;
 
 import com.google.gson.annotations.SerializedName;
+import com.tac.guns.client.resource.loader.ShellDisplay;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -16,6 +17,9 @@ public class AmmoDisplay {
     @Nullable
     @SerializedName("entity")
     private AmmoEntityDisplay ammoEntity;
+    @Nullable
+    @SerializedName("shell")
+    private ShellDisplay shellDisplay;
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -33,5 +37,10 @@ public class AmmoDisplay {
     @Nullable
     public AmmoEntityDisplay getAmmoEntity() {
         return ammoEntity;
+    }
+
+    @Nullable
+    public ShellDisplay getShellDisplay() {
+        return shellDisplay;
     }
 }

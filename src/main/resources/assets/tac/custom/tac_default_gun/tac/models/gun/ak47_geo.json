@@ -6072,6 +6072,11 @@
 					"parent": "positioning",
 					"pivot": [-3.225, 1.225, 5.15],
 					"rotation": [0, -15, 0]
+				},
+				{
+					"name": "shell",
+					"parent": "positioning",
+					"pivot": [-3.025, 4.8, -0.725]
 				}
 			]
 		}
