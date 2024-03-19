@@ -1,7 +1,7 @@
 package com.tac.guns.util.explosion;
 
 import com.google.common.collect.Sets;
-import com.tac.guns.config.sub.AmmoConfig;
+import com.tac.guns.config.common.AmmoConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;

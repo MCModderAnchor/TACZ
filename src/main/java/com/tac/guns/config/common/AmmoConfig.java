@@ -1,4 +1,4 @@
-package com.tac.guns.config.sub;
+package com.tac.guns.config.common;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 

@@ -4,7 +4,7 @@ import com.tac.guns.GunMod;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
-import com.tac.guns.config.sub.OtherConfig;
+import com.tac.guns.config.common.OtherConfig;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.inventory.tooltip.AmmoBoxTooltip;
 import com.tac.guns.item.builder.AmmoItemBuilder;

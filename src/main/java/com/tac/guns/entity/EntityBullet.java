@@ -1,7 +1,8 @@
 package com.tac.guns.entity;
 
 import com.tac.guns.api.entity.IGunOperator;
-import com.tac.guns.config.sub.AmmoConfig;
+import com.tac.guns.config.common.AmmoConfig;
+import com.tac.guns.particles.BulletHoleOption;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
 import com.tac.guns.util.explosion.ProjectileExplosion;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkHooks;
@@ -102,6 +104,12 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
             createExplosion(this, this.explosionDamage, this.explosionRadius);
         }
         super.onHitBlock(hitResult);
+        Vec3 location = hitResult.getLocation();
+
+        if (this.level instanceof ServerLevel serverLevel) {
+            BulletHoleOption bulletHoleOption = new BulletHoleOption(hitResult.getDirection(), hitResult.getBlockPos());
+            serverLevel.sendParticles(bulletHoleOption, location.x, location.y, location.z, 1, 0, 0, 0, 0);
+        }
         this.discard();
     }
 
