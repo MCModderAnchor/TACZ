@@ -61,11 +61,13 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                     if (skinIndex != null) { // 有皮肤则渲染皮肤
                         BedrockAttachmentModel model = skinIndex.getModel();
                         ResourceLocation texture = skinIndex.getTexture();
-                        model.render(poseStack, transformType, texture, pPackedLight, pPackedOverlay);
+                        RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
+                        model.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay);
                     }else { // 没有皮肤，渲染默认模型
                         BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
                         ResourceLocation texture = attachmentIndex.getModelTexture();
-                        model.render(poseStack, transformType, texture, pPackedLight, pPackedOverlay);
+                        RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
+                        model.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay);
                     }
                 }
             }, () -> {
