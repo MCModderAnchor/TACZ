@@ -102,7 +102,7 @@ public class FirstPersonRenderGunEvent {
             }
             // 在渲染之前，先更新动画，让动画数据写入模型
             if (animationStateMachine != null) {
-                animationStateMachine.update();
+                animationStateMachine.update(event.getPartialTicks());
             }
             PoseStack poseStack = event.getPoseStack();
             poseStack.pushPose();

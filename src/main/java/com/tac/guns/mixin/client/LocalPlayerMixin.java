@@ -259,8 +259,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 // 触发 reload，停止播放声音
                 SoundPlayManager.stopPlayGunSound();
                 SoundPlayManager.playReloadSound(player, gunIndex, noAmmo);
-                animationStateMachine.setNoAmmo(noAmmo);
-                animationStateMachine.onGunReload();
+                animationStateMachine.setNoAmmo(noAmmo).onGunReload();
             }
         });
     }
@@ -286,8 +285,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             SoundPlayManager.playInspectSound(player, gunIndex, noAmmo);
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                animationStateMachine.setNoAmmo(noAmmo);
-                animationStateMachine.onGunInspect();
+                animationStateMachine.setNoAmmo(noAmmo).onGunInspect();
             }
         });
     }
@@ -355,6 +353,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (player.getLevel().isClientSide()) {
             tickAimingProgress();
             tickStateLock();
+            tickPlayerMovement();
         }
     }
 
@@ -419,6 +418,29 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         // 释放状态锁
         tac$ClientStateLock = false;
+    }
+
+    @Unique
+    private void tickPlayerMovement() {
+        // 如果玩家正在移动，播放移动动画，否则播放 idle 动画
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            if (animationStateMachine != null) {
+                if (player.isSprinting()) {
+                    animationStateMachine.onShooterRun(player.walkDist);
+                } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
+                    animationStateMachine.onShooterWalk(player.input, player.walkDist);
+                } else {
+                    animationStateMachine.onPlayerIdle();
+                }
+            }
+        });
     }
 
     @Override
