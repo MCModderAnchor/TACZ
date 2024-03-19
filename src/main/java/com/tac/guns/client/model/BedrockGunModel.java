@@ -75,6 +75,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
                     renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, light1);
+                    Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
                 });
             }
         });
@@ -92,6 +93,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
                     renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.RIGHT, poseStack2, light1);
+                    Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
                 });
             }
         });
