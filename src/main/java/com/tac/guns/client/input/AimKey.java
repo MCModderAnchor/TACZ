@@ -3,6 +3,7 @@ package com.tac.guns.client.input;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.config.client.KeyConfig;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -30,14 +31,18 @@ public class AimKey {
     public static void onAimPress(InputEvent.MouseInputEvent event) {
         if (isInGame() && AIM_KEY.matchesMouse(event.getButton())) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) {
+            if (!(player instanceof IClientPlayerGunOperator operator)) {
                 return;
             }
             if (IGun.mainhandHoldGun(player)) {
-                if (event.getAction() == GLFW.GLFW_PRESS) {
-                    IClientPlayerGunOperator.fromLocalPlayer(player).aim(true);
+                boolean action = true;
+                if (!KeyConfig.HOLD_TO_AIM.get()) {
+                    action = !operator.isAim();
                 }
-                if (event.getAction() == GLFW.GLFW_RELEASE) {
+                if (event.getAction() == GLFW.GLFW_PRESS) {
+                    IClientPlayerGunOperator.fromLocalPlayer(player).aim(action);
+                }
+                if (KeyConfig.HOLD_TO_AIM.get() && event.getAction() == GLFW.GLFW_RELEASE) {
                     IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
                 }
             }
