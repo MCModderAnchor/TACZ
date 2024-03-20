@@ -152,7 +152,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 // 动画状态机转移状态
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (animationStateMachine != null) {
-                    animationStateMachine.onGunShoot();
+                    animationStateMachine
+                            .setBaseWalkDist(player.walkDist)
+                            .onGunShoot();
                 }
                 // 抛壳
                 if (gunIndex.getShellEjection() != null) {
@@ -433,9 +435,15 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
                 if (player.isSprinting()) {
-                    animationStateMachine.onShooterRun(player.walkDist, player.isOnGround());
+                    animationStateMachine
+                            .setOnGround(player.isOnGround())
+                            .setBaseWalkDist(player.walkDist)
+                            .onShooterRun();
                 } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
-                    animationStateMachine.onShooterWalk(player.input, player.walkDist, player.isOnGround());
+                    animationStateMachine
+                            .setOnGround(player.isOnGround())
+                            .setBaseWalkDist(player.walkDist)
+                            .onShooterWalk(player.input);
                 } else {
                     animationStateMachine.onShooterIdle();
                 }

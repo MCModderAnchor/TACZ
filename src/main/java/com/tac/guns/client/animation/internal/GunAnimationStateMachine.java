@@ -4,10 +4,8 @@ import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.AnimationPlan;
 import com.tac.guns.client.animation.ObjectAnimation;
 import com.tac.guns.client.animation.ObjectAnimationRunner;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
@@ -31,10 +29,10 @@ public class GunAnimationStateMachine {
     public static final String WALK_BACKWARD_ANIMATION = "walk_backward";
     protected AnimationController controller;
     protected boolean noAmmo;
+    protected boolean onGround;
+
     //记录开始冲刺时玩家的walk distance，以便让冲刺动画有统一的开头
     private float baseDistanceWalked = 0.0f;
-    //玩家以冲刺状态脱离地面时，需要保持walk distance不变以保持姿态。
-    private float keepDistanceWalked = 0.0f;
     private WalkDirection lastWalkDirection = WalkDirection.NONE;
 
     public GunAnimationStateMachine(AnimationController controller) {
@@ -68,7 +66,7 @@ public class GunAnimationStateMachine {
         }
     }
 
-    public void onShooterRun(float baseDistanceWalked, boolean onGround) {
+    public void onShooterRun() {
         if(isPlayingRunIntroOrLoop()) {
             if (!onGround && !isPlayingRunHold()) {
                 controller.runAnimation(MOVEMENT_TRACK, RUN_HOLD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f);
@@ -84,12 +82,10 @@ public class GunAnimationStateMachine {
             deque.add(new AnimationPlan(RUN_LOOP_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.2f));
             controller.queueAnimation(MOVEMENT_TRACK, deque);
             lastWalkDirection = WalkDirection.NONE;
-            this.baseDistanceWalked = baseDistanceWalked;
         }
     }
 
-    public void onShooterWalk(Input input, float baseDistanceWalked, boolean onGround) {
-        // 可以从 idle、run、inspect 转移到这个状态
+    public void onShooterWalk(Input input) {
         WalkDirection direction = WalkDirection.fromInput(input);
         if (direction == lastWalkDirection) {
             return;
@@ -111,7 +107,6 @@ public class GunAnimationStateMachine {
             }
         }
         controller.queueAnimation(MOVEMENT_TRACK, deque);
-        this.baseDistanceWalked = baseDistanceWalked;
     }
 
     public void onShooterIdle() {
@@ -138,6 +133,16 @@ public class GunAnimationStateMachine {
         return this;
     }
 
+    public GunAnimationStateMachine setOnGround(boolean onGround) {
+        this.onGround = onGround;
+        return this;
+    }
+
+    public GunAnimationStateMachine setBaseWalkDist(float baseWalkDist) {
+        this.baseDistanceWalked = baseWalkDist;
+        return this;
+    }
+
     public AnimationController getController() {
         return controller;
     }
@@ -146,39 +151,28 @@ public class GunAnimationStateMachine {
      * @return 返回当前正在播放的动画是否需要隐藏准心。
      */
     public boolean shouldHideCrossHair() {
-        if (isPlayingAnimation(MAIN_TRACK, INSPECT_ANIMATION, INSPECT_EMPTY_ANIMATION)) {
+        if (isPlayingInspectAnimation()) {
             return true;
         }
 
-        return isPlayingAnimation(MOVEMENT_TRACK, RUN_LOOP_ANIMATION, RUN_HOLD_ANIMATION);
+        return isPlayingRunHold() || isPlayingRunLoop();
     }
 
-    public void update(float partialTicks) {
+    public void update(float partialTicks, Entity entity) {
         ObjectAnimationRunner runner = controller.getAnimation(MOVEMENT_TRACK);
         if (runner != null) {
             //为了让冲刺和行走动画和原版的viewBobbing相适应，需要手动更新冲刺动画的进度
             //当前动画是run或者正在过渡向run动画的时候，就手动设置run动画的进度。
-            Entity entity = Minecraft.getInstance().getCameraEntity();
-            if (entity instanceof Player playerEntity) {
-                float deltaDistanceWalked = playerEntity.walkDist - playerEntity.walkDistO;
-                float distanceWalked;
-                if (playerEntity.isOnGround()) {
-                    distanceWalked = playerEntity.walkDist + deltaDistanceWalked * partialTicks - baseDistanceWalked;
-                }
-                else {
-                    distanceWalked = keepDistanceWalked;
-                    baseDistanceWalked = playerEntity.walkDist + deltaDistanceWalked * partialTicks - keepDistanceWalked;
-                }
-                keepDistanceWalked = distanceWalked;
-                String animationName = runner.getAnimation().name;
-                if ((isNamedWalkAnimation(animationName) || RUN_LOOP_ANIMATION.equals(animationName)) && runner.isRunning()) {
-                    runner.setProgressNs((long) (runner.getAnimation().getMaxEndTimeS() * (distanceWalked % 2f) / 2f * 1e9f));
-                }
-                if (runner.isTransitioning() && runner.getTransitionTo()!= null){
-                    animationName = runner.getTransitionTo().getAnimation().name;
-                    if (isNamedWalkAnimation(animationName) || RUN_LOOP_ANIMATION.equals(animationName)){
-                        runner.getTransitionTo().setProgressNs((long) (runner.getTransitionTo().getAnimation().getMaxEndTimeS() * (distanceWalked % 2f) / 2f * 1e9f));
-                    }
+            float deltaDistanceWalked = entity.walkDist - entity.walkDistO;
+            float distanceWalked = entity.walkDist + deltaDistanceWalked * partialTicks - baseDistanceWalked;
+            String animationName = runner.getAnimation().name;
+            if ((isNamedWalkAnimation(animationName) || RUN_LOOP_ANIMATION.equals(animationName)) && runner.isRunning()) {
+                runner.setProgressNs((long) (runner.getAnimation().getMaxEndTimeS() * (distanceWalked % 2f) / 2f * 1e9f));
+            }
+            if (runner.isTransitioning() && runner.getTransitionTo() != null) {
+                animationName = runner.getTransitionTo().getAnimation().name;
+                if (isNamedWalkAnimation(animationName) || RUN_LOOP_ANIMATION.equals(animationName)) {
+                    runner.getTransitionTo().setProgressNs((long) (runner.getTransitionTo().getAnimation().getMaxEndTimeS() * (distanceWalked % 2f) / 2f * 1e9f));
                 }
             }
         }
@@ -212,8 +206,20 @@ public class GunAnimationStateMachine {
         return isPlayingAnimation(MOVEMENT_TRACK, RUN_LOOP_ANIMATION, RUN_START_ANIMATION);
     }
 
+    public boolean isPlayingRunStart() {
+        return isPlayingAnimation(MOVEMENT_TRACK, RUN_START_ANIMATION);
+    }
+
+    public boolean isPlayingRunLoop() {
+        return isPlayingAnimation(MOVEMENT_TRACK, RUN_LOOP_ANIMATION);
+    }
+
     public boolean isPlayingRunHold() {
         return isPlayingAnimation(MOVEMENT_TRACK, RUN_HOLD_ANIMATION);
+    }
+
+    public boolean isPlayingRunEnd() {
+        return isPlayingAnimation(MOVEMENT_TRACK, RUN_END_ANIMATION);
     }
 
     public boolean isPlayingWalkAnimation() {
@@ -222,6 +228,22 @@ public class GunAnimationStateMachine {
 
     public boolean isPlayingIdleAnimation() {
         return isPlayingAnimation(MOVEMENT_TRACK, IDLE_ANIMATION);
+    }
+
+    public boolean isPlayingShootAnimation() {
+        return isPlayingAnimation(MAIN_TRACK, SHOOT_ANIMATION);
+    }
+
+    public boolean isPlayingInspectAnimation() {
+        return isPlayingAnimation(MAIN_TRACK, INSPECT_ANIMATION, INSPECT_EMPTY_ANIMATION);
+    }
+
+    public boolean isPlayingReloadAnimation() {
+        return isPlayingAnimation(MAIN_TRACK, RELOAD_EMPTY_ANIMATION, RELOAD_TACTICAL_ANIMATION);
+    }
+
+    public boolean isPlayingDrawAnimation() {
+        return isPlayingAnimation(MAIN_TRACK, DRAW_ANIMATION);
     }
 
     private boolean isNamedWalkAnimation(String animationName) {
