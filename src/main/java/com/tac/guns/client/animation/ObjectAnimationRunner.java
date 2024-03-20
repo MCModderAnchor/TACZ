@@ -213,7 +213,11 @@ public class ObjectAnimationRunner {
             }
             case LOOP -> {
                 if (progressNs / 1e9 > animation.getMaxEndTimeS()) {
-                    progressNs = progressNs % (long) (animation.getMaxEndTimeS() * 1e9);
+                    if (animation.getMaxEndTimeS() == 0) {
+                        progressNs = 0;
+                    } else {
+                        progressNs = progressNs % (long) (animation.getMaxEndTimeS() * 1e9);
+                    }
                 }
             }
         }

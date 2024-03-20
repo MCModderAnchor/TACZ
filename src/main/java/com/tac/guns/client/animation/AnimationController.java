@@ -93,7 +93,8 @@ public class AnimationController {
     }
 
     synchronized public void update() {
-        for (int i = 0; i < currentRunners.size(); i++) {
+        // 动画混合时，track 级别越低，优先级越低（体现在旋转的叠加先后顺序上）
+        for (int i = currentRunners.size() - 1; i >= 0; i--) {
             ObjectAnimationRunner runner = currentRunners.get(i);
             if (runner == null) continue;
             //更新当前动画runner

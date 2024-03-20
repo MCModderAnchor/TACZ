@@ -172,14 +172,14 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     // 因为模型是上下颠倒的，因此此处x轴和y轴的偏移也进行取反
                     if (bonesItem != null) {
                         // 因为要达成所有位移都是相对位移，所以如果当前node是根node，则减去根node的pivot坐标。
-                        rendererWrapper.setOffsetX(-values[0] - bonesItem.getPivot().get(0) / 16f);
-                        rendererWrapper.setOffsetY(-values[1] + bonesItem.getPivot().get(1) / 16f);
-                        rendererWrapper.setOffsetZ(values[2] - bonesItem.getPivot().get(2) / 16f);
+                        rendererWrapper.addOffsetX(-values[0] - bonesItem.getPivot().get(0) / 16f);
+                        rendererWrapper.addOffsetY(-values[1] + bonesItem.getPivot().get(1) / 16f);
+                        rendererWrapper.addOffsetZ(values[2] - bonesItem.getPivot().get(2) / 16f);
                     } else {
                         // 虽然方法名称写的是getRotationPoint，但其实还是相对父级node的坐标移动量。因此此处与listener提供的local translation相减。
-                        rendererWrapper.setOffsetX(-values[0] - rendererWrapper.getRotationPointX() / 16f);
-                        rendererWrapper.setOffsetY(-values[1] - rendererWrapper.getRotationPointY() / 16f);
-                        rendererWrapper.setOffsetZ(values[2] - rendererWrapper.getRotationPointZ() / 16f);
+                        rendererWrapper.addOffsetX(-values[0] - rendererWrapper.getRotationPointX() / 16f);
+                        rendererWrapper.addOffsetY(-values[1] - rendererWrapper.getRotationPointY() / 16f);
+                        rendererWrapper.addOffsetZ(values[2] - rendererWrapper.getRotationPointZ() / 16f);
                     }
                 }
 
@@ -221,12 +221,13 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     float yaw = (float) Math.atan2(m[1], m[0]);
                     // 因为模型是上下颠倒的，因此此处roll轴的旋转需要进行取反
                     // 要减去模型组的初始旋转值，写入相对值。
-                    toQuaternion(
+                    float[] q = MathUtil.toQuaternion(
                             -roll - rendererWrapper.getRotateAngleX(),
                             pitch - rendererWrapper.getRotateAngleY(),
-                            yaw - rendererWrapper.getRotateAngleZ(),
-                            rendererWrapper.getAdditionalQuaternion()
+                            yaw - rendererWrapper.getRotateAngleZ()
                     );
+                    Quaternion quaternion = MathUtil.toQuaternion(q);
+                    rendererWrapper.getAdditionalQuaternion().mul(quaternion);
                 }
 
                 @Override
