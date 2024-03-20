@@ -27,7 +27,9 @@ public class ConfigKey {
 
     @SubscribeEvent
     public static void onOpenConfig(InputEvent.KeyInputEvent event) {
-        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && OPEN_CONFIG_KEY.matches(event.getKey(), event.getScanCode())) {
+        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS
+                && OPEN_CONFIG_KEY.matches(event.getKey(), event.getScanCode())
+                && OPEN_CONFIG_KEY.getKeyModifier().equals(KeyModifier.getActiveModifier())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
                 return;
