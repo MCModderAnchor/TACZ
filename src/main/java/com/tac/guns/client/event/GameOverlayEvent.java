@@ -12,6 +12,8 @@ import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.gui.GunRefitScreen;
+import com.tac.guns.client.renderer.crosshair.CrosshairType;
+import com.tac.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -29,8 +31,8 @@ import static com.tac.guns.util.RenderHelper.blit;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class GameOverlayEvent {
-    private static final ResourceLocation HIT_ICON = new ResourceLocation(GunMod.MOD_ID, "textures/hud/hit_marker.png");
-    private static final long KEEP_TIME = 200;
+    private static final ResourceLocation HIT_ICON = new ResourceLocation(GunMod.MOD_ID, "textures/crosshair/hit/hit_marker.png");
+    private static final long KEEP_TIME = 300;
     private static boolean isRefitScreen = false;
     private static long hitTimestamp = -1L;
     private static long killTimestamp = -1L;
@@ -40,30 +42,29 @@ public class GameOverlayEvent {
      */
     @SubscribeEvent(receiveCanceled = true)
     public static void onRenderOverlay(RenderGameOverlayEvent.PreLayer event) {
-        if (Minecraft.getInstance().player == null) {
-            return;
-        }
         if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT) {
             LocalPlayer player = Minecraft.getInstance().player;
-
-            if (IGun.mainhandHoldGun(player)) {
-                renderHitMarker(event.getMatrixStack(), event.getWindow());
+            if (player == null) {
+                return;
             }
-
+            if (!IGun.mainhandHoldGun(player)) {
+                return;
+            }
+            // 全面替换成自己的
+            event.setCanceled(true);
+            // 击中显示
+            renderHitMarker(event.getMatrixStack(), event.getWindow());
             // 瞄准快要完成时，取消准心渲染
             if (IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(event.getPartialTicks()) > 0.9) {
-                event.setCanceled(true);
                 return;
             }
             // 换弹进行时取消准心渲染
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
             if (reloadState.getStateType().isReloading()) {
-                event.setCanceled(true);
                 return;
             }
             // 打开枪械改装界面的时候，取消准心渲染
             if (isRefitScreen) {
-                event.setCanceled(true);
                 return;
             }
             // 播放的动画需要隐藏准心时，取消准心渲染
@@ -74,8 +75,8 @@ public class GameOverlayEvent {
             ResourceLocation gunId = iGun.getGunId(stack);
             TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                if (animationStateMachine.shouldHideCrossHair()) {
-                    event.setCanceled(true);
+                if (!animationStateMachine.shouldHideCrossHair()) {
+                    renderCrosshair(event.getMatrixStack(), event.getWindow());
                 }
             });
         }
@@ -85,6 +86,20 @@ public class GameOverlayEvent {
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
         // 奇迹的是，RenderGameOverlayEvent.PreLayer 事件中，screen还未被赋值...
         isRefitScreen = Minecraft.getInstance().screen instanceof GunRefitScreen;
+    }
+
+    private static void renderCrosshair(PoseStack poseStack, Window window) {
+        int width = window.getGuiScaledWidth();
+        int height = window.getGuiScaledHeight();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        ResourceLocation location = CrosshairType.getTextureLocation(RenderConfig.CROSSHAIR_TYPE.get());
+        RenderSystem.setShaderTexture(0, location);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.setShaderColor(1F, 1F, 1F, 0.9f);
+        float x = width / 2f - 8;
+        float y = height / 2f - 8;
+        blit(poseStack, x, y, 0, 0, 16, 16, 16, 16);
     }
 
     private static void renderHitMarker(PoseStack poseStack, Window window) {

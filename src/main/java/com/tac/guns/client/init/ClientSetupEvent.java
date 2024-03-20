@@ -32,6 +32,7 @@ public class ClientSetupEvent {
             ClientRegistry.registerKeyBinding(FireSelectKey.FIRE_SELECT_KEY);
             ClientRegistry.registerKeyBinding(AimKey.AIM_KEY);
             ClientRegistry.registerKeyBinding(RefitKey.REFIT_KEY);
+            ClientRegistry.registerKeyBinding(ConfigKey.OPEN_CONFIG_KEY);
         });
 
         // 注册 HUD
