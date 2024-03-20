@@ -30,9 +30,11 @@ public class GunAnimationStateMachine {
     protected AnimationController controller;
     protected boolean noAmmo;
     protected boolean onGround;
+    protected boolean pauseWalkAndRun;
 
     //记录开始冲刺时玩家的walk distance，以便让冲刺动画有统一的开头
     private float baseDistanceWalked = 0.0f;
+    private float keepDistanceWalked = 0.0f;
     private WalkDirection lastWalkDirection = WalkDirection.NONE;
 
     public GunAnimationStateMachine(AnimationController controller) {
@@ -66,7 +68,7 @@ public class GunAnimationStateMachine {
         }
     }
 
-    public void onShooterRun() {
+    public void onShooterRun(float walkDist) {
         if(isPlayingRunIntroOrLoop()) {
             if (!onGround && !isPlayingRunHold()) {
                 controller.runAnimation(MOVEMENT_TRACK, RUN_HOLD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f);
@@ -82,10 +84,11 @@ public class GunAnimationStateMachine {
             deque.add(new AnimationPlan(RUN_LOOP_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.2f));
             controller.queueAnimation(MOVEMENT_TRACK, deque);
             lastWalkDirection = WalkDirection.NONE;
+            baseDistanceWalked = walkDist;
         }
     }
 
-    public void onShooterWalk(Input input) {
+    public void onShooterWalk(Input input, float walkDist) {
         WalkDirection direction = WalkDirection.fromInput(input);
         if (direction == lastWalkDirection) {
             return;
@@ -107,6 +110,7 @@ public class GunAnimationStateMachine {
             }
         }
         controller.queueAnimation(MOVEMENT_TRACK, deque);
+        baseDistanceWalked = walkDist;
     }
 
     public void onShooterIdle() {
@@ -138,8 +142,8 @@ public class GunAnimationStateMachine {
         return this;
     }
 
-    public GunAnimationStateMachine setBaseWalkDist(float baseWalkDist) {
-        this.baseDistanceWalked = baseWalkDist;
+    public GunAnimationStateMachine setPauseWalkAndRun(boolean pause) {
+        this.pauseWalkAndRun = pause;
         return this;
     }
 
@@ -164,7 +168,16 @@ public class GunAnimationStateMachine {
             //为了让冲刺和行走动画和原版的viewBobbing相适应，需要手动更新冲刺动画的进度
             //当前动画是run或者正在过渡向run动画的时候，就手动设置run动画的进度。
             float deltaDistanceWalked = entity.walkDist - entity.walkDistO;
-            float distanceWalked = entity.walkDist + deltaDistanceWalked * partialTicks - baseDistanceWalked;
+            float distanceWalked;
+            if (pauseWalkAndRun) {
+                // 保持 distanceWalked 与 keepDistanceWalked 相同，即不随时间增长
+                distanceWalked = keepDistanceWalked;
+                baseDistanceWalked = entity.walkDist + deltaDistanceWalked * partialTicks - keepDistanceWalked;
+            } else {
+                // distanceWalked 与 keepDistanceWalked 一同随时间增长
+                distanceWalked = entity.walkDist + deltaDistanceWalked * partialTicks - baseDistanceWalked;
+                keepDistanceWalked = distanceWalked;
+            }
             String animationName = runner.getAnimation().name;
             if ((isNamedWalkAnimation(animationName) || RUN_LOOP_ANIMATION.equals(animationName)) && runner.isRunning()) {
                 runner.setProgressNs((long) (runner.getAnimation().getMaxEndTimeS() * (distanceWalked % 2f) / 2f * 1e9f));

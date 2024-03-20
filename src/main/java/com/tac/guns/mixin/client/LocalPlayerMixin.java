@@ -153,7 +153,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (animationStateMachine != null) {
                     animationStateMachine
-                            .setBaseWalkDist(player.walkDist)
                             .onGunShoot();
                 }
                 // 抛壳
@@ -344,6 +343,22 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     }
 
     @Unique
+    @Override
+    public long getClientShootCoolDown() {
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        ItemStack mainHandItem = player.getMainHandItem();
+        IGun iGun = IGun.getIGunOrNull(mainHandItem);
+        if (iGun == null) {
+            return -1;
+        }
+        ResourceLocation gunId = iGun.getGunId(mainHandItem);
+        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
+        return gunIndexOptional
+                .map(gunIndex -> gunIndex.getGunData().getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp))
+                .orElse(-1L);
+    }
+
+    @Unique
     private void lockState(@Nullable Predicate<IGunOperator> lockedCondition) {
         tac$ClientStateLock = true;
         tac$LockedCondition = lockedCondition;
@@ -355,7 +370,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (player.getLevel().isClientSide()) {
             tickAimingProgress();
             tickStateLock();
-            tickPlayerMovement();
+            tickAnimations();
         }
     }
 
@@ -423,8 +438,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     }
 
     @Unique
-    private void tickPlayerMovement() {
-        // 如果玩家正在移动，播放移动动画，否则播放 idle 动画
+    private void tickAnimations() {
         LocalPlayer player = (LocalPlayer) (Object) this;
         ItemStack mainhandItem = player.getMainHandItem();
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
@@ -434,16 +448,23 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                if (player.isSprinting()) {
+                boolean isShooting = getClientShootCoolDown() > 0;
+                // 如果玩家正在射击，只能处于 idle 状态
+                if (isShooting) {
                     animationStateMachine
+                            .setPauseWalkAndRun(true)
+                            .onShooterIdle();
+                }// 如果玩家正在移动，播放移动动画，否则播放 idle 动画
+                else if (player.isSprinting()) {
+                    animationStateMachine
+                            .setPauseWalkAndRun(false)
                             .setOnGround(player.isOnGround())
-                            .setBaseWalkDist(player.walkDist)
-                            .onShooterRun();
+                            .onShooterRun(player.walkDist);
                 } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
                     animationStateMachine
+                            .setPauseWalkAndRun(false)
                             .setOnGround(player.isOnGround())
-                            .setBaseWalkDist(player.walkDist)
-                            .onShooterWalk(player.input);
+                            .onShooterWalk(player.input, player.walkDist);
                 } else {
                     animationStateMachine.onShooterIdle();
                 }
