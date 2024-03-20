@@ -141,7 +141,7 @@ public class MathUtil {
     }
 
     /**
-     * 在两个变换矩阵之间插值。
+     * 在两个变换矩阵之间旋转、位移的插值。
      *
      * @param resultMatrix 输出结果将乘进此矩阵
      */

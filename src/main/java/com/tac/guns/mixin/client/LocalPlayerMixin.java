@@ -433,11 +433,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
                 if (player.isSprinting()) {
-                    animationStateMachine.onShooterRun(player.walkDist);
+                    animationStateMachine.onShooterRun(player.walkDist, player.isOnGround());
                 } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
-                    animationStateMachine.onShooterWalk(player.input, player.walkDist);
+                    animationStateMachine.onShooterWalk(player.input, player.walkDist, player.isOnGround());
                 } else {
-                    animationStateMachine.onPlayerIdle();
+                    animationStateMachine.onShooterIdle();
                 }
             }
         });

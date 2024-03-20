@@ -64,6 +64,18 @@ public class ModelRendererWrapper{
         modelRenderer.offsetZ = offsetZ;
     }
 
+    public void addOffsetX(float offsetX) {
+        setOffsetX(getOffsetX() + offsetX);
+    }
+
+    public void addOffsetY(float offsetY) {
+        setOffsetY(getOffsetY() + offsetY);
+    }
+
+    public void addOffsetZ(float offsetZ) {
+        setOffsetZ(getOffsetZ() + offsetZ);
+    }
+
     public float getRotationPointX() {
         return modelRenderer.x;
     }
