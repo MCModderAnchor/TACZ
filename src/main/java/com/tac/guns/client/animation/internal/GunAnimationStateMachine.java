@@ -1,5 +1,6 @@
 package com.tac.guns.client.animation.internal;
 
+import com.mojang.logging.LogUtils;
 import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.AnimationPlan;
 import com.tac.guns.client.animation.ObjectAnimation;
@@ -71,7 +72,7 @@ public class GunAnimationStateMachine {
     public void onShooterRun(float walkDist) {
         if(isPlayingRunIntroOrLoop()) {
             if (!onGround && !isPlayingRunHold()) {
-                controller.runAnimation(MOVEMENT_TRACK, RUN_HOLD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f);
+                controller.runAnimation(MOVEMENT_TRACK, RUN_HOLD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.6f);
                 lastWalkDirection = WalkDirection.NONE;
             }
             return;
@@ -89,28 +90,36 @@ public class GunAnimationStateMachine {
     }
 
     public void onShooterWalk(Input input, float walkDist) {
+        if (!onGround && !isPlayingIdleAnimation()) {
+            controller.runAnimation(MOVEMENT_TRACK, IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.6f);
+            lastWalkDirection = WalkDirection.NONE;
+            LogUtils.getLogger().info(lastWalkDirection.name());
+            return;
+        }
         WalkDirection direction = WalkDirection.fromInput(input);
         if (direction == lastWalkDirection) {
             return;
         }
-        lastWalkDirection = direction;
-        ArrayDeque<AnimationPlan> deque = new ArrayDeque<>();
-        if (isPlayingRunIntroOrLoop() || isPlayingRunHold()) {
-            deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.4f));
+        if (onGround) {
+            lastWalkDirection = direction;
+            ArrayDeque<AnimationPlan> deque = new ArrayDeque<>();
+            if (isPlayingRunIntroOrLoop() || isPlayingRunHold()) {
+                deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f));
+            }
+            switch (direction) {
+                case FORWARD -> {
+                    deque.add(new AnimationPlan(WALK_FORWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                }
+                case BACKWARD -> {
+                    deque.add(new AnimationPlan(WALK_BACKWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                }
+                case SIDE_WAY -> {
+                    deque.add(new AnimationPlan(WALK_SIDEWAY_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                }
+            }
+            controller.queueAnimation(MOVEMENT_TRACK, deque);
+            baseDistanceWalked = walkDist;
         }
-        switch (direction){
-            case FORWARD -> {
-                deque.add(new AnimationPlan(WALK_FORWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-            }
-            case BACKWARD -> {
-                deque.add(new AnimationPlan(WALK_BACKWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-            }
-            case SIDE_WAY -> {
-                deque.add(new AnimationPlan(WALK_SIDEWAY_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-            }
-        }
-        controller.queueAnimation(MOVEMENT_TRACK, deque);
-        baseDistanceWalked = walkDist;
     }
 
     public void onShooterIdle() {
@@ -126,7 +135,7 @@ public class GunAnimationStateMachine {
         lastWalkDirection = WalkDirection.NONE;
         ArrayDeque<AnimationPlan> deque = new ArrayDeque<>();
         if (isPlayingRunIntroOrLoop()) {
-            deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.4f));
+            deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f));
         }
         deque.add(new AnimationPlan(IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
         controller.queueAnimation(MOVEMENT_TRACK, deque);
