@@ -2,23 +2,20 @@ package com.tac.guns.client.gui.components.refit;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.tac.guns.GunMod;
-import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public class RefitSlotButton extends Button {
+public abstract class RefitButton extends Button {
     private final ItemStack stack;
     private boolean selected = false;
 
-    public RefitSlotButton(int pX, int pY, ItemStack stack, Button.OnPress onPress) {
+    public RefitButton(int pX, int pY, ItemStack stack, Button.OnPress onPress) {
         super(pX, pY, 18, 18, TextComponent.EMPTY, onPress);
         this.stack = stack;
     }
