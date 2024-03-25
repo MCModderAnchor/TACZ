@@ -9,6 +9,7 @@ import com.tac.guns.item.builder.AttachmentItemBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,7 +27,7 @@ public class AttachmentTestCommand {
             ServerPlayer player = context.getSource().getPlayerOrException();
             ItemStack itemStack = player.getMainHandItem();
             if (itemStack.getItem() instanceof IGun iGun) {
-                iGun.setAttachment(itemStack, AttachmentItemBuilder.create().build());
+                iGun.setAttachment(itemStack, AttachmentItemBuilder.create().setId(new ResourceLocation("tac", "8x")).build());
             }
         } catch (CommandSyntaxException e) {
             throw new RuntimeException(e);

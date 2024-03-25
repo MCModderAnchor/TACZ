@@ -5,5 +5,7 @@
   "tac.gun.ak47.name": "AK-47 突击步枪",
   "tac.gun.glock_17.name": "格洛克 17 手枪",
   "tac.gun.ai_awp.name": "精密国际 AWM 狙击步枪",
-  "tac.ammo.762x39.name": "7.62×39毫米步枪弹"
+  "tac.ammo.762x39.name": "7.62×39毫米步枪弹",
+  "tac.attachment.lpvo_1_6.name": "LPVO 1-6x",
+  "tac.attachment.8x.name": "8x Scope"
 }

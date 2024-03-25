@@ -1,6 +1,13 @@
 {
   "ammo": "tac:9mm",
   "rpm": 800,
+  "bullet": {
+    "life": 10,
+    "damage": 3,
+    "speed": 10,
+    "gravity": 0,
+    "knockback": 0
+  },
   "ammo_amount": 17,
   "reload": {
     "type": "magazine",

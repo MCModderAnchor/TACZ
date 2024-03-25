@@ -1,0 +1,7 @@
+{
+  "name": "tac.attachment.8x.name",
+  "tooltip": "tac.attachment.8x.tooltip",
+  "display": "tac:8x_display",
+  "data": "tac:8x_data",
+  "type": "scope"
+}

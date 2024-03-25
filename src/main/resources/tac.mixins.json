@@ -13,9 +13,7 @@
     "client.HumanoidModelMixin",
     "client.LanguageMixin",
     "client.LocalPlayerMixin",
-    "client.MainTargetMixin",
-    "client.PlayerModelMixin",
-    "client.RenderTargetMixin"
+    "client.PlayerModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
