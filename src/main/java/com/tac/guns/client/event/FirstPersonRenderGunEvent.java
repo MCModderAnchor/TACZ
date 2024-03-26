@@ -107,7 +107,7 @@ public class FirstPersonRenderGunEvent {
             }
             PoseStack poseStack = event.getPoseStack();
             poseStack.pushPose();
-            // 逆转原版施加在手上的延滞效果，改为将旋转效果写入模型动画数据中
+            // 逆转原版施加在手上的延滞效果，改为写入模型动画数据中
             float f2 = Mth.lerp(event.getPartialTicks(), player.xBobO, player.xBob);
             float f3 = Mth.lerp(event.getPartialTicks(), player.yBobO, player.yBob);
             float xRot = player.getViewXRot(event.getPartialTicks()) - f2;

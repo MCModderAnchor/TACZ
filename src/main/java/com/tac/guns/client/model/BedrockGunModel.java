@@ -12,15 +12,14 @@ import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
+import com.tac.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -79,7 +78,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                     PoseStack poseStack2 = new PoseStack();
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
-                    renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, light1);
+                    RenderHelper.renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, light1);
                     Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
                 });
             }
@@ -97,7 +96,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                     PoseStack poseStack2 = new PoseStack();
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
-                    renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.RIGHT, poseStack2, light1);
+                    RenderHelper.renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.RIGHT, poseStack2, light1);
                     Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
                 });
             }
@@ -195,7 +194,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 
         // 准备各个配件的渲染
         for (AttachmentType type : AttachmentType.values()) {
-            if (type == AttachmentType.NONE) {
+            if (type == AttachmentType.NONE || type == AttachmentType.SCOPE) { // 瞄具的渲染需要提前。
                 continue;
             }
             String nodeName = type.name().toLowerCase() + ATTACHMENT_POS_SUFFIX;
@@ -294,22 +293,22 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             ItemStack attachmentItem = iGun.getAttachment(gunItem, type);
             currentAttachmentItem.put(type, attachmentItem);
         }
-        super.render(matrixStack, transformType, renderType, light, overlay);
-    }
-
-    private void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight) {
-        Minecraft mc = Minecraft.getInstance();
-        EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
-        PlayerRenderer renderer = (PlayerRenderer) renderManager.getRenderer(player);
-        MultiBufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        int oldId = RenderSystem.getShaderTexture(0);
-        RenderSystem.setShaderTexture(0, player.getSkinTextureLocation());
-
-        if (hand == HumanoidArm.RIGHT) {
-            renderer.renderRightHand(matrixStack, buffer, combinedLight, player);
-        } else {
-            renderer.renderLeftHand(matrixStack, buffer, combinedLight, player);
+        // 镜子需要先渲染，写入模板值
+        ItemStack attachmentItem = currentAttachmentItem.get(AttachmentType.SCOPE);
+        if (scopePosPath != null && attachmentItem != null && !attachmentItem.isEmpty()) {
+            matrixStack.pushPose();
+            for (BedrockPart bedrockPart : scopePosPath) {
+                bedrockPart.translateAndRotateAndScale(matrixStack);
+            }
+            MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+            Minecraft.getInstance().getItemRenderer().renderStatic(attachmentItem, ItemTransforms.TransformType.NONE,
+                    light, overlay, matrixStack, bufferSource, 0);
+            matrixStack.popPose();
+            RenderHelper.enableItemEntityStencilTest();
         }
-        RenderSystem.setShaderTexture(0, oldId);
+        RenderSystem.stencilFunc(GL11.GL_EQUAL, 0, 0xFF);
+        RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+        super.render(matrixStack, transformType, renderType, light, overlay);
+        RenderHelper.disableItemEntityStencilTest();
     }
 }

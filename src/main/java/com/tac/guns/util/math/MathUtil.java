@@ -6,10 +6,13 @@ import com.mojang.math.Vector3f;
 
 public class MathUtil {
     public static double magnificationToFovMultiplier(double magnification, double currentFov) {
+        return magnificationToFov(magnification, currentFov) / currentFov;
+    }
+
+    public static double magnificationToFov(double magnification, double currentFov) {
         double currentTan = Math.tan(Math.toRadians(currentFov / 2));
         double newTan = currentTan / magnification;
-        double newFov = Math.toDegrees(Math.atan(newTan)) * 2;
-        return newFov / currentFov;
+        return Math.toDegrees(Math.atan(newTan)) * 2;
     }
 
     public static double fovToMagnification(double currentFov, double originFov) {

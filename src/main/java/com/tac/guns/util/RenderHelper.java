@@ -1,9 +1,18 @@
 package com.tac.guns.util;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.world.entity.HumanoidArm;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 public class RenderHelper {
     public static void blit(PoseStack poseStack, float x, float y, float uOffset, float vOffset, float pWidth, float height, float textureWidth, float textureHeight) {
@@ -28,5 +37,43 @@ public class RenderHelper {
         bufferbuilder.vertex(matrix, x1, y1, blitOffset).uv(minU, minV).endVertex();
         bufferbuilder.end();
         BufferUploader.end(bufferbuilder);
+    }
+
+    public static void enableItemEntityStencilTest() {
+        RenderSystem.assertOnRenderThread();
+        int depthTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME);
+        int stencilTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
+        if (depthTextureId != GL30.GL_NONE && stencilTextureId == GL30.GL_NONE) {
+            GL30.glBindTexture(GL30.GL_TEXTURE_2D, depthTextureId);
+            int dataType = GL30.glGetTexLevelParameteri(GL30.GL_TEXTURE_2D, 0, GL30.GL_TEXTURE_DEPTH_TYPE);
+            if (dataType == GL30.GL_UNSIGNED_NORMALIZED) {
+                int width = GL30.glGetTexLevelParameteri(GL30.GL_TEXTURE_2D, 0, GL30.GL_TEXTURE_WIDTH);
+                int height = GL30.glGetTexLevelParameteri(GL30.GL_TEXTURE_2D, 0, GL30.GL_TEXTURE_HEIGHT);
+                GlStateManager._texImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_DEPTH24_STENCIL8, width, height, 0, GL30.GL_DEPTH_STENCIL, GL30.GL_UNSIGNED_INT_24_8, null);
+                GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, depthTextureId, 0);
+            }
+        }
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+    }
+
+    public static void disableItemEntityStencilTest() {
+        RenderSystem.assertOnRenderThread();
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
+    }
+
+    public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight) {
+        Minecraft mc = Minecraft.getInstance();
+        EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
+        PlayerRenderer renderer = (PlayerRenderer) renderManager.getRenderer(player);
+        MultiBufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        int oldId = RenderSystem.getShaderTexture(0);
+        RenderSystem.setShaderTexture(0, player.getSkinTextureLocation());
+
+        if (hand == HumanoidArm.RIGHT) {
+            renderer.renderRightHand(matrixStack, buffer, combinedLight, player);
+        } else {
+            renderer.renderLeftHand(matrixStack, buffer, combinedLight, player);
+        }
+        RenderSystem.setShaderTexture(0, oldId);
     }
 }

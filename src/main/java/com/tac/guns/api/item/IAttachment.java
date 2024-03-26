@@ -32,6 +32,10 @@ public interface IAttachment {
 
     void setSkinId(ItemStack attachmentStack, @Nullable ResourceLocation skinId);
 
+    int getZoomNumber(ItemStack attachmentStack);
+
+    void setZoomNumber(ItemStack attachmentStack, int zoomNumber);
+
     @Nonnull
     AttachmentType getType(ItemStack attachmentStack);
 }

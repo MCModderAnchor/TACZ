@@ -1,19 +1,18 @@
 package com.tac.guns.client.model;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
+import com.tac.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,23 +51,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         return scopeViewPath;
     }
 
-    private static void enableStencilTest() {
-        RenderSystem.assertOnRenderThread();
-        int depthTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME);
-        int stencilTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
-        if (depthTextureId != GL30.GL_NONE && stencilTextureId == GL30.GL_NONE) {
-            GL30.glBindTexture(GL30.GL_TEXTURE_2D, depthTextureId);
-            int dataType = GL30.glGetTexLevelParameteri(GL30.GL_TEXTURE_2D, 0, GL30.GL_TEXTURE_DEPTH_TYPE);
-            if (dataType == GL30.GL_UNSIGNED_NORMALIZED) {
-                int width = GL30.glGetTexLevelParameteri(GL30.GL_TEXTURE_2D, 0, GL30.GL_TEXTURE_WIDTH);
-                int height = GL30.glGetTexLevelParameteri(GL30.GL_TEXTURE_2D, 0, GL30.GL_TEXTURE_HEIGHT);
-                GlStateManager._texImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_DEPTH24_STENCIL8, width, height, 0, GL30.GL_DEPTH_STENCIL, GL30.GL_UNSIGNED_INT_24_8, null);
-                GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, depthTextureId, 0);
-            }
-        }
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-    }
-
     public void setIsScope(boolean isScope) {
         if (isScope) {
             this.isSight = false;
@@ -81,6 +63,14 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             this.isScope = false;
         }
         this.isSight = isSight;
+    }
+
+    public boolean isScope() {
+        return isScope;
+    }
+
+    public boolean isSight() {
+        return isSight;
     }
 
     public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
@@ -96,7 +86,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     private void renderSight(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
-        enableStencilTest();
+        RenderHelper.enableItemEntityStencilTest();
         if (ocularNodePath != null) {
             RenderSystem.colorMask(false, false, false, false);
             RenderSystem.depthMask(false);
@@ -121,7 +111,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             RenderSystem.enableDepthTest();
         }
         RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
-        disableStencilTest();
+        RenderHelper.disableItemEntityStencilTest();
         // 渲染其他部分
         super.render(matrixStack, transformType, renderType, light, overlay);
     }
@@ -153,17 +143,19 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     private void renderScope(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
-        enableStencilTest();
+        RenderHelper.enableItemEntityStencilTest();
+        // 清空模板缓冲区、准备绘制模板缓冲
+        RenderSystem.clearStencil(0);
+        RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
         if (ocularRingPath != null) {
+            RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
+            RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
             // 渲染目镜外环
             renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
         }
         if (ocularNodePath != null) {
             RenderSystem.colorMask(false, false, false, false);
             RenderSystem.depthMask(false);
-            // 清空模板缓冲区、准备绘制模板缓冲
-            RenderSystem.clearStencil(0);
-            RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
             RenderSystem.stencilMask(0xFF);
             RenderSystem.stencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
             RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
@@ -213,11 +205,8 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         }
 
         RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
-        disableStencilTest();
-    }
-
-    private static void disableStencilTest(){
-        RenderSystem.assertOnRenderThread();
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
+        RenderHelper.disableItemEntityStencilTest();
+        // 渲染其他部分
+        super.render(matrixStack, transformType, renderType, light, overlay);
     }
 }

@@ -14,6 +14,7 @@ import java.util.Objects;
 public interface AttachmentItemDataAccessor extends IAttachment {
     String ATTACHMENT_ID_TAG = "AttachmentId";
     String SKIN_ID_TAG = "Skin";
+    String ZOOM_NUMBER_TAG = "ZoomNumber";
 
     @Override
     @Nonnull
@@ -54,5 +55,18 @@ public interface AttachmentItemDataAccessor extends IAttachment {
         } else {
             nbt.remove(SKIN_ID_TAG);
         }
+    }
+
+    default int getZoomNumber(ItemStack attachmentStack) {
+        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        if (nbt.contains(ZOOM_NUMBER_TAG, Tag.TAG_INT)) {
+            return nbt.getInt(ZOOM_NUMBER_TAG);
+        }
+        return 0;
+    }
+
+    default void setZoomNumber(ItemStack attachmentStack, int zoomNumber) {
+        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        nbt.putInt(ZOOM_NUMBER_TAG, zoomNumber);
     }
 }
