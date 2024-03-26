@@ -32,6 +32,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -106,6 +107,20 @@ public class FirstPersonRenderGunEvent {
             }
             PoseStack poseStack = event.getPoseStack();
             poseStack.pushPose();
+            // 逆转原版施加在手上的延滞效果，改为将旋转效果写入模型动画数据中
+            float f2 = Mth.lerp(event.getPartialTicks(), player.xBobO, player.xBob);
+            float f3 = Mth.lerp(event.getPartialTicks(), player.yBobO, player.yBob);
+            float xRot = player.getViewXRot(event.getPartialTicks()) - f2;
+            float yRot = player.getViewYRot(event.getPartialTicks()) - f3;
+            poseStack.mulPose(Vector3f.XP.rotationDegrees(xRot * -0.1F));
+            poseStack.mulPose(Vector3f.YP.rotationDegrees(yRot * -0.1F));
+            BedrockPart rootNode = gunModel.getRootNode();
+            if (rootNode != null) {
+                rootNode.offsetX += yRot * 0.1F / 16F / 3F;
+                rootNode.offsetY += -xRot * 0.1F / 16F / 3F;
+                rootNode.additionalQuaternion.mul(Vector3f.XP.rotationDegrees(xRot * 0.05F));
+                rootNode.additionalQuaternion.mul(Vector3f.YP.rotationDegrees(yRot * 0.05F));
+            }
             // 从渲染原点 (0, 24, 0) 移动到模型原点 (0, 0, 0)
             poseStack.translate(0, 1.5f, 0);
             // 基岩版模型是上下颠倒的，需要翻转过来。

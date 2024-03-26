@@ -28,15 +28,18 @@ public class GunAnimationStateMachine {
     public static final String WALK_FORWARD_ANIMATION = "walk_forward";
     public static final String WALK_SIDEWAY_ANIMATION = "walk_sideway";
     public static final String WALK_BACKWARD_ANIMATION = "walk_backward";
+    public static final String WALK_AIMING_ANIMATION = "walk_aiming";
     protected AnimationController controller;
-    protected boolean noAmmo;
-    protected boolean onGround;
-    protected boolean pauseWalkAndRun;
+    protected boolean noAmmo = false;
+    protected boolean onGround = true;
+    protected boolean pauseWalkAndRun = false;
+    protected boolean isAiming = false;
 
     //记录开始冲刺时玩家的walk distance，以便让冲刺动画有统一的开头
     private float baseDistanceWalked = 0.0f;
     private float keepDistanceWalked = 0.0f;
     private WalkDirection lastWalkDirection = WalkDirection.NONE;
+    private boolean isWalkAiming = false;
 
     public GunAnimationStateMachine(AnimationController controller) {
         this.controller = controller;
@@ -73,6 +76,7 @@ public class GunAnimationStateMachine {
         if(isPlayingRunIntroOrLoop()) {
             if (!onGround && !isPlayingRunHold()) {
                 controller.runAnimation(MOVEMENT_TRACK, RUN_HOLD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.6f);
+                isWalkAiming = false;
                 lastWalkDirection = WalkDirection.NONE;
             }
             return;
@@ -84,6 +88,7 @@ public class GunAnimationStateMachine {
             }
             deque.add(new AnimationPlan(RUN_LOOP_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.2f));
             controller.queueAnimation(MOVEMENT_TRACK, deque);
+            isWalkAiming = false;
             lastWalkDirection = WalkDirection.NONE;
             baseDistanceWalked = walkDist;
         }
@@ -92,15 +97,31 @@ public class GunAnimationStateMachine {
     public void onShooterWalk(Input input, float walkDist) {
         if (!onGround && !isPlayingIdleAnimation()) {
             controller.runAnimation(MOVEMENT_TRACK, IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.6f);
+            isWalkAiming = false;
             lastWalkDirection = WalkDirection.NONE;
             LogUtils.getLogger().info(lastWalkDirection.name());
             return;
         }
-        WalkDirection direction = WalkDirection.fromInput(input);
-        if (direction == lastWalkDirection) {
-            return;
-        }
         if (onGround) {
+            if (isAiming) {
+                if (isWalkAiming) {
+                    return;
+                }
+                isWalkAiming = true;
+                lastWalkDirection = WalkDirection.NONE;
+                ArrayDeque<AnimationPlan> deque = new ArrayDeque<>();
+                if (isPlayingRunIntroOrLoop() || isPlayingRunHold()) {
+                    deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f));
+                }
+                deque.add(new AnimationPlan(WALK_AIMING_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.3f));
+                controller.queueAnimation(MOVEMENT_TRACK, deque);
+                baseDistanceWalked = walkDist;
+                return;
+            }
+            WalkDirection direction = WalkDirection.fromInput(input);
+            if (direction == lastWalkDirection) {
+                return;
+            }
             lastWalkDirection = direction;
             ArrayDeque<AnimationPlan> deque = new ArrayDeque<>();
             if (isPlayingRunIntroOrLoop() || isPlayingRunHold()) {
@@ -132,6 +153,7 @@ public class GunAnimationStateMachine {
                 return;
             }
         }
+        isWalkAiming = false;
         lastWalkDirection = WalkDirection.NONE;
         ArrayDeque<AnimationPlan> deque = new ArrayDeque<>();
         if (isPlayingRunIntroOrLoop()) {
@@ -153,6 +175,11 @@ public class GunAnimationStateMachine {
 
     public GunAnimationStateMachine setPauseWalkAndRun(boolean pause) {
         this.pauseWalkAndRun = pause;
+        return this;
+    }
+
+    public GunAnimationStateMachine setAiming(boolean isAiming) {
+        this.isAiming = isAiming;
         return this;
     }
 
@@ -245,7 +272,7 @@ public class GunAnimationStateMachine {
     }
 
     public boolean isPlayingWalkAnimation() {
-        return isPlayingAnimation(MOVEMENT_TRACK, WALK_FORWARD_ANIMATION, WALK_BACKWARD_ANIMATION, WALK_SIDEWAY_ANIMATION);
+        return isPlayingAnimation(MOVEMENT_TRACK, WALK_FORWARD_ANIMATION, WALK_BACKWARD_ANIMATION, WALK_SIDEWAY_ANIMATION, WALK_AIMING_ANIMATION);
     }
 
     public boolean isPlayingIdleAnimation() {
@@ -269,7 +296,8 @@ public class GunAnimationStateMachine {
     }
 
     private boolean isNamedWalkAnimation(String animationName) {
-        return WALK_SIDEWAY_ANIMATION.equals(animationName) || WALK_FORWARD_ANIMATION.equals(animationName) || WALK_BACKWARD_ANIMATION.equals(animationName);
+        return WALK_SIDEWAY_ANIMATION.equals(animationName) || WALK_FORWARD_ANIMATION.equals(animationName) || WALK_BACKWARD_ANIMATION.equals(animationName)
+                || WALK_AIMING_ANIMATION.equals(animationName);
     }
 
     private enum WalkDirection{

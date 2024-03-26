@@ -9,6 +9,7 @@ import com.mojang.math.Vector3f;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.bedrock.BedrockPart;
+import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import net.minecraft.client.Minecraft;
@@ -40,6 +41,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String ATTACHMENT_POS_SUFFIX = "_pos";
     private static final String REFIT_VIEW_PREFIX = "refit_";
     private static final String REFIT_VIEW_SUFFIX = "_view";
+    private static final String ROOT_NODE = "root";
     protected final @Nonnull EnumMap<AttachmentType, List<BedrockPart>> refitAttachmentViewPath = Maps.newEnumMap(AttachmentType.class);
     private final EnumMap<AttachmentType, ItemStack> currentAttachmentItem = Maps.newEnumMap(AttachmentType.class);
     // 第一人称机瞄摄像机定位组的路径
@@ -58,6 +60,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> constraintPath;
     // 抛壳子弹的起始位置
     protected @Nullable List<BedrockPart> shellOriginPath;
+    protected @Nullable BedrockPart root;
     private boolean renderHand = true;
     private ItemStack currentGunItem;
 
@@ -175,6 +178,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         shellOriginPath = getPath(modelMap.get(SHELL_ORIGIN_NODE));
         scopePosPath = getPath(modelMap.get(AttachmentType.SCOPE.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
         constraintPath = getPath(modelMap.get(CONSTRAINT_NODE));
+        ModelRendererWrapper rootWrapper = modelMap.get(ROOT_NODE);
+        if (rootWrapper != null) {
+            root = rootWrapper.getModelRenderer();
+        }
+
         // 缓存改装UI下各个配件的特写视角定位组
         for (AttachmentType type : AttachmentType.values()) {
             if (type == AttachmentType.NONE) {
@@ -257,6 +265,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     public List<BedrockPart> getRefitAttachmentViewPath(AttachmentType type) {
         return refitAttachmentViewPath.get(type);
+    }
+
+    @Nullable
+    public BedrockPart getRootNode() {
+        return root;
     }
 
     public boolean getRenderHand() {

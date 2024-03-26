@@ -2,7 +2,6 @@ package com.tac.guns.client.event;
 
 import com.tac.guns.GunMod;
 import com.tac.guns.client.resource.ClientGunPackLoader;
-import com.tac.guns.client.resource.InternalAssetLoader;
 import com.tac.guns.client.tab.CustomTabManager;
 import com.tac.guns.resource.CommonGunPackLoader;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +21,6 @@ public class ReloadResourceEvent {
     public static void onTextureStitchEventPost(TextureStitchEvent.Post event) {
         if (BLOCK_ATLAS_TEXTURE.equals(event.getAtlas().location())) {
             reloadAllPack();
-            InternalAssetLoader.onResourceReload();
         }
     }
 

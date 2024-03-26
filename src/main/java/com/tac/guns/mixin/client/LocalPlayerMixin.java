@@ -448,21 +448,19 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
+                animationStateMachine.setAiming(getClientAimingProgress(1) > 0.5f);
                 boolean isShooting = getClientShootCoolDown() > 0;
                 // 如果玩家正在射击，只能处于 idle 状态
                 if (isShooting) {
                     animationStateMachine
-                            .setPauseWalkAndRun(true)
                             .onShooterIdle();
                 }// 如果玩家正在移动，播放移动动画，否则播放 idle 动画
                 else if (player.isSprinting()) {
                     animationStateMachine
-                            .setPauseWalkAndRun(false)
                             .setOnGround(player.isOnGround())
                             .onShooterRun(player.walkDist);
                 } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
                     animationStateMachine
-                            .setPauseWalkAndRun(false)
                             .setOnGround(player.isOnGround())
                             .onShooterWalk(player.input, player.walkDist);
                 } else {

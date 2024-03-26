@@ -1,0 +1,15 @@
+{
+  "slot": "tac:attachment/slot/sro_dot",
+  // 配件的默认模型，不可为空
+  "model": "tac:attachment/sro_dot_geo",
+  // 配件默认模型使用的材质，不可为空
+  "texture": "tac:attachment/uv/sro_dot",
+  // 只有 瞄具 配件需要设置这个属性，表示瞄具的放大倍率。
+  // 玩家可以在数组设置的几个倍率之间切换
+  "zoom": [
+    1.1
+  ],
+  // 只有 瞄具 配件需要设置这个属性，表示开镜后，枪身和瞄具渲染的fov。
+  // 默认情况下，mc 渲染手部模型的 fov 为 70。
+  "fov": 70.0
+}
