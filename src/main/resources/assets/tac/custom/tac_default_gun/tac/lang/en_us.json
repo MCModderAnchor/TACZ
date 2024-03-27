@@ -7,5 +7,6 @@
   "tac.gun.ai_awp.name": "Accuracy International AWM",
   "tac.ammo.762x39.name": "7.62x39mm Ammo",
   "tac.attachment.lpvo_1_6.name": "LPVO 1-6x",
-  "tac.attachment.8x.name": "8x Scope"
+  "tac.attachment.8x.name": "8x Scope",
+  "key.tac.zoom.desc": "Zoom"
 }
