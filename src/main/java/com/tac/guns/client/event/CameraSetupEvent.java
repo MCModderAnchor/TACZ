@@ -72,6 +72,8 @@ public class CameraSetupEvent {
                 BedrockGunModel gunModel = gunIndex.getGunModel();
                 PoseStack poseStack = event.getPoseStack();
                 poseStack.mulPose(gunModel.getCameraAnimationObject().rotationQuaternion);
+                // 截至目前，摄像机动画数据已消费完毕。是否有更好的清理动画数据的方法？
+                gunModel.cleanCameraAnimationTransform();
             });
         }
     }

@@ -8,6 +8,7 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
+import com.tac.guns.api.event.GunShootEvent;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
@@ -24,6 +25,7 @@ import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.util.math.Easing;
 import com.tac.guns.util.math.MathUtil;
+import com.tac.guns.util.math.PerlinNoise;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
@@ -58,6 +60,13 @@ public class FirstPersonRenderGunEvent {
     private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(1.2f, 1.2f, 0.5f, 0);
     // 用于打开改装界面时枪械运动的平滑
     private static final SecondOrderDynamics REFIT_OPENING_DYNAMICS = new SecondOrderDynamics(1f, 1.2f, 0.5f, 0);
+    // 用于枪械后座的程序动画
+    private static final PerlinNoise SHOOT_X_SWAY_NOISE = new PerlinNoise(-0.2f, 0.2f, 400);
+    private static final PerlinNoise SHOOT_Y_ROTATION_NOISE = new PerlinNoise(-0.0136f, 0.0136f, 100);
+    private static final float SHOOT_Y_SWAY = -0.1f;
+    private static final float SHOOT_Z_SWAY = 0.2f;
+    private static final float SHOOT_ANIMATION_TIME = 0.3f;
+    private static long shootTimeStamp = -1;
     // 抛壳队列
     private static final ConcurrentLinkedDeque<Pair<Long, Vector3f>> SHELL_QUEUE = new ConcurrentLinkedDeque<>();
     // 用于切枪逻辑
@@ -125,7 +134,7 @@ public class FirstPersonRenderGunEvent {
             poseStack.translate(0, 1.5f, 0);
             // 基岩版模型是上下颠倒的，需要翻转过来。
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
-            // 应用枪械动态，如第一人称摄像机定位、后坐力的位移等
+            // 应用持枪姿态变换，如第一人称摄像机定位
             applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTicks());
             // 如果正在打开改装界面，则取消手臂渲染
             boolean renderHand = gunModel.getRenderHand();
@@ -224,17 +233,46 @@ public class FirstPersonRenderGunEvent {
         }
     }
 
+    @SubscribeEvent
+    public static void onGunFire(GunShootEvent event) {
+        if (event.getLogicalSide().isClient()) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null) {
+                return;
+            }
+            ItemStack mainhandItem = player.getMainHandItem();
+            IGun iGun = IGun.getIGunOrNull(mainhandItem);
+            if (iGun == null) {
+                return;
+            }
+            TimelessAPI.getClientGunIndex(iGun.getGunId(mainhandItem)).ifPresent(gunIndex -> {
+                // 抛壳
+                if (gunIndex.getShellEjection() != null) {
+                    addShell(gunIndex.getShellEjection().getRandomVelocity());
+                }
+                // 记录开火时间戳，用于后坐力程序动画
+                shootTimeStamp = System.currentTimeMillis();
+            });
+        }
+    }
+
     private static void applyFirstPersonGunTransform(LocalPlayer player, ItemStack gunItemStack, ClientGunIndex gunIndex,
                                                      PoseStack poseStack, BedrockGunModel model, float partialTicks) {
         // 配合运动曲线，计算改装枪口的打开进度
         float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(GunRefitScreen.getOpeningProgress());
         // 配合运动曲线，计算瞄准进度
         float aimingProgress = AIMING_DYNAMICS.update(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
+        // 应用枪械动态，如后坐力
+        applyGunMovements(model, aimingProgress, partialTicks);
         // 应用各种摄像机定位组的变换（默认持枪、瞄准、改装界面等）
         applyFirstPersonPositioningTransform(poseStack, model, gunItemStack, aimingProgress, refitScreenOpeningProgress);
         // 应用动画约束变换
         CommonTransformObject ica = gunIndex.getAnimationInfluenceCoefficient().getIronView();
         applyAnimationConstraintTransform(poseStack, model.getConstraintPath(), aimingProgress * (1 - refitScreenOpeningProgress), ica);
+    }
+
+    private static void applyGunMovements(BedrockGunModel model, float aimingProgress, float partialTicks) {
+        applyShootSwayAndRotation(model, aimingProgress);
     }
 
     /**
@@ -312,6 +350,20 @@ public class FirstPersonRenderGunEvent {
             }
         }
         return matrix4f;
+    }
+
+    private static void applyShootSwayAndRotation(BedrockGunModel model, float aimingProgress) {
+        BedrockPart rootNode = model.getRootNode();
+        if (rootNode != null) {
+            float progress = 1 - (System.currentTimeMillis() - shootTimeStamp) / (SHOOT_ANIMATION_TIME * 1000);
+            if (progress < 0) {
+                progress = 0;
+            }
+            progress = (float) Easing.easeOutCubic(progress);
+            rootNode.offsetX += SHOOT_X_SWAY_NOISE.getValue() / 16 * progress * (1 - aimingProgress);
+            rootNode.offsetY += SHOOT_Y_SWAY / 16 * progress * (1 - aimingProgress);
+            rootNode.additionalQuaternion.mul(Vector3f.YP.rotation(SHOOT_Y_ROTATION_NOISE.getValue() * progress));
+        }
     }
 
     /**
@@ -410,7 +462,7 @@ public class FirstPersonRenderGunEvent {
         ));
     }
 
-    public static void markFire(Vector3f randomVelocity) {
+    private static void addShell(Vector3f randomVelocity) {
         double xRandom = Math.random() * randomVelocity.x();
         double yRandom = Math.random() * randomVelocity.y();
         double zRandom = Math.random() * randomVelocity.z();

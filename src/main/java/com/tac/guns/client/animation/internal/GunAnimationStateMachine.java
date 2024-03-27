@@ -14,6 +14,9 @@ import java.util.ArrayDeque;
 public class GunAnimationStateMachine {
     public static final int MAIN_TRACK = 0;
     public static final int MOVEMENT_TRACK = 1;
+    public static final int SHOOTING_TRACK = 2;
+    public static final int EXTRA_SHOOTING_TRACK_1 = 3;
+    public static final int EXTRA_SHOOTING_TRACK_2 = 4;
     public static final String SHOOT_ANIMATION = "shoot";
     public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";
     public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";
@@ -46,7 +49,13 @@ public class GunAnimationStateMachine {
     }
 
     public void onGunShoot() {
-        controller.runAnimation(MAIN_TRACK, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.02f);
+        if (!tryRunAnimationNotRepeat(SHOOTING_TRACK, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0)) {
+            if (!tryRunAnimationNotRepeat(EXTRA_SHOOTING_TRACK_1, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0)) {
+                if (!tryRunAnimationNotRepeat(EXTRA_SHOOTING_TRACK_2, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0)) {
+                    controller.runAnimation(SHOOTING_TRACK, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0f);
+                }
+            }
+        }
     }
 
     public void onGunFireSelect() {
@@ -103,6 +112,7 @@ public class GunAnimationStateMachine {
             return;
         }
         if (onGround) {
+            // 如果一边走路一边瞄准，则需要播放特定的动画 WALK_AIMING_ANIMATION。
             if (isAiming) {
                 if (isWalkAiming) {
                     return;
@@ -119,6 +129,7 @@ public class GunAnimationStateMachine {
                 return;
             }
             WalkDirection direction = WalkDirection.fromInput(input);
+            // 同一个方向的动画播放只需要触发一次。
             if (direction == lastWalkDirection) {
                 return;
             }
@@ -298,6 +309,18 @@ public class GunAnimationStateMachine {
     private boolean isNamedWalkAnimation(String animationName) {
         return WALK_SIDEWAY_ANIMATION.equals(animationName) || WALK_FORWARD_ANIMATION.equals(animationName) || WALK_BACKWARD_ANIMATION.equals(animationName)
                 || WALK_AIMING_ANIMATION.equals(animationName);
+    }
+
+    private boolean tryRunAnimationNotRepeat(int track, String animationName, ObjectAnimation.PlayType playType, float transitionTimeS) {
+        ObjectAnimationRunner runner = controller.getAnimation(track);
+        if (runner != null && runner.isRunning() && SHOOT_ANIMATION.equals(animationName)) {
+            return false;
+        }
+        if (runner != null && runner.getTransitionTo() != null && SHOOT_ANIMATION.equals(runner.getTransitionTo().getAnimation().name)) {
+            return false;
+        }
+        controller.runAnimation(track, animationName, playType, transitionTimeS);
+        return true;
     }
 
     private enum WalkDirection{

@@ -103,6 +103,10 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
         }
     }
 
+    public void cleanCameraAnimationTransform() {
+        cameraAnimationObject.rotationQuaternion = Quaternion.ONE.copy();
+    }
+
     /**
      * @param node     想要进行编程渲染流程的 node 名称
      * @param function 输入为 BedrockPart，返回 IModelRenderer 以替换渲染
@@ -414,12 +418,13 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                         但唯独pitch是反的(也就是说唯独pitch是摄像机的旋转数值)。
                         最终需要存入rotationQuaternion的是世界箱体的旋转，因此roll yaw取反，pitch不需要
                         */
-                        toQuaternion(
+                        float[] q = MathUtil.toQuaternion(
                                 -roll - cameraRenderer.getRotateAngleX(),
                                 pitch - cameraRenderer.getRotateAngleY(),
-                                -yaw + cameraRenderer.getRotateAngleZ(),
-                                rotationQuaternion
+                                -yaw + cameraRenderer.getRotateAngleZ()
                         );
+                        Quaternion quaternion = MathUtil.toQuaternion(q);
+                        rotationQuaternion.mul(quaternion);
                     }
 
                     @Override

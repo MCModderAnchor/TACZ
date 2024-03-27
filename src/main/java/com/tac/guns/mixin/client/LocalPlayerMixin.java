@@ -12,7 +12,6 @@ import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
-import com.tac.guns.client.event.FirstPersonRenderGunEvent;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.network.NetworkHandler;
@@ -152,12 +151,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 // 动画状态机转移状态
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (animationStateMachine != null) {
-                    animationStateMachine
-                            .onGunShoot();
-                }
-                // 抛壳
-                if (gunIndex.getShellEjection() != null) {
-                    FirstPersonRenderGunEvent.markFire(gunIndex.getShellEjection().getRandomVelocity());
+                    animationStateMachine.onGunShoot();
                 }
                 // 播放声音、摄像机后坐需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
