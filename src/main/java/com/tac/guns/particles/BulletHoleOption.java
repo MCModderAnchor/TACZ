@@ -30,7 +30,7 @@ public class BulletHoleOption implements ParticleOptions {
 
         @Override
         public BulletHoleOption fromNetwork(ParticleType<BulletHoleOption> particleType, FriendlyByteBuf buffer) {
-            return new BulletHoleOption(buffer.readInt(), buffer.readLong());
+            return new BulletHoleOption(buffer.readVarInt(), buffer.readLong());
         }
     };
 
