@@ -2,6 +2,7 @@ package com.tac.guns.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.item.IGun;
@@ -9,6 +10,7 @@ import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.pojo.TransformScale;
+import com.tac.guns.config.client.RenderConfig;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,6 +20,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -29,9 +32,11 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.Transform
  */
 public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final SlotModel SLOT_GUN_MODEL = new SlotModel();
+    private final BlockEntityRenderDispatcher dispatcher;
 
     public GunItemRenderer(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
+        this.dispatcher = pBlockEntityRenderDispatcher;
     }
 
     private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, Vector3f scale) {
@@ -79,7 +84,16 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
                 return;
             }
             // 剩下的渲染
-            BedrockGunModel gunModel = gunIndex.getGunModel();
+            BedrockGunModel gunModel;
+            ResourceLocation gunTexture;
+            Pair<BedrockGunModel, ResourceLocation> lodModel = gunIndex.getLodModel();
+            if (lodModel == null || inRenderDistance(poseStack)) {
+                gunModel = gunIndex.getGunModel();
+                gunTexture = gunIndex.getModelTexture();
+            } else {
+                gunModel = lodModel.getLeft();
+                gunTexture = lodModel.getRight();
+            }
             poseStack.pushPose();
             // 移动到模型原点
             poseStack.translate(0.5, 2, 0.5);
@@ -90,7 +104,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             // 应用 display 数据中的缩放
             applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
             // 渲染枪械模型
-            RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
+            RenderType renderType = RenderType.itemEntityTranslucentCull(gunTexture);
             gunModel.render(poseStack, stack, transformType, renderType, pPackedLight, pPackedOverlay);
             poseStack.popPose();
         }, () -> {
@@ -103,6 +117,17 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.popPose();
         });
     }
+
+    private boolean inRenderDistance(PoseStack poseStack) {
+        int distance = RenderConfig.GUN_LOD_RENDER_DISTANCE.get();
+        if (distance <= 0) {
+            return false;
+        }
+        Matrix4f matrix4f = poseStack.last().pose();
+        float viewDistance = matrix4f.m03 * matrix4f.m03 + matrix4f.m13 * matrix4f.m13 + matrix4f.m23 * matrix4f.m23;
+        return viewDistance < distance * distance;
+    }
+
 
     private void applyPositioningTransform(ItemTransforms.TransformType transformType, TransformScale scale, BedrockGunModel model, PoseStack poseStack) {
         switch (transformType) {

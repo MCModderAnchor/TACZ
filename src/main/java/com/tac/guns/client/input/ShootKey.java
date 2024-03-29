@@ -75,19 +75,4 @@ public class ShootKey {
             }
         }
     }
-
-    @SubscribeEvent
-    public static void onClickInput(InputEvent.ClickInputEvent event) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) {
-            return;
-        }
-        // 只要主手有枪，那么禁止交互
-        ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (itemInHand.getItem() instanceof IGun) {
-            // 这个设置为 false 就能阻止客户端粒子的生成
-            event.setSwingHand(false);
-            event.setCanceled(true);
-        }
-    }
 }

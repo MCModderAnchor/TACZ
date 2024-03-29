@@ -15,10 +15,13 @@ import com.tac.guns.client.gui.GunRefitScreen;
 import com.tac.guns.client.renderer.crosshair.CrosshairType;
 import com.tac.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
@@ -89,6 +92,20 @@ public class GameOverlayEvent {
     }
 
     private static void renderCrosshair(PoseStack poseStack, Window window) {
+        Options options = Minecraft.getInstance().options;
+        if (!options.getCameraType().isFirstPerson()) {
+            return;
+        }
+        if (options.hideGui) {
+            return;
+        }
+        MultiPlayerGameMode gameMode = Minecraft.getInstance().gameMode;
+        if (gameMode == null) {
+            return;
+        }
+        if (gameMode.getPlayerMode() == GameType.SPECTATOR) {
+            return;
+        }
         int width = window.getGuiScaledWidth();
         int height = window.getGuiScaledHeight();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);

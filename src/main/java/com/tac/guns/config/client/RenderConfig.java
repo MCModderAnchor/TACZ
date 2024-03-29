@@ -4,12 +4,16 @@ import com.tac.guns.client.renderer.crosshair.CrosshairType;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class RenderConfig {
+    public static ForgeConfigSpec.IntValue GUN_LOD_RENDER_DISTANCE;
     public static ForgeConfigSpec.IntValue BULLET_HOLE_PARTICLE_LIFE;
     public static ForgeConfigSpec.DoubleValue BULLET_HOLE_PARTICLE_FADE_THRESHOLD;
     public static ForgeConfigSpec.EnumValue<CrosshairType> CROSSHAIR_TYPE;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
+
+        builder.comment("How far to display the lod model, 0 means always display");
+        GUN_LOD_RENDER_DISTANCE = builder.defineInRange("GunLodRenderDistance", 0, 0, Integer.MAX_VALUE);
 
         builder.comment("The existence time of bullet hole particles, in tick");
         BULLET_HOLE_PARTICLE_LIFE = builder.defineInRange("BulletHoleParticleLife", 400, 0, Integer.MAX_VALUE);

@@ -7,10 +7,7 @@ import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.ClientAssetManager;
-import com.tac.guns.client.resource.pojo.display.gun.AnimationInfluenceCoefficient;
-import com.tac.guns.client.resource.pojo.display.gun.GunDisplay;
-import com.tac.guns.client.resource.pojo.display.gun.GunTransform;
-import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
+import com.tac.guns.client.resource.pojo.display.gun.*;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.resource.CommonAssetManager;
@@ -22,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +31,7 @@ public class ClientGunIndex {
     private String name;
     private String thirdPersonAnimation = "empty";
     private BedrockGunModel gunModel;
+    private @Nullable Pair<BedrockGunModel, ResourceLocation> lodModel;
     private GunAnimationStateMachine animationStateMachine;
     private Map<String, ResourceLocation> sounds;
     private GunTransform transform;
@@ -54,6 +53,7 @@ public class ClientGunIndex {
         checkData(gunIndexPOJO, index);
         checkName(gunIndexPOJO, index);
         checkTextureAndModel(display, index);
+        checkLod(display, index);
         checkSlotTexture(display, index);
         checkHUDTexture(display, index);
         checkAnimation(display, index);
@@ -137,6 +137,33 @@ public class ClientGunIndex {
         }
     }
 
+    private static void checkLod(GunDisplay display, ClientGunIndex index) {
+        GunLod gunLod = display.getGunLod();
+        if (gunLod != null) {
+            ResourceLocation texture = gunLod.getModelTexture();
+            if (gunLod.getModelLocation() == null) {
+                return;
+            }
+            if (texture == null) {
+                return;
+            }
+            BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(gunLod.getModelLocation());
+            if (modelPOJO == null) {
+                return;
+            }
+            // 先判断是不是 1.10.0 版本基岩版模型文件
+            if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+                BedrockGunModel model = new BedrockGunModel(modelPOJO, BedrockVersion.LEGACY);
+                index.lodModel = Pair.of(model, texture);
+            }
+            // 判定是不是 1.12.0 版本基岩版模型文件
+            if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+                BedrockGunModel model = new BedrockGunModel(modelPOJO, BedrockVersion.NEW);
+                index.lodModel = Pair.of(model, texture);
+            }
+        }
+    }
+
     private static void checkAnimation(GunDisplay display, ClientGunIndex index) {
         ResourceLocation location = display.getAnimationLocation();
         if (location == null) {
@@ -212,6 +239,11 @@ public class ClientGunIndex {
 
     public BedrockGunModel getGunModel() {
         return gunModel;
+    }
+
+    @Nullable
+    public Pair<BedrockGunModel, ResourceLocation> getLodModel() {
+        return lodModel;
     }
 
     public GunAnimationStateMachine getAnimationStateMachine() {

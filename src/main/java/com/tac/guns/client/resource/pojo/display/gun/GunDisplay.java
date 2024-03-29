@@ -12,6 +12,9 @@ public class GunDisplay {
     @SerializedName("texture")
     private ResourceLocation modelTexture;
     @Nullable
+    @SerializedName("lod")
+    private GunLod gunLod;
+    @Nullable
     @SerializedName("hud")
     private ResourceLocation hudTextureLocation;
     @Nullable
@@ -42,6 +45,11 @@ public class GunDisplay {
 
     public ResourceLocation getModelTexture() {
         return modelTexture;
+    }
+
+    @Nullable
+    public GunLod getGunLod() {
+        return gunLod;
     }
 
     @Nullable

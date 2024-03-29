@@ -17,6 +17,10 @@ public class RenderClothConfig {
     public static void init(ConfigBuilder root, ConfigEntryBuilder entryBuilder) {
         ConfigCategory render = root.getOrCreateCategory(new TranslatableComponent("config.tac.client.render"));
 
+        render.addEntry(entryBuilder.startIntField(new TranslatableComponent("config.tac.client.render.gun_lod_render_distance"), RenderConfig.GUN_LOD_RENDER_DISTANCE.get())
+                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(0).setTooltip(new TranslatableComponent("config.tac.client.render.gun_lod_render_distance.desc"))
+                .setSaveConsumer(RenderConfig.GUN_LOD_RENDER_DISTANCE::set).build());
+
         render.addEntry(entryBuilder.startIntField(new TranslatableComponent("config.tac.client.render.bullet_hole_particle_life"), RenderConfig.BULLET_HOLE_PARTICLE_LIFE.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(400).setTooltip(new TranslatableComponent("config.tac.client.render.bullet_hole_particle_life.desc"))
                 .setSaveConsumer(RenderConfig.BULLET_HOLE_PARTICLE_LIFE::set).build());

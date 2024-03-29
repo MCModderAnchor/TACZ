@@ -3,6 +3,11 @@
     "model": "tac:gun/ak47_geo",
     // 默认材质，不可为空
     "texture": "tac:gun/uv/ak47",
+    // 低模
+    "lod": {
+        "model": "tac:gun/lod/ak47_lod",
+        "texture": "tac:gun/lod/ak47_lod"
+    },
     // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
     "hud": "tac:gun/hud/ak47",
     // 背包/快捷栏等容器中槽位显示的 2D 材质，在包目录下的 textures 文件夹中寻找，不建议为空

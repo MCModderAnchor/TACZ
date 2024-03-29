@@ -213,7 +213,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
                 if (drawTime < putAwayTime * 1000) {
                     tac$DrawTimestamp = System.currentTimeMillis() + drawTime;
                 } else {
-                    tac$DrawTimestamp = System.currentTimeMillis() + (long)(putAwayTime  * 1000);
+                    tac$DrawTimestamp = System.currentTimeMillis() + (long) (putAwayTime * 1000);
                 }
             } else {
                 tac$DrawTimestamp = System.currentTimeMillis();
@@ -328,12 +328,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
             Level world = shooter.getLevel();
             BulletData bulletData = gunIndex.getBulletData();
-            /*EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
+            EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
             InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
             float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
             float speed = Mth.clamp(bulletData.getSpeed(), 0, Float.MAX_VALUE);
             bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
-            world.addFreshEntity(bullet);*/
+            world.addFreshEntity(bullet);
             // 播放声音
             // TODO 配置文件决定衰减距离
             NetworkHandler.sendSoundToNearby(shooter, 64, gunId, SHOOT_SOUND, 1.0f, 1.0f);

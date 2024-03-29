@@ -2,6 +2,7 @@ package com.tac.guns.event;
 
 import com.tac.guns.api.item.IGun;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,6 +33,10 @@ public class PreventGunClick {
         // 只要主手有枪，那么禁止交互
         ItemStack itemInHand = event.getPlayer().getItemInHand(InteractionHand.MAIN_HAND);
         if (itemInHand.getItem() instanceof IGun) {
+            // 展示框可以交互
+            if (event.getTarget() instanceof ItemFrame) {
+                return;
+            }
             event.setCanceled(true);
         }
     }
