@@ -12,6 +12,7 @@ import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
@@ -28,32 +29,33 @@ import net.minecraftforge.fml.common.Mod;
 public class CameraSetupEvent {
     // 用于平滑 FOV 变化
     private static final SecondOrderDynamics FOV_DYNAMICS = new SecondOrderDynamics(0.5f, 1.2f, 0.5f, 0);
+    private static BedrockGunModel lastModel = null;
     @SubscribeEvent
     public static void applyLevelCameraAnimation(EntityViewRenderEvent.CameraSetup event) {
         if (!Minecraft.getInstance().options.bobView) {
             return;
         }
-        Entity entity = Minecraft.getInstance().getCameraEntity();
-        if (entity instanceof LivingEntity livingEntity) {
-            // 目前只有枪械物品有摄像机动画
-            ItemStack stack = livingEntity.getMainHandItem();
-            if (!(stack.getItem() instanceof IGun iGun)) {
-                return;
-            }
-            TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
-                BedrockGunModel gunModel = gunIndex.getGunModel();
-                Quaternion q = gunModel.getCameraAnimationObject().rotationQuaternion;
-                double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
-                double pitch = Math.atan2(2 * (q.r() * q.i() + q.j() * q.k()), 1 - 2 * (q.i() * q.i() + q.j() * q.j()));
-                double roll = Math.atan2(2 * (q.r() * q.k() + q.i() * q.j()), 1 - 2 * (q.j() * q.j() + q.k() * q.k()));
-                yaw = Math.toDegrees(yaw);
-                pitch = Math.toDegrees(pitch);
-                roll = Math.toDegrees(roll);
-                event.setYaw((float) yaw + event.getYaw());
-                event.setPitch((float) pitch + event.getPitch());
-                event.setRoll((float) roll + event.getRoll());
-            });
+        ItemStack stack = ((KeepingItemRenderer)Minecraft.getInstance().getItemInHandRenderer()).getCurrentGunItem();
+        if (!(stack.getItem() instanceof IGun iGun)) {
+            return;
         }
+        TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
+            BedrockGunModel gunModel = gunIndex.getGunModel();
+            if (lastModel != gunModel) {
+                gunModel.cleanCameraAnimationTransform();
+                lastModel = gunModel;
+            }
+            Quaternion q = gunModel.getCameraAnimationObject().rotationQuaternion;
+            double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
+            double pitch = Math.atan2(2 * (q.r() * q.i() + q.j() * q.k()), 1 - 2 * (q.i() * q.i() + q.j() * q.j()));
+            double roll = Math.atan2(2 * (q.r() * q.k() + q.i() * q.j()), 1 - 2 * (q.j() * q.j() + q.k() * q.k()));
+            yaw = Math.toDegrees(yaw);
+            pitch = Math.toDegrees(pitch);
+            roll = Math.toDegrees(roll);
+            event.setYaw((float) yaw + event.getYaw());
+            event.setPitch((float) pitch + event.getPitch());
+            event.setRoll((float) roll + event.getRoll());
+        });
     }
 
     @SubscribeEvent
@@ -61,21 +63,18 @@ public class CameraSetupEvent {
         if (!Minecraft.getInstance().options.bobView) {
             return;
         }
-        Entity entity = Minecraft.getInstance().getCameraEntity();
-        if (entity instanceof LivingEntity livingEntity) {
-            // 目前只有枪械物品有摄像机动画
-            ItemStack stack = livingEntity.getMainHandItem();
-            if (!(stack.getItem() instanceof IGun iGun)) {
-                return;
-            }
-            TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
-                BedrockGunModel gunModel = gunIndex.getGunModel();
-                PoseStack poseStack = event.getPoseStack();
-                poseStack.mulPose(gunModel.getCameraAnimationObject().rotationQuaternion);
-                // 截至目前，摄像机动画数据已消费完毕。是否有更好的清理动画数据的方法？
-                gunModel.cleanCameraAnimationTransform();
-            });
+        ItemStack stack = ((KeepingItemRenderer)Minecraft.getInstance().getItemInHandRenderer()).getCurrentGunItem();
+        if (!(stack.getItem() instanceof IGun iGun)) {
+            return;
         }
+        TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
+            BedrockGunModel gunModel = gunIndex.getGunModel();
+            PoseStack poseStack = event.getPoseStack();
+            poseStack.mulPose(gunModel.getCameraAnimationObject().rotationQuaternion);
+            // 截至目前，摄像机动画数据已消费完毕。是否有更好的清理动画数据的方法？
+            gunModel.cleanCameraAnimationTransform();
+        });
+
     }
 
     @SubscribeEvent
@@ -85,12 +84,16 @@ public class CameraSetupEvent {
         }
         Entity entity = event.getCamera().getEntity();
         if (entity instanceof LivingEntity livingEntity) {
-            ItemStack stack = livingEntity.getMainHandItem();
+            ItemStack stack = ((KeepingItemRenderer)Minecraft.getInstance().getItemInHandRenderer()).getCurrentGunItem();
             if (!(stack.getItem() instanceof IGun iGun)) {
+                float fov = FOV_DYNAMICS.update((float) event.getFOV());
+                event.setFOV(fov);
                 return;
             }
             ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
             if (!(scopeItem.getItem() instanceof IAttachment iAttachment)) {
+                float fov = FOV_DYNAMICS.update((float) event.getFOV());
+                event.setFOV(fov);
                 return;
             }
             TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(scopeItem)).ifPresent(index -> {

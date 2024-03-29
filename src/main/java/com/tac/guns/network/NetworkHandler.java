@@ -41,6 +41,8 @@ public class NetworkHandler {
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(7, ServerMessageCraft.class, ServerMessageCraft::encode, ServerMessageCraft::decode, ServerMessageCraft::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(8, ClientMessageGunZoom.class, ClientMessageGunZoom::encode, ClientMessageGunZoom::decode, ClientMessageGunZoom::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     public static void sendToClientPlayer(Object message, Player player) {

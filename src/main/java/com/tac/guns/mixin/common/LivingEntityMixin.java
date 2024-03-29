@@ -194,19 +194,32 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Override
     public void draw(ItemStack itemStack) {
         // 重置各个状态
-        tac$CurrentGunItem = itemStack;
         tac$ShootTimestamp = -1;
         tac$IsAiming = false;
         tac$AimingProgress = 0;
         tac$ReloadTimestamp = -1;
         tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
 
-        if (IGun.getIGunOrNull(itemStack) == null) {
-            tac$DrawTimestamp = -1;
-            // TODO 执行收枪逻辑
-        } else {
+        // 更新切枪时间戳
+        if (tac$DrawTimestamp == -1) {
             tac$DrawTimestamp = System.currentTimeMillis();
         }
+        long drawTime = System.currentTimeMillis() - tac$DrawTimestamp;
+        if (drawTime >= 0) { // 如果不处于收枪状态，则开始收枪
+            IGun iGun = IGun.getIGunOrNull(tac$CurrentGunItem);
+            if (iGun != null) {
+                Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun.getGunId(tac$CurrentGunItem));
+                float putAwayTime = gunIndex.map(index -> index.getGunData().getPutAwayTime()).orElse(0F);
+                if (drawTime < putAwayTime * 1000) {
+                    tac$DrawTimestamp = System.currentTimeMillis() + drawTime;
+                } else {
+                    tac$DrawTimestamp = System.currentTimeMillis() + (long)(putAwayTime  * 1000);
+                }
+            } else {
+                tac$DrawTimestamp = System.currentTimeMillis();
+            }
+        }
+        tac$CurrentGunItem = itemStack;
     }
 
     @Unique
@@ -315,12 +328,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
             Level world = shooter.getLevel();
             BulletData bulletData = gunIndex.getBulletData();
-            EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
+            /*EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
             InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
             float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
             float speed = Mth.clamp(bulletData.getSpeed(), 0, Float.MAX_VALUE);
             bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
-            world.addFreshEntity(bullet);
+            world.addFreshEntity(bullet);*/
             // 播放声音
             // TODO 配置文件决定衰减距离
             NetworkHandler.sendSoundToNearby(shooter, 64, gunId, SHOOT_SOUND, 1.0f, 1.0f);

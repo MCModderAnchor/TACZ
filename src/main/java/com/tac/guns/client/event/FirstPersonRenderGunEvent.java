@@ -22,6 +22,7 @@ import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
+import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.util.math.Easing;
 import com.tac.guns.util.math.MathUtil;
@@ -36,7 +37,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -69,9 +69,6 @@ public class FirstPersonRenderGunEvent {
     private static long shootTimeStamp = -1;
     // 抛壳队列
     private static final ConcurrentLinkedDeque<Pair<Long, Vector3f>> SHELL_QUEUE = new ConcurrentLinkedDeque<>();
-    // 用于切枪逻辑
-    private static ItemStack oldHotbarSelectedStack = ItemStack.EMPTY;
-    private static int oldHotbarSelected = -1;
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
@@ -102,13 +99,6 @@ public class FirstPersonRenderGunEvent {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (gunModel == null) {
                 return;
-            }
-            Inventory inventory = player.getInventory();
-            ItemStack inventorySelected = inventory.getSelected();
-            if (oldHotbarSelected != inventory.selected || !isSame(inventorySelected, oldHotbarSelectedStack)) {
-                oldHotbarSelected = inventory.selected;
-                oldHotbarSelectedStack = inventorySelected;
-                IClientPlayerGunOperator.fromLocalPlayer(player).draw();
             }
             // 在渲染之前，先更新动画，让动画数据写入模型
             if (animationStateMachine != null) {
@@ -228,7 +218,8 @@ public class FirstPersonRenderGunEvent {
         if (mc.player == null) {
             return;
         }
-        if (IGun.mainhandHoldGun(mc.player)) {
+        ItemStack itemStack = ((KeepingItemRenderer)Minecraft.getInstance().getItemInHandRenderer()).getCurrentGunItem();
+        if (IGun.getIGunOrNull(itemStack) != null) {
             event.setCanceled(true);
         }
     }
@@ -468,16 +459,6 @@ public class FirstPersonRenderGunEvent {
         double zRandom = Math.random() * randomVelocity.z();
         Vector3f vector3f = new Vector3f((float) xRandom, (float) yRandom, (float) zRandom);
         SHELL_QUEUE.offerLast(Pair.of(System.currentTimeMillis(), vector3f));
-    }
-
-    /**
-     * 判断两个枪械 ID 是否相同
-     */
-    private static boolean isSame(ItemStack gunA, ItemStack gunB) {
-        if (gunA.getItem() instanceof IGun iGunA && gunB.getItem() instanceof IGun iGunB) {
-            return iGunA.getGunId(gunA).equals(iGunB.getGunId(gunB));
-        }
-        return gunA.sameItem(gunB);
     }
 
     private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack) {

@@ -14,6 +14,7 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
+import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.*;
 import com.tac.guns.resource.index.CommonGunIndex;
@@ -37,13 +38,14 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
-    private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(1);
+    private static final ScheduledExecutorService tac$ScheduledExecutorService = Executors.newScheduledThreadPool(2);
     @Unique
     private static final Predicate<IGunOperator> tac$ShootLockedCondition = operator -> operator.getSynShootCoolDown() > 0;
     /**
@@ -67,7 +69,14 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     private long tac$ClientAimingTimestamp = -1L;
     @Unique
     private boolean tac$ClientIsAiming = false;
-
+    /**
+     * 切枪时间戳，在切枪开始时更新，单位 ms。
+     * 在客户端仅用于计算收枪动画的时长和过渡时长。
+     */
+    @Unique
+    private long tac$ClientDrawTimestamp = -1L;
+    @Unique
+    private ItemStack tac$OldItemInHand = ItemStack.EMPTY;
     /**
      * 这个状态锁表示：任意时刻，正在进行的枪械操作只能为一个。
      * 主要用于防止客户端操作表现效果重复执行。
@@ -80,6 +89,10 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     @Nullable
     private Predicate<IGunOperator> tac$LockedCondition = null;
+
+    @Unique
+    @Nullable
+    private ScheduledFuture<?> tac$DrawFuture = null;
 
     @Unique
     @Override
@@ -170,14 +183,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     @Override
     public void draw() {
-        // 触发 draw，先停止播放声音
-        SoundPlayManager.stopPlayGunSound();
         LocalPlayer player = (LocalPlayer) (Object) this;
-        // 暂定为主手
         ItemStack mainhandItem = player.getMainHandItem();
-        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
-            return;
-        }
         // 锁上状态锁
         lockState(operator -> operator.getSynDrawCoolDown() > 0);
         // 重置客户端的 shoot 时间戳
@@ -187,17 +194,60 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         tac$ClientIsAiming = false;
         tac$ClientAimingProgress = 0;
         tac$OldAimingProgress = 0;
+        // 更新切枪时间戳
+        if (tac$ClientDrawTimestamp == -1) {
+            tac$ClientDrawTimestamp = System.currentTimeMillis();
+        }
+        long drawTime = System.currentTimeMillis() - tac$ClientDrawTimestamp;
+        IGun iGun = IGun.getIGunOrNull(mainhandItem);
+        IGun iGun1 = IGun.getIGunOrNull(tac$OldItemInHand);
+        if (drawTime >= 0) { // 如果不处于收枪状态，则需要加上收枪的时长
+            if (iGun1 != null) {
+                Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun1.getGunId(tac$OldItemInHand));
+                float putAwayTime = gunIndex.map(index -> index.getGunData().getPutAwayTime()).orElse(0F);
+                if (drawTime > putAwayTime * 1000) {
+                    drawTime = (long) (putAwayTime * 1000);
+                }
+                tac$ClientDrawTimestamp = System.currentTimeMillis() + drawTime;
+            } else {
+                drawTime = 0;
+                tac$ClientDrawTimestamp = System.currentTimeMillis();
+            }
+        }
+        long putAwayTime = Math.abs(drawTime);
         // 发包通知服务器
         NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun(player.getInventory().selected));
-        // 放映 draw 动画
-        ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            SoundPlayManager.playDrawSound(player, gunIndex);
-            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-            if (animationStateMachine != null) {
-                animationStateMachine.onGunDraw();
+        if (drawTime >= 0) { // 不处于收枪状态时才能收枪
+            if (iGun1 != null) {
+                TimelessAPI.getClientGunIndex(iGun1.getGunId(tac$OldItemInHand)).ifPresent(gunIndex -> {
+                    // TODO 播放收枪音效
+                    // 播放收枪动画
+                    GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+                    if (animationStateMachine != null) {
+                        animationStateMachine.onGunPutAway(putAwayTime / 1000F);
+                        // 保持枪械的渲染直到收枪动作完成
+                        ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).keep(tac$OldItemInHand, putAwayTime);
+                    }
+                });
             }
-        });
+        }
+        if (iGun != null) {
+            TimelessAPI.getClientGunIndex(iGun.getGunId(mainhandItem)).ifPresent(gunIndex -> {
+                // 放映抬枪动画
+                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+                if (animationStateMachine != null) {
+                    if (tac$DrawFuture != null) {
+                        tac$DrawFuture.cancel(false);
+                    }
+                    tac$DrawFuture = tac$ScheduledExecutorService.schedule(()->{
+                        animationStateMachine.onGunDraw();
+                        SoundPlayManager.stopPlayGunSound();
+                        SoundPlayManager.playDrawSound(player, gunIndex);
+                    }, putAwayTime, TimeUnit.MILLISECONDS);
+                }
+            });
+        }
+        tac$OldItemInHand = mainhandItem;
     }
 
     @Unique
@@ -377,6 +427,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             tac$ClientAimingProgress = 0;
             tac$OldAimingProgress = 0;
             return;
+        }
+        if (System.currentTimeMillis() - tac$ClientDrawTimestamp < 0) { // 如果正在收枪，则不能瞄准
+            tac$ClientIsAiming = false;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);

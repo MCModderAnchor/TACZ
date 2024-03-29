@@ -8,7 +8,7 @@
     "common.LivingEntityMixin"
   ],
   "client": [
-    "client.FirstPersonRendererMixin",
+    "client.ItemInHandRendererMixin",
     "client.GameRendererMixin",
     "client.HumanoidModelMixin",
     "client.LanguageMixin",

@@ -7,20 +7,22 @@ import com.tac.guns.client.animation.ObjectAnimation;
 import com.tac.guns.client.animation.ObjectAnimationRunner;
 import net.minecraft.client.player.Input;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
 
+@OnlyIn(Dist.CLIENT)
 public class GunAnimationStateMachine {
     public static final int MAIN_TRACK = 0;
     public static final int MOVEMENT_TRACK = 1;
-    public static final int SHOOTING_TRACK = 2;
-    public static final int EXTRA_SHOOTING_TRACK_1 = 3;
-    public static final int EXTRA_SHOOTING_TRACK_2 = 4;
+    public static final int[] SHOOTING_TRACKS = {2, 3, 4, 5, 6};
     public static final String SHOOT_ANIMATION = "shoot";
     public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";
     public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";
     public static final String DRAW_ANIMATION = "draw";
+    public static final String PUT_AWAY_ANIMATION = "put_away";
     public static final String INSPECT_ANIMATION = "inspect";
     public static final String INSPECT_EMPTY_ANIMATION = "inspect_empty";
     public static final String IDLE_ANIMATION = "idle";
@@ -49,13 +51,12 @@ public class GunAnimationStateMachine {
     }
 
     public void onGunShoot() {
-        if (!tryRunAnimationNotRepeat(SHOOTING_TRACK, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0)) {
-            if (!tryRunAnimationNotRepeat(EXTRA_SHOOTING_TRACK_1, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0)) {
-                if (!tryRunAnimationNotRepeat(EXTRA_SHOOTING_TRACK_2, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0)) {
-                    controller.runAnimation(SHOOTING_TRACK, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0f);
-                }
+        for(int track : SHOOTING_TRACKS) {
+            if (tryRunAnimationNotRepeat(track, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0)) {
+                return;
             }
         }
+        controller.runAnimation(SHOOTING_TRACKS[0], SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0f);
     }
 
     public void onGunFireSelect() {
@@ -71,6 +72,22 @@ public class GunAnimationStateMachine {
 
     public void onGunDraw() {
         controller.runAnimation(MAIN_TRACK, DRAW_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0);
+    }
+
+    public void onGunPutAway(float putAwayTimeS) {
+        controller.runAnimation(MAIN_TRACK, PUT_AWAY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, putAwayTimeS);
+        ObjectAnimationRunner runner = controller.getAnimation(MAIN_TRACK);
+        if (runner != null) {
+            if (runner.isRunning() && PUT_AWAY_ANIMATION.equals(runner.getAnimation().name)) {
+                long progress = (long) (Math.max(runner.getAnimation().getMaxEndTimeS() - putAwayTimeS, 0) * 1e9);
+                runner.setProgressNs(progress);
+                return;
+            }
+            if (runner.getTransitionTo() != null && PUT_AWAY_ANIMATION.equals(runner.getTransitionTo().getAnimation().name)) {
+                long progress = (long) (Math.max(runner.getTransitionTo().getAnimation().getMaxEndTimeS() - putAwayTimeS, 0) * 1e9);
+                runner.getTransitionTo().setProgressNs(progress);
+            }
+        }
     }
 
     public void onGunInspect() {
