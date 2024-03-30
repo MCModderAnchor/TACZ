@@ -137,7 +137,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 return ShootResult.FAIL;
             }
             // 判断子弹数
-            if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && iGun.getCurrentAmmoCount(mainhandItem) < 1) {
+            int ammoCount = iGun.getCurrentAmmoCount(mainhandItem);
+            if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && ammoCount < 1) {
                 SoundPlayManager.playDryFireSound(player, gunIndex);
                 return ShootResult.NO_AMMO;
             }
@@ -166,10 +167,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 if (animationStateMachine != null) {
                     animationStateMachine.onGunShoot();
                 }
-                // 播放声音、摄像机后坐需要从异步线程上传到主线程执行。
+                // 摄像机后坐力需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
-                    // 触发 shot，停止播放声音
-                    SoundPlayManager.stopPlayGunSound();
                     GunRecoil recoil = gunData.getRecoil();
                     player.setXRot(player.getXRot() - recoil.getRandomPitch());
                     player.setYRot(player.getYRot() + recoil.getRandomYaw());
@@ -233,7 +232,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         if (iGun != null) {
             TimelessAPI.getClientGunIndex(iGun.getGunId(mainhandItem)).ifPresent(gunIndex -> {
-                // 放映抬枪动画
+                // 放映抬枪动画、初始化 Static 动画
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (animationStateMachine != null) {
                     if (tac$DrawFuture != null) {
@@ -414,7 +413,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (player.getLevel().isClientSide()) {
             tickAimingProgress();
             tickStateLock();
-            tickAnimations();
         }
     }
 
@@ -482,39 +480,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         // 释放状态锁
         tac$ClientStateLock = false;
-    }
-
-    @Unique
-    private void tickAnimations() {
-        LocalPlayer player = (LocalPlayer) (Object) this;
-        ItemStack mainhandItem = player.getMainHandItem();
-        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
-            return;
-        }
-        ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-            if (animationStateMachine != null) {
-                animationStateMachine.setAiming(getClientAimingProgress(1) > 0.5f);
-                boolean isShooting = getClientShootCoolDown() > 0;
-                // 如果玩家正在射击，只能处于 idle 状态
-                if (isShooting) {
-                    animationStateMachine
-                            .onShooterIdle();
-                }// 如果玩家正在移动，播放移动动画，否则播放 idle 动画
-                else if (player.isSprinting()) {
-                    animationStateMachine
-                            .setOnGround(player.isOnGround())
-                            .onShooterRun(player.walkDist);
-                } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
-                    animationStateMachine
-                            .setOnGround(player.isOnGround())
-                            .onShooterWalk(player.input, player.walkDist);
-                } else {
-                    animationStateMachine.onShooterIdle();
-                }
-            }
-        });
     }
 
     @Override

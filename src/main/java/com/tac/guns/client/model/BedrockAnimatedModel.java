@@ -3,7 +3,6 @@ package com.tac.guns.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.tac.guns.client.animation.AnimationListener;
 import com.tac.guns.client.animation.AnimationListenerSupplier;
 import com.tac.guns.client.animation.ObjectAnimationChannel;
@@ -172,23 +171,35 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                 }
 
                 @Override
-                public void update(float[] values) {
+                public void update(float[] values, boolean blend) {
                     // 因为模型是上下颠倒的，因此此处x轴和y轴的偏移也进行取反
                     if (bonesItem != null) {
                         // 因为要达成所有位移都是相对位移，所以如果当前node是根node，则减去根node的pivot坐标。
-                        rendererWrapper.addOffsetX(-values[0] - bonesItem.getPivot().get(0) / 16f);
-                        rendererWrapper.addOffsetY(-values[1] + bonesItem.getPivot().get(1) / 16f);
-                        rendererWrapper.addOffsetZ(values[2] - bonesItem.getPivot().get(2) / 16f);
+                        if (blend) {
+                            rendererWrapper.addOffsetX(-values[0] - bonesItem.getPivot().get(0) / 16f);
+                            rendererWrapper.addOffsetY(-values[1] + bonesItem.getPivot().get(1) / 16f);
+                            rendererWrapper.addOffsetZ(values[2] - bonesItem.getPivot().get(2) / 16f);
+                        } else {
+                            rendererWrapper.setOffsetX(-values[0] - bonesItem.getPivot().get(0) / 16f);
+                            rendererWrapper.setOffsetY(-values[1] + bonesItem.getPivot().get(1) / 16f);
+                            rendererWrapper.setOffsetZ(values[2] - bonesItem.getPivot().get(2) / 16f);
+                        }
                     } else {
                         // 虽然方法名称写的是getRotationPoint，但其实还是相对父级node的坐标移动量。因此此处与listener提供的local translation相减。
-                        rendererWrapper.addOffsetX(-values[0] - rendererWrapper.getRotationPointX() / 16f);
-                        rendererWrapper.addOffsetY(-values[1] - rendererWrapper.getRotationPointY() / 16f);
-                        rendererWrapper.addOffsetZ(values[2] - rendererWrapper.getRotationPointZ() / 16f);
+                        if (blend) {
+                            rendererWrapper.addOffsetX(-values[0] - rendererWrapper.getRotationPointX() / 16f);
+                            rendererWrapper.addOffsetY(-values[1] - rendererWrapper.getRotationPointY() / 16f);
+                            rendererWrapper.addOffsetZ(values[2] - rendererWrapper.getRotationPointZ() / 16f);
+                        } else {
+                            rendererWrapper.setOffsetX(-values[0] - rendererWrapper.getRotationPointX() / 16f);
+                            rendererWrapper.setOffsetY(-values[1] - rendererWrapper.getRotationPointY() / 16f);
+                            rendererWrapper.setOffsetZ(values[2] - rendererWrapper.getRotationPointZ() / 16f);
+                        }
                     }
                 }
 
                 @Override
-                public float[] recover() {
+                public float[] recover() { // 目标是让 offset 过渡为 0.
                     float[] recover = new float[3];
                     if (bonesItem != null) {
                         recover[0] = -bonesItem.getPivot().get(0) / 16f;
@@ -214,7 +225,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                 final ModelRendererWrapper rendererWrapper = model;
 
                 @Override
-                public void update(float[] values) {
+                public void update(float[] values, boolean blend) {
                     float[] m = new float[16];
                     quaternionToMatrix4x4(values, m);
                     // 计算 roll（绕 x 轴的旋转角）
@@ -225,17 +236,26 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     float yaw = (float) Math.atan2(m[1], m[0]);
                     // 因为模型是上下颠倒的，因此此处roll轴的旋转需要进行取反
                     // 要减去模型组的初始旋转值，写入相对值。
-                    float[] q = MathUtil.toQuaternion(
-                            -roll - rendererWrapper.getRotateAngleX(),
-                            pitch - rendererWrapper.getRotateAngleY(),
-                            yaw - rendererWrapper.getRotateAngleZ()
-                    );
-                    Quaternion quaternion = MathUtil.toQuaternion(q);
-                    rendererWrapper.getAdditionalQuaternion().mul(quaternion);
+                    if (blend) {
+                        float[] q = MathUtil.toQuaternion(
+                                -roll - rendererWrapper.getRotateAngleX(),
+                                pitch - rendererWrapper.getRotateAngleY(),
+                                yaw - rendererWrapper.getRotateAngleZ()
+                        );
+                        Quaternion quaternion = MathUtil.toQuaternion(q);
+                        MathUtil.blendQuaternion(rendererWrapper.getAdditionalQuaternion(), quaternion);
+                    } else {
+                        toQuaternion(
+                                -roll - rendererWrapper.getRotateAngleX(),
+                                pitch - rendererWrapper.getRotateAngleY(),
+                                yaw - rendererWrapper.getRotateAngleZ(),
+                                rendererWrapper.getAdditionalQuaternion()
+                        );
+                    }
                 }
 
                 @Override
-                public float[] recover() {
+                public float[] recover() { // 目标是让相对旋转为 0.
                     return MathUtil.toQuaternion(-rendererWrapper.getRotateAngleX(), rendererWrapper.getRotateAngleY(), rendererWrapper.getRotateAngleZ());
                 }
 
@@ -251,10 +271,16 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                 final ModelRendererWrapper rendererWrapper = model;
 
                 @Override
-                public void update(float[] values) {
-                    rendererWrapper.setScaleX(values[0]);
-                    rendererWrapper.setScaleY(values[1]);
-                    rendererWrapper.setScaleZ(values[2]);
+                public void update(float[] values, boolean blend) {
+                    if (blend) {
+                        rendererWrapper.setScaleX(rendererWrapper.getScaleX() * values[0]);
+                        rendererWrapper.setScaleY(rendererWrapper.getScaleY() * values[1]);
+                        rendererWrapper.setScaleZ(rendererWrapper.getScaleZ() * values[2]);
+                    } else {
+                        rendererWrapper.setScaleX(values[0]);
+                        rendererWrapper.setScaleY(values[1]);
+                        rendererWrapper.setScaleZ(values[2]);
+                    }
                 }
 
                 @Override
@@ -346,7 +372,6 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
          * 存在这个四元数中的旋转是世界箱体的旋转，而不是摄像头的旋转（二者互为相反数）
          */
         public Quaternion rotationQuaternion = Quaternion.ONE.copy();
-        public Vector3f translationVector = new Vector3f();
 
         /**
          * 当相机的节点为根时，cameraRenderer为空
@@ -362,48 +387,10 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
             if (!nodeName.equals(CAMERA_NODE_NAME)) {
                 return null;
             }
-            if (type.equals(ObjectAnimationChannel.ChannelType.TRANSLATION)) {
-                return new AnimationListener() {
-                    @Override
-                    public void update(float[] values) {
-                        if (cameraBone != null) {
-                            //因为要达成所有位移都是相对位移，所以如果当前node是根node，则减去根node的pivot坐标。
-                            translationVector.setX(values[0] - cameraBone.getPivot().get(0) / 16f);
-                            translationVector.setY(values[1] - cameraBone.getPivot().get(1) / 16f);
-                            translationVector.setZ(values[2] - cameraBone.getPivot().get(2) / 16f);
-                        } else {
-                            //虽然方法名称写的是getRotationPoint，但其实还是相对父级node的坐标移动量。因此此处与listener提供的local translation相减。
-                            translationVector.setX(values[0] + cameraRenderer.getRotationPointX() / 16f);
-                            translationVector.setY(values[1] + cameraRenderer.getRotationPointY() / 16f);
-                            translationVector.setZ(values[2] - cameraRenderer.getRotationPointZ() / 16f);
-                        }
-                    }
-
-                    @Override
-                    public float[] recover() {
-                        float[] recover = new float[3];
-                        if (cameraBone != null) {
-                            recover[0] = cameraBone.getPivot().get(0) / 16f;
-                            recover[1] = cameraBone.getPivot().get(1) / 16f;
-                            recover[2] = cameraBone.getPivot().get(2) / 16f;
-                        } else {
-                            recover[0] = -cameraRenderer.getRotationPointX() / 16f;
-                            recover[1] = -cameraRenderer.getRotationPointY() / 16f;
-                            recover[2] = cameraRenderer.getRotationPointZ() / 16f;
-                        }
-                        return recover;
-                    }
-
-                    @Override
-                    public ObjectAnimationChannel.ChannelType getType() {
-                        return ObjectAnimationChannel.ChannelType.TRANSLATION;
-                    }
-                };
-            }
             if (type.equals(ObjectAnimationChannel.ChannelType.ROTATION)) {
                 return new AnimationListener() {
                     @Override
-                    public void update(float[] values) {
+                    public void update(float[] values, boolean blend) {
                         float[] m = new float[16];
                         quaternionToMatrix4x4(values, m);
                         // 计算 roll（绕 x 轴的旋转角）
@@ -418,13 +405,22 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                         但唯独pitch是反的(也就是说唯独pitch是摄像机的旋转数值)。
                         最终需要存入rotationQuaternion的是世界箱体的旋转，因此roll yaw取反，pitch不需要
                         */
-                        float[] q = MathUtil.toQuaternion(
-                                -roll - cameraRenderer.getRotateAngleX(),
-                                pitch - cameraRenderer.getRotateAngleY(),
-                                -yaw + cameraRenderer.getRotateAngleZ()
-                        );
-                        Quaternion quaternion = MathUtil.toQuaternion(q);
-                        rotationQuaternion.mul(quaternion);
+                        if (blend) {
+                            float[] q = MathUtil.toQuaternion(
+                                    -roll - cameraRenderer.getRotateAngleX(),
+                                    pitch - cameraRenderer.getRotateAngleY(),
+                                    -yaw + cameraRenderer.getRotateAngleZ()
+                            );
+                            Quaternion quaternion = MathUtil.toQuaternion(q);
+                            MathUtil.blendQuaternion(rotationQuaternion, quaternion);
+                        } else {
+                            toQuaternion(
+                                    -roll - cameraRenderer.getRotateAngleX(),
+                                    pitch - cameraRenderer.getRotateAngleY(),
+                                    -yaw + cameraRenderer.getRotateAngleZ(),
+                                    rotationQuaternion
+                            );
+                        }
                     }
 
                     @Override

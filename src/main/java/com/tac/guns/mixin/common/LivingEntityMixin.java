@@ -51,7 +51,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tac.guns.resource.DefaultAssets.SHOOT_SOUND;
+import static com.tac.guns.client.sound.SoundPlayManager.SHOOT_SOUND;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator {

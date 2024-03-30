@@ -71,6 +71,11 @@ public class ObjectAnimationRunner {
         pause();
     }
 
+    public void stop() {
+        progressNs = (long) (animation.getMaxEndTimeS() * 1e9) + 2;
+        pause();
+    }
+
     public void reset() {
         progressNs = 0;
     }
@@ -199,7 +204,7 @@ public class ObjectAnimationRunner {
         this.valueRecover = null;
     }
 
-    public void update() {
+    public void update(boolean blend) {
         long currentNs = System.nanoTime();
 
         if (running) {
@@ -209,6 +214,11 @@ public class ObjectAnimationRunner {
             case PLAY_ONCE_HOLD -> {
                 if (progressNs / 1e9 > animation.getMaxEndTimeS()) {
                     hold();
+                }
+            }
+            case PLAY_ONCE_STOP -> {
+                if (progressNs / 1e9 > animation.getMaxEndTimeS()) {
+                    stop();
                 }
             }
             case LOOP -> {
@@ -229,10 +239,10 @@ public class ObjectAnimationRunner {
                 stopTransition();
             } else {
                 float transitionProgress = (float) transitionProgressNs / transitionTimeNs;
-                updateTransition(easeOutCubic(transitionProgress));
+                updateTransition(easeOutCubic(transitionProgress), blend);
             }
         } else {
-            animation.update();
+            animation.update(blend);
         }
 
         lastUpdateNs = currentNs;
@@ -246,11 +256,15 @@ public class ObjectAnimationRunner {
         return progressNs == (long) (getAnimation().getMaxEndTimeS() * 1e9) + 1;
     }
 
+    public boolean isStopped() {
+        return progressNs == (long) (getAnimation().getMaxEndTimeS() * 1e9) + 2;
+    }
+
     /**
      * 动画过渡的时候，计算出的插值将通过当前Runner中包含的ObjectAnimation中的channel对模型进行update
      * 这意味着需要暂时取消transitionTo中对应channel的update功能(将变量available设置为false)
      */
-    private void updateTransition(float progress) {
+    private void updateTransition(float progress, boolean blend) {
         assert transitionTo != null;
         for (int i = 0; i < transitionToChannels.size(); i++) {
             ObjectAnimationChannel fromChannel = transitionFromChannels.get(i);
@@ -268,7 +282,7 @@ public class ObjectAnimationRunner {
                 lerp(from, to, progress, result);
             }
             for (AnimationListener listener : fromChannel.getListeners()) {
-                listener.update(result);
+                listener.update(result, blend);
             }
 
         }
@@ -280,19 +294,19 @@ public class ObjectAnimationRunner {
                 for (AnimationListener listener : channel.getListeners()) {
                     float[] to = listener.recover();
                     lerp(from, to, progress, result);
-                    listener.update(result);
+                    listener.update(result, blend);
                 }
             } else if (channel.type.equals(ObjectAnimationChannel.ChannelType.ROTATION)) {
                 for (AnimationListener listener : channel.getListeners()) {
                     float[] to = listener.recover();
                     slerp(from, to, progress, result);
-                    listener.update(result);
+                    listener.update(result, blend);
                 }
             } else if (channel.type.equals(ObjectAnimationChannel.ChannelType.SCALE)) {
                 for (AnimationListener listener : channel.getListeners()) {
                     float[] to = listener.recover();
                     lerp(from, to, progress, result);
-                    listener.update(result);
+                    listener.update(result, blend);
                 }
             }
         }

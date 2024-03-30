@@ -21,6 +21,7 @@
     }
   },
   "draw_time": 0.35,
+  "put_away_time": 0.35,
   "aim_time": 0.17,
   "fire_mode": [
     "auto",

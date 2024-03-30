@@ -218,7 +218,7 @@ public class FirstPersonRenderGunEvent {
         if (mc.player == null) {
             return;
         }
-        ItemStack itemStack = ((KeepingItemRenderer)Minecraft.getInstance().getItemInHandRenderer()).getCurrentGunItem();
+        ItemStack itemStack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
         if (IGun.getIGunOrNull(itemStack) != null) {
             event.setCanceled(true);
         }

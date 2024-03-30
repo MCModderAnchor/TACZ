@@ -35,7 +35,7 @@ public class CameraSetupEvent {
         if (!Minecraft.getInstance().options.bobView) {
             return;
         }
-        ItemStack stack = ((KeepingItemRenderer)Minecraft.getInstance().getItemInHandRenderer()).getCurrentGunItem();
+        ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
@@ -63,7 +63,7 @@ public class CameraSetupEvent {
         if (!Minecraft.getInstance().options.bobView) {
             return;
         }
-        ItemStack stack = ((KeepingItemRenderer)Minecraft.getInstance().getItemInHandRenderer()).getCurrentGunItem();
+        ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
@@ -84,7 +84,7 @@ public class CameraSetupEvent {
         }
         Entity entity = event.getCamera().getEntity();
         if (entity instanceof LivingEntity livingEntity) {
-            ItemStack stack = ((KeepingItemRenderer)Minecraft.getInstance().getItemInHandRenderer()).getCurrentGunItem();
+            ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
             if (!(stack.getItem() instanceof IGun iGun)) {
                 float fov = FOV_DYNAMICS.update((float) event.getFOV());
                 event.setFOV(fov);

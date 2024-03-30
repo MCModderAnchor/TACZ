@@ -2,14 +2,12 @@ package com.tac.guns.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.api.client.event.BeforeRenderHandEvent;
-import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.duck.KeepingItemRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
@@ -78,7 +76,7 @@ public class ItemInHandRendererMixin implements KeepingItemRenderer {
     }
 
     @Override
-    public ItemStack getCurrentGunItem() {
+    public ItemStack getCurrentItem() {
         return mainHandItem;
     }
 }

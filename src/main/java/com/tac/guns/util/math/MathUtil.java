@@ -3,6 +3,7 @@ package com.tac.guns.util.math;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import net.minecraft.util.Mth;
 
 public class MathUtil {
     public static double magnificationToFovMultiplier(double magnification, double currentFov) {
@@ -48,6 +49,62 @@ public class MathUtil {
         result[2] = result[2] / m2;
         result[3] = result[3] / m2;
         return result;
+    }
+
+    public static void blendQuaternion(Quaternion to, Quaternion from) {
+        Quaternion q1 = new Quaternion(to);
+        Quaternion q2 = new Quaternion(from);
+        normalizeQuaternion(q1);
+        normalizeQuaternion(q2);
+        logQuaternion(q1);
+        logQuaternion(q2);
+        q1.set(q1.i() + q2.i(), q1.j() + q2.j(), q1.k() + q2.k(), q1.r() + q2.r());
+        expQuaternion(q1);
+        normalizeQuaternion(q1);
+        to.set(q1.i(), q1.j(), q1.k(), q1.r());
+    }
+
+    public static void normalizeQuaternion(Quaternion q) {
+        float f = q.i() * q.i() + q.j() * q.j() + q.k() * q.k() + q.r() * q.r();
+        if (f > 0) {
+            float f1 = Mth.fastInvSqrt(f);
+            q.set(f1 * q.i(), f1 * q.j(), f1 * q.k(), f1 * q.r());
+        } else {
+            q.set(0, 0, 0, 1);
+        }
+    }
+
+    public static void logQuaternion(Quaternion q) {
+        double norm = Math.sqrt(q.i() * q.i() + q.j() * q.j() + q.k() * q.k() + q.r() * q.r());
+        double vec = Math.sqrt(q.i() * q.i() + q.j() * q.j() + q.k() * q.k());
+        double i = q.r() / norm;
+        if (i > 1) {
+            i = 1;
+        }
+        if (i < -1) {
+            i = -1;
+        }
+        double theta = Math.acos(i);
+        double factor = vec == 0 ? 0 : theta / vec;
+        q.set(
+                (float) (q.i() * factor),
+                (float) (q.j() * factor),
+                (float) (q.k() * factor),
+                (float) Math.log(norm)
+        );
+    }
+
+    public static void expQuaternion(Quaternion q) {
+        double magnitude = Math.sqrt(q.i() * q.i() + q.j() * q.j() + q.k() * q.k());
+        double expW = Math.exp(q.r());
+        double sinMagnitude = Math.sin(magnitude);
+        double coef = magnitude == 0 ? 0 : expW * sinMagnitude / magnitude;
+        q.set(
+                (float) (coef * q.i()),
+                (float) (coef * q.j()),
+                (float) (coef * q.k()),
+                (float) (expW * Math.cos(magnitude))
+        );
     }
 
     public static float[] slerp(float[] from, float[] to, float alpha) {

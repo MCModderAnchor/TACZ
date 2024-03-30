@@ -1,6 +1,6 @@
 package com.tac.guns.client.animation.internal;
 
-import com.mojang.logging.LogUtils;
+import com.google.common.collect.Sets;
 import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.AnimationPlan;
 import com.tac.guns.client.animation.ObjectAnimation;
@@ -12,12 +12,18 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
+import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public class GunAnimationStateMachine {
-    public static final int MAIN_TRACK = 0;
-    public static final int MOVEMENT_TRACK = 1;
-    public static final int[] SHOOTING_TRACKS = {2, 3, 4, 5, 6};
+    public static final String STATIC_BOLT_CAUGHT_ANIMATION = "static_bolt_caught";
+    public static final String STATIC_IDLE_ANIMATION = "static_idle";
+    protected static final Set<Integer> blendingTracks = Sets.newHashSet();
+    protected static int trackIndexTop = 0;
+    public static final int MOVEMENT_TRACK = blendingTrack();
+    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
+    public static final int MAIN_TRACK = staticTrack();
+    public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
     public static final String SHOOT_ANIMATION = "shoot";
     public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";
     public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";
@@ -34,68 +40,55 @@ public class GunAnimationStateMachine {
     public static final String WALK_SIDEWAY_ANIMATION = "walk_sideway";
     public static final String WALK_BACKWARD_ANIMATION = "walk_backward";
     public static final String WALK_AIMING_ANIMATION = "walk_aiming";
+    public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
+    public static final int SELECTOR_STATIC_TRACK = staticTrack();
     protected AnimationController controller;
     protected boolean noAmmo = false;
     protected boolean onGround = true;
     protected boolean pauseWalkAndRun = false;
     protected boolean isAiming = false;
-
     //记录开始冲刺时玩家的walk distance，以便让冲刺动画有统一的开头
-    private float baseDistanceWalked = 0.0f;
-    private float keepDistanceWalked = 0.0f;
-    private WalkDirection lastWalkDirection = WalkDirection.NONE;
-    private boolean isWalkAiming = false;
+    protected float baseDistanceWalked = 0.0f;
+    protected float keepDistanceWalked = 0.0f;
+    protected WalkDirection lastWalkDirection = WalkDirection.NONE;
+    protected boolean isWalkAiming = false;
 
     public GunAnimationStateMachine(AnimationController controller) {
         this.controller = controller;
+        for (int i = 0; i < trackIndexTop; i++) {
+            controller.setBlending(i, blendingTracks.contains(i));
+        }
+    }
+
+    protected static int staticTrack() {
+        return trackIndexTop++;
+    }
+
+    protected static int blendingTrack() {
+        int track = trackIndexTop++;
+        blendingTracks.add(track);
+        return track;
     }
 
     public void onGunShoot() {
         for(int track : SHOOTING_TRACKS) {
-            if (tryRunAnimationNotRepeat(track, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0)) {
+            if (tryRunShootAnimation(track)) {
                 return;
             }
         }
-        controller.runAnimation(SHOOTING_TRACKS[0], SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0f);
-    }
-
-    public void onGunFireSelect() {
+        controller.runAnimation(SHOOTING_TRACKS[0], SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0f);
     }
 
     public void onGunReload() {
         if (noAmmo) {
-            controller.runAnimation(MAIN_TRACK, RELOAD_EMPTY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
+            controller.runAnimation(MAIN_TRACK, RELOAD_EMPTY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
         } else {
-            controller.runAnimation(MAIN_TRACK, RELOAD_TACTICAL_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
+            controller.runAnimation(MAIN_TRACK, RELOAD_TACTICAL_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
         }
     }
 
     public void onGunDraw() {
-        controller.runAnimation(MAIN_TRACK, DRAW_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0);
-    }
-
-    public void onGunPutAway(float putAwayTimeS) {
-        controller.runAnimation(MAIN_TRACK, PUT_AWAY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, putAwayTimeS);
-        ObjectAnimationRunner runner = controller.getAnimation(MAIN_TRACK);
-        if (runner != null) {
-            if (runner.isRunning() && PUT_AWAY_ANIMATION.equals(runner.getAnimation().name)) {
-                long progress = (long) (Math.max(runner.getAnimation().getMaxEndTimeS() - putAwayTimeS, 0) * 1e9);
-                runner.setProgressNs(progress);
-                return;
-            }
-            if (runner.getTransitionTo() != null && PUT_AWAY_ANIMATION.equals(runner.getTransitionTo().getAnimation().name)) {
-                long progress = (long) (Math.max(runner.getTransitionTo().getAnimation().getMaxEndTimeS() - putAwayTimeS, 0) * 1e9);
-                runner.getTransitionTo().setProgressNs(progress);
-            }
-        }
-    }
-
-    public void onGunInspect() {
-        if (noAmmo) {
-            controller.runAnimation(MAIN_TRACK, INSPECT_EMPTY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
-        } else {
-            controller.runAnimation(MAIN_TRACK, INSPECT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.2f);
-        }
+        controller.runAnimation(MAIN_TRACK, DRAW_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0);
     }
 
     public void onShooterRun(float walkDist) {
@@ -120,12 +113,56 @@ public class GunAnimationStateMachine {
         }
     }
 
+    public void onGunPutAway(float putAwayTimeS) {
+        controller.runAnimation(MAIN_TRACK, PUT_AWAY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, putAwayTimeS);
+        // 改变 put away 动画的进度，如果刚刚切枪不久，则收枪应当更快。
+        ObjectAnimationRunner runner = controller.getAnimation(MAIN_TRACK);
+        if (runner != null) {
+            if (runner.isRunning() && PUT_AWAY_ANIMATION.equals(runner.getAnimation().name)) {
+                long progress = (long) (Math.max(runner.getAnimation().getMaxEndTimeS() - putAwayTimeS, 0) * 1e9);
+                runner.setProgressNs(progress);
+                return;
+            }
+            if (runner.getTransitionTo() != null && PUT_AWAY_ANIMATION.equals(runner.getTransitionTo().getAnimation().name)) {
+                long progress = (long) (Math.max(runner.getTransitionTo().getAnimation().getMaxEndTimeS() - putAwayTimeS, 0) * 1e9);
+                runner.getTransitionTo().setProgressNs(progress);
+            }
+        }
+    }
+
+    public void onShooterIdle() {
+        if (isPlayingIdleAnimation()) {
+            return;
+        }
+        ObjectAnimationRunner runner = controller.getAnimation(MOVEMENT_TRACK);
+        if (runner != null && (runner.isRunning() || runner.isTransitioning())) {
+            if (!isPlayingWalkAnimation() && !isPlayingRunIntroOrLoop() && !isPlayingRunHold()) {
+                return;
+            }
+        }
+        isWalkAiming = false;
+        lastWalkDirection = WalkDirection.NONE;
+        ArrayDeque<AnimationPlan> deque = new ArrayDeque<>();
+        if (isPlayingRunIntroOrLoop()) {
+            deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f));
+        }
+        deque.add(new AnimationPlan(IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+        controller.queueAnimation(MOVEMENT_TRACK, deque);
+    }
+
+    public void onGunInspect() {
+        if (noAmmo) {
+            controller.runAnimation(MAIN_TRACK, INSPECT_EMPTY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+        } else {
+            controller.runAnimation(MAIN_TRACK, INSPECT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+        }
+    }
+
     public void onShooterWalk(Input input, float walkDist) {
         if (!onGround && !isPlayingIdleAnimation()) {
             controller.runAnimation(MOVEMENT_TRACK, IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.6f);
             isWalkAiming = false;
             lastWalkDirection = WalkDirection.NONE;
-            LogUtils.getLogger().info(lastWalkDirection.name());
             return;
         }
         if (onGround) {
@@ -167,28 +204,18 @@ public class GunAnimationStateMachine {
                 }
             }
             controller.queueAnimation(MOVEMENT_TRACK, deque);
+            isWalkAiming = false;
             baseDistanceWalked = walkDist;
         }
     }
 
-    public void onShooterIdle() {
-        if (isPlayingIdleAnimation()) {
-            return;
+    public void onGunFireSelect() {
+    }
+
+    public void onGunCatchBolt() {
+        if (!isPlayingAnimation(BOLT_CATCH_STATIC_TRACK, STATIC_BOLT_CAUGHT_ANIMATION)) {
+            controller.runAnimation(BOLT_CATCH_STATIC_TRACK, STATIC_BOLT_CAUGHT_ANIMATION, ObjectAnimation.PlayType.LOOP, 0);
         }
-        ObjectAnimationRunner runner = controller.getAnimation(MOVEMENT_TRACK);
-        if (runner != null && (runner.isRunning() || runner.isTransitioning())) {
-            if (!isPlayingWalkAnimation() && !isPlayingRunIntroOrLoop() && !isPlayingRunHold()) {
-                return;
-            }
-        }
-        isWalkAiming = false;
-        lastWalkDirection = WalkDirection.NONE;
-        ArrayDeque<AnimationPlan> deque = new ArrayDeque<>();
-        if (isPlayingRunIntroOrLoop()) {
-            deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f));
-        }
-        deque.add(new AnimationPlan(IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-        controller.queueAnimation(MOVEMENT_TRACK, deque);
     }
 
     public GunAnimationStateMachine setNoAmmo(boolean noAmmo) {
@@ -323,24 +350,34 @@ public class GunAnimationStateMachine {
         return isPlayingAnimation(MAIN_TRACK, DRAW_ANIMATION);
     }
 
+    public void onGunReleaseBolt() {
+        controller.removeAnimation(BOLT_CATCH_STATIC_TRACK);
+    }
+
+    public void onIdleHoldingPose() {
+        if (!isPlayingAnimation(HOLDING_POSE_STATIC_TRACK, STATIC_IDLE_ANIMATION)) {
+            controller.runAnimation(HOLDING_POSE_STATIC_TRACK, STATIC_IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0);
+        }
+    }
+
     private boolean isNamedWalkAnimation(String animationName) {
         return WALK_SIDEWAY_ANIMATION.equals(animationName) || WALK_FORWARD_ANIMATION.equals(animationName) || WALK_BACKWARD_ANIMATION.equals(animationName)
                 || WALK_AIMING_ANIMATION.equals(animationName);
     }
 
-    private boolean tryRunAnimationNotRepeat(int track, String animationName, ObjectAnimation.PlayType playType, float transitionTimeS) {
+    private boolean tryRunShootAnimation(int track) {
         ObjectAnimationRunner runner = controller.getAnimation(track);
-        if (runner != null && runner.isRunning() && SHOOT_ANIMATION.equals(animationName)) {
+        if (runner != null && runner.isRunning() && SHOOT_ANIMATION.equals(runner.getAnimation().name)) {
             return false;
         }
         if (runner != null && runner.getTransitionTo() != null && SHOOT_ANIMATION.equals(runner.getTransitionTo().getAnimation().name)) {
             return false;
         }
-        controller.runAnimation(track, animationName, playType, transitionTimeS);
+        controller.runAnimation(track, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0);
         return true;
     }
 
-    private enum WalkDirection{
+    protected enum WalkDirection {
         FORWARD,
         SIDE_WAY,
         BACKWARD,

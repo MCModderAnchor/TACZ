@@ -59,11 +59,11 @@ public class ObjectAnimationChannel {
      *
      * @param timeS absolute time in seconds
      */
-    public void update(float timeS) {
+    public void update(float timeS, boolean blend) {
         if (!transitioning) {
             float[] result = getResult(timeS);
             for (AnimationListener listener : listeners) {
-                listener.update(result);
+                listener.update(result, blend);
             }
         }
     }

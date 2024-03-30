@@ -75,10 +75,10 @@ public class ObjectAnimation {
     /**
      * Trigger all listeners to notify them of the updated value.
      */
-    public void update() {
+    public void update(boolean blend) {
         for (List<ObjectAnimationChannel> channels : channels.values()) {
             for (ObjectAnimationChannel channel : channels) {
-                channel.update(timeNs / 1e9f);
+                channel.update(timeNs / 1e9f, blend);
             }
         }
     }
@@ -89,6 +89,7 @@ public class ObjectAnimation {
 
     public enum PlayType {
         PLAY_ONCE_HOLD,
+        PLAY_ONCE_STOP,
         LOOP
     }
 }
