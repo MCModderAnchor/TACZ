@@ -41,6 +41,7 @@ public class ObjectAnimation {
             for (ObjectAnimationChannel channel : entry.getValue()) {
                 ObjectAnimationChannel newChannel = new ObjectAnimationChannel(channel.type, channel.content);
                 newChannel.node = channel.node;
+                newChannel.interpolator = channel.interpolator;
                 newList.add(newChannel);
             }
             this.channels.put(entry.getKey(), newList);
@@ -54,11 +55,12 @@ public class ObjectAnimation {
             return list;
         });
 
-        if (channel.getEndTimeS() > maxEndTimeS)
+        if (channel.getEndTimeS() > maxEndTimeS) {
             maxEndTimeS = channel.getEndTimeS();
+        }
     }
 
-    protected Map<String, List<ObjectAnimationChannel>> getChannels() {
+    public Map<String, List<ObjectAnimationChannel>> getChannels() {
         return channels;
     }
 

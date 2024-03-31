@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.function.Supplier;
 
 public class AnimationController {
     protected final ArrayList<ObjectAnimationRunner> currentRunners = new ArrayList<>();
@@ -14,7 +15,6 @@ public class AnimationController {
     private final ArrayList<Queue<AnimationPlan>> animationQueue = new ArrayList<>();
     protected final ArrayList<Boolean> blending = new ArrayList<>();
     protected Map<String, ObjectAnimation> prototypes = Maps.newHashMap();
-    private boolean updated = false;
 
     protected AnimationController(List<ObjectAnimation> animationPrototypes, AnimationListenerSupplier model) {
         for (ObjectAnimation prototype : animationPrototypes) {
@@ -24,6 +24,12 @@ public class AnimationController {
             prototypes.put(prototype.name, prototype);
         }
         this.listenerSupplier = model;
+    }
+
+    public void providePrototypeIfAbsent(String name, Supplier<ObjectAnimation> supplier) {
+        if (!prototypes.containsKey(name)) {
+            prototypes.put(name, supplier.get());
+        }
     }
 
     @Nullable
@@ -114,7 +120,6 @@ public class AnimationController {
             //更新当前动画runner
             if (runner.isRunning() || runner.isHolding() || runner.isTransitioning()) {
                 runner.update(blend);
-                updated = true;
             }
             //更新过渡目标动画runner，并且如果过渡已经完成，将其塞进currentRunners
             if (runner.getTransitionTo() != null) {

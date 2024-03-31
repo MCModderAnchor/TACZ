@@ -1,28 +1,28 @@
 package com.tac.guns.client.animation.interpolator;
 
-import com.tac.guns.client.animation.ObjectAnimationChannel;
+import com.tac.guns.client.animation.AnimationChannelContent;
 
 /**
  * 用于四元数的线性插值。
  */
 public class SLerp implements Interpolator {
-    private ObjectAnimationChannel channel;
+    private AnimationChannelContent content;
 
     @Override
-    public void compile(ObjectAnimationChannel channel) {
-        this.channel = channel;
+    public void compile(AnimationChannelContent content) {
+        this.content = content;
     }
 
     @Override
     public void interpolate(int indexFrom, int indexTo, float alpha, float[] result) {
-        float ax = channel.content.values[indexFrom][0];
-        float ay = channel.content.values[indexFrom][1];
-        float az = channel.content.values[indexFrom][2];
-        float aw = channel.content.values[indexFrom][3];
-        float bx = channel.content.values[indexTo][0];
-        float by = channel.content.values[indexTo][1];
-        float bz = channel.content.values[indexTo][2];
-        float bw = channel.content.values[indexTo][3];
+        float ax = content.values[indexFrom][0];
+        float ay = content.values[indexFrom][1];
+        float az = content.values[indexFrom][2];
+        float aw = content.values[indexFrom][3];
+        float bx = content.values[indexTo][0];
+        float by = content.values[indexTo][1];
+        float bz = content.values[indexTo][2];
+        float bw = content.values[indexTo][3];
 
         float dot = ax * bx + ay * by + az * bz + aw * bw;
         if (dot < 0) {

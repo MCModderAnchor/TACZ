@@ -14,6 +14,9 @@
     "slot": "tac:gun/slot/ak47",
     // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空
     "animation": "tac:ak47",
+  // 指定使用缺省动画，可为空。如果上文指定的动画文件里缺少某个动画，如 draw 动画，则会从缺省动画拷贝。
+  // 值可为 rifle、pistol
+  "use_default_animation": "rifle",
     // 第三人称动画，硬编码，只能选择已有类型，默认只有 default
     "third_person_animation": "default",
     // 调整各个视角下模型的变换参数，可为空

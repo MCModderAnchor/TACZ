@@ -1,12 +1,13 @@
 package com.tac.guns.client.resource.index;
 
 import com.google.common.collect.Maps;
-import com.tac.guns.client.animation.AnimationController;
-import com.tac.guns.client.animation.Animations;
+import com.tac.guns.client.animation.*;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientAssetManager;
+import com.tac.guns.client.resource.InternalAssetLoader;
 import com.tac.guns.client.resource.pojo.display.gun.*;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -176,6 +178,26 @@ public class ClientGunIndex {
         }
         // 用 gltf 动画资源创建动画控制器
         AnimationController controller = Animations.createControllerFromGltf(animations, index.gunModel);
+        // 将默认动画填入动画控制器
+        DefaultAnimation defaultAnimation = display.getDefaultAnimation();
+        BedrockPart rootNode = index.gunModel.getRootNode();
+        if (defaultAnimation != null && rootNode != null) {
+            float offsetX = -rootNode.x / 16f;
+            float offsetY = (24 - rootNode.y) / 16f;
+            float offsetZ = rootNode.z / 16f;
+            switch (defaultAnimation) {
+                case RIFLE -> {
+                    for (ObjectAnimation animation : InternalAssetLoader.getDefaultRifleAnimations()) {
+                        controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, offsetX, offsetY, offsetZ));
+                    }
+                }
+                case PISTOL -> {
+                    for (ObjectAnimation animation : InternalAssetLoader.getDefaultPistolAnimations()) {
+                        controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, offsetX, offsetY, offsetZ));
+                    }
+                }
+            }
+        }
         // 将动画控制器包装起来
         index.animationStateMachine = new GunAnimationStateMachine(controller);
         if (StringUtils.isNoneBlank(display.getThirdPersonAnimation())) {
@@ -227,6 +249,26 @@ public class ClientGunIndex {
 
     private static void checkShellEjection(GunDisplay display, ClientGunIndex index) {
         index.shellEjection = display.getShellEjection();
+    }
+
+    private static ObjectAnimation createAnimationCopy(ObjectAnimation prototype, float offsetX, float offsetY, float offsetZ) {
+        ObjectAnimation animation = new ObjectAnimation(prototype);
+        for (Map.Entry<String, List<ObjectAnimationChannel>> entry : animation.getChannels().entrySet()) {
+            for (ObjectAnimationChannel channel : entry.getValue()) {
+                if (channel.type == ObjectAnimationChannel.ChannelType.TRANSLATION) {
+                    channel.content = new AnimationChannelContent(channel.content);
+                    for (int i = 0; i < channel.content.values.length; i++) {
+                        float[] value = channel.content.values[i];
+                        value[0] += offsetX;
+                        value[1] += offsetY;
+                        value[2] += offsetZ;
+                    }
+                    channel.interpolator.compile(channel.content);
+                    break;
+                }
+            }
+        }
+        return animation;
     }
 
     public String getType() {

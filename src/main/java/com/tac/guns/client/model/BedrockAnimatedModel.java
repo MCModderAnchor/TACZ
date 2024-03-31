@@ -172,8 +172,8 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
 
                 @Override
                 public void update(float[] values, boolean blend) {
-                    // 因为模型是上下颠倒的，因此此处x轴和y轴的偏移也进行取反
                     if (bonesItem != null) {
+                        // 因为模型是上下颠倒的，因此此处x轴和y轴的偏移也进行取反
                         // 因为要达成所有位移都是相对位移，所以如果当前node是根node，则减去根node的pivot坐标。
                         if (blend) {
                             rendererWrapper.addOffsetX(-values[0] - bonesItem.getPivot().get(0) / 16f);
@@ -185,6 +185,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                             rendererWrapper.setOffsetZ(values[2] - bonesItem.getPivot().get(2) / 16f);
                         }
                     } else {
+                        // 因为模型是上下颠倒的，因此此处x轴和y轴的偏移也进行取反
                         // 虽然方法名称写的是getRotationPoint，但其实还是相对父级node的坐标移动量。因此此处与listener提供的local translation相减。
                         if (blend) {
                             rendererWrapper.addOffsetX(-values[0] - rendererWrapper.getRotationPointX() / 16f);

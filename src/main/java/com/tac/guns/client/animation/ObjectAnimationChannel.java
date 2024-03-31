@@ -1,5 +1,7 @@
 package com.tac.guns.client.animation;
 
+import com.tac.guns.client.animation.interpolator.Interpolator;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,9 +14,10 @@ public class ObjectAnimationChannel {
      */
     public String node;
     /**
-     * The key frame times, in seconds
+     * Content of this channel, including keyframes
      */
     public AnimationChannelContent content;
+    public Interpolator interpolator;
     /**
      * This variable is used for animation transitions.
      * Please don't change it if you don't understand what you are doing.
@@ -74,7 +77,7 @@ public class ObjectAnimationChannel {
         float alpha = computeAlpha(timeS, indexFrom);
 
         float[] result = new float[content.values[indexFrom].length];
-        content.interpolator.interpolate(indexFrom, indexTo, alpha, result);
+        interpolator.interpolate(indexFrom, indexTo, alpha, result);
 
         return result;
     }

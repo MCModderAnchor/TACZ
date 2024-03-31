@@ -28,10 +28,10 @@ public class GunData {
     private BulletData bulletData = new BulletData();
 
     @SerializedName("draw_time")
-    private float drawTime = 0.35f;
+    private float drawTime = 0.4f;
 
     @SerializedName("put_away_time")
-    private float putAwayTime = 0.5f;
+    private float putAwayTime = 0.4f;
 
     @SerializedName("aim_time")
     private float aimTime = 0.2f;

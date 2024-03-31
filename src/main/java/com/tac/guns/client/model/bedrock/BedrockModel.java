@@ -97,7 +97,7 @@ public class BedrockModel{
         for (BonesItem bones : pojo.getGeometryModelNew().getBones()) {
             // 骨骼名称
             String name = bones.getName();
-            // 旋转点，可能为空
+            // 旋转，可能为空
             @Nullable List<Float> rotation = bones.getRotation();
             // 父骨骼的名称，可能为空
             @Nullable String parent = bones.getParent();

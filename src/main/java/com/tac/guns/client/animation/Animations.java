@@ -19,7 +19,7 @@ public class Animations {
         return new AnimationController(createAnimationFromGltf(structure, (AnimationListenerSupplier[]) null), supplier);
     }
 
-    protected static @Nonnull List<ObjectAnimation> createAnimationFromGltf(@Nonnull AnimationStructure structure, @Nullable AnimationListenerSupplier... suppliers) {
+    public static @Nonnull List<ObjectAnimation> createAnimationFromGltf(@Nonnull AnimationStructure structure, @Nullable AnimationListenerSupplier... suppliers) {
         List<ObjectAnimation> result = new ArrayList<>();
 
         List<AnimationModel> animationModels = structure.getAnimationModels();
@@ -41,9 +41,9 @@ public class Animations {
                 //Quaternions require special interpolation
                 if (channel.type.equals(ObjectAnimationChannel.ChannelType.ROTATION)
                         && interpolation.equals(AnimationModel.Interpolation.LINEAR)) {
-                    channel.content.interpolator = InterpolatorUtil.fromInterpolation(InterpolatorUtil.InterpolatorType.SLERP);
+                    channel.interpolator = InterpolatorUtil.fromInterpolation(InterpolatorUtil.InterpolatorType.SLERP);
                 } else {
-                    channel.content.interpolator = InterpolatorUtil.fromInterpolation(InterpolatorUtil.InterpolatorType.valueOf(interpolation.name()));
+                    channel.interpolator = InterpolatorUtil.fromInterpolation(InterpolatorUtil.InterpolatorType.valueOf(interpolation.name()));
                 }
                 channel.node = nodeModel.getName();
 
@@ -78,7 +78,7 @@ public class Animations {
                 channel.content.values = values;
 
                 //compile the interpolator after everything loaded
-                channel.content.interpolator.compile(channel);
+                channel.interpolator.compile(channel.content);
 
                 //add channel to animation
                 animation.addChannel(channel);

@@ -4,6 +4,7 @@
   "hud": "tac:gun/hud/glock_17",
   "slot": "tac:gun/slot/glock_17",
   "animation": "tac:glock_17",
+  "use_default_animation": "pistol",
   "transform": {
     "scale": {
       "thirdperson": [

@@ -27,6 +27,9 @@ public class GunDisplay {
     @SerializedName("animation")
     private ResourceLocation animationLocation;
     @Nullable
+    @SerializedName("use_default_animation")
+    private DefaultAnimation defaultAnimation;
+    @Nullable
     @SerializedName("sounds")
     private Map<String, ResourceLocation> sounds;
     @Nullable
@@ -65,6 +68,11 @@ public class GunDisplay {
     @Nullable
     public ResourceLocation getAnimationLocation() {
         return animationLocation;
+    }
+
+    @Nullable
+    public DefaultAnimation getDefaultAnimation() {
+        return defaultAnimation;
     }
 
     @Nullable

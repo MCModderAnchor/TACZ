@@ -1,10 +1,10 @@
 package com.tac.guns.client.animation.interpolator;
 
-import com.tac.guns.client.animation.ObjectAnimationChannel;
+import com.tac.guns.client.animation.AnimationChannelContent;
 
 public class Spline implements Interpolator {
     @Override
-    public void compile(ObjectAnimationChannel channel) {
+    public void compile(AnimationChannelContent content) {
         // TODO
     }
 

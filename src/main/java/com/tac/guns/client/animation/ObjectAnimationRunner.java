@@ -286,27 +286,30 @@ public class ObjectAnimationRunner {
             }
 
         }
-        for (int i = 0; i < recoverChannels.size(); i++) {
-            ObjectAnimationChannel channel = recoverChannels.get(i);
-            float[] from = valueRecover.get(i);
-            float[] result = new float[from.length];
-            if (channel.type.equals(ObjectAnimationChannel.ChannelType.TRANSLATION)) {
-                for (AnimationListener listener : channel.getListeners()) {
-                    float[] to = listener.recover();
-                    lerp(from, to, progress, result);
-                    listener.update(result, blend);
-                }
-            } else if (channel.type.equals(ObjectAnimationChannel.ChannelType.ROTATION)) {
-                for (AnimationListener listener : channel.getListeners()) {
-                    float[] to = listener.recover();
-                    slerp(from, to, progress, result);
-                    listener.update(result, blend);
-                }
-            } else if (channel.type.equals(ObjectAnimationChannel.ChannelType.SCALE)) {
-                for (AnimationListener listener : channel.getListeners()) {
-                    float[] to = listener.recover();
-                    lerp(from, to, progress, result);
-                    listener.update(result, blend);
+        if (animation.playType != ObjectAnimation.PlayType.PLAY_ONCE_STOP) {
+            // 如果是 PLAY_ONCE_STOP，动画结束后不应该 update 其本身的关键帧，因此不进行恢复过渡
+            for (int i = 0; i < recoverChannels.size(); i++) {
+                ObjectAnimationChannel channel = recoverChannels.get(i);
+                float[] from = valueRecover.get(i);
+                float[] result = new float[from.length];
+                if (channel.type.equals(ObjectAnimationChannel.ChannelType.TRANSLATION)) {
+                    for (AnimationListener listener : channel.getListeners()) {
+                        float[] to = listener.recover();
+                        lerp(from, to, progress, result);
+                        listener.update(result, blend);
+                    }
+                } else if (channel.type.equals(ObjectAnimationChannel.ChannelType.ROTATION)) {
+                    for (AnimationListener listener : channel.getListeners()) {
+                        float[] to = listener.recover();
+                        slerp(from, to, progress, result);
+                        listener.update(result, blend);
+                    }
+                } else if (channel.type.equals(ObjectAnimationChannel.ChannelType.SCALE)) {
+                    for (AnimationListener listener : channel.getListeners()) {
+                        float[] to = listener.recover();
+                        lerp(from, to, progress, result);
+                        listener.update(result, blend);
+                    }
                 }
             }
         }

@@ -1,6 +1,6 @@
 package com.tac.guns.client.animation;
 
-import com.tac.guns.client.animation.interpolator.Interpolator;
+import java.util.Arrays;
 
 public class AnimationChannelContent {
     public float[] keyframeTimeS;
@@ -10,5 +10,15 @@ public class AnimationChannelContent {
      */
     public float[][] values;
 
-    public Interpolator interpolator;
+    public AnimationChannelContent() {
+    }
+
+    public AnimationChannelContent(AnimationChannelContent source) {
+        if (source.keyframeTimeS != null) {
+            this.keyframeTimeS = Arrays.copyOf(source.keyframeTimeS, source.keyframeTimeS.length);
+        }
+        if (source.values != null) {
+            this.values = Arrays.copyOf(source.values, source.values.length);
+        }
+    }
 }
