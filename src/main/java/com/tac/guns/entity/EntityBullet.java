@@ -82,7 +82,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
     protected Vec3 hitEntityPos(Entity entity) {
         Vec3 startPos = this.position();
         Vec3 endPos = this.position().add(this.getDeltaMovement());
-        return entity.getBoundingBox().clip(startPos, endPos).orElse(this.position());
+        return entity.getBoundingBox().clip(startPos, endPos).orElse(entity.position());
     }
 
     @Override
