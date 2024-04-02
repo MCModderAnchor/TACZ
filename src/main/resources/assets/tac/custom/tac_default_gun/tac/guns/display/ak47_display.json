@@ -14,9 +14,9 @@
     "slot": "tac:gun/slot/ak47",
     // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空
     "animation": "tac:ak47",
-  // 指定使用缺省动画，可为空。如果上文指定的动画文件里缺少某个动画，如 draw 动画，则会从缺省动画拷贝。
-  // 值可为 rifle、pistol
-  "use_default_animation": "rifle",
+    // 指定使用缺省动画，可为空。如果上文指定的动画文件里缺少某个动画，如 draw 动画，则会从缺省动画拷贝。
+    // 值可为 rifle、pistol
+    "use_default_animation": "rifle",
     // 第三人称动画，硬编码，只能选择已有类型，默认只有 default
     "third_person_animation": "default",
     // 调整各个视角下模型的变换参数，可为空
@@ -55,12 +55,10 @@
         "inspect_empty": "tac:ak47/ak47_inspect_empty",
         "draw": "tac:ak47/ak47_draw"
     },
-    // Influence Coefficient of Animation 的缩写，可为空，若为空则填入默认值。
-    // 表示各个第一人称定位（如机瞄摄像机定位、开镜摄像机定位）下 动画的影响系数
+    // Influence Coefficient of Animation 的缩写，可为空，若为空则不会生效。
+    // 表示瞄准状态下，各个动画（run、walk、shoot、reload）动画的影响系数
     // 具体细节请参阅 tac 动画说明文档
     "ica": {
-        // 机瞄视角下的动画影响系数，可为空，默认全部为 0.2。以下任意数值未填都默认 0.2。
-        // 可定义的值有 translation、rotation
         "iron_view": {
             "translation": [0.15, 0.05, 0.4],
             "rotation": [

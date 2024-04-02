@@ -46,7 +46,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                     if (transformType == ItemTransforms.TransformType.FIXED) {
                         poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
                     }
-                } else { // TransformType.NONE 用于在枪上渲染配件
+                } else { // TransformType.NONE 用于在枪上渲染配件, TransformType.HEAD 表示在第一人称的枪上渲染配件
                     // 基岩版模型渲染原点位于 (0, 24, 0)
                     poseStack.translate(0, -1.5f, 0);
                 }

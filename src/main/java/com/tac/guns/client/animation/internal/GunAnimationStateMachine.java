@@ -308,6 +308,9 @@ public class GunAnimationStateMachine {
         return false;
     }
 
+    public boolean isPlayingRunAnimation() {
+        return isPlayingAnimation(MOVEMENT_TRACK, RUN_START_ANIMATION, RUN_LOOP_ANIMATION, RUN_HOLD_ANIMATION, RUN_END_ANIMATION);
+    }
     public boolean isPlayingRunIntroOrLoop() {
         return isPlayingAnimation(MOVEMENT_TRACK, RUN_LOOP_ANIMATION, RUN_START_ANIMATION);
     }

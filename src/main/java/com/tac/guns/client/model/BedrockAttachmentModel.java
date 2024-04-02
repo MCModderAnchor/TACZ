@@ -74,14 +74,19 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
-        if (transformType == ItemTransforms.TransformType.NONE) { // 只有在枪上的时候需要境内特效
+        if (transformType == ItemTransforms.TransformType.NONE) { // 用 NONE 表示瞄具在枪上的情况
             if (isScope) {
                 renderScope(matrixStack, transformType, renderType, light, overlay);
             } else if (isSight) {
                 renderSight(matrixStack, transformType, renderType, light, overlay);
             }
         } else {
-            super.render(matrixStack, transformType, renderType, light, overlay);
+            if (scopeBodyPath != null) {
+                renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+            }
+            if (ocularRingPath != null) {
+                renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
+            }
         }
     }
 
