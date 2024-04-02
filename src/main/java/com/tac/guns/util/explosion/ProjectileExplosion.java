@@ -16,6 +16,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -55,7 +56,7 @@ public class ProjectileExplosion extends Explosion {
     private static BlockHitResult rayTraceBlocks(Level level, ClipContext context) {
         return performRayTrace(context, (rayTraceContext, blockPos) -> {
             BlockState blockState = level.getBlockState(blockPos);
-            // TODO 这里可以添加抵消爆炸的方块
+            // TODO 这里添加判断方块是否可以穿透，如果可以穿透则返回 null
             return getBlockHitResult(level, rayTraceContext, blockPos, blockState);
         }, (rayTraceContext) -> {
             Vec3 vec3 = rayTraceContext.getFrom().subtract(rayTraceContext.getTo());
@@ -139,25 +140,27 @@ public class ProjectileExplosion extends Explosion {
 
     @Override
     public void explode() {
+        this.level.gameEvent(this.exploder, GameEvent.EXPLODE, new BlockPos(this.x, this.y, this.z));
         Set<BlockPos> set = Sets.newHashSet();
+        int i = 16;
 
-        for (int x = 0; x < 16; ++x) {
-            for (int y = 0; y < 16; ++y) {
-                for (int z = 0; z < 16; ++z) {
-                    if (x == 0 || x == 15 || y == 0 || y == 15 || z == 0 || z == 15) {
-                        double d0 = ((float) x / 15.0F * 2.0F - 1.0F);
-                        double d1 = ((float) y / 15.0F * 2.0F - 1.0F);
-                        double d2 = ((float) z / 15.0F * 2.0F - 1.0F);
+        for (int x = 0; x < i; ++x) {
+            for (int y = 0; y < i; ++y) {
+                for (int z = 0; z < i; ++z) {
+                    if (x == 0 || x == i - 1 || y == 0 || y == i - 1 || z == 0 || z == i - 1) {
+                        double d0 = ((float) x / (i - 1) * 2.0F - 1.0F);
+                        double d1 = ((float) y / (i - 1) * 2.0F - 1.0F);
+                        double d2 = ((float) z / (i - 1) * 2.0F - 1.0F);
                         double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
-                        d0 = d0 / d3;
-                        d1 = d1 / d3;
-                        d2 = d2 / d3;
+                        d0 /= d3;
+                        d1 /= d3;
+                        d2 /= d3;
                         float f = this.radius * (0.7F + this.level.random.nextFloat() * 0.6F);
                         double blockX = this.x;
                         double blockY = this.y;
                         double blockZ = this.z;
 
-                        for (; f > 0.0F; f -= 0.225F) {
+                        for (float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
                             BlockPos pos = new BlockPos(blockX, blockY, blockZ);
                             BlockState blockState = this.level.getBlockState(pos);
                             FluidState fluidState = this.level.getFluidState(pos);
@@ -167,16 +170,16 @@ public class ProjectileExplosion extends Explosion {
 
                             Optional<Float> optional = this.damageCalculator.getBlockExplosionResistance(this, this.level, pos, blockState, fluidState);
                             if (optional.isPresent()) {
-                                f -= (optional.get() + 0.3F) * 0.3F;
+                                f -= (optional.get() + f1) * f1;
                             }
 
                             if (f > 0.0F && this.damageCalculator.shouldBlockExplode(this, this.level, pos, blockState, f)) {
                                 set.add(pos);
                             }
 
-                            blockX += d0 * (double) 0.3F;
-                            blockY += d1 * (double) 0.3F;
-                            blockZ += d2 * (double) 0.3F;
+                            blockX += d0 * (double) f1;
+                            blockY += d1 * (double) f1;
+                            blockZ += d2 * (double) f1;
                         }
                     }
                 }
@@ -235,9 +238,9 @@ public class ProjectileExplosion extends Explosion {
                 d[12] = new Vec3(deltaX, deltaY, boundingBox.minZ);
                 d[13] = new Vec3(deltaX, deltaY, boundingBox.maxZ);
                 d[14] = new Vec3(deltaX, deltaY, deltaZ);
-                for (int i = 0; i < 15; i++) {
-                    result = rayTraceBlocks(this.level, new ClipContext(explosionPos, d[i], ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
-                    minDistance = (result.getType() != BlockHitResult.Type.BLOCK) ? Math.min(minDistance, explosionPos.distanceTo(d[i])) : minDistance;
+                for (int s = 0; s < 15; s++) {
+                    result = rayTraceBlocks(this.level, new ClipContext(explosionPos, d[s], ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
+                    minDistance = (result.getType() != BlockHitResult.Type.BLOCK) ? Math.min(minDistance, explosionPos.distanceTo(d[s])) : minDistance;
                 }
                 strength = minDistance * 2 / radius;
                 deltaX -= this.x;
@@ -255,11 +258,6 @@ public class ProjectileExplosion extends Explosion {
                 deltaX /= distanceToExplosion;
                 deltaY /= distanceToExplosion;
                 deltaZ /= distanceToExplosion;
-            } else {
-                // 修复了恰好在玩家身上爆炸不会造成伤害的问题
-                deltaX = 0.0;
-                deltaY = 1.0;
-                deltaZ = 0.0;
             }
 
             double damage = 1.0D - strength;
