@@ -100,6 +100,8 @@ public class ClientAttachmentIndex {
         if (index.attachmentModel == null) {
             throw new IllegalArgumentException("there is no model data in the model file");
         }
+        index.attachmentModel.setIsScope(display.isScope());
+        index.attachmentModel.setIsSight(display.isSight());
         // 检查默认材质
         ResourceLocation textureLocation = display.getTexture();
         if (textureLocation == null) {

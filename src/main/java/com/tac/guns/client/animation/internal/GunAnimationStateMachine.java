@@ -115,11 +115,6 @@ public class GunAnimationStateMachine {
     }
 
     public void onGunPutAway(float putAwayTimeS) {
-        /*ObjectAnimationRunner oldRunner = controller.getAnimation(MAIN_TRACK);
-        if(oldRunner != null && !oldRunner.isRunning() && !oldRunner.isHolding() && !oldRunner.isTransitioning()) {
-            // 在 main track 没有播放动画的情况下，手动播放一次 PUT_AWAY_ANIMATION，以保证有关键帧的组都能进行过渡
-            controller.runAnimation(MAIN_TRACK, PUT_AWAY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0);
-        }*/
         controller.runAnimation(MAIN_TRACK, PUT_AWAY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, putAwayTimeS * 0.75f);
         // 改变 put away 动画的进度，如果刚刚切枪不久，则收枪应当更快。
         ObjectAnimationRunner runner = controller.getAnimation(MAIN_TRACK);

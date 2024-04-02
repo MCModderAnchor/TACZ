@@ -19,6 +19,12 @@ public class AttachmentDisplay {
     @Nullable
     private float[] zoom;
 
+    @SerializedName("scope")
+    private boolean isScope = false;
+
+    @SerializedName("sight")
+    private boolean isSight = false;
+
     @SerializedName("fov")
     private float fov = 70;
 
@@ -37,6 +43,14 @@ public class AttachmentDisplay {
     @Nullable
     public float[] getZoom() {
         return zoom;
+    }
+
+    public boolean isScope() {
+        return isScope;
+    }
+
+    public boolean isSight() {
+        return isSight;
     }
 
     public float getFov() {

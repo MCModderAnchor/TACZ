@@ -1,6 +1,5 @@
 package com.tac.guns.api.entity;
 
-import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,10 +45,10 @@ public interface IGunOperator {
 
     /**
      * 服务端切换开火模式的逻辑
-     *
-     * @return 切换后的开火模式
      */
-    FireMode fireSelect();
+    void fireSelect();
+
+    void zoom();
 
     /**
      * 从实体的位置，向指定的方向开枪

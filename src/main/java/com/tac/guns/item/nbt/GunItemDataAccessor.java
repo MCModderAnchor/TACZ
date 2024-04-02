@@ -95,7 +95,7 @@ public interface GunItemDataAccessor extends IGun {
     }
 
     @Override
-    default void setAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment) {
+    default void installAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment) {
         if (!allowAttachment(gun, attachment)) {
             return;
         }
@@ -107,6 +107,18 @@ public interface GunItemDataAccessor extends IGun {
         String key = GUN_ATTACHMENT_BASE + iAttachment.getType(attachment).name();
         CompoundTag attachmentTag = new CompoundTag();
         attachment.save(attachmentTag);
+        nbt.put(key, attachmentTag);
+    }
+
+    @Override
+    default void unloadAttachment(@Nonnull ItemStack gun, AttachmentType type) {
+        if (!allowAttachmentType(gun, type)) {
+            return;
+        }
+        CompoundTag nbt = gun.getOrCreateTag();
+        String key = GUN_ATTACHMENT_BASE + type.name();
+        CompoundTag attachmentTag = new CompoundTag();
+        ItemStack.EMPTY.save(attachmentTag);
         nbt.put(key, attachmentTag);
     }
 }

@@ -2,7 +2,7 @@ package com.tac.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tac.guns.network.NetworkHandler;
-import com.tac.guns.network.message.ClientMessageGunZoom;
+import com.tac.guns.network.message.ClientMessagePlayerZoom;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -34,7 +34,7 @@ public class ZoomKey {
             if (player == null) {
                 return;
             }
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessageGunZoom());
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerZoom());
         }
     }
 }
