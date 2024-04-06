@@ -5,6 +5,8 @@ import com.tac.guns.api.gun.ShootResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.function.Supplier;
+
 public interface IGunOperator {
     /**
      * LivingEntity 通过 Mixin 的方式实现了这个接口
@@ -36,7 +38,7 @@ public interface IGunOperator {
     /**
      * 服务端切枪逻辑
      */
-    void draw(ItemStack gunItemStack);
+    void draw(Supplier<ItemStack> itemStackSupplier);
 
     /**
      * 服务端换弹逻辑

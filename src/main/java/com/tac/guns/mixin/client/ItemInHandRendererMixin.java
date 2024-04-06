@@ -31,8 +31,6 @@ public class ItemInHandRendererMixin implements KeepingItemRenderer {
     private long tac$KeepTimeMs;
     @Unique
     private long tac$KeepTimestamp;
-    @Unique
-    private ItemStack tac$CurrentGunItem;
 
     @Inject(method = "renderHandsWithItems", at = @At("HEAD"))
     public void beforeHandRender(float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource.BufferSource pBuffer, LocalPlayer pPlayerEntity, int pCombinedLight, CallbackInfo ci) {

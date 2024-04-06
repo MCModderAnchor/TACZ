@@ -1,6 +1,7 @@
 package com.tac.guns.client.event;
 
 import com.tac.guns.GunMod;
+import com.tac.guns.api.client.event.SwapItemWithOffHand;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IGun;
 import net.minecraft.client.Minecraft;
@@ -15,24 +16,31 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class InventoryEvent {
     // 用于切枪逻辑
-    private static ItemStack oldHotbarSelectedStack = ItemStack.EMPTY;
     private static int oldHotbarSelected = -1;
 
     @SubscribeEvent
-    public static void onGunDraw(TickEvent.ClientTickEvent event) {
+    public static void onPlayerChangeSelect(TickEvent.ClientTickEvent event) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             return;
         }
         Inventory inventory = player.getInventory();
-        ItemStack inventorySelected = inventory.getSelected();
-        if (oldHotbarSelected != inventory.selected || !isSame(inventorySelected, oldHotbarSelectedStack)) {
+        if (oldHotbarSelected != inventory.selected) {
+            IClientPlayerGunOperator.fromLocalPlayer(player).draw(oldHotbarSelected, inventory.selected);
             oldHotbarSelected = inventory.selected;
-            oldHotbarSelectedStack = inventorySelected;
-            IClientPlayerGunOperator.fromLocalPlayer(player).draw();
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerSwapMainHand(SwapItemWithOffHand event) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        Inventory inventory = player.getInventory();
+        int offhandIndex = inventory.items.size() + inventory.armor.size() + inventory.offhand.size() - 1;
+        IClientPlayerGunOperator.fromLocalPlayer(player).draw(offhandIndex, player.getInventory().selected);
+    }
 
     /**
      * 判断两个枪械 ID 是否相同

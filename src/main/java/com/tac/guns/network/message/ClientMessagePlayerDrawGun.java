@@ -3,6 +3,7 @@ package com.tac.guns.network.message;
 import com.tac.guns.api.entity.IGunOperator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -30,8 +31,8 @@ public class ClientMessagePlayerDrawGun {
                 if (entity == null) {
                     return;
                 }
-                // TODO 验证 slotIndex 是否为允许 draw 的槽位
-                IGunOperator.fromLivingEntity(entity).draw(entity.getInventory().getItem(message.slotIndex));
+                Inventory inventory = entity.getInventory();
+                IGunOperator.fromLivingEntity(entity).draw(() -> inventory.getItem(message.slotIndex));
             });
         }
         context.setPacketHandled(true);

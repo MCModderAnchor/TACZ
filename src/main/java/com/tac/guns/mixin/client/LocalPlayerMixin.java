@@ -76,7 +76,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private long tac$ClientDrawTimestamp = -1L;
     @Unique
-    private ItemStack tac$OldItemInHand = ItemStack.EMPTY;
+    @Nullable
+    private ScheduledFuture<?> tac$DrawFuture = null;
     /**
      * 这个状态锁表示：任意时刻，正在进行的枪械操作只能为一个。
      * 主要用于防止客户端操作表现效果重复执行。
@@ -89,10 +90,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     @Nullable
     private Predicate<IGunOperator> tac$LockedCondition = null;
-
-    @Unique
-    @Nullable
-    private ScheduledFuture<?> tac$DrawFuture = null;
 
     @Unique
     @Override
@@ -181,9 +178,10 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
 
     @Unique
     @Override
-    public void draw() {
+    public void draw(int lastSlot, int currentSlot) {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        ItemStack mainhandItem = player.getMainHandItem();
+        ItemStack currentItem = currentSlot == -1 ? ItemStack.EMPTY : player.getInventory().getItem(currentSlot);
+        ItemStack lastItem = lastSlot == -1 ? ItemStack.EMPTY : player.getInventory().getItem(lastSlot);
         // 锁上状态锁
         lockState(operator -> operator.getSynDrawCoolDown() > 0);
         // 重置客户端的 shoot 时间戳
@@ -198,11 +196,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             tac$ClientDrawTimestamp = System.currentTimeMillis();
         }
         long drawTime = System.currentTimeMillis() - tac$ClientDrawTimestamp;
-        IGun iGun = IGun.getIGunOrNull(mainhandItem);
-        IGun iGun1 = IGun.getIGunOrNull(tac$OldItemInHand);
+        IGun iGun = IGun.getIGunOrNull(currentItem);
+        IGun iGun1 = IGun.getIGunOrNull(lastItem);
         if (drawTime >= 0) { // 如果不处于收枪状态，则需要加上收枪的时长
             if (iGun1 != null) {
-                Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun1.getGunId(tac$OldItemInHand));
+                Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun1.getGunId(lastItem));
                 float putAwayTime = gunIndex.map(index -> index.getGunData().getPutAwayTime()).orElse(0F);
                 if (drawTime > putAwayTime * 1000) {
                     drawTime = (long) (putAwayTime * 1000);
@@ -215,24 +213,24 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         long putAwayTime = Math.abs(drawTime);
         // 发包通知服务器
-        NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun(player.getInventory().selected));
+        NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun(currentSlot));
         if (drawTime >= 0) { // 不处于收枪状态时才能收枪
             if (iGun1 != null) {
-                TimelessAPI.getClientGunIndex(iGun1.getGunId(tac$OldItemInHand)).ifPresent(gunIndex -> {
+                TimelessAPI.getClientGunIndex(iGun1.getGunId(lastItem)).ifPresent(gunIndex -> {
                     // TODO 播放收枪音效
                     // 播放收枪动画
                     GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                     if (animationStateMachine != null) {
                         animationStateMachine.onGunPutAway(putAwayTime / 1000F);
                         // 保持枪械的渲染直到收枪动作完成
-                        ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).keep(tac$OldItemInHand, putAwayTime);
+                        ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).keep(lastItem, putAwayTime);
                     }
                 });
             }
         }
+        // 异步放映抬枪动画
         if (iGun != null) {
-            TimelessAPI.getClientGunIndex(iGun.getGunId(mainhandItem)).ifPresent(gunIndex -> {
-                // 放映抬枪动画、初始化 Static 动画
+            TimelessAPI.getClientGunIndex(iGun.getGunId(currentItem)).ifPresent(gunIndex -> {
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (animationStateMachine != null) {
                     if (tac$DrawFuture != null) {
@@ -246,7 +244,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 }
             });
         }
-        tac$OldItemInHand = mainhandItem;
     }
 
     @Unique

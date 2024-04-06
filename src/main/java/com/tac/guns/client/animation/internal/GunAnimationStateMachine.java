@@ -1,7 +1,6 @@
 package com.tac.guns.client.animation.internal;
 
 import com.google.common.collect.Sets;
-import com.mojang.logging.LogUtils;
 import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.AnimationPlan;
 import com.tac.guns.client.animation.ObjectAnimation;
@@ -22,7 +21,7 @@ public class GunAnimationStateMachine {
     protected static final Set<Integer> blendingTracks = Sets.newHashSet();
     protected static int trackIndexTop = 0;
     public static final int MOVEMENT_TRACK = blendingTrack();
-    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
+    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
     public static final int MAIN_TRACK = staticTrack();
     public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
     public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
@@ -125,7 +124,6 @@ public class GunAnimationStateMachine {
                 return;
             }
             if (runner.getTransitionTo() != null && PUT_AWAY_ANIMATION.equals(runner.getTransitionTo().getAnimation().name)) {
-                LogUtils.getLogger().info("" + runner.getTransitionTo().getAnimation().getMaxEndTimeS());
                 long progress = (long) (Math.max(runner.getTransitionTo().getAnimation().getMaxEndTimeS() - putAwayTimeS, 0) * 1e9);
                 runner.getTransitionTo().setProgressNs(progress);
             }

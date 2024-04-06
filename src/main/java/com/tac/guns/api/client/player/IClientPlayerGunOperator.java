@@ -24,7 +24,7 @@ public interface IClientPlayerGunOperator {
     /**
      * 执行客户端切枪逻辑。
      */
-    void draw();
+    void draw(int lastSlot, int currentSlot);
 
     void reload();
 
