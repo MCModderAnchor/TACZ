@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 public class InventoryEvent {
     // 用于切枪逻辑
     private static int oldHotbarSelected = -1;
+    private static ItemStack oldHotbarSelectItem = ItemStack.EMPTY;
 
     @SubscribeEvent
     public static void onPlayerChangeSelect(TickEvent.ClientTickEvent event) {
@@ -25,9 +26,24 @@ public class InventoryEvent {
             return;
         }
         Inventory inventory = player.getInventory();
+        // 玩家切换选中框的情况
         if (oldHotbarSelected != inventory.selected) {
-            IClientPlayerGunOperator.fromLocalPlayer(player).draw(oldHotbarSelected, inventory.selected);
+            if (oldHotbarSelected == -1) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).draw(ItemStack.EMPTY);
+            } else {
+                IClientPlayerGunOperator.fromLocalPlayer(player).draw(inventory.getItem(oldHotbarSelected));
+            }
             oldHotbarSelected = inventory.selected;
+            oldHotbarSelectItem = inventory.getItem(inventory.selected).copy();
+            return;
+        }
+        // 玩家选中的物品改变的情况
+        ItemStack currentItem = inventory.getItem(inventory.selected);
+        if (!ItemStack.matches(oldHotbarSelectItem, currentItem)) {
+            if (!isSame(oldHotbarSelectItem, currentItem)) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).draw(oldHotbarSelectItem);
+            }
+            oldHotbarSelectItem = currentItem.copy();
         }
     }
 
@@ -37,18 +53,18 @@ public class InventoryEvent {
         if (player == null) {
             return;
         }
-        Inventory inventory = player.getInventory();
-        int offhandIndex = inventory.items.size() + inventory.armor.size() + inventory.offhand.size() - 1;
-        IClientPlayerGunOperator.fromLocalPlayer(player).draw(offhandIndex, player.getInventory().selected);
+        IClientPlayerGunOperator.fromLocalPlayer(player).draw(player.getOffhandItem());
     }
 
-    /**
-     * 判断两个枪械 ID 是否相同
-     */
-    private static boolean isSame(ItemStack gunA, ItemStack gunB) {
-        if (gunA.getItem() instanceof IGun iGunA && gunB.getItem() instanceof IGun iGunB) {
-            return iGunA.getGunId(gunA).equals(iGunB.getGunId(gunB));
+    private static boolean isSame(ItemStack i, ItemStack j) {
+        IGun iGun1 = IGun.getIGunOrNull(i);
+        IGun iGun2 = IGun.getIGunOrNull(j);
+        if (iGun1 != null && iGun2 != null) {
+            return iGun1.getGunId(i).equals(iGun2.getGunId(j));
         }
-        return gunA.sameItem(gunB);
+        if (i.isEmpty() || j.isEmpty()) {
+            return i.isEmpty() && j.isEmpty();
+        }
+        return i.sameItem(j);
     }
 }

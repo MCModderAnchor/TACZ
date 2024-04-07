@@ -178,10 +178,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
 
     @Unique
     @Override
-    public void draw(int lastSlot, int currentSlot) {
+    public void draw(ItemStack lastItem) {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        ItemStack currentItem = currentSlot == -1 ? ItemStack.EMPTY : player.getInventory().getItem(currentSlot);
-        ItemStack lastItem = lastSlot == -1 ? ItemStack.EMPTY : player.getInventory().getItem(lastSlot);
+        ItemStack currentItem = player.getMainHandItem();
         // 锁上状态锁
         lockState(operator -> operator.getSynDrawCoolDown() > 0);
         // 重置客户端的 shoot 时间戳
@@ -213,8 +212,12 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         long putAwayTime = Math.abs(drawTime);
         // 发包通知服务器
-        NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun(currentSlot));
-        if (drawTime >= 0) { // 不处于收枪状态时才能收枪
+        if(Minecraft.getInstance().gameMode != null) {
+            Minecraft.getInstance().gameMode.ensureHasSentCarriedItem();
+        }
+        NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun());
+        // 不处于收枪状态时才能收枪
+        if (drawTime >= 0) {
             if (iGun1 != null) {
                 TimelessAPI.getClientGunIndex(iGun1.getGunId(lastItem)).ifPresent(gunIndex -> {
                     // TODO 播放收枪音效

@@ -55,6 +55,7 @@ public interface IGun {
      * @param gun 输入物品
      * @return 枪械 ID
      */
+    @Nonnull
     ResourceLocation getGunId(ItemStack gun);
 
     void setGunId(ItemStack gun, @Nullable ResourceLocation gunId);

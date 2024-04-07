@@ -1,6 +1,7 @@
 package com.tac.guns.entity;
 
 import com.tac.guns.api.entity.IGunOperator;
+import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.config.common.AmmoConfig;
 import com.tac.guns.particles.BulletHoleOption;
 import com.tac.guns.resource.DefaultAssets;
@@ -85,13 +86,12 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
             // 取消无敌时间
             livingEntity.invulnerableTime = 0;
             // 取消击退效果
-            if (livingEntity instanceof IGunOperator operator) {
-                operator.setKnockbackStrength(this.knockback);
-                livingEntity.hurt(DamageSource.thrown(this, this.getOwner()), this.damageAmount);
-                operator.resetKnockbackStrength();
-                if (this.hasExplosion) {
-                    createExplosion(this, this.explosionDamage, this.explosionRadius);
-                }
+            KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(livingEntity);
+            modifier.setKnockBackStrength(this.knockback);
+            livingEntity.hurt(DamageSource.thrown(this, this.getOwner()), this.damageAmount);
+            modifier.resetKnockBackStrength();
+            if (this.hasExplosion) {
+                createExplosion(this, this.explosionDamage, this.explosionRadius);
             }
         }
         super.onHitEntity(result);

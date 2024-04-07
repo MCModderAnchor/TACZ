@@ -8,19 +8,16 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ClientMessagePlayerDrawGun {
-    private final int slotIndex;
+public class ClientMessagePlayerDrawGun {;
 
-    public ClientMessagePlayerDrawGun(int slotIndex) {
-        this.slotIndex = slotIndex;
+    public ClientMessagePlayerDrawGun() {
     }
 
     public static void encode(ClientMessagePlayerDrawGun message, FriendlyByteBuf buf) {
-        buf.writeInt(message.slotIndex);
     }
 
     public static ClientMessagePlayerDrawGun decode(FriendlyByteBuf buf) {
-        return new ClientMessagePlayerDrawGun(buf.readInt());
+        return new ClientMessagePlayerDrawGun();
     }
 
     public static void handle(ClientMessagePlayerDrawGun message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -32,7 +29,8 @@ public class ClientMessagePlayerDrawGun {
                     return;
                 }
                 Inventory inventory = entity.getInventory();
-                IGunOperator.fromLivingEntity(entity).draw(() -> inventory.getItem(message.slotIndex));
+                int selected = inventory.selected;
+                IGunOperator.fromLivingEntity(entity).draw(() -> inventory.getItem(selected));
             });
         }
         context.setPacketHandled(true);

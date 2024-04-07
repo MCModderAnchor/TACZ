@@ -75,9 +75,9 @@ public interface IGunOperator {
      */
     void aim(boolean isAim);
 
-    void resetKnockbackStrength();
-
-    double getKnockbackStrength();
-
-    void setKnockbackStrength(double strength);
+    /**
+     * 根据当前持握的枪械属性更新收枪时间。
+     * 应当在切枪、枪械改装、附魔等时机调用
+     */
+    void updatePutAwayTime();
 }

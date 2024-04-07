@@ -16,8 +16,6 @@ import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public class GunAnimationStateMachine {
-    public static final String STATIC_BOLT_CAUGHT_ANIMATION = "static_bolt_caught";
-    public static final String STATIC_IDLE_ANIMATION = "static_idle";
     protected static final Set<Integer> blendingTracks = Sets.newHashSet();
     protected static int trackIndexTop = 0;
     public static final int MOVEMENT_TRACK = blendingTrack();
@@ -26,6 +24,8 @@ public class GunAnimationStateMachine {
     public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
     public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
     public static final int SELECTOR_STATIC_TRACK = staticTrack();
+    public static final String STATIC_BOLT_CAUGHT_ANIMATION = "static_bolt_caught";
+    public static final String STATIC_IDLE_ANIMATION = "static_idle";
     public static final String SHOOT_ANIMATION = "shoot";
     public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";
     public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";

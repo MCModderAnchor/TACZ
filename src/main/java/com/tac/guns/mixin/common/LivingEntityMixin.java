@@ -3,6 +3,7 @@ package com.tac.guns.mixin.common;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.entity.IGunOperator;
+import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.api.event.GunFireSelectEvent;
 import com.tac.guns.api.event.GunReloadEvent;
 import com.tac.guns.api.event.GunShootEvent;
@@ -30,7 +31,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -54,7 +54,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity implements IGunOperator {
+public abstract class LivingEntityMixin extends Entity implements IGunOperator, KnockBackModifier {
     @Unique
     private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
     @Unique
@@ -105,11 +105,17 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Nonnull
     private ReloadState.StateType tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
     /**
-     * 缓存实体当前操作的枪械物品。在切枪时 (draw 方法) 更新。
+     * 当前操作的枪械物品的 Supplier。在切枪时 (draw 方法) 更新。
      */
     @Unique
     @Nullable
     private Supplier<ItemStack> tac$CurrentGunItem = null;
+    /**
+     * 缓存当前枪械的收枪时间，以确保下一次切枪的时候使用此时间计算收枪。
+     * 此数值不会因 tac$CurrentGunItem 提供的 ItemStack 改变而改变，因此应当在恰当的时机调用 updatePutAwayTime() 进行更新。
+     */
+    @Unique
+    private float tac$CurrentPutAwayTimeS = 0;
     /**
      * 用来记录子弹击退能力，负数表示使用原版击退
      */
@@ -123,9 +129,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Override
     @Shadow
     public abstract <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing);
-
-    @Shadow
-    public abstract ItemStack getItemBySlot(EquipmentSlot pSlot);
 
     @Override
     @Unique
@@ -210,22 +213,28 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             tac$DrawTimestamp = System.currentTimeMillis();
         }
         long drawTime = System.currentTimeMillis() - tac$DrawTimestamp;
-        if (drawTime >= 0) { // 如果不处于收枪状态，则开始收枪
-            ItemStack currentGunItem = tac$CurrentGunItem == null ? ItemStack.EMPTY : tac$CurrentGunItem.get();
-            IGun iGun = IGun.getIGunOrNull(currentGunItem);
-            if (iGun != null) {
-                Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun.getGunId(currentGunItem));
-                float putAwayTime = gunIndex.map(index -> index.getGunData().getPutAwayTime()).orElse(0F);
-                if (drawTime < putAwayTime * 1000) {
-                    tac$DrawTimestamp = System.currentTimeMillis() + drawTime;
-                } else {
-                    tac$DrawTimestamp = System.currentTimeMillis() + (long) (putAwayTime * 1000);
-                }
+        if (drawTime >= 0) { // 如果不处于收枪状态，则需要计算收枪时长
+            if (drawTime < tac$CurrentPutAwayTimeS * 1000) {
+                tac$DrawTimestamp = System.currentTimeMillis() + drawTime;
             } else {
-                tac$DrawTimestamp = System.currentTimeMillis();
+                tac$DrawTimestamp = System.currentTimeMillis() + (long) (tac$CurrentPutAwayTimeS * 1000);
             }
         }
         tac$CurrentGunItem = gunItemSupplier;
+        ((IGunOperator)this).updatePutAwayTime();
+    }
+
+    @Unique
+    @Override
+    public void updatePutAwayTime(){
+        ItemStack gunItem = tac$CurrentGunItem == null ? ItemStack.EMPTY : tac$CurrentGunItem.get();
+        IGun iGun = IGun.getIGunOrNull(gunItem);
+        if (iGun != null) {
+            Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun.getGunId(gunItem));
+            tac$CurrentPutAwayTimeS = gunIndex.map(index -> index.getGunData().getPutAwayTime()).orElse(0F);
+        } else {
+            tac$CurrentPutAwayTimeS = 0;
+        }
     }
 
     @Unique
@@ -594,19 +603,19 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Override
     @Unique
-    public void resetKnockbackStrength() {
+    public void resetKnockBackStrength() {
         this.tac$KnockbackStrength = -1;
     }
 
     @Override
     @Unique
-    public double getKnockbackStrength() {
+    public double getKnockBackStrength() {
         return this.tac$KnockbackStrength;
     }
 
     @Override
     @Unique
-    public void setKnockbackStrength(double strength) {
+    public void setKnockBackStrength(double strength) {
         this.tac$KnockbackStrength = strength;
     }
 }
