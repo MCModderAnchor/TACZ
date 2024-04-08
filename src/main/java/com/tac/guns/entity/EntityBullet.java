@@ -80,6 +80,12 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
         }
     }
 
+    protected Vec3 hitEntityPos(Entity entity) {
+        Vec3 startPos = this.position();
+        Vec3 endPos = this.position().add(this.getDeltaMovement());
+        return entity.getBoundingBox().clip(startPos, endPos).orElse(entity.position());
+    }
+
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (result.getEntity() instanceof LivingEntity livingEntity) {
@@ -91,7 +97,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
             livingEntity.hurt(DamageSource.thrown(this, this.getOwner()), this.damageAmount);
             modifier.resetKnockBackStrength();
             if (this.hasExplosion) {
-                createExplosion(this, this.explosionDamage, this.explosionRadius);
+                createExplosion(this, this.explosionDamage, this.explosionRadius, hitEntityPos(livingEntity));
             }
         }
         super.onHitEntity(result);
@@ -100,11 +106,11 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
 
     @Override
     protected void onHitBlock(@NotNull BlockHitResult hitResult) {
+        Vec3 location = hitResult.getLocation();
         if (this.hasExplosion) {
-            createExplosion(this, this.explosionDamage, this.explosionRadius);
+            createExplosion(this, this.explosionDamage, this.explosionRadius, location);
         }
         super.onHitBlock(hitResult);
-        Vec3 location = hitResult.getLocation();
 
         if (this.level instanceof ServerLevel serverLevel) {
             BulletHoleOption bulletHoleOption = new BulletHoleOption(hitResult.getDirection(), hitResult.getBlockPos());
@@ -165,7 +171,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
         return super.ownedBy(entity);
     }
 
-    public static void createExplosion(Entity exploder, float damage, float radius) {
+    public static void createExplosion(Entity exploder, float damage, float radius, Vec3 hitPos) {
         // 客户端不执行
         if (!(exploder.level instanceof ServerLevel level)) {
             return;
@@ -177,7 +183,7 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
         }
         // 创建爆炸
         ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null,
-                exploder.getX(), exploder.getY(), exploder.getZ(), damage, radius, mode);
+                hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, mode);
         // 监听 forge 事件
         if (ForgeEventFactory.onExplosionStart(level, explosion)) {
             return;
@@ -189,8 +195,8 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
             explosion.clearToBlow();
         }
         // 客户端发包，发送爆炸相关信息
-        level.players().stream().filter(player -> player.distanceTo(exploder) < AmmoConfig.EXPLOSIVE_AMMO_VISIBLE_DISTANCE.get()).forEach(player -> {
-            ClientboundExplodePacket packet = new ClientboundExplodePacket(exploder.getX(), exploder.getY(), exploder.getZ(),
+        level.players().stream().filter(player -> Mth.sqrt((float) player.distanceToSqr(hitPos)) < AmmoConfig.EXPLOSIVE_AMMO_VISIBLE_DISTANCE.get()).forEach(player -> {
+            ClientboundExplodePacket packet = new ClientboundExplodePacket(hitPos.x(), hitPos.y(), hitPos.z(),
                     radius, explosion.getToBlow(), explosion.getHitPlayers().get(player));
             player.connection.send(packet);
         });
