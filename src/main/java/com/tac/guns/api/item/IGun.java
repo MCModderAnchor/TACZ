@@ -55,6 +55,7 @@ public interface IGun {
      * @param gun 输入物品
      * @return 枪械 ID
      */
+    @Nonnull
     ResourceLocation getGunId(ItemStack gun);
 
     void setGunId(ItemStack gun, @Nullable ResourceLocation gunId);
@@ -78,7 +79,9 @@ public interface IGun {
     @Nonnull
     ItemStack getAttachment(ItemStack gun, AttachmentType type);
 
-    void setAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment);
+    void installAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment);
+
+    void unloadAttachment(@Nonnull ItemStack gun, AttachmentType type);
 
     boolean allowAttachment(ItemStack gun, ItemStack attachmentItem);
 

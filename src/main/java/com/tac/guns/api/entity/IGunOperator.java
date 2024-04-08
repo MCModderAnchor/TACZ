@@ -1,10 +1,11 @@
 package com.tac.guns.api.entity;
 
-import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.function.Supplier;
 
 public interface IGunOperator {
     /**
@@ -37,7 +38,7 @@ public interface IGunOperator {
     /**
      * 服务端切枪逻辑
      */
-    void draw(ItemStack gunItemStack);
+    void draw(Supplier<ItemStack> itemStackSupplier);
 
     /**
      * 服务端换弹逻辑
@@ -46,10 +47,10 @@ public interface IGunOperator {
 
     /**
      * 服务端切换开火模式的逻辑
-     *
-     * @return 切换后的开火模式
      */
-    FireMode fireSelect();
+    void fireSelect();
+
+    void zoom();
 
     /**
      * 从实体的位置，向指定的方向开枪
@@ -74,9 +75,9 @@ public interface IGunOperator {
      */
     void aim(boolean isAim);
 
-    void resetKnockbackStrength();
-
-    double getKnockbackStrength();
-
-    void setKnockbackStrength(double strength);
+    /**
+     * 根据当前持握的枪械属性更新收枪时间。
+     * 应当在切枪、枪械改装、附魔等时机调用
+     */
+    void updatePutAwayTime();
 }

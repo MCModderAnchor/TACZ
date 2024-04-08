@@ -4,6 +4,7 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.init.ModSounds;
 import com.tac.guns.network.message.ServerMessageSound;
+import com.tac.guns.sound.SoundManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
@@ -14,13 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class SoundPlayManager {
-    public static String SHOOT_SOUND = "shoot";
-    public static String DRY_FIRE_SOUND = "dry_fire";
-    public static String RELOAD_EMPTY_SOUND = "reload_empty";
-    public static String RELOAD_TACTICAL_SOUND = "reload_tactical";
-    public static String INSPECT_EMPTY_SOUND = "inspect_empty";
-    public static String INSPECT_SOUND = "inspect";
-    public static String DRAW_SOUND = "draw";
+
 
     /**
      * 用于阻止连发时，反复播放 DryFire 音效
@@ -46,12 +41,12 @@ public class SoundPlayManager {
     }
 
     public static void playShootSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        playClientSound(entity, gunIndex.getSounds(SHOOT_SOUND), 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
+        playClientSound(entity, gunIndex.getSounds(SoundManager.SHOOT_SOUND), 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
     }
 
     public static void playDryFireSound(LivingEntity entity, ClientGunIndex gunIndex) {
         if (DRY_SOUND_TRACK) {
-            playClientSound(entity, gunIndex.getSounds(DRY_FIRE_SOUND), 1.0f, 1.0f);
+            playClientSound(entity, gunIndex.getSounds(SoundManager.DRY_FIRE_SOUND), 1.0f, 1.0f);
             DRY_SOUND_TRACK = false;
         }
     }
@@ -65,22 +60,22 @@ public class SoundPlayManager {
 
     public static void playReloadSound(LivingEntity entity, ClientGunIndex gunIndex, boolean noAmmo) {
         if (noAmmo) {
-            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(RELOAD_EMPTY_SOUND), 1.0f, 1.0f);
+            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.RELOAD_EMPTY_SOUND), 1.0f, 1.0f);
         } else {
-            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(RELOAD_TACTICAL_SOUND), 1.0f, 1.0f);
+            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.RELOAD_TACTICAL_SOUND), 1.0f, 1.0f);
         }
     }
 
     public static void playInspectSound(LivingEntity entity, ClientGunIndex gunIndex, boolean noAmmo) {
         if (noAmmo) {
-            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(INSPECT_EMPTY_SOUND), 1.0f, 1.0f);
+            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.INSPECT_EMPTY_SOUND), 1.0f, 1.0f);
         } else {
-            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(INSPECT_SOUND), 1.0f, 1.0f);
+            tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.INSPECT_SOUND), 1.0f, 1.0f);
         }
     }
 
     public static void playDrawSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(DRAW_SOUND), 1.0f, 1.0f);
+        tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.DRAW_SOUND), 1.0f, 1.0f);
     }
 
     public static void playMessageSound(ServerMessageSound message) {

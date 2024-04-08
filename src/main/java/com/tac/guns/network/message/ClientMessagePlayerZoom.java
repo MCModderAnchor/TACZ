@@ -7,15 +7,15 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ClientMessagePlayerFireSelect {
-    public static void encode(ClientMessagePlayerFireSelect message, FriendlyByteBuf buf) {
+public class ClientMessagePlayerZoom {
+    public static void encode(ClientMessagePlayerZoom message, FriendlyByteBuf buf) {
     }
 
-    public static ClientMessagePlayerFireSelect decode(FriendlyByteBuf buf) {
-        return new ClientMessagePlayerFireSelect();
+    public static ClientMessagePlayerZoom decode(FriendlyByteBuf buf) {
+        return new ClientMessagePlayerZoom();
     }
 
-    public static void handle(ClientMessagePlayerFireSelect message, Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void handle(ClientMessagePlayerZoom message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide().isServer()) {
             context.enqueueWork(() -> {
@@ -23,7 +23,7 @@ public class ClientMessagePlayerFireSelect {
                 if (entity == null) {
                     return;
                 }
-                IGunOperator.fromLivingEntity(entity).fireSelect();
+                IGunOperator.fromLivingEntity(entity).zoom();
             });
         }
         context.setPacketHandled(true);

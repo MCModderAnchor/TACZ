@@ -1,7 +1,6 @@
 package com.tac.guns.client.animation.internal;
 
 import com.google.common.collect.Sets;
-import com.mojang.logging.LogUtils;
 import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.AnimationPlan;
 import com.tac.guns.client.animation.ObjectAnimation;
@@ -17,16 +16,16 @@ import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public class GunAnimationStateMachine {
-    public static final String STATIC_BOLT_CAUGHT_ANIMATION = "static_bolt_caught";
-    public static final String STATIC_IDLE_ANIMATION = "static_idle";
     protected static final Set<Integer> blendingTracks = Sets.newHashSet();
     protected static int trackIndexTop = 0;
     public static final int MOVEMENT_TRACK = blendingTrack();
-    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
+    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
     public static final int MAIN_TRACK = staticTrack();
     public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
     public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
     public static final int SELECTOR_STATIC_TRACK = staticTrack();
+    public static final String STATIC_BOLT_CAUGHT_ANIMATION = "static_bolt_caught";
+    public static final String STATIC_IDLE_ANIMATION = "static_idle";
     public static final String SHOOT_ANIMATION = "shoot";
     public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";
     public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";
@@ -115,11 +114,6 @@ public class GunAnimationStateMachine {
     }
 
     public void onGunPutAway(float putAwayTimeS) {
-        /*ObjectAnimationRunner oldRunner = controller.getAnimation(MAIN_TRACK);
-        if(oldRunner != null && !oldRunner.isRunning() && !oldRunner.isHolding() && !oldRunner.isTransitioning()) {
-            // 在 main track 没有播放动画的情况下，手动播放一次 PUT_AWAY_ANIMATION，以保证有关键帧的组都能进行过渡
-            controller.runAnimation(MAIN_TRACK, PUT_AWAY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0);
-        }*/
         controller.runAnimation(MAIN_TRACK, PUT_AWAY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, putAwayTimeS * 0.75f);
         // 改变 put away 动画的进度，如果刚刚切枪不久，则收枪应当更快。
         ObjectAnimationRunner runner = controller.getAnimation(MAIN_TRACK);
@@ -130,7 +124,6 @@ public class GunAnimationStateMachine {
                 return;
             }
             if (runner.getTransitionTo() != null && PUT_AWAY_ANIMATION.equals(runner.getTransitionTo().getAnimation().name)) {
-                LogUtils.getLogger().info("" + runner.getTransitionTo().getAnimation().getMaxEndTimeS());
                 long progress = (long) (Math.max(runner.getTransitionTo().getAnimation().getMaxEndTimeS() - putAwayTimeS, 0) * 1e9);
                 runner.getTransitionTo().setProgressNs(progress);
             }
@@ -313,6 +306,9 @@ public class GunAnimationStateMachine {
         return false;
     }
 
+    public boolean isPlayingRunAnimation() {
+        return isPlayingAnimation(MOVEMENT_TRACK, RUN_START_ANIMATION, RUN_LOOP_ANIMATION, RUN_HOLD_ANIMATION, RUN_END_ANIMATION);
+    }
     public boolean isPlayingRunIntroOrLoop() {
         return isPlayingAnimation(MOVEMENT_TRACK, RUN_LOOP_ANIMATION, RUN_START_ANIMATION);
     }

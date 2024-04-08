@@ -5,12 +5,13 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "tac.refmap.json",
   "mixins": [
-    "common.LivingEntityMixin"
+    "common.LivingEntityMixin",
+    "common.ServerPlayNetHandlerMixin"
   ],
   "client": [
-    "client.ItemInHandRendererMixin",
     "client.GameRendererMixin",
     "client.HumanoidModelMixin",
+    "client.ItemInHandRendererMixin",
     "client.LanguageMixin",
     "client.LocalPlayerMixin",
     "client.PlayerModelMixin"

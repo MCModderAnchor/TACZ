@@ -3,23 +3,21 @@ package com.tac.guns.network.message;
 import com.tac.guns.api.entity.IGunOperator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ClientMessagePlayerDrawGun {
-    private final int slotIndex;
+public class ClientMessagePlayerDrawGun {;
 
-    public ClientMessagePlayerDrawGun(int slotIndex) {
-        this.slotIndex = slotIndex;
+    public ClientMessagePlayerDrawGun() {
     }
 
     public static void encode(ClientMessagePlayerDrawGun message, FriendlyByteBuf buf) {
-        buf.writeInt(message.slotIndex);
     }
 
     public static ClientMessagePlayerDrawGun decode(FriendlyByteBuf buf) {
-        return new ClientMessagePlayerDrawGun(buf.readInt());
+        return new ClientMessagePlayerDrawGun();
     }
 
     public static void handle(ClientMessagePlayerDrawGun message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -30,8 +28,9 @@ public class ClientMessagePlayerDrawGun {
                 if (entity == null) {
                     return;
                 }
-                // TODO 验证 slotIndex 是否为允许 draw 的槽位
-                IGunOperator.fromLivingEntity(entity).draw(entity.getInventory().getItem(message.slotIndex));
+                Inventory inventory = entity.getInventory();
+                int selected = inventory.selected;
+                IGunOperator.fromLivingEntity(entity).draw(() -> inventory.getItem(selected));
             });
         }
         context.setPacketHandled(true);

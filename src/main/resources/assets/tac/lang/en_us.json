@@ -1,9 +1,7 @@
 {
   "custom.tac.error.no_name": "Error: No Name",
   "commands.tac.reload.success": "All pack is reload!",
-  "message.tac.fire_select.success": "Switched to %s fire mode",
   "message.tac.fire_select.fail": "Unknown fire mode, unable to shoot",
-  "message.tac.reload.success": "The gun has been reloaded",
   "key.category.tac": "Timeless & Classics",
   "key.tac.reload.desc": "Reload",
   "key.tac.inspect.desc": "Inspect",
@@ -21,6 +19,7 @@
   "gui.tac.gun_smith_table.preview": "Preview",
   "gui.tac.gun_smith_table.ingredient": "Ingredient: ",
   "gui.tac.gun_smith_table.craft": "Craft",
+  "gui.tac.gun_refit.unload.no_space": "There is no free space in inventory for you to unload attachment.",
   "tooltip.tac.ammo_box.count": "Count: %d",
   "tooltip.tac.gun.type": "Type: ",
   "tooltip.tac.gun.damage": "Damage: ",

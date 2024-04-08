@@ -38,6 +38,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String SHELL_ORIGIN_NODE = "shell";
     private static final String CONSTRAINT_NODE = "constraint";
     private static final String ATTACHMENT_POS_SUFFIX = "_pos";
+    private static final String ATTACHMENT_ADAPTER_SUFFIX = "_adapter";
     private static final String REFIT_VIEW_PREFIX = "refit_";
     private static final String REFIT_VIEW_SUFFIX = "_view";
     private static final String ROOT_NODE = "root";
@@ -154,18 +155,22 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         });
         this.setFunctionalRenderer(MAG_EXTENDED_1, bedrockPart -> {
             //TODO 安装一级扩容弹匣时可见
+            bedrockPart.visible = false;
             return null;
         });
         this.setFunctionalRenderer(MAG_EXTENDED_2, bedrockPart -> {
             //TODO 安装二级扩容弹匣时可见
+            bedrockPart.visible = false;
             return null;
         });
         this.setFunctionalRenderer(MAG_EXTENDED_3, bedrockPart -> {
             //TODO 安装三级扩容弹匣时可见
+            bedrockPart.visible = false;
             return null;
         });
         this.setFunctionalRenderer(MAG_STANDARD, bedrockPart -> {
             //TODO 未安装扩容弹匣时可见
+            bedrockPart.visible = true;
             return null;
         });
 

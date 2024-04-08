@@ -30,7 +30,7 @@ public class AttachmentSkinTestCommand {
             ServerPlayer player = context.getSource().getPlayerOrException();
             ItemStack itemStack = player.getMainHandItem();
             if (itemStack.getItem() instanceof IGun iGun) {
-                iGun.setAttachment(itemStack, AttachmentItemBuilder.create().setSkinId(skinId).build());
+                iGun.installAttachment(itemStack, AttachmentItemBuilder.create().setSkinId(skinId).build());
             }
         } catch (CommandSyntaxException e) {
             throw new RuntimeException(e);

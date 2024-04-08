@@ -1,7 +1,9 @@
 package com.tac.guns.mixin.common;
 
 import com.tac.guns.api.TimelessAPI;
+import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.entity.IGunOperator;
+import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.api.event.GunFireSelectEvent;
 import com.tac.guns.api.event.GunReloadEvent;
 import com.tac.guns.api.event.GunShootEvent;
@@ -10,19 +12,18 @@ import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
+import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.serializer.ModEntityDataSerializers;
-import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunReloadData;
 import com.tac.guns.resource.pojo.data.gun.InaccuracyType;
-import net.minecraft.Util;
+import com.tac.guns.sound.SoundManager;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -50,11 +51,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-
-import static com.tac.guns.client.sound.SoundPlayManager.SHOOT_SOUND;
+import java.util.function.Supplier;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity implements IGunOperator {
+public abstract class LivingEntityMixin extends Entity implements IGunOperator, KnockBackModifier {
     @Unique
     private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
     @Unique
@@ -105,11 +105,17 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Nonnull
     private ReloadState.StateType tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
     /**
-     * 缓存实体当前操作的枪械物品。在切枪时 (draw 方法) 更新。
+     * 当前操作的枪械物品的 Supplier。在切枪时 (draw 方法) 更新。
      */
     @Unique
     @Nullable
-    private ItemStack tac$CurrentGunItem = null;
+    private Supplier<ItemStack> tac$CurrentGunItem = null;
+    /**
+     * 缓存当前枪械的收枪时间，以确保下一次切枪的时候使用此时间计算收枪。
+     * 此数值不会因 tac$CurrentGunItem 提供的 ItemStack 改变而改变，因此应当在恰当的时机调用 updatePutAwayTime() 进行更新。
+     */
+    @Unique
+    private float tac$CurrentPutAwayTimeS = 0;
     /**
      * 用来记录子弹击退能力，负数表示使用原版击退
      */
@@ -153,10 +159,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$CurrentGunItem == null) {
             return 0;
         }
-        if (!(tac$CurrentGunItem.getItem() instanceof IGun iGun)) {
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
             return 0;
         }
-        ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
         return gunIndex.map(index -> {
             long coolDown = index.getGunData().getShootInterval() - (System.currentTimeMillis() - tac$ShootTimestamp);
@@ -174,10 +181,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$CurrentGunItem == null) {
             return 0;
         }
-        if (!(tac$CurrentGunItem.getItem() instanceof IGun iGun)) {
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
             return 0;
         }
-        ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
         return gunIndex.map(index -> {
             long coolDown = (long) (index.getGunData().getDrawTime() * 1000) - (System.currentTimeMillis() - tac$DrawTimestamp);
@@ -192,7 +200,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Unique
     @Override
-    public void draw(ItemStack itemStack) {
+    public void draw(Supplier<ItemStack> gunItemSupplier) {
         // 重置各个状态
         tac$ShootTimestamp = -1;
         tac$IsAiming = false;
@@ -205,21 +213,28 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             tac$DrawTimestamp = System.currentTimeMillis();
         }
         long drawTime = System.currentTimeMillis() - tac$DrawTimestamp;
-        if (drawTime >= 0) { // 如果不处于收枪状态，则开始收枪
-            IGun iGun = IGun.getIGunOrNull(tac$CurrentGunItem);
-            if (iGun != null) {
-                Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun.getGunId(tac$CurrentGunItem));
-                float putAwayTime = gunIndex.map(index -> index.getGunData().getPutAwayTime()).orElse(0F);
-                if (drawTime < putAwayTime * 1000) {
-                    tac$DrawTimestamp = System.currentTimeMillis() + drawTime;
-                } else {
-                    tac$DrawTimestamp = System.currentTimeMillis() + (long) (putAwayTime * 1000);
-                }
+        if (drawTime >= 0) { // 如果不处于收枪状态，则需要计算收枪时长
+            if (drawTime < tac$CurrentPutAwayTimeS * 1000) {
+                tac$DrawTimestamp = System.currentTimeMillis() + drawTime;
             } else {
-                tac$DrawTimestamp = System.currentTimeMillis();
+                tac$DrawTimestamp = System.currentTimeMillis() + (long) (tac$CurrentPutAwayTimeS * 1000);
             }
         }
-        tac$CurrentGunItem = itemStack;
+        tac$CurrentGunItem = gunItemSupplier;
+        ((IGunOperator)this).updatePutAwayTime();
+    }
+
+    @Unique
+    @Override
+    public void updatePutAwayTime(){
+        ItemStack gunItem = tac$CurrentGunItem == null ? ItemStack.EMPTY : tac$CurrentGunItem.get();
+        IGun iGun = IGun.getIGunOrNull(gunItem);
+        if (iGun != null) {
+            Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun.getGunId(gunItem));
+            tac$CurrentPutAwayTimeS = gunIndex.map(index -> index.getGunData().getPutAwayTime()).orElse(0F);
+        } else {
+            tac$CurrentPutAwayTimeS = 0;
+        }
     }
 
     @Unique
@@ -228,11 +243,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$CurrentGunItem == null) {
             return;
         }
-        if (!(tac$CurrentGunItem.getItem() instanceof IGun iGun)) {
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
             return;
         }
         LivingEntity entity = (LivingEntity) (Object) this;
-        ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
             // 检查换弹是否还未完成
             if (tac$ReloadStateType.isReloading()) {
@@ -246,7 +262,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             if (getDrawCoolDown() != 0) {
                 return;
             }
-            int currentAmmoCount = iGun.getCurrentAmmoCount(tac$CurrentGunItem);
+            int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
             // 检查弹药
             if (this.needCheckAmmo()) {
                 // 超出或达到上限，不换弹
@@ -257,10 +273,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
                     // 背包检查
                     for (int i = 0; i < cap.getSlots(); i++) {
                         ItemStack checkAmmoStack = cap.getStackInSlot(i);
-                        if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(tac$CurrentGunItem, checkAmmoStack)) {
+                        if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(currentGunItem, checkAmmoStack)) {
                             return true;
                         }
-                        if (checkAmmoStack.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(tac$CurrentGunItem, checkAmmoStack)) {
+                        if (checkAmmoStack.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(currentGunItem, checkAmmoStack)) {
                             return true;
                         }
                     }
@@ -271,7 +287,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
                 }
             }
             // 触发装弹事件
-            if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
+            if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(entity, currentGunItem, LogicalSide.SERVER))) {
                 return;
             }
             // 空仓换弹，初始化用于 tick 的状态
@@ -294,7 +310,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$CurrentGunItem == null) {
             return ShootResult.FAIL;
         }
-        if (!(tac$CurrentGunItem.getItem() instanceof IGun iGun)) {
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
             return ShootResult.FAIL;
         }
         // 判断射击是否正在冷却
@@ -315,15 +332,15 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         }
         LivingEntity entity = (LivingEntity) (Object) this;
         // 创造模式不判断子弹数
-        if (needCheckAmmo() && iGun.getCurrentAmmoCount(tac$CurrentGunItem) < 1) {
+        if (needCheckAmmo() && iGun.getCurrentAmmoCount(currentGunItem) < 1) {
             return ShootResult.NO_AMMO;
         }
         // 触发射击事件
-        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
+        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, currentGunItem, LogicalSide.SERVER))) {
             return ShootResult.FAIL;
         }
         // 调用射击方法
-        ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
         LivingEntity shooter = (LivingEntity) (Object) this;
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
             Level world = shooter.getLevel();
@@ -336,10 +353,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
             world.addFreshEntity(bullet);
             // 播放声音
             // TODO 配置文件决定衰减距离
-            NetworkHandler.sendSoundToNearby(shooter, 64, gunId, SHOOT_SOUND, 1.0f, 1.0f);
+            SoundManager.sendSoundToNearby(shooter, 64, gunId, SoundManager.SHOOT_SOUND, 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
             // 削减弹药数
             if (this.needCheckAmmo()) {
-                iGun.reduceCurrentAmmoCount(tac$CurrentGunItem);
+                iGun.reduceCurrentAmmoCount(currentGunItem);
             }
         });
         tac$ShootTimestamp = System.currentTimeMillis();
@@ -364,28 +381,51 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Unique
     @Override
-    public FireMode fireSelect() {
+    public void fireSelect() {
         if (tac$CurrentGunItem == null) {
-            return FireMode.UNKNOWN;
+            return;
         }
-        if (!(tac$CurrentGunItem.getItem() instanceof IGun iGun)) {
-            return FireMode.UNKNOWN;
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
+            return;
         }
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(entity, tac$CurrentGunItem, LogicalSide.SERVER))) {
-            return FireMode.UNKNOWN;
+        if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(entity, currentGunItem, LogicalSide.SERVER))) {
+            return;
         }
         // 应用切换逻辑
-        ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
-        return TimelessAPI.getCommonGunIndex(gunId).map(gunIndex -> {
-            FireMode fireMode = iGun.getFireMode(tac$CurrentGunItem);
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
+        TimelessAPI.getCommonGunIndex(gunId).map(gunIndex -> {
+            FireMode fireMode = iGun.getFireMode(currentGunItem);
             List<FireMode> fireModeSet = gunIndex.getGunData().getFireModeSet();
             // 即使玩家拿的是没有的 FireMode，这里也能切换到正常情况
             int nextIndex = (fireModeSet.indexOf(fireMode) + 1) % fireModeSet.size();
             FireMode nextFireMode = fireModeSet.get(nextIndex);
-            iGun.setFireMode(tac$CurrentGunItem, nextFireMode);
+            iGun.setFireMode(currentGunItem, nextFireMode);
             return nextFireMode;
-        }).orElse(FireMode.UNKNOWN);
+        });
+    }
+
+    @Unique
+    @Override
+    public void zoom() {
+        if (tac$CurrentGunItem == null) {
+            return;
+        }
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
+            return;
+        }
+        ItemStack scopeItem = iGun.getAttachment(currentGunItem, AttachmentType.SCOPE);
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(scopeItem);
+        if (iAttachment != null) {
+            TimelessAPI.getCommonAttachmentIndex(iAttachment.getAttachmentId(scopeItem)).ifPresent(index -> {
+                int zoomNumber = iAttachment.getZoomNumber(scopeItem);
+                ++zoomNumber;
+                iAttachment.setZoomNumber(scopeItem, zoomNumber);
+                iGun.installAttachment(currentGunItem, scopeItem);
+            });
+        }
     }
 
     @Inject(method = "tick", at = @At(value = "RETURN"))
@@ -408,13 +448,14 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
     @Unique
     private void tickAimingProgress() {
         // currentGunItem 如果为 null，则取消瞄准状态并将 aimingProgress 归零。
-        if (tac$CurrentGunItem == null || !(tac$CurrentGunItem.getItem() instanceof IGun iGun)) {
+        if (tac$CurrentGunItem == null || !(tac$CurrentGunItem.get().getItem() instanceof IGun iGun)) {
             tac$AimingProgress = 0;
             tac$AimingTimestamp = System.currentTimeMillis();
             return;
         }
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
         // 如果获取不到 gunIndex，则取消瞄准状态并将 aimingProgress 归零，返回。
-        ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             tac$AimingProgress = 0;
@@ -449,11 +490,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         if (tac$ReloadTimestamp == -1 || tac$CurrentGunItem == null) {
             return reloadState;
         }
-        if (!(tac$CurrentGunItem.getItem() instanceof IGun iGun)) {
+        if (!(tac$CurrentGunItem.get().getItem() instanceof IGun iGun)) {
             return reloadState;
         }
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
         // 获取当前枪械的 ReloadData。如果没有则返回。
-        ResourceLocation gunId = iGun.getGunId(tac$CurrentGunItem);
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             return reloadState;
@@ -494,14 +536,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
         // 更新枪内弹药
         if (tac$ReloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
-                iGun.setCurrentAmmoCount(tac$CurrentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
-                entity.sendMessage(new TranslatableComponent("message.tac.reload.success"), Util.NIL_UUID);
+                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
             }
         }
         if (tac$ReloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
-                iGun.setCurrentAmmoCount(tac$CurrentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
-                entity.sendMessage(new TranslatableComponent("message.tac.reload.success"), Util.NIL_UUID);
+                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
             }
         }
         // 更新换弹状态缓存
@@ -514,7 +554,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Unique
     private int getAndExtractNeedAmmoCount(IGun iGun, int maxAmmoCount) {
-        int currentAmmoCount = iGun.getCurrentAmmoCount(tac$CurrentGunItem);
+        if (tac$CurrentGunItem == null) {
+            return -1;
+        }
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
+        int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
         if (this.needCheckAmmo()) {
             return this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map(cap -> {
                 // 子弹数量检查
@@ -522,14 +566,14 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
                 // 背包检查
                 for (int i = 0; i < cap.getSlots(); i++) {
                     ItemStack checkAmmoStack = cap.getStackInSlot(i);
-                    if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(tac$CurrentGunItem, checkAmmoStack)) {
+                    if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(currentGunItem, checkAmmoStack)) {
                         ItemStack extractItem = cap.extractItem(i, needAmmoCount, false);
                         needAmmoCount = needAmmoCount - extractItem.getCount();
                         if (needAmmoCount <= 0) {
                             break;
                         }
                     }
-                    if (checkAmmoStack.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(tac$CurrentGunItem, checkAmmoStack)) {
+                    if (checkAmmoStack.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(currentGunItem, checkAmmoStack)) {
                         int boxAmmoCount = iAmmoBox.getAmmoCount(checkAmmoStack);
                         int extractCount = Math.min(boxAmmoCount, needAmmoCount);
                         int remainCount = boxAmmoCount - extractCount;
@@ -559,19 +603,19 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator {
 
     @Override
     @Unique
-    public void resetKnockbackStrength() {
+    public void resetKnockBackStrength() {
         this.tac$KnockbackStrength = -1;
     }
 
     @Override
     @Unique
-    public double getKnockbackStrength() {
+    public double getKnockBackStrength() {
         return this.tac$KnockbackStrength;
     }
 
     @Override
     @Unique
-    public void setKnockbackStrength(double strength) {
+    public void setKnockBackStrength(double strength) {
         this.tac$KnockbackStrength = strength;
     }
 }
