@@ -68,6 +68,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(stack);
+        poseStack.pushPose();
         TimelessAPI.getClientGunIndex(gunId).ifPresentOrElse(gunIndex -> {
             // 第一人称就不渲染了，交给别的地方
             if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
@@ -75,12 +76,10 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             }
             // GUI 特殊渲染
             if (transformType == GUI) {
-                poseStack.pushPose();
                 poseStack.translate(0.5, 1.5, 0.5);
                 poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
                 VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(gunIndex.getSlotTexture()));
                 SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                poseStack.popPose();
                 return;
             }
             // 剩下的渲染
@@ -94,7 +93,6 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
                 gunModel = lodModel.getLeft();
                 gunTexture = lodModel.getRight();
             }
-            poseStack.pushPose();
             // 移动到模型原点
             poseStack.translate(0.5, 2, 0.5);
             // 反转模型
@@ -106,16 +104,14 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             // 渲染枪械模型
             RenderType renderType = RenderType.itemEntityTranslucentCull(gunTexture);
             gunModel.render(poseStack, stack, transformType, renderType, pPackedLight, pPackedOverlay);
-            poseStack.popPose();
         }, () -> {
             // 没有这个 ammoID，渲染个错误材质提醒别人
-            poseStack.pushPose();
             poseStack.translate(0.5, 1.5, 0.5);
             poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
             VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
             SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
-            poseStack.popPose();
         });
+        poseStack.popPose();
     }
 
     private boolean inRenderDistance(PoseStack poseStack) {
