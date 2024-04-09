@@ -36,7 +36,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String FIXED_ORIGIN_NODE = "fixed";
     private static final String GROUND_ORIGIN_NODE = "ground";
     private static final String SHELL_ORIGIN_NODE = "shell";
-    private static final String CONSTRAINT_NODE = "constraint";
     private static final String ATTACHMENT_POS_SUFFIX = "_pos";
     private static final String ATTACHMENT_ADAPTER_SUFFIX = "_adapter";
     private static final String REFIT_VIEW_PREFIX = "refit_";
@@ -56,8 +55,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> groundOriginPath;
     // 瞄具配件定位组的路径。其他配件不需要存路径，只需要替换渲染。但是瞄具定位组需要用来辅助第一人称瞄准的摄像机定位。
     protected @Nullable List<BedrockPart> scopePosPath;
-    // 动画约束组的路径
-    protected @Nullable List<BedrockPart> constraintPath;
     // 抛壳子弹的起始位置
     protected @Nullable List<BedrockPart> shellOriginPath;
     protected @Nullable BedrockPart root;
@@ -181,7 +178,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
         shellOriginPath = getPath(modelMap.get(SHELL_ORIGIN_NODE));
         scopePosPath = getPath(modelMap.get(AttachmentType.SCOPE.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
-        constraintPath = getPath(modelMap.get(CONSTRAINT_NODE));
         ModelRendererWrapper rootWrapper = modelMap.get(ROOT_NODE);
         if (rootWrapper != null) {
             root = rootWrapper.getModelRenderer();
@@ -259,11 +255,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     public List<BedrockPart> getScopePosPath() {
         return scopePosPath;
-    }
-
-    @Nullable
-    public List<BedrockPart> getConstraintPath() {
-        return constraintPath;
     }
 
     @Nullable

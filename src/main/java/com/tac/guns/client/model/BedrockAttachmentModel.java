@@ -36,6 +36,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     protected List<BedrockPart> divisionNodePath;
     private boolean isScope = true;
     private boolean isSight = false;
+    private float scopeViewRadiusModifier = 1;
 
     public BedrockAttachmentModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
@@ -71,6 +72,10 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     public boolean isSight() {
         return isSight;
+    }
+
+    public void setScopeViewRadiusModifier(float scopeViewRadiusModifier) {
+        this.scopeViewRadiusModifier = scopeViewRadiusModifier;
     }
 
     public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
@@ -175,22 +180,20 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             RenderSystem.stencilFunc(GL11.GL_NOTEQUAL, 1, 0xFF);
             renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
         }
-        float width = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-        float height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
         BufferBuilder builder = Tesselator.getInstance().getBuilder();
 
         RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0xFF);
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
         RenderSystem.colorMask(false, false, false, false);
         RenderSystem.depthMask(false);
-        float rad = Math.min(width, height) / 10;
         Vector3f ocularCenter = getBedrockPartCenter(matrixStack, ocularNodePath);
         float centerX = ocularCenter.x() * 16 * 90;
         float centerY = ocularCenter.y() * 16 * 90;
+        float rad = 80 * scopeViewRadiusModifier; // 80是一个随便找的大小合适的数值。
         builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
         builder.vertex(centerX, centerY, -90.0D).color(255, 255, 255, 255).endVertex();
-        for (int i = 0; i <= 180; i++) {
-            float angle = (float) i * ((float) Math.PI * 2F) / 180.0F;
+        for (int i = 0; i <= 90; i++) {
+            float angle = (float) i * ((float) Math.PI * 2F) / 90.0F;
             float sin = Mth.sin(angle);
             float cos = Mth.cos(angle);
             builder.vertex(centerX + cos * rad, centerY + sin * rad, -90.0D).color(255, 255, 255, 255).endVertex();

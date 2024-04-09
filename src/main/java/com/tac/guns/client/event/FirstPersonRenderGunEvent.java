@@ -1,6 +1,7 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
@@ -44,8 +45,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -64,7 +67,6 @@ public class FirstPersonRenderGunEvent {
     private static final PerlinNoise SHOOT_X_SWAY_NOISE = new PerlinNoise(-0.2f, 0.2f, 400);
     private static final PerlinNoise SHOOT_Y_ROTATION_NOISE = new PerlinNoise(-0.0136f, 0.0136f, 100);
     private static final float SHOOT_Y_SWAY = -0.1f;
-    private static final float SHOOT_Z_SWAY = 0.2f;
     private static final float SHOOT_ANIMATION_TIME = 0.3f;
     private static long shootTimeStamp = -1;
     // 抛壳队列
@@ -253,13 +255,12 @@ public class FirstPersonRenderGunEvent {
         float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(GunRefitScreen.getOpeningProgress());
         // 配合运动曲线，计算瞄准进度
         float aimingProgress = AIMING_DYNAMICS.update(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
-        // 应用枪械动态，如后坐力
+        // 应用枪械动态，如后坐力、持枪跳跃等
         applyGunMovements(model, aimingProgress, partialTicks);
         // 应用各种摄像机定位组的变换（默认持枪、瞄准、改装界面等）
         applyFirstPersonPositioningTransform(poseStack, model, gunItemStack, aimingProgress, refitScreenOpeningProgress);
         // 应用动画约束变换
-        CommonTransformObject ica = gunIndex.getAnimationInfluenceCoefficient().getIronView();
-        applyAnimationConstraintTransform(poseStack, model.getConstraintPath(), aimingProgress * (1 - refitScreenOpeningProgress), ica);
+        applyAnimationConstraintTransform(poseStack, model.getConstraintPath(), aimingProgress * (1 - refitScreenOpeningProgress));
     }
 
     private static void applyGunMovements(BedrockGunModel model, float aimingProgress, float partialTicks) {
@@ -365,7 +366,7 @@ public class FirstPersonRenderGunEvent {
      * @param rotation            用于输出约束点的旋转
      */
     private static void getAnimationConstraintTransform(List<BedrockPart> nodePath, @Nonnull Vector3f originTranslation, @Nonnull Vector3f animatedTranslation,
-                                                        @Nonnull Vector3f rotation) {
+                                                        @Nonnull Vector3f rotation, @Nonnull Vector3f translationICA, @Nonnull Vector3f rotationICA) {
         if (nodePath == null) {
             return;
         }
@@ -375,9 +376,14 @@ public class FirstPersonRenderGunEvent {
         Matrix4f originMatrix = new Matrix4f();
         animeMatrix.setIdentity();
         originMatrix.setIdentity();
+        BedrockPart constrainNode = nodePath.get(nodePath.size() - 1);
         for (BedrockPart part : nodePath) {
             // 乘动画位移
-            animeMatrix.multiplyWithTranslation(part.offsetX, part.offsetY, part.offsetZ);
+            if (part != constrainNode) {
+                animeMatrix.multiplyWithTranslation(part.offsetX, part.offsetY, part.offsetZ);
+            } else {
+                translationICA.set(part.offsetX * 16, -part.offsetY * 16, part.offsetZ * 16);
+            }
             // 乘组位移
             if (part.getParent() != null) {
                 animeMatrix.multiplyWithTranslation(part.x / 16.0F, part.y / 16.0F, part.z / 16.0F);
@@ -385,7 +391,12 @@ public class FirstPersonRenderGunEvent {
                 animeMatrix.multiplyWithTranslation(part.x / 16.0F, (part.y / 16.0F - 1.5F), part.z / 16.0F);
             }
             // 乘动画旋转
-            animeMatrix.multiply(part.additionalQuaternion);
+            if (part != constrainNode) {
+                animeMatrix.multiply(part.additionalQuaternion);
+            } else {
+                float[] angles = MathUtil.toEulerAngles(part.additionalQuaternion);
+                rotationICA.set((float) Math.toDegrees(angles[0]), (float) Math.toDegrees(angles[1]), (float) Math.toDegrees(angles[2]));
+            }
             // 乘组旋转
             animeMatrix.multiply(Vector3f.ZP.rotation(part.zRot));
             animeMatrix.multiply(Vector3f.YP.rotation(part.yRot));
@@ -423,24 +434,26 @@ public class FirstPersonRenderGunEvent {
     /**
      * 应用动画约束变换。
      *
-     * @param multiplier 旋转、位移各轴的动画权重，范围皆为 0~1，0 则完全不受动画影响，1 则完全受到动画控制。
      * @param weight     控制约束变换的权重，用于插值。
      */
-    public static void applyAnimationConstraintTransform(PoseStack poseStack, List<BedrockPart> nodePath, float weight,
-                                                         CommonTransformObject multiplier) {
-        // TODO 判断是否安装瞄具，
+    public static void applyAnimationConstraintTransform(PoseStack poseStack, List<BedrockPart> nodePath, float weight) {
+        if (nodePath == null) {
+            return;
+        }
         // 获取动画约束点的变换信息
         Vector3f originTranslation = new Vector3f();
         Vector3f animatedTranslation = new Vector3f();
         Vector3f rotation = new Vector3f();
-        getAnimationConstraintTransform(nodePath, originTranslation, animatedTranslation, rotation);
+        Vector3f translationICA = new Vector3f(1, 1, 1);
+        Vector3f rotationICA = new Vector3f(1, 1, 1);
+        getAnimationConstraintTransform(nodePath, originTranslation, animatedTranslation, rotation, translationICA, rotationICA);
         // 配合约束系数，计算约束位移需要的反向位移
         Vector3f inverseTranslation = originTranslation.copy();
         inverseTranslation.sub(animatedTranslation);
-        inverseTranslation.mul(1 - multiplier.getTranslation().x(), 1 - multiplier.getTranslation().y(), 1 - multiplier.getTranslation().z());
+        inverseTranslation.mul(1 - translationICA.x(), 1 - translationICA.y(), 1 - translationICA.z());
         // 计算约束旋转需要的反向旋转。因需要插值，获取的是欧拉角
         Vector3f inverseRotation = rotation.copy();
-        inverseRotation.mul(multiplier.getRotation().x() - 1, multiplier.getRotation().y() - 1, multiplier.getRotation().z() - 1);
+        inverseRotation.mul(rotationICA.x() - 1, rotationICA.y() - 1, rotationICA.z() - 1);
         // 约束旋转
         poseStack.translate(animatedTranslation.x(), animatedTranslation.y() + 1.5f, animatedTranslation.z());
         poseStack.mulPose(Vector3f.XP.rotation(inverseRotation.x() * weight));
@@ -474,5 +487,33 @@ public class FirstPersonRenderGunEvent {
                 poseStack.translate(t.x / 16.0F, (t.y / 16.0F - 1.5), t.z / 16.0F);
             }
         }
+    }
+
+    @Nullable
+    private static CommonTransformObject getCurrentICA(ClientGunIndex gunIndex){
+        Map<String, CommonTransformObject> ica = gunIndex.getAnimationInfluenceCoefficient();
+        if (ica == null) {
+            return null;
+        }
+        GunAnimationStateMachine stateMachine = gunIndex.getAnimationStateMachine();
+        if(stateMachine.isPlayingReloadAnimation()) {
+            CommonTransformObject transformObject = ica.get("reload");
+            if (transformObject != null) {
+                return transformObject;
+            }
+        }
+        if(stateMachine.isPlayingShootAnimation()) {
+            CommonTransformObject transformObject = ica.get("shoot");
+            if (transformObject != null) {
+                return transformObject;
+            }
+        }
+        if(stateMachine.isPlayingWalkAnimation()) {
+            CommonTransformObject transformObject = ica.get("walk");
+            if (transformObject != null) {
+                return transformObject;
+            }
+        }
+        return ica.get("idle");
     }
 }

@@ -1,6 +1,7 @@
 package com.tac.guns.client.resource.pojo.display.gun;
 
 import com.google.gson.annotations.SerializedName;
+import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -40,7 +41,7 @@ public class GunDisplay {
     private ShellEjection shellEjection;
     @Nullable
     @SerializedName("ica")
-    private AnimationInfluenceCoefficient animationInfluenceCoefficient;
+    private Map<String, CommonTransformObject> animationInfluenceCoefficient;
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -96,7 +97,7 @@ public class GunDisplay {
     }
 
     @Nullable
-    public AnimationInfluenceCoefficient getAnimationInfluenceCoefficient() {
+    public  Map<String, CommonTransformObject> getAnimationInfluenceCoefficient() {
         return animationInfluenceCoefficient;
     }
 }

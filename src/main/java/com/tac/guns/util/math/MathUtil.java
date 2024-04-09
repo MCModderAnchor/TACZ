@@ -20,6 +20,10 @@ public class MathUtil {
         return Math.tan(Math.toRadians(originFov / 2)) / Math.tan(Math.toRadians(currentFov / 2));
     }
 
+    public static double copySign(double magnitude, double sign) {
+        return Math.abs(magnitude) * (sign < 0 ? -1 : 1);
+    }
+
     public static float[] toQuaternion(float roll, float pitch, float yaw) {
         double cy = Math.cos(yaw * 0.5);
         double sy = Math.sin(yaw * 0.5);
@@ -33,6 +37,46 @@ public class MathUtil {
                 (float) (sy * cp * cr - cy * sp * sr),
                 (float) (cy * cp * cr + sy * sp * sr)
         };
+    }
+
+    public static float[] toEulerAngles(Quaternion q){
+        float[] angles = new float[3];
+        // roll (x-axis rotation)
+        double sinrCosp = 2 * (q.r() * q.i() + q.j() * q.k());
+        double cosrCosp = 1 - 2 * (q.i() * q.i() + q.j() * q.j());
+        angles[0] = (float) Math.atan2(sinrCosp, cosrCosp);
+        // pitch (y-axis rotation)
+        double sinp = 2 * (q.r() * q.j() - q.i() * q.k());
+        if (Math.abs(sinp) >= 1) {
+            angles[1] = (float) copySign(Math.PI / 2, sinp); // use 90 degrees if out of range
+        } else {
+            angles[1] = (float) Math.asin(sinp);
+        }
+        // yaw (z-axis rotation)
+        double sinyCosp = 2 * (q.r() * q.k()+ q.j() * q.i());
+        double cosyCosp = 1 - 2 * (q.j() * q.j() + q.k() * q.k());
+        angles[2] = (float) Math.atan2(sinyCosp, cosyCosp);
+        return angles;
+    }
+
+    public static float[] toEulerAngles(float[] q) {
+        float[] angles = new float[3];
+        // roll (x-axis rotation)
+        double sinrCosp = 2 * (q[3] * q[0] + q[1] * q[2]);
+        double cosrCosp = 1 - 2 * (q[0] * q[0] + q[1] * q[1]);
+        angles[0] = (float) Math.atan2(sinrCosp, cosrCosp);
+        // pitch (y-axis rotation)
+        double sinp = 2 * (q[3] * q[1] - q[2] * q[0]);
+        if (Math.abs(sinp) >= 1) {
+            angles[1] = (float) copySign(Math.PI / 2, sinp); // use 90 degrees if out of range
+        } else {
+            angles[1] = (float) Math.asin(sinp);
+        }
+        // yaw (z-axis rotation)
+        double sinyCosp = 2 * (q[3] * q[2] + q[1] * q[0]);
+        double cosyCosp = 1 - 2 * (q[1] * q[1] + q[2] * q[2]);
+        angles[2] = (float) Math.atan2(sinyCosp, cosyCosp);
+        return angles;
     }
 
     public static float[] inverseQuaternion(float[] quaternion) {

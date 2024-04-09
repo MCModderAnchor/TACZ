@@ -56,22 +56,24 @@
         "draw": "tac:ak47/ak47_draw"
     },
     // Influence Coefficient of Animation 的缩写，可为空，若为空则不会生效。
-    // 表示瞄准状态下，各个动画（run、walk、shoot、reload）动画的影响系数
-    // 具体细节请参阅 tac 动画说明文档
+    // 表示瞄准状态下，各个动画（可选：bolt、reload、shoot、walk、idle）动画的影响系数
+    // 一般来讲，生效的优先级为：bolt > reload > shoot > walk > idle
     "ica": {
-        "iron_view": {
+        "shoot": {
             "translation": [0.15, 0.05, 0.4],
-            "rotation": [
-                0.3,
-                0.3,
-                0.3
-            ]
+            "rotation": [0.3, 0.3, 0.3]
         },
-        // 瞄具视角下的动画影响系数，可为空，默认全部为 0.2。以下任意数值未填都默认 0.2。
-        // 可定义的值有 translation、rotation
-        "scope_view": {
-            "translation": [0.2, 0.2, 0.2],
-            "rotation": [0.2, 0.2, 0.2]
+        "reload": {
+            "translation": [0.02, 0.02, 0.02],
+            "rotation": [0.0, 0.0, 0.0]
+        },
+        "walk": {
+            "translation": [0.15, 0.15, 0.15],
+            "rotation": [0.1, 0.1, 0.1]
+        },
+        "idle": {
+            "translation": [0.2, 0.1, 0.15],
+            "rotation": [0.1, 0.1, 0.1]
         }
     }
 }

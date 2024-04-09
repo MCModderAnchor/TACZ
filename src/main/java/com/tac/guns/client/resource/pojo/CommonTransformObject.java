@@ -9,11 +9,11 @@ import java.lang.reflect.Type;
 
 public class CommonTransformObject {
     @Nullable
-    public Vector3f translation;
+    private Vector3f translation;
     @Nullable
-    public Vector3f rotation;
+    private Vector3f rotation;
     @Nullable
-    public Vector3f scale;
+    private Vector3f scale;
 
     public CommonTransformObject() {
     }
@@ -46,6 +46,41 @@ public class CommonTransformObject {
             scale = new Vector3f(1, 1, 1);
         }
         return scale;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if (other instanceof CommonTransformObject object) {
+            boolean flag1, flag2, flag3;
+            if(translation == null || object.translation == null) {
+                flag1 = translation == null && object.translation == null;
+            }else {
+                flag1 = translation.equals(object.translation);
+            }
+            if(rotation == null || object.rotation == null) {
+                flag2 = rotation == null && object.rotation == null;
+            }else {
+                flag2 = rotation.equals(object.rotation);
+            }
+            if(scale == null || object.scale == null) {
+                flag3 = scale == null && object.scale == null;
+            }else {
+                flag3 = scale.equals(object.scale);
+            }
+            return flag1 && flag2 && flag3;
+        }
+        return false;
+    }
+
+    public CommonTransformObject lerp(CommonTransformObject target, float alpha) {
+        CommonTransformObject object = new CommonTransformObject();
+        object.translation = this.translation == null ? new Vector3f(0, 0, 0) : this.translation.copy();
+        object.rotation = this.rotation == null ? new Vector3f(0, 0, 0) : this.rotation.copy();
+        object.scale = this.scale == null ? new Vector3f(1, 1, 1) : this.scale.copy();
+        object.translation.lerp(target.getTranslation(), alpha);
+        object.rotation.lerp(target.getRotation(), alpha);
+        object.scale.lerp(target.getScale(), alpha);
+        return object;
     }
 
     public static class Serializer implements JsonDeserializer<CommonTransformObject>, JsonSerializer<CommonTransformObject> {

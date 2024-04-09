@@ -8,6 +8,7 @@ import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.InternalAssetLoader;
+import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.display.gun.*;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
@@ -38,7 +39,7 @@ public class ClientGunIndex {
     private Map<String, ResourceLocation> sounds;
     private GunTransform transform;
     private GunData gunData;
-    private AnimationInfluenceCoefficient animationInfluenceCoefficient;
+    private @Nullable Map<String, CommonTransformObject> animationInfluenceCoefficient;
     private ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
     private ResourceLocation hudTexture;
@@ -239,8 +240,7 @@ public class ClientGunIndex {
     }
 
     private static void checkAnimationInfluenceCoefficient(GunDisplay display, ClientGunIndex index) {
-        index.animationInfluenceCoefficient = Objects.requireNonNullElse(display.getAnimationInfluenceCoefficient(), new AnimationInfluenceCoefficient());
-        index.animationInfluenceCoefficient.writeDefaultIfNull();
+        index.animationInfluenceCoefficient = display.getAnimationInfluenceCoefficient();
     }
 
     private static void checkHUDTexture(GunDisplay display, ClientGunIndex index) {
@@ -316,7 +316,8 @@ public class ClientGunIndex {
         return gunData;
     }
 
-    public AnimationInfluenceCoefficient getAnimationInfluenceCoefficient() {
+    @Nullable
+    public  Map<String, CommonTransformObject> getAnimationInfluenceCoefficient() {
         return animationInfluenceCoefficient;
     }
 

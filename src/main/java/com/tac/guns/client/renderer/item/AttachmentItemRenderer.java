@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import com.tac.guns.api.TimelessAPI;
+import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.SlotModel;

@@ -18,12 +18,11 @@ import java.util.Set;
 public class GunAnimationStateMachine {
     protected static final Set<Integer> blendingTracks = Sets.newHashSet();
     protected static int trackIndexTop = 0;
-    public static final int MOVEMENT_TRACK = blendingTrack();
     public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
+    public static final int MOVEMENT_TRACK = blendingTrack();
     public static final int MAIN_TRACK = staticTrack();
     public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
     public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
-    public static final int SELECTOR_STATIC_TRACK = staticTrack();
     public static final String STATIC_BOLT_CAUGHT_ANIMATION = "static_bolt_caught";
     public static final String STATIC_IDLE_ANIMATION = "static_idle";
     public static final String SHOOT_ANIMATION = "shoot";
@@ -338,7 +337,18 @@ public class GunAnimationStateMachine {
     }
 
     public boolean isPlayingShootAnimation() {
-        return isPlayingAnimation(MAIN_TRACK, SHOOT_ANIMATION);
+        for (int track : SHOOTING_TRACKS) {
+            ObjectAnimationRunner runner = controller.getAnimation(track);
+            if (runner != null) {
+                if (runner.isRunning()) {
+                    return true;
+                }
+                if (runner.isTransitioning() && runner.getTransitionTo() != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isPlayingInspectAnimation() {

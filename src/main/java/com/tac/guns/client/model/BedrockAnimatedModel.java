@@ -18,29 +18,32 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Function;
 
 public class BedrockAnimatedModel extends BedrockModel implements AnimationListenerSupplier {
+    public static final String CAMERA_NODE_NAME = "camera";
+    private static final String CONSTRAINT_NODE = "constraint";
     private final CameraAnimationObject cameraAnimationObject = new CameraAnimationObject();
+    // 动画约束组的路径
+    protected @Nullable List<BedrockPart> constraintPath;
 
     public BedrockAnimatedModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
         // 初始化相机动画对象
-        ModelRendererWrapper cameraRendererWrapper = modelMap.get(CameraAnimationObject.CAMERA_NODE_NAME);
+        ModelRendererWrapper cameraRendererWrapper = modelMap.get(CAMERA_NODE_NAME);
         if (cameraRendererWrapper != null) {
             if (shouldRender.contains(cameraRendererWrapper.getModelRenderer())) {
-                cameraAnimationObject.cameraBone = indexBones.get(CameraAnimationObject.CAMERA_NODE_NAME);
+                cameraAnimationObject.cameraBone = indexBones.get(CAMERA_NODE_NAME);
             }
             cameraAnimationObject.cameraRenderer = cameraRendererWrapper;
         }
+        constraintPath = getPath(modelMap.get(CONSTRAINT_NODE));
     }
 
-    private static float dot(float[] a, float[] b) {
-        float sum = 0;
-        for (int i = 0; i < a.length; i++) {
-            sum += a[i] * b[i];
-        }
-        return sum;
+    @Nullable
+    public List<BedrockPart> getConstraintPath() {
+        return constraintPath;
     }
 
     private static void toQuaternion(float roll, float pitch, float yaw, @Nonnull Quaternion quaternion) {
@@ -57,30 +60,6 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                 (float) (sy * cp * cr - cy * sp * sr),
                 (float) (cy * cp * cr + sy * sp * sr)
         );
-    }
-
-    private static void quaternionToMatrix4x4(float[] q, float[] m) {
-        float invLength = 1.0f / (float) Math.sqrt(dot(q, q));
-        float qx = q[0] * invLength;
-        float qy = q[1] * invLength;
-        float qz = q[2] * invLength;
-        float qw = q[3] * invLength;
-        m[0] = 1.0f - 2.0f * qy * qy - 2.0f * qz * qz;
-        m[1] = 2.0f * (qx * qy + qw * qz);
-        m[2] = 2.0f * (qx * qz - qw * qy);
-        m[3] = 0.0f;
-        m[4] = 2.0f * (qx * qy - qw * qz);
-        m[5] = 1.0f - 2.0f * qx * qx - 2.0f * qz * qz;
-        m[6] = 2.0f * (qy * qz + qw * qx);
-        m[7] = 0.0f;
-        m[8] = 2.0f * (qx * qz + qw * qy);
-        m[9] = 2.0f * (qy * qz - qw * qx);
-        m[10] = 1.0f - 2.0f * qx * qx - 2.0f * qy * qy;
-        m[11] = 0.0f;
-        m[12] = 0.0f;
-        m[13] = 0.0f;
-        m[14] = 0.0f;
-        m[15] = 1.0f;
     }
 
     public void setVisible(String bone, boolean visible) {
@@ -152,6 +131,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
         if (model == null) {
             return null;
         }
+        boolean isConstrainNode = CONSTRAINT_NODE.equals(nodeName);
 
         AnimationListener cameraListener = cameraAnimationObject.supplyListeners(nodeName, type);
         if (cameraListener != null) {
@@ -175,7 +155,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     if (bonesItem != null) {
                         // 因为模型是上下颠倒的，因此此处x轴和y轴的偏移也进行取反
                         // 因为要达成所有位移都是相对位移，所以如果当前node是根node，则减去根node的pivot坐标。
-                        if (blend) {
+                        if (blend && !isConstrainNode) { // 约束组动画是特殊值，不参与混合
                             rendererWrapper.addOffsetX(-values[0] - bonesItem.getPivot().get(0) / 16f);
                             rendererWrapper.addOffsetY(-values[1] + bonesItem.getPivot().get(1) / 16f);
                             rendererWrapper.addOffsetZ(values[2] - bonesItem.getPivot().get(2) / 16f);
@@ -187,7 +167,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     } else {
                         // 因为模型是上下颠倒的，因此此处x轴和y轴的偏移也进行取反
                         // 虽然方法名称写的是getRotationPoint，但其实还是相对父级node的坐标移动量。因此此处与listener提供的local translation相减。
-                        if (blend) {
+                        if (blend && !isConstrainNode) { // 约束组动画是特殊值，不参与混合
                             rendererWrapper.addOffsetX(-values[0] - rendererWrapper.getRotationPointX() / 16f);
                             rendererWrapper.addOffsetY(-values[1] - rendererWrapper.getRotationPointY() / 16f);
                             rendererWrapper.addOffsetZ(values[2] - rendererWrapper.getRotationPointZ() / 16f);
@@ -227,20 +207,19 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
 
                 @Override
                 public void update(float[] values, boolean blend) {
-                    float[] m = new float[16];
-                    quaternionToMatrix4x4(values, m);
+                    float[] angles = MathUtil.toEulerAngles(values);
                     // 计算 roll（绕 x 轴的旋转角）
-                    float roll = (float) Math.atan2(m[6], m[10]);
+                    float roll = angles[0];
                     // 计算 pitch（绕 y 轴的旋转角）
-                    float pitch = (float) Math.atan2(m[2], Math.sqrt(m[6] * m[6] + m[10] * m[10]));
+                    float pitch = angles[1];
                     // 计算 yaw（绕 z 轴的旋转角）
-                    float yaw = (float) Math.atan2(m[1], m[0]);
-                    // 因为模型是上下颠倒的，因此此处roll轴的旋转需要进行取反
+                    float yaw = angles[2];
+                    // 因为模型是上下颠倒的，因此此处 yaw 轴的旋转需要进行取反
                     // 要减去模型组的初始旋转值，写入相对值。
-                    if (blend) {
+                    if (blend && !isConstrainNode) { // 约束组动画是特殊值，不参与混合
                         float[] q = MathUtil.toQuaternion(
                                 -roll - rendererWrapper.getRotateAngleX(),
-                                pitch - rendererWrapper.getRotateAngleY(),
+                                -pitch - rendererWrapper.getRotateAngleY(),
                                 yaw - rendererWrapper.getRotateAngleZ()
                         );
                         Quaternion quaternion = MathUtil.toQuaternion(q);
@@ -248,7 +227,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     } else {
                         toQuaternion(
                                 -roll - rendererWrapper.getRotateAngleX(),
-                                pitch - rendererWrapper.getRotateAngleY(),
+                                -pitch - rendererWrapper.getRotateAngleY(),
                                 yaw - rendererWrapper.getRotateAngleZ(),
                                 rendererWrapper.getAdditionalQuaternion()
                         );
@@ -368,7 +347,6 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
     }
 
     public static class CameraAnimationObject implements AnimationListenerSupplier {
-        public static final String CAMERA_NODE_NAME = "camera";
         /**
          * 存在这个四元数中的旋转是世界箱体的旋转，而不是摄像头的旋转（二者互为相反数）
          */
@@ -392,33 +370,30 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                 return new AnimationListener() {
                     @Override
                     public void update(float[] values, boolean blend) {
-                        float[] m = new float[16];
-                        quaternionToMatrix4x4(values, m);
+                        float[] angles = MathUtil.toEulerAngles(values);
                         // 计算 roll（绕 x 轴的旋转角）
-                        float roll = (float) Math.atan2(m[6], m[10]);
+                        float roll = angles[0];
                         // 计算 pitch（绕 y 轴的旋转角）
-                        float pitch = (float) Math.atan2(m[2], Math.sqrt(m[6] * m[6] + m[10] * m[10]));
-                        // 计算 roll（绕 z 轴的旋转角）
-                        float yaw = (float) Math.atan2(m[1], m[0]);
+                        float pitch = angles[1];
+                        // 计算 yaw（绕 z 轴的旋转角）
+                        float yaw = angles[2];
                         /*
-                        对roll和yaw取反单纯是因为需要使用 blockbench 的camera插件，
-                        它在关键帧中储存的旋转数值并不是摄像头的旋转数值，是世界箱体的旋转数值，
-                        但唯独pitch是反的(也就是说唯独pitch是摄像机的旋转数值)。
-                        最终需要存入rotationQuaternion的是世界箱体的旋转，因此roll yaw取反，pitch不需要
+                        在关键帧中储存的旋转数值并不是摄像头的旋转数值，是世界箱体的旋转数值
+                        最终需要存入rotationQuaternion的是摄像机的旋转（即世界箱体旋转的反相）
                         */
                         if (blend) {
                             float[] q = MathUtil.toQuaternion(
-                                    -roll - cameraRenderer.getRotateAngleX(),
-                                    pitch - cameraRenderer.getRotateAngleY(),
-                                    -yaw + cameraRenderer.getRotateAngleZ()
+                                    -roll,
+                                    -pitch,
+                                    -yaw
                             );
                             Quaternion quaternion = MathUtil.toQuaternion(q);
                             MathUtil.blendQuaternion(rotationQuaternion, quaternion);
                         } else {
                             toQuaternion(
-                                    -roll - cameraRenderer.getRotateAngleX(),
-                                    pitch - cameraRenderer.getRotateAngleY(),
-                                    -yaw + cameraRenderer.getRotateAngleZ(),
+                                    -roll,
+                                    -pitch,
+                                    -yaw,
                                     rotationQuaternion
                             );
                         }
