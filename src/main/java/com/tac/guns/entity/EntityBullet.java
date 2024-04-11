@@ -67,6 +67,11 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
             this.explosionDamage = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
             this.explosionRadius = Mth.clamp(data.getExplosionData().getDamage(), 0, Float.MAX_VALUE);
         }
+        // 子弹初始位置重置
+        double posX = throwerIn.xOld + (throwerIn.getX() - throwerIn.xOld) / 2.0;
+        double posY = throwerIn.yOld + (throwerIn.getY() - throwerIn.yOld) / 2.0 + throwerIn.getEyeHeight();
+        double posZ = throwerIn.zOld + (throwerIn.getZ() - throwerIn.zOld) / 2.0;
+        this.setPos(posX, posY, posZ);
     }
 
     @Override
