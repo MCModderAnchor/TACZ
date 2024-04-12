@@ -1,7 +1,6 @@
 package com.tac.guns.client.resource.index;
 
 import com.google.common.collect.Maps;
-import com.mojang.math.Vector3f;
 import com.tac.guns.client.animation.*;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
@@ -14,7 +13,6 @@ import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.display.gun.*;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
-import com.tac.guns.client.resource.pojo.model.BonesItem;
 import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
@@ -360,4 +358,6 @@ public class ClientGunIndex {
     public ShellEjection getShellEjection() {
         return shellEjection;
     }
+
+
 }

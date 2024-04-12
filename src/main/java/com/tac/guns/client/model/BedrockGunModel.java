@@ -6,10 +6,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
+import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
+import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.util.RenderHelper;
@@ -25,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Optional;
 
 import static com.tac.guns.client.model.CommonComponents.*;
 
@@ -291,6 +295,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         }
         // 镜子需要先渲染，写入模板值
         ItemStack attachmentItem = currentAttachmentItem.get(AttachmentType.SCOPE);
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
         if (scopePosPath != null && attachmentItem != null && !attachmentItem.isEmpty()) {
             matrixStack.pushPose();
             for (BedrockPart bedrockPart : scopePosPath) {
@@ -300,7 +305,15 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             Minecraft.getInstance().getItemRenderer().renderStatic(attachmentItem, ItemTransforms.TransformType.NONE,
                     light, overlay, matrixStack, bufferSource, 0);
             matrixStack.popPose();
-            RenderHelper.enableItemEntityStencilTest();
+            // 如果是镜子，则需要开启模板测试，因为镜内不渲染枪体
+            if (iAttachment != null) {
+                Optional<ClientAttachmentIndex> attachmentIndex = TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(attachmentItem));
+                attachmentIndex.ifPresent(index -> {
+                    if (index.isScope()) {
+                        RenderHelper.enableItemEntityStencilTest();
+                    }
+                });
+            }
         }
         RenderSystem.stencilFunc(GL11.GL_EQUAL, 0, 0xFF);
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
