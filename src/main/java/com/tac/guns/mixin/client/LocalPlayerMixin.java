@@ -164,11 +164,12 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 if (animationStateMachine != null) {
                     animationStateMachine.onGunShoot();
                 }
-                // 摄像机后坐力需要从异步线程上传到主线程执行。
+                // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
                     GunRecoil recoil = gunData.getRecoil();
                     player.setXRot(player.getXRot() - recoil.getRandomPitch());
                     player.setYRot(player.getYRot() + recoil.getRandomYaw());
+                    SoundPlayManager.playShootSound(player, gunIndex);
                 });
             }, coolDown, TimeUnit.MILLISECONDS);
             return ShootResult.SUCCESS;
