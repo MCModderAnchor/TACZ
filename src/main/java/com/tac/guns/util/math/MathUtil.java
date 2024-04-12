@@ -79,6 +79,13 @@ public class MathUtil {
         return angles;
     }
 
+    public static double toDegreePositive(double angle) {
+        while (angle < 0) {
+            angle += Math.PI * 2;
+        }
+        return Math.toDegrees(angle);
+    }
+
     public static float[] inverseQuaternion(float[] quaternion) {
         float[] result = new float[4];
         // 求共轭
