@@ -6,6 +6,7 @@
   "refmap": "tac.refmap.json",
   "mixins": [
     "common.LivingEntityMixin",
+    "common.ServerGamePacketListenerImplMixin",
     "common.ServerPlayNetHandlerMixin"
   ],
   "client": [

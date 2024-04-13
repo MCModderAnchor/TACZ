@@ -36,6 +36,19 @@ public interface IGunOperator {
     float getSynAimingProgress();
 
     /**
+     * 获取该实体是否正在瞄准。
+     * 注意，这个方法并不等价于 getSynAimingProgress() > 0。
+     * 如果玩家正在瞄准，瞄准进度会增加，否则瞄准进度会减少。
+     */
+    boolean getSynIsAiming();
+
+    /**
+     * 获取玩家持枪奔跑的时长。
+     * 最大不会大于枪械数据中设置的 sprintTime，最小不会小于 0。
+     */
+    float getSynSprintTime();
+
+    /**
      * 服务端切枪逻辑
      */
     void draw(Supplier<ItemStack> itemStackSupplier);

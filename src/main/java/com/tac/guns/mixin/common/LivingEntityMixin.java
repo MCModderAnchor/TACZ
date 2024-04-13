@@ -63,6 +63,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     private static final EntityDataAccessor<Float> DATA_AIMING_PROGRESS_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
     @Unique
     private static final EntityDataAccessor<Long> DATA_DRAW_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
+    @Unique
+    private static final EntityDataAccessor<Boolean> DATA_IS_AIMING_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
+    @Unique
+    private static final EntityDataAccessor<Float> DATA_SPRINT_TIME_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
     /**
      * 射击时间戳，射击成功时更新，单位 ms。
      * 用于计算射击的冷却时间。
@@ -116,6 +120,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
      */
     @Unique
     private float tac$CurrentPutAwayTimeS = 0;
+    @Unique
+    private float tac$SprintTimeS = 0;
+    @Unique
+    private long tac$SprintTimestamp = -1;
     /**
      * 用来记录子弹击退能力，负数表示使用原版击退
      */
@@ -152,6 +160,18 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     public float getSynAimingProgress() {
         return this.getEntityData().get(DATA_AIMING_PROGRESS_ID);
+    }
+
+    @Override
+    @Unique
+    public float getSynSprintTime() {
+        return this.getEntityData().get(DATA_SPRINT_TIME_ID);
+    }
+
+    @Override
+    @Unique
+    public boolean getSynIsAiming() {
+        return this.getEntityData().get(DATA_IS_AIMING_ID);
     }
 
     @Unique
@@ -207,7 +227,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         tac$AimingProgress = 0;
         tac$ReloadTimestamp = -1;
         tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
-
+        tac$SprintTimestamp = -1;
+        tac$SprintTimeS = 0;
         // 更新切枪时间戳
         if (tac$DrawTimestamp == -1) {
             tac$DrawTimestamp = System.currentTimeMillis();
@@ -330,6 +351,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         if (getDrawCoolDown() != 0) {
             return ShootResult.FAIL;
         }
+        // 检查是否在奔跑
+        if (tac$SprintTimeS > 0) {
+            return ShootResult.FAIL;
+        }
         LivingEntity entity = (LivingEntity) (Object) this;
         // 创造模式不判断子弹数
         if (needCheckAmmo() && iGun.getCurrentAmmoCount(currentGunItem) < 1) {
@@ -438,11 +463,50 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         // 完成各种 tick 任务
         ReloadState reloadState = tickReloadState();
         tickAimingProgress();
+        tickSprint();
         // 从服务端同步数据
         this.getEntityData().set(DATA_SHOOT_COOL_DOWN_ID, getShootCoolDown());
         this.getEntityData().set(DATA_DRAW_COOL_DOWN_ID, getDrawCoolDown());
         this.getEntityData().set(DATA_RELOAD_STATE_ID, reloadState);
         this.getEntityData().set(DATA_AIMING_PROGRESS_ID, tac$AimingProgress);
+        this.getEntityData().set(DATA_IS_AIMING_ID, tac$IsAiming);
+        this.getEntityData().set(DATA_SPRINT_TIME_ID, tac$SprintTimeS);
+    }
+
+    private void tickSprint() {
+        LivingEntity entity = (LivingEntity) (Object) this;
+        ReloadState reloadState = this.getEntityData().get(DATA_RELOAD_STATE_ID);
+        if (tac$IsAiming || (reloadState.getStateType().isReloading() && !reloadState.getStateType().isReloadFinishing())) {
+            entity.setSprinting(false);
+        }
+        if (tac$SprintTimestamp == -1) {
+            tac$SprintTimestamp = System.currentTimeMillis();
+        }
+        if (tac$CurrentGunItem == null) {
+            return;
+        }
+        ItemStack gunItem = tac$CurrentGunItem.get();
+        IGun iGun = IGun.getIGunOrNull(gunItem);
+        if (iGun == null) {
+            return;
+        }
+        TimelessAPI.getCommonGunIndex(iGun.getGunId(gunItem)).ifPresentOrElse(gunIndex -> {
+            float gunSprintTime = gunIndex.getGunData().getSprintTime();
+            if (entity.isSprinting()) {
+                tac$SprintTimeS += System.currentTimeMillis() - tac$SprintTimestamp;
+                if (tac$SprintTimeS > gunSprintTime) {
+                    tac$SprintTimeS = gunSprintTime;
+                }
+            } else {
+                tac$SprintTimeS -= System.currentTimeMillis() - tac$SprintTimestamp;
+                if (tac$SprintTimeS < 0) {
+                    tac$SprintTimeS = 0;
+                }
+            }
+        }, () ->{
+            tac$SprintTimeS = 0;
+        });
+        tac$SprintTimestamp = System.currentTimeMillis();
     }
 
     @Unique
@@ -481,7 +545,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
 
     @Unique
     private ReloadState tickReloadState() {
-        LivingEntity entity = (LivingEntity) (Object) this;
         // 初始化 tick 返回值
         ReloadState reloadState = new ReloadState();
         reloadState.setStateType(ReloadState.StateType.NOT_RELOADING);
@@ -599,6 +662,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         entityData.define(DATA_RELOAD_STATE_ID, new ReloadState());
         entityData.define(DATA_AIMING_PROGRESS_ID, 0f);
         entityData.define(DATA_DRAW_COOL_DOWN_ID, -1L);
+        entityData.define(DATA_IS_AIMING_ID, false);
+        entityData.define(DATA_SPRINT_TIME_ID, 0f);
     }
 
     @Override

@@ -41,7 +41,6 @@ public class ClientGunIndex {
     private Map<String, ResourceLocation> sounds;
     private GunTransform transform;
     private GunData gunData;
-    private @Nullable Map<String, CommonTransformObject> animationInfluenceCoefficient;
     private ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
     private ResourceLocation hudTexture;
@@ -64,7 +63,6 @@ public class ClientGunIndex {
         checkAnimation(display, index);
         checkSounds(display, index);
         checkTransform(display, index);
-        checkAnimationInfluenceCoefficient(display, index);
         checkShellEjection(display, index);
         return index;
     }
@@ -237,10 +235,6 @@ public class ClientGunIndex {
         index.slotTexture = Objects.requireNonNullElseGet(display.getSlotTextureLocation(), MissingTextureAtlasSprite::getLocation);
     }
 
-    private static void checkAnimationInfluenceCoefficient(GunDisplay display, ClientGunIndex index) {
-        index.animationInfluenceCoefficient = display.getAnimationInfluenceCoefficient();
-    }
-
     private static void checkHUDTexture(GunDisplay display, ClientGunIndex index) {
         index.hudTexture = Objects.requireNonNullElseGet(display.getHudTextureLocation(), MissingTextureAtlasSprite::getLocation);
     }
@@ -345,11 +339,6 @@ public class ClientGunIndex {
         return gunData;
     }
 
-    @Nullable
-    public  Map<String, CommonTransformObject> getAnimationInfluenceCoefficient() {
-        return animationInfluenceCoefficient;
-    }
-
     public String getThirdPersonAnimation() {
         return thirdPersonAnimation;
     }
@@ -358,6 +347,4 @@ public class ClientGunIndex {
     public ShellEjection getShellEjection() {
         return shellEjection;
     }
-
-
 }

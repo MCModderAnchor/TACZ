@@ -41,7 +41,7 @@
         // 抛壳的加速度
         "acceleration": [0.0, -20, 0.0],
         // 抛壳的三轴角速度
-        "angular_velocity": [-720, -720, 90],
+        "angular_velocity": [720, 720, 90],
         // 抛壳渲染存活时间，单位为秒
         "living_time": 1.0
     },
@@ -54,26 +54,5 @@
         "inspect": "tac:ak47/ak47_inspect",
         "inspect_empty": "tac:ak47/ak47_inspect_empty",
         "draw": "tac:ak47/ak47_draw"
-    },
-    // Influence Coefficient of Animation 的缩写，可为空，若为空则不会生效。
-    // 表示瞄准状态下，各个动画（可选：bolt、reload、shoot、walk、idle）动画的影响系数
-    // 一般来讲，生效的优先级为：bolt > reload > shoot > walk > idle
-    "ica": {
-        "shoot": {
-            "translation": [0.15, 0.05, 0.4],
-            "rotation": [0.3, 0.3, 0.3]
-        },
-        "reload": {
-            "translation": [0.02, 0.02, 0.02],
-            "rotation": [0.0, 0.0, 0.0]
-        },
-        "walk": {
-            "translation": [0.15, 0.15, 0.15],
-            "rotation": [0.1, 0.1, 0.1]
-        },
-        "idle": {
-            "translation": [0.2, 0.1, 0.15],
-            "rotation": [0.1, 0.1, 0.1]
-        }
     }
 }
