@@ -7,6 +7,7 @@ import com.tac.guns.particles.BulletHoleOption;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
 import com.tac.guns.util.explosion.ProjectileExplosion;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
@@ -66,6 +67,11 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
             this.explosionDamage = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
             this.explosionRadius = Mth.clamp(data.getExplosionData().getDamage(), 0, Float.MAX_VALUE);
         }
+        // 子弹初始位置重置
+        double posX = throwerIn.xOld + (throwerIn.getX() - throwerIn.xOld) / 2.0;
+        double posY = throwerIn.yOld + (throwerIn.getY() - throwerIn.yOld) / 2.0 + throwerIn.getEyeHeight();
+        double posZ = throwerIn.zOld + (throwerIn.getZ() - throwerIn.zOld) / 2.0;
+        this.setPos(posX, posY, posZ);
     }
 
     @Override
@@ -78,6 +84,31 @@ public class EntityBullet extends ThrowableProjectile implements IEntityAddition
         if (this.tickCount > life) {
             this.discard();
         }
+        // 子弹的旋转与抛物线
+        Vec3 vec3 = this.getDeltaMovement();
+        // 子弹初始的朝向设置
+        if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
+            double d0 = vec3.horizontalDistance();
+            this.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180F / (float)Math.PI)));
+            this.setXRot((float)(Mth.atan2(vec3.y, d0) * (double)(180F / (float)Math.PI)));
+            this.yRotO = this.getYRot();
+            this.xRotO = this.getXRot();
+        }
+        double d5 = vec3.x;
+        double d6 = vec3.y;
+        double d1 = vec3.z;
+        // 子弹的粒子效果，可以根据子弹类型做出不同的尾烟
+//        if (true) {
+//            for(int i = 0; i < 4; ++i) {
+//                this.level.addParticle(ParticleTypes.CRIT, this.getX() + d5 * (double)i / 4.0D, this.getY() + d6 * (double)i / 4.0D, this.getZ() + d1 * (double)i / 4.0D, -d5, -d6 + 0.2D, -d1);
+//            }
+//        }
+        // 子弹运动时的旋转（不包含自转）
+        double d4 = vec3.horizontalDistance();
+        this.setYRot((float)(Mth.atan2(d5, d1) * (double)(180F / (float)Math.PI)));
+        this.setXRot((float)(Mth.atan2(d6, d4) * (double)(180F / (float)Math.PI)));
+        this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
+        this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
     }
 
     protected Vec3 hitEntityPos(Entity entity) {
