@@ -1,7 +1,6 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
@@ -21,7 +20,6 @@ import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
-import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
 import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.resource.DefaultAssets;
@@ -45,10 +43,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -429,7 +425,7 @@ public class FirstPersonRenderGunEvent {
     /**
      * 应用动画约束变换。
      *
-     * @param weight     控制约束变换的权重，用于插值。
+     * @param weight 控制约束变换的权重，用于插值。
      */
     public static void applyAnimationConstraintTransform(PoseStack poseStack, BedrockGunModel gunModel, float weight) {
         List<BedrockPart> nodePath = gunModel.getConstraintPath();
@@ -445,8 +441,8 @@ public class FirstPersonRenderGunEvent {
         Vector3f rotation = new Vector3f();
         Vector3f translationICA = gunModel.getConstraintObject().translationConstraint;
         Vector3f rotationICA = gunModel.getConstraintObject().rotationConstraint;
-        LogUtils.getLogger().info("translation " + translationICA);
-        LogUtils.getLogger().info("rotation " + rotationICA);
+        // LogUtils.getLogger().info("translation " + translationICA);
+        // LogUtils.getLogger().info("rotation " + rotationICA);
         getAnimationConstraintTransform(nodePath, originTranslation, animatedTranslation, rotation);
         // 配合约束系数，计算约束位移需要的反向位移
         Vector3f inverseTranslation = originTranslation.copy();

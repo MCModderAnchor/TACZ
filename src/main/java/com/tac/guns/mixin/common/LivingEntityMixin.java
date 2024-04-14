@@ -135,7 +135,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     }
 
     @Override
-    @Shadow
+    @Shadow(remap = false)
     public abstract <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing);
 
     @Override
@@ -242,12 +242,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             }
         }
         tac$CurrentGunItem = gunItemSupplier;
-        ((IGunOperator)this).updatePutAwayTime();
+        ((IGunOperator) this).updatePutAwayTime();
     }
 
     @Unique
     @Override
-    public void updatePutAwayTime(){
+    public void updatePutAwayTime() {
         ItemStack gunItem = tac$CurrentGunItem == null ? ItemStack.EMPTY : tac$CurrentGunItem.get();
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun != null) {
@@ -503,7 +503,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
                     tac$SprintTimeS = 0;
                 }
             }
-        }, () ->{
+        }, () -> {
             tac$SprintTimeS = 0;
         });
         tac$SprintTimestamp = System.currentTimeMillis();

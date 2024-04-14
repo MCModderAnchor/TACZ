@@ -50,7 +50,8 @@ public enum CommonAssetManager {
     }
 
     public void clearAll() {
-        // TODO：重载时清理缓存
+        this.gunData.clear();
+        this.attachmentData.clear();
     }
 
     public void clearRecipes() {

@@ -9,7 +9,6 @@ import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.InternalAssetLoader;
-import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.display.gun.*;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
@@ -184,11 +183,13 @@ public class ClientGunIndex {
         if (defaultAnimation != null) {
             switch (defaultAnimation) {
                 case RIFLE -> {
+                    // FIXME: 重载模型包后会有问题
                     for (ObjectAnimation animation : InternalAssetLoader.getDefaultRifleAnimations()) {
                         controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
                     }
                 }
                 case PISTOL -> {
+                    // FIXME: 重载模型包后会有问题
                     for (ObjectAnimation animation : InternalAssetLoader.getDefaultPistolAnimations()) {
                         controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
                     }

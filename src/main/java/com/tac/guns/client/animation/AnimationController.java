@@ -34,7 +34,9 @@ public class AnimationController {
 
     @Nullable
     public ObjectAnimationRunner getAnimation(int track) {
-        if (track >= currentRunners.size()) return null;
+        if (track >= currentRunners.size()) {
+            return null;
+        }
         return currentRunners.get(track);
     }
 

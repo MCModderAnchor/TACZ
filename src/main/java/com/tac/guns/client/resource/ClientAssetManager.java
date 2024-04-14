@@ -178,6 +178,16 @@ public enum ClientAssetManager {
      * 清除所有缓存
      */
     public void clearAll() {
-        // TODO 重载时清理缓存
+        this.customTabs.clear();
+        this.gunDisplays.clear();
+        this.ammoDisplays.clear();
+        this.attachmentDisplays.clear();
+        this.attachmentSkins.clear();
+        this.animations.clear();
+        this.models.clear();
+        this.soundBuffers.clear();
+        this.languages.clear();
+        this.tempGunModelMap.clear();
+        this.tempAttachmentModelMap.clear();
     }
 }
