@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 
 public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
-    private static final SlotModel SLOT_ATTACHMENT_MODEL = new SlotModel();
+    public static final SlotModel SLOT_ATTACHMENT_MODEL = new SlotModel();
 
     public AttachmentItemRenderer(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
@@ -42,20 +42,11 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                     SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
                     return;
                 }
-                // 渲染物品时有 (-0.5, -0.5, -0.5)的位移，需要将其逆转
-                poseStack.translate(0.5, 0.5, 0.5);
-                if (transformType != ItemTransforms.TransformType.NONE) {
-                    // 基岩版模型渲染原点位于 (0, 24, 0)
-                    poseStack.translate(0, 1.5, 0);
-                    // 反转模型
-                    poseStack.scale(-1, -1, 1);
-                    if (transformType == ItemTransforms.TransformType.FIXED) {
-                        poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
-                    }
-                } else {
-                    // TransformType.NONE 用于在枪上渲染配件, TransformType.HEAD 表示在第一人称的枪上渲染配件
-                    // 基岩版模型渲染原点位于 (0, 24, 0)
-                    poseStack.translate(0, -1.5f, 0);
+                poseStack.translate(0.5, 2, 0.5);
+                // 反转模型
+                poseStack.scale(-1, -1, 1);
+                if (transformType == ItemTransforms.TransformType.FIXED) {
+                    poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
                 }
                 ResourceLocation skinId = iAttachment.getSkinId(stack);
                 ClientAttachmentSkinIndex skinIndex = attachmentIndex.getSkinIndex(skinId);

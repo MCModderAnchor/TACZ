@@ -32,6 +32,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
@@ -127,10 +128,16 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             }
             // 因为开火冷却检测用了特别定制的方法，所以不检查状态锁，而是手动检查是否换弹、切枪
             IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
+            // 检查是否正在换弹
             if (gunOperator.getSynReloadState().getStateType().isReloading()) {
                 return ShootResult.FAIL;
             }
+            // 检查是否正在切枪
             if (gunOperator.getSynDrawCoolDown() != 0) {
+                return ShootResult.FAIL;
+            }
+            // 检查是否正在奔跑
+            if (gunOperator.getSynSprintTime() > 0) {
                 return ShootResult.FAIL;
             }
             // 判断子弹数
@@ -164,11 +171,12 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 if (animationStateMachine != null) {
                     animationStateMachine.onGunShoot();
                 }
-                // 摄像机后坐力需要从异步线程上传到主线程执行。
+                // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
                     GunRecoil recoil = gunData.getRecoil();
                     player.setXRot(player.getXRot() - recoil.getRandomPitch());
                     player.setYRot(player.getYRot() + recoil.getRandomYaw());
+                    SoundPlayManager.playShootSound(player, gunIndex);
                 });
             }, coolDown, TimeUnit.MILLISECONDS);
             return ShootResult.SUCCESS;
@@ -413,6 +421,18 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (player.getLevel().isClientSide()) {
             tickAimingProgress();
             tickStateLock();
+        }
+    }
+
+    @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setSprinting(Z)V"))
+    public void cancelSprint(LocalPlayer player, boolean pSprinting) {
+        IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
+        boolean isAiming = gunOperator.getSynIsAiming();
+        ReloadState.StateType reloadStateType = gunOperator.getSynReloadState().getStateType();
+        if (isAiming || (reloadStateType.isReloading() && !reloadStateType.isReloadFinishing())) {
+            player.setSprinting(false);
+        } else {
+            player.setSprinting(pSprinting);
         }
     }
 

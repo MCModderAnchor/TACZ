@@ -3,6 +3,7 @@ package com.tac.guns.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import com.tac.guns.client.animation.AnimationListener;
 import com.tac.guns.client.animation.AnimationListenerSupplier;
 import com.tac.guns.client.animation.ObjectAnimationChannel;
@@ -25,6 +26,8 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
     public static final String CAMERA_NODE_NAME = "camera";
     private static final String CONSTRAINT_NODE = "constraint";
     private final CameraAnimationObject cameraAnimationObject = new CameraAnimationObject();
+    @Nullable
+    private ConstraintObject constraintObject;
     // 动画约束组的路径
     protected @Nullable List<BedrockPart> constraintPath;
 
@@ -33,12 +36,19 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
         // 初始化相机动画对象
         ModelRendererWrapper cameraRendererWrapper = modelMap.get(CAMERA_NODE_NAME);
         if (cameraRendererWrapper != null) {
-            if (shouldRender.contains(cameraRendererWrapper.getModelRenderer())) {
-                cameraAnimationObject.cameraBone = indexBones.get(CAMERA_NODE_NAME);
-            }
             cameraAnimationObject.cameraRenderer = cameraRendererWrapper;
         }
+        // 初始化动画约束对象
         constraintPath = getPath(modelMap.get(CONSTRAINT_NODE));
+        if (constraintPath != null) {
+            constraintObject = new ConstraintObject();
+            BedrockPart constraintNode = constraintPath.get(constraintPath.size() - 1);
+            if (shouldRender.contains(constraintNode)) {
+                constraintObject.bonesItem = indexBones.get(CONSTRAINT_NODE);
+            } else {
+                constraintObject.node = constraintNode;
+            }
+        }
     }
 
     @Nullable
@@ -79,6 +89,10 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
             rendererWrapper.setScaleY(1);
             rendererWrapper.setScaleZ(1);
         }
+        if (constraintObject != null) {
+            constraintObject.rotationConstraint.set(0, 0, 0);
+            constraintObject.translationConstraint.set(0, 0, 0);
+        }
     }
 
     public void cleanCameraAnimationTransform() {
@@ -101,6 +115,10 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
 
     public @Nonnull CameraAnimationObject getCameraAnimationObject() {
         return cameraAnimationObject;
+    }
+
+    public @Nullable ConstraintObject getConstraintObject() {
+        return constraintObject;
     }
 
     @Override
@@ -131,11 +149,17 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
         if (model == null) {
             return null;
         }
-        boolean isConstrainNode = CONSTRAINT_NODE.equals(nodeName);
 
         AnimationListener cameraListener = cameraAnimationObject.supplyListeners(nodeName, type);
         if (cameraListener != null) {
             return cameraListener;
+        }
+
+        if (constraintObject != null) {
+            AnimationListener constraintListener =constraintObject.supplyListeners(nodeName, type);
+            if (constraintListener != null) {
+                return constraintListener;
+            }
         }
 
         if (type.equals(ObjectAnimationChannel.ChannelType.TRANSLATION)) {
@@ -155,7 +179,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     if (bonesItem != null) {
                         // 因为模型是上下颠倒的，因此此处x轴和y轴的偏移也进行取反
                         // 因为要达成所有位移都是相对位移，所以如果当前node是根node，则减去根node的pivot坐标。
-                        if (blend && !isConstrainNode) { // 约束组动画是特殊值，不参与混合
+                        if (blend) { // 约束组动画是特殊值，不参与混合
                             rendererWrapper.addOffsetX(-values[0] - bonesItem.getPivot().get(0) / 16f);
                             rendererWrapper.addOffsetY(-values[1] + bonesItem.getPivot().get(1) / 16f);
                             rendererWrapper.addOffsetZ(values[2] - bonesItem.getPivot().get(2) / 16f);
@@ -167,7 +191,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     } else {
                         // 因为模型是上下颠倒的，因此此处x轴和y轴的偏移也进行取反
                         // 虽然方法名称写的是getRotationPoint，但其实还是相对父级node的坐标移动量。因此此处与listener提供的local translation相减。
-                        if (blend && !isConstrainNode) { // 约束组动画是特殊值，不参与混合
+                        if (blend) { // 约束组动画是特殊值，不参与混合
                             rendererWrapper.addOffsetX(-values[0] - rendererWrapper.getRotationPointX() / 16f);
                             rendererWrapper.addOffsetY(-values[1] - rendererWrapper.getRotationPointY() / 16f);
                             rendererWrapper.addOffsetZ(values[2] - rendererWrapper.getRotationPointZ() / 16f);
@@ -216,7 +240,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                     float yaw = angles[2];
                     // 因为模型是上下颠倒的，因此此处 yaw 轴的旋转需要进行取反
                     // 要减去模型组的初始旋转值，写入相对值。
-                    if (blend && !isConstrainNode) { // 约束组动画是特殊值，不参与混合
+                    if (blend) { // 约束组动画是特殊值，不参与混合
                         float[] q = MathUtil.toQuaternion(
                                 -roll - rendererWrapper.getRotateAngleX(),
                                 -pitch - rendererWrapper.getRotateAngleY(),
@@ -346,6 +370,107 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
         }
     }
 
+    public static class ConstraintObject implements AnimationListenerSupplier {
+        public Vector3f translationConstraint = new Vector3f(0, 0, 0);
+        public Vector3f rotationConstraint = new Vector3f(0, 0, 0);
+        /**
+         * 当相机的节点为根时，node为空
+         */
+        protected BedrockPart node;
+        /**
+         * 当相机的节点不为根时，bonesItem为空
+         */
+        protected BonesItem bonesItem;
+
+        @Nullable
+        @Override
+        public AnimationListener supplyListeners(String nodeName, ObjectAnimationChannel.ChannelType type) {
+            if (!nodeName.equals(CONSTRAINT_NODE)) {
+                return null;
+            }
+            if (type.equals(ObjectAnimationChannel.ChannelType.ROTATION)) {
+                return new AnimationListener() {
+                    @Override
+                    public void update(float[] values, boolean blend) {
+                        float[] angles = MathUtil.toEulerAngles(values);
+                        if (blend) {
+                            rotationConstraint.set(
+                                    (float) Math.max(rotationConstraint.x(), MathUtil.toDegreePositive(-angles[0])),
+                                    (float) Math.max(rotationConstraint.y(), MathUtil.toDegreePositive(-angles[1])),
+                                    (float) Math.max(rotationConstraint.z(), MathUtil.toDegreePositive(angles[2]))
+                            );
+                        } else {
+                            rotationConstraint.set((float) MathUtil.toDegreePositive(-angles[0]), (float) MathUtil.toDegreePositive(-angles[1]), (float) MathUtil.toDegreePositive(angles[2]));
+                        }
+                    }
+                    @Override
+                    public float[] recover() {
+                        return new float[]{0, 0, 0, 1};
+                    }
+                    @Override
+                    public ObjectAnimationChannel.ChannelType getType() {
+                        return ObjectAnimationChannel.ChannelType.ROTATION;
+                    }
+                };
+            }
+            if (type.equals(ObjectAnimationChannel.ChannelType.TRANSLATION)) {
+                return new AnimationListener() {
+                    @Override
+                    public void update(float[] values, boolean blend) {
+                        if (bonesItem != null) {
+                            if (blend) {
+                                translationConstraint.set(
+                                        Math.max(translationConstraint.x(), -values[0] * 16 - bonesItem.getPivot().get(0)),
+                                        Math.max(translationConstraint.y(),  values[1] * 16 - bonesItem.getPivot().get(1)),
+                                        Math.max(translationConstraint.z(),  values[2] * 16 - bonesItem.getPivot().get(2))
+                                );
+                            } else {
+                                translationConstraint.set(
+                                        -values[0] * 16 - bonesItem.getPivot().get(0),
+                                         values[1] * 16 - bonesItem.getPivot().get(1),
+                                         values[2] * 16 - bonesItem.getPivot().get(2)
+                                );
+                            }
+                        } else {
+                            if (blend) {
+                                translationConstraint.set(
+                                        Math.max(translationConstraint.x(), -values[0] * 16 - node.x),
+                                        Math.max(translationConstraint.y(),  values[1] * 16 + node.y),
+                                        Math.max(translationConstraint.z(),  values[2] * 16 - node.z)
+                                );
+                            } else {
+                                translationConstraint.set(
+                                        -values[0] * 16 - node.x,
+                                         values[1] * 16 + node.y,
+                                         values[2] * 16 - node.z
+                                );
+                            }
+                        }
+                    }
+                    @Override
+                    public float[] recover() {
+                        float[] recover = new float[3];
+                        if (bonesItem != null) {
+                            recover[0] = -bonesItem.getPivot().get(0) / 16f;
+                            recover[1] = bonesItem.getPivot().get(1) / 16f;
+                            recover[2] = bonesItem.getPivot().get(2) / 16f;
+                        } else {
+                            recover[0] = -node.x / 16f;
+                            recover[1] = -node.y / 16f;
+                            recover[2] =  node.z / 16f;
+                        }
+                        return recover;
+                    }
+                    @Override
+                    public ObjectAnimationChannel.ChannelType getType() {
+                        return ObjectAnimationChannel.ChannelType.TRANSLATION;
+                    }
+                };
+            }
+            return null;
+        }
+    }
+
     public static class CameraAnimationObject implements AnimationListenerSupplier {
         /**
          * 存在这个四元数中的旋转是世界箱体的旋转，而不是摄像头的旋转（二者互为相反数）
@@ -356,10 +481,6 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
          * 当相机的节点为根时，cameraRenderer为空
          */
         protected ModelRendererWrapper cameraRenderer;
-        /**
-         * 当相机的节点不为根时，cameraBone为空
-         */
-        protected BonesItem cameraBone;
 
         @Override
         public AnimationListener supplyListeners(String nodeName, ObjectAnimationChannel.ChannelType type) {

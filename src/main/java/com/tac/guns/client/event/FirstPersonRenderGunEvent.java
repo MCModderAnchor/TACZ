@@ -1,7 +1,6 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
@@ -21,7 +20,6 @@ import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
-import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
 import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.resource.DefaultAssets;
@@ -45,10 +43,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -260,7 +256,7 @@ public class FirstPersonRenderGunEvent {
         // 应用各种摄像机定位组的变换（默认持枪、瞄准、改装界面等）
         applyFirstPersonPositioningTransform(poseStack, model, gunItemStack, aimingProgress, refitScreenOpeningProgress);
         // 应用动画约束变换
-        applyAnimationConstraintTransform(poseStack, model.getConstraintPath(), aimingProgress * (1 - refitScreenOpeningProgress));
+        applyAnimationConstraintTransform(poseStack, model, aimingProgress * (1 - refitScreenOpeningProgress));
     }
 
     private static void applyGunMovements(BedrockGunModel model, float aimingProgress, float partialTicks) {
@@ -366,7 +362,7 @@ public class FirstPersonRenderGunEvent {
      * @param rotation            用于输出约束点的旋转
      */
     private static void getAnimationConstraintTransform(List<BedrockPart> nodePath, @Nonnull Vector3f originTranslation, @Nonnull Vector3f animatedTranslation,
-                                                        @Nonnull Vector3f rotation, @Nonnull Vector3f translationICA, @Nonnull Vector3f rotationICA) {
+                                                        @Nonnull Vector3f rotation) {
         if (nodePath == null) {
             return;
         }
@@ -381,8 +377,6 @@ public class FirstPersonRenderGunEvent {
             // 乘动画位移
             if (part != constrainNode) {
                 animeMatrix.multiplyWithTranslation(part.offsetX, part.offsetY, part.offsetZ);
-            } else {
-                translationICA.set(part.offsetX * 16, -part.offsetY * 16, part.offsetZ * 16);
             }
             // 乘组位移
             if (part.getParent() != null) {
@@ -393,9 +387,6 @@ public class FirstPersonRenderGunEvent {
             // 乘动画旋转
             if (part != constrainNode) {
                 animeMatrix.multiply(part.additionalQuaternion);
-            } else {
-                float[] angles = MathUtil.toEulerAngles(part.additionalQuaternion);
-                rotationICA.set((float) Math.toDegrees(angles[0]), (float) Math.toDegrees(angles[1]), (float) Math.toDegrees(angles[2]));
             }
             // 乘组旋转
             animeMatrix.multiply(Vector3f.ZP.rotation(part.zRot));
@@ -434,19 +425,23 @@ public class FirstPersonRenderGunEvent {
     /**
      * 应用动画约束变换。
      *
-     * @param weight     控制约束变换的权重，用于插值。
+     * @param weight 控制约束变换的权重，用于插值。
      */
-    public static void applyAnimationConstraintTransform(PoseStack poseStack, List<BedrockPart> nodePath, float weight) {
+    public static void applyAnimationConstraintTransform(PoseStack poseStack, BedrockGunModel gunModel, float weight) {
+        List<BedrockPart> nodePath = gunModel.getConstraintPath();
         if (nodePath == null) {
+            return;
+        }
+        if (gunModel.getConstraintObject() == null) {
             return;
         }
         // 获取动画约束点的变换信息
         Vector3f originTranslation = new Vector3f();
         Vector3f animatedTranslation = new Vector3f();
         Vector3f rotation = new Vector3f();
-        Vector3f translationICA = new Vector3f(1, 1, 1);
-        Vector3f rotationICA = new Vector3f(1, 1, 1);
-        getAnimationConstraintTransform(nodePath, originTranslation, animatedTranslation, rotation, translationICA, rotationICA);
+        Vector3f translationICA = gunModel.getConstraintObject().translationConstraint;
+        Vector3f rotationICA = gunModel.getConstraintObject().rotationConstraint;
+        getAnimationConstraintTransform(nodePath, originTranslation, animatedTranslation, rotation);
         // 配合约束系数，计算约束位移需要的反向位移
         Vector3f inverseTranslation = originTranslation.copy();
         inverseTranslation.sub(animatedTranslation);
@@ -487,33 +482,5 @@ public class FirstPersonRenderGunEvent {
                 poseStack.translate(t.x / 16.0F, (t.y / 16.0F - 1.5), t.z / 16.0F);
             }
         }
-    }
-
-    @Nullable
-    private static CommonTransformObject getCurrentICA(ClientGunIndex gunIndex){
-        Map<String, CommonTransformObject> ica = gunIndex.getAnimationInfluenceCoefficient();
-        if (ica == null) {
-            return null;
-        }
-        GunAnimationStateMachine stateMachine = gunIndex.getAnimationStateMachine();
-        if(stateMachine.isPlayingReloadAnimation()) {
-            CommonTransformObject transformObject = ica.get("reload");
-            if (transformObject != null) {
-                return transformObject;
-            }
-        }
-        if(stateMachine.isPlayingShootAnimation()) {
-            CommonTransformObject transformObject = ica.get("shoot");
-            if (transformObject != null) {
-                return transformObject;
-            }
-        }
-        if(stateMachine.isPlayingWalkAnimation()) {
-            CommonTransformObject transformObject = ica.get("walk");
-            if (transformObject != null) {
-                return transformObject;
-            }
-        }
-        return ica.get("idle");
     }
 }

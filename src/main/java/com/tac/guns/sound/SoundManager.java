@@ -24,6 +24,7 @@ public class SoundManager {
             ServerMessageSound soundMessage = new ServerMessageSound(sourceEntity.getId(), gunId, soundName, volume, pitch);
             serverLevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
                     .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < distance * distance)
+                    .filter(p -> p.getId() != sourceEntity.getId())
                     .forEach(p -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), soundMessage));
         }
     }

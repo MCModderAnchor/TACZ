@@ -5,10 +5,10 @@ import com.tac.guns.client.animation.*;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.InternalAssetLoader;
-import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.display.gun.*;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
@@ -16,6 +16,7 @@ import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.resource.pojo.data.gun.GunData;
+import com.tac.guns.util.math.MathUtil;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,7 +40,6 @@ public class ClientGunIndex {
     private Map<String, ResourceLocation> sounds;
     private GunTransform transform;
     private GunData gunData;
-    private @Nullable Map<String, CommonTransformObject> animationInfluenceCoefficient;
     private ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
     private ResourceLocation hudTexture;
@@ -62,7 +62,6 @@ public class ClientGunIndex {
         checkAnimation(display, index);
         checkSounds(display, index);
         checkTransform(display, index);
-        checkAnimationInfluenceCoefficient(display, index);
         checkShellEjection(display, index);
         return index;
     }
@@ -181,20 +180,18 @@ public class ClientGunIndex {
         AnimationController controller = Animations.createControllerFromGltf(animations, index.gunModel);
         // 将默认动画填入动画控制器
         DefaultAnimation defaultAnimation = display.getDefaultAnimation();
-        BedrockPart rootNode = index.gunModel.getRootNode();
-        if (defaultAnimation != null && rootNode != null) {
-            float offsetX = -rootNode.x / 16f;
-            float offsetY = (24 - rootNode.y) / 16f;
-            float offsetZ = rootNode.z / 16f;
+        if (defaultAnimation != null) {
             switch (defaultAnimation) {
                 case RIFLE -> {
+                    // FIXME: 重载模型包后会有问题
                     for (ObjectAnimation animation : InternalAssetLoader.getDefaultRifleAnimations()) {
-                        controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, offsetX, offsetY, offsetZ));
+                        controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
                     }
                 }
                 case PISTOL -> {
+                    // FIXME: 重载模型包后会有问题
                     for (ObjectAnimation animation : InternalAssetLoader.getDefaultPistolAnimations()) {
-                        controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, offsetX, offsetY, offsetZ));
+                        controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
                     }
                 }
             }
@@ -239,10 +236,6 @@ public class ClientGunIndex {
         index.slotTexture = Objects.requireNonNullElseGet(display.getSlotTextureLocation(), MissingTextureAtlasSprite::getLocation);
     }
 
-    private static void checkAnimationInfluenceCoefficient(GunDisplay display, ClientGunIndex index) {
-        index.animationInfluenceCoefficient = display.getAnimationInfluenceCoefficient();
-    }
-
     private static void checkHUDTexture(GunDisplay display, ClientGunIndex index) {
         index.hudTexture = Objects.requireNonNullElseGet(display.getHudTextureLocation(), MissingTextureAtlasSprite::getLocation);
     }
@@ -251,9 +244,28 @@ public class ClientGunIndex {
         index.shellEjection = display.getShellEjection();
     }
 
-    private static ObjectAnimation createAnimationCopy(ObjectAnimation prototype, float offsetX, float offsetY, float offsetZ) {
+    private static ObjectAnimation createAnimationCopy(ObjectAnimation prototype, BedrockModel model) {
         ObjectAnimation animation = new ObjectAnimation(prototype);
         for (Map.Entry<String, List<ObjectAnimationChannel>> entry : animation.getChannels().entrySet()) {
+            BedrockPart node = model.getNode(entry.getKey());
+            float offsetX = 0, offsetY = 0, offsetZ = 0;
+            float rotationX = 0, rotationY = 0, rotationZ = 0;
+            if (node != null) {
+                if (node.getParent() != null) {
+                    // 因为模型是上下颠倒的，因此x轴和y轴的偏移也进行取反
+                    offsetX = -node.x / 16f;
+                    offsetY = -node.y / 16f;
+                    offsetZ = node.z / 16f;
+                } else {
+                    // 节点为根时，x轴和y轴取反，并且y轴坐标需要加上 24 。
+                    offsetX = -node.x / 16f;
+                    offsetY = (24 - node.y) / 16f;
+                    offsetZ = node.z / 16f;
+                }
+                rotationX = node.xRot;
+                rotationY = node.yRot;
+                rotationZ = node.zRot;
+            }
             for (ObjectAnimationChannel channel : entry.getValue()) {
                 if (channel.type == ObjectAnimationChannel.ChannelType.TRANSLATION) {
                     channel.content = new AnimationChannelContent(channel.content);
@@ -264,7 +276,19 @@ public class ClientGunIndex {
                         value[2] += offsetZ;
                     }
                     channel.interpolator.compile(channel.content);
-                    break;
+                    continue;
+                }
+                if (channel.type == ObjectAnimationChannel.ChannelType.ROTATION) {
+                    channel.content = new AnimationChannelContent(channel.content);
+                    for (int i = 0; i < channel.content.values.length; i++) {
+                        float[] value = channel.content.values[i];
+                        float[] angles = MathUtil.toEulerAngles(value);
+                        angles[0] += rotationX;
+                        angles[1] += rotationY;
+                        angles[2] += rotationZ;
+                        channel.content.values[i] = MathUtil.toQuaternion(angles[0], angles[1], angles[2]);
+                    }
+                    channel.interpolator.compile(channel.content);
                 }
             }
         }
@@ -314,11 +338,6 @@ public class ClientGunIndex {
 
     public GunData getGunData() {
         return gunData;
-    }
-
-    @Nullable
-    public  Map<String, CommonTransformObject> getAnimationInfluenceCoefficient() {
-        return animationInfluenceCoefficient;
     }
 
     public String getThirdPersonAnimation() {

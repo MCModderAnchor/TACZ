@@ -50,6 +50,7 @@
   "put_away_time": 0.4,
   // 瞄准时长，单位秒。
   "aim_time": 0.2,
+  "sprint_time": 0.3,
   // 开火模式
   "fire_mode": [
     // 全自动

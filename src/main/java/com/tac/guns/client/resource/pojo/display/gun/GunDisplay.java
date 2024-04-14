@@ -39,9 +39,6 @@ public class GunDisplay {
     @Nullable
     @SerializedName("shell")
     private ShellEjection shellEjection;
-    @Nullable
-    @SerializedName("ica")
-    private Map<String, CommonTransformObject> animationInfluenceCoefficient;
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -94,10 +91,5 @@ public class GunDisplay {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
-    }
-
-    @Nullable
-    public  Map<String, CommonTransformObject> getAnimationInfluenceCoefficient() {
-        return animationInfluenceCoefficient;
     }
 }

@@ -38,15 +38,5 @@
     "inspect_empty": "tac:glock_17/glock17_inspect_empty",
     "draw": "tac:glock_17/glock17_draw",
     "shoot": "tac:glock_17/glock17_shoot"
-  },
-  "ica": {
-    "iron_view": {
-      "translation": [0.3, 0.2, 0.4],
-      "rotation": [0.3, 0.4, 0.3]
-    },
-    "scope_view": {
-      "translation": [0.5, 0.5, 0.5],
-      "rotation": [0.5, 0.5, 0.5]
-    }
   }
 }

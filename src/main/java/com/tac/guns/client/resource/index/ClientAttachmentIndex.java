@@ -26,6 +26,8 @@ public class ClientAttachmentIndex {
     private AttachmentData data;
     private float fov = 70.0f;
     private float @Nullable [] zoom;
+    private boolean isScope;
+    private boolean isSight;
 
     private ClientAttachmentIndex() {
     }
@@ -63,6 +65,8 @@ public class ClientAttachmentIndex {
         }
         index.fov = display.getFov();
         index.zoom = display.getZoom();
+        index.isScope = display.isScope();
+        index.isSight = display.isSight();
         return display;
     }
 
@@ -154,5 +158,13 @@ public class ClientAttachmentIndex {
             return null;
         }
         return skinIndexMap.get(skinName);
+    }
+
+    public boolean isScope() {
+        return isScope;
+    }
+
+    public boolean isSight() {
+        return isSight;
     }
 }

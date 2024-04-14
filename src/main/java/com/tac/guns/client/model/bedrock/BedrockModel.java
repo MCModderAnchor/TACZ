@@ -325,6 +325,15 @@ public class BedrockModel{
         return (float) (degree * Math.PI / 180);
     }
 
+    public BedrockPart getNode(String nodeName) {
+        ModelRendererWrapper rendererWrapper = modelMap.get(nodeName);
+        if (rendererWrapper != null) {
+            return rendererWrapper.getModelRenderer();
+        } else {
+            return null;
+        }
+    }
+
     public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer builder = bufferSource.getBuffer(renderType);

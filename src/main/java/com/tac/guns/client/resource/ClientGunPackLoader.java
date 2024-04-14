@@ -361,7 +361,7 @@ public class ClientGunPackLoader {
                 return;
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
-                // 获取枪械的定义文件
+                // 获取配件的定义文件
                 AttachmentIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentIndexPOJO.class);
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
@@ -379,7 +379,7 @@ public class ClientGunPackLoader {
         if (Files.isDirectory(filePath)) {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
-                    // 获取枪械的定义文件
+                    // 获取配件的定义文件
                     AttachmentIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentIndexPOJO.class);
                     ATTACHMENT_INDEX.put(id, ClientAttachmentIndex.getInstance(id, indexPOJO));
                 } catch (IOException exception) {
