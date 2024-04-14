@@ -3,11 +3,13 @@ package com.tac.guns.client.model;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
+import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -79,7 +81,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
-        if (transformType == ItemTransforms.TransformType.NONE) { // 用 NONE 表示瞄具在枪上的情况
+        if (transformType.firstPerson()) {
             if (isScope) {
                 renderScope(matrixStack, transformType, renderType, light, overlay);
             } else if (isSight) {
@@ -123,6 +125,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
         RenderHelper.disableItemEntityStencilTest();
         // 渲染其他部分
+        if (scopeBodyPath != null) {
+            renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+        }
         super.render(matrixStack, transformType, renderType, light, overlay);
     }
 
@@ -181,7 +186,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
         }
         BufferBuilder builder = Tesselator.getInstance().getBuilder();
-
+        // 渲染圆形模板层
         RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0xFF);
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
         RenderSystem.colorMask(false, false, false, false);
@@ -190,6 +195,10 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         float centerX = ocularCenter.x() * 16 * 90;
         float centerY = ocularCenter.y() * 16 * 90;
         float rad = 80 * scopeViewRadiusModifier; // 80是一个随便找的大小合适的数值。
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            rad *= 0.3F + 0.7F * IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getFrameTime());
+        }
         builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
         builder.vertex(centerX, centerY, -90.0D).color(255, 255, 255, 255).endVertex();
         for (int i = 0; i <= 90; i++) {
@@ -211,7 +220,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             RenderSystem.stencilFunc(GL11.GL_EQUAL, 2, 0xFF);
             renderTempPart(matrixStack, transformType, renderType, light, overlay, divisionNodePath);
         }
-
         RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
         RenderHelper.disableItemEntityStencilTest();
         // 渲染其他部分
