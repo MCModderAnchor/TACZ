@@ -197,7 +197,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         float rad = 80 * scopeViewRadiusModifier; // 80是一个随便找的大小合适的数值。
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
-            rad *= 0.3F + 0.7F * IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getFrameTime());
+            rad *= IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getFrameTime());
         }
         builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
         builder.vertex(centerX, centerY, -90.0D).color(255, 255, 255, 255).endVertex();

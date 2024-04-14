@@ -1,6 +1,7 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
@@ -16,6 +17,7 @@ import com.tac.guns.client.gui.GunRefitScreen;
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
@@ -59,6 +61,14 @@ public class FirstPersonRenderGunEvent {
     private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(1.2f, 1.2f, 0.5f, 0);
     // 用于打开改装界面时枪械运动的平滑
     private static final SecondOrderDynamics REFIT_OPENING_DYNAMICS = new SecondOrderDynamics(1f, 1.2f, 0.5f, 0);
+    // 用于跳跃延滞动画的平滑
+    private static final SecondOrderDynamics JUMPING_DYNAMICS = new SecondOrderDynamics(0.28f,1f, 0.65f, 0);
+    private static final float JUMPING_Y_SWAY = -2f;
+    private static final float JUMPING_SWAY_TIME = 0.3f;
+    private static final float LANDING_SWAY_TIME = 0.15f;
+    private static float jumpingSwayProgress = 0;
+    private static boolean lastOnGround = false;
+    private static long jumpingTimeStamp = -1;
     // 用于枪械后座的程序动画
     private static final PerlinNoise SHOOT_X_SWAY_NOISE = new PerlinNoise(-0.2f, 0.2f, 400);
     private static final PerlinNoise SHOOT_Y_ROTATION_NOISE = new PerlinNoise(-0.0136f, 0.0136f, 100);
@@ -261,6 +271,7 @@ public class FirstPersonRenderGunEvent {
 
     private static void applyGunMovements(BedrockGunModel model, float aimingProgress, float partialTicks) {
         applyShootSwayAndRotation(model, aimingProgress);
+        applyJumpingSway(model, partialTicks);
     }
 
     /**
@@ -349,8 +360,54 @@ public class FirstPersonRenderGunEvent {
             }
             progress = (float) Easing.easeOutCubic(progress);
             rootNode.offsetX += SHOOT_X_SWAY_NOISE.getValue() / 16 * progress * (1 - aimingProgress);
-            rootNode.offsetY += SHOOT_Y_SWAY / 16 * progress * (1 - aimingProgress);
+            // 基岩版模型 y 轴上下颠倒，sway 值取相反数
+            rootNode.offsetY += -SHOOT_Y_SWAY / 16 * progress * (1 - aimingProgress);
             rootNode.additionalQuaternion.mul(Vector3f.YP.rotation(SHOOT_Y_ROTATION_NOISE.getValue() * progress));
+        }
+    }
+
+    private static void applyJumpingSway(BedrockGunModel model, float partialTicks) {
+        if (jumpingTimeStamp == -1) {
+            jumpingTimeStamp = System.currentTimeMillis();
+        }
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            double posY = Mth.lerp(partialTicks, Minecraft.getInstance().player.yOld, Minecraft.getInstance().player.getY());
+            float velocityY = (float) (posY - Minecraft.getInstance().player.yOld)/partialTicks;
+            if (player.isOnGround()) {
+                if (!lastOnGround) {
+                    jumpingSwayProgress = velocityY / -0.1f;
+                    if (jumpingSwayProgress > 1) {
+                        jumpingSwayProgress = 1;
+                    }
+                    lastOnGround = true;
+                } else {
+                    jumpingSwayProgress -= (System.currentTimeMillis() - jumpingTimeStamp) / (LANDING_SWAY_TIME * 1000);
+                    if (jumpingSwayProgress < 0) {
+                        jumpingSwayProgress = 0;
+                    }
+                }
+            } else {
+                if (lastOnGround) {
+                    jumpingSwayProgress = velocityY / 0.42f; // 0.42 是玩家自然起跳的速度
+                    if (jumpingSwayProgress > 1) {
+                        jumpingSwayProgress = 1;
+                    }
+                    lastOnGround = false;
+                } else {
+                    jumpingSwayProgress -= (System.currentTimeMillis() - jumpingTimeStamp) / (JUMPING_SWAY_TIME * 1000);
+                    if (jumpingSwayProgress < 0) {
+                        jumpingSwayProgress = 0;
+                    }
+                }
+            }
+        }
+        jumpingTimeStamp = System.currentTimeMillis();
+        float ySway = JUMPING_DYNAMICS.update(JUMPING_Y_SWAY * jumpingSwayProgress);
+        BedrockPart rootNode = model.getRootNode();
+        if (rootNode != null) {
+            // 基岩版模型 y 轴上下颠倒，sway 值取相反数
+            rootNode.offsetY += -ySway / 16;
         }
     }
 
