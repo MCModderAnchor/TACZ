@@ -47,7 +47,11 @@ public final class TextureLoader {
                 FilePackTexture filePackTexture = new FilePackTexture(file);
                 Minecraft.getInstance().textureManager.register(id, filePackTexture);
             });
-            Files.walkFileTree(filePath, visitor);
+            try {
+                Files.walkFileTree(filePath, visitor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

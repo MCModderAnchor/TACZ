@@ -18,7 +18,10 @@ public class AnimationChannelContent {
             this.keyframeTimeS = Arrays.copyOf(source.keyframeTimeS, source.keyframeTimeS.length);
         }
         if (source.values != null) {
-            this.values = Arrays.copyOf(source.values, source.values.length);
+            // deep copy animation values
+            this.values = Arrays.stream(source.values)
+                    .map(float[]::clone)
+                    .toArray(float[][]::new);
         }
     }
 }

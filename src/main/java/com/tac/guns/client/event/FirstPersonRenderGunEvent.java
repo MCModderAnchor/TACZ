@@ -441,8 +441,6 @@ public class FirstPersonRenderGunEvent {
         Vector3f rotation = new Vector3f();
         Vector3f translationICA = gunModel.getConstraintObject().translationConstraint;
         Vector3f rotationICA = gunModel.getConstraintObject().rotationConstraint;
-        // LogUtils.getLogger().info("translation " + translationICA);
-        // LogUtils.getLogger().info("rotation " + rotationICA);
         getAnimationConstraintTransform(nodePath, originTranslation, animatedTranslation, rotation);
         // 配合约束系数，计算约束位移需要的反向位移
         Vector3f inverseTranslation = originTranslation.copy();
