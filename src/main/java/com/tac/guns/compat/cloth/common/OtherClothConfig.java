@@ -13,5 +13,9 @@ public class OtherClothConfig {
         other.addEntry(entryBuilder.startIntField(new TranslatableComponent("config.tac.common.other.ammo_box_stack_size"), OtherConfig.AMMO_BOX_STACK_SIZE.get())
                 .setMin(1).setMax(Integer.MAX_VALUE).setDefaultValue(5).setTooltip(new TranslatableComponent("config.tac.common.other.ammo_box_stack_size.desc"))
                 .setSaveConsumer(OtherConfig.AMMO_BOX_STACK_SIZE::set).build());
+
+        other.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tac.common.other.default_pack_debug"), OtherConfig.DEFAULT_PACK_DEBUG.get())
+                .setDefaultValue(false).setTooltip(new TranslatableComponent("config.tac.common.other.default_pack_debug.desc"))
+                .setSaveConsumer(OtherConfig.DEFAULT_PACK_DEBUG::set).build());
     }
 }

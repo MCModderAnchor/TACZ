@@ -13,6 +13,7 @@ import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
 import com.tac.guns.client.resource.serialize.ItemStackSerializer;
 import com.tac.guns.client.resource.serialize.Vector3fSerializer;
+import com.tac.guns.config.common.OtherConfig;
 import com.tac.guns.resource.pojo.AmmoIndexPOJO;
 import com.tac.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
@@ -129,9 +130,10 @@ public class ClientGunPackLoader {
     }
 
     private static void checkDefaultPack() {
-        // TODO 改成可选安装
-        String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
-        GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
+        if (!OtherConfig.DEFAULT_PACK_DEBUG.get()) {
+            String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
+            GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
+        }
     }
 
     private static void readAsset(File[] files) {

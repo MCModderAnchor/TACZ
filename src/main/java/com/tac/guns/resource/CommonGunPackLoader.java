@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tac.guns.GunMod;
+import com.tac.guns.config.common.OtherConfig;
 import com.tac.guns.crafting.GunSmithTableIngredient;
 import com.tac.guns.crafting.GunSmithTableResult;
 import com.tac.guns.resource.index.CommonAmmoIndex;
@@ -104,9 +105,10 @@ public class CommonGunPackLoader {
     }
 
     private static void checkDefaultPack() {
-        // TODO 改成可选安装
-        String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
-        GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
+        if (!OtherConfig.DEFAULT_PACK_DEBUG.get()) {
+            String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
+            GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
+        }
     }
 
     private static void createFolder() {

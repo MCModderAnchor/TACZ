@@ -48,6 +48,8 @@
   "config.tac.common.other": "Other",
   "config.tac.common.other.ammo_box_stack_size": "Ammo Box Stack Size",
   "config.tac.common.other.ammo_box_stack_size.desc": "The maximum stack size of ammo that the ammo box can hold",
+  "config.tac.common.other.default_pack_debug": "Default Pack Debug",
+  "config.tac.common.other.default_pack_debug.desc": "When enabled, the reload command will not overwrite the default model file under config",
   "config.tac.client.render.crosshair_type": "Crosshair Type",
   "config.tac.client.render.crosshair_type.desc": "The crosshair when holding a gun"
 }
