@@ -122,7 +122,7 @@ public class GameOverlayEvent {
     private static void renderHitMarker(PoseStack poseStack, Window window) {
         long remainHitTime = System.currentTimeMillis() - hitTimestamp;
         long remainKillTime = System.currentTimeMillis() - killTimestamp;
-        float offset = 0;
+        float offset = 1.5f;
         float fadeTime;
 
         if (remainKillTime > KEEP_TIME) {
@@ -133,7 +133,7 @@ public class GameOverlayEvent {
             }
         } else {
             // 最大位移为 4 像素
-            offset = (remainKillTime * 4f) / KEEP_TIME;
+            offset += (remainKillTime * 4f) / KEEP_TIME;
             fadeTime = remainKillTime;
         }
 
