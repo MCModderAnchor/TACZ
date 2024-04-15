@@ -8,6 +8,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.IntValue BULLET_HOLE_PARTICLE_LIFE;
     public static ForgeConfigSpec.DoubleValue BULLET_HOLE_PARTICLE_FADE_THRESHOLD;
     public static ForgeConfigSpec.EnumValue<CrosshairType> CROSSHAIR_TYPE;
+    public static ForgeConfigSpec.DoubleValue HIT_MARKET_START_POSITION;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -23,6 +24,9 @@ public class RenderConfig {
 
         builder.comment("The crosshair when holding a gun");
         CROSSHAIR_TYPE = builder.defineEnum("CrosshairType", CrosshairType.SQUARE_5);
+
+        builder.comment("The starting position of the hit marker");
+        HIT_MARKET_START_POSITION = builder.defineInRange("HitMarketStartPosition", 4d, -1024d, 1024d);
 
         builder.pop();
     }

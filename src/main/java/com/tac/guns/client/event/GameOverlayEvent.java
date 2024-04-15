@@ -122,7 +122,7 @@ public class GameOverlayEvent {
     private static void renderHitMarker(PoseStack poseStack, Window window) {
         long remainHitTime = System.currentTimeMillis() - hitTimestamp;
         long remainKillTime = System.currentTimeMillis() - killTimestamp;
-        float offset = 1.5f;
+        float offset = RenderConfig.HIT_MARKET_START_POSITION.get().floatValue();
         float fadeTime;
 
         if (remainKillTime > KEEP_TIME) {

@@ -34,5 +34,9 @@ public class RenderClothConfig {
                 .setSelections(Arrays.stream(CrosshairType.values()).sorted().sorted(Comparator.comparing(CrosshairType::name)).collect(Collectors.toCollection(LinkedHashSet::new)))
                 .setDefaultValue(CrosshairType.SQUARE_5).setTooltip(new TranslatableComponent("config.tac.client.render.crosshair_type.desc"))
                 .setSaveConsumer(RenderConfig.CROSSHAIR_TYPE::set).build());
+
+        render.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tac.client.render.hit_market_start_position"), RenderConfig.HIT_MARKET_START_POSITION.get())
+                .setMin(-1024).setMax(1024).setDefaultValue(4).setTooltip(new TranslatableComponent("config.tac.client.render.hit_market_start_position.desc"))
+                .setSaveConsumer(RenderConfig.HIT_MARKET_START_POSITION::set).build());
     }
 }
