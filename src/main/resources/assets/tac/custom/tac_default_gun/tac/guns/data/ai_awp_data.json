@@ -21,6 +21,8 @@
     }
   },
   "draw_time": 0.35,
+  // 收枪的动作时长，单位秒。
+  "put_away_time": 0.65,
   "aim_time": 0.25,
   "fire_mode": [
     "semi"

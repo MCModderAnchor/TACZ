@@ -1,11 +1,14 @@
 package com.tac.guns.mixin.client;
 
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.duck.KeepingItemRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,7 +38,8 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
 
         // 用于清除默认的手臂旋转
         // 当第一人称渲染是，ageInTicks 正好是 0
-        if (ageInTicks == 0F && IGun.mainhandHoldGun(player)) {
+        ItemStack currentItem = ((KeepingItemRenderer)Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
+        if (ageInTicks == 0F && IGun.getIGunOrNull(currentItem) != null) {
             tac$resetAll(this.rightArm);
             tac$resetAll(this.leftArm);
             this.rightSleeve.copyFrom(this.rightArm);
