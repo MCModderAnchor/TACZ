@@ -1,12 +1,16 @@
 package com.tac.guns.config.common;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
 
 public class AmmoConfig {
     public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_DESTROYS_BLOCKS;
     public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_FIRE;
     public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_KNOCK_BACK;
     public static ForgeConfigSpec.IntValue EXPLOSIVE_AMMO_VISIBLE_DISTANCE;
+    public static ForgeConfigSpec.ConfigValue<List<String>> EXPLOSIVE_PASS_THROUGH_BLOCKS;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("ammo");
@@ -22,6 +26,9 @@ public class AmmoConfig {
 
         builder.comment("The distance at which the explosion effect can be seen");
         EXPLOSIVE_AMMO_VISIBLE_DISTANCE = builder.defineInRange("ExplosiveAmmoVisibleDistance", 192, 0, Integer.MAX_VALUE);
+
+        builder.comment("Those blocks that the explosion can pass through");
+        EXPLOSIVE_PASS_THROUGH_BLOCKS = builder.define("ExplosivePassThroughBlocks", Lists.newArrayList());
 
         builder.pop();
     }

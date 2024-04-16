@@ -400,8 +400,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            // TODO 发个 GunAimingEvent
-            // TODO 判断能不能瞄准
             tac$ClientIsAiming = isAim;
             // 发送切换开火模式的数据包，通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(isAim));

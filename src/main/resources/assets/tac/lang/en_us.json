@@ -48,6 +48,8 @@
   "config.tac.common.ammo.explosive_ammo_knock_back.desc": "Ammo with explosive properties can add knockback effect",
   "config.tac.common.ammo.explosive_ammo_visible_distance": "Explosive Ammo Visible Distance",
   "config.tac.common.ammo.explosive_ammo_visible_distance.desc": "The distance at which the explosion effect can be seen",
+  "config.tac.common.ammo.explosive_pass_through_blocks": "Explosive Pass Through Blocks",
+  "config.tac.common.ammo.explosive_pass_through_blocks.desc": "Those blocks that the explosion can pass through",
   "config.tac.common.other": "Other",
   "config.tac.common.other.ammo_box_stack_size": "Ammo Box Stack Size",
   "config.tac.common.other.ammo_box_stack_size.desc": "The maximum stack size of ammo that the ammo box can hold",

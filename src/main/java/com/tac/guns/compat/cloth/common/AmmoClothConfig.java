@@ -5,6 +5,7 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.network.chat.TranslatableComponent;
+import org.apache.commons.compress.utils.Lists;
 
 public class AmmoClothConfig {
     public static void init(ConfigBuilder root, ConfigEntryBuilder entryBuilder) {
@@ -25,5 +26,9 @@ public class AmmoClothConfig {
         ammo.addEntry(entryBuilder.startIntField(new TranslatableComponent("config.tac.common.ammo.explosive_ammo_visible_distance"), AmmoConfig.EXPLOSIVE_AMMO_VISIBLE_DISTANCE.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(192).setTooltip(new TranslatableComponent("config.tac.common.ammo.explosive_ammo_visible_distance.desc"))
                 .setSaveConsumer(AmmoConfig.EXPLOSIVE_AMMO_VISIBLE_DISTANCE::set).build());
+
+        ammo.addEntry(entryBuilder.startStrList(new TranslatableComponent("config.tac.common.ammo.explosive_pass_through_blocks"), AmmoConfig.EXPLOSIVE_PASS_THROUGH_BLOCKS.get())
+                .setDefaultValue(Lists.newArrayList()).setTooltip(new TranslatableComponent("config.tac.common.ammo.explosive_pass_through_blocks.desc"))
+                .setSaveConsumer(AmmoConfig.EXPLOSIVE_PASS_THROUGH_BLOCKS::set).build());
     }
 }
