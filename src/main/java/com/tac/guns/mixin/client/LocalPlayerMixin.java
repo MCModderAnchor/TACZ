@@ -220,7 +220,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         long putAwayTime = Math.abs(drawTime);
         // 发包通知服务器
-        if(Minecraft.getInstance().gameMode != null) {
+        if (Minecraft.getInstance().gameMode != null) {
             Minecraft.getInstance().gameMode.ensureHasSentCarriedItem();
         }
         NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun());
@@ -247,7 +247,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                     if (tac$DrawFuture != null) {
                         tac$DrawFuture.cancel(false);
                     }
-                    tac$DrawFuture = tac$ScheduledExecutorService.schedule(()->{
+                    tac$DrawFuture = tac$ScheduledExecutorService.schedule(() -> {
                         animationStateMachine.onGunDraw();
                         SoundPlayManager.stopPlayGunSound();
                         SoundPlayManager.playDrawSound(player, gunIndex);
