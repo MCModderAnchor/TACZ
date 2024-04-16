@@ -80,7 +80,6 @@ public class FirstPersonRenderGunEvent {
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
-        // TODO 先默认只实现主手的渲染
         if (event.getHand() == InteractionHand.OFF_HAND) {
             return;
         }

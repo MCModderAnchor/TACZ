@@ -44,6 +44,10 @@ public class SoundPlayManager {
         playClientSound(entity, gunIndex.getSounds(SoundManager.SHOOT_SOUND), 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
     }
 
+    public static void playSilenceSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.SILENCE_SOUND), 0.6f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
+    }
+
     public static void playDryFireSound(LivingEntity entity, ClientGunIndex gunIndex) {
         if (DRY_SOUND_TRACK) {
             playClientSound(entity, gunIndex.getSounds(SoundManager.DRY_FIRE_SOUND), 1.0f, 1.0f);

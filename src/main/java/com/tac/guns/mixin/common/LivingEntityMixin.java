@@ -14,10 +14,12 @@ import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.config.common.GunConfig;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.pojo.data.attachment.Silence;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunReloadData;
@@ -374,17 +376,27 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
             InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
             final float[] inaccuracy = new float[]{gunIndex.getGunData().getInaccuracy(inaccuracyState)};
-            // 影响除瞄准外所有的不准确度
-            if (!inaccuracyState.isAim()) {
-                AttachmentDataUtils.getAllAttachmentData(currentGunItem, gunIndex.getGunData(), attachmentData -> inaccuracy[0] += attachmentData.getInaccuracyAddend());
-            }
+            final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
+            final boolean[] useSilenceSound = new boolean[]{false};
+            AttachmentDataUtils.getAllAttachmentData(currentGunItem, gunIndex.getGunData(), attachmentData -> {
+                // 影响除瞄准外所有的不准确度
+                if (!inaccuracyState.isAim()) {
+                    inaccuracy[0] += attachmentData.getInaccuracyAddend();
+                }
+                Silence silence = attachmentData.getSilence();
+                soundDistance[0] += silence.getDistanceAddend();
+                if (silence.isUseSilenceSound()) {
+                    useSilenceSound[0] = true;
+                }
+            });
             inaccuracy[0] = Math.max(0, inaccuracy[0]);
             float speed = Mth.clamp(bulletData.getSpeed(), 0, Float.MAX_VALUE);
             bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
             world.addFreshEntity(bullet);
-            // 播放声音
-            // TODO 配置文件决定衰减距离
-            SoundManager.sendSoundToNearby(shooter, 64, gunId, SoundManager.SHOOT_SOUND, 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
+            if (soundDistance[0] > 0) {
+                String soundId = useSilenceSound[0] ? SoundManager.SILENCE_SOUND : SoundManager.SHOOT_SOUND;
+                SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
+            }
             // 削减弹药数
             if (this.needCheckAmmo()) {
                 iGun.reduceCurrentAmmoCount(currentGunItem);

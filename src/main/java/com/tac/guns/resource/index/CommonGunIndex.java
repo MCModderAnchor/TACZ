@@ -46,7 +46,6 @@ public class CommonGunIndex {
         if (data == null) {
             throw new IllegalArgumentException("there is no corresponding data file");
         }
-        // TODO 检查 ammo 是否存在
         if (data.getAmmoId() == null) {
             throw new IllegalArgumentException("ammo id is empty");
         }

@@ -183,13 +183,11 @@ public class ClientGunIndex {
         if (defaultAnimation != null) {
             switch (defaultAnimation) {
                 case RIFLE -> {
-                    // FIXME: 重载模型包后会有问题
                     for (ObjectAnimation animation : InternalAssetLoader.getDefaultRifleAnimations()) {
                         controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
                     }
                 }
                 case PISTOL -> {
-                    // FIXME: 重载模型包后会有问题
                     for (ObjectAnimation animation : InternalAssetLoader.getDefaultPistolAnimations()) {
                         controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
                     }

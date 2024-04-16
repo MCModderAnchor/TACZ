@@ -175,6 +175,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 }
                 // 获取配件的后坐力属性
                 final float[] attachmentRecoilModifier = new float[]{0f, 0f};
+                final boolean[] useSilenceSound = new boolean[]{false};
                 AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> {
                     RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
                     if (recoilModifier == null) {
@@ -182,13 +183,20 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                     }
                     attachmentRecoilModifier[0] += recoilModifier.getPitch();
                     attachmentRecoilModifier[1] += recoilModifier.getYaw();
+                    if (attachmentData.getSilence().isUseSilenceSound()) {
+                        useSilenceSound[0] = true;
+                    }
                 });
                 // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
                     GunRecoil recoil = gunData.getRecoil();
                     player.setXRot(player.getXRot() - recoil.getRandomPitch(attachmentRecoilModifier[0]));
                     player.setYRot(player.getYRot() + recoil.getRandomYaw(attachmentRecoilModifier[1]));
-                    SoundPlayManager.playShootSound(player, gunIndex);
+                    if (useSilenceSound[0]) {
+                        SoundPlayManager.playSilenceSound(player, gunIndex);
+                    } else {
+                        SoundPlayManager.playShootSound(player, gunIndex);
+                    }
                 });
             }, coolDown, TimeUnit.MILLISECONDS);
             return ShootResult.SUCCESS;

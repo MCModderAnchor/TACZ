@@ -65,6 +65,7 @@
         "reload_tactical": "tac:ak47/ak47_reload_tactical",
         "inspect": "tac:ak47/ak47_inspect",
         "inspect_empty": "tac:ak47/ak47_inspect_empty",
-        "draw": "tac:ak47/ak47_draw"
+        "draw": "tac:ak47/ak47_draw",
+        "silence": "tac:ak47/ak47_silence"
     }
 }

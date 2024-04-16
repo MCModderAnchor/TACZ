@@ -5,10 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import javax.annotation.Nullable;
 
 public class AttachmentData {
-    private static final float SILENCE_DEFAULT_VALUE = -1;
-
     @SerializedName("silence")
-    private float silence = SILENCE_DEFAULT_VALUE;
+    private Silence silence = new Silence();
 
     @SerializedName("weight")
     private float weight;
@@ -23,11 +21,7 @@ public class AttachmentData {
     @Nullable
     private RecoilModifier recoilModifier;
 
-    public boolean isSilencer() {
-        return silence == SILENCE_DEFAULT_VALUE;
-    }
-
-    public float getSilence() {
+    public Silence getSilence() {
         return silence;
     }
 
