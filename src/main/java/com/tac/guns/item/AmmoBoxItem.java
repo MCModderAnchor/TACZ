@@ -11,8 +11,10 @@ import com.tac.guns.item.builder.AmmoItemBuilder;
 import com.tac.guns.item.nbt.AmmoBoxItemDataAccessor;
 import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SlotAccess;
@@ -40,7 +42,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
 
     @OnlyIn(Dist.CLIENT)
     public static int getColor(ItemStack stack, int tintIndex) {
-        return tintIndex > 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack);
+        return tintIndex > 0 ? -1 : getTagColor(stack);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -54,6 +56,11 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
             return CLOSE;
         }
         return OPEN;
+    }
+
+    private static int getTagColor(ItemStack stack) {
+        CompoundTag compoundtag = stack.getTagElement("display");
+        return compoundtag != null && compoundtag.contains("color", 99) ? compoundtag.getInt("color") : 0x727d6b;
     }
 
     @Override
@@ -147,7 +154,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return this.getColor(stack);
+        return Mth.hsvToRgb(1 / 3f, 1.0F, 1.0F);
     }
 
     @Override
