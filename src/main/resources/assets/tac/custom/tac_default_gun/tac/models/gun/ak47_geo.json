@@ -3916,6 +3916,11 @@
 					]
 				},
 				{
+					"name": "muzzle_flash",
+					"parent": "barrel3",
+					"pivot": [-2.275, 3.95, -20.475]
+				},
+				{
 					"name": "lower2",
 					"parent": "akm_default",
 					"pivot": [-2.225, 3.47126, 8.43216]
@@ -5585,6 +5590,11 @@
 					"pivot": [-2.225, 6.75, 1.425]
 				},
 				{
+					"name": "shell",
+					"parent": "AKM",
+					"pivot": [-3.025, 4.8, -0.725]
+				},
+				{
 					"name": "R",
 					"parent": "bone2",
 					"pivot": [3.775, 14.425, -0.7]
@@ -5670,16 +5680,6 @@
 					"parent": "positioning",
 					"pivot": [-3.225, 1.225, 5.15],
 					"rotation": [0, -15, 0]
-				},
-				{
-					"name": "shell",
-					"parent": "positioning",
-					"pivot": [-3.025, 4.8, -0.725]
-				},
-				{
-					"name": "muzzle_flash",
-					"parent": "positioning",
-					"pivot": [-2.275, 3.95, -20.475]
 				}
 			]
 		}

@@ -14,6 +14,8 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tac.guns.client.renderer.item.AttachmentItemRenderer;
+import com.tac.guns.client.renderer.other.MuzzleFlashRender;
+import com.tac.guns.client.renderer.other.ShellRender;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientAttachmentSkinIndex;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
@@ -65,13 +67,13 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> groundOriginPath;
     // 瞄具配件定位组的路径。其他配件不需要存路径，只需要替换渲染。但是瞄具定位组需要用来辅助第一人称瞄准的摄像机定位。
     protected @Nullable List<BedrockPart> scopePosPath;
-    // 抛壳子弹的起始位置
-    protected @Nullable List<BedrockPart> shellOriginPath;
-    // 枪口火焰的起始位置
-    protected @Nullable List<BedrockPart> muzzleFlashOriginPath;
     protected @Nullable BedrockPart root;
     private boolean renderHand = true;
     private ItemStack currentGunItem;
+    // 枪口火焰模型
+    private static final SlotModel MUZZLE_FLASH_MODEL = new SlotModel(true);
+    private static Matrix3f muzzleFlashNormal = new Matrix3f();
+    private static Matrix4f muzzleFlashPose = new Matrix4f();
 
     public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
@@ -110,6 +112,14 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                     Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
                 });
             }
+        });
+        // 渲染枪口火焰
+        this.setFunctionalRenderer(MUZZLE_FLASH_ORIGIN_NODE, bedrockPart -> (poseStack, transformType, light, overlay) -> {
+            MuzzleFlashRender.render(currentGunItem, poseStack, this);
+        });
+        // 渲染抛壳
+        this.setFunctionalRenderer(SHELL_ORIGIN_NODE, bedrockPart -> (poseStack, transformType, light, overlay) -> {
+            ShellRender.render(currentGunItem, poseStack, this);
         });
         this.setFunctionalRenderer(BULLET_IN_BARREL, bedrockPart -> {
             // 弹药数大于 1 时渲染
@@ -187,8 +197,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         thirdPersonHandOriginPath = getPath(modelMap.get(THIRD_PERSON_HAND_ORIGIN_NODE));
         fixedOriginPath = getPath(modelMap.get(FIXED_ORIGIN_NODE));
         groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
-        shellOriginPath = getPath(modelMap.get(SHELL_ORIGIN_NODE));
-        muzzleFlashOriginPath = getPath(modelMap.get(MUZZLE_FLASH_ORIGIN_NODE));
         scopePosPath = getPath(modelMap.get(AttachmentType.SCOPE.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
         ModelRendererWrapper rootWrapper = modelMap.get(ROOT_NODE);
         if (rootWrapper != null) {
@@ -274,16 +282,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     public List<BedrockPart> getGroundOriginPath() {
         return groundOriginPath;
-    }
-
-    @Nullable
-    public List<BedrockPart> getShellOriginPath() {
-        return shellOriginPath;
-    }
-
-    @Nullable
-    public List<BedrockPart> getMuzzleFlashOriginPath() {
-        return muzzleFlashOriginPath;
     }
 
     @Nullable
