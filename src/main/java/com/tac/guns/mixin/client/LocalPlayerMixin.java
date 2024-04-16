@@ -1,7 +1,6 @@
 package com.tac.guns.mixin.client;
 
 import com.tac.guns.api.TimelessAPI;
-import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.event.GunFireSelectEvent;
@@ -11,7 +10,6 @@ import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
-import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.resource.index.ClientGunIndex;
@@ -20,10 +18,10 @@ import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.*;
 import com.tac.guns.resource.index.CommonGunIndex;
-import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tac.guns.resource.pojo.data.attachment.RecoilModifier;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunRecoil;
+import com.tac.guns.util.AttachmentDataUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -177,39 +175,14 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 }
                 // 获取配件的后坐力属性
                 final float[] attachmentRecoilModifier = new float[]{0f, 0f};
-                for (AttachmentType type : AttachmentType.values()) {
-                    if (type == AttachmentType.NONE) {
-                        continue;
+                AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> {
+                    RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
+                    if (recoilModifier == null) {
+                        return;
                     }
-                    ItemStack attachmentStack = iGun.getAttachment(mainhandItem, type);
-                    if (attachmentStack.isEmpty()) {
-                        continue;
-                    }
-                    IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-                    if (attachment == null) {
-                        continue;
-                    }
-                    ResourceLocation attachmentId = attachment.getAttachmentId(attachmentStack);
-                    // 检查专属配件属性
-                    AttachmentData attachmentData = gunIndex.getGunData().getExclusiveAttachments().get(attachmentId);
-                    if (attachmentData != null) {
-                        RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
-                        if (recoilModifier == null) {
-                            return;
-                        }
-                        attachmentRecoilModifier[0] += recoilModifier.getPitch();
-                        attachmentRecoilModifier[1] += recoilModifier.getYaw();
-                    } else {
-                        TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(attachmentIndex -> {
-                            RecoilModifier recoilModifier = attachmentIndex.getData().getRecoilModifier();
-                            if (recoilModifier == null) {
-                                return;
-                            }
-                            attachmentRecoilModifier[0] += recoilModifier.getPitch();
-                            attachmentRecoilModifier[1] += recoilModifier.getYaw();
-                        });
-                    }
-                }
+                    attachmentRecoilModifier[0] += recoilModifier.getPitch();
+                    attachmentRecoilModifier[1] += recoilModifier.getYaw();
+                });
                 // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
                     GunRecoil recoil = gunData.getRecoil();
@@ -498,23 +471,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         GunData gunData = gunIndexOptional.get().getGunData();
         final float[] aimTime = new float[]{gunData.getAimTime()};
-        for (AttachmentType type : AttachmentType.values()) {
-            ItemStack attachmentStack = iGun.getAttachment(mainhandItem, type);
-            if (attachmentStack.isEmpty()) {
-                continue;
-            }
-            IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-            if (attachment == null) {
-                continue;
-            }
-            ResourceLocation attachmentId = attachment.getAttachmentId(attachmentStack);
-            AttachmentData attachmentData = gunData.getExclusiveAttachments().get(attachmentId);
-            if (attachmentData != null) {
-                aimTime[0] += attachmentData.getAdsAddendTime();
-            } else {
-                TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> aimTime[0] += index.getData().getAdsAddendTime());
-            }
-        }
+        AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> aimTime[0] += attachmentData.getAdsAddendTime());
         aimTime[0] = Math.max(0, aimTime[0]);
         float alphaProgress = (System.currentTimeMillis() - tac$ClientAimingTimestamp + 1) / (aimTime[0] * 1000);
         tac$OldAimingProgress = tac$ClientAimingProgress;

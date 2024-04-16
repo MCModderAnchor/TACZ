@@ -34,12 +34,6 @@ public class GunRecoil {
         if (modifier == 0) {
             return number;
         }
-        float changeNumber = Math.abs(number) - modifier;
-        if (changeNumber <= 0) {
-            changeNumber = 0;
-        } else if (number < 0) {
-            changeNumber = -changeNumber;
-        }
-        return changeNumber;
+        return number * Math.max(0, 1 + modifier);
     }
 }

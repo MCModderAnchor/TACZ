@@ -18,12 +18,12 @@ import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.index.CommonGunIndex;
-import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunReloadData;
 import com.tac.guns.resource.pojo.data.gun.InaccuracyType;
 import com.tac.guns.sound.SoundManager;
+import com.tac.guns.util.AttachmentDataUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -373,9 +373,14 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             BulletData bulletData = gunIndex.getBulletData();
             EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
             InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
-            float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
+            final float[] inaccuracy = new float[]{gunIndex.getGunData().getInaccuracy(inaccuracyState)};
+            // 影响除瞄准外所有的不准确度
+            if (!inaccuracyState.isAim()) {
+                AttachmentDataUtils.getAllAttachmentData(currentGunItem, gunIndex.getGunData(), attachmentData -> inaccuracy[0] += attachmentData.getInaccuracyAddend());
+            }
+            inaccuracy[0] = Math.max(0, inaccuracy[0]);
             float speed = Mth.clamp(bulletData.getSpeed(), 0, Float.MAX_VALUE);
-            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
+            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
             world.addFreshEntity(bullet);
             // 播放声音
             // TODO 配置文件决定衰减距离
@@ -528,23 +533,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         }
         GunData gunData = gunIndexOptional.get().getGunData();
         final float[] aimTime = new float[]{gunData.getAimTime()};
-        for (AttachmentType type : AttachmentType.values()) {
-            ItemStack attachmentStack = iGun.getAttachment(currentGunItem, type);
-            if (attachmentStack.isEmpty()) {
-                continue;
-            }
-            IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-            if (attachment == null) {
-                continue;
-            }
-            ResourceLocation attachmentId = attachment.getAttachmentId(attachmentStack);
-            AttachmentData attachmentData = gunData.getExclusiveAttachments().get(attachmentId);
-            if (attachmentData != null) {
-                aimTime[0] += attachmentData.getAdsAddendTime();
-            } else {
-                TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> aimTime[0] += index.getData().getAdsAddendTime());
-            }
-        }
+        AttachmentDataUtils.getAllAttachmentData(currentGunItem, gunData, attachmentData -> aimTime[0] += attachmentData.getAdsAddendTime());
         aimTime[0] = Math.max(0, aimTime[0]);
         float alphaProgress = (System.currentTimeMillis() - tac$AimingTimestamp + 1) / (aimTime[0] * 1000);
         if (tac$IsAiming) {
