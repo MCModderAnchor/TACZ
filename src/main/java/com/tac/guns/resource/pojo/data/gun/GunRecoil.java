@@ -18,11 +18,28 @@ public class GunRecoil {
         return yaw;
     }
 
-    public float getRandomPitch() {
-        return (float) (pitch.getLeft() + Math.random() * (pitch.getRight() - pitch.getLeft()));
+    public float getRandomPitch(float modifier) {
+        float left = modifierNumber(pitch.getLeft(), modifier);
+        float right = modifierNumber(pitch.getRight(), modifier);
+        return (float) (left + Math.random() * (right - left));
     }
 
-    public float getRandomYaw() {
-        return (float) (yaw.getLeft() + Math.random() * (yaw.getRight() - yaw.getLeft()));
+    public float getRandomYaw(float modifier) {
+        float left = modifierNumber(yaw.getLeft(), modifier);
+        float right = modifierNumber(yaw.getRight(), modifier);
+        return (float) (left + Math.random() * (right - left));
+    }
+
+    private float modifierNumber(float number, float modifier) {
+        if (modifier == 0) {
+            return number;
+        }
+        float changeNumber = Math.abs(number) - modifier;
+        if (changeNumber <= 0) {
+            changeNumber = 0;
+        } else if (number < 0) {
+            changeNumber = -changeNumber;
+        }
+        return changeNumber;
     }
 }
