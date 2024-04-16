@@ -66,6 +66,7 @@
         "inspect": "tac:ak47/ak47_inspect",
         "inspect_empty": "tac:ak47/ak47_inspect_empty",
         "draw": "tac:ak47/ak47_draw",
+        "put_away": "tac:ak47/ak47_put_away",
         "silence": "tac:ak47/ak47_silence"
     }
 }

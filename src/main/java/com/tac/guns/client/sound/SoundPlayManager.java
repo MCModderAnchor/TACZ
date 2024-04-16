@@ -82,6 +82,10 @@ public class SoundPlayManager {
         tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.DRAW_SOUND), 1.0f, 1.0f);
     }
 
+    public static void playPutAwaySound(LivingEntity entity, ClientGunIndex gunIndex) {
+        tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.PUT_AWAY_SOUND), 1.0f, 1.0f);
+    }
+
     public static void playMessageSound(ServerMessageSound message) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null || !(level.getEntity(message.getEntityId()) instanceof LivingEntity livingEntity)) {

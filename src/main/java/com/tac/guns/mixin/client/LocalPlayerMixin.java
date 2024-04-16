@@ -248,7 +248,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (drawTime >= 0) {
             if (iGun1 != null) {
                 TimelessAPI.getClientGunIndex(iGun1.getGunId(lastItem)).ifPresent(gunIndex -> {
-                    // TODO 播放收枪音效
+                    // 播放收枪音效
+                    SoundPlayManager.stopPlayGunSound();
+                    SoundPlayManager.playPutAwaySound(player, gunIndex);
                     // 播放收枪动画
                     GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                     if (animationStateMachine != null) {
