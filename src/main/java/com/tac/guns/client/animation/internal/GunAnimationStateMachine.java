@@ -27,6 +27,7 @@ public class GunAnimationStateMachine {
     public static final String STATIC_IDLE_ANIMATION = "static_idle";
     public static final String SHOOT_ANIMATION = "shoot";
     public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";
+    public static final String BOLT_ANIMATION = "bolt";
     public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";
     public static final String DRAW_ANIMATION = "draw";
     public static final String PUT_AWAY_ANIMATION = "put_away";
@@ -84,6 +85,10 @@ public class GunAnimationStateMachine {
         } else {
             controller.runAnimation(MAIN_TRACK, RELOAD_TACTICAL_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
         }
+    }
+
+    public void onGunBolt() {
+        controller.runAnimation(MAIN_TRACK, BOLT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
     }
 
     public void onGunDraw() {

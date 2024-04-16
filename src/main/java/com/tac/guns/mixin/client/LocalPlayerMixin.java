@@ -19,6 +19,7 @@ import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.*;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.attachment.RecoilModifier;
+import com.tac.guns.resource.pojo.data.gun.Bolt;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunRecoil;
 import com.tac.guns.util.AttachmentDataUtils;
@@ -138,15 +139,21 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (gunOperator.getSynDrawCoolDown() != 0) {
                 return ShootResult.FAIL;
             }
-            // 检查是否正在奔跑
-            if (gunOperator.getSynSprintTime() > 0) {
-                return ShootResult.FAIL;
-            }
             // 判断子弹数
             int ammoCount = iGun.getCurrentAmmoCount(mainhandItem);
             if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && ammoCount < 1) {
                 SoundPlayManager.playDryFireSound(player, gunIndex);
                 return ShootResult.NO_AMMO;
+            }
+            // 判断膛内子弹
+            Bolt boltType = gunIndex.getGunData().getBolt();
+            if (boltType == Bolt.MANUAL_ACTION && !iGun.hasBulletInBarrel(mainhandItem)) {
+                bolt();
+                return ShootResult.NEED_BOLT;
+            }
+            // 检查是否正在奔跑
+            if (gunOperator.getSynSprintTime() > 0) {
+                return ShootResult.FAIL;
             }
             // 触发开火事件
             if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, mainhandItem, LogicalSide.CLIENT))) {
@@ -277,6 +284,46 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 }
             });
         }
+    }
+
+    @Unique
+    @Override
+    public void bolt() {
+        // 检查状态锁
+        if (tac$ClientStateLock) {
+            return;
+        }
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+            // 检查 bolt 类型是否是 manual action
+            Bolt boltType = gunIndex.getGunData().getBolt();
+            if (boltType != Bolt.MANUAL_ACTION) {
+                return;
+            }
+            // 检查是否有弹药在枪膛内
+            if (iGun.hasBulletInBarrel(mainhandItem)) {
+                return;
+            }
+            // 检查弹匣内是否有子弹
+            if (iGun.getCurrentAmmoCount(mainhandItem) == 0) {
+                return;
+            }
+            // 锁上状态锁
+            lockState(operator -> operator.getSynBoltCoolDown() >= 0);
+            // 发包通知服务器
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerBoltGun());
+            // 播放动画和音效
+            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            if (animationStateMachine != null) {
+                SoundPlayManager.playBoltSound(player, gunIndex);
+                animationStateMachine.onGunBolt();
+            }
+        });
     }
 
     @Unique
@@ -521,6 +568,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return;
         }
         if (gunOperator.getSynDrawCoolDown() > 0) {
+            return;
+        }
+        if (gunOperator.getSynBoltCoolDown() >= 0) {
             return;
         }
         // 释放状态锁

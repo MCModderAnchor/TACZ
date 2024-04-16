@@ -17,6 +17,7 @@ public class SoundManager {
     public static String INSPECT_EMPTY_SOUND = "inspect_empty";
     public static String INSPECT_SOUND = "inspect";
     public static String DRAW_SOUND = "draw";
+    public static String BOLT_SOUND = "bolt";
     public static String PUT_AWAY_SOUND = "put_away";
     public static String SILENCE_SOUND = "silence";
 

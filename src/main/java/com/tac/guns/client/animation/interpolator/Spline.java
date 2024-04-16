@@ -12,4 +12,10 @@ public class Spline implements Interpolator {
     public void interpolate(int indexFrom, int indexTo, float alpha, float[] result) {
         // TODO
     }
+
+    @Override
+    public Interpolator clone() {
+        //todo
+        return null;
+    }
 }

@@ -43,6 +43,9 @@ public class GunData {
     @SerializedName("aim_time")
     private float aimTime = 0.2f;
 
+    @SerializedName("bolt_action_time")
+    private float boltActionTime = 0;
+
     @SerializedName("reload")
     private GunReloadData reloadData = new GunReloadData();
 
@@ -102,6 +105,10 @@ public class GunData {
 
     public float getSprintTime() {
         return sprintTime;
+    }
+
+    public float getBoltActionTime() {
+        return boltActionTime;
     }
 
     public GunReloadData getReloadData() {

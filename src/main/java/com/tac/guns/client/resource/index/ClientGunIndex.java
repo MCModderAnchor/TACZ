@@ -282,6 +282,7 @@ public class ClientGunIndex {
                         value[1] += offsetY;
                         value[2] += offsetZ;
                     }
+                    channel.interpolator = channel.interpolator.clone();
                     channel.interpolator.compile(channel.content);
                     continue;
                 }
@@ -295,6 +296,7 @@ public class ClientGunIndex {
                         angles[2] += rotationZ;
                         channel.content.values[i] = MathUtil.toQuaternion(angles[0], angles[1], angles[2]);
                     }
+                    channel.interpolator = channel.interpolator.clone();
                     channel.interpolator.compile(channel.content);
                 }
             }

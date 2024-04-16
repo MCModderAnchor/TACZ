@@ -20,7 +20,7 @@ public class AnimationChannelContent {
         if (source.values != null) {
             // deep copy animation values
             this.values = Arrays.stream(source.values)
-                    .map(float[]::clone)
+                    .map(values -> Arrays.copyOf(values, values.length))
                     .toArray(float[][]::new);
         }
     }

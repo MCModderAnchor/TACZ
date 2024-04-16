@@ -4,6 +4,7 @@
   "hud": "tac:gun/hud/ai_awp",
   "slot": "tac:gun/slot/ai_awp",
   "animation": "tac:ai_awp",
+  "use_default_animation": "rifle",
   "transform": {
     "scale": {
       // 第三人称手部

@@ -12,5 +12,10 @@ public enum Bolt {
      * 闭膛待击
      */
     @SerializedName("closed_bolt")
-    CLOSED_BOLT
+    CLOSED_BOLT,
+    /**
+     * 手动上膛
+     */
+    @SerializedName("manual_action")
+    MANUAL_ACTION
 }

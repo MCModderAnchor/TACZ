@@ -27,6 +27,8 @@ public interface IClientPlayerGunOperator {
      */
     void draw(ItemStack lastItem);
 
+    void bolt();
+
     void reload();
 
     void inspect();

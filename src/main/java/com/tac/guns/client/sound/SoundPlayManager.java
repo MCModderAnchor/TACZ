@@ -78,6 +78,10 @@ public class SoundPlayManager {
         }
     }
 
+    public static void playBoltSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.BOLT_SOUND), 1.0f, 1.0f);
+    }
+
     public static void playDrawSound(LivingEntity entity, ClientGunIndex gunIndex) {
         tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.DRAW_SOUND), 1.0f, 1.0f);
     }
