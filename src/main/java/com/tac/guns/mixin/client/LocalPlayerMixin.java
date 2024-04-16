@@ -485,7 +485,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             tac$OldAimingProgress = 0;
             return;
         }
-        if (System.currentTimeMillis() - tac$ClientDrawTimestamp < 0) { // 如果正在收枪，则不能瞄准
+        // 如果正在收枪，则不能瞄准
+        if (System.currentTimeMillis() - tac$ClientDrawTimestamp < 0) {
             tac$ClientIsAiming = false;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
@@ -495,8 +496,27 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             tac$OldAimingProgress = 0;
             return;
         }
-        float aimTime = gunIndexOptional.get().getGunData().getAimTime();
-        float alphaProgress = (System.currentTimeMillis() - tac$ClientAimingTimestamp + 1) / (aimTime * 1000);
+        GunData gunData = gunIndexOptional.get().getGunData();
+        final float[] aimTime = new float[]{gunData.getAimTime()};
+        for (AttachmentType type : AttachmentType.values()) {
+            ItemStack attachmentStack = iGun.getAttachment(mainhandItem, type);
+            if (attachmentStack.isEmpty()) {
+                continue;
+            }
+            IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
+            if (attachment == null) {
+                continue;
+            }
+            ResourceLocation attachmentId = attachment.getAttachmentId(attachmentStack);
+            AttachmentData attachmentData = gunData.getExclusiveAttachments().get(attachmentId);
+            if (attachmentData != null) {
+                aimTime[0] += attachmentData.getAdsAddendTime();
+            } else {
+                TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> aimTime[0] += index.getData().getAdsAddendTime());
+            }
+        }
+        aimTime[0] = Math.max(0, aimTime[0]);
+        float alphaProgress = (System.currentTimeMillis() - tac$ClientAimingTimestamp + 1) / (aimTime[0] * 1000);
         tac$OldAimingProgress = tac$ClientAimingProgress;
         if (tac$ClientIsAiming) {
             // 处于执行瞄准状态，增加 aimingProgress

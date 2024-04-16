@@ -18,6 +18,7 @@ import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunReloadData;
@@ -525,8 +526,27 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             tac$AimingProgress = 0;
             return;
         }
-        float aimTime = gunIndexOptional.get().getGunData().getAimTime();
-        float alphaProgress = (System.currentTimeMillis() - tac$AimingTimestamp + 1) / (aimTime * 1000);
+        GunData gunData = gunIndexOptional.get().getGunData();
+        final float[] aimTime = new float[]{gunData.getAimTime()};
+        for (AttachmentType type : AttachmentType.values()) {
+            ItemStack attachmentStack = iGun.getAttachment(currentGunItem, type);
+            if (attachmentStack.isEmpty()) {
+                continue;
+            }
+            IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
+            if (attachment == null) {
+                continue;
+            }
+            ResourceLocation attachmentId = attachment.getAttachmentId(attachmentStack);
+            AttachmentData attachmentData = gunData.getExclusiveAttachments().get(attachmentId);
+            if (attachmentData != null) {
+                aimTime[0] += attachmentData.getAdsAddendTime();
+            } else {
+                TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> aimTime[0] += index.getData().getAdsAddendTime());
+            }
+        }
+        aimTime[0] = Math.max(0, aimTime[0]);
+        float alphaProgress = (System.currentTimeMillis() - tac$AimingTimestamp + 1) / (aimTime[0] * 1000);
         if (tac$IsAiming) {
             // 处于执行瞄准状态，增加 aimingProgress
             tac$AimingProgress += alphaProgress;
