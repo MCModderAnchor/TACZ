@@ -1,7 +1,6 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
@@ -17,11 +16,12 @@ import com.tac.guns.client.gui.GunRefitScreen;
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.model.bedrock.BedrockModel;
+import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
+import com.tac.guns.client.resource.pojo.display.gun.MuzzleFlash;
 import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
 import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.resource.DefaultAssets;
@@ -32,6 +32,7 @@ import com.tac.guns.util.math.SecondOrderDynamics;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -62,7 +63,7 @@ public class FirstPersonRenderGunEvent {
     // 用于打开改装界面时枪械运动的平滑
     private static final SecondOrderDynamics REFIT_OPENING_DYNAMICS = new SecondOrderDynamics(1f, 1.2f, 0.5f, 0);
     // 用于跳跃延滞动画的平滑
-    private static final SecondOrderDynamics JUMPING_DYNAMICS = new SecondOrderDynamics(0.28f,1f, 0.65f, 0);
+    private static final SecondOrderDynamics JUMPING_DYNAMICS = new SecondOrderDynamics(0.28f, 1f, 0.65f, 0);
     private static final float JUMPING_Y_SWAY = -2f;
     private static final float JUMPING_SWAY_TIME = 0.3f;
     private static final float LANDING_SWAY_TIME = 0.15f;
@@ -77,6 +78,9 @@ public class FirstPersonRenderGunEvent {
     private static long shootTimeStamp = -1;
     // 抛壳队列
     private static final ConcurrentLinkedDeque<Pair<Long, Vector3f>> SHELL_QUEUE = new ConcurrentLinkedDeque<>();
+    // 枪口火焰模型
+    private static final SlotModel MUZZLE_FLASH_MODEL = new SlotModel(true);
+    private static float MUZZLE_RANDOM_ROTATE = 0;
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
@@ -141,6 +145,8 @@ public class FirstPersonRenderGunEvent {
             // 调用枪械模型渲染
             RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
             gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+            // 渲染枪口火焰
+            renderMuzzleFlash(event, gunIndex, poseStack, gunModel);
             // 渲染抛壳
             renderShell(gunIndex, gunModel, poseStack, transformType, event.getPackedLight());
             // 恢复手臂渲染
@@ -151,6 +157,36 @@ public class FirstPersonRenderGunEvent {
             // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
             event.setCanceled(true);
         });
+    }
+
+    private static void renderMuzzleFlash(RenderHandEvent event, ClientGunIndex gunIndex, PoseStack poseStack, BedrockGunModel gunModel) {
+        // 500ms 显示时间
+        long time = System.currentTimeMillis() - shootTimeStamp;
+        if (time > 100) {
+            return;
+        }
+
+        MuzzleFlash muzzleFlash = gunIndex.getMuzzleFlash();
+        if (muzzleFlash == null) {
+            return;
+        }
+        float scale = 0.5f * muzzleFlash.getScale();
+        scale = time < 50 ? (scale * (time / 50.0f)) : scale;
+
+        poseStack.pushPose();
+
+        poseStack.translate(0, 1.5, 0);
+        applyPositioningNodeTransform(gunModel.getMuzzleFlashOriginPath(), poseStack);
+        poseStack.scale(scale, scale, scale);
+        poseStack.mulPose(Vector3f.ZP.rotationDegrees(MUZZLE_RANDOM_ROTATE));
+        poseStack.translate(0, -1.5, 0);
+
+        RenderType renderType = RenderType.itemEntityTranslucentCull(muzzleFlash.getTexture());
+        MultiBufferSource multiBufferSource = event.getMultiBufferSource();
+        poseStack.translate(0, 0.5, 0);
+        MUZZLE_FLASH_MODEL.renderToBuffer(poseStack, multiBufferSource.getBuffer(renderType), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+
+        poseStack.popPose();
     }
 
     private static void checkShellQueue(long lifeTime) {
@@ -250,6 +286,9 @@ public class FirstPersonRenderGunEvent {
                 }
                 // 记录开火时间戳，用于后坐力程序动画
                 shootTimeStamp = System.currentTimeMillis();
+
+                // 随机给予枪口火焰的旋转
+                MUZZLE_RANDOM_ROTATE = (float) (Math.random() * 360);
             });
         }
     }
@@ -372,7 +411,7 @@ public class FirstPersonRenderGunEvent {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
             double posY = Mth.lerp(partialTicks, Minecraft.getInstance().player.yOld, Minecraft.getInstance().player.getY());
-            float velocityY = (float) (posY - Minecraft.getInstance().player.yOld)/partialTicks;
+            float velocityY = (float) (posY - Minecraft.getInstance().player.yOld) / partialTicks;
             if (player.isOnGround()) {
                 if (!lastOnGround) {
                     jumpingSwayProgress = velocityY / -0.1f;

@@ -52,6 +52,10 @@ public class CommonGunIndex {
         if (data.getAmmoAmount() < 1) {
             throw new IllegalArgumentException("ammo count must >= 1");
         }
+        int[] extendedMagAmmoAmount = data.getExtendedMagAmmoAmount();
+        if (extendedMagAmmoAmount != null && extendedMagAmmoAmount.length < 3) {
+            throw new IllegalArgumentException("extended_mag_ammo_amount size must is 3");
+        }
         if (data.getRoundsPerMinute() < 1) {
             throw new IllegalArgumentException("rpm count must >= 1");
         }

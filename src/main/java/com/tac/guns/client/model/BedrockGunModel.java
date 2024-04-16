@@ -45,6 +45,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String FIXED_ORIGIN_NODE = "fixed";
     private static final String GROUND_ORIGIN_NODE = "ground";
     private static final String SHELL_ORIGIN_NODE = "shell";
+    private static final String MUZZLE_FLASH_ORIGIN_NODE = "muzzle_flash";
     private static final String ATTACHMENT_POS_SUFFIX = "_pos";
     private static final String ATTACHMENT_ADAPTER_SUFFIX = "_adapter";
     private static final String REFIT_VIEW_PREFIX = "refit_";
@@ -66,6 +67,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> scopePosPath;
     // 抛壳子弹的起始位置
     protected @Nullable List<BedrockPart> shellOriginPath;
+    // 枪口火焰的起始位置
+    protected @Nullable List<BedrockPart> muzzleFlashOriginPath;
     protected @Nullable BedrockPart root;
     private boolean renderHand = true;
     private ItemStack currentGunItem;
@@ -185,6 +188,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         fixedOriginPath = getPath(modelMap.get(FIXED_ORIGIN_NODE));
         groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
         shellOriginPath = getPath(modelMap.get(SHELL_ORIGIN_NODE));
+        muzzleFlashOriginPath = getPath(modelMap.get(MUZZLE_FLASH_ORIGIN_NODE));
         scopePosPath = getPath(modelMap.get(AttachmentType.SCOPE.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
         ModelRendererWrapper rootWrapper = modelMap.get(ROOT_NODE);
         if (rootWrapper != null) {
@@ -275,6 +279,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     public List<BedrockPart> getShellOriginPath() {
         return shellOriginPath;
+    }
+
+    @Nullable
+    public List<BedrockPart> getMuzzleFlashOriginPath() {
+        return muzzleFlashOriginPath;
     }
 
     @Nullable

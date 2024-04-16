@@ -44,6 +44,10 @@
             ]
         }
     },
+    "muzzle_flash": {
+      "texture": "tac:gun/flash/ak47_muzzle_flash",
+      "scale": 1
+    },
     // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
     "shell": {
         // 抛壳的初速度

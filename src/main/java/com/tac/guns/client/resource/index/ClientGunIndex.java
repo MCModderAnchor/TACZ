@@ -45,6 +45,7 @@ public class ClientGunIndex {
     private ResourceLocation hudTexture;
     private String type;
     private @Nullable ShellEjection shellEjection;
+    private @Nullable MuzzleFlash muzzleFlash;
 
     private ClientGunIndex() {
     }
@@ -63,6 +64,7 @@ public class ClientGunIndex {
         checkSounds(display, index);
         checkTransform(display, index);
         checkShellEjection(display, index);
+        checkMuzzleFlash(display, index);
         return index;
     }
 
@@ -242,6 +244,13 @@ public class ClientGunIndex {
         index.shellEjection = display.getShellEjection();
     }
 
+    private static void checkMuzzleFlash(GunDisplay display, ClientGunIndex index) {
+        index.muzzleFlash = display.getMuzzleFlash();
+        if (index.muzzleFlash != null && index.muzzleFlash.getTexture() == null) {
+            index.muzzleFlash = null;
+        }
+    }
+
     private static ObjectAnimation createAnimationCopy(ObjectAnimation prototype, BedrockModel model) {
         ObjectAnimation animation = new ObjectAnimation(prototype);
         for (Map.Entry<String, List<ObjectAnimationChannel>> entry : animation.getChannels().entrySet()) {
@@ -345,5 +354,10 @@ public class ClientGunIndex {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
+    }
+
+    @Nullable
+    public MuzzleFlash getMuzzleFlash() {
+        return muzzleFlash;
     }
 }
