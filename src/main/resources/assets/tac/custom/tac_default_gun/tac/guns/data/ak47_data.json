@@ -108,5 +108,17 @@
     },
     "stock": {},
     "muzzle": {}
+  },
+  // 专属的配件属性
+  "exclusive_attachments": {
+    // 配件 ID，后面的数据和配件的 data 部分结构完全一致
+    "tac:8x": {
+      "weight": 1.0,
+      "ads_addend": 0.04,
+      "recoil_modifier": {
+        "pitch": 2,
+        "yaw": 1
+      }
+    }
   }
 }

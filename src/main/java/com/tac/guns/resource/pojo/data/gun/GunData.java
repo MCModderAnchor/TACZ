@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.gun.FireMode;
+import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +57,9 @@ public class GunData {
 
     @SerializedName("allow_attachments")
     private Map<AttachmentType, AttachmentPass> allowAttachments = Maps.newEnumMap(AttachmentType.class);
+
+    @SerializedName("exclusive_attachments")
+    private Map<ResourceLocation, AttachmentData> exclusiveAttachments = Maps.newHashMap();
 
     public ResourceLocation getAmmoId() {
         return ammoId;
@@ -128,6 +132,10 @@ public class GunData {
 
     public boolean allowAttachmentType(AttachmentType type) {
         return allowAttachments.containsKey(type);
+    }
+
+    public Map<ResourceLocation, AttachmentData> getExclusiveAttachments() {
+        return exclusiveAttachments;
     }
 
     /**

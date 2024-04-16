@@ -20,6 +20,7 @@ import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.*;
 import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tac.guns.resource.pojo.data.attachment.RecoilModifier;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunRecoil;
@@ -189,14 +190,25 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                         continue;
                     }
                     ResourceLocation attachmentId = attachment.getAttachmentId(attachmentStack);
-                    TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(attachmentIndex -> {
-                        RecoilModifier recoilModifier = attachmentIndex.getData().getRecoilModifier();
+                    // 检查专属配件属性
+                    AttachmentData attachmentData = gunIndex.getGunData().getExclusiveAttachments().get(attachmentId);
+                    if (attachmentData != null) {
+                        RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
                         if (recoilModifier == null) {
                             return;
                         }
                         attachmentRecoilModifier[0] += recoilModifier.getPitch();
                         attachmentRecoilModifier[1] += recoilModifier.getYaw();
-                    });
+                    } else {
+                        TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(attachmentIndex -> {
+                            RecoilModifier recoilModifier = attachmentIndex.getData().getRecoilModifier();
+                            if (recoilModifier == null) {
+                                return;
+                            }
+                            attachmentRecoilModifier[0] += recoilModifier.getPitch();
+                            attachmentRecoilModifier[1] += recoilModifier.getYaw();
+                        });
+                    }
                 }
                 // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
