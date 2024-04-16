@@ -159,24 +159,23 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             bedrockPart.visible = (scopeItem == null || scopeItem.isEmpty());
             return null;
         });
-        this.setFunctionalRenderer(MAG_EXTENDED_1, bedrockPart -> {
-            //TODO 安装一级扩容弹匣时可见
-            bedrockPart.visible = false;
-            return null;
-        });
-        this.setFunctionalRenderer(MAG_EXTENDED_2, bedrockPart -> {
-            //TODO 安装二级扩容弹匣时可见
-            bedrockPart.visible = false;
-            return null;
-        });
-        this.setFunctionalRenderer(MAG_EXTENDED_3, bedrockPart -> {
-            //TODO 安装三级扩容弹匣时可见
-            bedrockPart.visible = false;
-            return null;
-        });
+        this.setFunctionalRenderer(MAG_EXTENDED_1, bedrockPart -> getExtendedMagLevel(bedrockPart, 1));
+        this.setFunctionalRenderer(MAG_EXTENDED_2, bedrockPart -> getExtendedMagLevel(bedrockPart, 2));
+        this.setFunctionalRenderer(MAG_EXTENDED_3, bedrockPart -> getExtendedMagLevel(bedrockPart, 3));
         this.setFunctionalRenderer(MAG_STANDARD, bedrockPart -> {
-            //TODO 未安装扩容弹匣时可见
-            bedrockPart.visible = true;
+            ItemStack extendedMagItem = currentAttachmentItem.get(AttachmentType.EXTENDED_MAG);
+            if (extendedMagItem == null || extendedMagItem.isEmpty()) {
+                bedrockPart.visible = true;
+                return null;
+            }
+            IAttachment attachment = IAttachment.getIAttachmentOrNull(extendedMagItem);
+            if (attachment == null) {
+                bedrockPart.visible = true;
+                return null;
+            }
+            TimelessAPI.getCommonAttachmentIndex(attachment.getAttachmentId(extendedMagItem)).ifPresent(index -> {
+                bedrockPart.visible = (index.getData().getExtendedMagLevel() <= 0 || index.getData().getExtendedMagLevel() > 3);
+            });
             return null;
         });
 
@@ -204,7 +203,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 
         // 准备各个配件的渲染
         for (AttachmentType type : AttachmentType.values()) {
-            if (type == AttachmentType.NONE || type == AttachmentType.SCOPE) { // 瞄具的渲染需要提前。
+            // 瞄具的渲染需要提前
+            if (type == AttachmentType.NONE || type == AttachmentType.SCOPE) {
                 continue;
             }
             String nodeName = type.name().toLowerCase() + ATTACHMENT_POS_SUFFIX;
@@ -227,6 +227,24 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 };
             });
         }
+    }
+
+    @Nullable
+    private IFunctionalRenderer getExtendedMagLevel(BedrockPart bedrockPart, int level) {
+        ItemStack extendedMagItem = currentAttachmentItem.get(AttachmentType.EXTENDED_MAG);
+        if (extendedMagItem == null || extendedMagItem.isEmpty()) {
+            bedrockPart.visible = false;
+            return null;
+        }
+        IAttachment attachment = IAttachment.getIAttachmentOrNull(extendedMagItem);
+        if (attachment == null) {
+            bedrockPart.visible = false;
+            return null;
+        }
+        TimelessAPI.getCommonAttachmentIndex(attachment.getAttachmentId(extendedMagItem)).ifPresent(index -> {
+            bedrockPart.visible = (index.getData().getExtendedMagLevel() == level);
+        });
+        return null;
     }
 
     @Nullable
@@ -322,7 +340,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         RenderHelper.disableItemEntityStencilTest();
     }
 
-    private void renderAttachment(ItemStack attachmentItem, PoseStack poseStack, ItemTransforms.TransformType transformType, int light, int overlay){
+    private void renderAttachment(ItemStack attachmentItem, PoseStack poseStack, ItemTransforms.TransformType transformType, int light, int overlay) {
         poseStack.translate(0, -1.5, 0);
         if (attachmentItem.getItem() instanceof IAttachment iAttachment) {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);

@@ -9,17 +9,20 @@ public class AttachmentData {
     private Silence silence = new Silence();
 
     @SerializedName("weight")
-    private float weight;
+    private float weight = 0;
 
     @SerializedName("ads_addend")
-    private float adsAddendTime;
+    private float adsAddendTime = 0;
+
+    @SerializedName("extended_mag_level")
+    private int extendedMagLevel = 0;
 
     @SerializedName("inaccuracy_addend")
-    private float inaccuracyAddend;
+    private float inaccuracyAddend = 0;
 
     @SerializedName("recoil_modifier")
     @Nullable
-    private RecoilModifier recoilModifier;
+    private RecoilModifier recoilModifier = null;
 
     public Silence getSilence() {
         return silence;
@@ -27,6 +30,10 @@ public class AttachmentData {
 
     public float getWeight() {
         return weight;
+    }
+
+    public int getExtendedMagLevel() {
+        return extendedMagLevel;
     }
 
     public float getAdsAddendTime() {

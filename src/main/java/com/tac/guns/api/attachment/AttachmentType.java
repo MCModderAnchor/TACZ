@@ -29,6 +29,11 @@ public enum AttachmentType {
     @SerializedName("laser")
     LASER,
     /**
+     * 扩容弹夹（匣）
+     */
+    @SerializedName("extended_mag")
+    EXTENDED_MAG,
+    /**
      * 用来表示物品不是配件的情况。
      */
     NONE

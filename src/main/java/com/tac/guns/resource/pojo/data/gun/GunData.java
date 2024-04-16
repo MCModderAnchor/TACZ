@@ -19,6 +19,9 @@ public class GunData {
     @SerializedName("ammo_amount")
     private int ammoAmount = 30;
 
+    @SerializedName("extended_mag_ammo_amount")
+    private int @Nullable [] extendedMagAmmoAmount = null;
+
     @SerializedName("bolt")
     private Bolt bolt = Bolt.OPEN_BOLT;
 
@@ -67,6 +70,10 @@ public class GunData {
 
     public int getAmmoAmount() {
         return ammoAmount;
+    }
+
+    public int @Nullable [] getExtendedMagAmmoAmount() {
+        return extendedMagAmmoAmount;
     }
 
     public Bolt getBolt() {

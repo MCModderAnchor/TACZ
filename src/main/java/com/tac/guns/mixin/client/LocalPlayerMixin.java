@@ -296,7 +296,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
                 // 满弹检查也放这，这样创造模式玩家随意随便换弹
                 // 满弹不需要换
-                if (iGun.getCurrentAmmoCount(mainhandItem) >= gunIndex.getGunData().getAmmoAmount()) {
+                int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(mainhandItem, gunIndex.getGunData());
+                if (iGun.getCurrentAmmoCount(mainhandItem) >= maxAmmoCount) {
                     return;
                 }
                 // 背包弹药检查

@@ -3,6 +3,12 @@
   "ammo": "tac:762x39",
   // 弹容
   "ammo_amount": 30,
+  // 扩容弹夹弹药总数
+  "extended_mag_ammo_amount": [
+    40,
+    50,
+    60
+  ],
   // 枪栓类型：开膛待机（open_bolt）、闭膛待击（closed_bolt）
   "bolt": "open_bolt",
   // 每分钟射出弹药量，最大不应超过 1200
@@ -107,7 +113,8 @@
       //]
     },
     "stock": {},
-    "muzzle": {}
+    "muzzle": {},
+    "extended_mag": {}
   },
   // 专属的配件属性
   "exclusive_attachments": {

@@ -38,4 +38,40 @@ public final class AttachmentDataUtils {
             }
         }
     }
+
+    public static int getAmmoCountWithAttachment(ItemStack gunItem, GunData gunData) {
+        IGun iGun = IGun.getIGunOrNull(gunItem);
+        if (iGun == null) {
+            return gunData.getAmmoAmount();
+        }
+        int[] extendedMagAmmoAmount = gunData.getExtendedMagAmmoAmount();
+        if (extendedMagAmmoAmount == null) {
+            return gunData.getAmmoAmount();
+        }
+        ItemStack attachmentStack = iGun.getAttachment(gunItem, AttachmentType.EXTENDED_MAG);
+        if (attachmentStack.isEmpty()) {
+            return gunData.getAmmoAmount();
+        }
+        IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
+        if (attachment == null) {
+            return gunData.getAmmoAmount();
+        }
+        ResourceLocation attachmentId = attachment.getAttachmentId(attachmentStack);
+        AttachmentData attachmentData = gunData.getExclusiveAttachments().get(attachmentId);
+        if (attachmentData != null) {
+            int level = attachmentData.getExtendedMagLevel();
+            if (level <= 0 || level > 3) {
+                return gunData.getAmmoAmount();
+            }
+            return extendedMagAmmoAmount[level];
+        } else {
+            return TimelessAPI.getCommonAttachmentIndex(attachmentId).map(index -> {
+                int level = index.getData().getExtendedMagLevel();
+                if (level <= 0 || level > 3) {
+                    return gunData.getAmmoAmount();
+                }
+                return extendedMagAmmoAmount[level - 1];
+            }).orElse(gunData.getAmmoAmount());
+        }
+    }
 }

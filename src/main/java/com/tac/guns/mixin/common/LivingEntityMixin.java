@@ -287,10 +287,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
                 return;
             }
             int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
+            int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunIndex.getGunData());
             // 检查弹药
             if (this.needCheckAmmo()) {
                 // 超出或达到上限，不换弹
-                if (currentAmmoCount >= gunIndex.getGunData().getAmmoAmount()) {
+                if (currentAmmoCount >= maxAmmoCount) {
                     return;
                 }
                 boolean hasAmmo = this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map(cap -> {
@@ -321,7 +322,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
                 return;
             }
             // 战术换弹，初始化用于 tick 的状态
-            if (currentAmmoCount <= gunIndex.getGunData().getAmmoAmount()) {
+            if (currentAmmoCount <= maxAmmoCount) {
                 tac$ReloadStateType = ReloadState.StateType.TACTICAL_RELOAD_FEEDING;
                 tac$ReloadTimestamp = System.currentTimeMillis();
             }
@@ -618,14 +619,15 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             }
         }
         // 更新枪内弹药
+        int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunData);
         if (tac$ReloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
-                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
+                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount));
             }
         }
         if (tac$ReloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
-                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
+                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount));
             }
         }
         // 更新换弹状态缓存
