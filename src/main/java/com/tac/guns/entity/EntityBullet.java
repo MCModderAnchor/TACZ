@@ -192,7 +192,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             if (hitEntities != null) {
                 EntityResult[] hitEntityResult = hitEntities.toArray(new EntityResult[0]);
                 // 对被命中的实体进行排序，按照距离子弹发射位置的距离进行升序排序
-                for (int i = 0; i < this.pierce || i < 1; i++) {
+                for (int i = 0; (i < this.pierce || i < 1) && i < hitEntityResult.length - 1; i++) {
                     int k = i;
                     for (int j = i + 1; j < hitEntityResult.length; j++) {
                         if (hitEntityResult[j].hitVec.distanceTo(startVec) < hitEntityResult[k].hitVec.distanceTo(startVec)) {
@@ -206,6 +206,12 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                 for (EntityResult entityResult : hitEntityResult) {
                     result = new TacHitResult(entityResult);
                     this.onHitEntity((TacHitResult) result, startVec, endVec);
+                    this.pierce --;
+                    if (this.pierce < 1 || this.hasExplosion) {
+                        // 子弹已经穿透所有实体，结束子弹的飞行
+                        this.discard();
+                        return;
+                    }
                 }
             } else {
                 this.onHitBlock(resultB, startVec, endVec);
@@ -322,11 +328,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                 // 取消无敌时间
                 entity.invulnerableTime = 0;
                 createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
-                // 爆炸直接结束子弹生命周期，不计算穿透
-                this.discard();
             }
         }
-        this.discard();
     }
 
     protected void onHitBlock(BlockHitResult result, Vec3 startVec, Vec3 endVec) {
