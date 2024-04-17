@@ -435,14 +435,20 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             return ShootResult.FAIL;
         }
         LivingEntity entity = (LivingEntity) (Object) this;
+        Bolt boltType = gunIndex.getGunData().getBolt();
+        boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(currentGunItem);
+        int ammoCount = iGun.getCurrentAmmoCount(currentGunItem) + (hasAmmoInBarrel ? 1 : 0);
         // 创造模式不判断子弹数
-        if (needCheckAmmo() && iGun.getCurrentAmmoCount(currentGunItem) < 1) {
+        if (needCheckAmmo() && ammoCount < 1) {
             return ShootResult.NO_AMMO;
         }
         // 检查膛内子弹
-        Bolt boltType = gunIndex.getGunData().getBolt();
-        if (boltType == Bolt.MANUAL_ACTION && !iGun.hasBulletInBarrel(currentGunItem)) {
+        if (boltType == Bolt.MANUAL_ACTION && !hasAmmoInBarrel) {
             return ShootResult.NEED_BOLT;
+        }
+        if (boltType == Bolt.CLOSED_BOLT && !hasAmmoInBarrel) {
+            iGun.reduceCurrentAmmoCount(currentGunItem);
+            iGun.setBulletInBarrel(currentGunItem, true);
         }
         // 触发射击事件
         if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, currentGunItem, LogicalSide.SERVER))) {
@@ -478,9 +484,16 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         }
         // 削减弹药数
         if (this.needCheckAmmo()) {
-            iGun.reduceCurrentAmmoCount(currentGunItem);
             if (boltType == Bolt.MANUAL_ACTION) {
                 iGun.setBulletInBarrel(currentGunItem, false);
+            } else if (boltType == Bolt.CLOSED_BOLT){
+                if (iGun.getCurrentAmmoCount(currentGunItem) > 0) {
+                    iGun.reduceCurrentAmmoCount(currentGunItem);
+                } else {
+                    iGun.setBulletInBarrel(currentGunItem, false);
+                }
+            } else {
+                iGun.reduceCurrentAmmoCount(currentGunItem);
             }
         }
         tac$ShootTimestamp = System.currentTimeMillis();
@@ -674,7 +687,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             return coolDown;
         }).orElse(-1L);
         if (tac$BoltCoolDown == 0) {
-            if (iGun.getCurrentAmmoCount(currentGunItem) != 0) {
+            if (iGun.getCurrentAmmoCount(currentGunItem) > 0) {
+                iGun.reduceCurrentAmmoCount(currentGunItem);
                 iGun.setBulletInBarrel(currentGunItem, true);
             }
             tac$BoltCoolDown = -1;
@@ -740,7 +754,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
                 iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount));
                 Bolt boltType = gunIndexOptional.get().getGunData().getBolt();
-                if (boltType == Bolt.MANUAL_ACTION) {
+                if (boltType == Bolt.MANUAL_ACTION || boltType == Bolt.CLOSED_BOLT) {
+                    iGun.reduceCurrentAmmoCount(currentGunItem);
                     iGun.setBulletInBarrel(currentGunItem, true);
                 }
             }

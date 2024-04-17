@@ -62,6 +62,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private volatile boolean tac$IsShootRecorded = true;
     /**
+     * 用于标记 bolt 是否已经执行完成，防止因为客户端、服务端异步产生的数据不同步而造成的重复 bolt
+     */
+    @Unique
+    private boolean tac$IsBolting = false;
+    /**
      * 瞄准的进度，范围 0 ~ 1
      */
     @Unique
@@ -140,14 +145,15 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 return ShootResult.FAIL;
             }
             // 判断子弹数
-            int ammoCount = iGun.getCurrentAmmoCount(mainhandItem);
+            Bolt boltType = gunIndex.getGunData().getBolt();
+            boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem);
+            int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (hasAmmoInBarrel ? 1 : 0);
             if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && ammoCount < 1) {
                 SoundPlayManager.playDryFireSound(player, gunIndex);
                 return ShootResult.NO_AMMO;
             }
             // 判断膛内子弹
-            Bolt boltType = gunIndex.getGunData().getBolt();
-            if (boltType == Bolt.MANUAL_ACTION && !iGun.hasBulletInBarrel(mainhandItem)) {
+            if (boltType == Bolt.MANUAL_ACTION && !hasAmmoInBarrel) {
                 bolt();
                 return ShootResult.NEED_BOLT;
             }
@@ -225,6 +231,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         tac$ClientIsAiming = false;
         tac$ClientAimingProgress = 0;
         tac$OldAimingProgress = 0;
+        // 重置拉栓状态
+        tac$IsBolting = false;
         // 更新切枪时间戳
         if (tac$ClientDrawTimestamp == -1) {
             tac$ClientDrawTimestamp = System.currentTimeMillis();
@@ -293,6 +301,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (tac$ClientStateLock) {
             return;
         }
+        if (tac$IsBolting) {
+            return;
+        }
         LocalPlayer player = (LocalPlayer) (Object) this;
         ItemStack mainhandItem = player.getMainHandItem();
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
@@ -315,6 +326,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             }
             // 锁上状态锁
             lockState(operator -> operator.getSynBoltCoolDown() >= 0);
+            tac$IsBolting = true;
             // 发包通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerBoltGun());
             // 播放动画和音效
@@ -489,6 +501,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (player.getLevel().isClientSide()) {
             tickAimingProgress();
             tickStateLock();
+            tickAutoBolt();
         }
     }
 
@@ -501,6 +514,23 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             player.setSprinting(false);
         } else {
             player.setSprinting(pSprinting);
+        }
+    }
+
+    @Unique
+    private void tickAutoBolt() {
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            tac$IsBolting = false;
+            return;
+        }
+        bolt();
+        if (tac$IsBolting) {
+            // 对于客户端来说，膛内弹药被填入的状态同步到客户端的瞬间，bolt 过程才算完全结束
+            if (iGun.hasBulletInBarrel(mainhandItem)) {
+                tac$IsBolting = false;
+            }
         }
     }
 

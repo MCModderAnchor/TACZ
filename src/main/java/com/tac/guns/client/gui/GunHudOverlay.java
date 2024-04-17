@@ -42,14 +42,14 @@ public class GunHudOverlay {
         }
 
         // 当前枪械弹药数
-        int currentAmmoCount = iGun.getCurrentAmmoCount(stack);
+        int ammoCount = iGun.getCurrentAmmoCount(stack) + (iGun.hasBulletInBarrel(stack) ? 1 : 0);
         int ammoCountColor;
-        if (currentAmmoCount < 1) {
+        if (ammoCount < 1) {
             ammoCountColor = 0xFF5555;
         } else {
             ammoCountColor = 0xFFFFFF;
         }
-        String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(currentAmmoCount);
+        String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(ammoCount);
 
 
         // 玩家背包弹药数
