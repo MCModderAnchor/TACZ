@@ -25,6 +25,9 @@ public class BulletData {
     @SerializedName("friction")
     private float friction = 0.01f;
 
+    @SerializedName("pierce")
+    private int pierce = 1;
+
     @SerializedName("ignite")
     private boolean hasIgnite = false;
 
@@ -58,6 +61,10 @@ public class BulletData {
 
     public float getFriction() {
         return friction;
+    }
+
+    public int getPierce() {
+        return pierce;
     }
 
     public boolean isHasIgnite() {

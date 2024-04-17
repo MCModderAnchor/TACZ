@@ -54,7 +54,7 @@
     // 点燃目标
     "ignite": false,
     // 穿透数
-    "pierce": 1
+    "pierce": 2
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
     //  "radius": 5
