@@ -1,7 +1,10 @@
 package com.tac.guns.entity;
 
 import com.tac.guns.api.entity.KnockBackModifier;
+import com.tac.guns.api.event.AmmoHitBlockEvent;
 import com.tac.guns.config.common.AmmoConfig;
+import com.tac.guns.network.NetworkHandler;
+import com.tac.guns.network.message.ServerMessageHeadShot;
 import com.tac.guns.particles.BulletHoleOption;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
@@ -29,14 +32,12 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.block.BellBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkHooks;
@@ -155,10 +156,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.setDeltaMovement(this.getDeltaMovement().scale(1 - friction));
         this.setDeltaMovement(this.getDeltaMovement().add(0, -gravity, 0));
         // 子弹生命结束
-        if (!this.level.isClientSide()) {
-            if (this.tickCount >= this.life - 1) {
-                this.discard();
-            }
+        if (this.tickCount >= this.life - 1) {
+            this.discard();
         }
     }
 
@@ -274,10 +273,16 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         boundingBox = boundingBox.move(velocity.multiply(-5, -5, -5));
         // 计算射线与实体 boundingBox 的交点
         Vec3 hitPos = boundingBox.clip(startVec, endVec).orElse(null);
-        // TODO 需要补充爆头判断
+        // 爆头判定
         boolean headshot = false;
         if (hitPos == null) {
             return null;
+        }
+        // TODO 默认爆头判定
+        Vec3 hitBoxPos = hitPos.subtract(entity.position());
+        float eyeHeight = entity.getEyeHeight();
+        if ((eyeHeight - 0.25) < hitBoxPos.y && hitBoxPos.y < (eyeHeight + 0.25)) {
+            headshot = true;
         }
         return new EntityResult(entity, hitPos, headshot);
     }
@@ -292,22 +297,26 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             entity.invulnerableTime = 0;
             // 造成伤害
             float damage = this.getDamage(result.getLocation());
-            // TODO 暴击判定（不是爆头）
-            // TODO 暴击判定内部逻辑，需要输出一个是否暴击的 flag
-            // TODO 爆头伤害判定
+            // TODO 暴击判定（不是爆头）暴击判定内部逻辑，需要输出一个是否暴击的 flag
+            Entity owner = this.getOwner();
             if (result.isHeadshot()) {
                 // TODO 更细节的自定义爆头伤害计算
+                if (owner instanceof Player player) {
+                    NetworkHandler.sendToClientPlayer(new ServerMessageHeadShot(), player);
+                }
                 damage *= 2;
             }
             // 取消击退效果，设定自己的击退强度
             KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(entity);
             modifier.setKnockBackStrength(this.knockback);
             // 创建伤害
-            tacAttackEntity(DamageSource.thrown(this, this.getOwner()), entity, damage);
+            tacAttackEntity(DamageSource.thrown(this, owner), entity, damage);
             // 恢复原位
             modifier.resetKnockBackStrength();
             // 爆炸逻辑
             if (this.hasExplosion) {
+                // 取消无敌时间
+                entity.invulnerableTime = 0;
                 createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
                 // 爆炸直接结束子弹生命周期，不计算穿透
                 this.discard();
@@ -323,16 +332,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         }
         Vec3 hitVec = result.getLocation();
         BlockPos pos = result.getBlockPos();
-        BlockState state = this.level.getBlockState(pos);
-        Block block = state.getBlock();
-        // 打碎玻璃（可以给个 Config 开关）
-        if (state.getMaterial() == Material.GLASS) {
-            this.level.destroyBlock(result.getBlockPos(), false, this.getOwner());
-        }
-        // 敲钟
-        if (block instanceof BellBlock bell) {
-            bell.attemptToRing(this.level, pos, result.getDirection());
-        }
+        // 触发事件
+        MinecraftForge.EVENT_BUS.post(new AmmoHitBlockEvent(level, result, this.level.getBlockState(pos), this));
         // 爆炸
         if (this.hasExplosion) {
             createExplosion(this, this.explosionDamage, this.explosionRadius, hitVec);
