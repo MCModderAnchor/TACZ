@@ -14,15 +14,15 @@ import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.config.common.GunConfig;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.index.CommonGunIndex;
-import com.tac.guns.resource.pojo.data.gun.BulletData;
-import com.tac.guns.resource.pojo.data.gun.GunData;
-import com.tac.guns.resource.pojo.data.gun.GunReloadData;
-import com.tac.guns.resource.pojo.data.gun.InaccuracyType;
+import com.tac.guns.resource.pojo.data.attachment.Silence;
+import com.tac.guns.resource.pojo.data.gun.*;
 import com.tac.guns.sound.SoundManager;
+import com.tac.guns.util.AttachmentDataUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -67,6 +67,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     private static final EntityDataAccessor<Boolean> DATA_IS_AIMING_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
     @Unique
     private static final EntityDataAccessor<Float> DATA_SPRINT_TIME_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
+    @Unique
+    private static final EntityDataAccessor<Long> DATA_BOLT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
     /**
      * 射击时间戳，射击成功时更新，单位 ms。
      * 用于计算射击的冷却时间。
@@ -79,6 +81,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
      */
     @Unique
     private long tac$DrawTimestamp = -1L;
+    /**
+     * 拉栓时间戳，在拉栓开始时更新，单位 ms。
+     */
+    @Unique
+    private long tac$BoltTimestamp = -1;
+    @Unique
+    private long tac$BoltCoolDown = -1;
     /**
      * 瞄准的进度，范围 0 ~ 1
      */
@@ -148,6 +157,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     public long getSynDrawCoolDown() {
         return this.getEntityData().get(DATA_DRAW_COOL_DOWN_ID);
+    }
+
+    @Override
+    @Unique
+    public long getSynBoltCoolDown() {
+        return this.getEntityData().get(DATA_BOLT_COOL_DOWN_ID);
     }
 
     @Override
@@ -229,6 +244,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         tac$ReloadStateType = ReloadState.StateType.NOT_RELOADING;
         tac$SprintTimestamp = -1;
         tac$SprintTimeS = 0;
+        tac$BoltTimestamp = -1;
+        tac$BoltCoolDown = -1;
         // 更新切枪时间戳
         if (tac$DrawTimestamp == -1) {
             tac$DrawTimestamp = System.currentTimeMillis();
@@ -243,6 +260,53 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         }
         tac$CurrentGunItem = gunItemSupplier;
         ((IGunOperator) this).updatePutAwayTime();
+    }
+
+    @Unique
+    @Override
+    public void bolt() {
+        if (tac$CurrentGunItem == null) {
+            return;
+        }
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
+        TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
+            // 判断是否正在射击冷却
+            if (getShootCoolDown() != 0) {
+                return;
+            }
+            // 检查是否正在换弹
+            if (tac$ReloadStateType.isReloading()) {
+                return;
+            }
+            // 检查是否在切枪
+            if (getDrawCoolDown() != 0) {
+                return;
+            }
+            // 检查是否在拉栓
+            if (tac$BoltCoolDown >= 0) {
+                return;
+            }
+            // 检查 bolt 类型是否是 manual action
+            Bolt boltType = gunIndex.getGunData().getBolt();
+            if (boltType != Bolt.MANUAL_ACTION) {
+                return;
+            }
+            // 检查是否有弹药在枪膛内
+            if (iGun.hasBulletInBarrel(currentGunItem)) {
+                return;
+            }
+            // 检查弹匣内是否有子弹
+            if (iGun.getCurrentAmmoCount(currentGunItem) == 0) {
+                return;
+            }
+            tac$BoltTimestamp = System.currentTimeMillis();
+            // 将bolt cool down随便改为一个非 -1 的数值，以标记bolt进程开始
+            tac$BoltCoolDown = 0;
+        });
     }
 
     @Unique
@@ -283,11 +347,16 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             if (getDrawCoolDown() != 0) {
                 return;
             }
+            // 检查是否在拉栓
+            if (tac$BoltCoolDown >= 0) {
+                return;
+            }
             int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
+            int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunIndex.getGunData());
             // 检查弹药
             if (this.needCheckAmmo()) {
                 // 超出或达到上限，不换弹
-                if (currentAmmoCount >= gunIndex.getGunData().getAmmoAmount()) {
+                if (currentAmmoCount >= maxAmmoCount) {
                     return;
                 }
                 boolean hasAmmo = this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map(cap -> {
@@ -318,7 +387,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
                 return;
             }
             // 战术换弹，初始化用于 tick 的状态
-            if (currentAmmoCount <= gunIndex.getGunData().getAmmoAmount()) {
+            if (currentAmmoCount <= maxAmmoCount) {
                 tac$ReloadStateType = ReloadState.StateType.TACTICAL_RELOAD_FEEDING;
                 tac$ReloadTimestamp = System.currentTimeMillis();
             }
@@ -335,6 +404,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         if (!(currentGunItem.getItem() instanceof IGun iGun)) {
             return ShootResult.FAIL;
         }
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
+        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
+        if (gunIndexOptional.isEmpty()) {
+            return ShootResult.FAIL;
+        }
+        CommonGunIndex gunIndex = gunIndexOptional.get();
         // 判断射击是否正在冷却
         long coolDown = getShootCoolDown();
         if (coolDown == -1) {
@@ -351,6 +426,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         if (getDrawCoolDown() != 0) {
             return ShootResult.FAIL;
         }
+        // 检查是否在拉栓
+        if (tac$BoltCoolDown >= 0) {
+            return ShootResult.FAIL;
+        }
         // 检查是否在奔跑
         if (tac$SprintTimeS > 0) {
             return ShootResult.FAIL;
@@ -360,30 +439,50 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         if (needCheckAmmo() && iGun.getCurrentAmmoCount(currentGunItem) < 1) {
             return ShootResult.NO_AMMO;
         }
+        // 检查膛内子弹
+        Bolt boltType = gunIndex.getGunData().getBolt();
+        if (boltType == Bolt.MANUAL_ACTION && !iGun.hasBulletInBarrel(currentGunItem)) {
+            return ShootResult.NEED_BOLT;
+        }
         // 触发射击事件
         if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, currentGunItem, LogicalSide.SERVER))) {
             return ShootResult.FAIL;
         }
         // 调用射击方法
-        ResourceLocation gunId = iGun.getGunId(currentGunItem);
         LivingEntity shooter = (LivingEntity) (Object) this;
-        TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
-            Level world = shooter.getLevel();
-            BulletData bulletData = gunIndex.getBulletData();
-            EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
-            InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
-            float inaccuracy = gunIndex.getGunData().getInaccuracy(inaccuracyState);
-            float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
-            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
-            world.addFreshEntity(bullet);
-            // 播放声音
-            // TODO 配置文件决定衰减距离
-            SoundManager.sendSoundToNearby(shooter, 64, gunId, SoundManager.SHOOT_SOUND, 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
-            // 削减弹药数
-            if (this.needCheckAmmo()) {
-                iGun.reduceCurrentAmmoCount(currentGunItem);
+        Level world = shooter.getLevel();
+        BulletData bulletData = gunIndex.getBulletData();
+        EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
+        InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
+        final float[] inaccuracy = new float[]{gunIndex.getGunData().getInaccuracy(inaccuracyState)};
+        final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
+        final boolean[] useSilenceSound = new boolean[]{false};
+        AttachmentDataUtils.getAllAttachmentData(currentGunItem, gunIndex.getGunData(), attachmentData -> {
+            // 影响除瞄准外所有的不准确度
+            if (!inaccuracyState.isAim()) {
+                inaccuracy[0] += attachmentData.getInaccuracyAddend();
+            }
+            Silence silence = attachmentData.getSilence();
+            soundDistance[0] += silence.getDistanceAddend();
+            if (silence.isUseSilenceSound()) {
+                useSilenceSound[0] = true;
             }
         });
+        inaccuracy[0] = Math.max(0, inaccuracy[0]);
+        float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
+        bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
+        world.addFreshEntity(bullet);
+        if (soundDistance[0] > 0) {
+            String soundId = useSilenceSound[0] ? SoundManager.SILENCE_SOUND : SoundManager.SHOOT_SOUND;
+            SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
+        }
+        // 削减弹药数
+        if (this.needCheckAmmo()) {
+            iGun.reduceCurrentAmmoCount(currentGunItem);
+            if (boltType == Bolt.MANUAL_ACTION) {
+                iGun.setBulletInBarrel(currentGunItem, false);
+            }
+        }
         tac$ShootTimestamp = System.currentTimeMillis();
         return ShootResult.SUCCESS;
     }
@@ -464,9 +563,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         ReloadState reloadState = tickReloadState();
         tickAimingProgress();
         tickSprint();
+        tickBolt();
         // 从服务端同步数据
         this.getEntityData().set(DATA_SHOOT_COOL_DOWN_ID, getShootCoolDown());
         this.getEntityData().set(DATA_DRAW_COOL_DOWN_ID, getDrawCoolDown());
+        this.getEntityData().set(DATA_BOLT_COOL_DOWN_ID, tac$BoltCoolDown);
         this.getEntityData().set(DATA_RELOAD_STATE_ID, reloadState);
         this.getEntityData().set(DATA_AIMING_PROGRESS_ID, tac$AimingProgress);
         this.getEntityData().set(DATA_IS_AIMING_ID, tac$IsAiming);
@@ -525,8 +626,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             tac$AimingProgress = 0;
             return;
         }
-        float aimTime = gunIndexOptional.get().getGunData().getAimTime();
-        float alphaProgress = (System.currentTimeMillis() - tac$AimingTimestamp + 1) / (aimTime * 1000);
+        GunData gunData = gunIndexOptional.get().getGunData();
+        final float[] aimTime = new float[]{gunData.getAimTime()};
+        AttachmentDataUtils.getAllAttachmentData(currentGunItem, gunData, attachmentData -> aimTime[0] += attachmentData.getAdsAddendTime());
+        aimTime[0] = Math.max(0, aimTime[0]);
+        float alphaProgress = (System.currentTimeMillis() - tac$AimingTimestamp + 1) / (aimTime[0] * 1000);
         if (tac$IsAiming) {
             // 处于执行瞄准状态，增加 aimingProgress
             tac$AimingProgress += alphaProgress;
@@ -541,6 +645,40 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             }
         }
         tac$AimingTimestamp = System.currentTimeMillis();
+    }
+
+    @Unique
+    private void tickBolt(){
+        // bolt cool down 为 -1 时，代表拉栓逻辑进程没有开始，不需要tick
+        if (tac$BoltCoolDown == -1) {
+            return;
+        }
+        if (tac$CurrentGunItem == null) {
+            tac$BoltCoolDown = -1;
+            return;
+        }
+        ItemStack currentGunItem = tac$CurrentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
+            tac$BoltCoolDown = -1;
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
+        Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
+        tac$BoltCoolDown =  gunIndex.map(index -> {
+            long coolDown = (long) (index.getGunData().getBoltActionTime() * 1000) - (System.currentTimeMillis() - tac$BoltTimestamp);
+            // 给 5 ms 的窗口时间，以平衡延迟
+            coolDown = coolDown - 5;
+            if (coolDown < 0) {
+                return 0L;
+            }
+            return coolDown;
+        }).orElse(-1L);
+        if (tac$BoltCoolDown == 0) {
+            if (iGun.getCurrentAmmoCount(currentGunItem) != 0) {
+                iGun.setBulletInBarrel(currentGunItem, true);
+            }
+            tac$BoltCoolDown = -1;
+        }
     }
 
     @Unique
@@ -597,14 +735,19 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             }
         }
         // 更新枪内弹药
+        int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunData);
         if (tac$ReloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
-                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
+                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount));
+                Bolt boltType = gunIndexOptional.get().getGunData().getBolt();
+                if (boltType == Bolt.MANUAL_ACTION) {
+                    iGun.setBulletInBarrel(currentGunItem, true);
+                }
             }
         }
         if (tac$ReloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
-                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, gunData.getAmmoAmount()));
+                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount));
             }
         }
         // 更新换弹状态缓存
@@ -662,6 +805,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         entityData.define(DATA_RELOAD_STATE_ID, new ReloadState());
         entityData.define(DATA_AIMING_PROGRESS_ID, 0f);
         entityData.define(DATA_DRAW_COOL_DOWN_ID, -1L);
+        entityData.define(DATA_BOLT_COOL_DOWN_ID, -1L);
         entityData.define(DATA_IS_AIMING_ID, false);
         entityData.define(DATA_SPRINT_TIME_ID, 0f);
     }

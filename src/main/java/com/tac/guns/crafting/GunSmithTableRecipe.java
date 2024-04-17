@@ -28,14 +28,14 @@ public class GunSmithTableRecipe implements Recipe<Inventory> {
     }
 
     @Override
+    @Deprecated
     public boolean matches(Inventory playerInventory, Level level) {
-        // TODO
         return false;
     }
 
     @Override
+    @Deprecated
     public ItemStack assemble(Inventory playerInventory) {
-        // TODO
         return ItemStack.EMPTY;
     }
 

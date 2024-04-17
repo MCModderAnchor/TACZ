@@ -62,4 +62,8 @@ public enum InaccuracyType {
         double distance = Math.abs(livingEntity.walkDist - livingEntity.walkDistO);
         return distance > 0.05f;
     }
+
+    public boolean isAim() {
+        return this == AIM;
+    }
 }

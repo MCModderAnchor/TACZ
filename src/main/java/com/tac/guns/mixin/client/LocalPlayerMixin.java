@@ -18,8 +18,11 @@ import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.*;
 import com.tac.guns.resource.index.CommonGunIndex;
+import com.tac.guns.resource.pojo.data.attachment.RecoilModifier;
+import com.tac.guns.resource.pojo.data.gun.Bolt;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunRecoil;
+import com.tac.guns.util.AttachmentDataUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -136,15 +139,21 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (gunOperator.getSynDrawCoolDown() != 0) {
                 return ShootResult.FAIL;
             }
-            // 检查是否正在奔跑
-            if (gunOperator.getSynSprintTime() > 0) {
-                return ShootResult.FAIL;
-            }
             // 判断子弹数
             int ammoCount = iGun.getCurrentAmmoCount(mainhandItem);
             if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && ammoCount < 1) {
                 SoundPlayManager.playDryFireSound(player, gunIndex);
                 return ShootResult.NO_AMMO;
+            }
+            // 判断膛内子弹
+            Bolt boltType = gunIndex.getGunData().getBolt();
+            if (boltType == Bolt.MANUAL_ACTION && !iGun.hasBulletInBarrel(mainhandItem)) {
+                bolt();
+                return ShootResult.NEED_BOLT;
+            }
+            // 检查是否正在奔跑
+            if (gunOperator.getSynSprintTime() > 0) {
+                return ShootResult.FAIL;
             }
             // 触发开火事件
             if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, mainhandItem, LogicalSide.CLIENT))) {
@@ -171,12 +180,30 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 if (animationStateMachine != null) {
                     animationStateMachine.onGunShoot();
                 }
+                // 获取配件的后坐力属性
+                final float[] attachmentRecoilModifier = new float[]{0f, 0f};
+                final boolean[] useSilenceSound = new boolean[]{false};
+                AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> {
+                    RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
+                    if (recoilModifier == null) {
+                        return;
+                    }
+                    attachmentRecoilModifier[0] += recoilModifier.getPitch();
+                    attachmentRecoilModifier[1] += recoilModifier.getYaw();
+                    if (attachmentData.getSilence().isUseSilenceSound()) {
+                        useSilenceSound[0] = true;
+                    }
+                });
                 // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
                     GunRecoil recoil = gunData.getRecoil();
-                    player.setXRot(player.getXRot() - recoil.getRandomPitch());
-                    player.setYRot(player.getYRot() + recoil.getRandomYaw());
-                    SoundPlayManager.playShootSound(player, gunIndex);
+                    player.setXRot(player.getXRot() - recoil.getRandomPitch(attachmentRecoilModifier[0]));
+                    player.setYRot(player.getYRot() + recoil.getRandomYaw(attachmentRecoilModifier[1]));
+                    if (useSilenceSound[0]) {
+                        SoundPlayManager.playSilenceSound(player, gunIndex);
+                    } else {
+                        SoundPlayManager.playShootSound(player, gunIndex);
+                    }
                 });
             }, coolDown, TimeUnit.MILLISECONDS);
             return ShootResult.SUCCESS;
@@ -220,7 +247,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         long putAwayTime = Math.abs(drawTime);
         // 发包通知服务器
-        if(Minecraft.getInstance().gameMode != null) {
+        if (Minecraft.getInstance().gameMode != null) {
             Minecraft.getInstance().gameMode.ensureHasSentCarriedItem();
         }
         NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun());
@@ -228,7 +255,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (drawTime >= 0) {
             if (iGun1 != null) {
                 TimelessAPI.getClientGunIndex(iGun1.getGunId(lastItem)).ifPresent(gunIndex -> {
-                    // TODO 播放收枪音效
+                    // 播放收枪音效
+                    SoundPlayManager.stopPlayGunSound();
+                    SoundPlayManager.playPutAwaySound(player, gunIndex);
                     // 播放收枪动画
                     GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                     if (animationStateMachine != null) {
@@ -247,7 +276,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                     if (tac$DrawFuture != null) {
                         tac$DrawFuture.cancel(false);
                     }
-                    tac$DrawFuture = tac$ScheduledExecutorService.schedule(()->{
+                    tac$DrawFuture = tac$ScheduledExecutorService.schedule(() -> {
                         animationStateMachine.onGunDraw();
                         SoundPlayManager.stopPlayGunSound();
                         SoundPlayManager.playDrawSound(player, gunIndex);
@@ -255,6 +284,46 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 }
             });
         }
+    }
+
+    @Unique
+    @Override
+    public void bolt() {
+        // 检查状态锁
+        if (tac$ClientStateLock) {
+            return;
+        }
+        LocalPlayer player = (LocalPlayer) (Object) this;
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(mainhandItem);
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+            // 检查 bolt 类型是否是 manual action
+            Bolt boltType = gunIndex.getGunData().getBolt();
+            if (boltType != Bolt.MANUAL_ACTION) {
+                return;
+            }
+            // 检查是否有弹药在枪膛内
+            if (iGun.hasBulletInBarrel(mainhandItem)) {
+                return;
+            }
+            // 检查弹匣内是否有子弹
+            if (iGun.getCurrentAmmoCount(mainhandItem) == 0) {
+                return;
+            }
+            // 锁上状态锁
+            lockState(operator -> operator.getSynBoltCoolDown() >= 0);
+            // 发包通知服务器
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerBoltGun());
+            // 播放动画和音效
+            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            if (animationStateMachine != null) {
+                SoundPlayManager.playBoltSound(player, gunIndex);
+                animationStateMachine.onGunBolt();
+            }
+        });
     }
 
     @Unique
@@ -276,7 +345,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
                 // 满弹检查也放这，这样创造模式玩家随意随便换弹
                 // 满弹不需要换
-                if (iGun.getCurrentAmmoCount(mainhandItem) >= gunIndex.getGunData().getAmmoAmount()) {
+                int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(mainhandItem, gunIndex.getGunData());
+                if (iGun.getCurrentAmmoCount(mainhandItem) >= maxAmmoCount) {
                     return;
                 }
                 // 背包弹药检查
@@ -379,8 +449,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            // TODO 发个 GunAimingEvent
-            // TODO 判断能不能瞄准
             tac$ClientIsAiming = isAim;
             // 发送切换开火模式的数据包，通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(isAim));
@@ -446,7 +514,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             tac$OldAimingProgress = 0;
             return;
         }
-        if (System.currentTimeMillis() - tac$ClientDrawTimestamp < 0) { // 如果正在收枪，则不能瞄准
+        // 如果正在收枪，则不能瞄准
+        if (System.currentTimeMillis() - tac$ClientDrawTimestamp < 0) {
             tac$ClientIsAiming = false;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
@@ -456,8 +525,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             tac$OldAimingProgress = 0;
             return;
         }
-        float aimTime = gunIndexOptional.get().getGunData().getAimTime();
-        float alphaProgress = (System.currentTimeMillis() - tac$ClientAimingTimestamp + 1) / (aimTime * 1000);
+        GunData gunData = gunIndexOptional.get().getGunData();
+        final float[] aimTime = new float[]{gunData.getAimTime()};
+        AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> aimTime[0] += attachmentData.getAdsAddendTime());
+        aimTime[0] = Math.max(0, aimTime[0]);
+        float alphaProgress = (System.currentTimeMillis() - tac$ClientAimingTimestamp + 1) / (aimTime[0] * 1000);
         tac$OldAimingProgress = tac$ClientAimingProgress;
         if (tac$ClientIsAiming) {
             // 处于执行瞄准状态，增加 aimingProgress
@@ -496,6 +568,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return;
         }
         if (gunOperator.getSynDrawCoolDown() > 0) {
+            return;
+        }
+        if (gunOperator.getSynBoltCoolDown() >= 0) {
             return;
         }
         // 释放状态锁

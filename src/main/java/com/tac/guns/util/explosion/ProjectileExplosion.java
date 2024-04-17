@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.tac.guns.config.common.AmmoConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -22,6 +23,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -56,7 +58,12 @@ public class ProjectileExplosion extends Explosion {
     private static BlockHitResult rayTraceBlocks(Level level, ClipContext context) {
         return performRayTrace(context, (rayTraceContext, blockPos) -> {
             BlockState blockState = level.getBlockState(blockPos);
-            // TODO 这里添加判断方块是否可以穿透，如果可以穿透则返回 null
+            // 这里添加判断方块是否可以穿透，如果可以穿透则返回 null
+            List<String> ids = AmmoConfig.EXPLOSIVE_PASS_THROUGH_BLOCKS.get();
+            ResourceLocation blockId = ForgeRegistries.BLOCKS.getKey(blockState.getBlock());
+            if (blockId != null && ids.contains(blockId.toString())) {
+                return null;
+            }
             return getBlockHitResult(level, rayTraceContext, blockPos, blockState);
         }, (rayTraceContext) -> {
             Vec3 vec3 = rayTraceContext.getFrom().subtract(rayTraceContext.getTo());

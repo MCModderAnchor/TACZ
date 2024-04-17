@@ -1,0 +1,7 @@
+{
+  "name": "tac.attachment.extended_mag_1.name",
+  "tooltip": "tac.attachment.extended_mag_1.tooltip",
+  "display": "tac:extended_mag_1_display",
+  "data": "tac:extended_mag_1_data",
+  "type": "extended_mag"
+}

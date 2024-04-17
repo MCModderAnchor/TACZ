@@ -1,7 +1,6 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
@@ -14,17 +13,15 @@ import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.gui.GunRefitScreen;
-import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
-import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
+import com.tac.guns.client.renderer.other.MuzzleFlashRender;
+import com.tac.guns.client.renderer.other.ShellRender;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
-import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
 import com.tac.guns.duck.KeepingItemRenderer;
-import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.util.math.Easing;
 import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.PerlinNoise;
@@ -62,7 +59,7 @@ public class FirstPersonRenderGunEvent {
     // 用于打开改装界面时枪械运动的平滑
     private static final SecondOrderDynamics REFIT_OPENING_DYNAMICS = new SecondOrderDynamics(1f, 1.2f, 0.5f, 0);
     // 用于跳跃延滞动画的平滑
-    private static final SecondOrderDynamics JUMPING_DYNAMICS = new SecondOrderDynamics(0.28f,1f, 0.65f, 0);
+    private static final SecondOrderDynamics JUMPING_DYNAMICS = new SecondOrderDynamics(0.28f, 1f, 0.65f, 0);
     private static final float JUMPING_Y_SWAY = -2f;
     private static final float JUMPING_SWAY_TIME = 0.3f;
     private static final float LANDING_SWAY_TIME = 0.15f;
@@ -80,7 +77,6 @@ public class FirstPersonRenderGunEvent {
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
-        // TODO 先默认只实现主手的渲染
         if (event.getHand() == InteractionHand.OFF_HAND) {
             return;
         }
@@ -142,8 +138,6 @@ public class FirstPersonRenderGunEvent {
             // 调用枪械模型渲染
             RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
             gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
-            // 渲染抛壳
-            renderShell(gunIndex, gunModel, poseStack, transformType, event.getPackedLight());
             // 恢复手臂渲染
             gunModel.setRenderHand(renderHand);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
@@ -151,69 +145,6 @@ public class FirstPersonRenderGunEvent {
             gunModel.cleanAnimationTransform();
             // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
             event.setCanceled(true);
-        });
-    }
-
-    private static void checkShellQueue(long lifeTime) {
-        if (!SHELL_QUEUE.isEmpty()) {
-            long first = SHELL_QUEUE.peekFirst().left();
-            if ((System.currentTimeMillis() - first) > lifeTime) {
-                SHELL_QUEUE.pollFirst();
-                checkShellQueue(lifeTime);
-            }
-        }
-    }
-
-    private static void renderShell(ClientGunIndex gunIndex, BedrockGunModel gunModel, PoseStack poseStack, TransformType transformType, int packLight) {
-        ShellEjection shellEjection = gunIndex.getShellEjection();
-        if (shellEjection == null) {
-            SHELL_QUEUE.clear();
-            return;
-        }
-        TimelessAPI.getClientAmmoIndex(DefaultAssets.DEFAULT_AMMO_ID).ifPresent(ammoIndex -> {
-            BedrockAmmoModel model = ammoIndex.getShellModel();
-            if (model == null) {
-                return;
-            }
-            ResourceLocation location = ammoIndex.getShellTextureLocation();
-            if (location == null) {
-                return;
-            }
-            long lifeTime = (long) (shellEjection.getLivingTime() * 1000);
-
-            // 检查有没有需要踢出去的队列
-            checkShellQueue(lifeTime);
-            // 将原点放置在抛壳定位点处
-            applyPositioningNodeTransform(gunModel.getShellOriginPath(), poseStack);
-            // 各种参数的获取
-            Vector3f initialVelocity = shellEjection.getInitialVelocity();
-            Vector3f acceleration = shellEjection.getAcceleration();
-            Vector3f angularVelocity = shellEjection.getAngularVelocity();
-            // 渲染抛壳
-            for (Pair<Long, Vector3f> data : SHELL_QUEUE) {
-                poseStack.pushPose();
-
-                long remindTime = System.currentTimeMillis() - data.left();
-                double time = remindTime / 1000.0;
-                Vector3f right = data.right();
-                double x = (initialVelocity.x() + right.x()) * time + 0.5 * acceleration.x() * time * time;
-                double y = (initialVelocity.y() + right.y()) * time + 0.5 * acceleration.y() * time * time;
-                double z = (initialVelocity.z() + right.z()) * time + 0.5 * acceleration.z() * time * time;
-                poseStack.translate(-x, -y, z);
-
-                double xw = time * angularVelocity.x();
-                double yw = time * angularVelocity.y();
-                double zw = time * angularVelocity.z();
-                poseStack.translate(0, 1.5, 0);
-                poseStack.mulPose(Vector3f.XN.rotationDegrees((float) xw));
-                poseStack.mulPose(Vector3f.YN.rotationDegrees((float) yw));
-                poseStack.mulPose(Vector3f.ZP.rotationDegrees((float) zw));
-                poseStack.translate(0, -1.5, 0);
-
-                model.render(poseStack, transformType, RenderType.itemEntityTranslucentCull(location), packLight, OverlayTexture.NO_OVERLAY);
-
-                poseStack.popPose();
-            }
         });
     }
 
@@ -245,12 +176,14 @@ public class FirstPersonRenderGunEvent {
                 return;
             }
             TimelessAPI.getClientGunIndex(iGun.getGunId(mainhandItem)).ifPresent(gunIndex -> {
-                // 抛壳
-                if (gunIndex.getShellEjection() != null) {
-                    addShell(gunIndex.getShellEjection().getRandomVelocity());
-                }
                 // 记录开火时间戳，用于后坐力程序动画
                 shootTimeStamp = System.currentTimeMillis();
+                // 记录枪口火焰数据
+                MuzzleFlashRender.onShoot();
+                // 抛壳
+                if (gunIndex.getShellEjection() != null) {
+                    ShellRender.addShell(gunIndex.getShellEjection().getRandomVelocity());
+                }
             });
         }
     }
@@ -373,7 +306,7 @@ public class FirstPersonRenderGunEvent {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
             double posY = Mth.lerp(partialTicks, Minecraft.getInstance().player.yOld, Minecraft.getInstance().player.getY());
-            float velocityY = (float) (posY - Minecraft.getInstance().player.yOld)/partialTicks;
+            float velocityY = (float) (posY - Minecraft.getInstance().player.yOld) / partialTicks;
             if (player.isOnGround()) {
                 if (!lastOnGround) {
                     jumpingSwayProgress = velocityY / -0.1f;
@@ -516,14 +449,6 @@ public class FirstPersonRenderGunEvent {
         poseStack.last().pose().translate(new Vector3f(
                 -inverseTranslation.x() * weight, -inverseTranslation.y() * weight, inverseTranslation.z() * weight
         ));
-    }
-
-    private static void addShell(Vector3f randomVelocity) {
-        double xRandom = Math.random() * randomVelocity.x();
-        double yRandom = Math.random() * randomVelocity.y();
-        double zRandom = Math.random() * randomVelocity.z();
-        Vector3f vector3f = new Vector3f((float) xRandom, (float) yRandom, (float) zRandom);
-        SHELL_QUEUE.offerLast(Pair.of(System.currentTimeMillis(), vector3f));
     }
 
     private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack) {

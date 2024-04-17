@@ -3,6 +3,7 @@ package com.tac.guns.compat.cloth;
 import com.tac.guns.compat.cloth.client.KeyClothConfig;
 import com.tac.guns.compat.cloth.client.RenderClothConfig;
 import com.tac.guns.compat.cloth.common.AmmoClothConfig;
+import com.tac.guns.compat.cloth.common.GunClothConfig;
 import com.tac.guns.compat.cloth.common.OtherClothConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -22,6 +23,8 @@ public class MenuIntegration {
 
         KeyClothConfig.init(root, entryBuilder);
         RenderClothConfig.init(root, entryBuilder);
+
+        GunClothConfig.init(root, entryBuilder);
         AmmoClothConfig.init(root, entryBuilder);
         OtherClothConfig.init(root, entryBuilder);
 

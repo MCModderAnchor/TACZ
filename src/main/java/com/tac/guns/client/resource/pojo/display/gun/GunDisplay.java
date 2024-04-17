@@ -1,7 +1,6 @@
 package com.tac.guns.client.resource.pojo.display.gun;
 
 import com.google.gson.annotations.SerializedName;
-import com.tac.guns.client.resource.pojo.CommonTransformObject;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -39,6 +38,9 @@ public class GunDisplay {
     @Nullable
     @SerializedName("shell")
     private ShellEjection shellEjection;
+    @Nullable
+    @SerializedName("muzzle_flash")
+    private MuzzleFlash muzzleFlash;
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -91,5 +93,10 @@ public class GunDisplay {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
+    }
+
+    @Nullable
+    public MuzzleFlash getMuzzleFlash() {
+        return muzzleFlash;
     }
 }

@@ -16,4 +16,16 @@ public class Linear implements Interpolator {
             result[i] = content.values[indexFrom][i] * (1 - alpha) + content.values[indexTo][i] * alpha;
         }
     }
+
+    @Override
+    public Linear clone() {
+        try {
+            Linear linear = (Linear) super.clone();
+            linear.content = this.content;
+            return linear;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 }

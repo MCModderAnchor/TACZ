@@ -1,12 +1,18 @@
 package com.tac.guns.network.message;
 
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.item.builder.AmmoItemBuilder;
 import com.tac.guns.network.NetworkHandler;
+import com.tac.guns.util.AttachmentDataUtils;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -36,11 +42,11 @@ public class ClientMessageRefitGun {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide().isServer()) {
             context.enqueueWork(() -> {
-                ServerPlayer entity = context.getSender();
-                if (entity == null) {
+                ServerPlayer player = context.getSender();
+                if (player == null) {
                     return;
                 }
-                Inventory inventory = entity.getInventory();
+                Inventory inventory = player.getInventory();
                 ItemStack attachmentItem = inventory.getItem(message.attachmentSlotIndex);
                 ItemStack gunItem = inventory.getItem(message.gunSlotIndex);
                 IGun iGun = IGun.getIGunOrNull(gunItem);
@@ -49,12 +55,45 @@ public class ClientMessageRefitGun {
                         ItemStack oldAttachmentItem = iGun.getAttachment(gunItem, message.attachmentType);
                         iGun.installAttachment(gunItem, attachmentItem);
                         inventory.setItem(message.attachmentSlotIndex, oldAttachmentItem);
-                        entity.inventoryMenu.broadcastChanges();
-                        NetworkHandler.sendToClientPlayer(new ServerMessageRefreshRefitScreen(), entity);
+                        // 如果卸载的是扩容弹匣，吐出所有子弹
+                        if (message.attachmentType == AttachmentType.EXTENDED_MAG) {
+                            dropAllAmmo(player, iGun, gunItem);
+                        }
+                        player.inventoryMenu.broadcastChanges();
+                        NetworkHandler.sendToClientPlayer(new ServerMessageRefreshRefitScreen(), player);
                     }
                 }
             });
         }
         context.setPacketHandled(true);
+    }
+
+    private static void dropAllAmmo(Player player, IGun iGun, ItemStack gunItem) {
+        int ammoCount = iGun.getCurrentAmmoCount(gunItem);
+        if (ammoCount <= 0) {
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(gunItem);
+        TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
+            ResourceLocation ammoId = index.getGunData().getAmmoId();
+            // 创造模式，只改变子弹总数，不进行任何卸载弹药逻辑
+            if (player.isCreative()) {
+                int maxAmmCount = AttachmentDataUtils.getAmmoCountWithAttachment(gunItem, index.getGunData());
+                iGun.setCurrentAmmoCount(gunItem, maxAmmCount);
+                return;
+            }
+            TimelessAPI.getCommonAmmoIndex(ammoId).ifPresent(ammoIndex -> {
+                int stackSize = ammoIndex.getStackSize();
+                int tmpAmmoCount = ammoCount;
+                int roundCount = tmpAmmoCount / (stackSize + 1);
+                for (int i = 0; i <= roundCount; i++) {
+                    int count = Math.min(tmpAmmoCount, stackSize);
+                    ItemStack ammoItem = AmmoItemBuilder.create().setId(ammoId).setCount(count).build();
+                    ItemHandlerHelper.giveItemToPlayer(player, ammoItem);
+                    tmpAmmoCount -= stackSize;
+                }
+                iGun.setCurrentAmmoCount(gunItem, 0);
+            });
+        });
     }
 }

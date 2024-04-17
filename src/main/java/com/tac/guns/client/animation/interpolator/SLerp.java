@@ -52,4 +52,16 @@ public class SLerp implements Interpolator {
         result[2] = rz;
         result[3] = rw;
     }
+
+    @Override
+    public SLerp clone() {
+        try {
+            SLerp sLerp = (SLerp) super.clone();
+            sLerp.content = this.content;
+            return sLerp;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 }

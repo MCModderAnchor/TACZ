@@ -45,6 +45,7 @@ public class ClientGunIndex {
     private ResourceLocation hudTexture;
     private String type;
     private @Nullable ShellEjection shellEjection;
+    private @Nullable MuzzleFlash muzzleFlash;
 
     private ClientGunIndex() {
     }
@@ -63,6 +64,7 @@ public class ClientGunIndex {
         checkSounds(display, index);
         checkTransform(display, index);
         checkShellEjection(display, index);
+        checkMuzzleFlash(display, index);
         return index;
     }
 
@@ -183,13 +185,11 @@ public class ClientGunIndex {
         if (defaultAnimation != null) {
             switch (defaultAnimation) {
                 case RIFLE -> {
-                    // FIXME: 重载模型包后会有问题
                     for (ObjectAnimation animation : InternalAssetLoader.getDefaultRifleAnimations()) {
                         controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
                     }
                 }
                 case PISTOL -> {
-                    // FIXME: 重载模型包后会有问题
                     for (ObjectAnimation animation : InternalAssetLoader.getDefaultPistolAnimations()) {
                         controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
                     }
@@ -244,6 +244,13 @@ public class ClientGunIndex {
         index.shellEjection = display.getShellEjection();
     }
 
+    private static void checkMuzzleFlash(GunDisplay display, ClientGunIndex index) {
+        index.muzzleFlash = display.getMuzzleFlash();
+        if (index.muzzleFlash != null && index.muzzleFlash.getTexture() == null) {
+            index.muzzleFlash = null;
+        }
+    }
+
     private static ObjectAnimation createAnimationCopy(ObjectAnimation prototype, BedrockModel model) {
         ObjectAnimation animation = new ObjectAnimation(prototype);
         for (Map.Entry<String, List<ObjectAnimationChannel>> entry : animation.getChannels().entrySet()) {
@@ -275,6 +282,7 @@ public class ClientGunIndex {
                         value[1] += offsetY;
                         value[2] += offsetZ;
                     }
+                    channel.interpolator = channel.interpolator.clone();
                     channel.interpolator.compile(channel.content);
                     continue;
                 }
@@ -288,6 +296,7 @@ public class ClientGunIndex {
                         angles[2] += rotationZ;
                         channel.content.values[i] = MathUtil.toQuaternion(angles[0], angles[1], angles[2]);
                     }
+                    channel.interpolator = channel.interpolator.clone();
                     channel.interpolator.compile(channel.content);
                 }
             }
@@ -347,5 +356,10 @@ public class ClientGunIndex {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
+    }
+
+    @Nullable
+    public MuzzleFlash getMuzzleFlash() {
+        return muzzleFlash;
     }
 }

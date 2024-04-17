@@ -19,4 +19,16 @@ public class Step implements Interpolator {
                 result[i] = content.values[indexTo][i];
         }
     }
+
+    @Override
+    public Step clone() {
+        try {
+            Step step = (Step) super.clone();
+            step.content = this.content;
+            return step;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 }

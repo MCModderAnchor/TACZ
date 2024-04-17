@@ -1,6 +1,8 @@
 {
   "ammo": "tac:338",
-  "rpm": 37,
+  "ammo_amount": 10,
+  "bolt": "manual_action",
+  "rpm": 171,
   "bullet": {
     "life": 10,
     "damage": 20,
@@ -8,7 +10,6 @@
     "gravity": 0,
     "knockback": 0
   },
-  "ammo_amount": 10,
   "reload": {
     "type": "magazine",
     "feed": {
@@ -20,10 +21,11 @@
       "tactical": 2.25
     }
   },
-  "draw_time": 0.35,
-  // 收枪的动作时长，单位秒。
+  "draw_time": 0.38,
   "put_away_time": 0.65,
   "aim_time": 0.25,
+  "sprint_time": 0.3,
+  "bolt_action_time": 0.9,
   "fire_mode": [
     "semi"
   ],
@@ -43,5 +45,9 @@
     "sneak": 1,
     "lie": 0.5,
     "aim": 0.2
+  },
+  "allow_attachments": {
+    "scope": {},
+    "muzzle": {}
   }
 }

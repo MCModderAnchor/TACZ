@@ -17,6 +17,7 @@ import java.util.Objects;
 public interface GunItemDataAccessor extends IGun {
     String GUN_ID_TAG = "GunId";
     String GUN_FIRE_MODE_TAG = "GunFireMode";
+    String GUN_HAS_BULLET_IN_BARREL = "HasBulletInBarrel";
     String GUN_CURRENT_AMMO_COUNT_TAG = "GunCurrentAmmoCount";
     String GUN_ATTACHMENT_BASE = "Attachment";
 
@@ -120,5 +121,20 @@ public interface GunItemDataAccessor extends IGun {
         CompoundTag attachmentTag = new CompoundTag();
         ItemStack.EMPTY.save(attachmentTag);
         nbt.put(key, attachmentTag);
+    }
+
+    @Override
+    default boolean hasBulletInBarrel(ItemStack gun){
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (nbt.contains(GUN_HAS_BULLET_IN_BARREL, Tag.TAG_BYTE)) {
+            return nbt.getBoolean(GUN_HAS_BULLET_IN_BARREL);
+        }
+        return false;
+    }
+
+    @Override
+    default void setBulletInBarrel(ItemStack gun, boolean bulletInBarrel){
+        CompoundTag nbt = gun.getOrCreateTag();
+        nbt.putBoolean(GUN_HAS_BULLET_IN_BARREL, bulletInBarrel);
     }
 }

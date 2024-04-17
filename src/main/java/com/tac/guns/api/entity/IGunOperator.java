@@ -25,6 +25,8 @@ public interface IGunOperator {
      */
     long getSynDrawCoolDown();
 
+    long getSynBoltCoolDown();
+
     /**
      * 获取从服务端同步的换弹状态
      */
@@ -52,6 +54,11 @@ public interface IGunOperator {
      * 服务端切枪逻辑
      */
     void draw(Supplier<ItemStack> itemStackSupplier);
+
+    /**
+     * 服务端拉栓逻辑
+     */
+    void bolt();
 
     /**
      * 服务端换弹逻辑

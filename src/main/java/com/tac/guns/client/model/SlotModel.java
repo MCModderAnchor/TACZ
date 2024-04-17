@@ -13,10 +13,15 @@ import net.minecraft.world.entity.Entity;
 public class SlotModel extends EntityModel<Entity> {
     private final BedrockPart bone;
 
-    public SlotModel() {
+    public SlotModel(boolean illuminated) {
         bone = new BedrockPart("slot");
         bone.setPos(8.0F, 24.0F, -10.0F);
         bone.cubes.add(new BedrockCubePerFace(-16.0F, -16.0F, 9.5F, 16.0F, 16.0F, 0, 0, 16, 16, FaceUVsItem.singleSouthFace()));
+        bone.illuminated = illuminated;
+    }
+
+    public SlotModel() {
+        this(false);
     }
 
     @Override

@@ -86,4 +86,8 @@ public interface IGun {
     boolean allowAttachment(ItemStack gun, ItemStack attachmentItem);
 
     boolean allowAttachmentType(ItemStack gun, AttachmentType type);
+
+    boolean hasBulletInBarrel(ItemStack gun);
+
+    void setBulletInBarrel(ItemStack gun, boolean bulletInBarrel);
 }

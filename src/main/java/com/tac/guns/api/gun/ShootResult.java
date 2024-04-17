@@ -16,5 +16,9 @@ public enum ShootResult {
     /**
      * 无弹药
      */
-    NO_AMMO
+    NO_AMMO,
+    /**
+     * 需要手动上膛
+     */
+    NEED_BOLT
 }
