@@ -6,6 +6,9 @@ public class ExtraDamage {
     @SerializedName("armor_ignore")
     private float armorIgnore = 0f;
 
+    @SerializedName("head_shot_multiplier")
+    private float headShotMultiplier = 2;
+
     @SerializedName("decay")
     private Decay decay = new Decay();
 
@@ -14,6 +17,10 @@ public class ExtraDamage {
 
     public float getArmorIgnore() {
         return armorIgnore;
+    }
+
+    public float getHeadShotMultiplier() {
+        return headShotMultiplier;
     }
 
     public Decay getDecay() {

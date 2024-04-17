@@ -23,6 +23,8 @@
     "extra_damage": {
       // 护甲穿透率，默认为 0，也就是没有穿甲伤害
       "armor_ignore": 0.5,
+      // 爆头伤害
+      "head_shot_multiplier": 2,
       // 远距伤害
       "decay": {
         // 距离从 14% 到 30%
@@ -50,7 +52,9 @@
     // 阻力
     "friction": 0.01,
     // 点燃目标
-    "ignite": false
+    "ignite": false,
+    // 穿透数
+    "pierce": 1
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
     //  "radius": 5

@@ -290,7 +290,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     protected void onHitEntity(TacHitResult result, Vec3 startVec, Vec3 endVec) {
         if (result.getEntity() instanceof LivingEntity entity) {
             // 点燃
-            if (this.hasIgnite) {
+            if (this.hasIgnite && AmmoConfig.IGNITE_BLOCK.get()) {
                 entity.setSecondsOnFire(2);
             }
             // 取消无敌时间
@@ -300,11 +300,15 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             // TODO 暴击判定（不是爆头）暴击判定内部逻辑，需要输出一个是否暴击的 flag
             Entity owner = this.getOwner();
             if (result.isHeadshot()) {
-                // TODO 更细节的自定义爆头伤害计算
+                // 发送爆头提示
                 if (owner instanceof Player player) {
                     NetworkHandler.sendToClientPlayer(new ServerMessageHeadShot(), player);
                 }
-                damage *= 2;
+                float headShotMultiplier = 2f;
+                if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
+                    headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+                }
+                damage *= headShotMultiplier;
             }
             // 取消击退效果，设定自己的击退强度
             KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(entity);
@@ -349,8 +353,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                 serverLevel.sendParticles(ParticleTypes.LAVA, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);
             }
         }
-        // TODO 点燃 需要增加一个控制是否引燃方块的 Config
-        if (this.hasIgnite) {
+        if (this.hasIgnite && AmmoConfig.IGNITE_BLOCK.get()) {
             BlockPos offsetPos = pos.relative(result.getDirection());
             if (BaseFireBlock.canBePlacedAt(this.level, offsetPos, result.getDirection())) {
                 BlockState fireState = BaseFireBlock.getState(this.level, offsetPos);
@@ -419,7 +422,10 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     }
 
     private void tacAttackEntity(DamageSource source, Entity entity, float damage) {
-        float armorIgnore = 0.5F;
+        float armorIgnore = 0;
+        if (this.extraDamage != null && this.extraDamage.getArmorIgnore() > 0) {
+            armorIgnore = (float) (this.extraDamage.getArmorIgnore() * AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
+        }
         // FIXME 阻止末影人传送，并不起作用
         if (entity instanceof EnderMan) {
             source.bypassInvul();
