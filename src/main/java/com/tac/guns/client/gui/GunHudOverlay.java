@@ -10,6 +10,7 @@ import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.util.AttachmentDataUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.player.LocalPlayer;
@@ -28,6 +29,7 @@ public class GunHudOverlay {
     private static final DecimalFormat CURRENT_AMMO_FORMAT = new DecimalFormat("000");
     private static final DecimalFormat INVENTORY_AMMO_FORMAT = new DecimalFormat("0000");
     private static long checkAmmoTimestamp = -1L;
+    private static int cacheMaxAmmoCount = 0;
     private static int cacheInventoryAmmoCount = 0;
 
     public static void render(ForgeIngameGui gui, PoseStack poseStack, float partialTick, int width, int height) {
@@ -40,22 +42,16 @@ public class GunHudOverlay {
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
-
-        // 当前枪械弹药数
-        int currentAmmoCount = iGun.getCurrentAmmoCount(stack);
-        int ammoCountColor;
-        if (currentAmmoCount < 1) {
-            ammoCountColor = 0xFF5555;
-        } else {
-            ammoCountColor = 0xFFFFFF;
-        }
-        String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(currentAmmoCount);
-
+        ResourceLocation gunId = iGun.getGunId(stack);
 
         // 玩家背包弹药数
         if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
             // 0.2 秒检查一次
             if ((System.currentTimeMillis() - checkAmmoTimestamp) > 200) {
+                // 当前枪械的总弹药数
+                TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> cacheMaxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(stack, gunIndex.getGunData()));
+
+                // 缓存背包内的弹药数
                 Inventory inventory = player.getInventory();
                 cacheInventoryAmmoCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -72,21 +68,30 @@ public class GunHudOverlay {
         } else {
             cacheInventoryAmmoCount = 9999;
         }
-        String inventoryAmmoCountText = INVENTORY_AMMO_FORMAT.format(cacheInventoryAmmoCount);
 
+        // 当前枪械弹药数
+        int currentAmmoCount = iGun.getCurrentAmmoCount(stack);
+        int ammoCountColor;
+        if (currentAmmoCount < (cacheMaxAmmoCount * 0.25)) {
+            ammoCountColor = 0xFF5555;
+        } else {
+            ammoCountColor = 0xFFFFFF;
+        }
 
-        TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             // 竖线
             GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 32, 0xFFFFFFFF);
 
             // 数字
             poseStack.pushPose();
             poseStack.scale(1.5f, 1.5f, 1);
+            String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(currentAmmoCount);
             mc.font.drawShadow(poseStack, currentAmmoCountText, (width - 70) / 1.5f, (height - 43) / 1.5f, ammoCountColor);
             poseStack.popPose();
 
             poseStack.pushPose();
             poseStack.scale(0.8f, 0.8f, 1);
+            String inventoryAmmoCountText = INVENTORY_AMMO_FORMAT.format(cacheInventoryAmmoCount);
             mc.font.drawShadow(poseStack, inventoryAmmoCountText, (width - 41) / 0.8f, (height - 43) / 0.8f, 0xAAAAAA);
             poseStack.popPose();
 
@@ -96,6 +101,9 @@ public class GunHudOverlay {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
 
+            if (currentAmmoCount <= 0) {
+                RenderSystem.setShaderColor(1, 0.3f, 0.3f, 1);
+            }
             // 渲染枪械图标
             RenderSystem.setShaderTexture(0, gunIndex.getHUDTexture());
             GuiComponent.blit(poseStack, width - 142, height - 96, 0, 0, 64, 64, 64, 64);
@@ -107,6 +115,7 @@ public class GunHudOverlay {
                 case AUTO -> RenderSystem.setShaderTexture(0, AUTO);
                 case BURST -> RenderSystem.setShaderTexture(0, BURST);
             }
+            RenderSystem.setShaderColor(1, 1, 1, 1);
             GuiComponent.blit(poseStack, width - 41, height - 38, 0, 0, 10, 10, 10, 10);
         });
     }
