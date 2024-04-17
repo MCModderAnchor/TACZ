@@ -92,6 +92,7 @@ public class GunAnimationStateMachine {
     }
 
     public void onGunDraw() {
+        controller.runAnimation(MOVEMENT_TRACK, IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0);
         controller.runAnimation(MAIN_TRACK, DRAW_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0);
     }
 
