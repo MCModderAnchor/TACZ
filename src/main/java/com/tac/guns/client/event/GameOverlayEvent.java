@@ -39,6 +39,7 @@ public class GameOverlayEvent {
     private static boolean isRefitScreen = false;
     private static long hitTimestamp = -1L;
     private static long killTimestamp = -1L;
+    private static long headShotTimestamp = -1L;
 
     /**
      * 当玩家手上拿着枪时，播放特定动画、或瞄准时需要隐藏准心
@@ -122,6 +123,7 @@ public class GameOverlayEvent {
     private static void renderHitMarker(PoseStack poseStack, Window window) {
         long remainHitTime = System.currentTimeMillis() - hitTimestamp;
         long remainKillTime = System.currentTimeMillis() - killTimestamp;
+        long remainHeadShotTime = System.currentTimeMillis() - headShotTimestamp;
         float offset = RenderConfig.HIT_MARKET_START_POSITION.get().floatValue();
         float fadeTime;
 
@@ -147,7 +149,11 @@ public class GameOverlayEvent {
 
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1 - fadeTime / KEEP_TIME);
+        if (remainHeadShotTime > KEEP_TIME) {
+            RenderSystem.setShaderColor(1F, 1F, 1F, 1 - fadeTime / KEEP_TIME);
+        } else {
+            RenderSystem.setShaderColor(1F, 0, 0, 1 - fadeTime / KEEP_TIME);
+        }
 
         blit(poseStack, x - offset, y - offset, 0, 0, 8, 8, 16, 16);
         blit(poseStack, x + 8 + offset, y - offset, 8, 0, 8, 8, 16, 16);
@@ -161,5 +167,9 @@ public class GameOverlayEvent {
 
     public static void markKillTimestamp() {
         GameOverlayEvent.killTimestamp = System.currentTimeMillis();
+    }
+
+    public static void markHeadShotTimestamp() {
+        GameOverlayEvent.headShotTimestamp = System.currentTimeMillis();
     }
 }

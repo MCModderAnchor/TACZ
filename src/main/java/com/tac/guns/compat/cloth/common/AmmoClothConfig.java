@@ -27,8 +27,24 @@ public class AmmoClothConfig {
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(192).setTooltip(new TranslatableComponent("config.tac.common.ammo.explosive_ammo_visible_distance.desc"))
                 .setSaveConsumer(AmmoConfig.EXPLOSIVE_AMMO_VISIBLE_DISTANCE::set).build());
 
-        ammo.addEntry(entryBuilder.startStrList(new TranslatableComponent("config.tac.common.ammo.explosive_pass_through_blocks"), AmmoConfig.EXPLOSIVE_PASS_THROUGH_BLOCKS.get())
-                .setDefaultValue(Lists.newArrayList()).setTooltip(new TranslatableComponent("config.tac.common.ammo.explosive_pass_through_blocks.desc"))
-                .setSaveConsumer(AmmoConfig.EXPLOSIVE_PASS_THROUGH_BLOCKS::set).build());
+        ammo.addEntry(entryBuilder.startStrList(new TranslatableComponent("config.tac.common.ammo.pass_through_blocks"), AmmoConfig.PASS_THROUGH_BLOCKS.get())
+                .setDefaultValue(Lists.newArrayList()).setTooltip(new TranslatableComponent("config.tac.common.ammo.pass_through_blocks.desc"))
+                .setSaveConsumer(AmmoConfig.PASS_THROUGH_BLOCKS::set).build());
+
+        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tac.common.ammo.armor_ignore_base_multiplier"), AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get())
+                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tac.common.ammo.armor_ignore_base_multiplier.desc"))
+                .setSaveConsumer(AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER::set).build());
+
+        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tac.common.ammo.head_shot_base_multiplier"), AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get())
+                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tac.common.ammo.head_shot_base_multiplier.desc"))
+                .setSaveConsumer(AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER::set).build());
+
+        ammo.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tac.common.ammo.destroy_glass"), AmmoConfig.DESTROY_GLASS.get())
+                .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tac.common.ammo.destroy_glass.desc"))
+                .setSaveConsumer(AmmoConfig.DESTROY_GLASS::set).build());
+
+        ammo.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tac.common.ammo.ignite_block"), AmmoConfig.IGNITE_BLOCK.get())
+                .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tac.common.ammo.ignite_block.desc"))
+                .setSaveConsumer(AmmoConfig.IGNITE_BLOCK::set).build());
     }
 }

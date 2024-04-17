@@ -10,6 +10,9 @@ public class BulletData {
     @SerializedName("damage")
     private float damageAmount = 5;
 
+    @SerializedName("extra_damage")
+    private @Nullable ExtraDamage extraDamage = null;
+
     @SerializedName("speed")
     private float speed = 5;
 
@@ -18,6 +21,15 @@ public class BulletData {
 
     @SerializedName("knockback")
     private float knockback = 0;
+
+    @SerializedName("friction")
+    private float friction = 0.01f;
+
+    @SerializedName("pierce")
+    private int pierce = 1;
+
+    @SerializedName("ignite")
+    private boolean hasIgnite = false;
 
     @SerializedName("explosion")
     private @Nullable ExplosionData explosionData;
@@ -30,6 +42,11 @@ public class BulletData {
         return damageAmount;
     }
 
+    @Nullable
+    public ExtraDamage getExtraDamage() {
+        return extraDamage;
+    }
+
     public float getSpeed() {
         return speed;
     }
@@ -40,6 +57,18 @@ public class BulletData {
 
     public float getKnockback() {
         return knockback;
+    }
+
+    public float getFriction() {
+        return friction;
+    }
+
+    public int getPierce() {
+        return pierce;
+    }
+
+    public boolean isHasIgnite() {
+        return hasIgnite;
     }
 
     @Nullable

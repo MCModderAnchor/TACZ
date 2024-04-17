@@ -19,12 +19,42 @@
     "life": 10,
     // 伤害
     "damage": 6,
+    // 额外伤害的内容，为空则表示没有任何额外伤害计算内容
+    "extra_damage": {
+      // 护甲穿透率，默认为 0，也就是没有穿甲伤害
+      "armor_ignore": 0.5,
+      // 爆头伤害
+      "head_shot_multiplier": 2,
+      // 远距伤害
+      "decay": {
+        // 距离从 14% 到 30%
+        "range_percent": [
+          0.14,
+          0.3
+        ],
+        // 最小伤害 30%
+        "min_damage_multiplier": 0.3
+      },
+      // 抵近伤害
+      "close": {
+        // 范围 0.5 格内算抵近伤害
+        "range_meters": 2,
+        // 伤害倍率 110%
+        "damage_multiplier": 1.1
+      }
+    },
     // 速度 m/s
-    "speed": 10,
+    "speed": 400,
     // 重力
     "gravity": 0,
     // 击退效果
-    "knockback": 0
+    "knockback": 0,
+    // 阻力
+    "friction": 0.01,
+    // 点燃目标
+    "ignite": false,
+    // 穿透数
+    "pierce": 2
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
     //  "radius": 5
@@ -84,15 +114,15 @@
   // 不准确度
   "inaccuracy": {
     // 站立射击散布
-    "stand": 2,
+    "stand": 0,
     // 移动射击散布
-    "move": 4,
+    "move": 0,
     // 潜行射击散布
-    "sneak": 1,
+    "sneak": 0,
     // 趴下射击散布
-    "lie": 0.5,
+    "lie": 0,
     // 瞄准射击时散布
-    "aim": 0.2
+    "aim": 0
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser

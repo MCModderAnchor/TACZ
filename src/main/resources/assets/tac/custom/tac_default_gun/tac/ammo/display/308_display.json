@@ -1,6 +1,6 @@
 {
   "model": "tac:ammo/308",
-  "texture": "tac:ammo/uv/762x39",
+  "texture": "tac:ammo/uv/308",
   "slot": "tac:ammo/slot/308"
 }
     
