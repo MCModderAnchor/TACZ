@@ -27,8 +27,8 @@ public class AmmoClothConfig {
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(192).setTooltip(new TranslatableComponent("config.tac.common.ammo.explosive_ammo_visible_distance.desc"))
                 .setSaveConsumer(AmmoConfig.EXPLOSIVE_AMMO_VISIBLE_DISTANCE::set).build());
 
-        ammo.addEntry(entryBuilder.startStrList(new TranslatableComponent("config.tac.common.ammo.explosive_pass_through_blocks"), AmmoConfig.EXPLOSIVE_PASS_THROUGH_BLOCKS.get())
-                .setDefaultValue(Lists.newArrayList()).setTooltip(new TranslatableComponent("config.tac.common.ammo.explosive_pass_through_blocks.desc"))
-                .setSaveConsumer(AmmoConfig.EXPLOSIVE_PASS_THROUGH_BLOCKS::set).build());
+        ammo.addEntry(entryBuilder.startStrList(new TranslatableComponent("config.tac.common.ammo.pass_through_blocks"), AmmoConfig.PASS_THROUGH_BLOCKS.get())
+                .setDefaultValue(Lists.newArrayList()).setTooltip(new TranslatableComponent("config.tac.common.ammo.pass_through_blocks.desc"))
+                .setSaveConsumer(AmmoConfig.PASS_THROUGH_BLOCKS::set).build());
     }
 }

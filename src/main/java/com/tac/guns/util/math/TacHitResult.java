@@ -6,14 +6,12 @@ import net.minecraft.world.phys.EntityHitResult;
 public class TacHitResult extends EntityHitResult {
     private final boolean headshot;
 
-    public TacHitResult(EntityBullet.EntityResult result)
-    {
+    public TacHitResult(EntityBullet.EntityResult result) {
         super(result.getEntity(), result.getHitPos());
         this.headshot = result.isHeadshot();
     }
 
-    public boolean isHeadshot()
-    {
+    public boolean isHeadshot() {
         return this.headshot;
     }
 }
