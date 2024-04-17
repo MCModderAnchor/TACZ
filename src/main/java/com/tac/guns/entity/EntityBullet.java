@@ -14,13 +14,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -37,6 +35,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
@@ -162,8 +161,10 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.setDeltaMovement(this.getDeltaMovement().scale(1F - friction));
         this.setDeltaMovement(this.getDeltaMovement().add(0, -gravity, 0));
         // 子弹生命结束
-        if (this.tickCount >= this.life - 1) {
-            this.discard();
+        if (!this.level.isClientSide()) {
+            if (this.tickCount >= this.life - 1) {
+                this.discard();
+            }
         }
     }
 
@@ -271,6 +272,15 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         double expandHeight = entity instanceof Player && !entity.isCrouching() ? 0.0625 : 0.0;
         AABB boundingBox = entity.getBoundingBox();
         boundingBox = boundingBox.expandTowards(0, expandHeight, 0);
+        // Test
+        AABB oldBox = boundingBox;
+        Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
+        if (entity.getVehicle() != null) {
+            boundingBox = boundingBox.move(velocity.multiply(-2.5, -2.5, -2.5));
+//            boundingBox = boundingBox.expandTowards(velocity.multiply(1,1,1));
+        }
+        boundingBox = boundingBox.move(velocity.multiply(-5, -5, -5));
+//        boundingBox = boundingBox.expandTowards(velocity.multiply(-1,-1,-1));
         // 计算射线与实体 boundingBox 的交点
         Vec3 hitPos = boundingBox.clip(startVec, endVec).orElse(null);
 
@@ -283,6 +293,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         if (hitPos == null) {
             return null;
         }
+
         return new EntityResult(entity, hitPos, headshot);
     }
 
