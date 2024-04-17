@@ -10,7 +10,7 @@
     60
   ],
   // 枪栓类型：开膛待机（open_bolt）、闭膛待击（closed_bolt）、手动上膛（manual_action)
-  "bolt": "open_bolt",
+  "bolt": "closed_bolt",
   // 每分钟射出弹药量，最大不应超过 1200
   "rpm": 600,
   // 子弹实体属性

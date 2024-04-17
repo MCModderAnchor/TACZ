@@ -42,8 +42,18 @@ public class GunHudOverlay {
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
+        // 当前枪械弹药数
+        int ammoCount = iGun.getCurrentAmmoCount(stack) + (iGun.hasBulletInBarrel(stack) ? 1 : 0);
+        int ammoCountColor;
+        if (ammoCount < (cacheMaxAmmoCount * 0.25)) {
+            // 红色
+            ammoCountColor = 0xFF5555;
+        } else {
+            // 白色
+            ammoCountColor = 0xFFFFFF;
+        }
+        String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(ammoCount);
         ResourceLocation gunId = iGun.getGunId(stack);
-
         // 玩家背包弹药数
         if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
             // 0.2 秒检查一次
@@ -68,16 +78,6 @@ public class GunHudOverlay {
         } else {
             cacheInventoryAmmoCount = 9999;
         }
-
-        // 当前枪械弹药数
-        int currentAmmoCount = iGun.getCurrentAmmoCount(stack);
-        int ammoCountColor;
-        if (currentAmmoCount < (cacheMaxAmmoCount * 0.25)) {
-            ammoCountColor = 0xFF5555;
-        } else {
-            ammoCountColor = 0xFFFFFF;
-        }
-
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             // 竖线
             GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 32, 0xFFFFFFFF);
@@ -85,7 +85,6 @@ public class GunHudOverlay {
             // 数字
             poseStack.pushPose();
             poseStack.scale(1.5f, 1.5f, 1);
-            String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(currentAmmoCount);
             mc.font.drawShadow(poseStack, currentAmmoCountText, (width - 70) / 1.5f, (height - 43) / 1.5f, ammoCountColor);
             poseStack.popPose();
 
@@ -101,7 +100,7 @@ public class GunHudOverlay {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
 
-            if (currentAmmoCount <= 0) {
+            if (ammoCount <= 0) {
                 RenderSystem.setShaderColor(1, 0.3f, 0.3f, 1);
             }
             // 渲染枪械图标
