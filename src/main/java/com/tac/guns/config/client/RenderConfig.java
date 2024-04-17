@@ -9,6 +9,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.DoubleValue BULLET_HOLE_PARTICLE_FADE_THRESHOLD;
     public static ForgeConfigSpec.EnumValue<CrosshairType> CROSSHAIR_TYPE;
     public static ForgeConfigSpec.DoubleValue HIT_MARKET_START_POSITION;
+    public static ForgeConfigSpec.BooleanValue HEAD_SHOT_DEBUG_HITBOX;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -27,6 +28,9 @@ public class RenderConfig {
 
         builder.comment("The starting position of the hit marker");
         HIT_MARKET_START_POSITION = builder.defineInRange("HitMarketStartPosition", 4d, -1024d, 1024d);
+
+        builder.comment("Whether or not to display the head shot's hitbox");
+        HEAD_SHOT_DEBUG_HITBOX = builder.define("HeadShotDebugHitbox", false);
 
         builder.pop();
     }

@@ -11,6 +11,7 @@ public class AmmoConfig {
     public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_KNOCK_BACK;
     public static ForgeConfigSpec.IntValue EXPLOSIVE_AMMO_VISIBLE_DISTANCE;
     public static ForgeConfigSpec.ConfigValue<List<String>> PASS_THROUGH_BLOCKS;
+    public static ForgeConfigSpec.DoubleValue DAMAGE_BASE_MULTIPLIER;
     public static ForgeConfigSpec.DoubleValue ARMOR_IGNORE_BASE_MULTIPLIER;
     public static ForgeConfigSpec.DoubleValue HEAD_SHOT_BASE_MULTIPLIER;
     public static ForgeConfigSpec.BooleanValue DESTROY_GLASS;
@@ -33,6 +34,9 @@ public class AmmoConfig {
 
         builder.comment("Those blocks that the ammo can pass through");
         PASS_THROUGH_BLOCKS = builder.define("PassThroughBlocks", Lists.newArrayList());
+
+        builder.comment("All base damage number is multiplied by this factor");
+        DAMAGE_BASE_MULTIPLIER = builder.defineInRange("DamageBaseMultiplier", 1, 0, Double.MAX_VALUE);
 
         builder.comment("All armor ignore damage number is multiplied by this factor");
         ARMOR_IGNORE_BASE_MULTIPLIER = builder.defineInRange("ArmorIgnoreBaseMultiplier", 1, 0, Double.MAX_VALUE);

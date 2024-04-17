@@ -36,6 +36,8 @@
   "config.tac.client.render.bullet_hole_particle_fade_threshold.desc": "The threshold for fading out when rendering bullet hole particles",
   "config.tac.client.render.hit_market_start_position": "Hit Market Start Position",
   "config.tac.client.render.hit_market_start_position.desc": "The starting position of the hit marker",
+  "config.tac.client.render.head_shot_debug_hitbox": "Head Shot Debug Hitbox",
+  "config.tac.client.render.head_shot_debug_hitbox.desc": "Whether or not to display the head shot's hitbox",
   "config.tac.common.gun": "Gun",
   "config.tac.common.gun.default_gun_fire_sound_distance": "Default Gun Fire Sound Distance",
   "config.tac.common.gun.default_gun_fire_sound_distance.desc": "The default fire sound range (block)",
@@ -50,6 +52,8 @@
   "config.tac.common.ammo.explosive_ammo_visible_distance.desc": "The distance at which the explosion effect can be seen",
   "config.tac.common.ammo.pass_through_blocks": "Pass Through Blocks",
   "config.tac.common.ammo.pass_through_blocks.desc": "Those blocks that the ammo can pass through",
+  "config.tac.common.ammo.damage_base_multiplier": "Damage Base Multiplier",
+  "config.tac.common.ammo.damage_base_multiplier.desc": "All base damage number is multiplied by this factor",
   "config.tac.common.ammo.armor_ignore_base_multiplier": "Armor Ignore Base Multiplier",
   "config.tac.common.ammo.armor_ignore_base_multiplier.desc": "All armor ignore damage number is multiplied by this factor",
   "config.tac.common.ammo.head_shot_base_multiplier": "Head Shot Base Multiplier",
@@ -63,6 +67,8 @@
   "config.tac.common.other.ammo_box_stack_size.desc": "The maximum stack size of ammo that the ammo box can hold",
   "config.tac.common.other.default_pack_debug": "Default Pack Debug",
   "config.tac.common.other.default_pack_debug.desc": "When enabled, the reload command will not overwrite the default model file under config",
+  "config.tac.common.other.head_shot_aabb": "Head Shot AABB",
+  "config.tac.common.other.head_shot_aabb.desc": "The entity's head hitbox during the headshot\nFormat: touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]",
   "config.tac.client.render.crosshair_type": "Crosshair Type",
   "config.tac.client.render.crosshair_type.desc": "The crosshair when holding a gun"
 }

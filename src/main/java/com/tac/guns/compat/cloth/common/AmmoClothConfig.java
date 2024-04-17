@@ -31,6 +31,10 @@ public class AmmoClothConfig {
                 .setDefaultValue(Lists.newArrayList()).setTooltip(new TranslatableComponent("config.tac.common.ammo.pass_through_blocks.desc"))
                 .setSaveConsumer(AmmoConfig.PASS_THROUGH_BLOCKS::set).build());
 
+        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tac.common.ammo.damage_base_multiplier"), AmmoConfig.DAMAGE_BASE_MULTIPLIER.get())
+                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tac.common.ammo.damage_base_multiplier.desc"))
+                .setSaveConsumer(AmmoConfig.DAMAGE_BASE_MULTIPLIER::set).build());
+
         ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tac.common.ammo.armor_ignore_base_multiplier"), AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tac.common.ammo.armor_ignore_base_multiplier.desc"))
                 .setSaveConsumer(AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER::set).build());

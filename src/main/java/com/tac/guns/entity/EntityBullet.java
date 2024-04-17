@@ -3,6 +3,7 @@ package com.tac.guns.entity;
 import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.api.event.AmmoHitBlockEvent;
 import com.tac.guns.config.common.AmmoConfig;
+import com.tac.guns.event.HeadShotAABBConfigRead;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ServerMessageHeadShot;
 import com.tac.guns.particles.BulletHoleOption;
@@ -41,6 +42,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -95,7 +97,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.gravity = Mth.clamp(data.getGravity(), 0, Float.MAX_VALUE);
         this.friction = Mth.clamp(data.getFriction(), 0, Float.MAX_VALUE);
         this.hasIgnite = data.isHasIgnite();
-        this.damageAmount = Mth.clamp(data.getDamageAmount(), 0, Float.MAX_VALUE);
+        this.damageAmount = (float) Mth.clamp(data.getDamageAmount() * AmmoConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
         this.knockback = Mth.clamp(data.getKnockback(), 0, Float.MAX_VALUE);
         this.pierce = Mth.clamp(data.getPierce(), 1, Integer.MAX_VALUE);
         this.extraDamage = data.getExtraDamage();
@@ -281,12 +283,20 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         // 计算射线与实体 boundingBox 的交点
         Vec3 hitPos = boundingBox.clip(startVec, endVec).orElse(null);
         // 爆头判定
-        boolean headshot = false;
         if (hitPos == null) {
             return null;
         }
-        // TODO 默认爆头判定
         Vec3 hitBoxPos = hitPos.subtract(entity.position());
+        ResourceLocation entityId = ForgeRegistries.ENTITIES.getKey(entity.getType());
+        // 有配置的调用配置
+        if (entityId != null) {
+            AABB aabb = HeadShotAABBConfigRead.getAABB(entityId);
+            if (aabb != null) {
+                return new EntityResult(entity, hitPos, aabb.contains(hitBoxPos));
+            }
+        }
+        // 没有配置的默认给一个
+        boolean headshot = false;
         float eyeHeight = entity.getEyeHeight();
         if ((eyeHeight - 0.25) < hitBoxPos.y && hitBoxPos.y < (eyeHeight + 0.25)) {
             headshot = true;
