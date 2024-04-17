@@ -36,4 +36,8 @@ public class GunSoundInstance extends EntityBoundSoundInstance {
     public SoundBuffer getSoundBuffer() {
         return ClientAssetManager.INSTANCE.getSoundBuffers(this.registryName);
     }
+
+    public ResourceLocation getRegistryName() {
+        return registryName;
+    }
 }

@@ -22,6 +22,7 @@ import com.tac.guns.resource.pojo.data.attachment.RecoilModifier;
 import com.tac.guns.resource.pojo.data.gun.Bolt;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.resource.pojo.data.gun.GunRecoil;
+import com.tac.guns.sound.SoundManager;
 import com.tac.guns.util.AttachmentDataUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -205,6 +206,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                     GunRecoil recoil = gunData.getRecoil();
                     player.setXRot(player.getXRot() - recoil.getRandomPitch(attachmentRecoilModifier[0]));
                     player.setYRot(player.getYRot() + recoil.getRandomYaw(attachmentRecoilModifier[1]));
+                    // 开火需要打断检视
+                    SoundPlayManager.stopPlayGunSound(gunIndex, SoundManager.INSPECT_SOUND);
                     if (useSilenceSound[0]) {
                         SoundPlayManager.playSilenceSound(player, gunIndex);
                     } else {

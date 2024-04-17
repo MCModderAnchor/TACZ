@@ -6602,6 +6602,16 @@
 					]
 				},
 				{
+					"name": "scope_pos",
+					"parent": "AWP_body",
+					"pivot": [0, 8.825, 0.125]
+				},
+				{
+					"name": "constraint",
+					"parent": "AWP_body",
+					"pivot": [0, 4, 9]
+				},
+				{
 					"name": "MAG_Bullet",
 					"parent": "AWP",
 					"pivot": [0, 5.35, 2.175]
@@ -7116,16 +7126,6 @@
 							}
 						}
 					]
-				},
-				{
-					"name": "constraint",
-					"parent": "AWP",
-					"pivot": [0, 4, 9]
-				},
-				{
-					"name": "scope_pos",
-					"parent": "AWP",
-					"pivot": [0, 8.825, 0.125]
 				},
 				{
 					"name": "camera",

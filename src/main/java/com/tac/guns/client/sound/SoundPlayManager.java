@@ -15,8 +15,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class SoundPlayManager {
-
-
     /**
      * 用于阻止连发时，反复播放 DryFire 音效
      */
@@ -37,6 +35,14 @@ public class SoundPlayManager {
     public static void stopPlayGunSound() {
         if (tmpSoundInstance != null) {
             tmpSoundInstance.setStop();
+        }
+    }
+
+    public static void stopPlayGunSound(ClientGunIndex gunIndex, String animationName) {
+        if (tmpSoundInstance != null) {
+            if (tmpSoundInstance.getRegistryName() != null && tmpSoundInstance.getRegistryName().equals(gunIndex.getSounds(animationName))) {
+                tmpSoundInstance.setStop();
+            }
         }
     }
 
