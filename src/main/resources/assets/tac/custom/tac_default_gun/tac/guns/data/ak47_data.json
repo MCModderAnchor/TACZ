@@ -20,7 +20,7 @@
     // 伤害
     "damage": 6,
     // 速度 m/s
-    "speed": 10,
+    "speed": 400,
     // 重力
     "gravity": 0,
     // 击退效果
@@ -84,15 +84,15 @@
   // 不准确度
   "inaccuracy": {
     // 站立射击散布
-    "stand": 2,
+    "stand": 0,
     // 移动射击散布
-    "move": 4,
+    "move": 0,
     // 潜行射击散布
-    "sneak": 1,
+    "sneak": 0,
     // 趴下射击散布
-    "lie": 0.5,
+    "lie": 0,
     // 瞄准射击时散布
-    "aim": 0.2
+    "aim": 0
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser
