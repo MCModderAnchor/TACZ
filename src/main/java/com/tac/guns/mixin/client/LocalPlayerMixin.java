@@ -392,7 +392,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                boolean noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
+                Bolt boltType = gunIndex.getGunData().getBolt();
+                boolean needBolt = boltType == Bolt.CLOSED_BOLT || boltType == Bolt.MANUAL_ACTION;
+                boolean noAmmo = needBolt && !iGun.hasBulletInBarrel(mainhandItem);
                 // 触发 reload，停止播放声音
                 SoundPlayManager.stopPlayGunSound();
                 SoundPlayManager.playReloadSound(player, gunIndex, noAmmo);

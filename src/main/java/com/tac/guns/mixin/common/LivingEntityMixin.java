@@ -380,17 +380,17 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(entity, currentGunItem, LogicalSide.SERVER))) {
                 return;
             }
-            // 空仓换弹，初始化用于 tick 的状态
-            if (currentAmmoCount <= 0) {
+            Bolt boltType = gunIndex.getGunData().getBolt();
+            boolean needBolt = boltType == Bolt.CLOSED_BOLT || boltType == Bolt.MANUAL_ACTION;
+            boolean hasBulletInBarrel = iGun.hasBulletInBarrel(currentGunItem);
+            if (needBolt && !hasBulletInBarrel) {
+                // 初始化空仓换弹的 tick 的状态
                 tac$ReloadStateType = ReloadState.StateType.EMPTY_RELOAD_FEEDING;
-                tac$ReloadTimestamp = System.currentTimeMillis();
-                return;
-            }
-            // 战术换弹，初始化用于 tick 的状态
-            if (currentAmmoCount <= maxAmmoCount) {
+            } else {
+                // 初始化战术换弹的 tick 的状态
                 tac$ReloadStateType = ReloadState.StateType.TACTICAL_RELOAD_FEEDING;
-                tac$ReloadTimestamp = System.currentTimeMillis();
             }
+            tac$ReloadTimestamp = System.currentTimeMillis();
         });
     }
 
