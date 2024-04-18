@@ -321,7 +321,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                 if (owner instanceof Player player) {
                     NetworkHandler.sendToClientPlayer(new ServerMessageHeadShot(), player);
                 }
-                float headShotMultiplier = 2f;
+                // 默认爆头伤害是 1x
+                float headShotMultiplier = 1f;
                 if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
                     headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
                 }
@@ -441,7 +442,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         if (this.extraDamage != null && this.extraDamage.getArmorIgnore() > 0) {
             armorIgnore = (float) (this.extraDamage.getArmorIgnore() * AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
         }
-        // FIXME 阻止末影人传送，并不起作用
+        // 给末影人造成伤害
         if (entity instanceof EnderMan) {
             source.bypassInvul();
         }

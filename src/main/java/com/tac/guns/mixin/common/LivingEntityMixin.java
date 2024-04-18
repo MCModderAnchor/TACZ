@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@SuppressWarnings("UnreachableCode")
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator, KnockBackModifier {
     @Unique
@@ -251,7 +252,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             tac$DrawTimestamp = System.currentTimeMillis();
         }
         long drawTime = System.currentTimeMillis() - tac$DrawTimestamp;
-        if (drawTime >= 0) { // 如果不处于收枪状态，则需要计算收枪时长
+        if (drawTime >= 0) {
+            // 如果不处于收枪状态，则需要计算收枪时长
             if (drawTime < tac$CurrentPutAwayTimeS * 1000) {
                 tac$DrawTimestamp = System.currentTimeMillis() + drawTime;
             } else {
@@ -434,7 +436,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         if (tac$SprintTimeS > 0) {
             return ShootResult.FAIL;
         }
-        LivingEntity entity = (LivingEntity) (Object) this;
+        LivingEntity shooter = (LivingEntity) (Object) this;
         Bolt boltType = gunIndex.getGunData().getBolt();
         boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(currentGunItem);
         int ammoCount = iGun.getCurrentAmmoCount(currentGunItem) + (hasAmmoInBarrel ? 1 : 0);
@@ -451,14 +453,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             iGun.setBulletInBarrel(currentGunItem, true);
         }
         // 触发射击事件
-        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(entity, currentGunItem, LogicalSide.SERVER))) {
+        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
             return ShootResult.FAIL;
         }
         // 调用射击方法
-        LivingEntity shooter = (LivingEntity) (Object) this;
         Level world = shooter.getLevel();
         BulletData bulletData = gunIndex.getBulletData();
-        EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
         InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
         final float[] inaccuracy = new float[]{gunIndex.getGunData().getInaccuracy(inaccuracyState)};
         final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
@@ -476,17 +476,18 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         });
         inaccuracy[0] = Math.max(0, inaccuracy[0]);
         float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
+        EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
         bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
         world.addFreshEntity(bullet);
         if (soundDistance[0] > 0) {
             String soundId = useSilenceSound[0] ? SoundManager.SILENCE_SOUND : SoundManager.SHOOT_SOUND;
-            SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
+            SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
         }
         // 削减弹药数
         if (this.needCheckAmmo()) {
             if (boltType == Bolt.MANUAL_ACTION) {
                 iGun.setBulletInBarrel(currentGunItem, false);
-            } else if (boltType == Bolt.CLOSED_BOLT){
+            } else if (boltType == Bolt.CLOSED_BOLT) {
                 if (iGun.getCurrentAmmoCount(currentGunItem) > 0) {
                     iGun.reduceCurrentAmmoCount(currentGunItem);
                 } else {
@@ -661,7 +662,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     }
 
     @Unique
-    private void tickBolt(){
+    private void tickBolt() {
         // bolt cool down 为 -1 时，代表拉栓逻辑进程没有开始，不需要tick
         if (tac$BoltCoolDown == -1) {
             return;
@@ -677,7 +678,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         }
         ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
-        tac$BoltCoolDown =  gunIndex.map(index -> {
+        tac$BoltCoolDown = gunIndex.map(index -> {
             long coolDown = (long) (index.getGunData().getBoltActionTime() * 1000) - (System.currentTimeMillis() - tac$BoltTimestamp);
             // 给 5 ms 的窗口时间，以平衡延迟
             coolDown = coolDown - 5;
