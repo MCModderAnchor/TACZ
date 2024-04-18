@@ -193,7 +193,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                 hitEntities = this.findEntitiesOnPath(startVec, endVec);
             }
             // 当子弹击中实体时，进行被命中的实体读取
-            if (hitEntities != null) {
+            if (hitEntities != null && !hitEntities.isEmpty()) {
                 EntityResult[] hitEntityResult = hitEntities.toArray(new EntityResult[0]);
                 // 对被命中的实体进行排序，按照距离子弹发射位置的距离进行升序排序
                 for (int i = 0; (i < this.pierce || i < 1) && i < (hitEntityResult.length - 1); i++) {
