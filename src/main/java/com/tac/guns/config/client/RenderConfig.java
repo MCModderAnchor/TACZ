@@ -10,6 +10,8 @@ public class RenderConfig {
     public static ForgeConfigSpec.EnumValue<CrosshairType> CROSSHAIR_TYPE;
     public static ForgeConfigSpec.DoubleValue HIT_MARKET_START_POSITION;
     public static ForgeConfigSpec.BooleanValue HEAD_SHOT_DEBUG_HITBOX;
+    public static ForgeConfigSpec.BooleanValue KILL_AMOUNT_ENABLE;
+    public static ForgeConfigSpec.DoubleValue KILL_AMOUNT_DURATION_SECOND;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -31,6 +33,12 @@ public class RenderConfig {
 
         builder.comment("Whether or not to display the head shot's hitbox");
         HEAD_SHOT_DEBUG_HITBOX = builder.define("HeadShotDebugHitbox", false);
+
+        builder.comment("Whether or not to display the kill amount");
+        KILL_AMOUNT_ENABLE = builder.define("KillAmountEnable", true);
+
+        builder.comment("The duration of the kill amount, in second");
+        KILL_AMOUNT_DURATION_SECOND = builder.defineInRange("KillAmountDurationSecond", 3, 0, Double.MAX_VALUE);
 
         builder.pop();
     }

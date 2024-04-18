@@ -1,6 +1,7 @@
 package com.tac.guns.client.event;
 
 import com.tac.guns.GunMod;
+import com.tac.guns.client.gui.overlay.KillAmountOverlay;
 import com.tac.guns.entity.EntityBullet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -18,7 +19,7 @@ public class EntityHurtDeathEvent {
         LocalPlayer player = Minecraft.getInstance().player;
         Entity directEntity = event.getSource().getDirectEntity();
         if (player != null && directEntity instanceof EntityBullet bullet && bullet.ownedBy(player)) {
-            GameOverlayEvent.markHitTimestamp();
+            RenderCrosshairEvent.markHitTimestamp();
         }
     }
 
@@ -27,7 +28,8 @@ public class EntityHurtDeathEvent {
         LocalPlayer player = Minecraft.getInstance().player;
         Entity directEntity = event.getSource().getDirectEntity();
         if (player != null && directEntity instanceof EntityBullet bullet && bullet.ownedBy(player)) {
-            GameOverlayEvent.markKillTimestamp();
+            RenderCrosshairEvent.markKillTimestamp();
+            KillAmountOverlay.markTimestamp();
         }
     }
 }

@@ -33,7 +33,7 @@ import static com.tac.guns.util.RenderHelper.blit;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
-public class GameOverlayEvent {
+public class RenderCrosshairEvent {
     private static final ResourceLocation HIT_ICON = new ResourceLocation(GunMod.MOD_ID, "textures/crosshair/hit/hit_marker.png");
     private static final long KEEP_TIME = 300;
     private static boolean isRefitScreen = false;
@@ -162,14 +162,14 @@ public class GameOverlayEvent {
     }
 
     public static void markHitTimestamp() {
-        GameOverlayEvent.hitTimestamp = System.currentTimeMillis();
+        RenderCrosshairEvent.hitTimestamp = System.currentTimeMillis();
     }
 
     public static void markKillTimestamp() {
-        GameOverlayEvent.killTimestamp = System.currentTimeMillis();
+        RenderCrosshairEvent.killTimestamp = System.currentTimeMillis();
     }
 
     public static void markHeadShotTimestamp() {
-        GameOverlayEvent.headShotTimestamp = System.currentTimeMillis();
+        RenderCrosshairEvent.headShotTimestamp = System.currentTimeMillis();
     }
 }

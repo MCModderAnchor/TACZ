@@ -42,5 +42,13 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tac.client.render.head_shot_debug_hitbox"), RenderConfig.HEAD_SHOT_DEBUG_HITBOX.get())
                 .setDefaultValue(false).setTooltip(new TranslatableComponent("config.tac.client.render.head_shot_debug_hitbox.desc"))
                 .setSaveConsumer(RenderConfig.HEAD_SHOT_DEBUG_HITBOX::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tac.client.render.kill_amount_enable"), RenderConfig.KILL_AMOUNT_ENABLE.get())
+                .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tac.client.render.kill_amount_enable.desc"))
+                .setSaveConsumer(RenderConfig.KILL_AMOUNT_ENABLE::set).build());
+
+        render.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tac.client.render.kill_amount_duration_second"), RenderConfig.KILL_AMOUNT_DURATION_SECOND.get())
+                .setMin(0).setMax(Double.MAX_VALUE).setDefaultValue(3).setTooltip(new TranslatableComponent("config.tac.client.render.kill_amount_duration_second.desc"))
+                .setSaveConsumer(RenderConfig.KILL_AMOUNT_DURATION_SECOND::set).build());
     }
 }

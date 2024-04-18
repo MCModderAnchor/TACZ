@@ -1,6 +1,6 @@
 package com.tac.guns.network.message;
 
-import com.tac.guns.client.event.GameOverlayEvent;
+import com.tac.guns.client.event.RenderCrosshairEvent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -29,6 +29,6 @@ public class ServerMessageHeadShot {
 
     @OnlyIn(Dist.CLIENT)
     private static void updateHeadShot() {
-        GameOverlayEvent.markHeadShotTimestamp();
+        RenderCrosshairEvent.markHeadShotTimestamp();
     }
 }

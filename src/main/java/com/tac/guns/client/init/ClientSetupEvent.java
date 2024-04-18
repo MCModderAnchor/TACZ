@@ -2,7 +2,8 @@ package com.tac.guns.client.init;
 
 import com.tac.guns.GunMod;
 import com.tac.guns.client.animation.thrid.ThirdPersonManager;
-import com.tac.guns.client.gui.GunHudOverlay;
+import com.tac.guns.client.gui.overlay.GunHudOverlay;
+import com.tac.guns.client.gui.overlay.KillAmountOverlay;
 import com.tac.guns.client.input.*;
 import com.tac.guns.client.tooltip.ClientAmmoBoxTooltip;
 import com.tac.guns.client.tooltip.ClientGunTooltip;
@@ -38,7 +39,8 @@ public class ClientSetupEvent {
 
         // 注册 HUD
         event.enqueueWork(() -> {
-            OverlayRegistry.registerOverlayTop("TAC HUD Overlay", GunHudOverlay::render);
+            OverlayRegistry.registerOverlayTop("TAC Gun HUD Overlay", GunHudOverlay::render);
+            OverlayRegistry.registerOverlayTop("TAC Kill Amount Overlay", KillAmountOverlay::render);
         });
 
         // 注册自己的的硬编码第三人称动画
