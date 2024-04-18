@@ -346,7 +346,7 @@ public class BedrockModel{
         bufferSource.endBatch(renderType);
 
         for (IFunctionalRenderer renderer : delegateRenderers) {
-            renderer.render(matrixStack, transformType, light, overlay);
+            renderer.render(matrixStack, builder, transformType, light, overlay);
         }
         delegateRenderers = new ArrayList<>();
     }

@@ -6,6 +6,7 @@ import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 
 public class MathUtil {
+    public static final float[] QUATERNION_ONE = {0, 0, 0, 1};
     public static double magnificationToFovMultiplier(double magnification, double currentFov) {
         return magnificationToFov(magnification, currentFov) / currentFov;
     }
@@ -251,6 +252,49 @@ public class MathUtil {
         return new Vector3f((float) x, (float) y, (float) z);
     }
 
+    public static float[] solveEquations(float[][] coefficients, float[] constants) {
+        int n = constants.length;
+        // 高斯消元
+        for (int pivot = 0; pivot < n - 1; pivot++) {
+            for (int row = pivot + 1; row < n; row++) {
+                float factor = coefficients[row][pivot] / coefficients[pivot][pivot];
+                for (int col = pivot; col < n; col++) {
+                    coefficients[row][col] -= coefficients[pivot][col] * factor;
+                }
+                constants[row] -= constants[pivot] * factor;
+            }
+        }
+        // 回代求解
+        float[] solution = new float[n];
+        for (int i = n - 1; i >= 0; i--) {
+            float sum = 0.0f;
+            for (int j = i + 1; j < n; j++) {
+                sum += coefficients[i][j] * solution[j];
+            }
+            solution[i] = (constants[i] - sum) / coefficients[i][i];
+        }
+        return solution;
+    }
+
+    public static float[] getRelativeQuaternion(float[] qa, float[] qb){
+        /*
+        Given two quaternions A and B, find the quaternion C such that the result of A multiplied by C is equal to B.
+        Solve the following equations:
+             aw*ci -ak*cj +aj*ck +ai*cw = bi
+             ak*ci +aw*cj -ai*ck +aj*cw = bj
+            -aj*ci +ai*cj +aw*ck +ak*cw = bk
+            -ai*ci -aj*cj -ak*ck +aw*cw = bw
+        */
+        float[][] coefficients = {
+                { qa[3], -qa[2],  qa[1],  qa[0] },
+                { qa[2],  qa[3], -qa[0],  qa[1] },
+                {-qa[1],  qa[0],  qa[3],  qa[2] },
+                {-qa[0], -qa[1], -qa[2],  qa[3] },
+        };
+        float[] constants = { qb[0], qb[1], qb[2], qb[3] };
+        return solveEquations(coefficients, constants);
+    }
+
     /**
      * 在两个变换矩阵之间旋转、位移的插值。
      *
@@ -265,9 +309,8 @@ public class MathUtil {
         float[] qFrom = MathUtil.toQuaternion(fromRotation.x(), fromRotation.y(), fromRotation.z());
         Vector3f toRotation = MathUtil.getEulerAngles(toMatrix);
         float[] qTo = MathUtil.toQuaternion(toRotation.x(), toRotation.y(), toRotation.z());
-        Quaternion qLerped = MathUtil.toQuaternion(MathUtil.slerp(qFrom, qTo, alpha));
-        Quaternion qInverse = MathUtil.toQuaternion(inverseQuaternion(qFrom));
-        qLerped.mul(qInverse);
+        float[] qRelative = getRelativeQuaternion(qFrom, qTo);
+        Quaternion qLerped = MathUtil.toQuaternion(MathUtil.slerp(QUATERNION_ONE, qRelative, alpha));
         // 应用位移和旋转
         resultMatrix.translate(new Vector3f(translation.x(), translation.y(), translation.z()));
         resultMatrix.multiply(qLerped);

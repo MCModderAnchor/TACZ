@@ -11,6 +11,10 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.client.animation.AnimationController;
+import com.tac.guns.client.animation.AnimationListener;
+import com.tac.guns.client.animation.ObjectAnimationChannel;
+import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tac.guns.client.renderer.item.AttachmentItemRenderer;
@@ -18,6 +22,7 @@ import com.tac.guns.client.renderer.other.MuzzleFlashRender;
 import com.tac.guns.client.renderer.other.ShellRender;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientAttachmentSkinIndex;
+import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.util.RenderHelper;
@@ -48,6 +53,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String GROUND_ORIGIN_NODE = "ground";
     private static final String SHELL_ORIGIN_NODE = "shell";
     private static final String MUZZLE_FLASH_ORIGIN_NODE = "muzzle_flash";
+    private static final String MAG_NORMAL_NODE = "magazine";
+    private static final String MAG_ADDITIONAL_NODE = "additional_magazine";
     private static final String ATTACHMENT_POS_SUFFIX = "_pos";
     private static final String ATTACHMENT_ADAPTER_SUFFIX = "_adapter";
     private static final String REFIT_VIEW_PREFIX = "refit_";
@@ -68,6 +75,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     // 瞄具配件定位组的路径。其他配件不需要存路径，只需要替换渲染。但是瞄具定位组需要用来辅助第一人称瞄准的摄像机定位。
     protected @Nullable List<BedrockPart> scopePosPath;
     protected @Nullable BedrockPart root;
+    protected @Nullable BedrockPart magazineNode;
+    protected @Nullable BedrockPart additionalMagazineNode;
     private boolean renderHand = true;
     private ItemStack currentGunItem;
     // 枪口火焰模型
@@ -77,7 +86,9 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 
     public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
-        this.setFunctionalRenderer("lefthand_pos", bedrockPart -> (poseStack, transformType, light, overlay) -> {
+        magazineNode = Optional.ofNullable(modelMap.get(MAG_NORMAL_NODE)).map(ModelRendererWrapper::getModelRenderer).orElse(null);
+        additionalMagazineNode = Optional.ofNullable(modelMap.get(MAG_ADDITIONAL_NODE)).map(ModelRendererWrapper::getModelRenderer).orElse(null);
+        this.setFunctionalRenderer("lefthand_pos", bedrockPart -> (poseStack, vertexBuffer, transformType, light, overlay) -> {
             if (transformType.firstPerson()) {
                 if (!renderHand) {
                     return;
@@ -86,7 +97,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 Matrix3f normal = poseStack.last().normal().copy();
                 Matrix4f pose = poseStack.last().pose().copy();
                 //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染
-                this.delegateRender((poseStack1, transformType1, light1, overlay1) -> {
+                this.delegateRender((poseStack1, vertexBuffer1, transformType1, light1, overlay1) -> {
                     PoseStack poseStack2 = new PoseStack();
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
@@ -95,7 +106,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 });
             }
         });
-        this.setFunctionalRenderer("righthand_pos", bedrockPart -> (poseStack, transformType, light, overlay) -> {
+        this.setFunctionalRenderer("righthand_pos", bedrockPart -> (poseStack, vertexBuffer, transformType, light, overlay) -> {
             if (transformType.firstPerson()) {
                 if (!renderHand) {
                     return;
@@ -104,7 +115,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 Matrix3f normal = poseStack.last().normal().copy();
                 Matrix4f pose = poseStack.last().pose().copy();
                 //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染
-                this.delegateRender((poseStack1, transformType1, light1, overlay1) -> {
+                this.delegateRender((poseStack1, vertexBuffer1, transformType1, light1, overlay1) -> {
                     PoseStack poseStack2 = new PoseStack();
                     poseStack2.last().normal().mul(normal);
                     poseStack2.last().pose().multiply(pose);
@@ -114,11 +125,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             }
         });
         // 渲染枪口火焰
-        this.setFunctionalRenderer(MUZZLE_FLASH_ORIGIN_NODE, bedrockPart -> (poseStack, transformType, light, overlay) -> {
+        this.setFunctionalRenderer(MUZZLE_FLASH_ORIGIN_NODE, bedrockPart -> (poseStack, vertexBuffer, transformType, light, overlay) -> {
             MuzzleFlashRender.render(currentGunItem, poseStack, this);
         });
         // 渲染抛壳
-        this.setFunctionalRenderer(SHELL_ORIGIN_NODE, bedrockPart -> (poseStack, transformType, light, overlay) -> {
+        this.setFunctionalRenderer(SHELL_ORIGIN_NODE, bedrockPart -> (poseStack, vertexBuffer, transformType, light, overlay) -> {
             ShellRender.render(currentGunItem, poseStack, this);
         });
         this.setFunctionalRenderer(BULLET_IN_BARREL, bedrockPart -> {
@@ -191,6 +202,20 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             });
             return null;
         });
+        this.setFunctionalRenderer(MAG_ADDITIONAL_NODE, bedrockPart -> (poseStack, vertexBuffer, transformType, light, overlay) -> {
+            if (bedrockPart.visible) {
+                bedrockPart.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                for (BedrockPart part : bedrockPart.children) {
+                    part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                }
+                if (magazineNode != null && magazineNode.visible) {
+                    magazineNode.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    for (BedrockPart part : magazineNode.children) {
+                        part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    }
+                }
+            }
+        });
 
         ironSightPath = getPath(modelMap.get(IRON_VIEW_NODE));
         idleSightPath = getPath(modelMap.get(IDLE_VIEW_NODE));
@@ -222,13 +247,13 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             String nodeName = type.name().toLowerCase() + ATTACHMENT_POS_SUFFIX;
             this.setFunctionalRenderer(nodeName, bedrockPart -> {
                 bedrockPart.visible = false;
-                return (poseStack, transformType, light, overlay) -> {
+                return (poseStack, vertexBuffer, transformType, light, overlay) -> {
                     ItemStack attachmentItem = currentAttachmentItem.get(type);
                     if (attachmentItem != null && !attachmentItem.isEmpty()) {
                         Matrix3f normal = poseStack.last().normal().copy();
                         Matrix4f pose = poseStack.last().pose().copy();
                         //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染
-                        this.delegateRender((poseStack1, transformType1, light1, overlay1) -> {
+                        this.delegateRender((poseStack1, vertexBuffer1, transformType1, light1, overlay1) -> {
                             PoseStack poseStack2 = new PoseStack();
                             poseStack2.last().normal().mul(normal);
                             poseStack2.last().pose().multiply(pose);
@@ -345,6 +370,43 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
         super.render(matrixStack, transformType, renderType, light, overlay);
         RenderHelper.disableItemEntityStencilTest();
+    }
+
+    @Override
+    public AnimationListener supplyListeners(String nodeName, ObjectAnimationChannel.ChannelType type) {
+        AnimationListener listener = super.supplyListeners(nodeName, type);
+        if (listener == null) {
+            return null;
+        }
+        if (nodeName.equals(MAG_ADDITIONAL_NODE)) {
+            // 额外弹匣只有当动画中有它的关键帧的时候才渲染
+            return new AnimationListener() {
+                @Override
+                public void update(float[] values, boolean blend) {
+                    listener.update(values, blend);
+                    if (additionalMagazineNode != null) {
+                        additionalMagazineNode.visible = true;
+                    }
+                }
+                @Override
+                public float[] recover() {
+                    return listener.recover();
+                }
+                @Override
+                public ObjectAnimationChannel.ChannelType getType() {
+                    return listener.getType();
+                }
+            };
+        }
+        return listener;
+    }
+
+    @Override
+    public void cleanAnimationTransform() {
+        super.cleanAnimationTransform();
+        if (additionalMagazineNode != null) {
+            additionalMagazineNode.visible = false;
+        }
     }
 
     private void renderAttachment(ItemStack attachmentItem, PoseStack poseStack, ItemTransforms.TransformType transformType, int light, int overlay) {

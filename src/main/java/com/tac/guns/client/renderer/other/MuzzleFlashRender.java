@@ -47,7 +47,7 @@ public class MuzzleFlashRender {
                 muzzleFlashNormal = poseStack.last().normal().copy();
                 muzzleFlashPose = poseStack.last().pose().copy();
             }
-            bedrockModel.delegateRender((poseStack1, transformType1, light, overlay) -> {
+            bedrockModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) -> {
                 if (muzzleFlashNormal != null && muzzleFlashPose != null) {
                     float scale = 0.5f * muzzleFlash.getScale();
                     float scaleTime = TIME_RANGE / 2.0f;

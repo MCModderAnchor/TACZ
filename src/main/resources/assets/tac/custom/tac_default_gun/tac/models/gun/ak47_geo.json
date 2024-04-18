@@ -177,13 +177,13 @@
 					"pivot": [-2.225, 2.325, 0.8]
 				},
 				{
-					"name": "MAGZINE",
+					"name": "magazine",
 					"parent": "LmagINSPECT",
 					"pivot": [-2.225, 2.325, 0.8]
 				},
 				{
 					"name": "bullet_in_mag",
-					"parent": "MAGZINE",
+					"parent": "magazine",
 					"pivot": [5.775, -4.575, -8.7]
 				},
 				{
@@ -329,7 +329,7 @@
 				},
 				{
 					"name": "mag_standard",
-					"parent": "MAGZINE",
+					"parent": "magazine",
 					"pivot": [-2.225, 3.425, -8.7]
 				},
 				{
@@ -750,7 +750,7 @@
 				},
 				{
 					"name": "mag_extended_1",
-					"parent": "MAGZINE",
+					"parent": "magazine",
 					"pivot": [-2.0798, 7.17659, 5.2375]
 				},
 				{
@@ -925,7 +925,7 @@
 				},
 				{
 					"name": "mag_extended_2",
-					"parent": "MAGZINE",
+					"parent": "magazine",
 					"pivot": [-2.0798, 7.17659, 5.2375]
 				},
 				{
@@ -1100,7 +1100,7 @@
 				},
 				{
 					"name": "mag_extended_3",
-					"parent": "MAGZINE",
+					"parent": "magazine",
 					"pivot": [-2.0798, 7.17659, 5.2375]
 				},
 				{
@@ -5595,6 +5595,11 @@
 					"pivot": [-3.025, 4.8, -0.725]
 				},
 				{
+					"name": "additional_magazine",
+					"parent": "AKM",
+					"pivot": [-2.225, 2.325, 0.8]
+				},
+				{
 					"name": "R",
 					"parent": "bone2",
 					"pivot": [3.775, 14.425, -0.7]
@@ -5655,6 +5660,12 @@
 					"parent": "views",
 					"pivot": [8, 8, 9],
 					"rotation": [0, 50, 0]
+				},
+				{
+					"name": "refit_extended_mag_view",
+					"parent": "views",
+					"pivot": [4.625, -3.8, 3.25],
+					"rotation": [-30, 63.76338, 0]
 				},
 				{
 					"name": "camera",

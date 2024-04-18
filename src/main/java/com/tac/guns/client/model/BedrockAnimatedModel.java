@@ -349,7 +349,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
             if (functionalRenderer != null) {
                 @Nullable IFunctionalRenderer renderer = functionalRenderer.apply(this);
                 if (renderer != null) {
-                    renderer.render(poseStack, transformType, cubePackedLight, overlay);
+                    renderer.render(poseStack, consumer, transformType, cubePackedLight, overlay);
                 } else {
                     if (this.visible) {
                         super.compile(poseStack.last(), consumer, cubePackedLight, overlay, red, green, blue, alpha);

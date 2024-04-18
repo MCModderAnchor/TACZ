@@ -5,5 +5,5 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 
 public interface IFunctionalRenderer {
-    void render(PoseStack poseStack, ItemTransforms.TransformType transformType, int light, int overlay);
+    void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay);
 }

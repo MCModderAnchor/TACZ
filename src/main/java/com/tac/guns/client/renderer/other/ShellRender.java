@@ -57,7 +57,7 @@ public class ShellRender {
                 Vector3f acceleration = shellEjection.getAcceleration();
                 Vector3f angularVelocity = shellEjection.getAngularVelocity();
                 // 渲染抛壳
-                gunModel.delegateRender((poseStack1, transformType1, light, overlay) -> {
+                gunModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) -> {
                     for (Data data : SHELL_QUEUE) {
                         if (data.normal == null && data.pose == null) {
                             data.normal = poseStack.last().normal().copy();

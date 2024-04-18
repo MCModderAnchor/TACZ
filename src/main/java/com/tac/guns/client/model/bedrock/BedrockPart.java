@@ -95,7 +95,7 @@ public class BedrockPart {
         poseStack.scale(xScale, yScale, zScale);
     }
 
-    protected void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
+    public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
         for (BedrockCube bedrockCube : this.cubes) {
             bedrockCube.compile(pose, consumer, light, overlay, red, green, blue, alpha);
         }
