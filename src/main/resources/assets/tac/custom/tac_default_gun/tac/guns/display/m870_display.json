@@ -1,6 +1,0 @@
-{
-  "model": "tac:gun/m870_geo",
-  "texture": "tac:gun/uv/m870",
-  "slot": "tac:gun/slot/m870",
-  "hud": "tac:gun/hud/m870"
-}

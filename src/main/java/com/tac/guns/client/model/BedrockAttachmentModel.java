@@ -26,6 +26,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     private static final String OCULAR_RING_NODE = "ocular_ring";
     private static final String DIVISION_NODE = "division";
     private static final String OCULAR_NODE = "ocular";
+    private static final String ALWAYS_SHOWN_NODE = "always_shown";
     @Nullable
     protected List<BedrockPart> scopeViewPath;
     @Nullable
@@ -36,6 +37,8 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     protected List<BedrockPart> ocularNodePath;
     @Nullable
     protected List<BedrockPart> divisionNodePath;
+    @Nullable
+    protected List<BedrockPart> alwaysShownNodePath;
     private boolean isScope = true;
     private boolean isSight = false;
     private float scopeViewRadiusModifier = 1;
@@ -47,6 +50,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         ocularRingPath = getPath(modelMap.get(OCULAR_RING_NODE));
         ocularNodePath = getPath(modelMap.get(OCULAR_NODE));
         divisionNodePath = getPath(modelMap.get(DIVISION_NODE));
+        alwaysShownNodePath = getPath(modelMap.get(ALWAYS_SHOWN_NODE));
     }
 
     @Nullable
@@ -95,6 +99,10 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
                 renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
             }
         }
+        // 总是显示部分
+        if (alwaysShownNodePath != null) {
+            renderTempPart(matrixStack, transformType, renderType, light, overlay, alwaysShownNodePath);
+        }
     }
 
     private void renderSight(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
@@ -142,9 +150,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     private void renderTempPart(PoseStack poseStack, ItemTransforms.TransformType transformType, RenderType renderType,
-                                   int light, int overlay, @Nonnull List<BedrockPart> path){
+                                int light, int overlay, @Nonnull List<BedrockPart> path) {
         poseStack.pushPose();
-        for(int i = 0; i < path.size() - 1; ++i){
+        for (int i = 0; i < path.size() - 1; ++i) {
             path.get(i).translateAndRotateAndScale(poseStack);
         }
         BedrockPart part = path.get(path.size() - 1);
@@ -194,7 +202,8 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         Vector3f ocularCenter = getBedrockPartCenter(matrixStack, ocularNodePath);
         float centerX = ocularCenter.x() * 16 * 90;
         float centerY = ocularCenter.y() * 16 * 90;
-        float rad = 80 * scopeViewRadiusModifier; // 80是一个随便找的大小合适的数值。
+        // 80是一个随便找的大小合适的数值。
+        float rad = 80 * scopeViewRadiusModifier;
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
             rad *= IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getFrameTime());

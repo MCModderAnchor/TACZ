@@ -33,28 +33,6 @@
       }
     }
   },
-  "machine_gun": {
-    // 名称
-    "name": "tac.type.machine_gun.name",
-    // 图标，按照原版标准物品格式来写
-    "icon": {
-      "item": "tac:gun",
-      "nbt": {
-        "GunId": "tac:m249"
-      }
-    }
-  },
-  "shotgun": {
-    // 名称
-    "name": "tac.type.shotgun.name",
-    // 图标，按照原版标准物品格式来写
-    "icon": {
-      "item": "tac:gun",
-      "nbt": {
-        "GunId": "tac:m870"
-      }
-    }
-  },
   "rpg": {
     // 名称
     "name": "tac.type.rpg.name",
@@ -63,17 +41,6 @@
       "item": "tac:gun",
       "nbt": {
         "GunId": "tac:rpg7"
-      }
-    }
-  },
-  "sub_machine_gun": {
-    // 名称
-    "name": "tac.type.sub_machine_gun.name",
-    // 图标，按照原版标准物品格式来写
-    "icon": {
-      "item": "tac:gun",
-      "nbt": {
-        "GunId": "tac:vector45"
       }
     }
   }

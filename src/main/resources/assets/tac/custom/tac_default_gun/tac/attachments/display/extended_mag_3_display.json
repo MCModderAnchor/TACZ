@@ -1,7 +1,7 @@
 {
   "slot": "tac:attachment/slot/extended_mag_3",
   // 配件的默认模型，不可为空
-  "model": "tac:attachment/sro_dot_geo",
+  "model": "tac:attachment/flat",
   // 配件默认模型使用的材质，不可为空
-  "texture": "tac:attachment/uv/sro_dot"
+  "texture": "tac:attachment/slot/extended_mag_3"
 }

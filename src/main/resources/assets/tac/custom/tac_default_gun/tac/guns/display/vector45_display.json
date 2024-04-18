@@ -1,6 +1,0 @@
-{
-  "model": "tac:gun/vector45_geo",
-  "texture": "tac:gun/uv/vector45",
-  "slot": "tac:gun/slot/vector45",
-  "hud": "tac:gun/hud/vector45"
-}

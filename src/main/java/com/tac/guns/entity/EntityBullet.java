@@ -2,6 +2,7 @@ package com.tac.guns.entity;
 
 import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.api.event.AmmoHitBlockEvent;
+import com.tac.guns.api.event.HeadShotEvent;
 import com.tac.guns.config.common.AmmoConfig;
 import com.tac.guns.event.HeadShotAABBConfigRead;
 import com.tac.guns.network.NetworkHandler;
@@ -326,6 +327,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                     headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
                 }
                 damage *= headShotMultiplier;
+                MinecraftForge.EVENT_BUS.post(new HeadShotEvent(this, owner, damage));
             }
             // 取消击退效果，设定自己的击退强度
             KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(entity);
