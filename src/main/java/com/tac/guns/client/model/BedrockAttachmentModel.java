@@ -84,6 +84,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         this.scopeViewRadiusModifier = scopeViewRadiusModifier;
     }
 
+    @Override
     public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
         if (transformType.firstPerson()) {
             if (isScope) {

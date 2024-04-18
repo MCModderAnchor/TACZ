@@ -217,9 +217,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                         return;
                     }
                 }
-            } else {
-                this.onHitBlock(resultB, startVec, endVec);
             }
+            this.onHitBlock(resultB, startVec, endVec);
         }
     }
 
