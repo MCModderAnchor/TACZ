@@ -3916,11 +3916,6 @@
 					]
 				},
 				{
-					"name": "muzzle_flash",
-					"parent": "barrel3",
-					"pivot": [-2.275, 3.95, -20.475]
-				},
-				{
 					"name": "lower2",
 					"parent": "akm_default",
 					"pivot": [-2.225, 3.47126, 8.43216]
@@ -5580,19 +5575,59 @@
 					]
 				},
 				{
-					"name": "constraint",
+					"name": "attachment_adapter",
 					"parent": "AKM",
-					"pivot": [-2.225, 6.975, -11.825]
+					"pivot": [-2.225, -4.575, -0.7]
+				},
+				{
+					"name": "ar_stock_adapter",
+					"parent": "attachment_adapter",
+					"pivot": [-2.225, -2.975, 1.5],
+					"cubes": [
+						{
+							"origin": [-2.725, -5.8, 3.675],
+							"size": [1, 0.475, 1.4],
+							"pivot": [0, 1.6, 2.2],
+							"rotation": [90, 0, 0],
+							"uv": {
+								"north": {"uv": [78, 44], "uv_size": [1, 1]},
+								"east": {"uv": [60, 12], "uv_size": [2.5, 1]},
+								"south": {"uv": [78, 52], "uv_size": [1, 1]},
+								"west": {"uv": [60, 19], "uv_size": [2.5, 1]},
+								"down": {"uv": [33, 62.5], "uv_size": [1, -2.5]}
+							}
+						}
+					]
+				},
+				{
+					"name": "positioning2",
+					"parent": "AKM",
+					"pivot": [-2.225, -4.575, -0.7]
 				},
 				{
 					"name": "scope_pos",
-					"parent": "AKM",
+					"parent": "positioning2",
 					"pivot": [-2.225, 6.75, 1.425]
 				},
 				{
+					"name": "stock_pos",
+					"parent": "positioning2",
+					"pivot": [-2.225, 3.75, 9.6]
+				},
+				{
 					"name": "shell",
+					"parent": "positioning2",
+					"pivot": [-3.025, 4.475, -0.625]
+				},
+				{
+					"name": "muzzle_flash",
+					"parent": "positioning2",
+					"pivot": [-2.275, 3.95, -20.475]
+				},
+				{
+					"name": "constraint",
 					"parent": "AKM",
-					"pivot": [-3.025, 4.8, -0.725]
+					"pivot": [-2.225, 6.975, -11.825]
 				},
 				{
 					"name": "additional_magazine",
@@ -5668,10 +5703,6 @@
 					"rotation": [-30, 63.76338, 0]
 				},
 				{
-					"name": "camera",
-					"pivot": [0, 8, 12]
-				},
-				{
 					"name": "positioning",
 					"pivot": [-3.025, -8.95, -11.225]
 				},
@@ -5691,6 +5722,10 @@
 					"parent": "positioning",
 					"pivot": [-3.225, 1.225, 5.15],
 					"rotation": [0, -15, 0]
+				},
+				{
+					"name": "camera",
+					"pivot": [0, 8, 12]
 				}
 			]
 		}

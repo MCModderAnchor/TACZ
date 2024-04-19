@@ -28,6 +28,7 @@ public class ClientAttachmentIndex {
     private float @Nullable [] zoom;
     private boolean isScope;
     private boolean isSight;
+    private @Nullable String adapterNodeName;
 
     private ClientAttachmentIndex() {
     }
@@ -67,6 +68,7 @@ public class ClientAttachmentIndex {
         index.zoom = display.getZoom();
         index.isScope = display.isScope();
         index.isSight = display.isSight();
+        index.adapterNodeName = display.getAdapterNodeName();
         return display;
     }
 
@@ -166,5 +168,10 @@ public class ClientAttachmentIndex {
 
     public boolean isSight() {
         return isSight;
+    }
+
+    @Nullable
+    public String getAdapterNodeName() {
+        return adapterNodeName;
     }
 }

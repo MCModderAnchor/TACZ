@@ -15,6 +15,10 @@ public class AttachmentDisplay {
     @SerializedName("texture")
     private ResourceLocation texture;
 
+    @SerializedName("adapter")
+    @Nullable
+    private String adapterNodeName;
+
     @SerializedName("zoom")
     @Nullable
     private float[] zoom;
@@ -38,6 +42,11 @@ public class AttachmentDisplay {
 
     public ResourceLocation getTexture() {
         return texture;
+    }
+
+    @Nullable
+    public String getAdapterNodeName() {
+        return adapterNodeName;
     }
 
     @Nullable

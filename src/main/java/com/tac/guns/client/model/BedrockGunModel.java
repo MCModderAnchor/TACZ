@@ -11,10 +11,8 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.client.animation.AnimationController;
 import com.tac.guns.client.animation.AnimationListener;
 import com.tac.guns.client.animation.ObjectAnimationChannel;
-import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tac.guns.client.renderer.item.AttachmentItemRenderer;
@@ -22,7 +20,6 @@ import com.tac.guns.client.renderer.other.MuzzleFlashRender;
 import com.tac.guns.client.renderer.other.ShellRender;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientAttachmentSkinIndex;
-import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.util.RenderHelper;
@@ -38,9 +35,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.tac.guns.client.model.CommonComponents.*;
 
@@ -55,8 +50,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String MUZZLE_FLASH_ORIGIN_NODE = "muzzle_flash";
     private static final String MAG_NORMAL_NODE = "magazine";
     private static final String MAG_ADDITIONAL_NODE = "additional_magazine";
+    private static final String ATTACHMENT_ADAPTER_NODE = "attachment_adapter";
     private static final String ATTACHMENT_POS_SUFFIX = "_pos";
-    private static final String ATTACHMENT_ADAPTER_SUFFIX = "_adapter";
     private static final String REFIT_VIEW_PREFIX = "refit_";
     private static final String REFIT_VIEW_SUFFIX = "_view";
     private static final String ROOT_NODE = "root";
@@ -79,10 +74,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable BedrockPart additionalMagazineNode;
     private boolean renderHand = true;
     private ItemStack currentGunItem;
-    // 枪口火焰模型
-    private static final SlotModel MUZZLE_FLASH_MODEL = new SlotModel(true);
-    private static Matrix3f muzzleFlashNormal = new Matrix3f();
-    private static Matrix4f muzzleFlashPose = new Matrix4f();
+    private int currentExtendMagLevel = 0;
+    private final Set<String> adapterToRender = new HashSet<>();
 
     public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
@@ -186,22 +179,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         this.setFunctionalRenderer(MAG_EXTENDED_1, bedrockPart -> getExtendedMagLevel(bedrockPart, 1));
         this.setFunctionalRenderer(MAG_EXTENDED_2, bedrockPart -> getExtendedMagLevel(bedrockPart, 2));
         this.setFunctionalRenderer(MAG_EXTENDED_3, bedrockPart -> getExtendedMagLevel(bedrockPart, 3));
-        this.setFunctionalRenderer(MAG_STANDARD, bedrockPart -> {
-            ItemStack extendedMagItem = currentAttachmentItem.get(AttachmentType.EXTENDED_MAG);
-            if (extendedMagItem == null || extendedMagItem.isEmpty()) {
-                bedrockPart.visible = true;
-                return null;
-            }
-            IAttachment attachment = IAttachment.getIAttachmentOrNull(extendedMagItem);
-            if (attachment == null) {
-                bedrockPart.visible = true;
-                return null;
-            }
-            TimelessAPI.getCommonAttachmentIndex(attachment.getAttachmentId(extendedMagItem)).ifPresent(index -> {
-                bedrockPart.visible = (index.getData().getExtendedMagLevel() <= 0 || index.getData().getExtendedMagLevel() > 3);
-            });
-            return null;
-        });
+        this.setFunctionalRenderer(MAG_STANDARD, bedrockPart ->  getExtendedMagLevel(bedrockPart, 0));
         this.setFunctionalRenderer(MAG_ADDITIONAL_NODE, bedrockPart -> (poseStack, vertexBuffer, transformType, light, overlay) -> {
             if (bedrockPart.visible) {
                 bedrockPart.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
@@ -223,10 +201,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         fixedOriginPath = getPath(modelMap.get(FIXED_ORIGIN_NODE));
         groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
         scopePosPath = getPath(modelMap.get(AttachmentType.SCOPE.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
-        ModelRendererWrapper rootWrapper = modelMap.get(ROOT_NODE);
-        if (rootWrapper != null) {
-            root = rootWrapper.getModelRenderer();
-        }
+        root = Optional.ofNullable(modelMap.get(ROOT_NODE)).map(ModelRendererWrapper::getModelRenderer).orElse(null);
 
         // 缓存改装UI下各个配件的特写视角定位组
         for (AttachmentType type : AttachmentType.values()) {
@@ -264,23 +239,23 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 };
             });
         }
+
+        // 配件转接口渲染
+        this.setFunctionalRenderer(ATTACHMENT_ADAPTER_NODE, bedrockPart -> {
+            for (BedrockPart child : bedrockPart.children) {
+                if (child.name == null) {
+                    child.visible = false;
+                    continue;
+                }
+                child.visible = adapterToRender.contains(child.name);
+            }
+            return null;
+        });
     }
 
     @Nullable
     private IFunctionalRenderer getExtendedMagLevel(BedrockPart bedrockPart, int level) {
-        ItemStack extendedMagItem = currentAttachmentItem.get(AttachmentType.EXTENDED_MAG);
-        if (extendedMagItem == null || extendedMagItem.isEmpty()) {
-            bedrockPart.visible = false;
-            return null;
-        }
-        IAttachment attachment = IAttachment.getIAttachmentOrNull(extendedMagItem);
-        if (attachment == null) {
-            bedrockPart.visible = false;
-            return null;
-        }
-        TimelessAPI.getCommonAttachmentIndex(attachment.getAttachmentId(extendedMagItem)).ifPresent(index -> {
-            bedrockPart.visible = (index.getData().getExtendedMagLevel() == level);
-        });
+        bedrockPart.visible = currentExtendMagLevel == level;
         return null;
     }
 
@@ -338,6 +313,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             return;
         }
         currentGunItem = gunItem;
+        currentExtendMagLevel = 0;
+        adapterToRender.clear();
         // 更新配件物品的缓存，以供渲染使用
         for (AttachmentType type : AttachmentType.values()) {
             if (type == AttachmentType.NONE) {
@@ -345,6 +322,19 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             }
             ItemStack attachmentItem = iGun.getAttachment(gunItem, type);
             currentAttachmentItem.put(type, attachmentItem);
+            IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+            if (attachment != null) {
+                TimelessAPI.getClientAttachmentIndex(attachment.getAttachmentId(attachmentItem)).ifPresent(index -> {
+                    // 读取扩容等级，为扩容弹匣渲染做准备
+                    if (type == AttachmentType.EXTENDED_MAG) {
+                        currentExtendMagLevel = index.getData().getExtendedMagLevel();
+                    }
+                    // 添加需要渲染的转接口
+                    if (index.getAdapterNodeName() != null) {
+                        adapterToRender.add(index.getAdapterNodeName());
+                    }
+                });
+            }
         }
         // 镜子需要先渲染，写入模板值
         ItemStack attachmentItem = currentAttachmentItem.get(AttachmentType.SCOPE);

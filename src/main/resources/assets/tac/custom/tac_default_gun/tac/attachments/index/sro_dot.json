@@ -6,7 +6,7 @@
   "display": "tac:sro_dot_display",
   // 配件的属性
   "data": "tac:sro_dot_data",
-  // 配件的类型。scope、grip、muzzle、stock、laser
+  // 配件的类型。scope、grip、muzzle、stock、laser、extended_mag
   // 枪械配件槽位能从中选择可以安装的类型
   "type": "scope"
 }

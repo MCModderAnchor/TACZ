@@ -1,0 +1,7 @@
+{
+  "name": "tac.attachment.ar_tactical_stock.name",
+  "tooltip": "tac.attachment.ar_tactical_stock.tooltip",
+  "display": "tac:ar_tactical_stock_display",
+  "data": "tac:ar_tactical_stock_data",
+  "type": "stock"
+}

@@ -26,7 +26,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     private static final String OCULAR_RING_NODE = "ocular_ring";
     private static final String DIVISION_NODE = "division";
     private static final String OCULAR_NODE = "ocular";
-    private static final String ALWAYS_SHOWN_NODE = "always_shown";
     @Nullable
     protected List<BedrockPart> scopeViewPath;
     @Nullable
@@ -37,8 +36,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     protected List<BedrockPart> ocularNodePath;
     @Nullable
     protected List<BedrockPart> divisionNodePath;
-    @Nullable
-    protected List<BedrockPart> alwaysShownNodePath;
     private boolean isScope = true;
     private boolean isSight = false;
     private float scopeViewRadiusModifier = 1;
@@ -50,7 +47,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         ocularRingPath = getPath(modelMap.get(OCULAR_RING_NODE));
         ocularNodePath = getPath(modelMap.get(OCULAR_NODE));
         divisionNodePath = getPath(modelMap.get(DIVISION_NODE));
-        alwaysShownNodePath = getPath(modelMap.get(ALWAYS_SHOWN_NODE));
     }
 
     @Nullable
@@ -100,10 +96,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
                 renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
             }
         }
-        // 总是显示部分
-        if (alwaysShownNodePath != null) {
-            renderTempPart(matrixStack, transformType, renderType, light, overlay, alwaysShownNodePath);
-        }
+        super.render(matrixStack, transformType, renderType, light, overlay);
     }
 
     private void renderSight(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
