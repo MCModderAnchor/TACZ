@@ -17,29 +17,24 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
-   public TargetMinecartRenderer(EntityRendererProvider.Context ctx) {
-      super(ctx, ModelLayers.TNT_MINECART);
-   }
+    public TargetMinecartRenderer(EntityRendererProvider.Context ctx) {
+        super(ctx, ModelLayers.TNT_MINECART);
+    }
 
-   @Override
-   protected void renderMinecartContents(TargetMinecart pEntity, float pPartialTicks, BlockState pState, PoseStack stack, MultiBufferSource pBuffer, int pPackedLight) {
-      stack.pushPose();
-      {
-         super.renderMinecartContents(pEntity, pPartialTicks, pState, stack, pBuffer, pPackedLight);
-      }
-      stack.popPose();
+    @Override
+    protected void renderMinecartContents(TargetMinecart pEntity, float pPartialTicks, BlockState pState, PoseStack stack, MultiBufferSource pBuffer, int pPackedLight) {
+        stack.pushPose();
+        super.renderMinecartContents(pEntity, pPartialTicks, pState, stack, pBuffer, pPackedLight);
+        stack.popPose();
 
-      stack.pushPose();
-      {
-         stack.translate(0.5, 1.5, 0.5);
-         stack.mulPose(Vector3f.ZN.rotationDegrees(180));
-         stack.mulPose(Vector3f.YN.rotationDegrees(90));
-
-         RenderType renderType = RenderType.entityTranslucent(TargetRenderer.getTextureLocation());
-         if (TargetRenderer.getModel() != null) {
+        stack.pushPose();
+        stack.translate(0.5, 1.5, 0.5);
+        stack.mulPose(Vector3f.ZN.rotationDegrees(180));
+        stack.mulPose(Vector3f.YN.rotationDegrees(90));
+        RenderType renderType = RenderType.entityTranslucent(TargetRenderer.getTextureLocation());
+        if (TargetRenderer.getModel() != null) {
             TargetRenderer.getModel().render(stack, ItemTransforms.TransformType.NONE, renderType, pPackedLight, OverlayTexture.NO_OVERLAY);
-         }
-      }
-      stack.popPose();
-   }
+        }
+        stack.popPose();
+    }
 }

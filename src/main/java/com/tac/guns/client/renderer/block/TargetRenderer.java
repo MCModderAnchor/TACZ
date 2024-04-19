@@ -70,40 +70,33 @@ public class TargetRenderer implements BlockEntityRenderer<TargetBlockEntity> {
             return;
         }
         BlockState blockState = blockEntity.getBlockState();
-
-
         Direction facing = blockState.getValue(TargetBlock.FACING);
+
         poseStack.pushPose();
-        {
+        poseStack.translate(0.5, 0.225, 0.5);
+        poseStack.mulPose(Vector3f.YN.rotationDegrees(facing.get2DDataValue() * 90));
+        poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+        poseStack.mulPose(Vector3f.XN.rotationDegrees(Mth.lerp(partialTick, blockEntity.oRot, blockEntity.rot)));
+        poseStack.translate(0, -1.275, 0.0125);
 
-            poseStack.translate(0.5, 0.225, 0.5);
-            poseStack.mulPose(Vector3f.YN.rotationDegrees(facing.get2DDataValue() * 90));
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
-            poseStack.mulPose(Vector3f.XN.rotationDegrees(
-                    Mth.lerp(partialTick, blockEntity.oRot, blockEntity.rot))
-            );
-            poseStack.translate(0, -1.275, 0.0125);
+        RenderType renderType = RenderType.entityTranslucent(TEXTURE_LOCATION);
+        MODEL.render(poseStack, ItemTransforms.TransformType.NONE, renderType, combinedLightIn, combinedOverlayIn);
 
-            RenderType renderType = RenderType.entityTranslucent(TEXTURE_LOCATION);
-            MODEL.render(poseStack, ItemTransforms.TransformType.NONE, renderType, combinedLightIn, combinedOverlayIn);
+        if (blockEntity.getOwner() != null) {
+            Minecraft minecraft = Minecraft.getInstance();
 
-            if(blockEntity.getOwner()!=null){
-                Minecraft minecraft = Minecraft.getInstance();
-
-                var map = minecraft.getSkinManager().getInsecureSkinInformation(blockEntity.getOwner());
-                ResourceLocation rl;
-                if(map.containsKey(MinecraftProfileTexture.Type.SKIN)){
-                    rl = minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
-                }else {
-                    rl = DefaultPlayerSkin.getDefaultSkin(Player.createPlayerUUID(blockEntity.getOwner()));
-                }
-
-                RenderType renderType2 = RenderType.entityTranslucent(rl);
-                if (HEAD_MODEL != null) {
-                    HEAD_MODEL.render(poseStack, ItemTransforms.TransformType.NONE, renderType2, combinedLightIn, combinedOverlayIn);
-                }
+            var map = minecraft.getSkinManager().getInsecureSkinInformation(blockEntity.getOwner());
+            ResourceLocation rl;
+            if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
+                rl = minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
+            } else {
+                rl = DefaultPlayerSkin.getDefaultSkin(Player.createPlayerUUID(blockEntity.getOwner()));
             }
 
+            RenderType renderType2 = RenderType.entityTranslucent(rl);
+            if (HEAD_MODEL != null) {
+                HEAD_MODEL.render(poseStack, ItemTransforms.TransformType.NONE, renderType2, combinedLightIn, combinedOverlayIn);
+            }
         }
         poseStack.popPose();
     }

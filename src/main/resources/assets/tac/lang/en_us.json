@@ -27,6 +27,8 @@
   "tooltip.tac.gun.type": "Type: ",
   "tooltip.tac.gun.damage": "Damage: ",
   "tooltip.tac.gun.tips": "<<< Press %s in-game for Attachments >>>",
+  "subtitle.tac.gun": "Gun Sound",
+  "subtitle.tac.target_block_hit": "Target Block: Hit",
   "config.tac.client.key": "Key",
   "config.tac.client.key.hold_to_aim": "Hold To Aim",
   "config.tac.client.key.hold_to_aim.desc": "True if you want to hold the right mouse button to aim",

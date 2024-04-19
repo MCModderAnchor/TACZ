@@ -31,15 +31,14 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
     @Override
     public boolean onProjectileHit(Entity p, EntityHitResult result, DamageSource source, float damage) {
         if (!this.level.isClientSide() && !this.isRemoved()) {
-            if(source instanceof IndirectEntityDamageSource){
+            if (source instanceof IndirectEntityDamageSource) {
                 Entity e = source.getEntity();
-                if(e instanceof Player player){
+                if (e instanceof Player player) {
                     this.setHurtDir(-1);
                     this.setHurtTime(10);
                     this.markHurt();
                     this.setDamage(10);
                     double dis = this.position().distanceTo(e.position());
-                    //todo 测试用文本
                     player.displayClientMessage(new TranslatableComponent("message.tac.target_minecart.hit",
                             String.format("%.1f", damage), String.format("%.2f", dis)), true);
                 }
@@ -48,6 +47,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
         return true;
     }
 
+    @Override
     public boolean isInvulnerableTo(DamageSource pSource) {
         return pSource.isExplosion() || super.isInvulnerableTo(pSource);
     }
@@ -57,6 +57,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
         return false;
     }
 
+    @Override
     @NotNull
     public BlockState getDefaultDisplayBlockState() {
         return ModBlocks.TARGET.get().defaultBlockState();
@@ -68,6 +69,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
         return RIDEABLE;
     }
 
+    @Override
     public float getMaxCartSpeedOnRail() {
         return 0.2F;
     }

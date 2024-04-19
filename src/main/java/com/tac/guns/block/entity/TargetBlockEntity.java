@@ -51,7 +51,7 @@ public class TargetBlockEntity extends BlockEntity {
 
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        if(owner!=null) {
+        if (owner != null) {
             tag.put("Owner", NbtUtils.writeGameProfile(new CompoundTag(), owner));
         }
     }
@@ -63,7 +63,7 @@ public class TargetBlockEntity extends BlockEntity {
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        if(pkt.getTag()!=null) {
+        if (pkt.getTag() != null) {
             handleUpdateTag(pkt.getTag());
         }
     }
@@ -71,7 +71,7 @@ public class TargetBlockEntity extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
-        if(owner!=null) {
+        if (owner != null) {
             tag.put("Owner", NbtUtils.writeGameProfile(new CompoundTag(), owner));
         }
         return tag;
@@ -84,22 +84,21 @@ public class TargetBlockEntity extends BlockEntity {
         }
     }
 
-
     public void hit(Level pLevel, BlockState state, BlockPos pos) {
         if (this.level != null && state.getValue(STAND)) {
-            pLevel.setBlock(pos,state.setValue(STAND,false),3);
+            pLevel.setBlock(pos, state.setValue(STAND, false), 3);
             pLevel.scheduleTick(pos, state.getBlock(), 100);
-            //todo 这个声音是占位符
+            // TODO 这个声音是占位符
             pLevel.playSound(null, pos, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }
 
-    public static void clientTick(Level pLevel, BlockPos pPos, BlockState state, TargetBlockEntity pBlockEntity){
+    public static void clientTick(Level pLevel, BlockPos pPos, BlockState state, TargetBlockEntity pBlockEntity) {
         pBlockEntity.oRot = pBlockEntity.rot;
-        if(state.getValue(STAND)){
-            pBlockEntity.rot = Math.max(pBlockEntity.rot-18, 0);
-        }else {
-            pBlockEntity.rot = Math.min(pBlockEntity.rot+45, 90);
+        if (state.getValue(STAND)) {
+            pBlockEntity.rot = Math.max(pBlockEntity.rot - 18, 0);
+        } else {
+            pBlockEntity.rot = Math.min(pBlockEntity.rot + 45, 90);
         }
     }
 }

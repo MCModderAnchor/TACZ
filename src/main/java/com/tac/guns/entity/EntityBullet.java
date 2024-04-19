@@ -344,8 +344,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                 createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
             }
         } else if (result.getEntity() instanceof ITargetEntity targetEntity) {
-            targetEntity.onProjectileHit(this, result,
-                    DamageSource.thrown(this, this.getOwner()), this.getDamage(result.getLocation()));
+            targetEntity.onProjectileHit(this, result, DamageSource.thrown(this, this.getOwner()), this.getDamage(result.getLocation()));
         }
     }
 

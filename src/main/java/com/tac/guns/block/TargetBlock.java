@@ -10,7 +10,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -37,28 +40,24 @@ public class TargetBlock extends BaseEntityBlock {
     public static final VoxelShape BOX_BOTTOM_DOWN = Block.box(6, 0, 6, 10, 4, 10);
     public static final VoxelShape BOX_UPPER_X = Block.box(6, 0, 2, 10, 16, 14);
     public static final VoxelShape BOX_UPPER_Z = Block.box(2, 0, 6, 14, 16, 10);
+
     static {
         VoxelShape column = Block.box(6, 0, 6, 10, 16, 10);
-        VoxelShape plate_x = Block.box(6, 13, 2, 10, 16, 14);
-        VoxelShape plate_z = Block.box(2, 13, 6, 14, 16, 10);
-        BOX_BOTTOM_STAND_X = Shapes.or(column,plate_x);
-        BOX_BOTTOM_STAND_Z = Shapes.or(column,plate_z);
+        VoxelShape plateX = Block.box(6, 13, 2, 10, 16, 14);
+        VoxelShape plateZ = Block.box(2, 13, 6, 14, 16, 10);
+        BOX_BOTTOM_STAND_X = Shapes.or(column, plateX);
+        BOX_BOTTOM_STAND_Z = Shapes.or(column, plateZ);
     }
 
     public TargetBlock() {
         super(Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(2.0F, 3.0F).noOcclusion());
-        this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACING, Direction.NORTH)
-                .setValue(HALF, DoubleBlockHalf.LOWER)
-                .setValue(STAND,true)
-        );
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER).setValue(STAND, true));
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return pState.getValue(HALF).equals(DoubleBlockHalf.LOWER) && pLevel.isClientSide() ?
-                createTickerHelper(pBlockEntityType, ModBlocks.TARGET_BE.get(), TargetBlockEntity::clientTick) : null;
+        return pState.getValue(HALF).equals(DoubleBlockHalf.LOWER) && pLevel.isClientSide() ? createTickerHelper(pBlockEntityType, ModBlocks.TARGET_BE.get(), TargetBlockEntity::clientTick) : null;
     }
 
     @Override
@@ -69,17 +68,18 @@ public class TargetBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState blockState) {
-        if(blockState.getValue(HALF).equals(DoubleBlockHalf.LOWER)) {
+        if (blockState.getValue(HALF).equals(DoubleBlockHalf.LOWER)) {
             return new TargetBlockEntity(pos, blockState);
-        }else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         boolean stand = state.getValue(STAND);
         boolean axis = state.getValue(FACING).getAxis().equals(Direction.Axis.X);
-
-        if(state.getValue(HALF).equals(DoubleBlockHalf.UPPER)) {
+        if (state.getValue(HALF).equals(DoubleBlockHalf.UPPER)) {
             return stand ? (axis ? BOX_UPPER_X : BOX_UPPER_Z) : Shapes.empty();
         }
         return stand ? (axis ? BOX_BOTTOM_STAND_X : BOX_BOTTOM_STAND_Z) : BOX_BOTTOM_DOWN;
@@ -88,32 +88,31 @@ public class TargetBlock extends BaseEntityBlock {
     @Override
     public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, Random pRandom) {
         // 计划刻的内容
-        if(!pState.getValue(STAND)){
-            pLevel.setBlock(pPos,pState.setValue(STAND,true),3);
+        if (!pState.getValue(STAND)) {
+            pLevel.setBlock(pPos, pState.setValue(STAND, true), Block.UPDATE_ALL);
         }
     }
 
     @Override
     public void onProjectileHit(Level world, BlockState state, BlockHitResult pHit, Projectile pProjectile) {
-        if(pHit.getDirection().getOpposite().equals(state.getValue(FACING))){
-            if(state.getValue(HALF).equals(DoubleBlockHalf.LOWER)) {
-                world.getBlockEntity(pHit.getBlockPos(), TargetBlockEntity.TYPE)
-                        .ifPresent(e-> e.hit(world, state, pHit.getBlockPos()));
+        if (pHit.getDirection().getOpposite().equals(state.getValue(FACING))) {
+            if (state.getValue(HALF).equals(DoubleBlockHalf.LOWER)) {
+                world.getBlockEntity(pHit.getBlockPos(), TargetBlockEntity.TYPE).ifPresent(e -> e.hit(world, state, pHit.getBlockPos()));
             } else if (state.getValue(HALF).equals(DoubleBlockHalf.UPPER)) {
-                world.getBlockEntity(pHit.getBlockPos().below(), TargetBlockEntity.TYPE)
-                        .ifPresent(e-> e.hit(world, state, pHit.getBlockPos()));
+                world.getBlockEntity(pHit.getBlockPos().below(), TargetBlockEntity.TYPE).ifPresent(e -> e.hit(world, state, pHit.getBlockPos()));
             }
         }
     }
 
+    @Override
     public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos) {
         DoubleBlockHalf half = pState.getValue(HALF);
         boolean stand = pState.getValue(STAND);
 
-        if(pFacing.getAxis() == Direction.Axis.Y){
-            if(half.equals(DoubleBlockHalf.LOWER) && pFacing == Direction.UP || half.equals(DoubleBlockHalf.UPPER) && pFacing == Direction.DOWN){
+        if (pFacing.getAxis() == Direction.Axis.Y) {
+            if (half.equals(DoubleBlockHalf.LOWER) && pFacing == Direction.UP || half.equals(DoubleBlockHalf.UPPER) && pFacing == Direction.DOWN) {
                 // 拆一半另外一半跟着没
-                if(!pFacingState.is(this)){
+                if (!pFacingState.is(this)) {
                     return Blocks.AIR.defaultBlockState();
                 }
                 // 同步击倒状态
@@ -162,6 +161,7 @@ public class TargetBlock extends BaseEntityBlock {
         }
     }
 
+    @Override
     public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
         BlockPos blockpos = pPos.below();
         BlockState blockstate = pLevel.getBlockState(blockpos);

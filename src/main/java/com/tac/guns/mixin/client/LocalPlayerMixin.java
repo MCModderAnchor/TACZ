@@ -47,6 +47,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
+@SuppressWarnings("UnreachableCode")
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
@@ -288,9 +289,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                         tac$DrawFuture.cancel(false);
                     }
                     tac$DrawFuture = tac$ScheduledExecutorService.schedule(() -> {
-                        animationStateMachine.onGunDraw();
-                        SoundPlayManager.stopPlayGunSound();
-                        SoundPlayManager.playDrawSound(player, gunIndex);
+                        Minecraft.getInstance().submitAsync(() -> {
+                            animationStateMachine.onGunDraw();
+                            SoundPlayManager.stopPlayGunSound();
+                            SoundPlayManager.playDrawSound(player, gunIndex);
+                        });
                     }, putAwayTime, TimeUnit.MILLISECONDS);
                 }
             });
