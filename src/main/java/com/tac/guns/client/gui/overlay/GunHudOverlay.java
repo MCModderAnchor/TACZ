@@ -10,7 +10,9 @@ import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.config.client.RenderConfig;
 import com.tac.guns.util.AttachmentDataUtils;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.player.LocalPlayer;
@@ -19,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.fml.ModList;
 
 import java.text.DecimalFormat;
 
@@ -33,9 +36,12 @@ public class GunHudOverlay {
     private static int cacheInventoryAmmoCount = 0;
 
     public static void render(ForgeIngameGui gui, PoseStack poseStack, float partialTick, int width, int height) {
+        if (!RenderConfig.GUN_HUD_ENABLE.get()) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        if (!(player instanceof IClientPlayerGunOperator clientPlayerGunOperator)) {
+        if (!(player instanceof IClientPlayerGunOperator)) {
             return;
         }
         ItemStack stack = player.getMainHandItem();
@@ -80,7 +86,7 @@ public class GunHudOverlay {
         }
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             // 竖线
-            GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 32, 0xFFFFFFFF);
+            GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 25, 0xFFFFFFFF);
 
             // 数字
             poseStack.pushPose();
@@ -91,7 +97,17 @@ public class GunHudOverlay {
             poseStack.pushPose();
             poseStack.scale(0.8f, 0.8f, 1);
             String inventoryAmmoCountText = INVENTORY_AMMO_FORMAT.format(cacheInventoryAmmoCount);
-            mc.font.drawShadow(poseStack, inventoryAmmoCountText, (width - 41) / 0.8f, (height - 43) / 0.8f, 0xAAAAAA);
+            mc.font.drawShadow(poseStack, inventoryAmmoCountText, (width - 68 + mc.font.width(currentAmmoCountText) * 1.5f) / 0.8f, (height - 43) / 0.8f, 0xAAAAAA);
+            poseStack.popPose();
+
+            // 模组版本信息
+            String minecraftVersion = SharedConstants.getCurrentVersion().getName();
+            String modVersion = ModList.get().getModFileById(GunMod.MOD_ID).versionString();
+            String debugInfo = String.format("%s-%s", minecraftVersion, modVersion);
+            // 文本
+            poseStack.pushPose();
+            poseStack.scale(0.5f, 0.5f, 1);
+            mc.font.draw(poseStack, debugInfo, (width - 70) / 0.5f, (height - 29f) / 0.5f, 0xffaaaaaa);
             poseStack.popPose();
 
             // 图标渲染
@@ -115,7 +131,7 @@ public class GunHudOverlay {
                 case BURST -> RenderSystem.setShaderTexture(0, BURST);
             }
             RenderSystem.setShaderColor(1, 1, 1, 1);
-            GuiComponent.blit(poseStack, width - 41, height - 38, 0, 0, 10, 10, 10, 10);
+            GuiComponent.blit(poseStack, (int) (width - 68.5 + mc.font.width(currentAmmoCountText) * 1.5), height - 38, 0, 0, 10, 10, 10, 10);
         });
     }
 }

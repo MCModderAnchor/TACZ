@@ -43,6 +43,10 @@ public class RenderClothConfig {
                 .setDefaultValue(false).setTooltip(new TranslatableComponent("config.tac.client.render.head_shot_debug_hitbox.desc"))
                 .setSaveConsumer(RenderConfig.HEAD_SHOT_DEBUG_HITBOX::set).build());
 
+        render.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tac.client.render.gun_hud_enable"), RenderConfig.GUN_HUD_ENABLE.get())
+                .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tac.client.render.gun_hud_enable.desc"))
+                .setSaveConsumer(RenderConfig.GUN_HUD_ENABLE::set).build());
+
         render.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tac.client.render.kill_amount_enable"), RenderConfig.KILL_AMOUNT_ENABLE.get())
                 .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tac.client.render.kill_amount_enable.desc"))
                 .setSaveConsumer(RenderConfig.KILL_AMOUNT_ENABLE::set).build());

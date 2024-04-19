@@ -38,6 +38,8 @@
   "config.tac.client.render.hit_market_start_position.desc": "The starting position of the hit marker",
   "config.tac.client.render.head_shot_debug_hitbox": "Head Shot Debug Hitbox",
   "config.tac.client.render.head_shot_debug_hitbox.desc": "Whether or not to display the head shot's hitbox",
+  "config.tac.client.render.gun_hud_enable": "Gun HUD Enable",
+  "config.tac.client.render.gun_hud_enable.desc": "Whether or not to display the gun's HUD",
   "config.tac.client.render.kill_amount_enable": "Kill Amount Enable",
   "config.tac.client.render.kill_amount_enable.desc": "Whether or not to display the kill amount",
   "config.tac.client.render.kill_amount_duration_second": "Kill Amount Duration Second",

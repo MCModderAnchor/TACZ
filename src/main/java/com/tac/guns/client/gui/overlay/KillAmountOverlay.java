@@ -36,7 +36,7 @@ public class KillAmountOverlay {
             return;
         }
 
-        String text = "\u2620 x " + killAmount;
+        String text = "\u2620 x 0" + killAmount;
         int fontWith = mc.font.width(text);
         double fadeOutTime = timeout / 3.0 * 2;
         float hue = (1 - Math.min((killAmount / colorCount), 1)) * 0.15f;
@@ -50,7 +50,7 @@ public class KillAmountOverlay {
         RenderSystem.defaultBlendFunc();
         poseStack.pushPose();
         poseStack.scale(0.5f, 0.5f, 1);
-        mc.font.draw(poseStack, text, width - fontWith / 2.0f, (height - 40) * 2 - 1, color);
+        mc.font.draw(poseStack, text, width - fontWith / 2.0f, (height - 45) * 2 - 1, color);
         poseStack.popPose();
         RenderSystem.disableBlend();
     }
