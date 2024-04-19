@@ -254,8 +254,8 @@ public class FirstPersonRenderGunEvent {
         List<BedrockPart> toNode = model.getRefitAttachmentViewPath(currentType);
         MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(fromNode), transformMatrix, refitScreenOpeningProgress);
         MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(toNode), transformMatrix, refitScreenOpeningProgress * refitTransformProgress);
-        Vector3f rotation = MathUtil.getEulerAngles(transformMatrix);
-        LogUtils.getLogger().info(rotation.toString());
+        // Vector3f rotation = MathUtil.getEulerAngles(transformMatrix);
+        // LogUtils.getLogger().info(rotation.toString());
         // 应用变换到 PoseStack
         poseStack.translate(0, 1.5f, 0);
         poseStack.mulPoseMatrix(transformMatrix);
