@@ -6,5 +6,19 @@
         "name": "tac:gun/empty"
       }
     ]
+  },
+  "target_block_hit": {
+    "subtitle": "subtitle.tac.target_block_hit",
+    "sounds": [
+      {
+        "name": "tac:block/ea_1"
+      },
+      {
+        "name": "tac:block/ea_2"
+      },
+      {
+        "name": "tac:block/ea_3"
+      }
+    ]
   }
 }

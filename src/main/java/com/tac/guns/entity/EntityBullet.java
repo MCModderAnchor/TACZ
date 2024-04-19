@@ -1,5 +1,6 @@
 package com.tac.guns.entity;
 
+import com.tac.guns.api.entity.ITargetEntity;
 import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.api.event.AmmoHitBlockEvent;
 import com.tac.guns.api.event.HeadShotEvent;
@@ -342,6 +343,9 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                 entity.invulnerableTime = 0;
                 createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
             }
+        } else if (result.getEntity() instanceof ITargetEntity targetEntity) {
+            targetEntity.onProjectileHit(this, result,
+                    DamageSource.thrown(this, this.getOwner()), this.getDamage(result.getLocation()));
         }
     }
 

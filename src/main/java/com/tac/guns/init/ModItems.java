@@ -4,6 +4,7 @@ import com.tac.guns.GunMod;
 import com.tac.guns.item.*;
 import com.tac.guns.item.builder.AmmoItemBuilder;
 import com.tac.guns.item.builder.AttachmentItemBuilder;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -38,5 +39,7 @@ public class ModItems {
     public static RegistryObject<Item> AMMO = ITEMS.register("ammo", AmmoItem::new);
     public static RegistryObject<Item> ATTACHMENT = ITEMS.register("attachment", AttachmentItem::new);
     public static RegistryObject<Item> GUN_SMITH_TABLE = ITEMS.register("gun_smith_table", GunSmithTableItem::new);
+    public static RegistryObject<Item> TARGET = ITEMS.register("target",
+            ()-> new BlockItem(ModBlocks.TARGET.get(), new Item.Properties().tab(OTHER_TAB)));
     public static RegistryObject<Item> AMMO_BOX = ITEMS.register("ammo_box", AmmoBoxItem::new);
 }

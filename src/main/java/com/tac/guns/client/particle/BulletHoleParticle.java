@@ -3,7 +3,9 @@ package com.tac.guns.client.particle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import com.tac.guns.block.TargetBlock;
 import com.tac.guns.config.client.RenderConfig;
+import com.tac.guns.init.ModBlocks;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -42,7 +44,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
 
         // 如果方块是空气，则立即移除粒子
         BlockState state = world.getBlockState(pos);
-        if (world.getBlockState(pos).isAir()) {
+        if (world.getBlockState(pos).isAir() || state.is(ModBlocks.TARGET.get())) {
             this.remove();
         }
 

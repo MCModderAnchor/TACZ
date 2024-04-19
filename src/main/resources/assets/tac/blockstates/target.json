@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=east,half=lower": {
+      "model": "tac:block/target",
+      "y": 270
+    },
+    "facing=north,half=lower": {
+      "model": "tac:block/target",
+      "y": 180
+    },
+    "facing=south,half=lower": {
+      "model": "tac:block/target"
+    },
+    "facing=west,half=lower": {
+      "model": "tac:block/target",
+      "y": 90
+    },
+    "half=upper": {"model": "tac:block/target_upper"}
+  }
+}

@@ -11,4 +11,7 @@ public class ModSounds {
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, GunMod.MOD_ID);
 
     public static final RegistryObject<SoundEvent> GUN = SOUNDS.register("gun", () -> new SoundEvent(new ResourceLocation(GunMod.MOD_ID, "gun")));
+    //todo 占位符
+    public static final RegistryObject<SoundEvent> TARGET_HIT = SOUNDS.register("target_block_hit",
+            () -> new SoundEvent(new ResourceLocation(GunMod.MOD_ID, "target_block_hit")));
 }
