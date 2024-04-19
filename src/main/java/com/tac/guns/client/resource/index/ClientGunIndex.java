@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -170,34 +171,37 @@ public class ClientGunIndex {
 
     private static void checkAnimation(GunDisplay display, ClientGunIndex index) {
         ResourceLocation location = display.getAnimationLocation();
+        AnimationController controller;
         if (location == null) {
-            location = DefaultAssets.DEFAULT_GUN_ID;
-        }
-        // 目前支持的动画为 gltf 动画。此处从缓存取出 gltf 的动画资源。
-        AnimationStructure animations = ClientAssetManager.INSTANCE.getAnimations(location);
-        if (animations == null) {
-            animations = Objects.requireNonNull(ClientAssetManager.INSTANCE.getAnimations(DefaultAssets.DEFAULT_GUN_ID));
-        }
-        // 用 gltf 动画资源创建动画控制器
-        AnimationController controller = Animations.createControllerFromGltf(animations, index.gunModel);
-        // 将默认动画填入动画控制器
-        DefaultAnimation defaultAnimation = display.getDefaultAnimation();
-        if (defaultAnimation != null) {
-            switch (defaultAnimation) {
-                case RIFLE -> {
-                    for (ObjectAnimation animation : InternalAssetLoader.getDefaultRifleAnimations()) {
-                        controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
+            controller = new AnimationController(Lists.newArrayList(), index.gunModel);
+        } else {
+            // 目前支持的动画为 gltf 动画。此处从缓存取出 gltf 的动画资源。
+            AnimationStructure animations = ClientAssetManager.INSTANCE.getAnimations(location);
+            if (animations == null) {
+                animations = Objects.requireNonNull(ClientAssetManager.INSTANCE.getAnimations(DefaultAssets.DEFAULT_GUN_ID));
+            }
+            // 用 gltf 动画资源创建动画控制器
+            controller = Animations.createControllerFromGltf(animations, index.gunModel);
+            // 将默认动画填入动画控制器
+            DefaultAnimation defaultAnimation = display.getDefaultAnimation();
+            if (defaultAnimation != null) {
+                switch (defaultAnimation) {
+                    case RIFLE -> {
+                        for (ObjectAnimation animation : InternalAssetLoader.getDefaultRifleAnimations()) {
+                            controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
+                        }
                     }
-                }
-                case PISTOL -> {
-                    for (ObjectAnimation animation : InternalAssetLoader.getDefaultPistolAnimations()) {
-                        controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
+                    case PISTOL -> {
+                        for (ObjectAnimation animation : InternalAssetLoader.getDefaultPistolAnimations()) {
+                            controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
+                        }
                     }
                 }
             }
         }
         // 将动画控制器包装起来
         index.animationStateMachine = new GunAnimationStateMachine(controller);
+        // 初始化第三人称动画
         if (StringUtils.isNoneBlank(display.getThirdPersonAnimation())) {
             index.thirdPersonAnimation = display.getThirdPersonAnimation();
         }

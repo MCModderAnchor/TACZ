@@ -16,7 +16,7 @@ public class AnimationController {
     protected final ArrayList<Boolean> blending = new ArrayList<>();
     protected Map<String, ObjectAnimation> prototypes = Maps.newHashMap();
 
-    protected AnimationController(List<ObjectAnimation> animationPrototypes, AnimationListenerSupplier model) {
+    public AnimationController(List<ObjectAnimation> animationPrototypes, AnimationListenerSupplier model) {
         for (ObjectAnimation prototype : animationPrototypes) {
             if (prototype == null) {
                 continue;
