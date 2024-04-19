@@ -5,8 +5,8 @@
     "texture": "tac:gun/uv/ak47",
     // 低模
     "lod": {
-        "model": "tac:gun/lod/ak47_lod",
-        "texture": "tac:gun/lod/ak47_lod"
+        "model": "tac:gun/lod/ak47",
+        "texture": "tac:gun/lod/ak47"
     },
     // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
     "hud": "tac:gun/hud/ak47",
@@ -45,7 +45,7 @@
         }
     },
     "muzzle_flash": {
-      "texture": "tac:gun/flash/ak47_muzzle_flash",
+      "texture": "tac:flash/common_muzzle_flash",
       "scale": 1
     },
     // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
