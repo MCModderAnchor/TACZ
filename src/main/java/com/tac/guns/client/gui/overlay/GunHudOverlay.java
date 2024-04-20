@@ -121,7 +121,7 @@ public class GunHudOverlay {
             }
             // 渲染枪械图标
             RenderSystem.setShaderTexture(0, gunIndex.getHUDTexture());
-            GuiComponent.blit(poseStack, width - 142, height - 96, 0, 0, 64, 64, 64, 64);
+            GuiComponent.blit(poseStack, width - 117, height - 44, 0, 0, 39, 13, 39, 13);
 
             // 渲染开火模式图标
             FireMode fireMode = IGun.getMainhandFireMode(player);
