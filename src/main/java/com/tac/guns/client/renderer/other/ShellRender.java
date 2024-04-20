@@ -113,10 +113,5 @@ public class ShellRender {
             this.timeStamp = timeStamp;
             this.randomRotation = randomRotation;
         }
-
-        public void setPose(Matrix3f normal, Matrix4f pose) {
-            this.normal = normal;
-            this.pose = pose;
-        }
     }
 }
