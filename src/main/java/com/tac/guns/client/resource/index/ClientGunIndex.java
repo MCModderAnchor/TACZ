@@ -178,7 +178,7 @@ public class ClientGunIndex {
             // 目前支持的动画为 gltf 动画。此处从缓存取出 gltf 的动画资源。
             AnimationStructure animations = ClientAssetManager.INSTANCE.getAnimations(location);
             if (animations == null) {
-                animations = Objects.requireNonNull(ClientAssetManager.INSTANCE.getAnimations(DefaultAssets.DEFAULT_GUN_ID));
+                throw new IllegalArgumentException("animation not found: " + location);
             }
             // 用 gltf 动画资源创建动画控制器
             controller = Animations.createControllerFromGltf(animations, index.gunModel);
@@ -208,21 +208,12 @@ public class ClientGunIndex {
     }
 
     private static void checkSounds(GunDisplay display, ClientGunIndex index) {
+        index.sounds = Maps.newHashMap();
         Map<String, ResourceLocation> soundMaps = display.getSounds();
-        GunDisplay defaultDisplay = ClientAssetManager.INSTANCE.getGunDisplay(DefaultAssets.DEFAULT_GUN_DISPLAY);
-        Map<String, ResourceLocation> defaultSoundMaps = Objects.requireNonNull(defaultDisplay.getSounds());
         if (soundMaps == null || soundMaps.isEmpty()) {
-            index.sounds = defaultSoundMaps;
             return;
         }
-        index.sounds = Maps.newHashMap();
-        for (String name : defaultSoundMaps.keySet()) {
-            if (soundMaps.containsKey(name)) {
-                index.sounds.put(name, soundMaps.get(name));
-            } else {
-                index.sounds.put(name, defaultSoundMaps.get(name));
-            }
-        }
+        index.sounds.putAll(soundMaps);
     }
 
     private static void checkTransform(GunDisplay display, ClientGunIndex index) {
