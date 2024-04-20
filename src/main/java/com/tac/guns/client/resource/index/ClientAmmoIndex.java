@@ -18,8 +18,8 @@ import java.util.Objects;
 
 public class ClientAmmoIndex {
     private String name;
-    private BedrockAmmoModel ammoModel;
-    private ResourceLocation modelTextureLocation;
+    private @Nullable BedrockAmmoModel ammoModel;
+    private @Nullable ResourceLocation modelTextureLocation;
     private ResourceLocation slotTextureLocation;
     private @Nullable BedrockAmmoModel ammoEntityModel;
     private @Nullable ResourceLocation ammoEntityTextureLocation;
@@ -73,18 +73,14 @@ public class ClientAmmoIndex {
         // 检查模型
         ResourceLocation modelLocation = display.getModelLocation();
         if (modelLocation == null) {
-            throw new IllegalArgumentException("display object missing model field");
+            return;
         }
         BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(modelLocation);
         if (modelPOJO == null) {
             throw new IllegalArgumentException("there is no corresponding model file");
         }
         // 检查材质
-        ResourceLocation texture = display.getModelTexture();
-        if (texture == null) {
-            throw new IllegalArgumentException("display object missing textures field");
-        }
-        index.modelTextureLocation = texture;
+        index.modelTextureLocation = display.getModelTexture();
         // 先判断是不是 1.10.0 版本基岩版模型文件
         if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
             index.ammoModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.LEGACY);
@@ -92,9 +88,6 @@ public class ClientAmmoIndex {
         // 判定是不是 1.12.0 版本基岩版模型文件
         if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
             index.ammoModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.NEW);
-        }
-        if (index.ammoModel == null) {
-            throw new IllegalArgumentException("there is no model data in the model file");
         }
     }
 
@@ -151,10 +144,12 @@ public class ClientAmmoIndex {
         return name;
     }
 
+    @Nullable
     public BedrockAmmoModel getAmmoModel() {
         return ammoModel;
     }
 
+    @Nullable
     public ResourceLocation getModelTextureLocation() {
         return modelTextureLocation;
     }
