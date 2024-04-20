@@ -560,6 +560,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             TimelessAPI.getCommonAttachmentIndex(iAttachment.getAttachmentId(scopeItem)).ifPresent(index -> {
                 int zoomNumber = iAttachment.getZoomNumber(scopeItem);
                 ++zoomNumber;
+                zoomNumber = zoomNumber % (Integer.MAX_VALUE - 1); // 避免上溢变成负的
                 iAttachment.setZoomNumber(scopeItem, zoomNumber);
                 iGun.installAttachment(currentGunItem, scopeItem);
             });

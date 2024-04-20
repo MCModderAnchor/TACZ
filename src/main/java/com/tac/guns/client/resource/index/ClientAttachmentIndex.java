@@ -66,6 +66,13 @@ public class ClientAttachmentIndex {
         }
         index.fov = display.getFov();
         index.zoom = display.getZoom();
+        if (index.zoom != null) {
+            for (int i = 0; i < index.zoom.length; i++) {
+                if (index.zoom[i] < 1) {
+                    throw new IllegalArgumentException("zoom must >= 1");
+                }
+            }
+        }
         index.isScope = display.isScope();
         index.isSight = display.isSight();
         index.adapterNodeName = display.getAdapterNodeName();
