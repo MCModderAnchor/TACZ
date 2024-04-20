@@ -15,6 +15,7 @@
     "client.ItemInHandRendererMixin",
     "client.LanguageMixin",
     "client.LocalPlayerMixin",
+    "client.MouseHandlerMixin",
     "client.PlayerModelMixin"
   ],
   "injectors": {
