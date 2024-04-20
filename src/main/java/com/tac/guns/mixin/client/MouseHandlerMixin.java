@@ -19,7 +19,7 @@ import java.util.Optional;
 @Mixin(MouseHandler.class)
 public class MouseHandlerMixin {
     @Redirect(method = "turnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"))
-    public void cancelSprint(LocalPlayer player, double yaw, double pitch) {
+    public void reduceSensitivity(LocalPlayer player, double yaw, double pitch) {
         ItemStack mainHandItem = player.getMainHandItem();
         IGun iGun = IGun.getIGunOrNull(mainHandItem);
         if (iGun == null) {
