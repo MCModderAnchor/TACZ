@@ -6,6 +6,7 @@ import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.pojo.CustomTabPOJO;
+import com.tac.guns.client.resource.pojo.PackInfo;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tac.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tac.guns.client.resource.pojo.display.gun.GunDisplay;
@@ -25,6 +26,10 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public enum ClientAssetManager {
     INSTANCE;
+    /**
+     * 枪包信息
+     */
+    private final Map<String, PackInfo> customInfos = Maps.newHashMap();
     /**
      * 创造模式标签页
      */
@@ -72,6 +77,10 @@ public enum ClientAssetManager {
             attachmentModel = new BedrockAttachmentModel(modelPOJO, BedrockVersion.NEW);
         }
         return attachmentModel;
+    }
+
+    public void putPackInfo(String namespace, PackInfo info) {
+        customInfos.put(namespace, info);
     }
 
     public void putAllCustomTab(Map<String, CustomTabPOJO> tabs) {
@@ -153,6 +162,11 @@ public enum ClientAssetManager {
         return customTabs;
     }
 
+    @Nullable
+    public PackInfo getPackInfo(ResourceLocation id) {
+        return customInfos.get(id.getNamespace());
+    }
+
     /**
      * @return 如果模型缓存中没有对应模型、模型 POJO 缓存也没有对应的 POJO，则返回 null。
      */
@@ -178,6 +192,7 @@ public enum ClientAssetManager {
      * 清除所有缓存
      */
     public void clearAll() {
+        this.customInfos.clear();
         this.customTabs.clear();
         this.gunDisplays.clear();
         this.ammoDisplays.clear();

@@ -183,6 +183,7 @@ public class ClientGunPackLoader {
                 SoundLoader.load(root);
                 LanguageLoader.load(root);
                 CustomTabLoader.load(root);
+                PackInfoLoader.load(root);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -242,6 +243,8 @@ public class ClientGunPackLoader {
                 }
                 // 加载创造模式标签页
                 CustomTabLoader.load(zipFile, path);
+                // 加载信息文件
+                PackInfoLoader.load(zipFile, path);
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();

@@ -70,7 +70,6 @@ public class GunLevelManager {
 
     // TODO 计算升级所需经验，当前设置仅测试用
     public static float getExpNeeded(ItemStack gun, float level) {
-        // return (level + 1) * 500;
-        return 5;
+        return (level + 1) * 500;
     }
 }

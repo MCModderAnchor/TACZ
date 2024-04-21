@@ -10,10 +10,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.TimelessAPI;
+import com.tac.guns.api.item.IAmmo;
+import com.tac.guns.api.item.IAttachment;
+import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.gui.components.smith.ResultButton;
 import com.tac.guns.client.gui.components.smith.TypeButton;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.CustomTabPOJO;
+import com.tac.guns.client.resource.pojo.PackInfo;
 import com.tac.guns.crafting.GunSmithTableIngredient;
 import com.tac.guns.crafting.GunSmithTableRecipe;
 import com.tac.guns.crafting.GunSmithTableResult;
@@ -23,6 +27,7 @@ import com.tac.guns.item.builder.AttachmentItemBuilder;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessageCraft;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ImageButton;
@@ -34,12 +39,15 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -274,12 +282,68 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         drawModCenteredString(poseStack, font, new TranslatableComponent("gui.tac.gun_smith_table.craft"), leftPos + 312, topPos + 167, 0xFFFFFF);
         if (this.selectedRecipe != null) {
             this.renderLeftModel(this.selectedRecipe);
+            this.renderPackInfo(poseStack, this.selectedRecipe);
         }
         if (selectedRecipeList != null && !selectedRecipeList.isEmpty()) {
             renderIngredient(poseStack);
         }
         this.renderables.stream().filter(w -> w instanceof ResultButton)
                 .forEach(w -> ((ResultButton) w).renderTooltips(stack -> this.renderTooltip(poseStack, stack, mouseX, mouseY)));
+    }
+
+    private void renderPackInfo(PoseStack poseStack, GunSmithTableRecipe recipe) {
+        ItemStack output = recipe.getOutput();
+        Item item = output.getItem();
+        ResourceLocation id;
+        if (item instanceof IGun iGun) {
+            id = iGun.getGunId(output);
+        } else if (item instanceof IAttachment iAttachment) {
+            id = iAttachment.getAttachmentId(output);
+        } else if (item instanceof IAmmo iAmmo) {
+            id = iAmmo.getAmmoId(output);
+        } else {
+            return;
+        }
+
+        PackInfo packInfo = ClientAssetManager.INSTANCE.getPackInfo(id);
+        if (packInfo != null) {
+            poseStack.pushPose();
+            poseStack.scale(0.5f, 0.5f, 1);
+
+            int offsetX = (leftPos + 6) * 2;
+            int offsetY = (topPos + 122) * 2;
+            TranslatableComponent nameText = new TranslatableComponent(packInfo.getName());
+            font.draw(poseStack, nameText.withStyle(ChatFormatting.DARK_BLUE), offsetX, offsetY, 0xFFFFFF);
+            int nameWidth = font.width(nameText);
+            font.draw(poseStack, new TextComponent(packInfo.getVersion()).withStyle(ChatFormatting.GREEN).withStyle(ChatFormatting.UNDERLINE), offsetX + nameWidth + 5, offsetY, 0xFFFFFF);
+            offsetY += 12;
+
+            String descKey = packInfo.getDescription();
+            if (StringUtils.isNoneBlank(descKey)) {
+                // FIXME 示例文字，修改
+                // TranslatableComponent desc = new TranslatableComponent(descKey);
+                TextComponent desc = new TextComponent("微积分学也称为微分积分学，主要包括微分学和积分学两个部分，是研究极限、微分、积分和无穷级数等的一个数学分支。本质上，微积分学是一门研究连续变化的学问。");
+                List<FormattedCharSequence> split = font.split(desc, 245);
+                for (FormattedCharSequence charSequence : split) {
+                    font.draw(poseStack, charSequence, offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
+                    offsetY += font.lineHeight;
+                }
+                offsetY += 10;
+            }
+
+            font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.license").append(new TextComponent(packInfo.getLicense()).withStyle(ChatFormatting.DARK_GRAY)), offsetX, offsetY, 0xFFFFFF);
+            offsetY += 12;
+
+            List<String> authors = packInfo.getAuthors();
+            if (!authors.isEmpty()) {
+                font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.authors").append(new TextComponent(StringUtils.join(authors, ", ")).withStyle(ChatFormatting.DARK_GRAY)), offsetX, offsetY, 0xFFFFFF);
+                offsetY += 12;
+            }
+
+            font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.date").append(new TextComponent(packInfo.getDate()).withStyle(ChatFormatting.DARK_GRAY)), offsetX, offsetY, 0xFFFFFF);
+
+            poseStack.popPose();
+        }
     }
 
     private void renderIngredient(PoseStack poseStack) {

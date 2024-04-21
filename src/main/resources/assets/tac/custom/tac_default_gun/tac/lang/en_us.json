@@ -1,4 +1,6 @@
 {
+  "pack.tac.tac_default_gun.name": "TAC Default Pack",
+  "pack.tac.tac_default_gun.desc": "Default model package",
   "tac.type.ammo.name": "Ammo",
   "tac.type.pistol.name": "Pistol",
   "tac.type.rifle.name": "Rifle",

@@ -6,6 +6,7 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.input.RefitKey;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.pojo.CustomTabPOJO;
+import com.tac.guns.client.resource.pojo.PackInfo;
 import com.tac.guns.inventory.tooltip.GunTooltip;
 import com.tac.guns.item.builder.AmmoItemBuilder;
 import com.tac.guns.resource.index.CommonGunIndex;
@@ -38,6 +39,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     private MutableComponent tips;
     private MutableComponent ownerInfo;
     private MutableComponent levelInfo;
+    private @Nullable MutableComponent packInfo;
 
     private int maxWidth;
 
@@ -53,7 +55,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return 86;
+        return 97;
     }
 
     @Override
@@ -110,6 +112,13 @@ public class ClientGunTooltip implements ClientTooltipComponent {
             }
         }
         this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
+
+        ResourceLocation gunId = iGun.getGunId(gun);
+        PackInfo packInfoObject = ClientAssetManager.INSTANCE.getPackInfo(gunId);
+        if (packInfoObject != null) {
+            packInfo = new TranslatableComponent(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
+            this.maxWidth = Math.max(font.width(this.packInfo), this.maxWidth);
+        }
     }
 
     @Override
@@ -141,6 +150,12 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
         // Z 键说明
         font.drawInBatch(this.tips, pX, yOffset + 4, 0xffffff, false, matrix4f, bufferSource, false, 0, 0xF000F0);
+        yOffset += 12;
+
+        // 枪包名
+        if (packInfo != null) {
+            font.drawInBatch(this.packInfo, pX, yOffset + 4, 0xffffff, false, matrix4f, bufferSource, false, 0, 0xF000F0);
+        }
     }
 
     @Override
