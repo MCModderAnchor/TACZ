@@ -1,6 +1,7 @@
 package com.tac.guns.item.nbt;
 
 import com.tac.guns.api.attachment.AttachmentType;
+import com.tac.guns.api.event.GunLevelEvent;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
@@ -40,6 +41,11 @@ public interface GunItemDataAccessor extends IGun {
             return;
         }
         nbt.putString(GUN_ID_TAG, DefaultAssets.DEFAULT_GUN_ID.toString());
+    }
+
+    @Override
+    default void initLevel(ItemStack gun) {
+        GunLevelEvent.init(gun);
     }
 
     @Override
@@ -124,7 +130,7 @@ public interface GunItemDataAccessor extends IGun {
     }
 
     @Override
-    default boolean hasBulletInBarrel(ItemStack gun){
+    default boolean hasBulletInBarrel(ItemStack gun) {
         CompoundTag nbt = gun.getOrCreateTag();
         if (nbt.contains(GUN_HAS_BULLET_IN_BARREL, Tag.TAG_BYTE)) {
             return nbt.getBoolean(GUN_HAS_BULLET_IN_BARREL);
@@ -133,7 +139,7 @@ public interface GunItemDataAccessor extends IGun {
     }
 
     @Override
-    default void setBulletInBarrel(ItemStack gun, boolean bulletInBarrel){
+    default void setBulletInBarrel(ItemStack gun, boolean bulletInBarrel) {
         CompoundTag nbt = gun.getOrCreateTag();
         nbt.putBoolean(GUN_HAS_BULLET_IN_BARREL, bulletInBarrel);
     }

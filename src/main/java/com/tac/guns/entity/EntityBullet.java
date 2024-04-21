@@ -3,7 +3,9 @@ package com.tac.guns.entity;
 import com.tac.guns.api.entity.ITargetEntity;
 import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.api.event.AmmoHitBlockEvent;
+import com.tac.guns.api.event.GunLevelEvent;
 import com.tac.guns.api.event.HeadShotEvent;
+import com.tac.guns.api.item.IGun;
 import com.tac.guns.config.common.AmmoConfig;
 import com.tac.guns.event.HeadShotAABBConfigRead;
 import com.tac.guns.network.NetworkHandler;
@@ -31,6 +33,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -335,6 +338,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             modifier.setKnockBackStrength(this.knockback);
             // 创建伤害
             tacAttackEntity(DamageSource.thrown(this, owner), entity, damage);
+            updateGunLevel(damage);
             // 恢复原位
             modifier.resetKnockBackStrength();
             // 爆炸逻辑
@@ -458,6 +462,16 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         source.bypassArmor();
         source.bypassMagic();
         entity.hurt(source, damage * armorDamagePercent);
+    }
+
+    protected void updateGunLevel(float damage) {
+        if (this.getOwner() instanceof Player shooter) {
+            ItemStack gun = shooter.getMainHandItem();
+            if (!gun.hasTag() || !(gun.getItem() instanceof IGun)) {
+                return;
+            }
+            GunLevelEvent.levelUp(gun, damage, shooter);
+        }
     }
 
     @Override

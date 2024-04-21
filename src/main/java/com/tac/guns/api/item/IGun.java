@@ -61,6 +61,11 @@ public interface IGun {
     void setGunId(ItemStack gun, @Nullable ResourceLocation gunId);
 
     /**
+     * 初始化等级系统
+     */
+    void initLevel(ItemStack gun);
+
+    /**
      * 获取开火模式
      *
      * @param gun 枪

@@ -2,6 +2,7 @@ package com.tac.guns.item;
 
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
+import com.tac.guns.api.event.GunLevelEvent;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
@@ -20,11 +21,14 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
@@ -137,5 +141,16 @@ public class GunItem extends Item implements GunItemDataAccessor {
             }
         }
         return Optional.empty();
+    }
+
+    public void inventoryTick(ItemStack gun, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+        super.inventoryTick(gun, worldIn, entityIn, itemSlot, isSelected);
+        if (isSelected && !worldIn.isClientSide) {
+            if (gun.hasTag()) {
+                if (entityIn instanceof Player user) {
+                    GunLevelEvent.checkUser(gun, user);
+                }
+            }
+        }
     }
 }

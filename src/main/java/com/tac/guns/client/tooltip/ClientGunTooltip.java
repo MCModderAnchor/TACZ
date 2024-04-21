@@ -16,6 +16,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -35,6 +36,8 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     private @Nullable MutableComponent gunType;
     private MutableComponent damage;
     private MutableComponent tips;
+    private MutableComponent ownerInfo;
+    private MutableComponent levelInfo;
 
     private int maxWidth;
 
@@ -50,7 +53,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return 64;
+        return 86;
     }
 
     @Override
@@ -58,6 +61,12 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         return this.maxWidth;
     }
 
+
+    String GUN_LEVEL_TAG = "GunLevel";
+    String GUN_LEVEL_EXP_TAG = "GunLevelExp";
+    String GUN_LEVEL_MAX_EXP_TAG = "GunLevelMaxExp";
+    String GUN_LEVEL_LOCK_TAG = "GunLevelLock";
+    String GUN_LEVEL_OWNER_TAG = "GunLevelOwner";
     private void getText() {
         Font font = Minecraft.getInstance().font;
 
@@ -81,6 +90,27 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         String keyName = new KeybindComponent(RefitKey.REFIT_KEY.getName()).getString().toUpperCase(Locale.ENGLISH);
         this.tips = new TranslatableComponent("tooltip.tac.gun.tips", keyName).withStyle(ChatFormatting.YELLOW).withStyle(ChatFormatting.ITALIC);
         this.maxWidth = Math.max(font.width(this.tips), this.maxWidth);
+
+        CompoundTag nbt = this.gun.getOrCreateTag();
+        String level = String.valueOf(nbt.getInt(GUN_LEVEL_TAG));
+        float levelExp = nbt.getFloat(GUN_LEVEL_EXP_TAG);
+        float levelMaxExp = nbt.getFloat(GUN_LEVEL_MAX_EXP_TAG);
+        if (!nbt.contains(GUN_LEVEL_OWNER_TAG)) {
+            this.ownerInfo = new TranslatableComponent("tooltip.tac.gun.level.no_owner").withStyle(ChatFormatting.DARK_GRAY);
+        } else {
+            String levelOwner = nbt.getString(GUN_LEVEL_OWNER_TAG);
+            this.ownerInfo = new TranslatableComponent("tooltip.tac.gun.level.owner").append(new TranslatableComponent(levelOwner).withStyle(ChatFormatting.YELLOW));
+        }
+        boolean levelLock = nbt.getBoolean(GUN_LEVEL_LOCK_TAG);
+        if (levelLock) {
+            this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level.error_owner").withStyle(ChatFormatting.RED);
+        } else {
+            if (nbt.getInt(GUN_LEVEL_TAG) >= 10) {
+                this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TranslatableComponent(level).withStyle(ChatFormatting.YELLOW).append(" (MAX)"));
+            } else {
+                this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TranslatableComponent(level).withStyle(ChatFormatting.YELLOW).append(" (%.1f%%)".formatted(levelExp / levelMaxExp * 100)));
+            }
+        }
     }
 
     @Override
@@ -91,8 +121,16 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         // 弹药数
         font.drawInBatch(this.ammoCountText, pX + 20, pY + 13, 0x777777, false, matrix4f, bufferSource, false, 0, 0xF000F0);
 
-        // 枪械类型
+        // 拥有者信息
         int yOffset = pY + 27;
+        font.drawInBatch(this.ownerInfo, pX, yOffset, 0x777777, false, matrix4f, bufferSource, false, 0, 0xF000F0);
+        yOffset += 11;
+
+        // 等级信息
+        font.drawInBatch(this.levelInfo, pX, yOffset, 0x777777, false, matrix4f, bufferSource, false, 0, 0xF000F0);
+        yOffset += 11;
+
+        // 枪械类型
         if (this.gunType != null) {
             font.drawInBatch(this.gunType, pX, yOffset, 0x777777, false, matrix4f, bufferSource, false, 0, 0xF000F0);
             yOffset += 11;
