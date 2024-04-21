@@ -1,7 +1,8 @@
 package com.tac.guns.network.message;
 
-import com.tac.guns.client.gui.toast.ToastPlayManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -38,7 +39,29 @@ public class ServerMessageLevelUp {
     public static void handle(ServerMessageLevelUp message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide().isClient()) {
-            context.enqueueWork(() -> ToastPlayManager.levelUpMessage(message));
+            context.enqueueWork(() -> {
+                int level = message.getLevel();
+                ItemStack gun = message.getGun();
+                Player player = Minecraft.getInstance().player;
+                if (player == null) {
+                    return;
+                }
+                // TODO 在完成了枪械升级逻辑后，解封下面的代码
+                /*
+                if (GunLevelManager.DAMAGE_UP_LEVELS.contains(level)) {
+                    Minecraft.getInstance().getToasts().addToast(new GunLevelUpToast(gun,
+                            new TranslatableComponent("toast.tac.level_up"),
+                            new TranslatableComponent("toast.tac.sub.damage_up")));
+                } else if (level >= GunLevelManager.MAX_LEVEL) {
+                    Minecraft.getInstance().getToasts().addToast(new GunLevelUpToast(gun,
+                            new TranslatableComponent("toast.tac.level_up"),
+                            new TranslatableComponent("toast.tac.sub.final_level")));
+                } else {
+                    Minecraft.getInstance().getToasts().addToast(new GunLevelUpToast(gun,
+                            new TranslatableComponent("toast.tac.level_up"),
+                            new TranslatableComponent("toast.tac.sub.level_up")));
+                }*/
+            });
         }
         context.setPacketHandled(true);
     }

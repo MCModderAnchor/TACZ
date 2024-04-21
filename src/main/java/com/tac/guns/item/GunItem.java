@@ -10,7 +10,6 @@ import com.tac.guns.client.tab.CustomTab;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.inventory.tooltip.GunTooltip;
 import com.tac.guns.item.builder.GunItemBuilder;
-import com.tac.guns.item.level.GunLevelManager;
 import com.tac.guns.item.nbt.GunItemDataAccessor;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.gun.AttachmentPass;
@@ -92,6 +91,21 @@ public class GunItem extends Item implements GunItemDataAccessor {
     }
 
     @Override
+    public int getLevel(int exp) {
+        return 0;
+    }
+
+    @Override
+    public int getExp(int level) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 0;
+    }
+
+    @Override
     public boolean allowAttachment(ItemStack gun, ItemStack attachmentItem) {
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
         IGun iGun = IGun.getIGunOrNull(gun);
@@ -141,17 +155,5 @@ public class GunItem extends Item implements GunItemDataAccessor {
             }
         }
         return Optional.empty();
-    }
-
-    public void inventoryTick(ItemStack gun, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        super.inventoryTick(gun, worldIn, entityIn, itemSlot, isSelected);
-        if (isSelected && !worldIn.isClientSide) {
-            if (!gun.hasTag()) {
-                return;
-            }
-            if (entityIn instanceof Player user) {
-                GunLevelManager.checkUser(gun, user);
-            }
-        }
     }
 }

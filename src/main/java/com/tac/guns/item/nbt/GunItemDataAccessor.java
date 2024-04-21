@@ -4,7 +4,6 @@ import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.item.level.GunLevelManager;
 import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -21,6 +20,7 @@ public interface GunItemDataAccessor extends IGun {
     String GUN_HAS_BULLET_IN_BARREL = "HasBulletInBarrel";
     String GUN_CURRENT_AMMO_COUNT_TAG = "GunCurrentAmmoCount";
     String GUN_ATTACHMENT_BASE = "Attachment";
+    String GUN_EXP_TAG = "GunLevelExp";
 
     @Override
     @Nonnull
@@ -43,9 +43,40 @@ public interface GunItemDataAccessor extends IGun {
         nbt.putString(GUN_ID_TAG, DefaultAssets.DEFAULT_GUN_ID.toString());
     }
 
-    @Override
-    default void initLevel(ItemStack gun) {
-        GunLevelManager.init(gun);
+    default int getLevel(ItemStack gun){
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (nbt.contains(GUN_EXP_TAG, Tag.TAG_INT)) {
+            return getLevel(nbt.getInt(GUN_EXP_TAG));
+        }
+        return 0;
+    }
+
+    default int getExp(ItemStack gun){
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (nbt.contains(GUN_EXP_TAG, Tag.TAG_INT)) {
+            return nbt.getInt(GUN_EXP_TAG);
+        }
+        return 0;
+    }
+
+    default int getExpToNextLevel(ItemStack gun){
+        int exp = getExp(gun);
+        int level = getLevel(exp);
+        if (level >= getMaxLevel()) {
+            return 0;
+        }
+        int nextLevelExp = getExp(level + 1);
+        return nextLevelExp - exp;
+    }
+
+    default int getExpCurrentLevel(ItemStack gun){
+        int exp = getExp(gun);
+        int level = getLevel(exp);
+        if (level <= 0) {
+            return exp;
+        } else {
+            return exp - getExp(level - 1);
+        }
     }
 
     @Override

@@ -17,15 +17,12 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
-
-import static com.tac.guns.item.level.GunLevelManager.*;
 
 public class ClientGunTooltip implements ClientTooltipComponent {
     private final ItemStack gun;
@@ -37,7 +34,6 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     private @Nullable MutableComponent gunType;
     private MutableComponent damage;
     private MutableComponent tips;
-    private MutableComponent ownerInfo;
     private MutableComponent levelInfo;
     private @Nullable MutableComponent packInfo;
 
@@ -87,29 +83,15 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         this.tips = new TranslatableComponent("tooltip.tac.gun.tips", keyName).withStyle(ChatFormatting.YELLOW).withStyle(ChatFormatting.ITALIC);
         this.maxWidth = Math.max(font.width(this.tips), this.maxWidth);
 
-        CompoundTag nbt = this.gun.getOrCreateTag();
-        if (!nbt.contains(GUN_LEVEL_OWNER_TAG)) {
-            this.ownerInfo = new TranslatableComponent("tooltip.tac.gun.level.no_owner").withStyle(ChatFormatting.DARK_GRAY);
+        int expToNextLevel = iGun.getExpToNextLevel(gun);
+        int expCurrentLevel = iGun.getExpCurrentLevel(gun);
+        int level = iGun.getLevel(gun);
+        if (level >= iGun.getMaxLevel()) {
+            String levelText = String.format("%d (MAX)", level);
+            this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TextComponent(levelText).withStyle(ChatFormatting.DARK_PURPLE));
         } else {
-            String levelOwner = nbt.getString(GUN_LEVEL_OWNER_TAG);
-            this.ownerInfo = new TranslatableComponent("tooltip.tac.gun.level.owner").append(new TextComponent(levelOwner).withStyle(ChatFormatting.YELLOW));
-        }
-        this.maxWidth = Math.max(font.width(this.ownerInfo), this.maxWidth);
-
-        int level = nbt.getInt(GUN_LEVEL_TAG);
-        if (nbt.getBoolean(GUN_LEVEL_LOCK_TAG)) {
-            this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level.error_owner").withStyle(ChatFormatting.RED);
-            this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
-        } else {
-            if (nbt.getInt(GUN_LEVEL_TAG) >= MAX_LEVEL) {
-                String levelText = String.format("%d (MAX)", level);
-                this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TextComponent(levelText).withStyle(ChatFormatting.DARK_PURPLE));
-            } else {
-                float levelExp = nbt.getFloat(GUN_LEVEL_EXP_TAG);
-                float levelMaxExp = getExpNeeded(gun, level);
-                String levelText = String.format("%d (%.1f%%)", level, levelExp / levelMaxExp * 100);
-                this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TextComponent(levelText).withStyle(ChatFormatting.YELLOW));
-            }
+            String levelText = String.format("%d (%.1f%%)", level, expCurrentLevel / (expToNextLevel + expCurrentLevel) * 100f);
+            this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TextComponent(levelText).withStyle(ChatFormatting.YELLOW));
         }
         this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
 
@@ -129,10 +111,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         // 弹药数
         font.drawInBatch(this.ammoCountText, pX + 20, pY + 13, 0x777777, false, matrix4f, bufferSource, false, 0, 0xF000F0);
 
-        // 拥有者信息
         int yOffset = pY + 27;
-        font.drawInBatch(this.ownerInfo, pX, yOffset, 0x777777, false, matrix4f, bufferSource, false, 0, 0xF000F0);
-        yOffset += 11;
 
         // 等级信息
         font.drawInBatch(this.levelInfo, pX, yOffset, 0x777777, false, matrix4f, bufferSource, false, 0, 0xF000F0);

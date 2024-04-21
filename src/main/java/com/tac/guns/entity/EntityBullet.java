@@ -4,10 +4,8 @@ import com.tac.guns.api.entity.ITargetEntity;
 import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.api.event.AmmoHitBlockEvent;
 import com.tac.guns.api.event.HeadShotEvent;
-import com.tac.guns.api.item.IGun;
 import com.tac.guns.config.common.AmmoConfig;
 import com.tac.guns.event.HeadShotAABBConfigRead;
-import com.tac.guns.item.level.GunLevelManager;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ServerMessageHeadShot;
 import com.tac.guns.particles.BulletHoleOption;
@@ -342,8 +340,6 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             tacAttackEntity(DamageSource.thrown(this, owner), entity, damage);
             // 恢复原位
             modifier.resetKnockBackStrength();
-            // 升级枪械等级
-            updateGunLevel(damage);
             // 爆炸逻辑
             if (this.hasExplosion) {
                 // 取消无敌时间
@@ -465,12 +461,6 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         source.bypassArmor();
         source.bypassMagic();
         entity.hurt(source, damage * armorDamagePercent);
-    }
-
-    protected void updateGunLevel(float damage) {
-        if (this.getOwner() instanceof Player shooter && !this.gun.isEmpty() && gun.getItem() instanceof IGun && gun.hasTag()) {
-            GunLevelManager.levelUp(gun, damage, shooter);
-        }
     }
 
     @Override

@@ -46,7 +46,6 @@ public final class GunItemBuilder {
             iGun.setGunId(gun, this.gunId);
             iGun.setFireMode(gun, this.fireMode);
             iGun.setCurrentAmmoCount(gun, this.ammoCount);
-            iGun.initLevel(gun);
         }
         return gun;
     }
