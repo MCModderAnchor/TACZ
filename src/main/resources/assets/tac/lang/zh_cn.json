@@ -65,6 +65,7 @@
   "gui.tac.gun_smith_table.license": "§n许可证§r：",
   "gui.tac.gun_smith_table.preview": "预览",
   "item.tac.ammo_box": "弹药盒",
+  "item.tac.target_minecart": "标靶车",
   "itemGroup.tab.tac.ammo": "TAC | 弹药",
   "itemGroup.tab.tac.attachment": "TAC | 配件",
   "itemGroup.tab.tac.other": "永恒枪械工坊",

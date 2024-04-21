@@ -7,26 +7,30 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Nameable;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
 
 import static com.tac.guns.block.TargetBlock.STAND;
 
-public class TargetBlockEntity extends BlockEntity {
+public class TargetBlockEntity extends BlockEntity implements Nameable {
     public static final BlockEntityType<TargetBlockEntity> TYPE = BlockEntityType.Builder.of(TargetBlockEntity::new, ModBlocks.TARGET.get()).build(null);
     public float rot = 0;
     public float oRot = 0;
-    @Nullable
-    private GameProfile owner;
+    private @Nullable GameProfile owner;
+    private @Nullable Component name;
 
     public TargetBlockEntity(BlockPos pos, BlockState blockState) {
         super(TYPE, pos, blockState);
@@ -41,19 +45,41 @@ public class TargetBlockEntity extends BlockEntity {
         return owner;
     }
 
+    @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag.contains("Owner", Tag.TAG_COMPOUND)) {
             this.owner = NbtUtils.readGameProfile(tag.getCompound("Owner"));
         }
-
+        if (tag.contains("CustomName", Tag.TAG_STRING)) {
+            this.name = Component.Serializer.fromJson(tag.getString("CustomName"));
+        }
     }
 
+    @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         if (owner != null) {
             tag.put("Owner", NbtUtils.writeGameProfile(new CompoundTag(), owner));
         }
+        if (this.name != null) {
+            tag.putString("CustomName", Component.Serializer.toJson(this.name));
+        }
+    }
+
+    public void setCustomName(Component name) {
+        this.name = name;
+    }
+
+    @Override
+    public Component getName() {
+        return this.name != null ? this.name : TextComponent.EMPTY;
+    }
+
+    @Nullable
+    @Override
+    public Component getCustomName() {
+        return this.name;
     }
 
     @Override
@@ -62,33 +88,27 @@ public class TargetBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        if (pkt.getTag() != null) {
-            handleUpdateTag(pkt.getTag());
-        }
-    }
-
-    @Override
     public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        if (owner != null) {
-            tag.put("Owner", NbtUtils.writeGameProfile(new CompoundTag(), owner));
+        return saveWithoutMetadata();
+    }
+
+    public void refresh() {
+        this.setChanged();
+        if (level != null) {
+            BlockState state = level.getBlockState(worldPosition);
+            level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_ALL);
         }
-        return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        if (tag.contains("Owner", Tag.TAG_COMPOUND)) {
-            this.owner = NbtUtils.readGameProfile(tag.getCompound("Owner"));
-        }
+    public AABB getRenderBoundingBox() {
+        return new AABB(worldPosition.offset(-2, 0, -2), worldPosition.offset(2, 2, 2));
     }
 
     public void hit(Level pLevel, BlockState state, BlockPos pos) {
         if (this.level != null && state.getValue(STAND)) {
             pLevel.setBlock(pos, state.setValue(STAND, false), 3);
             pLevel.scheduleTick(pos, state.getBlock(), 100);
-            // TODO 这个声音是占位符
             pLevel.playSound(null, pos, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }

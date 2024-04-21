@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -156,9 +158,21 @@ public class TargetBlock extends BaseEntityBlock {
                 if (blockentity instanceof TargetBlockEntity e) {
                     GameProfile gameprofile = new GameProfile(null, stack.getHoverName().getString());
                     e.setOwner(gameprofile);
+                    e.setCustomName(stack.getHoverName());
+                    e.refresh();
                 }
             }
         }
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+        BlockPos blockPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+        BlockEntity blockentity = level.getBlockEntity(blockPos);
+        if (blockentity instanceof TargetBlockEntity e) {
+            return new ItemStack(this).setHoverName(e.getCustomName());
+        }
+        return super.getCloneItemStack(state, target, level, pos, player);
     }
 
     @Override
