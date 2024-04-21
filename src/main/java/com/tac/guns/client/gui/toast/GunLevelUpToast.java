@@ -29,40 +29,38 @@ public class GunLevelUpToast implements Toast {
     }
 
     @NotNull
-    public Visibility render(@NotNull PoseStack pPoseStack, ToastComponent pToastComponent, long pTimeSinceLastVisible) {
+    public Visibility render(@NotNull PoseStack pPoseStack, ToastComponent toastComponent, long timeSinceLastVisible) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, TEXTURE);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        pToastComponent.blit(pPoseStack, 0, 0, 0, 0, this.width(), this.height());
+        toastComponent.blit(pPoseStack, 0, 0, 0, 0, this.width(), this.height());
 
         List<FormattedCharSequence> list = null;
         if (this.subTitle != null) {
-            list = pToastComponent.getMinecraft().font.split(this.subTitle, 125);
+            list = toastComponent.getMinecraft().font.split(this.subTitle, 125);
         }
-        int i = 16776960;
+        int i = 0xffff00;
         if (list != null) {
             if (list.size() == 1) {
-                pToastComponent.getMinecraft().font.draw(pPoseStack, this.title, 30.0F, 7.0F, i | -16777216);
-                pToastComponent.getMinecraft().font.draw(pPoseStack, list.get(0), 30.0F, 18.0F, -1);
+                toastComponent.getMinecraft().font.draw(pPoseStack, this.title, 30.0F, 7.0F, i | 0xff000000);
+                toastComponent.getMinecraft().font.draw(pPoseStack, list.get(0), 30.0F, 18.0F, -1);
             } else {
-                if (pTimeSinceLastVisible < 1500L) {
-                    int k = Mth.floor(Mth.clamp((float) (1500L - pTimeSinceLastVisible) / 300.0F, 0.0F, 1.0F) * 255.0F) << 24 | 67108864;
-                    pToastComponent.getMinecraft().font.draw(pPoseStack, this.title, 30.0F, 11.0F, i | k);
+                if (timeSinceLastVisible < 1500L) {
+                    int k = Mth.floor(Mth.clamp((float) (1500L - timeSinceLastVisible) / 300.0F, 0.0F, 1.0F) * 255.0F) << 24 | 0x4000000;
+                    toastComponent.getMinecraft().font.draw(pPoseStack, this.title, 30.0F, 11.0F, i | k);
                 } else {
-                    int i1 = Mth.floor(Mth.clamp((float) (pTimeSinceLastVisible - 1500L) / 300.0F, 0.0F, 1.0F) * 252.0F) << 24 | 67108864;
+                    int j = Mth.floor(Mth.clamp((float) (timeSinceLastVisible - 1500L) / 300.0F, 0.0F, 1.0F) * 252.0F) << 24 | 0x4000000;
                     int l = this.height() / 2 - list.size() * 9 / 2;
 
                     for (FormattedCharSequence formattedCharSequence : list) {
-                        pToastComponent.getMinecraft().font.draw(pPoseStack, formattedCharSequence, 30.0F, (float) l, 16777215 | i1);
+                        toastComponent.getMinecraft().font.draw(pPoseStack, formattedCharSequence, 30.0F, (float) l, 0xffffff | j);
                         l += 9;
                     }
                 }
             }
         }
-
-        pToastComponent.getMinecraft().getItemRenderer().renderAndDecorateFakeItem(this.icon, 8, 8);
-        return pTimeSinceLastVisible >= 5000L ? Visibility.HIDE : Visibility.SHOW;
+        toastComponent.getMinecraft().getItemRenderer().renderAndDecorateFakeItem(this.icon, 8, 8);
+        return timeSinceLastVisible >= 5000L ? Visibility.HIDE : Visibility.SHOW;
     }
-
 }

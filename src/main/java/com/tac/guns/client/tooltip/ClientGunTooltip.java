@@ -24,13 +24,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
+import static com.tac.guns.item.level.GunLevelManager.*;
+
 public class ClientGunTooltip implements ClientTooltipComponent {
     private final ItemStack gun;
     private final IGun iGun;
-    private final ResourceLocation ammoId;
     private final CommonGunIndex gunIndex;
     private final ItemStack ammo;
-
     private Component ammoName;
     private MutableComponent ammoCountText;
     private @Nullable MutableComponent gunType;
@@ -44,7 +44,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     public ClientGunTooltip(GunTooltip tooltip) {
         this.gun = tooltip.getGun();
         this.iGun = tooltip.getIGun();
-        this.ammoId = tooltip.getAmmoId();
+        ResourceLocation ammoId = tooltip.getAmmoId();
         this.gunIndex = tooltip.getGunIndex();
         this.ammo = AmmoItemBuilder.create().setId(ammoId).build();
         this.maxWidth = 0;
@@ -61,12 +61,6 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         return this.maxWidth;
     }
 
-
-    String GUN_LEVEL_TAG = "GunLevel";
-    String GUN_LEVEL_EXP_TAG = "GunLevelExp";
-    String GUN_LEVEL_MAX_EXP_TAG = "GunLevelMaxExp";
-    String GUN_LEVEL_LOCK_TAG = "GunLevelLock";
-    String GUN_LEVEL_OWNER_TAG = "GunLevelOwner";
     private void getText() {
         Font font = Minecraft.getInstance().font;
 
@@ -92,25 +86,30 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         this.maxWidth = Math.max(font.width(this.tips), this.maxWidth);
 
         CompoundTag nbt = this.gun.getOrCreateTag();
-        String level = String.valueOf(nbt.getInt(GUN_LEVEL_TAG));
-        float levelExp = nbt.getFloat(GUN_LEVEL_EXP_TAG);
-        float levelMaxExp = nbt.getFloat(GUN_LEVEL_MAX_EXP_TAG);
         if (!nbt.contains(GUN_LEVEL_OWNER_TAG)) {
             this.ownerInfo = new TranslatableComponent("tooltip.tac.gun.level.no_owner").withStyle(ChatFormatting.DARK_GRAY);
         } else {
             String levelOwner = nbt.getString(GUN_LEVEL_OWNER_TAG);
-            this.ownerInfo = new TranslatableComponent("tooltip.tac.gun.level.owner").append(new TranslatableComponent(levelOwner).withStyle(ChatFormatting.YELLOW));
+            this.ownerInfo = new TranslatableComponent("tooltip.tac.gun.level.owner").append(new TextComponent(levelOwner).withStyle(ChatFormatting.YELLOW));
         }
-        boolean levelLock = nbt.getBoolean(GUN_LEVEL_LOCK_TAG);
-        if (levelLock) {
+        this.maxWidth = Math.max(font.width(this.ownerInfo), this.maxWidth);
+
+        int level = nbt.getInt(GUN_LEVEL_TAG);
+        if (nbt.getBoolean(GUN_LEVEL_LOCK_TAG)) {
             this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level.error_owner").withStyle(ChatFormatting.RED);
+            this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
         } else {
-            if (nbt.getInt(GUN_LEVEL_TAG) >= 10) {
-                this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TranslatableComponent(level).withStyle(ChatFormatting.YELLOW).append(" (MAX)"));
+            if (nbt.getInt(GUN_LEVEL_TAG) >= MAX_LEVEL) {
+                String levelText = String.format("%d (MAX)", level);
+                this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TextComponent(levelText).withStyle(ChatFormatting.DARK_PURPLE));
             } else {
-                this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TranslatableComponent(level).withStyle(ChatFormatting.YELLOW).append(" (%.1f%%)".formatted(levelExp / levelMaxExp * 100)));
+                float levelExp = nbt.getFloat(GUN_LEVEL_EXP_TAG);
+                float levelMaxExp = getExpNeeded(gun, level);
+                String levelText = String.format("%d (%.1f%%)", level, levelExp / levelMaxExp * 100);
+                this.levelInfo = new TranslatableComponent("tooltip.tac.gun.level").append(new TextComponent(levelText).withStyle(ChatFormatting.YELLOW));
             }
         }
+        this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.tac.guns.client.gui.toast;
 
+import com.tac.guns.item.level.GunLevelManager;
 import com.tac.guns.network.message.ServerMessageLevelUp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -14,12 +15,14 @@ public class ToastPlayManager {
         int level = message.getLevel();
         ItemStack gun = message.getGun();
         Player player = Minecraft.getInstance().player;
-        if (player == null) return;
-        if (level == 5 || level == 8) {
+        if (player == null) {
+            return;
+        }
+        if (GunLevelManager.DAMAGE_UP_LEVELS.contains(level)) {
             Minecraft.getInstance().getToasts().addToast(new GunLevelUpToast(gun,
                     new TranslatableComponent("toast.tac.level_up"),
                     new TranslatableComponent("toast.tac.sub.damage_up")));
-        } else if (level == 10) {
+        } else if (level >= GunLevelManager.MAX_LEVEL) {
             Minecraft.getInstance().getToasts().addToast(new GunLevelUpToast(gun,
                     new TranslatableComponent("toast.tac.level_up"),
                     new TranslatableComponent("toast.tac.sub.final_level")));

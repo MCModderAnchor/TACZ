@@ -2,7 +2,6 @@ package com.tac.guns.item;
 
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
-import com.tac.guns.api.event.GunLevelEvent;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
@@ -11,6 +10,7 @@ import com.tac.guns.client.tab.CustomTab;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.inventory.tooltip.GunTooltip;
 import com.tac.guns.item.builder.GunItemBuilder;
+import com.tac.guns.item.level.GunLevelManager;
 import com.tac.guns.item.nbt.GunItemDataAccessor;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.gun.AttachmentPass;
@@ -146,10 +146,11 @@ public class GunItem extends Item implements GunItemDataAccessor {
     public void inventoryTick(ItemStack gun, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         super.inventoryTick(gun, worldIn, entityIn, itemSlot, isSelected);
         if (isSelected && !worldIn.isClientSide) {
-            if (gun.hasTag()) {
-                if (entityIn instanceof Player user) {
-                    GunLevelEvent.checkUser(gun, user);
-                }
+            if (!gun.hasTag()) {
+                return;
+            }
+            if (entityIn instanceof Player user) {
+                GunLevelManager.checkUser(gun, user);
             }
         }
     }

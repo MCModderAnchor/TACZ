@@ -476,7 +476,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         });
         inaccuracy[0] = Math.max(0, inaccuracy[0]);
         float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
-        EntityBullet bullet = new EntityBullet(world, shooter, gunIndex.getGunData().getAmmoId(), bulletData);
+        EntityBullet bullet = new EntityBullet(world, shooter, currentGunItem, gunIndex.getGunData().getAmmoId(), bulletData);
         bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
         world.addFreshEntity(bullet);
         if (soundDistance[0] > 0) {

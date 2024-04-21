@@ -3,11 +3,11 @@ package com.tac.guns.entity;
 import com.tac.guns.api.entity.ITargetEntity;
 import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.api.event.AmmoHitBlockEvent;
-import com.tac.guns.api.event.GunLevelEvent;
 import com.tac.guns.api.event.HeadShotEvent;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.config.common.AmmoConfig;
 import com.tac.guns.event.HeadShotAABBConfigRead;
+import com.tac.guns.item.level.GunLevelManager;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ServerMessageHeadShot;
 import com.tac.guns.particles.BulletHoleOption;
@@ -83,6 +83,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     private int pierce = 1;
     // 初始位置
     private Vec3 startPos;
+    private ItemStack gun = ItemStack.EMPTY;
 
     public EntityBullet(EntityType<? extends Projectile> type, Level worldIn) {
         super(type, worldIn);
@@ -93,7 +94,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.setPos(x, y, z);
     }
 
-    public EntityBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, BulletData data) {
+    public EntityBullet(Level worldIn, LivingEntity throwerIn, ItemStack gun, ResourceLocation ammoId, BulletData data) {
         this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         this.ammoId = ammoId;
@@ -117,6 +118,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         double posZ = throwerIn.zOld + (throwerIn.getZ() - throwerIn.zOld) / 2.0;
         this.setPos(posX, posY, posZ);
         this.startPos = this.position();
+        this.gun = gun;
     }
 
     @Override
@@ -338,9 +340,10 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             modifier.setKnockBackStrength(this.knockback);
             // 创建伤害
             tacAttackEntity(DamageSource.thrown(this, owner), entity, damage);
-            updateGunLevel(damage);
             // 恢复原位
             modifier.resetKnockBackStrength();
+            // 升级枪械等级
+            updateGunLevel(damage);
             // 爆炸逻辑
             if (this.hasExplosion) {
                 // 取消无敌时间
@@ -465,12 +468,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     }
 
     protected void updateGunLevel(float damage) {
-        if (this.getOwner() instanceof Player shooter) {
-            ItemStack gun = shooter.getMainHandItem();
-            if (!gun.hasTag() || !(gun.getItem() instanceof IGun)) {
-                return;
-            }
-            GunLevelEvent.levelUp(gun, damage, shooter);
+        if (this.getOwner() instanceof Player shooter && !this.gun.isEmpty() && gun.getItem() instanceof IGun && gun.hasTag()) {
+            GunLevelManager.levelUp(gun, damage, shooter);
         }
     }
 

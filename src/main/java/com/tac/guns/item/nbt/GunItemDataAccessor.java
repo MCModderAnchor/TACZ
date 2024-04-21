@@ -1,10 +1,10 @@
 package com.tac.guns.item.nbt;
 
 import com.tac.guns.api.attachment.AttachmentType;
-import com.tac.guns.api.event.GunLevelEvent;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
+import com.tac.guns.item.level.GunLevelManager;
 import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -45,7 +45,7 @@ public interface GunItemDataAccessor extends IGun {
 
     @Override
     default void initLevel(ItemStack gun) {
-        GunLevelEvent.init(gun);
+        GunLevelManager.init(gun);
     }
 
     @Override
