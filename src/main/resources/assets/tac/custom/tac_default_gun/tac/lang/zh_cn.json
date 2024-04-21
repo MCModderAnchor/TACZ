@@ -1,4 +1,6 @@
 {
+  "pack.tac.tac_default_gun.name": "TAC 默认枪械包",
+  "pack.tac.tac_default_gun.desc": "我们将使这个国家，在上帝的庇佑下，从自由里获得新生；而那一为民所有、为民所治、为民所享的政府，也绝不会从这片土地上消亡。",
   "tac.type.ammo.name": "子弹",
   "tac.type.pistol.name": "手枪",
   "tac.type.rifle.name": "步枪",

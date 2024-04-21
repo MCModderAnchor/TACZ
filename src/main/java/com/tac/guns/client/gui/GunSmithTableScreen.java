@@ -28,9 +28,11 @@ import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessageCraft;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -144,6 +146,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         this.addIndexButtons();
         this.addScaleButtons();
         this.addCraftButton();
+        this.addUrlButton();
     }
 
     private void addCraftButton() {
@@ -164,6 +167,39 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                     }
                 }
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessageCraft(this.selectedRecipe.getId(), this.menu.containerId));
+            }
+        }));
+    }
+
+    private void addUrlButton() {
+        this.addRenderableWidget(new ImageButton(leftPos + 112, topPos + 164, 18, 18, 149, 211, 18, TEXTURE, b -> {
+            if (this.selectedRecipe != null) {
+                ItemStack output = selectedRecipe.getOutput();
+                Item item = output.getItem();
+                ResourceLocation id;
+                if (item instanceof IGun iGun) {
+                    id = iGun.getGunId(output);
+                } else if (item instanceof IAttachment iAttachment) {
+                    id = iAttachment.getAttachmentId(output);
+                } else if (item instanceof IAmmo iAmmo) {
+                    id = iAmmo.getAmmoId(output);
+                } else {
+                    return;
+                }
+
+                PackInfo packInfo = ClientAssetManager.INSTANCE.getPackInfo(id);
+                if (packInfo == null) {
+                    return;
+                }
+                String url = packInfo.getUrl();
+                if (StringUtils.isNotBlank(url) && minecraft != null) {
+                    minecraft.setScreen(new ConfirmLinkScreen(yes -> {
+                        if (yes) {
+                            Util.getPlatform().openUri(url);
+                        }
+                        minecraft.setScreen(this);
+                    }, url, false));
+                }
             }
         }));
     }
@@ -308,39 +344,47 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         PackInfo packInfo = ClientAssetManager.INSTANCE.getPackInfo(id);
         if (packInfo != null) {
             poseStack.pushPose();
+            poseStack.scale(0.75f, 0.75f, 1);
+            TranslatableComponent nameText = new TranslatableComponent(packInfo.getName());
+            font.draw(poseStack, nameText, (leftPos + 6) / 0.75f, (topPos + 122) / 0.75f, ChatFormatting.DARK_GRAY.getColor());
+            poseStack.popPose();
+
+            poseStack.pushPose();
             poseStack.scale(0.5f, 0.5f, 1);
 
             int offsetX = (leftPos + 6) * 2;
-            int offsetY = (topPos + 122) * 2;
-            TranslatableComponent nameText = new TranslatableComponent(packInfo.getName());
-            font.draw(poseStack, nameText.withStyle(ChatFormatting.DARK_BLUE), offsetX, offsetY, 0xFFFFFF);
+            int offsetY = (topPos + 123) * 2;
             int nameWidth = font.width(nameText);
-            font.draw(poseStack, new TextComponent(packInfo.getVersion()).withStyle(ChatFormatting.GREEN).withStyle(ChatFormatting.UNDERLINE), offsetX + nameWidth + 5, offsetY, 0xFFFFFF);
-            offsetY += 12;
+            font.draw(poseStack, new TextComponent("v" + packInfo.getVersion()).withStyle(ChatFormatting.UNDERLINE), offsetX + nameWidth * 0.75f / 0.5f + 5, offsetY, ChatFormatting.DARK_GRAY.getColor());
+            offsetY += 14;
 
             String descKey = packInfo.getDescription();
             if (StringUtils.isNoneBlank(descKey)) {
-                // FIXME 示例文字，修改
-                // TranslatableComponent desc = new TranslatableComponent(descKey);
-                TextComponent desc = new TextComponent("微积分学也称为微分积分学，主要包括微分学和积分学两个部分，是研究极限、微分、积分和无穷级数等的一个数学分支。本质上，微积分学是一门研究连续变化的学问。");
+                TranslatableComponent desc = new TranslatableComponent(descKey);
                 List<FormattedCharSequence> split = font.split(desc, 245);
                 for (FormattedCharSequence charSequence : split) {
                     font.draw(poseStack, charSequence, offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
                     offsetY += font.lineHeight;
                 }
-                offsetY += 10;
+                offsetY += 3;
             }
 
-            font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.license").append(new TextComponent(packInfo.getLicense()).withStyle(ChatFormatting.DARK_GRAY)), offsetX, offsetY, 0xFFFFFF);
+            font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.license")
+                            .append(new TextComponent(packInfo.getLicense()).withStyle(ChatFormatting.DARK_GRAY)),
+                    offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
             offsetY += 12;
 
             List<String> authors = packInfo.getAuthors();
             if (!authors.isEmpty()) {
-                font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.authors").append(new TextComponent(StringUtils.join(authors, ", ")).withStyle(ChatFormatting.DARK_GRAY)), offsetX, offsetY, 0xFFFFFF);
+                font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.authors")
+                                .append(new TextComponent(StringUtils.join(authors, ", ")).withStyle(ChatFormatting.DARK_GRAY)),
+                        offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
                 offsetY += 12;
             }
 
-            font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.date").append(new TextComponent(packInfo.getDate()).withStyle(ChatFormatting.DARK_GRAY)), offsetX, offsetY, 0xFFFFFF);
+            font.draw(poseStack, new TranslatableComponent("gui.tac.gun_smith_table.date")
+                            .append(new TextComponent(packInfo.getDate()).withStyle(ChatFormatting.DARK_GRAY)),
+                    offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
 
             poseStack.popPose();
         }

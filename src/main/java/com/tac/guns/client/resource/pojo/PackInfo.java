@@ -24,6 +24,9 @@ public class PackInfo {
     @SerializedName("date")
     private String date = "1919-08-10";
 
+    @SerializedName("url")
+    private String url;
+
     public String getVersion() {
         return version;
     }
@@ -46,5 +49,9 @@ public class PackInfo {
 
     public String getDate() {
         return date;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }
