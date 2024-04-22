@@ -73,7 +73,7 @@ public class GunAnimationStateMachine {
     public void onGunShoot() {
         // 开火动画应当打断检视动画
         if (isPlayingInspectAnimation()) {
-            controller.removeAnimation(MAIN_TRACK);
+            //controller.removeAnimation(MAIN_TRACK);
         }
         for(int track : SHOOTING_TRACKS) {
             if (tryRunShootAnimation(track)) {
@@ -97,6 +97,7 @@ public class GunAnimationStateMachine {
 
     public void onGunDraw() {
         controller.runAnimation(MOVEMENT_TRACK, IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0);
+        lastWalkDirection = WalkDirection.NONE;
         controller.runAnimation(MAIN_TRACK, DRAW_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0);
     }
 

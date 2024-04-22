@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.FIXED;
+import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.*;
 
 public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final SlotModel SLOT_AMMO_MODEL = new SlotModel();
@@ -60,10 +60,19 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
             TimelessAPI.getClientAmmoIndex(ammoId).ifPresentOrElse(ammoIndex -> {
                 BedrockAmmoModel ammoModel = ammoIndex.getAmmoModel();
                 ResourceLocation modelTexture = ammoIndex.getModelTextureLocation();
-                if (transformType == FIXED && ammoModel != null && modelTexture != null) {
+                if (transformType == GUI) {
+                    VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(ammoIndex.getSlotTextureLocation()));
+                    SLOT_AMMO_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                } else if (ammoModel != null && modelTexture != null) {
                     // 再移动 0.5 格到中心
                     poseStack.translate(0, -0.5, 0);
-                    applyPositioningNodeTransform(ammoModel.getFixedOriginPath(), poseStack);
+                    if (transformType == FIXED) {
+                        applyPositioningNodeTransform(ammoModel.getFixedOriginPath(), poseStack);
+                    } else if (transformType == GROUND) {
+                        applyPositioningNodeTransform(ammoModel.getGroundOriginPath(), poseStack);
+                    } else if (transformType == THIRD_PERSON_LEFT_HAND || transformType == THIRD_PERSON_RIGHT_HAND) {
+                        applyPositioningNodeTransform(ammoModel.getThirdPersonHandPath(), poseStack);
+                    }
                     ammoModel.render(poseStack, transformType, RenderType.entityTranslucent(modelTexture), pPackedLight, pPackedOverlay);
                 } else {
                     VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(ammoIndex.getSlotTextureLocation()));
