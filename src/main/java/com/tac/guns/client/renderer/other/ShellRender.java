@@ -9,7 +9,6 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
-import com.tac.guns.resource.DefaultAssets;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +38,7 @@ public class ShellRender {
                 SHELL_QUEUE.clear();
                 return;
             }
-            TimelessAPI.getClientAmmoIndex(DefaultAssets.DEFAULT_AMMO_ID).ifPresent(ammoIndex -> {
+            TimelessAPI.getClientAmmoIndex(index.getGunData().getAmmoId()).ifPresent(ammoIndex -> {
                 BedrockAmmoModel model = ammoIndex.getShellModel();
                 if (model == null) {
                     return;
