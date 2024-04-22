@@ -36,6 +36,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -379,7 +380,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             BlockPos offsetPos = pos.relative(result.getDirection());
             if (BaseFireBlock.canBePlacedAt(this.level, offsetPos, result.getDirection())) {
                 BlockState fireState = BaseFireBlock.getState(this.level, offsetPos);
-                this.level.setBlock(offsetPos, fireState, 11);
+                this.level.setBlock(offsetPos, fireState, Block.UPDATE_ALL_IMMEDIATE);
                 ((ServerLevel) this.level).sendParticles(ParticleTypes.LAVA, hitVec.x - 1.0 + this.random.nextDouble() * 2.0, hitVec.y, hitVec.z - 1.0 + this.random.nextDouble() * 2.0, 4, 0, 0, 0, 0);
             }
         }

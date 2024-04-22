@@ -89,9 +89,6 @@
   "tooltip.tac.ammo_box.count": "计数: %d",
   "tooltip.tac.gun.damage": "伤害: ",
   "tooltip.tac.gun.level": "好感度等级：",
-  "tooltip.tac.gun.level.error_owner": "非法使用者",
-  "tooltip.tac.gun.level.no_owner": "没有使用者",
-  "tooltip.tac.gun.level.owner": "归属者：",
   "tooltip.tac.gun.tips": "<<< 在游戏内按下 %s 打开改装界面 >>>",
   "tooltip.tac.gun.type": "枪种: "
 }
