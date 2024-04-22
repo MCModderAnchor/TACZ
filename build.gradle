@@ -150,9 +150,16 @@ tasks.withType(JavaCompile).configureEach {
 jar.finalizedBy('reobfJar')
 
 publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
+    publications.create('mavenJava', MavenPublication) {
+        from components.java
+        artifactId = project.archivesBaseName
+    }
+    repositories {
+        if (System.getenv('local_maven') != null) {
+            maven {
+                name = 'local'
+                url = 'file://' + System.getenv('local_maven')
+            }
         }
     }
 }
