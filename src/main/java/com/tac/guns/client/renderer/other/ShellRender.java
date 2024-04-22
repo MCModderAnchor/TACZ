@@ -9,6 +9,7 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.resource.pojo.display.gun.ShellEjection;
+import com.tac.guns.compat.oculus.OculusCompat;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +29,9 @@ public class ShellRender {
     }
 
     public static void render(ItemStack currentGunItem, PoseStack poseStack, BedrockGunModel gunModel) {
+        if (OculusCompat.isRenderShadow()) {
+            return;
+        }
         IGun iGun = IGun.getIGunOrNull(currentGunItem);
         if (iGun == null) {
             return;

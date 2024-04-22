@@ -9,6 +9,7 @@ import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.SlotModel;
 import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.resource.pojo.display.gun.MuzzleFlash;
+import com.tac.guns.compat.oculus.OculusCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -29,6 +30,9 @@ public class MuzzleFlashRender {
     private static Matrix4f muzzleFlashPose = new Matrix4f();
 
     public static void render(ItemStack currentGunItem, PoseStack poseStack, BedrockModel bedrockModel) {
+        if (OculusCompat.isRenderShadow()) {
+            return;
+        }
         long time = System.currentTimeMillis() - shootTimeStamp;
         if (time > TIME_RANGE) {
             return;
