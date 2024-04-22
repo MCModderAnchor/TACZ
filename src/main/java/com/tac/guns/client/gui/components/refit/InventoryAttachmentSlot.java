@@ -8,8 +8,10 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 public class InventoryAttachmentSlot extends Button {
     private final int slotIndex;
@@ -20,8 +22,14 @@ public class InventoryAttachmentSlot extends Button {
         this.slotIndex = slotIndex;
         this.inventory = inventory;
     }
-    @Override
 
+    public void renderTooltip(Consumer<ItemStack> consumer) {
+        if (this.isHovered && 0 <= this.slotIndex && this.slotIndex < this.inventory.getContainerSize()) {
+            consumer.accept(this.inventory.getItem(slotIndex));
+        }
+    }
+
+    @Override
     public void renderButton(@Nonnull PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, GunRefitScreen.SLOT_TEXTURE);

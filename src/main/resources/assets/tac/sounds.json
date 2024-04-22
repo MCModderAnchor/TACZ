@@ -10,15 +10,13 @@
   "target_block_hit": {
     "subtitle": "subtitle.tac.target_block_hit",
     "sounds": [
-      {
-        "name": "tac:block/ea_1"
-      },
-      {
-        "name": "tac:block/ea_2"
-      },
-      {
-        "name": "tac:block/ea_3"
-      }
+      "tac:block/target_block_hit/target_block_hit_1",
+      "tac:block/target_block_hit/target_block_hit_2",
+      "tac:block/target_block_hit/target_block_hit_3",
+      "tac:block/target_block_hit/target_block_hit_4",
+      "tac:block/target_block_hit/target_block_hit_5",
+      "tac:block/target_block_hit/target_block_hit_6",
+      "tac:block/target_block_hit/target_block_hit_7"
     ]
   }
 }

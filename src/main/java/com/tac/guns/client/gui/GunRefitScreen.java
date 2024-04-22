@@ -1,13 +1,11 @@
 package com.tac.guns.client.gui;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
-import com.tac.guns.client.gui.components.refit.GunAttachmentSlot;
-import com.tac.guns.client.gui.components.refit.InventoryAttachmentSlot;
-import com.tac.guns.client.gui.components.refit.RefitTurnPageButton;
-import com.tac.guns.client.gui.components.refit.RefitUnloadButton;
+import com.tac.guns.client.gui.components.refit.*;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessageRefitGun;
 import com.tac.guns.network.message.ClientMessageUnloadAttachment;
@@ -151,11 +149,19 @@ public class GunRefitScreen extends Screen {
     public void init() {
         super.init();
         this.clearWidgets();
-
         // 添加配件槽位
         this.addAttachmentTypeButtons();
         // 添加可选配件列表
         this.addInventoryAttachmentButtons();
+    }
+
+    @Override
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float pPartialTick) {
+        super.render(poseStack, mouseX, mouseY, pPartialTick);
+        this.renderables.stream().filter(w -> w instanceof IComponentTooltip).forEach(w -> ((IComponentTooltip) w)
+                .renderTooltip(component -> this.renderTooltip(poseStack, component, mouseX, mouseY)));
+        this.renderables.stream().filter(w -> w instanceof InventoryAttachmentSlot).forEach(w -> ((InventoryAttachmentSlot) w)
+                .renderTooltip(stack -> this.renderTooltip(poseStack, stack, mouseX, mouseY)));
     }
 
     @Override

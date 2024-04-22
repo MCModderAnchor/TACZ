@@ -4,7 +4,9 @@ import com.mojang.authlib.GameProfile;
 import com.tac.guns.api.entity.ITargetEntity;
 import com.tac.guns.init.ModBlocks;
 import com.tac.guns.init.ModItems;
+import com.tac.guns.init.ModSounds;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
@@ -24,7 +26,7 @@ import static net.minecraft.world.entity.vehicle.AbstractMinecart.Type.RIDEABLE;
 
 public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
     public static EntityType<TargetMinecart> TYPE = EntityType.Builder.<TargetMinecart>of(TargetMinecart::new, MobCategory.MISC)
-            .sized(0.75F, 1.8F)
+            .sized(0.75F, 2.4F)
             .clientTrackingRange(8)
             .build("target_minecart");
 
@@ -51,6 +53,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
                     double dis = this.position().distanceTo(e.position());
                     player.displayClientMessage(new TranslatableComponent("message.tac.target_minecart.hit",
                             String.format("%.1f", damage), String.format("%.2f", dis)), true);
+                    level.playSound(null, this, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 0.8f, this.level.random.nextFloat() * 0.1F + 0.9F);
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.tac.guns.block.entity;
 
 import com.mojang.authlib.GameProfile;
+import com.tac.guns.block.TargetBlock;
 import com.tac.guns.init.ModBlocks;
 import com.tac.guns.init.ModSounds;
 import net.minecraft.core.BlockPos;
@@ -20,9 +21,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 
+import static com.tac.guns.block.TargetBlock.OUTPUT_POWER;
 import static com.tac.guns.block.TargetBlock.STAND;
 
 public class TargetBlockEntity extends BlockEntity implements Nameable {
@@ -105,15 +108,22 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
         return new AABB(worldPosition.offset(-2, 0, -2), worldPosition.offset(2, 2, 2));
     }
 
-    public void hit(Level pLevel, BlockState state, BlockPos pos) {
+    public void hit(Level level, BlockState state, BlockHitResult hit, boolean isUpperBlock) {
         if (this.level != null && state.getValue(STAND)) {
-            pLevel.setBlock(pos, state.setValue(STAND, false), 3);
-            pLevel.scheduleTick(pos, state.getBlock(), 100);
-            pLevel.playSound(null, pos, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            BlockPos blockPos = hit.getBlockPos();
+            // 如果是击中上方，把状态移动到下方处理
+            if (isUpperBlock) {
+                blockPos = blockPos.below();
+                state = level.getBlockState(blockPos);
+            }
+            int redstoneStrength = TargetBlock.getRedstoneStrength(hit, isUpperBlock);
+            level.setBlock(blockPos, state.setValue(STAND, false).setValue(OUTPUT_POWER, redstoneStrength), Block.UPDATE_ALL);
+            level.scheduleTick(blockPos, state.getBlock(), 100);
+            level.playSound(null, blockPos, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 0.8f, this.level.random.nextFloat() * 0.1F + 0.9F);
         }
     }
 
-    public static void clientTick(Level pLevel, BlockPos pPos, BlockState state, TargetBlockEntity pBlockEntity) {
+    public static void clientTick(Level level, BlockPos pos, BlockState state, TargetBlockEntity pBlockEntity) {
         pBlockEntity.oRot = pBlockEntity.rot;
         if (state.getValue(STAND)) {
             pBlockEntity.rot = Math.max(pBlockEntity.rot - 18, 0);
