@@ -9,17 +9,25 @@ import javax.annotation.Nullable;
 public class AmmoDisplay {
     @SerializedName("model")
     private ResourceLocation modelLocation;
+
     @SerializedName("texture")
     private ResourceLocation modelTexture;
+
     @Nullable
     @SerializedName("slot")
     private ResourceLocation slotTextureLocation;
+
     @Nullable
     @SerializedName("entity")
     private AmmoEntityDisplay ammoEntity;
+
     @Nullable
     @SerializedName("shell")
     private ShellDisplay shellDisplay;
+
+    @Nullable
+    @SerializedName("particle")
+    private AmmoParticle particle;
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -42,5 +50,10 @@ public class AmmoDisplay {
     @Nullable
     public ShellDisplay getShellDisplay() {
         return shellDisplay;
+    }
+
+    @Nullable
+    public AmmoParticle getParticle() {
+        return particle;
     }
 }

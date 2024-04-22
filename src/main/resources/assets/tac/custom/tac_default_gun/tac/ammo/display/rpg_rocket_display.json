@@ -8,5 +8,16 @@
     "model": "tac:ammo_entity/rpg_rocket",
     // 材质
     "texture": "tac:ammo_entity/rpg_rocket"
+  },
+  "particle": {
+    "name": "dust_color_transition 1.0 0.0 0.0 1.0 0.0 0.0 1.0",
+    "delta": [
+      0,
+      0,
+      0
+    ],
+    "speed": 0,
+    "life_time": 50,
+    "count": 5
   }
 }

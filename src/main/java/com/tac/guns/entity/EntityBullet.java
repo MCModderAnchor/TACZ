@@ -4,6 +4,7 @@ import com.tac.guns.api.entity.ITargetEntity;
 import com.tac.guns.api.entity.KnockBackModifier;
 import com.tac.guns.api.event.AmmoHitBlockEvent;
 import com.tac.guns.api.event.HeadShotEvent;
+import com.tac.guns.client.particle.AmmoParticleSpawner;
 import com.tac.guns.config.common.AmmoConfig;
 import com.tac.guns.event.HeadShotAABBConfigRead;
 import com.tac.guns.network.NetworkHandler;
@@ -15,6 +16,7 @@ import com.tac.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tac.guns.util.block.BlockRayTrace;
 import com.tac.guns.util.block.ProjectileExplosion;
 import com.tac.guns.util.math.TacHitResult;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
@@ -41,9 +43,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +55,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
 public class EntityBullet extends Projectile implements IEntityAdditionalSpawnData {
@@ -130,6 +135,10 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         super.tick();
         // 调用 TaC 子弹服务器事件
         this.onBulletTick();
+        // 粒子效果
+        if (this.level instanceof ClientLevel clientLevel) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(clientLevel, this));
+        }
         // 子弹模型的旋转与抛物线
         Vec3 movement = this.getDeltaMovement();
         double x = movement.x;
@@ -521,6 +530,10 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
 
     public ResourceLocation getAmmoId() {
         return ammoId;
+    }
+
+    public Random getRandom() {
+        return this.random;
     }
 
     @Override

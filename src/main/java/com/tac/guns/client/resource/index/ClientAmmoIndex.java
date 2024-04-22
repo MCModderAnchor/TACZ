@@ -1,10 +1,12 @@
 package com.tac.guns.client.resource.index;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.resource.ClientAssetManager;
 import com.tac.guns.client.resource.loader.ShellDisplay;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoEntityDisplay;
+import com.tac.guns.client.resource.pojo.display.ammo.AmmoParticle;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
 import com.tac.guns.resource.pojo.AmmoIndexPOJO;
@@ -26,6 +28,7 @@ public class ClientAmmoIndex {
     private @Nullable BedrockAmmoModel shellModel;
     private @Nullable ResourceLocation shellTextureLocation;
     private int stackSize;
+    private @Nullable AmmoParticle particle;
 
     private ClientAmmoIndex() {
     }
@@ -40,6 +43,7 @@ public class ClientAmmoIndex {
         checkStackSize(clientPojo, index);
         checkAmmoEntity(display, index);
         checkShell(display, index);
+        checkParticle(display, index);
         return index;
     }
 
@@ -136,6 +140,17 @@ public class ClientAmmoIndex {
         }
     }
 
+    private static void checkParticle(AmmoDisplay display, ClientAmmoIndex index) {
+        if (display.getParticle() != null) {
+            try {
+                display.getParticle().decoParticleOptions();
+                index.particle = display.getParticle();
+            } catch (CommandSyntaxException e) {
+                e.fillInStackTrace();
+            }
+        }
+    }
+
     private static void checkStackSize(AmmoIndexPOJO clientPojo, ClientAmmoIndex index) {
         index.stackSize = Math.max(clientPojo.getStackSize(), 1);
     }
@@ -180,5 +195,10 @@ public class ClientAmmoIndex {
     @Nullable
     public ResourceLocation getShellTextureLocation() {
         return shellTextureLocation;
+    }
+
+    @Nullable
+    public AmmoParticle getParticle() {
+        return particle;
     }
 }
