@@ -31,7 +31,6 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -82,7 +81,6 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     private int pierce = 1;
     // 初始位置
     private Vec3 startPos;
-    private ItemStack gun = ItemStack.EMPTY;
 
     public EntityBullet(EntityType<? extends Projectile> type, Level worldIn) {
         super(type, worldIn);
@@ -93,7 +91,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.setPos(x, y, z);
     }
 
-    public EntityBullet(Level worldIn, LivingEntity throwerIn, ItemStack gun, ResourceLocation ammoId, BulletData data) {
+    public EntityBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, BulletData data) {
         this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         this.ammoId = ammoId;
@@ -103,6 +101,10 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.friction = Mth.clamp(data.getFriction(), 0, Float.MAX_VALUE);
         this.hasIgnite = data.isHasIgnite();
         this.damageAmount = (float) Mth.clamp(data.getDamageAmount() * AmmoConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
+        // 霰弹情况，每个伤害要扣去
+        if (data.getBulletAmount() > 1) {
+            this.damageAmount = this.damageAmount / data.getBulletAmount();
+        }
         this.knockback = Mth.clamp(data.getKnockback(), 0, Float.MAX_VALUE);
         this.pierce = Mth.clamp(data.getPierce(), 1, Integer.MAX_VALUE);
         this.extraDamage = data.getExtraDamage();
@@ -117,7 +119,6 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         double posZ = throwerIn.zOld + (throwerIn.getZ() - throwerIn.zOld) / 2.0;
         this.setPos(posX, posY, posZ);
         this.startPos = this.position();
-        this.gun = gun;
     }
 
     @Override

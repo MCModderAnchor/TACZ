@@ -7,6 +7,9 @@ public class BulletData {
     @SerializedName("life")
     private float lifeSecond = 10f;
 
+    @SerializedName("bullet_amount")
+    private int bulletAmount = 1;
+
     @SerializedName("damage")
     private float damageAmount = 5;
 
@@ -36,6 +39,10 @@ public class BulletData {
 
     public float getLifeSecond() {
         return lifeSecond;
+    }
+
+    public int getBulletAmount() {
+        return bulletAmount;
     }
 
     public float getDamageAmount() {

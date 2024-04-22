@@ -476,9 +476,14 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         });
         inaccuracy[0] = Math.max(0, inaccuracy[0]);
         float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
-        EntityBullet bullet = new EntityBullet(world, shooter, currentGunItem, gunIndex.getGunData().getAmmoId(), bulletData);
-        bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
-        world.addFreshEntity(bullet);
+        int bulletAmount = Math.max(bulletData.getBulletAmount(), 1);
+        ResourceLocation ammoId = gunIndex.getGunData().getAmmoId();
+        // 开始生成子弹
+        for (int i = 0; i < bulletAmount; i++) {
+            EntityBullet bullet = new EntityBullet(world, shooter, ammoId, bulletData);
+            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
+            world.addFreshEntity(bullet);
+        }
         if (soundDistance[0] > 0) {
             String soundId = useSilenceSound[0] ? SoundManager.SILENCE_SOUND : SoundManager.SHOOT_SOUND;
             SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
