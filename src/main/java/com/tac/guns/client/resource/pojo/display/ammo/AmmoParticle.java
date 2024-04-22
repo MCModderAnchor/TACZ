@@ -1,12 +1,8 @@
 package com.tac.guns.client.resource.pojo.display.ammo;
 
 import com.google.gson.annotations.SerializedName;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.math.Vector3f;
-import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.particles.ParticleOptions;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 
@@ -15,16 +11,16 @@ public class AmmoParticle {
     private String name;
 
     @SerializedName("delta")
-    private Vector3f delta;
+    private Vector3f delta = Vector3f.ZERO;
 
     @SerializedName("speed")
-    private float speed;
+    private float speed = 0f;
 
     @SerializedName("life_time")
-    private int lifeTime;
+    private int lifeTime = 20;
 
     @SerializedName("count")
-    private int count;
+    private int count = 1;
 
     // 不进行序列化，而是需要 deco 的
     private transient ParticleOptions particleOptions;
@@ -49,10 +45,8 @@ public class AmmoParticle {
         return lifeTime;
     }
 
-    public void decoParticleOptions() throws CommandSyntaxException {
-        if (StringUtils.isNoneBlank(this.name)) {
-            this.particleOptions = ParticleArgument.readParticle(new StringReader(this.name));
-        }
+    public void setParticleOptions(ParticleOptions particleOptions) {
+        this.particleOptions = particleOptions;
     }
 
     @Nullable
