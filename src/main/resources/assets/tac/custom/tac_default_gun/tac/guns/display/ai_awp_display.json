@@ -24,6 +24,8 @@
     "reload_tactical": "tac:ai_awp/awp_reload_tactical",
     "inspect": "tac:ai_awp/awp_inspect",
     "inspect_empty": "tac:ai_awp/awp_inspect_empty",
-    "draw": "tac:ai_awp/awp_draw"
+    "draw": "tac:ai_awp/awp_draw",
+    "shoot": "tac:ai_awp/awp_shoot",
+    "silence": "tac:ai_awp/awp_silence"
   }
 }

@@ -239,6 +239,10 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         for (Entity entity : entities) {
             // 禁止对自己造成伤害（如有需要可以增加 Config 开启对自己的伤害）
             if (!entity.equals(this.getOwner())) {
+                // 射击无视自己的载具
+                if (this.getOwner().getVehicle() != null && entity.equals(this.getOwner().getVehicle())) {
+                    continue;
+                }
                 EntityResult result = this.getHitResult(entity, startVec, endVec);
                 if (result == null) {
                     continue;
@@ -264,6 +268,9 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         List<Entity> entities = this.level.getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0), PROJECTILE_TARGETS);
         for (Entity entity : entities) {
             if (!entity.equals(this.getOwner())) {
+                if (this.getOwner().getVehicle() != null && entity.equals(this.getOwner().getVehicle())) {
+                    continue;
+                }
                 EntityResult result = this.getHitResult(entity, startVec, endVec);
                 if (result == null) {
                     continue;

@@ -7,6 +7,7 @@
   "sounds": {
     "reload_empty": "tac:rpg7/rpg7_reload",
     "inspect": "tac:rpg7/rpg7_inspect",
-    "draw": "tac:rpg7/rpg7_draw"
+    "draw": "tac:rpg7/rpg7_draw",
+    "shoot": "tac:rpg7/rpg7_shoot"
   }
 }
