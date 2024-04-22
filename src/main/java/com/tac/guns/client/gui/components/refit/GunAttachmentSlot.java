@@ -8,16 +8,21 @@ import com.tac.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.Locale;
+import java.util.function.Consumer;
 
-public class GunAttachmentSlot extends Button {
+public class GunAttachmentSlot extends Button implements IComponentTooltip {
     private final AttachmentType type;
     private final Inventory inventory;
     private final int gunItemIndex;
+    private final String nameKey;
     private boolean selected = false;
 
     public GunAttachmentSlot(int pX, int pY, AttachmentType type, int gunItemIndex, Inventory inventory, Button.OnPress onPress) {
@@ -25,6 +30,14 @@ public class GunAttachmentSlot extends Button {
         this.type = type;
         this.inventory = inventory;
         this.gunItemIndex = gunItemIndex;
+        this.nameKey = String.format("tooltip.tac.attachment.%s", type.name().toLowerCase(Locale.US));
+    }
+
+    @Override
+    public void renderTooltip(Consumer<MutableComponent> consumer) {
+        if (this.isHovered) {
+            consumer.accept(new TranslatableComponent(nameKey));
+        }
     }
 
     @Override

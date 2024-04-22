@@ -87,8 +87,18 @@
   "toast.tac.sub.final_level": "人枪合一",
   "toast.tac.sub.level_up": "武器手感更好了",
   "tooltip.tac.ammo_box.count": "计数: %d",
+  "tooltip.tac.attachment.extended_mag": "扩容弹匣",
+  "tooltip.tac.attachment.grip": "握把",
+  "tooltip.tac.attachment.laser": "激光指示器",
+  "tooltip.tac.attachment.muzzle": "枪口组件",
+  "tooltip.tac.attachment.none": "无",
+  "tooltip.tac.attachment.scope": "瞄具",
+  "tooltip.tac.attachment.stock": "枪托",
   "tooltip.tac.gun.damage": "伤害: ",
   "tooltip.tac.gun.level": "好感度等级：",
   "tooltip.tac.gun.tips": "<<< 在游戏内按下 %s 打开改装界面 >>>",
-  "tooltip.tac.gun.type": "枪种: "
+  "tooltip.tac.gun.type": "枪种: ",
+  "tooltip.tac.page.next": "下一页",
+  "tooltip.tac.page.previous": "上一页",
+  "tooltip.tac.refit.unload": "卸载"
 }

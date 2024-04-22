@@ -5,11 +5,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
-public class RefitTurnPageButton extends Button {
+public class RefitTurnPageButton extends Button implements IComponentTooltip {
     private final boolean isUpPage;
 
     public RefitTurnPageButton(int pX, int pY, boolean isUpPage, OnPress pOnPress) {
@@ -35,5 +38,13 @@ public class RefitTurnPageButton extends Button {
 
     public boolean isUpPage() {
         return isUpPage;
+    }
+
+    @Override
+    public void renderTooltip(Consumer<MutableComponent> consumer) {
+        if (this.isHovered) {
+            String key = isUpPage ? "tooltip.tac.page.previous" : "tooltip.tac.page.next";
+            consumer.accept(new TranslatableComponent(key));
+        }
     }
 }
