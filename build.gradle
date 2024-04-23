@@ -158,6 +158,7 @@ java {
 }
 
 publishing {
+    // 发布到 jitpack maven，方便其他模组开发者
     publications.create('mavenJava', MavenPublication) {
         from components.java
         groupId = project.group
@@ -165,14 +166,6 @@ publishing {
         artifactId = project.archivesBaseName
         pom {
             name = project.archivesBaseName
-        }
-    }
-    repositories {
-        if (System.getenv('local_maven') != null) {
-            maven {
-                name = 'local'
-                url = 'file://' + System.getenv('local_maven')
-            }
         }
     }
 }
