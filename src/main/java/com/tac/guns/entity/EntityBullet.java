@@ -86,6 +86,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     private int pierce = 1;
     // 初始位置
     private Vec3 startPos;
+    // 曳光弹
+    private boolean isTracerAmmo;
 
     public EntityBullet(EntityType<? extends Projectile> type, Level worldIn) {
         super(type, worldIn);
@@ -96,7 +98,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.setPos(x, y, z);
     }
 
-    public EntityBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, BulletData data) {
+    public EntityBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, BulletData data, boolean isTracerAmmo) {
         this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         this.ammoId = ammoId;
@@ -124,6 +126,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         double posZ = throwerIn.zOld + (throwerIn.getZ() - throwerIn.zOld) / 2.0;
         this.setPos(posX, posY, posZ);
         this.startPos = this.position();
+        this.isTracerAmmo = isTracerAmmo;
     }
 
     @Override
@@ -455,8 +458,6 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             }
         }
         initialDamage *= modifier;
-        // 伤害除去弹丸数（关于霰弹枪这种一次性射出多发弹丸的武器的情况设置）
-        // this.getProjectileAmount()
         float damage = initialDamage;
         return Math.max(0F, damage);
     }
@@ -505,6 +506,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         buffer.writeFloat(this.speed);
         buffer.writeFloat(this.friction);
         buffer.writeInt(this.pierce);
+        buffer.writeBoolean(this.isTracerAmmo);
     }
 
     @Override
@@ -526,10 +528,15 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.speed = additionalData.readFloat();
         this.friction = additionalData.readFloat();
         this.pierce = additionalData.readInt();
+        this.isTracerAmmo = additionalData.readBoolean();
     }
 
     public ResourceLocation getAmmoId() {
         return ammoId;
+    }
+
+    public boolean isTracerAmmo() {
+        return isTracerAmmo;
     }
 
     public Random getRandom() {

@@ -79,4 +79,8 @@ public class MuzzleFlashRender {
         // 随机给予枪口火焰的旋转
         muzzleFlashRandomRotate = (float) (Math.random() * 360);
     }
+
+    public static Matrix4f getMuzzleFlashPose() {
+        return muzzleFlashPose;
+    }
 }

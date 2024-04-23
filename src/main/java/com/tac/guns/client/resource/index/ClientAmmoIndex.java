@@ -20,8 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ClientAmmoIndex {
+    private static final Pattern COLOR_HEX = Pattern.compile("^#([0-9A-Fa-f]{6})$");
+
     private String name;
     private @Nullable BedrockAmmoModel ammoModel;
     private @Nullable ResourceLocation modelTextureLocation;
@@ -32,6 +36,7 @@ public class ClientAmmoIndex {
     private @Nullable ResourceLocation shellTextureLocation;
     private int stackSize;
     private @Nullable AmmoParticle particle;
+    private float[] tracerColor = new float[]{1f, 1f, 1f};
 
     private ClientAmmoIndex() {
     }
@@ -47,6 +52,7 @@ public class ClientAmmoIndex {
         checkAmmoEntity(display, index);
         checkShell(display, index);
         checkParticle(display, index);
+        checkTracerColor(display, index);
         return index;
     }
 
@@ -160,6 +166,21 @@ public class ClientAmmoIndex {
         }
     }
 
+    private static void checkTracerColor(AmmoDisplay display, ClientAmmoIndex index) {
+        String tracerColorText = display.getTracerColor();
+        if (StringUtils.isNoneBlank(tracerColorText)) {
+            Matcher matcher = COLOR_HEX.matcher(tracerColorText);
+            if (!matcher.find()) {
+                return;
+            }
+            int colorHex = Integer.parseInt(matcher.group(1), 16);
+            float r = (colorHex >> 16 & 0xff) / 255.0F;
+            float g = (colorHex >> 8 & 0xff) / 255.0F;
+            float b = (colorHex & 0xff) / 255.0F;
+            index.tracerColor = new float[]{r, g, b};
+        }
+    }
+
     private static void checkStackSize(AmmoIndexPOJO clientPojo, ClientAmmoIndex index) {
         index.stackSize = Math.max(clientPojo.getStackSize(), 1);
     }
@@ -209,5 +230,9 @@ public class ClientAmmoIndex {
     @Nullable
     public AmmoParticle getParticle() {
         return particle;
+    }
+
+    public float[] getTracerColor() {
+        return tracerColor;
     }
 }

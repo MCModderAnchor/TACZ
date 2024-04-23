@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class BedrockModel{
+public class BedrockModel {
     /**
      * 存储 ModelRender 子模型的 HashMap
      */

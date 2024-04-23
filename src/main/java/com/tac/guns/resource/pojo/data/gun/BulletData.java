@@ -34,6 +34,9 @@ public class BulletData {
     @SerializedName("ignite")
     private boolean hasIgnite = false;
 
+    @SerializedName("tracer_count_interval")
+    private int tracerCountInterval = -1;
+
     @SerializedName("explosion")
     private @Nullable ExplosionData explosionData;
 
@@ -76,6 +79,14 @@ public class BulletData {
 
     public boolean isHasIgnite() {
         return hasIgnite;
+    }
+
+    public boolean hasTracerAmmo() {
+        return this.tracerCountInterval >= 0;
+    }
+
+    public int getTracerCountInterval() {
+        return tracerCountInterval;
     }
 
     @Nullable

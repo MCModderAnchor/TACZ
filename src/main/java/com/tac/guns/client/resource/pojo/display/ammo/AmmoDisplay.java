@@ -29,6 +29,9 @@ public class AmmoDisplay {
     @SerializedName("particle")
     private AmmoParticle particle;
 
+    @SerializedName("tracer_color")
+    private String tracerColor = "0xFFFFFF";
+
     public ResourceLocation getModelLocation() {
         return modelLocation;
     }
@@ -55,5 +58,9 @@ public class AmmoDisplay {
     @Nullable
     public AmmoParticle getParticle() {
         return particle;
+    }
+
+    public String getTracerColor() {
+        return tracerColor;
     }
 }

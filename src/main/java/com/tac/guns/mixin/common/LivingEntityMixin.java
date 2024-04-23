@@ -140,6 +140,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     private double tac$KnockbackStrength = -1;
 
+    /**
+     * 记录射击数，用以判定曳光弹
+     */
+    @Unique
+    private int tac$shootCount = 0;
+
     public LivingEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
@@ -247,6 +253,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         tac$SprintTimeS = 0;
         tac$BoltTimestamp = -1;
         tac$BoltCoolDown = -1;
+        tac$shootCount = 0;
         // 更新切枪时间戳
         if (tac$DrawTimestamp == -1) {
             tac$DrawTimestamp = System.currentTimeMillis();
@@ -477,10 +484,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         inaccuracy[0] = Math.max(0, inaccuracy[0]);
         float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
         int bulletAmount = Math.max(bulletData.getBulletAmount(), 1);
+        boolean isTracerAmmo = bulletData.hasTracerAmmo() && (tac$shootCount % (bulletData.getTracerCountInterval() + 1) == 0);
         ResourceLocation ammoId = gunIndex.getGunData().getAmmoId();
         // 开始生成子弹
         for (int i = 0; i < bulletAmount; i++) {
-            EntityBullet bullet = new EntityBullet(world, shooter, ammoId, bulletData);
+            EntityBullet bullet = new EntityBullet(world, shooter, ammoId, bulletData, isTracerAmmo);
             bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
             world.addFreshEntity(bullet);
         }
@@ -503,6 +511,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             }
         }
         tac$ShootTimestamp = System.currentTimeMillis();
+        tac$shootCount += 1;
         return ShootResult.SUCCESS;
     }
 

@@ -1,12 +1,12 @@
 package com.tac.guns.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.model.bedrock.BedrockModel;
-import com.tac.guns.client.renderer.ModRenderType;
 import com.tac.guns.client.resource.InternalAssetLoader;
 import com.tac.guns.entity.EntityBullet;
 import net.minecraft.client.Minecraft;
@@ -52,57 +52,58 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
                 poseStack.scale(-1, -1, 1);
                 ammoEntityModel.render(poseStack, ItemTransforms.TransformType.GROUND, RenderType.entityTranslucentCull(textureLocation), packedLight, OverlayTexture.NO_OVERLAY);
                 poseStack.popPose();
-            }else {
-                renderDefault(bullet, entityYaw, partialTicks, poseStack, buffer, packedLight);
+            }
+
+            // 曳光弹发光
+            if (bullet.isTracerAmmo()) {
+                float[] tracerColor = index.getTracerColor();
+                renderTracerAmmo(bullet, tracerColor, partialTicks, poseStack, packedLight);
             }
         });
-
     }
 
-    public void renderDefault(EntityBullet bullet, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    public void renderTracerAmmo(EntityBullet bullet, float[] tracerColor, float partialTicks, PoseStack poseStack, int packedLight) {
         getModel().ifPresent(model -> {
-            if(Minecraft.getInstance().player==null) return;
+            if (Minecraft.getInstance().player == null) {
+                return;
+            }
             Player player = Minecraft.getInstance().player;
-
             float width = 0.005f;
-
             poseStack.pushPose();
             {
                 double disToEye = bullet.getPosition(partialTicks).distanceTo(player.getEyePosition(partialTicks));
                 double trailLength = 0.85 * bullet.getDeltaMovement().length();
                 trailLength = Math.min(trailLength, disToEye * 0.8);
-
                 float extraYRot = 0;
-
                 if (this.entityRenderDispatcher.options.getCameraType().isFirstPerson() && bullet.getOwner() instanceof IClientPlayerGunOperator operator && player.is(bullet.getOwner())) {
                     double merge = 8f * trailLength;
                     float s = (float) ((merge - disToEye) / merge);
-
                     if (disToEye < merge) {
-                        // TODO 这里需要计算实际的偏移，这里只是手填的估计值
+                        // 这里需要计算实际的偏移，这里只是手填的估计值
                         if (operator.getClientAimingProgress(partialTicks) < 0.8) {
                             poseStack.translate(0, -0.1 * (merge - disToEye) / merge, 0);
                         } else {
                             poseStack.translate(0, -0.008 * (merge - disToEye) / merge, 0);
                         }
-
                         extraYRot = s;
                         trailLength *= s;
                     }
-
                     trailLength *= 0.75;
                     width *= 1.35f;
                 }
-                width *= (float) Math.max(1.0, disToEye/3.5);
-
+                width *= (float) Math.max(1.0, disToEye / 3.5);
                 poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F + extraYRot));
                 poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
-
                 poseStack.translate(0, 0, trailLength / 2.0);
                 poseStack.scale(width, width, (float) trailLength);
-                // TODO 这里可以找个地方读入颜色，我不是很知道data放哪好
-                model.render(poseStack, ItemTransforms.TransformType.NONE, ModRenderType.entityBullet(DEFAULT_BULLET_TEXTURE), packedLight, OverlayTexture.NO_OVERLAY,
-                        1, 0.5f, 0.5f, 1);
+                // 距离两格外才渲染，只在前 5 tick 判定
+                Matrix4f matrix4f = poseStack.last().pose();
+                float viewDistance = matrix4f.m03 * matrix4f.m03 + matrix4f.m13 * matrix4f.m13 + matrix4f.m23 * matrix4f.m23;
+                if (bullet.tickCount >= 5 || viewDistance > 2) {
+                    RenderType type = RenderType.energySwirl(DEFAULT_BULLET_TEXTURE, 15, 15);
+                    model.render(poseStack, ItemTransforms.TransformType.NONE, type, packedLight, OverlayTexture.NO_OVERLAY,
+                            tracerColor[0], tracerColor[1], tracerColor[2], 1);
+                }
             }
             poseStack.popPose();
         });

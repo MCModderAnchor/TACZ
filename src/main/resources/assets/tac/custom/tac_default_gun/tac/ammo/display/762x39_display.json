@@ -16,5 +16,8 @@
   "shell": {
     "model": "tac:shell/762x39_shell",
     "texture": "tac:shell/762x39_shell"
-  }
+  },
+  // 曳光弹颜色，没有则为 #FFFFFF
+  // 严格遵循 RGB 颜色代码
+  "tracer_color": "#FF0000"
 }
