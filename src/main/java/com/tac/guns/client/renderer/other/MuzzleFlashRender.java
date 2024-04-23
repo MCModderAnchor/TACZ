@@ -63,7 +63,7 @@ public class MuzzleFlashRender {
                     poseStack2.mulPose(Vector3f.ZP.rotationDegrees(muzzleFlashRandomRotate));
                     poseStack2.translate(0, -1, 0);
                     muzzleFlashStartMark = false;
-                    RenderType renderType = RenderType.itemEntityTranslucentCull(muzzleFlash.getTexture());
+                    RenderType renderType = RenderType.entityTranslucent(muzzleFlash.getTexture());
                     MultiBufferSource multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
                     MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderType), light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
                 }
