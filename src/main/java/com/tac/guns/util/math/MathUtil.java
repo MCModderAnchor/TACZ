@@ -21,6 +21,11 @@ public class MathUtil {
         return Math.tan(Math.toRadians(originFov / 2)) / Math.tan(Math.toRadians(currentFov / 2));
     }
 
+    public static double zoomSensitivityRatio(double currentFov, double originFov, double coefficient) {
+        return Math.atan(Math.tan(Math.toRadians(currentFov / 2)) * coefficient) /
+                Math.atan(Math.tan(Math.toRadians(originFov / 2)) * coefficient);
+    }
+
     public static double copySign(double magnitude, double sign) {
         return Math.abs(magnitude) * (sign < 0 ? -1 : 1);
     }
