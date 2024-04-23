@@ -10,6 +10,7 @@ import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.renderer.block.GunSmithTableRenderer;
 import com.tac.guns.client.renderer.block.TargetRenderer;
+import com.tac.guns.client.renderer.entity.EntityBulletRenderer;
 import com.tac.guns.client.renderer.entity.TargetMinecartRenderer;
 import com.tac.guns.client.resource.pojo.animation.gltf.RawAnimationStructure;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
@@ -47,6 +48,7 @@ public class InternalAssetLoader {
         loadBedrockModels(GunSmithTableRenderer.MODEL_LOCATION);
         loadBedrockModels(TargetRenderer.MODEL_LOCATION);
         loadBedrockModels(TargetMinecartRenderer.MODEL_LOCATION);
+        loadBedrockModels(EntityBulletRenderer.DEFAULT_BULLET_MODEL);
     }
 
     private static AnimationStructure loadAnimations(ResourceLocation resourceLocation) {

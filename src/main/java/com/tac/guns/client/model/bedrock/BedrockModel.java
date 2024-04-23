@@ -335,12 +335,16 @@ public class BedrockModel{
     }
 
     public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
+        render(matrixStack, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha) {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer builder = bufferSource.getBuffer(renderType);
 
         matrixStack.pushPose();
         for (BedrockPart model : shouldRender) {
-            model.render(matrixStack, transformType, builder, light, overlay);
+            model.render(matrixStack, transformType, builder, light, overlay, red, green, blue, alpha);
         }
         matrixStack.popPose();
         bufferSource.endBatch(renderType);
