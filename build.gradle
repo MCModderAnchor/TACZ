@@ -33,7 +33,7 @@ mixin {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '2022.05.22-1.18.2'
+    mappings channel: 'parchment', version: '2022.11.06-1.18.2'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -96,6 +96,9 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven {
+        url = uri("https://maven.aliyun.com/repository/public/")
+    }
+    maven {
         // location of the maven that hosts JEI files
         name = "Progwml6 Maven"
         url = "https://dvs1.progwml6.com/files/maven/"
@@ -150,12 +153,15 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-jar.finalizedBy('reobfJar')
-
 publishing {
     publications.create('mavenJava', MavenPublication) {
         from components.java
         artifactId = project.archivesBaseName
+        groupId = project.group
+        version = project.version
+        pom{
+            name = project.archivesBaseName
+        }
     }
     repositories {
         if (System.getenv('local_maven') != null) {
