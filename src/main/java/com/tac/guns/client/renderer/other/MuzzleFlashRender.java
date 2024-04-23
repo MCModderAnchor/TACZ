@@ -56,16 +56,35 @@ public class MuzzleFlashRender {
                     float scale = 0.5f * muzzleFlash.getScale();
                     float scaleTime = TIME_RANGE / 2.0f;
                     scale = time < scaleTime ? (scale * (time / scaleTime)) : scale;
+                    muzzleFlashStartMark = false;
+                    MultiBufferSource multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+
+                    // 推送到指定位置
                     PoseStack poseStack2 = new PoseStack();
                     poseStack2.last().normal().mul(muzzleFlashNormal);
                     poseStack2.last().pose().multiply(muzzleFlashPose);
-                    poseStack2.scale(scale, scale, scale);
-                    poseStack2.mulPose(Vector3f.ZP.rotationDegrees(muzzleFlashRandomRotate));
-                    poseStack2.translate(0, -1, 0);
-                    muzzleFlashStartMark = false;
-                    RenderType renderType = RenderType.entityTranslucent(muzzleFlash.getTexture());
-                    MultiBufferSource multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-                    MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderType), light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+
+                    // 先渲染一遍半透明背景
+                    poseStack2.pushPose();
+                    {
+                        poseStack2.scale(scale, scale, scale);
+                        poseStack2.mulPose(Vector3f.ZP.rotationDegrees(muzzleFlashRandomRotate));
+                        poseStack2.translate(0, -1, 0);
+                        RenderType renderTypeBg = RenderType.entityTranslucent(muzzleFlash.getTexture());
+                        MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeBg), light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    }
+                    poseStack2.popPose();
+
+                    // 然后渲染发光效果
+                    poseStack2.pushPose();
+                    {
+                        poseStack2.scale(scale / 2, scale / 2, scale / 2);
+                        poseStack2.mulPose(Vector3f.ZP.rotationDegrees(muzzleFlashRandomRotate));
+                        poseStack2.translate(0, -0.9, 0);
+                        RenderType renderTypeLight = RenderType.energySwirl(muzzleFlash.getTexture(), 1, 1);
+                        MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeLight), light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    }
+                    poseStack2.popPose();
                 }
             });
         });

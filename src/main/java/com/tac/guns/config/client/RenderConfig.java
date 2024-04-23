@@ -13,6 +13,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue GUN_HUD_ENABLE;
     public static ForgeConfigSpec.BooleanValue KILL_AMOUNT_ENABLE;
     public static ForgeConfigSpec.DoubleValue KILL_AMOUNT_DURATION_SECOND;
+    public static ForgeConfigSpec.IntValue TARGET_RENDER_DISTANCE;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -43,6 +44,9 @@ public class RenderConfig {
 
         builder.comment("The duration of the kill amount, in second");
         KILL_AMOUNT_DURATION_SECOND = builder.defineInRange("KillAmountDurationSecond", 3, 0, Double.MAX_VALUE);
+
+        builder.comment("The farthest render distance of the target, including minecarts type");
+        TARGET_RENDER_DISTANCE = builder.defineInRange("TargetRenderDistance", 128, 0, Integer.MAX_VALUE);
 
         builder.pop();
     }

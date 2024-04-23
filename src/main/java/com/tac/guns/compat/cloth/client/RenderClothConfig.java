@@ -54,5 +54,9 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tac.client.render.kill_amount_duration_second"), RenderConfig.KILL_AMOUNT_DURATION_SECOND.get())
                 .setMin(0).setMax(Double.MAX_VALUE).setDefaultValue(3).setTooltip(new TranslatableComponent("config.tac.client.render.kill_amount_duration_second.desc"))
                 .setSaveConsumer(RenderConfig.KILL_AMOUNT_DURATION_SECOND::set).build());
+
+        render.addEntry(entryBuilder.startIntField(new TranslatableComponent("config.tac.client.render.target_render_distance"), RenderConfig.TARGET_RENDER_DISTANCE.get())
+                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(128).setTooltip(new TranslatableComponent("config.tac.client.render.target_render_distance.desc"))
+                .setSaveConsumer(RenderConfig.TARGET_RENDER_DISTANCE::set).build());
     }
 }

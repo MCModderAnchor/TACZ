@@ -9,6 +9,7 @@ import com.tac.guns.block.entity.TargetBlockEntity;
 import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.InternalAssetLoader;
+import com.tac.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -73,6 +74,11 @@ public class TargetRenderer implements BlockEntityRenderer<TargetBlockEntity> {
             }
             poseStack.popPose();
         });
+    }
+
+    @Override
+    public int getViewDistance() {
+        return RenderConfig.TARGET_RENDER_DISTANCE.get();
     }
 
     @Override

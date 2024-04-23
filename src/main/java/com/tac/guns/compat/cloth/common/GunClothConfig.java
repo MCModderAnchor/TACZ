@@ -8,9 +8,9 @@ import net.minecraft.network.chat.TranslatableComponent;
 
 public class GunClothConfig {
     public static void init(ConfigBuilder root, ConfigEntryBuilder entryBuilder) {
-        ConfigCategory other = root.getOrCreateCategory(new TranslatableComponent("config.tac.common.gun"));
+        ConfigCategory gun = root.getOrCreateCategory(new TranslatableComponent("config.tac.common.gun"));
 
-        other.addEntry(entryBuilder.startIntField(new TranslatableComponent("config.tac.common.gun.default_gun_fire_sound_distance"), GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get())
+        gun.addEntry(entryBuilder.startIntField(new TranslatableComponent("config.tac.common.gun.default_gun_fire_sound_distance"), GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(64).setTooltip(new TranslatableComponent("config.tac.common.gun.default_gun_fire_sound_distance.desc"))
                 .setSaveConsumer(GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE::set).build());
     }

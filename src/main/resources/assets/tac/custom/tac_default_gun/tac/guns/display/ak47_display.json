@@ -46,7 +46,7 @@
     },
     "muzzle_flash": {
       "texture": "tac:flash/common_muzzle_flash",
-      "scale": 1
+      "scale": 0.75
     },
     // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
     "shell": {

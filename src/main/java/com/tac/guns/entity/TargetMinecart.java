@@ -2,6 +2,7 @@ package com.tac.guns.entity;
 
 import com.mojang.authlib.GameProfile;
 import com.tac.guns.api.entity.ITargetEntity;
+import com.tac.guns.config.client.RenderConfig;
 import com.tac.guns.init.ModBlocks;
 import com.tac.guns.init.ModItems;
 import com.tac.guns.init.ModSounds;
@@ -68,6 +69,16 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
     @Override
     public boolean canBeRidden() {
         return false;
+    }
+
+    @Override
+    public boolean shouldRenderAtSqrDistance(double distance) {
+        double size = this.getBoundingBox().getSize();
+        if (Double.isNaN(size)) {
+            size = 1.0;
+        }
+        size *= RenderConfig.TARGET_RENDER_DISTANCE.get() * getViewScale();
+        return distance < size * size;
     }
 
     @Override

@@ -485,7 +485,14 @@
 								"up": {"uv": [0, 57], "uv_size": [1, 1]},
 								"down": {"uv": [2, 58], "uv_size": [1, -1]}
 							}
-						},
+						}
+					]
+				},
+				{
+					"name": "center_illuminated",
+					"parent": "bone2",
+					"pivot": [0, 20.21351, -1.18495],
+					"cubes": [
 						{
 							"origin": [-3.5, 17.6875, -1.5],
 							"size": [7, 7, 0.5],

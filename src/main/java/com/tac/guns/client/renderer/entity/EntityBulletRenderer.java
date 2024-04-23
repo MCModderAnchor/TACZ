@@ -74,6 +74,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
                 double disToEye = bullet.getPosition(partialTicks).distanceTo(player.getEyePosition(partialTicks));
                 double trailLength = 0.85 * bullet.getDeltaMovement().length();
                 trailLength = Math.min(trailLength, disToEye * 0.8);
+                float extraXRot = 0;
                 float extraYRot = 0;
                 if (this.entityRenderDispatcher.options.getCameraType().isFirstPerson() && bullet.getOwner() instanceof IClientPlayerGunOperator operator && player.is(bullet.getOwner())) {
                     double merge = 8f * trailLength;
@@ -82,10 +83,11 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
                         // 这里需要计算实际的偏移，这里只是手填的估计值
                         if (operator.getClientAimingProgress(partialTicks) < 0.8) {
                             poseStack.translate(0, -0.1 * (merge - disToEye) / merge, 0);
+                            extraYRot = s;
                         } else {
                             poseStack.translate(0, -0.008 * (merge - disToEye) / merge, 0);
+                            extraXRot = s;
                         }
-                        extraYRot = s;
                         trailLength *= s;
                     }
                     trailLength *= 0.75;
@@ -93,7 +95,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
                 }
                 width *= (float) Math.max(1.0, disToEye / 3.5);
                 poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F + extraYRot));
-                poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
+                poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot()) + extraXRot));
                 poseStack.translate(0, 0, trailLength / 2.0);
                 poseStack.scale(width, width, (float) trailLength);
                 // 距离两格外才渲染，只在前 5 tick 判定
