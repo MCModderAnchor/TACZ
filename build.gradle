@@ -33,13 +33,17 @@ mixin {
 }
 
 minecraft {
+    // 使用 parchment 来反混淆变量名
     mappings channel: 'parchment', version: '2022.11.06-1.18.2'
-
+    // 使用 access transformer 来修改原版的一些方法访问修饰符
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
+    // 运行参数
     runs {
         client {
+            // 使用 JetBrainsRuntime 时需要的参数，否则无法热重载
+            // 如果你使用别的 JDK，那么可以删除这一行
             jvmArgs "-XX:+AllowEnhancedClassRedefinition"
+            // 每个启动单独区分文件夹
             workingDirectory project.file('run/client_a')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
@@ -55,6 +59,7 @@ minecraft {
         client2 {
             parent minecraft.runs.client
             workingDirectory project.file('run/client_b')
+            // 设定用户名
             args '--username', 'mayday_memory'
             mods {
                 touhoulittlemaid {
@@ -96,6 +101,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven {
+        // 阿里云镜像，方便国内开发
         url = uri("https://maven.aliyun.com/repository/public/")
     }
     maven {
@@ -127,11 +133,10 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
 
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
-
-    runtimeOnly fg.deobf("curse.maven:customskinloader-286924:${csl_version}")
-
     implementation fg.deobf("org.embeddedt:embeddium-1.18.2:${embeddedt_id}")
     implementation fg.deobf("curse.maven:oculus-581495:${oculus_id}")
+
+    runtimeOnly fg.deobf("curse.maven:customskinloader-286924:${csl_version}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
@@ -140,26 +145,25 @@ jar {
     manifest {
         attributes([
                 "Implementation-Title"  : project.name,
+                // 版本号，正式发布需要修改这一行
                 "Implementation-Version": new SimpleDateFormat("MMdd-HHmmss").format(new Date())
+                // "Implementation-Version": project.version
         ])
     }
 }
 
 java {
+    // 编译源码文件，方便发布 maven
     withSourcesJar()
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
 }
 
 publishing {
     publications.create('mavenJava', MavenPublication) {
         from components.java
-        artifactId = project.archivesBaseName
         groupId = project.group
         version = project.version
-        pom{
+        artifactId = project.archivesBaseName
+        pom {
             name = project.archivesBaseName
         }
     }
@@ -171,4 +175,8 @@ publishing {
             }
         }
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
