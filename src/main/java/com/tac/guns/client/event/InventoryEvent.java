@@ -9,6 +9,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -54,6 +55,13 @@ public class InventoryEvent {
             return;
         }
         IClientPlayerGunOperator.fromLocalPlayer(player).draw(player.getOffhandItem());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+        // 离开游戏时重置客户端 draw 状态
+        oldHotbarSelected = -1;
+        oldHotbarSelectItem = ItemStack.EMPTY;
     }
 
     private static boolean isSame(ItemStack i, ItemStack j) {

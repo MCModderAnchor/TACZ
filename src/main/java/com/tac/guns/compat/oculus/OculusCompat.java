@@ -1,6 +1,6 @@
 package com.tac.guns.compat.oculus;
 
-import net.coderbot.iris.pipeline.ShadowRenderer;
+import net.coderbot.iris.shadows.ShadowRenderingState;
 import net.minecraftforge.fml.ModList;
 
 public final class OculusCompat {
@@ -8,7 +8,7 @@ public final class OculusCompat {
 
     public static boolean isRenderShadow() {
         if (ModList.get().isLoaded(MOD_ID)) {
-            return ShadowRenderer.ACTIVE;
+            return ShadowRenderingState.areShadowsCurrentlyBeingRendered();
         }
         return false;
     }

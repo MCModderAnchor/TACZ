@@ -244,7 +244,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         long drawTime = System.currentTimeMillis() - tac$ClientDrawTimestamp;
         IGun iGun = IGun.getIGunOrNull(currentItem);
         IGun iGun1 = IGun.getIGunOrNull(lastItem);
-        if (drawTime >= 0) { // 如果不处于收枪状态，则需要加上收枪的时长
+        if (drawTime >= 0) {
+            // 如果不处于收枪状态，则需要加上收枪的时长
             if (iGun1 != null) {
                 Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun1.getGunId(lastItem));
                 float putAwayTime = gunIndex.map(index -> index.getGunData().getPutAwayTime()).orElse(0F);
