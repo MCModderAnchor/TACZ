@@ -9,6 +9,7 @@
     "knockback": 0
   },
   "ammo_amount": 17,
+  "bolt": "closed_bolt",
   "reload": {
     "type": "magazine",
     "feed": {
@@ -27,6 +28,14 @@
     "auto",
     "semi"
   ],
+  "allow_attachments": {
+    "scope": {
+      "black_list": [
+        "tac:8x"
+      ]
+    },
+    "extended_mag": {}
+  },
   "recoil": {
     // 竖直方向偏转，会在两个数值之间取随机数
     // 遵循游戏内坐标系，上为正
