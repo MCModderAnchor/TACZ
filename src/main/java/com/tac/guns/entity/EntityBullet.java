@@ -247,11 +247,12 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         // 获取子弹 tick 路径上所有的实体
         List<Entity> entities = this.level.getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0), PROJECTILE_TARGETS);
         double closestDistance = Double.MAX_VALUE;
+        Entity owner = this.getOwner();
         for (Entity entity : entities) {
             // 禁止对自己造成伤害（如有需要可以增加 Config 开启对自己的伤害）
-            if (!entity.equals(this.getOwner())) {
+            if (!entity.equals(owner)) {
                 // 射击无视自己的载具
-                if (this.getOwner().getVehicle() != null && entity.equals(this.getOwner().getVehicle())) {
+                if (owner != null && entity.equals(owner.getVehicle())) {
                     continue;
                 }
                 EntityResult result = this.getHitResult(entity, startVec, endVec);
@@ -277,9 +278,10 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     protected List<EntityResult> findEntitiesOnPath(Vec3 startVec, Vec3 endVec) {
         List<EntityResult> hitEntities = new ArrayList<>();
         List<Entity> entities = this.level.getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0), PROJECTILE_TARGETS);
+        Entity owner = this.getOwner();
         for (Entity entity : entities) {
-            if (!entity.equals(this.getOwner())) {
-                if (this.getOwner().getVehicle() != null && entity.equals(this.getOwner().getVehicle())) {
+            if (!entity.equals(owner)) {
+                if (owner != null && entity.equals(owner.getVehicle())) {
                     continue;
                 }
                 EntityResult result = this.getHitResult(entity, startVec, endVec);
