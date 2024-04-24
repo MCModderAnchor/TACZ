@@ -1,11 +1,11 @@
 package com.tac.guns.compat.cloth.common;
 
+import com.google.common.collect.Lists;
 import com.tac.guns.config.common.AmmoConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.network.chat.TranslatableComponent;
-import org.apache.commons.compress.utils.Lists;
 
 public class AmmoClothConfig {
     public static void init(ConfigBuilder root, ConfigEntryBuilder entryBuilder) {

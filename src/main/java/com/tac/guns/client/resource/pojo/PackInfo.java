@@ -1,7 +1,7 @@
 package com.tac.guns.client.resource.pojo;
 
+import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 

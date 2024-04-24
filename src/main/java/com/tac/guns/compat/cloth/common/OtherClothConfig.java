@@ -1,12 +1,12 @@
 package com.tac.guns.compat.cloth.common;
 
+import com.google.common.collect.Lists;
 import com.tac.guns.config.common.OtherConfig;
 import com.tac.guns.event.HeadShotAABBConfigRead;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.network.chat.TranslatableComponent;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 

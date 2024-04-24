@@ -1,5 +1,6 @@
 package com.tac.guns.client.resource.index;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tac.guns.client.animation.*;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
@@ -21,7 +22,6 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
