@@ -1,6 +1,6 @@
 package com.tac.guns.event.ammo;
 
-import com.tac.guns.api.event.AmmoHitBlockEvent;
+import com.tac.guns.api.event.server.AmmoHitBlockEvent;
 import com.tac.guns.config.common.AmmoConfig;
 import com.tac.guns.entity.EntityBullet;
 import net.minecraft.core.BlockPos;

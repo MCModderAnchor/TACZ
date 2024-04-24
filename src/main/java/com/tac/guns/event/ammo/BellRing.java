@@ -1,6 +1,6 @@
 package com.tac.guns.event.ammo;
 
-import com.tac.guns.api.event.AmmoHitBlockEvent;
+import com.tac.guns.api.event.server.AmmoHitBlockEvent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BellBlock;
 import net.minecraft.world.level.block.state.BlockState;

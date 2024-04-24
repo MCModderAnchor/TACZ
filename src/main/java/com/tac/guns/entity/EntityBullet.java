@@ -2,13 +2,15 @@ package com.tac.guns.entity;
 
 import com.tac.guns.api.entity.ITargetEntity;
 import com.tac.guns.api.entity.KnockBackModifier;
-import com.tac.guns.api.event.AmmoHitBlockEvent;
-import com.tac.guns.api.event.HeadShotEvent;
+import com.tac.guns.api.event.server.AmmoHitBlockEvent;
+import com.tac.guns.api.event.common.LivingHurtByGunEvent;
+import com.tac.guns.api.event.common.LivingKillByGunEvent;
 import com.tac.guns.client.particle.AmmoParticleSpawner;
 import com.tac.guns.config.common.AmmoConfig;
 import com.tac.guns.event.HeadShotAABBConfigRead;
 import com.tac.guns.network.NetworkHandler;
-import com.tac.guns.network.message.ServerMessageHeadShot;
+import com.tac.guns.network.message.ServerMessageGunHurt;
+import com.tac.guns.network.message.ServerMessageGunKill;
 import com.tac.guns.particles.BulletHoleOption;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.data.gun.BulletData;
@@ -47,6 +49,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
@@ -59,15 +62,7 @@ import java.util.function.Predicate;
 
 public class EntityBullet extends Projectile implements IEntityAdditionalSpawnData {
     private static final Predicate<Entity> PROJECTILE_TARGETS = input -> input != null && input.isPickable() && !input.isSpectator();
-    public static final EntityType<EntityBullet> TYPE = EntityType.Builder.<EntityBullet>of(EntityBullet::new, MobCategory.MISC)
-            .noSummon()
-            .noSave()
-            .fireImmune()
-            .sized(0.0625F, 0.0625F)
-            .clientTrackingRange(5)
-            .updateInterval(5)
-            .setShouldReceiveVelocityUpdates(false)
-            .build("bullet");
+    public static final EntityType<EntityBullet> TYPE = EntityType.Builder.<EntityBullet>of(EntityBullet::new, MobCategory.MISC).noSummon().noSave().fireImmune().sized(0.0625F, 0.0625F).clientTrackingRange(5).updateInterval(5).setShouldReceiveVelocityUpdates(false).build("bullet");
 
     private ResourceLocation ammoId = DefaultAssets.EMPTY_AMMO_ID;
     private int life = 200;
@@ -87,6 +82,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     private Vec3 startPos;
     // 曳光弹
     private boolean isTracerAmmo;
+    // 发射的枪械 ID
+    private ResourceLocation gunId;
 
     public EntityBullet(EntityType<? extends Projectile> type, Level worldIn) {
         super(type, worldIn);
@@ -97,7 +94,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.setPos(x, y, z);
     }
 
-    public EntityBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, BulletData data, boolean isTracerAmmo) {
+    public EntityBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, BulletData data, boolean isTracerAmmo, ResourceLocation gunId) {
         this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         this.ammoId = ammoId;
@@ -116,8 +113,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.extraDamage = data.getExtraDamage();
         if (data.getExplosionData() != null) {
             this.hasExplosion = true;
-            this.explosionDamage = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
-            this.explosionRadius = Mth.clamp(data.getExplosionData().getDamage(), 0, Float.MAX_VALUE);
+            this.explosionDamage = Mth.clamp(data.getExplosionData().getDamage(), 0, Float.MAX_VALUE);
+            this.explosionRadius = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
         }
         // 子弹初始位置重置
         double posX = throwerIn.xOld + (throwerIn.getX() - throwerIn.xOld) / 2.0;
@@ -126,6 +123,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.setPos(posX, posY, posZ);
         this.startPos = this.position();
         this.isTracerAmmo = isTracerAmmo;
+        this.gunId = gunId;
     }
 
     @Override
@@ -341,19 +339,15 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             // 造成伤害
             float damage = this.getDamage(result.getLocation());
             // TODO 暴击判定（不是爆头）暴击判定内部逻辑，需要输出一个是否暴击的 flag
-            Entity owner = this.getOwner();
-            if (result.isHeadshot()) {
-                // 发送爆头提示
-                if (owner instanceof Player player) {
-                    NetworkHandler.sendToClientPlayer(new ServerMessageHeadShot(), player);
-                }
+            @Nullable Entity owner = this.getOwner();
+            boolean headshot = result.isHeadshot();
+            if (headshot) {
                 // 默认爆头伤害是 1x
                 float headShotMultiplier = 1f;
                 if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
                     headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
                 }
                 damage *= headShotMultiplier;
-                MinecraftForge.EVENT_BUS.post(new HeadShotEvent(this, owner, damage));
             }
             // 取消击退效果，设定自己的击退强度
             KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(entity);
@@ -367,6 +361,19 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
                 // 取消无敌时间
                 entity.invulnerableTime = 0;
                 createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
+            }
+            // 事件同步，从服务端到客户端
+            if (!level.isClientSide) {
+                LivingEntity attacker = owner instanceof LivingEntity livingEntity ? livingEntity : null;
+                int attackerId = attacker == null ? 0 : attacker.getId();
+                // 如果生物死了
+                if (entity.isDeadOrDying()) {
+                    MinecraftForge.EVENT_BUS.post(new LivingKillByGunEvent(entity, attacker, this.gunId, headshot, LogicalSide.SERVER));
+                    NetworkHandler.sendToNearby(entity, new ServerMessageGunKill(entity.getId(), attackerId, this.gunId, headshot));
+                } else {
+                    MinecraftForge.EVENT_BUS.post(new LivingHurtByGunEvent(entity, attacker, this.gunId, damage, headshot, LogicalSide.SERVER));
+                    NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(entity.getId(), attackerId, this.gunId, damage, headshot));
+                }
             }
         } else if (result.getEntity() instanceof ITargetEntity targetEntity) {
             targetEntity.onProjectileHit(this, result, DamageSource.thrown(this, this.getOwner()), this.getDamage(result.getLocation()));
@@ -508,6 +515,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         buffer.writeFloat(this.friction);
         buffer.writeInt(this.pierce);
         buffer.writeBoolean(this.isTracerAmmo);
+        buffer.writeResourceLocation(this.gunId);
     }
 
     @Override
@@ -530,6 +538,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.friction = additionalData.readFloat();
         this.pierce = additionalData.readInt();
         this.isTracerAmmo = additionalData.readBoolean();
+        this.gunId = additionalData.readResourceLocation();
     }
 
     public ResourceLocation getAmmoId() {
@@ -563,8 +572,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             mode = Explosion.BlockInteraction.BREAK;
         }
         // 创建爆炸
-        ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null,
-                hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, mode);
+        ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null, hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, mode);
         // 监听 forge 事件
         if (ForgeEventFactory.onExplosionStart(level, explosion)) {
             return;
@@ -577,8 +585,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         }
         // 客户端发包，发送爆炸相关信息
         level.players().stream().filter(player -> Mth.sqrt((float) player.distanceToSqr(hitPos)) < AmmoConfig.EXPLOSIVE_AMMO_VISIBLE_DISTANCE.get()).forEach(player -> {
-            ClientboundExplodePacket packet = new ClientboundExplodePacket(hitPos.x(), hitPos.y(), hitPos.z(),
-                    radius, explosion.getToBlow(), explosion.getHitPlayers().get(player));
+            ClientboundExplodePacket packet = new ClientboundExplodePacket(hitPos.x(), hitPos.y(), hitPos.z(), radius, explosion.getToBlow(), explosion.getHitPlayers().get(player));
             player.connection.send(packet);
         });
     }

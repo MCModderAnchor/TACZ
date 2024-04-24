@@ -1,4 +1,4 @@
-package com.tac.guns.api.event;
+package com.tac.guns.api.event.common;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -6,15 +6,15 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
- * 生物开始更换枪械弹药时触发的事件。
+ * 生物射击时触发的事件。
  */
-public class GunReloadEvent extends Event {
-    private final LivingEntity entity;
+public class GunShootEvent extends Event {
+    private final LivingEntity shooter;
     private final ItemStack gunItemStack;
     private final LogicalSide logicalSide;
 
-    public GunReloadEvent(LivingEntity entity, ItemStack gunItemStack, LogicalSide side) {
-        this.entity = entity;
+    public GunShootEvent(LivingEntity shooter, ItemStack gunItemStack, LogicalSide side) {
+        this.shooter = shooter;
         this.gunItemStack = gunItemStack;
         this.logicalSide = side;
     }
@@ -24,8 +24,8 @@ public class GunReloadEvent extends Event {
         return true;
     }
 
-    public LivingEntity getEntity() {
-        return entity;
+    public LivingEntity getShooter() {
+        return shooter;
     }
 
     public ItemStack getGunItemStack() {

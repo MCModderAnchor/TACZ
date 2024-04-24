@@ -1,4 +1,4 @@
-package com.tac.guns.api.event;
+package com.tac.guns.api.event.server;
 
 import com.tac.guns.entity.EntityBullet;
 import net.minecraft.world.level.Level;
