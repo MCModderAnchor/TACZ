@@ -47,6 +47,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         ocularRingPath = getPath(modelMap.get(OCULAR_RING_NODE));
         ocularNodePath = getPath(modelMap.get(OCULAR_NODE));
         divisionNodePath = getPath(modelMap.get(DIVISION_NODE));
+        if (divisionNodePath != null) {
+            divisionNodePath.get(divisionNodePath.size() - 1).visible = false;
+        }
     }
 
     @Nullable
