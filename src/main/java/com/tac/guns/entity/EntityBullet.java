@@ -16,7 +16,6 @@ import com.tac.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tac.guns.util.block.BlockRayTrace;
 import com.tac.guns.util.block.ProjectileExplosion;
 import com.tac.guns.util.math.TacHitResult;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
@@ -139,8 +138,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         // 调用 TaC 子弹服务器事件
         this.onBulletTick();
         // 粒子效果
-        if (this.level instanceof ClientLevel clientLevel) {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(clientLevel, this));
+        if (this.level.isClientSide) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(level, this));
         }
         // 子弹模型的旋转与抛物线
         Vec3 movement = this.getDeltaMovement();

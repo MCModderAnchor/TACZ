@@ -9,6 +9,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -17,7 +18,7 @@ import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public class AmmoParticleSpawner {
-    public static void addParticle(ClientLevel clientLevel, EntityBullet bullet) {
+    public static void addParticle(Level level, EntityBullet bullet) {
         TimelessAPI.getClientAmmoIndex(bullet.getAmmoId()).ifPresent(ammoIndex -> {
             AmmoParticle particle = ammoIndex.getParticle();
             if (particle == null) {
