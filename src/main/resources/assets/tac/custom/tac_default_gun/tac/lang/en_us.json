@@ -29,6 +29,8 @@
   "tac.ammo.rpg_rocket.name": "RPG-7 Rocket",
   "tac.attachment.sro_dot.name": "Trijicon SRO",
   "tac.attachment.8x.name": "8x Scope",
+  "tac.attachment.coyote.name": "Coyote Sight",
+  "tac.attachment.acog.name": "4x TA31 ACOG",
   "tac.attachment.extended_mag_1.name": "Small Extended Mag",
   "tac.attachment.extended_mag_2.name": "§9Medium Extended Mag",
   "tac.attachment.extended_mag_3.name": "§5Large Extended Mag",

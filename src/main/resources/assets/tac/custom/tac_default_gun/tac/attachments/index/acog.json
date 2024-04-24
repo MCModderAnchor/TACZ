@@ -1,0 +1,7 @@
+{
+  "name": "tac.attachment.acog.name",
+  "tooltip": "tac.attachment.acog.tooltip",
+  "display": "tac:acog_display",
+  "data": "tac:acog_data",
+  "type": "scope"
+}
