@@ -55,33 +55,47 @@ public class ShellRender {
 
                 // 检查有没有需要踢出去的队列
                 checkShellQueue(lifeTime);
+
                 // 各种参数的获取
                 Vector3f initialVelocity = shellEjection.getInitialVelocity();
                 Vector3f acceleration = shellEjection.getAcceleration();
                 Vector3f angularVelocity = shellEjection.getAngularVelocity();
+
+                // 缓存一下 PoseStack
+                for (Data data : SHELL_QUEUE) {
+                    if (data.normal == null && data.pose == null) {
+                        data.normal = poseStack.last().normal().copy();
+                        data.pose = poseStack.last().pose().copy();
+                    }
+                }
+
                 // 渲染抛壳
                 gunModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) -> {
                     for (Data data : SHELL_QUEUE) {
+                        // 再检查一次
                         if (data.normal == null && data.pose == null) {
-                            data.normal = poseStack.last().normal().copy();
-                            data.pose = poseStack.last().pose().copy();
+                            continue;
                         }
+                        // 先初始化到缓存位置和朝向
                         PoseStack poseStack2 = new PoseStack();
                         poseStack2.last().normal().mul(data.normal);
                         poseStack2.last().pose().multiply(data.pose);
-                        poseStack2.translate(-0.5, 0, -0.5);
+
+                        // 获取存留时间和各种参数
                         long remindTime = System.currentTimeMillis() - data.timeStamp;
                         double time = remindTime / 1000.0;
-                        Vector3f right = data.randomRotation;
-                        double x = (initialVelocity.x() + right.x()) * time + 0.5 * acceleration.x() * time * time;
-                        double y = (initialVelocity.y() + right.y()) * time + 0.5 * acceleration.y() * time * time;
-                        double z = (initialVelocity.z() + right.z()) * time + 0.5 * acceleration.z() * time * time;
+                        Vector3f randomOffset = data.randomOffset;
+
+                        // 位移，满足标准的匀变速直线运动
+                        double x = (initialVelocity.x() + randomOffset.x()) * time + 0.5 * acceleration.x() * time * time;
+                        double y = (initialVelocity.y() + randomOffset.y()) * time + 0.5 * acceleration.y() * time * time;
+                        double z = (initialVelocity.z() + randomOffset.z()) * time + 0.5 * acceleration.z() * time * time;
                         poseStack2.translate(-x, -y, z);
 
+                        // 旋转
                         double xw = time * angularVelocity.x();
                         double yw = time * angularVelocity.y();
                         double zw = time * angularVelocity.z();
-                        poseStack2.translate(0, 1.5, 0);
                         poseStack2.mulPose(Vector3f.XN.rotationDegrees((float) xw));
                         poseStack2.mulPose(Vector3f.YN.rotationDegrees((float) yw));
                         poseStack2.mulPose(Vector3f.ZP.rotationDegrees((float) zw));
@@ -107,14 +121,14 @@ public class ShellRender {
 
     public static class Data {
         public final long timeStamp;
-        public final Vector3f randomRotation;
+        public final Vector3f randomOffset;
 
         public Matrix3f normal = null;
         public Matrix4f pose = null;
 
-        public Data(long timeStamp, Vector3f randomRotation) {
+        public Data(long timeStamp, Vector3f randomOffset) {
             this.timeStamp = timeStamp;
-            this.randomRotation = randomRotation;
+            this.randomOffset = randomOffset;
         }
     }
 }
