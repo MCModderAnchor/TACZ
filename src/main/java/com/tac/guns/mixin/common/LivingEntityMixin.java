@@ -407,41 +407,42 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Override
     public ShootResult shoot(float pitch, float yaw) {
         if (tac$CurrentGunItem == null) {
-            return ShootResult.FAIL;
+            return ShootResult.NOT_DRAW;
         }
         ItemStack currentGunItem = tac$CurrentGunItem.get();
         if (!(currentGunItem.getItem() instanceof IGun iGun)) {
-            return ShootResult.FAIL;
+            return ShootResult.NOT_GUN;
         }
         ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
-            return ShootResult.FAIL;
+            return ShootResult.ID_NOT_EXIST;
         }
         CommonGunIndex gunIndex = gunIndexOptional.get();
         // 判断射击是否正在冷却
         long coolDown = getShootCoolDown();
         if (coolDown == -1) {
-            return ShootResult.FAIL;
+            // 一般来说不太可能为 -1，原因未知
+            return ShootResult.UNKNOWN_FAIL;
         }
         if (coolDown > 0) {
             return ShootResult.COOL_DOWN;
         }
         // 检查是否正在换弹
         if (tac$ReloadStateType.isReloading()) {
-            return ShootResult.FAIL;
+            return ShootResult.IS_RELOADING;
         }
         // 检查是否在切枪
         if (getDrawCoolDown() != 0) {
-            return ShootResult.FAIL;
+            return ShootResult.IS_DRAWING;
         }
         // 检查是否在拉栓
         if (tac$BoltCoolDown >= 0) {
-            return ShootResult.FAIL;
+            return ShootResult.IS_BOLTING;
         }
         // 检查是否在奔跑
         if (tac$SprintTimeS > 0) {
-            return ShootResult.FAIL;
+            return ShootResult.IS_SPRINTING;
         }
         LivingEntity shooter = (LivingEntity) (Object) this;
         Bolt boltType = gunIndex.getGunData().getBolt();
@@ -461,7 +462,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         }
         // 触发射击事件
         if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
-            return ShootResult.FAIL;
+            return ShootResult.FORGE_EVENT_CANCEL;
         }
         // 调用射击方法
         Level world = shooter.getLevel();

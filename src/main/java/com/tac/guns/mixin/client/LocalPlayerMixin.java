@@ -112,18 +112,18 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
         if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null) {
             tac$IsShootRecorded = true;
-            return ShootResult.FAIL;
+            return ShootResult.UNKNOWN_FAIL;
         }
         LocalPlayer player = (LocalPlayer) (Object) this;
         // 暂定为只有主手能开枪
         ItemStack mainhandItem = player.getMainHandItem();
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
-            return ShootResult.FAIL;
+            return ShootResult.UNKNOWN_FAIL;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         Optional<ClientGunIndex> gunIndexOptional = TimelessAPI.getClientGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
-            return ShootResult.FAIL;
+            return ShootResult.UNKNOWN_FAIL;
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
         if (mainhandItem.getItem() instanceof IGun) {
@@ -140,11 +140,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
             // 检查是否正在换弹
             if (gunOperator.getSynReloadState().getStateType().isReloading()) {
-                return ShootResult.FAIL;
+                return ShootResult.UNKNOWN_FAIL;
             }
             // 检查是否正在切枪
             if (gunOperator.getSynDrawCoolDown() != 0) {
-                return ShootResult.FAIL;
+                return ShootResult.UNKNOWN_FAIL;
             }
             // 判断子弹数
             Bolt boltType = gunIndex.getGunData().getBolt();
@@ -161,11 +161,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             }
             // 检查是否正在奔跑
             if (gunOperator.getSynSprintTime() > 0) {
-                return ShootResult.FAIL;
+                return ShootResult.UNKNOWN_FAIL;
             }
             // 触发开火事件
             if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, mainhandItem, LogicalSide.CLIENT))) {
-                return ShootResult.FAIL;
+                return ShootResult.UNKNOWN_FAIL;
             }
             // 切换状态锁，不允许换弹、检视等行为进行。
             lockState(tac$ShootLockedCondition);
@@ -218,7 +218,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             }, coolDown, TimeUnit.MILLISECONDS);
             return ShootResult.SUCCESS;
         }
-        return ShootResult.FAIL;
+        return ShootResult.UNKNOWN_FAIL;
     }
 
     @Unique
