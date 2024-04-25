@@ -32,6 +32,8 @@
   "gui.tac.gun_smith_table.authors": "§nAuthors§r: ",
   "gui.tac.gun_smith_table.date": "§nDate:§r ",
   "gui.tac.gun_refit.unload.no_space": "There is no free space in inventory for you to unload attachment.",
+  "gui.tac.cloth_config_warning.tips": "You'll need to install the Cloth Config API mod to use the ingame configuration feature",
+  "gui.tac.cloth_config_warning.download": "Download Cloth Config API",
   "tooltip.tac.ammo_box.count": "Count: %d",
   "tooltip.tac.gun.type": "Type: ",
   "tooltip.tac.gun.damage": "Damage: ",

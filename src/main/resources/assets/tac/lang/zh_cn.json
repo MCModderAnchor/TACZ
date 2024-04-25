@@ -64,6 +64,8 @@
   "config.tac.common.other.head_shot_aabb.desc": "实体碰撞箱中作为头部命中判定的部分\n格式: touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]",
   "custom.tac.error.no_name": "错误: 没有名字",
   "entity.tac.target_minecart": "标靶车",
+  "gui.tac.cloth_config_warning.download": "下载 Cloth Config API 模组",
+  "gui.tac.cloth_config_warning.tips": "您需要安装 Cloth Config API 模组才能使用游戏内配置功能",
   "gui.tac.gun_refit.unload.no_space": "背包中没有可用空间供您卸载配件。",
   "gui.tac.gun_smith_table.authors": "§n作者§r：",
   "gui.tac.gun_smith_table.craft": "制造",

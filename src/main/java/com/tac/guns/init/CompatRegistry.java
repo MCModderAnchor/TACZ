@@ -1,5 +1,6 @@
 package com.tac.guns.init;
 
+import com.tac.guns.client.gui.compat.ClothConfigScreen;
 import com.tac.guns.compat.cloth.MenuIntegration;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,6 +16,7 @@ public class CompatRegistry {
     @SubscribeEvent
     public static void onEnqueue(final InterModEnqueueEvent event) {
         event.enqueueWork(() -> checkModLoad(CLOTH_CONFIG, () -> DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> MenuIntegration::registerModsPage)));
+        event.enqueueWork(() -> DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClothConfigScreen::registerNoClothConfigPage));
     }
 
     public static void checkModLoad(String modId, Runnable runnable) {
