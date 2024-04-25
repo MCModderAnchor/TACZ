@@ -166,6 +166,12 @@ publishing {
         artifactId = project.archivesBaseName
         pom {
             name = project.archivesBaseName
+            // 删除所有依赖，不需要
+            pom.withXml {
+                asNode().dependencies.dependency.each { dep ->
+                    assert dep.parent().remove(dep)
+                }
+            }
         }
     }
 }
