@@ -99,7 +99,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.setOwner(throwerIn);
         this.ammoId = ammoId;
         this.life = Mth.clamp((int) (data.getLifeSecond() * 20), 1, Integer.MAX_VALUE);
-        this.speed = Mth.clamp(data.getSpeed() / 20, 0, Float.MAX_VALUE);
+        // 限制最大弹速为 600 m / s，以减轻计算负担
+        this.speed = Mth.clamp(data.getSpeed() / 20, 0, 30);
         this.gravity = Mth.clamp(data.getGravity(), 0, Float.MAX_VALUE);
         this.friction = Mth.clamp(data.getFriction(), 0, Float.MAX_VALUE);
         this.hasIgnite = data.isHasIgnite();

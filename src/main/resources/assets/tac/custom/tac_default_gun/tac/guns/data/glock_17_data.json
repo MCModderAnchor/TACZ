@@ -2,11 +2,31 @@
   "ammo": "tac:9mm",
   "rpm": 800,
   "bullet": {
-    "life": 10,
-    "damage": 3,
-    "speed": 10,
-    "gravity": 0,
-    "knockback": 0
+    "life": 0.6,
+    "bullet_amount": 1,
+    "damage": 5,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0,
+      "head_shot_multiplier": 1.5,
+      "decay": {
+        "range_percent": [
+          0.03,
+          0.5
+        ],
+        "min_damage_multiplier": 0.5
+      },
+      "close": {
+        "range_meters": 0.5,
+        "damage_multiplier": 1.2
+      }
+    },
+    "speed": 150,
+    "gravity": 0.0245,
+    "knockback": 0,
+    "friction": 0.012,
+    "ignite": false,
+    "pierce": 1
   },
   "ammo_amount": 17,
   "bolt": "closed_bolt",
@@ -25,13 +45,14 @@
   "put_away_time": 0.35,
   "aim_time": 0.17,
   "fire_mode": [
-    "auto",
     "semi"
   ],
   "allow_attachments": {
     "scope": {
       "black_list": [
-        "tac:8x"
+        "tac:8x",
+        "tac:acog",
+        "tac:coyote"
       ]
     },
     "extended_mag": {}
@@ -49,5 +70,12 @@
       -0.8,
       0.2
     ]
+  },
+  "inaccuracy": {
+    "stand": 2,
+    "move": 4,
+    "sneak": 1,
+    "lie": 0.5,
+    "aim": 0.1
   }
 }

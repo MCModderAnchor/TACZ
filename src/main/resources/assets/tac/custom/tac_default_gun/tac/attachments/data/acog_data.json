@@ -3,7 +3,7 @@
   "ads_addend": 0.02,
   "inaccuracy_addend": -0.4,
   "recoil_modifier": {
-    "pitch": -0.08,
-    "yaw": -0.05
+    "pitch": -0.14,
+    "yaw": -0.08
   }
 }

@@ -10,9 +10,9 @@
   // 消音
   "silence": {
     // 声音传播的范围，如果默认是 50 格，这里填入 -10，那么消音后传播距离为 40 格
-    "distance_addend": -10,
+//    "distance_addend": -10,
     // 是否使用专门的消音后的音源
-    "use_silence_sound": true
+//    "use_silence_sound": true
   },
   // 对枪械后坐力的影响。
   "recoil_modifier": {

@@ -16,42 +16,42 @@
   // 子弹实体属性
   "bullet": {
     // 寿命，单位秒
-    "life": 10,
+    "life": 0.8,
     // 用于霰弹，默认为 1，每发的伤害 / bullet_amount，每次射击扣除一发子弹
     "bullet_amount": 1,
     // 伤害
-    "damage": 6,
+    "damage": 8.5,
     // 曳光弹间隔数量，没有此字段则不发射曳光弹
     // 设置为 0 则是每发都是曳光弹
-    "tracer_count_interval": 1,
+    "tracer_count_interval": 0,
     // 额外伤害的内容，为空则表示没有任何额外伤害计算内容
     "extra_damage": {
       // 护甲穿透率，默认为 0，也就是没有穿甲伤害
-      "armor_ignore": 0.5,
-      // 爆头伤害
-      "head_shot_multiplier": 2,
+      "armor_ignore": 0.25,
+      // 爆头伤害 x1.5
+      "head_shot_multiplier": 1.5,
       // 远距伤害
       "decay": {
-        // 距离从 14% 到 30%
+        // 距离从 2% 到 40%
         "range_percent": [
-          0.14,
-          0.3
+          0.02,
+          0.4
         ],
-        // 最小伤害 30%
-        "min_damage_multiplier": 0.3
+        // 最小伤害 40%
+        "min_damage_multiplier": 0.4
       },
       // 抵近伤害
       "close": {
         // 范围 0.5 格内算抵近伤害
-        "range_meters": 2,
+        "range_meters": 0.5,
         // 伤害倍率 110%
         "damage_multiplier": 1.1
       }
     },
     // 速度 m/s
-    "speed": 400,
+    "speed": 240,
     // 重力
-    "gravity": 0,
+    "gravity": 0.0245,
     // 击退效果
     "knockback": 0,
     // 阻力
@@ -59,7 +59,7 @@
     // 点燃目标
     "ignite": false,
     // 穿透数
-    "pierce": 2
+    "pierce": 1
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
     //  "radius": 5
@@ -127,7 +127,7 @@
     // 趴下射击散布
     "lie": 0.5,
     // 瞄准射击时散布
-    "aim": 0.2
+    "aim": 0.1
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser
@@ -150,11 +150,12 @@
   "exclusive_attachments": {
     // 配件 ID，后面的数据和配件的 data 部分结构完全一致
     "tac:8x": {
-      "weight": 1.0,
+      "weight": 2.0,
       "ads_addend": 0.04,
+      "inaccuracy_addend": -0.4,
       "recoil_modifier": {
-        "pitch": -0.95,
-        "yaw": -0.9
+        "pitch": -0.2,
+        "yaw": -0.1
       }
     }
   }

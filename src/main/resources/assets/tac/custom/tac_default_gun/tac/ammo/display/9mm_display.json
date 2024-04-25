@@ -6,6 +6,7 @@
     "model": "tac:shell/762x39_shell",
     "texture": "tac:shell/762x39_shell"
   },
+  "tracer_color": "#FF8888",
   "transform": {
     "scale": {
       "thirdperson": [

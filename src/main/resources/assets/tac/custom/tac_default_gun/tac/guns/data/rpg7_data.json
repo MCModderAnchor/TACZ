@@ -3,15 +3,33 @@
   "rpm": 30,
   "ammo_amount": 1,
   "bullet": {
-    // 寿命，单位秒
-    "life": 20,
-    // 速度 m/s
-    "speed": 20,
-    // 重力
-    "gravity": 0.005,
-    // 是否爆炸，没有此字段时为 false
+    "life": 3,
+    "bullet_amount": 1,
+    "damage": 20,
+    "extra_damage": {
+      "armor_ignore": 0,
+      "head_shot_multiplier": 1,
+      "decay": {
+        "range_percent": [
+          0.5,
+          1
+        ],
+        "min_damage_multiplier": 1
+      },
+      "close": {
+        "range_meters": 0,
+        "damage_multiplier": 1
+      }
+    },
+    "speed": 80,
+    "gravity": 0.0245,
+    "knockback": 0,
+    "friction": 0.005,
+    "ignite": false,
+    "pierce": 1,
     "explosion": {
-      "radius": 5
+      "damage": 100,
+      "radius": 3
     }
   },
   "reload": {
@@ -43,5 +61,12 @@
       -0.8,
       0.2
     ]
+  },
+  "inaccuracy": {
+    "stand": 2,
+    "move": 4,
+    "sneak": 1,
+    "lie": 0.5,
+    "aim": 0.1
   }
 }
