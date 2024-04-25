@@ -176,6 +176,11 @@ publishing {
     }
 }
 
+// 禁用元数据生成，它生成的 maven 项目有问题
+tasks.withType(GenerateModuleMetadata).configureEach {
+    enabled = false
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
