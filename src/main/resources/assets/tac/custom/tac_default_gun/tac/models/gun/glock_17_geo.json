@@ -3719,6 +3719,28 @@
 				{
 					"name": "idle_view",
 					"pivot": [0.85, 9, 14]
+				},
+				{
+					"name": "refit",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "refit_view",
+					"parent": "refit",
+					"pivot": [13, 5, 0],
+					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "refit_extended_mag_view",
+					"parent": "refit",
+					"pivot": [7, 1, 0],
+					"rotation": [0, 112.5, 0]
+				},
+				{
+					"name": "refit_scope_view",
+					"parent": "refit",
+					"pivot": [5, 7, 6],
+					"rotation": [0, 47.5, 0]
 				}
 			]
 		}
