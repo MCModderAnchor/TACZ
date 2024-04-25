@@ -1,6 +1,4 @@
 {
-  "model": "tac:ammo/45acp",
-  "texture": "tac:ammo/uv/762x39",
   "slot": "tac:ammo/slot/45acp"
 }
     

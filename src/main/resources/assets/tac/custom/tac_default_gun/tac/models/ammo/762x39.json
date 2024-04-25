@@ -767,13 +767,20 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0, 3, 3],
-					"rotation": [-90, 0, 0]
+                  "pivot": [
+                    0,
+                    3.5,
+                    0
+                  ]
 				},
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [3.975, 6.05, -0.225],
+                  "pivot": [
+                    -0.025,
+                    2.05,
+                    -0.225
+                  ],
 					"rotation": [0, 90, 0]
 				}
 			]

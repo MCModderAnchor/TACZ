@@ -18,13 +18,13 @@ public class BedrockAmmoModel extends BedrockModel {
     // 地面实体渲染原点定位组的路径
     protected @Nullable List<BedrockPart> groundOriginPath;
     // 第三人称手部实体渲染原点定位组的路径
-    protected @Nullable List<BedrockPart> thirdPersonHandPath;
+    protected @Nullable List<BedrockPart> thirdPersonHandOriginPath;
 
     public BedrockAmmoModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
         fixedOriginPath = getPath(modelMap.get(FIXED_ORIGIN_NODE));
         groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
-        thirdPersonHandPath = getPath(modelMap.get(THIRD_PERSON_HAND_ORIGIN_NODE));
+        thirdPersonHandOriginPath = getPath(modelMap.get(THIRD_PERSON_HAND_ORIGIN_NODE));
     }
 
     @Nullable
@@ -38,7 +38,7 @@ public class BedrockAmmoModel extends BedrockModel {
     }
 
     @Nullable
-    public List<BedrockPart> getThirdPersonHandPath() {
-        return thirdPersonHandPath;
+    public List<BedrockPart> getThirdPersonHandOriginPath() {
+        return thirdPersonHandOriginPath;
     }
 }

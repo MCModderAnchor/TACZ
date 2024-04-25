@@ -105,7 +105,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             RenderType renderType = RenderType.itemEntityTranslucentCull(gunTexture);
             gunModel.render(poseStack, stack, transformType, renderType, pPackedLight, pPackedOverlay);
         }, () -> {
-            // 没有这个 ammoID，渲染个错误材质提醒别人
+            // 没有这个 gunID，渲染个错误材质提醒别人
             poseStack.translate(0.5, 1.5, 0.5);
             poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
             VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));

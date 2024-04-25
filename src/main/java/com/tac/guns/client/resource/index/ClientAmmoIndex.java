@@ -9,8 +9,10 @@ import com.tac.guns.client.resource.loader.ShellDisplay;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoEntityDisplay;
 import com.tac.guns.client.resource.pojo.display.ammo.AmmoParticle;
+import com.tac.guns.client.resource.pojo.display.ammo.AmmoTransform;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
+import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.AmmoIndexPOJO;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.commands.arguments.ParticleArgument;
@@ -37,6 +39,7 @@ public class ClientAmmoIndex {
     private int stackSize;
     private @Nullable AmmoParticle particle;
     private float[] tracerColor = new float[]{1f, 1f, 1f};
+    private AmmoTransform transform;
 
     private ClientAmmoIndex() {
     }
@@ -53,6 +56,7 @@ public class ClientAmmoIndex {
         checkShell(display, index);
         checkParticle(display, index);
         checkTracerColor(display, index);
+        checkTransform(display, index);
         return index;
     }
 
@@ -181,6 +185,16 @@ public class ClientAmmoIndex {
         }
     }
 
+    private static void checkTransform(AmmoDisplay display, ClientAmmoIndex index) {
+        AmmoTransform readTransform = display.getTransform();
+        AmmoDisplay defaultDisplay = ClientAssetManager.INSTANCE.getAmmoDisplay(DefaultAssets.DEFAULT_AMMO_DISPLAY);
+        if (readTransform == null || readTransform.getScale() == null) {
+            index.transform = Objects.requireNonNull(defaultDisplay.getTransform());
+        } else {
+            index.transform = display.getTransform();
+        }
+    }
+
     private static void checkStackSize(AmmoIndexPOJO clientPojo, ClientAmmoIndex index) {
         index.stackSize = Math.max(clientPojo.getStackSize(), 1);
     }
@@ -234,5 +248,9 @@ public class ClientAmmoIndex {
 
     public float[] getTracerColor() {
         return tracerColor;
+    }
+
+    public AmmoTransform getTransform() {
+        return transform;
     }
 }

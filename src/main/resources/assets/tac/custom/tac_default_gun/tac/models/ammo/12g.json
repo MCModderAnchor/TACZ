@@ -639,12 +639,29 @@
 				{
 					"name": "ground",
 					"parent": "positioning",
-					"pivot": [0, 0, 0]
+                  "pivot": [
+                    0,
+                    0,
+                    2
+                  ]
 				},
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0, 4, 1.25],
+                  "pivot": [
+                    0,
+                    3.5,
+                    4
+                  ]
+                },
+              {
+                "name": "thirdperson_hand",
+                "parent": "positioning",
+                "pivot": [
+                  -0.025,
+                  2.05,
+                  2.025
+                ],
 					"rotation": [0, 90, 0]
 				}
 			]

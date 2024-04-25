@@ -1,6 +1,24 @@
 {
   "model": "tac:ammo/12g",
   "texture": "tac:ammo/uv/12g",
-  "slot": "tac:ammo/slot/12g"
+  "slot": "tac:ammo/slot/12g",
+  "transform": {
+    "scale": {
+      "thirdperson": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "ground": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "fixed": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    }
+  }
 }
-    

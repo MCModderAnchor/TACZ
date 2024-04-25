@@ -635,6 +635,46 @@
 							}
 						}
 					]
+                },
+              {
+                "name": "positioning",
+                "pivot": [
+                  -3.025,
+                  -8.95,
+                  -11.225
+                ]
+              },
+              {
+                "name": "ground",
+                "parent": "positioning",
+                "pivot": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "name": "fixed",
+                "parent": "positioning",
+                "pivot": [
+                  0,
+                  0.5,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  -90,
+                  0
+                ]
+              },
+              {
+                "name": "thirdperson_hand",
+                "parent": "positioning",
+                "pivot": [
+                  -0.025,
+                  0.55,
+                  -0.225
+                ]
 				}
 			]
 		}

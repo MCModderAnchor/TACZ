@@ -32,6 +32,10 @@ public class AmmoDisplay {
     @SerializedName("tracer_color")
     private String tracerColor = "0xFFFFFF";
 
+    @Nullable
+    @SerializedName("transform")
+    private AmmoTransform transform;
+
     public ResourceLocation getModelLocation() {
         return modelLocation;
     }
@@ -62,5 +66,10 @@ public class AmmoDisplay {
 
     public String getTracerColor() {
         return tracerColor;
+    }
+
+    @Nullable
+    public AmmoTransform getTransform() {
+        return transform;
     }
 }
