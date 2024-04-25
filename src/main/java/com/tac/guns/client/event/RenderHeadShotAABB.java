@@ -33,7 +33,10 @@ public class RenderHeadShotAABB {
         }
         AABB aabb = HeadShotAABBConfigRead.getAABB(entityId);
         if (aabb == null) {
-            return;
+            float width = entity.getBbWidth();
+            float eyeHeight = entity.getEyeHeight();
+            // 扩张 0.01，避免和原版显示重合
+            aabb = new AABB(-width / 2, eyeHeight - 0.25, -width / 2, width / 2, eyeHeight + 0.25, width / 2).inflate(0.01);
         }
         VertexConsumer buffer = event.getMultiBufferSource().getBuffer(RenderType.lines());
         LevelRenderer.renderLineBox(event.getPoseStack(), buffer, aabb, 1.0F, 1.0F, 0.0F, 1.0F);

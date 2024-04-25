@@ -22,6 +22,9 @@ public class HumanoidModelMixin<T extends LivingEntity> {
     public ModelPart head;
     @Shadow
     @Final
+    public ModelPart body;
+    @Shadow
+    @Final
     public ModelPart leftArm;
     @Shadow
     @Final
@@ -39,9 +42,9 @@ public class HumanoidModelMixin<T extends LivingEntity> {
                 String animation = index.getThirdPersonAnimation();
                 float aimingProgress = operator.getSynAimingProgress();
                 if (aimingProgress <= 0) {
-                    ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, head, true);
+                    ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, body, head, true);
                 } else {
-                    ThirdPersonManager.getAnimation(animation).animateGunAim(entityIn, rightArm, leftArm, head, true, aimingProgress);
+                    ThirdPersonManager.getAnimation(animation).animateGunAim(entityIn, rightArm, leftArm, body, head, true, aimingProgress);
                 }
             });
         }

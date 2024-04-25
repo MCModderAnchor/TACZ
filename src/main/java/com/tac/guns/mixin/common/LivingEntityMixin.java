@@ -4,9 +4,9 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.entity.KnockBackModifier;
-import com.tac.guns.api.event.GunFireSelectEvent;
-import com.tac.guns.api.event.GunReloadEvent;
-import com.tac.guns.api.event.GunShootEvent;
+import com.tac.guns.api.event.common.GunFireSelectEvent;
+import com.tac.guns.api.event.common.GunReloadEvent;
+import com.tac.guns.api.event.common.GunShootEvent;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
@@ -488,7 +488,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         ResourceLocation ammoId = gunIndex.getGunData().getAmmoId();
         // 开始生成子弹
         for (int i = 0; i < bulletAmount; i++) {
-            EntityBullet bullet = new EntityBullet(world, shooter, ammoId, bulletData, isTracerAmmo);
+            EntityBullet bullet = new EntityBullet(world, shooter, ammoId, bulletData, isTracerAmmo, gunId);
             bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
             world.addFreshEntity(bullet);
         }

@@ -5979,8 +5979,7 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [-0.875, 5.05, 7.175],
-					"rotation": [0, -15, 0]
+					"pivot": [0.125, 4.05, 7.175]
 				},
 				{
 					"name": "views",

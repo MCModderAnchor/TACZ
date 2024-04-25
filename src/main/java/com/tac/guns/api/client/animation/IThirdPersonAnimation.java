@@ -13,7 +13,7 @@ public interface IThirdPersonAnimation {
      * @param head         头部模型
      * @param rightHoldGun 是否是右手持枪
      */
-    void animateGunHold(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean rightHoldGun);
+    void animateGunHold(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart body, ModelPart head, boolean rightHoldGun);
 
     /**
      * 第三人称动画：枪械瞄准时
@@ -25,5 +25,5 @@ public interface IThirdPersonAnimation {
      * @param rightHoldGun 是否是右手持枪
      * @param aimProgress  瞄准进度 0-1
      */
-    void animateGunAim(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean rightHoldGun, float aimProgress);
+    void animateGunAim(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart body, ModelPart head, boolean rightHoldGun, float aimProgress);
 }

@@ -8,7 +8,7 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
-import com.tac.guns.api.event.GunShootEvent;
+import com.tac.guns.api.event.common.GunShootEvent;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;

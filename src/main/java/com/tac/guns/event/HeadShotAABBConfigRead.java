@@ -30,7 +30,6 @@ public class HeadShotAABBConfigRead {
             for (String text : configData) {
                 addCheck(text);
             }
-            System.out.println(AABB_CHECK);
         }
     }
 

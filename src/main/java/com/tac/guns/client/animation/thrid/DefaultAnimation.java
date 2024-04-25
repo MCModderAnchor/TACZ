@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class DefaultAnimation implements IThirdPersonAnimation {
     @Override
-    public void animateGunHold(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean rightHoldGun) {
+    public void animateGunHold(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart body, ModelPart head, boolean rightHoldGun) {
         ModelPart holdModel = rightHoldGun ? rightArm : leftArm;
         ModelPart otherModel = rightHoldGun ? leftArm : rightArm;
         holdModel.yRot = (rightHoldGun ? -0.3F : 0.3F) + head.yRot;
@@ -17,7 +17,7 @@ public class DefaultAnimation implements IThirdPersonAnimation {
     }
 
     @Override
-    public void animateGunAim(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean rightHoldGun, float aimProgress) {
+    public void animateGunAim(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart body, ModelPart head, boolean rightHoldGun, float aimProgress) {
         ModelPart holdModel = rightHoldGun ? rightArm : leftArm;
         ModelPart otherModel = rightHoldGun ? leftArm : rightArm;
         float lerp1 = Mth.lerp(aimProgress, 0.3f, 0.35f);

@@ -21,7 +21,9 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
-version = "1.0.0"
+// version = "1.0.0"
+// 版本号，正式发布需要修改这一行
+version = new SimpleDateFormat("MMdd-HHmmss").format(new Date())
 group = "com.tac"
 archivesBaseName = "tac-1.18.2"
 
@@ -62,7 +64,7 @@ minecraft {
             // 设定用户名
             args '--username', 'mayday_memory'
             mods {
-                touhoulittlemaid {
+                tac {
                     source sourceSets.main
                 }
             }
@@ -145,9 +147,7 @@ jar {
     manifest {
         attributes([
                 "Implementation-Title"  : project.name,
-                // 版本号，正式发布需要修改这一行
-                "Implementation-Version": new SimpleDateFormat("MMdd-HHmmss").format(new Date())
-                // "Implementation-Version": project.version
+                "Implementation-Version": project.version
         ])
     }
 }
