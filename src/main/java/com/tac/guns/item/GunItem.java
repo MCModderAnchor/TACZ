@@ -64,6 +64,7 @@ public class GunItem extends Item implements GunItemDataAccessor {
                             .setId(entry.getKey())
                             .setFireMode(gunData.getFireModeSet().get(0))
                             .setAmmoCount(gunData.getAmmoAmount())
+                            .setAmmoInBarrel(true)
                             .build();
                     stacks.add(itemStack);
                 }

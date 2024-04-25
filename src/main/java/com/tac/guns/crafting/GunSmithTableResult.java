@@ -69,7 +69,11 @@ public class GunSmithTableResult {
 
         private GunSmithTableResult getGunStack(ResourceLocation id, int count) {
             return TimelessAPI.getCommonGunIndex(id).map(gunIndex -> {
-                ItemStack itemStack = GunItemBuilder.create().setCount(count).setId(id).setAmmoCount(0)
+                ItemStack itemStack = GunItemBuilder.create()
+                        .setCount(count)
+                        .setId(id)
+                        .setAmmoCount(0)
+                        .setAmmoInBarrel(false)
                         .setFireMode(gunIndex.getGunData().getFireModeSet().get(0)).build();
                 String group = gunIndex.getType();
                 return new GunSmithTableResult(itemStack, group);

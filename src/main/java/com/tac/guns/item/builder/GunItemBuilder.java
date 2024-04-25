@@ -12,6 +12,7 @@ public final class GunItemBuilder {
     private int ammoCount = 0;
     private ResourceLocation gunId = DefaultAssets.DEFAULT_GUN_ID;
     private FireMode fireMode = FireMode.UNKNOWN;
+    private boolean bulletInBarrel = false;
 
     private GunItemBuilder() {
     }
@@ -40,12 +41,18 @@ public final class GunItemBuilder {
         return this;
     }
 
+    public GunItemBuilder setAmmoInBarrel(boolean ammoInBarrel) {
+        this.bulletInBarrel = ammoInBarrel;
+        return this;
+    }
+
     public ItemStack build() {
         ItemStack gun = new ItemStack(ModItems.GUN.get(), this.count);
         if (gun.getItem() instanceof IGun iGun) {
             iGun.setGunId(gun, this.gunId);
             iGun.setFireMode(gun, this.fireMode);
             iGun.setCurrentAmmoCount(gun, this.ammoCount);
+            iGun.setBulletInBarrel(gun, this.bulletInBarrel);
         }
         return gun;
     }
