@@ -11,6 +11,12 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class SoundManager {
     public static String SHOOT_SOUND = "shoot";
+    // 即其他玩家听到的枪声
+    public static String SHOOT_3P_SOUND = "shoot_3p";
+    // 消音器音效
+    public static String SILENCE_SOUND = "silence";
+    // 即其他玩家听到的枪声
+    public static String SILENCE_3P_SOUND = "silence_3p";
     public static String DRY_FIRE_SOUND = "dry_fire";
     public static String RELOAD_EMPTY_SOUND = "reload_empty";
     public static String RELOAD_TACTICAL_SOUND = "reload_tactical";
@@ -19,7 +25,6 @@ public class SoundManager {
     public static String DRAW_SOUND = "draw";
     public static String BOLT_SOUND = "bolt";
     public static String PUT_AWAY_SOUND = "put_away";
-    public static String SILENCE_SOUND = "silence";
 
     public static void sendSoundToNearby(LivingEntity sourceEntity, int distance, ResourceLocation gunId, String soundName, float volume, float pitch) {
         if (sourceEntity.level instanceof ServerLevel serverLevel) {

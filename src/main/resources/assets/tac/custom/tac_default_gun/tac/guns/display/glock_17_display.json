@@ -38,6 +38,8 @@
     "inspect_empty": "tac:glock_17/glock17_inspect_empty",
     "draw": "tac:glock_17/glock17_draw",
     "shoot": "tac:glock_17/glock17_shoot",
-    "silence": "tac:glock_17/glock17_silence"
+    "shoot_3p": "tac:glock_17/glock17_shoot_3p",
+    "silence": "tac:glock_17/glock17_silence",
+    "silence_3p": "tac:glock_17/glock17_silence_3p"
   }
 }

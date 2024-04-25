@@ -26,6 +26,8 @@
     "inspect_empty": "tac:ai_awp/awp_inspect_empty",
     "draw": "tac:ai_awp/awp_draw",
     "shoot": "tac:ai_awp/awp_shoot",
-    "silence": "tac:ai_awp/awp_silence"
+    "shoot_3p": "tac:ai_awp/awp_shoot_3p",
+    "silence": "tac:ai_awp/awp_silence",
+    "silence_3p": "tac:ai_awp/awp_silence_3p"
   }
 }

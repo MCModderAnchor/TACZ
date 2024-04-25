@@ -493,7 +493,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             world.addFreshEntity(bullet);
         }
         if (soundDistance[0] > 0) {
-            String soundId = useSilenceSound[0] ? SoundManager.SILENCE_SOUND : SoundManager.SHOOT_SOUND;
+            String soundId = useSilenceSound[0] ? SoundManager.SILENCE_3P_SOUND : SoundManager.SHOOT_3P_SOUND;
             SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
         }
         // 削减弹药数

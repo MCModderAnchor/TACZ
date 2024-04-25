@@ -8,6 +8,7 @@
     "reload_empty": "tac:rpg7/rpg7_reload",
     "inspect": "tac:rpg7/rpg7_inspect",
     "draw": "tac:rpg7/rpg7_draw",
-    "shoot": "tac:rpg7/rpg7_shoot"
+    "shoot": "tac:rpg7/rpg7_shoot",
+    "shoot_3p": "tac:rpg7/rpg7_shoot"
   }
 }
