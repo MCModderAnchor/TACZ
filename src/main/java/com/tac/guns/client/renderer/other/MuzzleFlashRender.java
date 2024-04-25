@@ -22,7 +22,7 @@ public class MuzzleFlashRender {
      * 50ms 显示时间
      */
     private static final long TIME_RANGE = 50;
-
+    public static boolean isSelf = false;
     private static long shootTimeStamp = -1;
     private static boolean muzzleFlashStartMark = false;
     private static float muzzleFlashRandomRotate = 0;
@@ -31,6 +31,9 @@ public class MuzzleFlashRender {
 
     public static void render(ItemStack currentGunItem, PoseStack poseStack, BedrockModel bedrockModel) {
         if (OculusCompat.isRenderShadow()) {
+            return;
+        }
+        if (!isSelf) {
             return;
         }
         long time = System.currentTimeMillis() - shootTimeStamp;

@@ -135,6 +135,9 @@ public class FirstPersonRenderGunEvent {
             if (GunRefitScreen.getOpeningProgress() != 0) {
                 gunModel.setRenderHand(false);
             }
+            // 开启第一人称弹壳和火焰渲染
+            MuzzleFlashRender.isSelf = true;
+            ShellRender.isSelf = true;
             // 调用枪械模型渲染
             RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
             gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
@@ -143,6 +146,9 @@ public class FirstPersonRenderGunEvent {
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
             poseStack.popPose();
             gunModel.cleanAnimationTransform();
+            // 关闭第一人称弹壳和火焰渲染
+            MuzzleFlashRender.isSelf = false;
+            ShellRender.isSelf = false;
             // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
             event.setCanceled(true);
         });

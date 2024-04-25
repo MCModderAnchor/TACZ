@@ -12,6 +12,7 @@
   "client": [
     "client.GameRendererMixin",
     "client.HumanoidModelMixin",
+    "client.ItemInHandLayerMixin",
     "client.ItemInHandRendererMixin",
     "client.LanguageMixin",
     "client.LocalPlayerMixin",

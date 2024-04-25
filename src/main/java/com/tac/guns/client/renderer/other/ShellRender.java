@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class ShellRender {
     // 抛壳队列
     private static final ConcurrentLinkedDeque<Data> SHELL_QUEUE = new ConcurrentLinkedDeque<>();
+    public static boolean isSelf = false;
 
     public static void addShell(Vector3f randomVelocity) {
         double xRandom = Math.random() * randomVelocity.x();
@@ -30,6 +31,9 @@ public class ShellRender {
 
     public static void render(ItemStack currentGunItem, PoseStack poseStack, BedrockGunModel gunModel) {
         if (OculusCompat.isRenderShadow()) {
+            return;
+        }
+        if (!isSelf) {
             return;
         }
         IGun iGun = IGun.getIGunOrNull(currentGunItem);
