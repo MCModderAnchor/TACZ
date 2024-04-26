@@ -24,6 +24,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.fml.ModList;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 
@@ -121,11 +122,19 @@ public class GunHudOverlay {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
+        // 获取图标
+        ResourceLocation hudTexture = gunIndex.getHUDTexture();
+        @Nullable ResourceLocation hudEmptyTexture = gunIndex.getHudEmptyTexture();
+
         if (ammoCount <= 0) {
-            RenderSystem.setShaderColor(1, 0.3f, 0.3f, 1);
+            if (hudEmptyTexture == null) {
+                RenderSystem.setShaderColor(1, 0.3f, 0.3f, 1);
+            } else {
+                hudTexture = hudEmptyTexture;
+            }
         }
         // 渲染枪械图标
-        RenderSystem.setShaderTexture(0, gunIndex.getHUDTexture());
+        RenderSystem.setShaderTexture(0, hudTexture);
         GuiComponent.blit(poseStack, width - 117, height - 44, 0, 0, 39, 13, 39, 13);
 
         // 渲染开火模式图标

@@ -143,7 +143,11 @@
       //]
     },
     "stock": {},
-    "muzzle": {},
+    "muzzle": {
+      "black_list": [
+        "tac:muzzle_s_p_1"
+      ]
+    },
     "extended_mag": {}
   },
   // 专属的配件属性

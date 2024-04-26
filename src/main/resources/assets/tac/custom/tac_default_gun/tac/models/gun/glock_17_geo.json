@@ -2849,6 +2849,16 @@
 					]
 				},
 				{
+					"name": "positioning2",
+					"parent": "barrel2",
+					"pivot": [0.00625, 5.35, -5.05]
+				},
+				{
+					"name": "muzzle_pos",
+					"parent": "positioning2",
+					"pivot": [0.00625, 5.35, -5.05]
+				},
+				{
 					"name": "slide",
 					"parent": "g17",
 					"pivot": [-0.01875, 8, 0]
@@ -3741,6 +3751,12 @@
 					"parent": "refit",
 					"pivot": [5, 7, 6],
 					"rotation": [0, 47.5, 0]
+				},
+				{
+					"name": "refit_muzzle_view",
+					"parent": "refit",
+					"pivot": [5, 5.35, -11],
+					"rotation": [0, 120, 0]
 				}
 			]
 		}

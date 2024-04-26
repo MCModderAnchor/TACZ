@@ -166,8 +166,19 @@ publishing {
         artifactId = project.archivesBaseName
         pom {
             name = project.archivesBaseName
+            // 删除所有依赖，不需要
+            pom.withXml {
+                asNode().dependencies.dependency.each { dep ->
+                    assert dep.parent().remove(dep)
+                }
+            }
         }
     }
+}
+
+// 禁用元数据生成，它生成的 maven 项目有问题
+tasks.withType(GenerateModuleMetadata).configureEach {
+    enabled = false
 }
 
 tasks.withType(JavaCompile).configureEach {

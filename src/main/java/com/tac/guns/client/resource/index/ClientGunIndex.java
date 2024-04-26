@@ -44,6 +44,7 @@ public class ClientGunIndex {
     private ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
     private ResourceLocation hudTexture;
+    private @Nullable ResourceLocation hudEmptyTexture;
     private String type;
     private @Nullable ShellEjection shellEjection;
     private @Nullable MuzzleFlash muzzleFlash;
@@ -233,6 +234,7 @@ public class ClientGunIndex {
 
     private static void checkHUDTexture(GunDisplay display, ClientGunIndex index) {
         index.hudTexture = Objects.requireNonNullElseGet(display.getHudTextureLocation(), MissingTextureAtlasSprite::getLocation);
+        index.hudEmptyTexture = display.getHudEmptyTextureLocation();
     }
 
     private static void checkShellEjection(GunDisplay display, ClientGunIndex index) {
@@ -334,6 +336,11 @@ public class ClientGunIndex {
 
     public ResourceLocation getHUDTexture() {
         return hudTexture;
+    }
+
+    @Nullable
+    public ResourceLocation getHudEmptyTexture() {
+        return hudEmptyTexture;
     }
 
     public ResourceLocation getModelTexture() {

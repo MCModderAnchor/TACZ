@@ -1,0 +1,7 @@
+{
+  "name": "tac.attachment.muzzle_s_p_1.name",
+  "tooltip": "tac.attachment.muzzle_s_p_1.tooltip",
+  "display": "tac:muzzle_s_p_1_display",
+  "data": "tac:muzzle_s_p_1_data",
+  "type": "muzzle"
+}

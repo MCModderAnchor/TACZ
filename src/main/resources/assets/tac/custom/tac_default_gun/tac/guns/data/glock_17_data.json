@@ -1,6 +1,6 @@
 {
   "ammo": "tac:9mm",
-  "rpm": 800,
+  "rpm": 400,
   "bullet": {
     "life": 0.6,
     "bullet_amount": 1,
@@ -49,13 +49,16 @@
   ],
   "allow_attachments": {
     "scope": {
-      "black_list": [
-        "tac:8x",
-        "tac:acog",
-        "tac:coyote"
+      "white_list": [
+        "tac:sro_dot"
       ]
     },
-    "extended_mag": {}
+    "extended_mag": {},
+    "muzzle": {
+      "white_list": [
+        "tac:muzzle_s_p_1"
+      ]
+    }
   },
   "recoil": {
     // 竖直方向偏转，会在两个数值之间取随机数
