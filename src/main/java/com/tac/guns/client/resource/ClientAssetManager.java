@@ -122,7 +122,9 @@ public enum ClientAssetManager {
     }
 
     public void putLanguage(String region, Map<String, String> lang) {
-        languages.put(region, lang);
+        Map<String, String> languageMaps = languages.getOrDefault(region, Maps.newHashMap());
+        languageMaps.putAll(lang);
+        languages.put(region, languageMaps);
     }
 
     public GunDisplay getGunDisplay(ResourceLocation registryName) {
