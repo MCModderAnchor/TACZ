@@ -4,7 +4,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import com.tac.guns.GunMod;
 import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.InternalAssetLoader;
@@ -28,9 +27,6 @@ import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
-    public static final ResourceLocation MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/target_minecart.json");
-    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/entity/target_minecart.png");
-    private static final ResourceLocation EMPTY_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/entity/empty.png");
     private static final String HEAD_NAME = "head";
 
     public TargetMinecartRenderer(EntityRendererProvider.Context ctx) {
@@ -39,12 +35,12 @@ public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
     }
 
     public static Optional<BedrockModel> getModel() {
-        return InternalAssetLoader.getBedrockModel(MODEL_LOCATION);
+        return InternalAssetLoader.getBedrockModel(InternalAssetLoader.TARGET_MINECART_MODEL_LOCATION);
     }
 
     @Override
     public ResourceLocation getTextureLocation(TargetMinecart minecart) {
-        return EMPTY_TEXTURE;
+        return InternalAssetLoader.ENTITY_EMPTY_TEXTURE;
     }
 
     @Override
@@ -58,7 +54,7 @@ public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
             stack.scale(1.5f, 1.5f, 1.5f);
             stack.mulPose(Vector3f.ZN.rotationDegrees(180));
             stack.mulPose(Vector3f.YN.rotationDegrees(90));
-            RenderType renderType = RenderType.entityTranslucent(TEXTURE_LOCATION);
+            RenderType renderType = RenderType.entityTranslucent(InternalAssetLoader.TARGET_MINECART_TEXTURE_LOCATION);
             model.render(stack, ItemTransforms.TransformType.NONE, renderType, pPackedLight, OverlayTexture.NO_OVERLAY);
             if (targetMinecart.getGameProfile() != null) {
                 stack.translate(0, 1, -4.5 / 16d);

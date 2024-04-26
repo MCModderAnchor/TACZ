@@ -1,15 +1,14 @@
 package com.tac.guns.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
+import com.mojang.logging.LogUtils;
 import com.mojang.math.Vector3f;
 import com.tac.guns.api.TimelessAPI;
-import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.client.model.BedrockAmmoModel;
 import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.resource.InternalAssetLoader;
 import com.tac.guns.entity.EntityBullet;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -20,22 +19,21 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
-    public static final ResourceLocation DEFAULT_BULLET_TEXTURE = new ResourceLocation("tac", "textures/entity/basic_bullet.png");
-    public static final ResourceLocation DEFAULT_BULLET_MODEL = new ResourceLocation("tac", "models/bedrock/basic_bullet.json");
 
     public EntityBulletRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
     }
 
     public static Optional<BedrockModel> getModel() {
-        return InternalAssetLoader.getBedrockModel(DEFAULT_BULLET_MODEL);
+        return InternalAssetLoader.getBedrockModel(InternalAssetLoader.DEFAULT_BULLET_MODEL);
     }
 
     @Override
@@ -64,45 +62,32 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
 
     public void renderTracerAmmo(EntityBullet bullet, float[] tracerColor, float partialTicks, PoseStack poseStack, int packedLight) {
         getModel().ifPresent(model -> {
-            if (Minecraft.getInstance().player == null) {
+            Entity shooter = bullet.getOwner();
+            if (shooter == null) {
                 return;
             }
-            Player player = Minecraft.getInstance().player;
-            float width = 0.005f;
             poseStack.pushPose();
             {
-                double disToEye = bullet.getPosition(partialTicks).distanceTo(player.getEyePosition(partialTicks));
+                float width = 0.005f;
+                Vec3 bulletPosition = bullet.getPosition(partialTicks);
                 double trailLength = 0.85 * bullet.getDeltaMovement().length();
+                double disToEye = bulletPosition.distanceTo(shooter.getEyePosition(partialTicks));
                 trailLength = Math.min(trailLength, disToEye * 0.8);
-                float extraXRot = 0;
-                float extraYRot = 0;
-                if (this.entityRenderDispatcher.options.getCameraType().isFirstPerson() && bullet.getOwner() instanceof IClientPlayerGunOperator operator && player.is(bullet.getOwner())) {
-                    double merge = 8f * trailLength;
-                    float s = (float) ((merge - disToEye) / merge);
-                    if (disToEye < merge) {
-                        // 这里需要计算实际的偏移，这里只是手填的估计值
-                        if (operator.getClientAimingProgress(partialTicks) < 0.8) {
-                            poseStack.translate(0, -0.1 * (merge - disToEye) / merge, 0);
-                            extraYRot = s;
-                        } else {
-                            poseStack.translate(0, -0.008 * (merge - disToEye) / merge, 0);
-                            extraXRot = s;
-                        }
-                        trailLength *= s;
-                    }
-                    trailLength *= 0.75;
-                    width *= 1.35f;
+                if (this.entityRenderDispatcher.options.getCameraType().isFirstPerson() && bullet.getOwner() instanceof LocalPlayer) {
+                    // 自己打的曳光弹在第一人称的渲染委托给 FirstPersonRenderGunEvent
+                    poseStack.popPose();
+                    return;
+                }else {
+                    width *= (float) Math.max(1.0, disToEye / 3.5);
+                    poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
+                    poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
+                    poseStack.translate(0, 0, trailLength / 2.0);
+                    poseStack.scale(width, width, (float) trailLength);
                 }
-                width *= (float) Math.max(1.0, disToEye / 3.5);
-                poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F + extraYRot));
-                poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot()) + extraXRot));
-                poseStack.translate(0, 0, trailLength / 2.0);
-                poseStack.scale(width, width, (float) trailLength);
                 // 距离两格外才渲染，只在前 5 tick 判定
-                Matrix4f matrix4f = poseStack.last().pose();
-                float viewDistance = matrix4f.m03 * matrix4f.m03 + matrix4f.m13 * matrix4f.m13 + matrix4f.m23 * matrix4f.m23;
-                if (bullet.tickCount >= 5 || viewDistance > 2) {
-                    RenderType type = RenderType.energySwirl(DEFAULT_BULLET_TEXTURE, 15, 15);
+                double bulletDistance = bulletPosition.distanceTo(shooter.getEyePosition());
+                if (bullet.tickCount >= 5 || bulletDistance > 2) {
+                    RenderType type = RenderType.energySwirl(InternalAssetLoader.DEFAULT_BULLET_TEXTURE, 15, 15);
                     model.render(poseStack, ItemTransforms.TransformType.NONE, type, packedLight, OverlayTexture.NO_OVERLAY,
                             tracerColor[0], tracerColor[1], tracerColor[2], 1);
                 }

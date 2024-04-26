@@ -3,7 +3,6 @@ package com.tac.guns.client.renderer.block;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import com.tac.guns.GunMod;
 import com.tac.guns.block.TargetBlock;
 import com.tac.guns.block.entity.TargetBlockEntity;
 import com.tac.guns.client.model.bedrock.BedrockModel;
@@ -27,8 +26,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.Optional;
 
 public class TargetRenderer implements BlockEntityRenderer<TargetBlockEntity> {
-    public static final ResourceLocation MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/target.json");
-    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/block/target.png");
     private static final String UPPER_NAME = "target_upper";
     private static final String HEAD_NAME = "head";
 
@@ -36,7 +33,7 @@ public class TargetRenderer implements BlockEntityRenderer<TargetBlockEntity> {
     }
 
     public static Optional<BedrockModel> getModel() {
-        return InternalAssetLoader.getBedrockModel(MODEL_LOCATION);
+        return InternalAssetLoader.getBedrockModel(InternalAssetLoader.TARGET_MODEL_LOCATION);
     }
 
     @Override
@@ -55,7 +52,7 @@ public class TargetRenderer implements BlockEntityRenderer<TargetBlockEntity> {
             poseStack.mulPose(Vector3f.YN.rotationDegrees(facing.get2DDataValue() * 90));
             poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
             poseStack.translate(0, -1.275, 0.0125);
-            RenderType renderType = RenderType.entityTranslucent(TEXTURE_LOCATION);
+            RenderType renderType = RenderType.entityTranslucent(InternalAssetLoader.TARGET_TEXTURE_LOCATION);
             model.render(poseStack, ItemTransforms.TransformType.NONE, renderType, combinedLightIn, combinedOverlayIn);
             if (blockEntity.getOwner() != null) {
                 poseStack.translate(0, 1.25, 0);

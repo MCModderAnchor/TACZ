@@ -445,7 +445,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         }
         LivingEntity shooter = (LivingEntity) (Object) this;
         Bolt boltType = gunIndex.getGunData().getBolt();
-        boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(currentGunItem);
+        boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(currentGunItem) && boltType != Bolt.OPEN_BOLT;
         int ammoCount = iGun.getCurrentAmmoCount(currentGunItem) + (hasAmmoInBarrel ? 1 : 0);
         // 创造模式不判断子弹数
         if (needCheckAmmo() && ammoCount < 1) {

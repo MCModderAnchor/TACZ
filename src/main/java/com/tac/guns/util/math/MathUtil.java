@@ -4,6 +4,7 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 public class MathUtil {
     public static final float[] QUATERNION_ONE = {0, 0, 0, 1};
@@ -319,5 +320,16 @@ public class MathUtil {
         // 应用位移和旋转
         resultMatrix.translate(new Vector3f(translation.x(), translation.y(), translation.z()));
         resultMatrix.multiply(qLerped);
+    }
+
+    public static double getTwoVecAngle(Vec3 v1, Vec3 v2) {
+        double dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+        double magnitude1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
+        double magnitude2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
+        if (magnitude1 * magnitude2 == 0) {
+            return -1;
+        }
+        double cos = dotProduct / (magnitude1 * magnitude2);
+        return Math.acos(cos);
     }
 }

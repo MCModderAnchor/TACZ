@@ -1,6 +1,7 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
@@ -15,27 +16,37 @@ import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.gui.GunRefitScreen;
 import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.renderer.other.MuzzleFlashRender;
 import com.tac.guns.client.renderer.other.ShellRender;
+import com.tac.guns.client.resource.InternalAssetLoader;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.duck.KeepingItemRenderer;
+import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.util.math.Easing;
 import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.PerlinNoise;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -98,7 +109,7 @@ public class FirstPersonRenderGunEvent {
         }
 
         ResourceLocation gunId = iGun.getGunId(stack);
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+        TimelessAPI.getClientGunIndex(gunId).ifPresentOrElse(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (gunModel == null) {
@@ -141,6 +152,8 @@ public class FirstPersonRenderGunEvent {
             // 调用枪械模型渲染
             RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
             gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+            // 调用曳光弹渲染
+            renderBulletTracer(player, poseStack, gunModel, event.getPartialTicks());
             // 恢复手臂渲染
             gunModel.setRenderHand(renderHand);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
@@ -151,7 +164,83 @@ public class FirstPersonRenderGunEvent {
             ShellRender.isSelf = false;
             // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
             event.setCanceled(true);
+        }, () -> {
+            renderBulletTracer(player, event.getPoseStack(), null, event.getPartialTicks());
         });
+    }
+
+    private static void renderBulletTracer(LocalPlayer player, PoseStack poseStack, BedrockGunModel gunModel, float partialTicks){
+        Optional<BedrockModel> modelOptional = InternalAssetLoader.getBedrockModel(InternalAssetLoader.DEFAULT_BULLET_MODEL);
+        if (modelOptional.isEmpty()) {
+            return;
+        }
+        BedrockModel model = modelOptional.get();
+        Level level = player.getLevel();
+        AABB renderArea = player.getBoundingBox().inflate(256, 256, 256);
+        for(Entity entity : level.getEntities(player, renderArea, entity -> {
+            if (entity instanceof EntityBullet entityBullet) {
+                return entityBullet.getOwner() instanceof LocalPlayer;
+            }
+            return false;
+        })) {
+            EntityBullet entityBullet = (EntityBullet) entity;
+            Vec3 deltaMovement = entityBullet.getDeltaMovement().multiply(partialTicks, partialTicks, partialTicks);
+            Vec3 entityPosition = entityBullet.getPosition(0).add(deltaMovement);
+            Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+            Vec3 cameraPosition = camera.getPosition();
+            Vec3 originCameraPosition = entityBullet.getOriginCameraPosition();
+            if (originCameraPosition == null) {
+                if (gunModel == null) {
+                    continue;
+                }
+                if (gunModel.getMuzzleFlashPosPath() != null) {
+                    poseStack.pushPose();
+                    for (BedrockPart bedrockPart : gunModel.getMuzzleFlashPosPath()) {
+                        bedrockPart.translateAndRotateAndScale(poseStack);
+                    }
+                    Matrix4f pose = poseStack.last().pose();
+                    originCameraPosition = new Vec3(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+                    entityBullet.setOriginCameraPosition(originCameraPosition);
+                    entityBullet.setOriginRenderOffset(new Vec3(pose.m03, pose.m13, pose.m23));
+                    poseStack.popPose();
+                } else {
+                    continue;
+                }
+            }
+            Vec3 originRenderOffset = entityBullet.getOriginRenderOffset();
+            Vec3 alphaCameraTranslation = originCameraPosition.subtract(cameraPosition);
+            double distance = entityPosition.distanceTo(originCameraPosition);
+            Vec3 bulletDirection = entityPosition.subtract(originCameraPosition);
+            double yRot = MathUtil.getTwoVecAngle(new Vec3(0, 0, -1), new Vec3(bulletDirection.x, 0, bulletDirection.z));
+            double xRot = MathUtil.getTwoVecAngle(new Vec3(bulletDirection.x, 0, bulletDirection.z), bulletDirection);
+            if (yRot == -1) {
+                yRot = Math.toRadians(camera.getYRot() + 180f);
+            }
+            if (xRot == -1) {
+                xRot = Math.toRadians(camera.getXRot());
+            }
+            xRot *= bulletDirection.y > 0 ? -1 : 1;
+            yRot *= bulletDirection.x > 0 ? 1 : -1;
+            PoseStack poseStack1 = new PoseStack();
+            // 逆转摄像机的旋转，回到起始坐标
+            poseStack1.mulPose(Vector3f.XP.rotationDegrees(camera.getXRot()));
+            poseStack1.mulPose(Vector3f.YP.rotationDegrees(camera.getYRot() + 180f));
+            poseStack1.translate(-alphaCameraTranslation.x, alphaCameraTranslation.y, -alphaCameraTranslation.z);
+            // 恢复旋转角度，应用枪口定位偏移
+            poseStack1.mulPose(Vector3f.YN.rotation((float) yRot));
+            poseStack1.mulPose(Vector3f.XN.rotation((float) xRot));
+            poseStack1.translate(originRenderOffset.x, originRenderOffset.y, originRenderOffset.z - distance);
+            float trailLength = 0.2f * (float) entityBullet.getDeltaMovement().length();
+            poseStack1.translate(0, 0, -trailLength / 2);
+            poseStack1.scale(0.03f, 0.03f, trailLength);
+            ResourceLocation ammoId = entityBullet.getAmmoId();
+            TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(index -> {
+                float[] tracerColor = index.getTracerColor();
+                RenderType type = RenderType.energySwirl(InternalAssetLoader.DEFAULT_BULLET_TEXTURE, 15, 15);
+                model.render(poseStack1, ItemTransforms.TransformType.NONE, type, LightTexture.pack(15, 15), OverlayTexture.NO_OVERLAY,
+                        tracerColor[0], tracerColor[1], tracerColor[2], 1);
+            });
+        }
     }
 
     /**
@@ -455,20 +544,5 @@ public class FirstPersonRenderGunEvent {
         poseStack.last().pose().translate(new Vector3f(
                 -inverseTranslation.x() * weight, -inverseTranslation.y() * weight, inverseTranslation.z() * weight
         ));
-    }
-
-    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack) {
-        if (nodePath == null) {
-            return;
-        }
-        // 抛壳原点为定位组
-        for (int i = nodePath.size() - 1; i >= 0; i--) {
-            BedrockPart t = nodePath.get(i);
-            if (t.getParent() != null) {
-                poseStack.translate(t.x / 16.0F, t.y / 16.0F, t.z / 16.0F);
-            } else {
-                poseStack.translate(t.x / 16.0F, (t.y / 16.0F - 1.5), t.z / 16.0F);
-            }
-        }
     }
 }
