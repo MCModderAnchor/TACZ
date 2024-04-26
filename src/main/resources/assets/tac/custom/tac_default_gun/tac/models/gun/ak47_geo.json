@@ -5625,6 +5625,11 @@
 					"pivot": [-2.275, 3.95, -20.475]
 				},
 				{
+					"name": "muzzle_pos",
+					"parent": "positioning2",
+					"pivot": [-2.275, 3.95, -20.275]
+				},
+				{
 					"name": "constraint",
 					"parent": "AKM",
 					"pivot": [-2.225, 6.975, -11.825]

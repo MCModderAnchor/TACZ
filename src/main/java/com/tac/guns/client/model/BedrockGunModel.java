@@ -52,6 +52,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String MAG_ADDITIONAL_NODE = "additional_magazine";
     private static final String ATTACHMENT_ADAPTER_NODE = "attachment_adapter";
     private static final String ATTACHMENT_POS_SUFFIX = "_pos";
+    private static final String DEFAULT_ATTACHMENT_SUFFIX = "_default";
     private static final String REFIT_VIEW_PREFIX = "refit_";
     private static final String REFIT_VIEW_SUFFIX = "_view";
     private static final String ROOT_NODE = "root";
@@ -233,8 +234,9 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             if (type == AttachmentType.NONE || type == AttachmentType.SCOPE) {
                 continue;
             }
-            String nodeName = type.name().toLowerCase() + ATTACHMENT_POS_SUFFIX;
-            this.setFunctionalRenderer(nodeName, bedrockPart -> {
+            String positionNodeName = type.name().toLowerCase() + ATTACHMENT_POS_SUFFIX;
+            String defaultNodeName = type.name().toLowerCase() + DEFAULT_ATTACHMENT_SUFFIX;
+            this.setFunctionalRenderer(positionNodeName, bedrockPart -> {
                 bedrockPart.visible = false;
                 return (poseStack, vertexBuffer, transformType, light, overlay) -> {
                     ItemStack attachmentItem = currentAttachmentItem.get(type);
@@ -251,6 +253,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                         });
                     }
                 };
+            });
+            this.setFunctionalRenderer(defaultNodeName, bedrockPart -> {
+                ItemStack attachmentItem = currentAttachmentItem.get(type);
+                bedrockPart.visible = attachmentItem == null || attachmentItem.isEmpty();
+                return null;
             });
         }
 

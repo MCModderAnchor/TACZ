@@ -1,0 +1,87 @@
+{
+  "ammo": "tac:556x45",
+  "ammo_amount": 30,
+  "extended_mag_ammo_amount": [
+    40,
+    50,
+    60
+  ],
+  "bolt": "closed_bolt",
+  "rpm": 850,
+  "bullet": {
+    "life": 0.8,
+    "bullet_amount": 1,
+    "damage": 7,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.25,
+      "head_shot_multiplier": 1.5,
+      "decay": {
+        "range_percent": [
+          0.02,
+          0.4
+        ],
+        "min_damage_multiplier": 0.4
+      },
+      "close": {
+        "range_meters": 0.5,
+        "damage_multiplier": 1.1
+      }
+    },
+    "speed": 240,
+    "gravity": 0.0245,
+    "knockback": 0,
+    "friction": 0.01,
+    "ignite": false,
+    "pierce": 1
+  },
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 1.87,
+      "tactical": 1.40
+    },
+    "cooldown": {
+      "empty": 2.2,
+      "tactical": 1.87
+    }
+  },
+  "draw_time": 0.3,
+  "put_away_time": 0.53,
+  "aim_time": 0.2,
+  "sprint_time": 0.3,
+  "fire_mode": [
+    // 全自动
+    "auto",
+    // 半自动
+    "semi"
+  ],
+  // 后坐力
+  "recoil": {
+    "pitch": [
+      0.9,
+      1.2
+    ],
+    "yaw": [
+      -0.5,
+      0.5
+    ]
+  },
+  "inaccuracy": {
+    "stand": 4,
+    "move": 5,
+    "sneak": 1.5,
+    "lie": 1,
+    "aim": 0.4
+  },
+  "allow_attachments": {
+    "scope": {},
+    "stock": {},
+    "grip": {},
+    "muzzle": {},
+    "laser": {},
+    "extended_mag": {}
+  },
+  "exclusive_attachments": {
+  }
+}

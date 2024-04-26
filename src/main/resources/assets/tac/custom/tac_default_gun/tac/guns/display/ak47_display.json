@@ -12,7 +12,7 @@
     "hud": "tac:gun/hud/ak47",
     // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空
     // 若为空，则对应位置渲染改为：上述 hud + 代码着成红色
-    "hud_empty": "tac:gun/hud/ak47_empty",
+    //"hud_empty": "tac:gun/hud/ak47_empty",
     // 背包/快捷栏等容器中槽位显示的 2D 材质，在包目录下的 textures 文件夹中寻找，不建议为空
     "slot": "tac:gun/slot/ak47",
     // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空

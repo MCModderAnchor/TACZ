@@ -18,7 +18,10 @@ import java.util.Set;
 public class GunAnimationStateMachine {
     protected static final Set<Integer> blendingTracks = Sets.newHashSet();
     protected static int trackIndexTop = 0;
-    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
+    // 射击轨道 12 个，支持 0.5 秒的射击动画在 rpm 1200 以内播放
+    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
+                                                 blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
+                                                 blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
     public static final int MOVEMENT_TRACK = blendingTrack();
     public static final int MAIN_TRACK = staticTrack();
     public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();

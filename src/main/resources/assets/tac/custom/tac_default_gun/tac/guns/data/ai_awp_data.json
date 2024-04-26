@@ -73,9 +73,6 @@
       ]
     },
     "muzzle": {
-      "black_list": [
-        "tac:muzzle_s_p_1"
-      ]
     }
   }
 }

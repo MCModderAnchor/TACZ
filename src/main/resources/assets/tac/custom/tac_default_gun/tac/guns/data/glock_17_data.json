@@ -41,7 +41,7 @@
       "tactical": 1.5
     }
   },
-  "draw_time": 0.35,
+  "draw_time": 0.32,
   "put_away_time": 0.35,
   "aim_time": 0.17,
   "fire_mode": [

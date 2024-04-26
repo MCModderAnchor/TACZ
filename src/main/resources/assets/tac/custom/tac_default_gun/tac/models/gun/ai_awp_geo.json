@@ -5439,7 +5439,12 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "AWP_body",
-					"pivot": [0, 7.6, -33.3]
+					"pivot": [0, 7.6, -33]
+				},
+				{
+					"name": "muzzle_pos",
+					"parent": "AWP_body",
+					"pivot": [0, 7.725, -33.3]
 				},
 				{
 					"name": "MAG_Bullet",

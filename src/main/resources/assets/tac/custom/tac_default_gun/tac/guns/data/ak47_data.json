@@ -144,9 +144,6 @@
     },
     "stock": {},
     "muzzle": {
-      "black_list": [
-        "tac:muzzle_s_p_1"
-      ]
     },
     "extended_mag": {}
   },

@@ -1,0 +1,52 @@
+{
+    "model": "tac:gun/m4a1_geo",
+    "texture": "tac:gun/uv/m4a1",
+    "hud": "tac:gun/hud/m4a1",
+    "slot": "tac:gun/slot/m4a1",
+    "animation": "tac:m4a1",
+    "use_default_animation": "rifle",
+    "third_person_animation": "default",
+    "transform": {
+        "scale": {
+            "thirdperson": [
+                0.6,
+                0.6,
+                0.6
+            ],
+            "ground": [
+                0.6,
+                0.6,
+                0.6
+            ],
+            "fixed": [
+                1.2,
+                1.2,
+                1.2
+            ]
+        }
+    },
+    "muzzle_flash": {
+      "texture": "tac:flash/common_muzzle_flash",
+      "scale": 0.75
+    },
+    "shell": {
+        "initial_velocity": [5, 2, 1],
+        "random_velocity": [1, 1, 0.25],
+        "acceleration": [0.0, -10, 0.0],
+        "angular_velocity": [360, -1200, 90],
+        "living_time": 1.0
+    },
+    "sounds": {
+        "shoot": "tac:m4a1/m4a1_shoot",
+        "shoot_3p": "tac:m4a1/m4a1_shoot_3p",
+        "dry_fire": "tac:dry_fire",
+        "reload_empty": "tac:m4a1/m4a1_reload_empty",
+        "reload_tactical": "tac:m4a1/m4a1_reload_tactical",
+        "inspect": "tac:m4a1/m4a1_inspect",
+        "inspect_empty": "tac:m4a1/m4a1_inspect_empty",
+        "draw": "tac:m4a1/m4a1_draw",
+        "put_away": "tac:m4a1/m4a1_put_away",
+        "silence": "tac:m4a1/m4a1_silence",
+        "silence_3p": "tac:m4a1/m4a1_silence_3p"
+    }
+}
