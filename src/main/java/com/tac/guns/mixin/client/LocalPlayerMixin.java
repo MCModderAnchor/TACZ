@@ -524,6 +524,21 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
     }
 
+    @Inject(method = "respawn", at = @At("RETURN"))
+    public void onRespawn(CallbackInfo ci){
+        // 重置客户端的 shoot 时间戳
+        tac$IsShootRecorded = true;
+        tac$ClientShootTimestamp = -1;
+        // 重置客户端瞄准状态
+        tac$ClientIsAiming = false;
+        tac$ClientAimingProgress = 0;
+        tac$OldAimingProgress = 0;
+        // 重置拉栓状态
+        tac$IsBolting = false;
+        // 打开状态锁
+        tac$ClientStateLock = false;
+    }
+
     @Unique
     private void tickAutoBolt() {
         LocalPlayer player = (LocalPlayer) (Object) this;
