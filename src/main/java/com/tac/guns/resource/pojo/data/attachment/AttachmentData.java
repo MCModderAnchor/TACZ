@@ -6,7 +6,8 @@ import javax.annotation.Nullable;
 
 public class AttachmentData {
     @SerializedName("silence")
-    private Silence silence = new Silence();
+    @Nullable
+    private Silence silence;
 
     @SerializedName("weight")
     private float weight = 0;
@@ -24,6 +25,7 @@ public class AttachmentData {
     @Nullable
     private RecoilModifier recoilModifier = null;
 
+    @Nullable
     public Silence getSilence() {
         return silence;
     }

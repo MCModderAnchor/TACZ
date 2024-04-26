@@ -3,8 +3,8 @@
   "texture": "tac:ammo/uv/9mm",
   "slot": "tac:ammo/slot/9mm",
   "shell": {
-    "model": "tac:shell/762x39_shell",
-    "texture": "tac:shell/762x39_shell"
+    "model": "tac:shell/9mm_shell",
+    "texture": "tac:shell/9mm_shell"
   },
   "tracer_color": "#FF8888",
   "transform": {

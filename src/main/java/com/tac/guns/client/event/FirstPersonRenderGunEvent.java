@@ -130,6 +130,8 @@ public class FirstPersonRenderGunEvent {
             poseStack.mulPose(Vector3f.YP.rotationDegrees(yRot * -0.1F));
             BedrockPart rootNode = gunModel.getRootNode();
             if (rootNode != null) {
+                xRot = (float) Math.tanh(xRot / 25) * 25;
+                yRot = (float) Math.tanh(yRot / 25) * 25;
                 rootNode.offsetX += yRot * 0.1F / 16F / 3F;
                 rootNode.offsetY += -xRot * 0.1F / 16F / 3F;
                 rootNode.additionalQuaternion.mul(Vector3f.XP.rotationDegrees(xRot * 0.05F));
@@ -184,6 +186,9 @@ public class FirstPersonRenderGunEvent {
             return false;
         })) {
             EntityBullet entityBullet = (EntityBullet) entity;
+            if (!entityBullet.isTracerAmmo()) {
+                continue;
+            }
             Vec3 deltaMovement = entityBullet.getDeltaMovement().multiply(partialTicks, partialTicks, partialTicks);
             Vec3 entityPosition = entityBullet.getPosition(0).add(deltaMovement);
             Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();

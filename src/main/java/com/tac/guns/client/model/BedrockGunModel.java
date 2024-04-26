@@ -120,7 +120,19 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         });
         // 渲染枪口火焰
         this.setFunctionalRenderer(MUZZLE_FLASH_ORIGIN_NODE, bedrockPart -> (poseStack, vertexBuffer, transformType, light, overlay) -> {
-            MuzzleFlashRender.render(currentGunItem, poseStack, this);
+            // 如果安装了消音器，则不渲染枪口火光
+            ItemStack muzzleAttachment = currentAttachmentItem.get(AttachmentType.MUZZLE);
+            IAttachment iAttachment = IAttachment.getIAttachmentOrNull(muzzleAttachment);
+            if (iAttachment != null) {
+                TimelessAPI.getCommonAttachmentIndex(iAttachment.getAttachmentId(muzzleAttachment)).ifPresent(index -> {
+                    if (index.getData().getSilence() != null) {
+                        return;
+                    }
+                    MuzzleFlashRender.render(currentGunItem, poseStack, this);
+                });
+            } else {
+                MuzzleFlashRender.render(currentGunItem, poseStack, this);
+            }
         });
         // 渲染抛壳
         this.setFunctionalRenderer(SHELL_ORIGIN_NODE, bedrockPart -> (poseStack, vertexBuffer, transformType, light, overlay) -> {

@@ -198,7 +198,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 }
                 attachmentRecoilModifier[0] += recoilModifier.getPitch();
                 attachmentRecoilModifier[1] += recoilModifier.getYaw();
-                if (attachmentData.getSilence().isUseSilenceSound()) {
+                if (attachmentData.getSilence() != null && attachmentData.getSilence().isUseSilenceSound()) {
                     useSilenceSound[0] = true;
                 }
             });

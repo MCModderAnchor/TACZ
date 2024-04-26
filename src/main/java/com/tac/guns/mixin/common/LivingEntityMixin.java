@@ -477,9 +477,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
                 inaccuracy[0] += attachmentData.getInaccuracyAddend();
             }
             Silence silence = attachmentData.getSilence();
-            soundDistance[0] += silence.getDistanceAddend();
-            if (silence.isUseSilenceSound()) {
-                useSilenceSound[0] = true;
+            if (silence != null) {
+                soundDistance[0] += silence.getDistanceAddend();
+                if (silence.isUseSilenceSound()) {
+                    useSilenceSound[0] = true;
+                }
             }
         });
         inaccuracy[0] = Math.max(0, inaccuracy[0]);

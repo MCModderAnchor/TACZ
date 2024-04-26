@@ -2849,14 +2849,14 @@
 					]
 				},
 				{
-					"name": "positioning2",
+					"name": "muzzle_pos",
 					"parent": "barrel2",
 					"pivot": [0.00625, 5.35, -5.05]
 				},
 				{
-					"name": "muzzle_pos",
-					"parent": "positioning2",
-					"pivot": [0.00625, 5.35, -5.05]
+					"name": "muzzle_flash",
+					"parent": "barrel2",
+					"pivot": [0.00625, 5.35, -5.55]
 				},
 				{
 					"name": "slide",
