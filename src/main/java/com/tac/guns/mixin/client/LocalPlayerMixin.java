@@ -112,113 +112,112 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
         if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null) {
             tac$IsShootRecorded = true;
-            return ShootResult.UNKNOWN_FAIL;
+            // 因为这块主要目的是防止切枪后开火动作覆盖切枪动作，返回 IS_DRAWING
+            return ShootResult.IS_DRAWING;
         }
         LocalPlayer player = (LocalPlayer) (Object) this;
         // 暂定为只有主手能开枪
         ItemStack mainhandItem = player.getMainHandItem();
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
-            return ShootResult.UNKNOWN_FAIL;
+            return ShootResult.NOT_GUN;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         Optional<ClientGunIndex> gunIndexOptional = TimelessAPI.getClientGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
-            return ShootResult.UNKNOWN_FAIL;
+            return ShootResult.ID_NOT_EXIST;
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
-        if (mainhandItem.getItem() instanceof IGun) {
-            GunData gunData = gunIndex.getGunData();
-            long coolDown = gunData.getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
-            // 如果射击冷却大于 1 tick (即 50 ms)，则不允许开火
-            if (coolDown > 50) {
-                return ShootResult.COOL_DOWN;
-            }
-            if (coolDown < 0) {
-                coolDown = 0;
-            }
-            // 因为开火冷却检测用了特别定制的方法，所以不检查状态锁，而是手动检查是否换弹、切枪
-            IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
-            // 检查是否正在换弹
-            if (gunOperator.getSynReloadState().getStateType().isReloading()) {
-                return ShootResult.UNKNOWN_FAIL;
-            }
-            // 检查是否正在切枪
-            if (gunOperator.getSynDrawCoolDown() != 0) {
-                return ShootResult.UNKNOWN_FAIL;
-            }
-            // 判断子弹数
-            Bolt boltType = gunIndex.getGunData().getBolt();
-            boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem);
-            int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (hasAmmoInBarrel ? 1 : 0);
-            if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && ammoCount < 1) {
-                SoundPlayManager.playDryFireSound(player, gunIndex);
-                return ShootResult.NO_AMMO;
-            }
-            // 判断膛内子弹
-            if (boltType == Bolt.MANUAL_ACTION && !hasAmmoInBarrel) {
-                bolt();
-                return ShootResult.NEED_BOLT;
-            }
-            // 检查是否正在奔跑
-            if (gunOperator.getSynSprintTime() > 0) {
-                return ShootResult.UNKNOWN_FAIL;
-            }
-            // 触发开火事件
-            if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, mainhandItem, LogicalSide.CLIENT))) {
-                return ShootResult.UNKNOWN_FAIL;
-            }
-            // 切换状态锁，不允许换弹、检视等行为进行。
-            lockState(tac$ShootLockedCondition);
-            tac$IsShootRecorded = false;
-            // 开火效果需要延时执行，这样渲染效果更好。
-            tac$ScheduledExecutorService.schedule(() -> {
-                // 转换 isRecord 状态，允许下一个tick的开火检测。
+
+        GunData gunData = gunIndex.getGunData();
+        long coolDown = gunData.getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
+        // 如果射击冷却大于 1 tick (即 50 ms)，则不允许开火
+        if (coolDown > 50) {
+            return ShootResult.COOL_DOWN;
+        }
+        if (coolDown < 0) {
+            coolDown = 0;
+        }
+        // 因为开火冷却检测用了特别定制的方法，所以不检查状态锁，而是手动检查是否换弹、切枪
+        IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
+        // 检查是否正在换弹
+        if (gunOperator.getSynReloadState().getStateType().isReloading()) {
+            return ShootResult.IS_RELOADING;
+        }
+        // 检查是否正在切枪
+        if (gunOperator.getSynDrawCoolDown() != 0) {
+            return ShootResult.IS_DRAWING;
+        }
+        // 判断子弹数
+        Bolt boltType = gunIndex.getGunData().getBolt();
+        boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem);
+        int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (hasAmmoInBarrel ? 1 : 0);
+        if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && ammoCount < 1) {
+            SoundPlayManager.playDryFireSound(player, gunIndex);
+            return ShootResult.NO_AMMO;
+        }
+        // 判断膛内子弹
+        if (boltType == Bolt.MANUAL_ACTION && !hasAmmoInBarrel) {
+            bolt();
+            return ShootResult.NEED_BOLT;
+        }
+        // 检查是否正在奔跑
+        if (gunOperator.getSynSprintTime() > 0) {
+            return ShootResult.IS_SPRINTING;
+        }
+        // 触发开火事件
+        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, mainhandItem, LogicalSide.CLIENT))) {
+            return ShootResult.FORGE_EVENT_CANCEL;
+        }
+        // 切换状态锁，不允许换弹、检视等行为进行。
+        lockState(tac$ShootLockedCondition);
+        tac$IsShootRecorded = false;
+        // 开火效果需要延时执行，这样渲染效果更好。
+        tac$ScheduledExecutorService.schedule(() -> {
+            // 转换 isRecord 状态，允许下一个tick的开火检测。
+            tac$IsShootRecorded = true;
+            // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
+            if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null) {
                 tac$IsShootRecorded = true;
-                // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
-                if (tac$ClientStateLock && tac$LockedCondition != tac$ShootLockedCondition && tac$LockedCondition != null) {
-                    tac$IsShootRecorded = true;
+                return;
+            }
+            // 记录新的开火时间戳
+            tac$ClientShootTimestamp = System.currentTimeMillis();
+            // 发送开火的数据包，通知服务器。暂时只考虑主手能打枪。
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot());
+            // 动画状态机转移状态
+            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            if (animationStateMachine != null) {
+                animationStateMachine.onGunShoot();
+            }
+            // 获取配件的后坐力属性
+            final float[] attachmentRecoilModifier = new float[]{0f, 0f};
+            final boolean[] useSilenceSound = new boolean[]{false};
+            AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> {
+                RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
+                if (recoilModifier == null) {
                     return;
                 }
-                // 记录新的开火时间戳
-                tac$ClientShootTimestamp = System.currentTimeMillis();
-                // 发送开火的数据包，通知服务器。暂时只考虑主手能打枪。
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot());
-                // 动画状态机转移状态
-                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                if (animationStateMachine != null) {
-                    animationStateMachine.onGunShoot();
+                attachmentRecoilModifier[0] += recoilModifier.getPitch();
+                attachmentRecoilModifier[1] += recoilModifier.getYaw();
+                if (attachmentData.getSilence().isUseSilenceSound()) {
+                    useSilenceSound[0] = true;
                 }
-                // 获取配件的后坐力属性
-                final float[] attachmentRecoilModifier = new float[]{0f, 0f};
-                final boolean[] useSilenceSound = new boolean[]{false};
-                AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> {
-                    RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
-                    if (recoilModifier == null) {
-                        return;
-                    }
-                    attachmentRecoilModifier[0] += recoilModifier.getPitch();
-                    attachmentRecoilModifier[1] += recoilModifier.getYaw();
-                    if (attachmentData.getSilence().isUseSilenceSound()) {
-                        useSilenceSound[0] = true;
-                    }
-                });
-                // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
-                Minecraft.getInstance().submitAsync(() -> {
-                    GunRecoil recoil = gunData.getRecoil();
-                    player.setXRot(player.getXRot() - recoil.getRandomPitch(attachmentRecoilModifier[0]));
-                    player.setYRot(player.getYRot() + recoil.getRandomYaw(attachmentRecoilModifier[1]));
-                    // 开火需要打断检视
-                    SoundPlayManager.stopPlayGunSound(gunIndex, SoundManager.INSPECT_SOUND);
-                    if (useSilenceSound[0]) {
-                        SoundPlayManager.playSilenceSound(player, gunIndex);
-                    } else {
-                        SoundPlayManager.playShootSound(player, gunIndex);
-                    }
-                });
-            }, coolDown, TimeUnit.MILLISECONDS);
-            return ShootResult.SUCCESS;
-        }
-        return ShootResult.UNKNOWN_FAIL;
+            });
+            // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
+            Minecraft.getInstance().submitAsync(() -> {
+                GunRecoil recoil = gunData.getRecoil();
+                player.setXRot(player.getXRot() - recoil.getRandomPitch(attachmentRecoilModifier[0]));
+                player.setYRot(player.getYRot() + recoil.getRandomYaw(attachmentRecoilModifier[1]));
+                // 开火需要打断检视
+                SoundPlayManager.stopPlayGunSound(gunIndex, SoundManager.INSPECT_SOUND);
+                if (useSilenceSound[0]) {
+                    SoundPlayManager.playSilenceSound(player, gunIndex);
+                } else {
+                    SoundPlayManager.playShootSound(player, gunIndex);
+                }
+            });
+        }, coolDown, TimeUnit.MILLISECONDS);
+        return ShootResult.SUCCESS;
     }
 
     @Unique
