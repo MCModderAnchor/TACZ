@@ -73,7 +73,7 @@ public class GunAnimationStateMachine {
     public void onGunShoot() {
         // 开火动画应当打断检视动画
         if (isPlayingInspectAnimation()) {
-            //controller.removeAnimation(MAIN_TRACK);
+            controller.removeAnimation(MAIN_TRACK);
         }
         for(int track : SHOOTING_TRACKS) {
             if (tryRunShootAnimation(track)) {

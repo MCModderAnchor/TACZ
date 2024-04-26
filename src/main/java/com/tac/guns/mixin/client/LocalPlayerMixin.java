@@ -148,7 +148,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         // 判断子弹数
         Bolt boltType = gunIndex.getGunData().getBolt();
-        boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem);
+        boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem) && boltType != Bolt.OPEN_BOLT;
         int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (hasAmmoInBarrel ? 1 : 0);
         if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && ammoCount < 1) {
             SoundPlayManager.playDryFireSound(player, gunIndex);
