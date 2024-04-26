@@ -61,7 +61,7 @@
   "config.tac.client.render.bullet_hole_particle_fade_threshold": "Bullet Hole Particle Fade Threshold",
   "config.tac.client.render.bullet_hole_particle_fade_threshold.desc": "The threshold for fading out when rendering bullet hole particles",
   "config.tac.client.render.hit_market_start_position": "Hit Market Start Position",
-  "config.tac.client.render.hit_market_start_position.desc": "The starting position of the hit marker",
+  "config.tac.client.render.hit_market_start_position.desc": "The starting position of the hit marker when kill",
   "config.tac.client.render.head_shot_debug_hitbox": "Head Shot Debug Hitbox",
   "config.tac.client.render.head_shot_debug_hitbox.desc": "Whether or not to display the head shot's hitbox",
   "config.tac.client.render.gun_hud_enable": "Gun HUD Enable",
