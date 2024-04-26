@@ -225,12 +225,12 @@ public class FirstPersonRenderGunEvent {
             // 逆转摄像机的旋转，回到起始坐标
             poseStack1.mulPose(Vector3f.XP.rotationDegrees(camera.getXRot()));
             poseStack1.mulPose(Vector3f.YP.rotationDegrees(camera.getYRot() + 180f));
-            poseStack1.translate(-alphaCameraTranslation.x, alphaCameraTranslation.y, -alphaCameraTranslation.z);
+            poseStack1.translate(alphaCameraTranslation.x, alphaCameraTranslation.y, alphaCameraTranslation.z);
             // 恢复旋转角度，应用枪口定位偏移
             poseStack1.mulPose(Vector3f.YN.rotation((float) yRot));
             poseStack1.mulPose(Vector3f.XN.rotation((float) xRot));
             poseStack1.translate(originRenderOffset.x, originRenderOffset.y, originRenderOffset.z - distance);
-            float trailLength = 0.2f * (float) entityBullet.getDeltaMovement().length();
+            float trailLength = 0.5f * (float) entityBullet.getDeltaMovement().length();
             poseStack1.translate(0, 0, -trailLength / 2);
             poseStack1.scale(0.03f, 0.03f, trailLength);
             ResourceLocation ammoId = entityBullet.getAmmoId();
