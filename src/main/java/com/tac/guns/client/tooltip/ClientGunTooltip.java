@@ -51,7 +51,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return 97;
+        return 86;
     }
 
     @Override
