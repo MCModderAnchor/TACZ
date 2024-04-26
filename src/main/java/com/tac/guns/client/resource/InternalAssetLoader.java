@@ -3,15 +3,12 @@ package com.tac.guns.client.resource;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tac.guns.GunMod;
 import com.tac.guns.client.animation.AnimationListenerSupplier;
 import com.tac.guns.client.animation.Animations;
 import com.tac.guns.client.animation.ObjectAnimation;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.model.bedrock.BedrockModel;
-import com.tac.guns.client.renderer.block.GunSmithTableRenderer;
-import com.tac.guns.client.renderer.block.TargetRenderer;
-import com.tac.guns.client.renderer.entity.EntityBulletRenderer;
-import com.tac.guns.client.renderer.entity.TargetMinecartRenderer;
 import com.tac.guns.client.resource.pojo.animation.gltf.RawAnimationStructure;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
@@ -31,7 +28,24 @@ import java.util.Optional;
 public class InternalAssetLoader {
     private static final ResourceLocation DEFAULT_PISTOL_ANIMATIONS_LOC = new ResourceLocation("tac", "animations/pistol_default.gltf");
     private static final ResourceLocation DEFAULT_RIFLE_ANIMATIONS_LOC = new ResourceLocation("tac", "animations/rifle_default.gltf");
+
+    // 曳光弹模型
+    public static final ResourceLocation DEFAULT_BULLET_TEXTURE = new ResourceLocation("tac", "textures/entity/basic_bullet.png");
+    public static final ResourceLocation DEFAULT_BULLET_MODEL = new ResourceLocation("tac", "models/bedrock/basic_bullet.json");
+
+    // 射击标靶车
+    public static final ResourceLocation TARGET_MINECART_MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/target_minecart.json");
+    public static final ResourceLocation TARGET_MINECART_TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/entity/target_minecart.png");
+    public static final ResourceLocation ENTITY_EMPTY_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/entity/empty.png");
+
+    // 射击标靶
+    public static final ResourceLocation TARGET_MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/target.json");
+    public static final ResourceLocation TARGET_TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/block/target.png");
     private static final Map<ResourceLocation, BedrockModel> BEDROCK_MODELS = Maps.newHashMap();
+
+    // 改装台
+    public static final ResourceLocation SMITH_TABLE_MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/gun_smith_table.json");
+    public static final ResourceLocation SMITH_TABLE_TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/block/gun_smith_table.png");
 
     private static List<ObjectAnimation> defaultPistolAnimations;
     private static List<ObjectAnimation> defaultRifleAnimations;
@@ -45,10 +59,10 @@ public class InternalAssetLoader {
 
         // 加载代码直接调用的基岩版模型
         BEDROCK_MODELS.clear();
-        loadBedrockModels(GunSmithTableRenderer.MODEL_LOCATION);
-        loadBedrockModels(TargetRenderer.MODEL_LOCATION);
-        loadBedrockModels(TargetMinecartRenderer.MODEL_LOCATION);
-        loadBedrockModels(EntityBulletRenderer.DEFAULT_BULLET_MODEL);
+        loadBedrockModels(InternalAssetLoader.SMITH_TABLE_MODEL_LOCATION);
+        loadBedrockModels(InternalAssetLoader.TARGET_MODEL_LOCATION);
+        loadBedrockModels(InternalAssetLoader.TARGET_MINECART_MODEL_LOCATION);
+        loadBedrockModels(InternalAssetLoader.DEFAULT_BULLET_MODEL);
     }
 
     private static AnimationStructure loadAnimations(ResourceLocation resourceLocation) {

@@ -127,7 +127,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             return ShootResult.ID_NOT_EXIST;
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
-
         GunData gunData = gunIndex.getGunData();
         long coolDown = gunData.getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
         // 如果射击冷却大于 1 tick (即 50 ms)，则不允许开火
@@ -149,7 +148,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         // 判断子弹数
         Bolt boltType = gunIndex.getGunData().getBolt();
-        boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem);
+        boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem) && boltType != Bolt.OPEN_BOLT;
         int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (hasAmmoInBarrel ? 1 : 0);
         if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && ammoCount < 1) {
             SoundPlayManager.playDryFireSound(player, gunIndex);

@@ -20,18 +20,16 @@ import net.minecraft.world.level.block.state.properties.BedPart;
 import java.util.Optional;
 
 public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableBlockEntity> {
-    public static final ResourceLocation MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/gun_smith_table.json");
-    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/block/gun_smith_table.png");
 
     public GunSmithTableRenderer(BlockEntityRendererProvider.Context context) {
     }
 
     public static Optional<BedrockModel> getModel() {
-        return InternalAssetLoader.getBedrockModel(MODEL_LOCATION);
+        return InternalAssetLoader.getBedrockModel(InternalAssetLoader.SMITH_TABLE_MODEL_LOCATION);
     }
 
     public static ResourceLocation getTextureLocation() {
-        return TEXTURE_LOCATION;
+        return InternalAssetLoader.SMITH_TABLE_TEXTURE_LOCATION;
     }
 
     @Override
@@ -46,7 +44,7 @@ public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableB
             poseStack.translate(0.5, 1.5, 0.5);
             poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
             poseStack.mulPose(Vector3f.YN.rotationDegrees(90 - facing.get2DDataValue() * 90));
-            RenderType renderType = RenderType.entityTranslucent(TEXTURE_LOCATION);
+            RenderType renderType = RenderType.entityTranslucent(InternalAssetLoader.SMITH_TABLE_TEXTURE_LOCATION);
             model.render(poseStack, ItemTransforms.TransformType.NONE, renderType, combinedLightIn, combinedOverlayIn);
             poseStack.popPose();
         });

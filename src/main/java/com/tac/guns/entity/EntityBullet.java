@@ -17,6 +17,7 @@ import com.tac.guns.resource.pojo.data.gun.BulletData;
 import com.tac.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tac.guns.util.block.BlockRayTrace;
 import com.tac.guns.util.block.ProjectileExplosion;
+import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.TacHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -82,6 +83,9 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     private Vec3 startPos;
     // 曳光弹
     private boolean isTracerAmmo;
+    // 只对客户端有用的曳光弹数据
+    private Vec3 originCameraPosition;
+    private Vec3 originRenderOffset;
     // 发射的枪械 ID
     private ResourceLocation gunId;
 
@@ -552,6 +556,22 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
 
     public Random getRandom() {
         return this.random;
+    }
+
+    public Vec3 getOriginCameraPosition() {
+        return originCameraPosition;
+    }
+
+    public void setOriginCameraPosition(Vec3 originCameraPosition) {
+        this.originCameraPosition = originCameraPosition;
+    }
+
+    public Vec3 getOriginRenderOffset() {
+        return originRenderOffset;
+    }
+
+    public void setOriginRenderOffset(Vec3 originRenderOffset) {
+        this.originRenderOffset = originRenderOffset;
     }
 
     @Override

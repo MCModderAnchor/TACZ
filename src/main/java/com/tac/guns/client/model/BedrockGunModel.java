@@ -69,6 +69,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected @Nullable List<BedrockPart> groundOriginPath;
     // 瞄具配件定位组的路径。其他配件不需要存路径，只需要替换渲染。但是瞄具定位组需要用来辅助第一人称瞄准的摄像机定位。
     protected @Nullable List<BedrockPart> scopePosPath;
+    protected @Nullable List<BedrockPart> muzzleFlashPosPath;
     protected @Nullable BedrockPart root;
     protected @Nullable BedrockPart magazineNode;
     protected @Nullable BedrockPart additionalMagazineNode;
@@ -200,6 +201,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         thirdPersonHandOriginPath = getPath(modelMap.get(THIRD_PERSON_HAND_ORIGIN_NODE));
         fixedOriginPath = getPath(modelMap.get(FIXED_ORIGIN_NODE));
         groundOriginPath = getPath(modelMap.get(GROUND_ORIGIN_NODE));
+        muzzleFlashPosPath = getPath(modelMap.get(MUZZLE_FLASH_ORIGIN_NODE));
         scopePosPath = getPath(modelMap.get(AttachmentType.SCOPE.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
         root = Optional.ofNullable(modelMap.get(ROOT_NODE)).map(ModelRendererWrapper::getModelRenderer).orElse(null);
 
@@ -282,6 +284,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     public List<BedrockPart> getGroundOriginPath() {
         return groundOriginPath;
+    }
+
+    @Nullable
+    public List<BedrockPart> getMuzzleFlashPosPath() {
+        return muzzleFlashPosPath;
     }
 
     @Nullable
