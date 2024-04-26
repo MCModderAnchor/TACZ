@@ -96,11 +96,16 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private volatile boolean tac$ClientStateLock = false;
     /**
-     * 用于跳过状态锁上锁 到 服务端数据更新的这段延迟...
+     * 用于等待上锁的服务端响应
      */
     @Unique
     @Nullable
     private Predicate<IGunOperator> tac$LockedCondition = null;
+    /**
+     * 计算上锁响应时间，不允许超过最大响应时间，避免死锁
+     */
+    @Unique
+    private long tac$LockTimestamp = -1;
 
     @Unique
     @Override
@@ -499,6 +504,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     private void lockState(@Nullable Predicate<IGunOperator> lockedCondition) {
         tac$ClientStateLock = true;
+        tac$LockTimestamp = System.currentTimeMillis();
         tac$LockedCondition = lockedCondition;
     }
 
@@ -608,7 +614,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
         ReloadState reloadState = gunOperator.getSynReloadState();
         // 如果还没完成上锁，则不能释放状态锁
-        if (tac$LockedCondition != null && !tac$LockedCondition.test(gunOperator)) {
+        long maxLockTime = 250; // 上锁允许的最大响应时间，毫秒
+        long lockTime = System.currentTimeMillis() - tac$LockTimestamp;
+        if (lockTime < maxLockTime && tac$LockedCondition != null && !tac$LockedCondition.test(gunOperator)) {
             return;
         }
         tac$LockedCondition = null;
