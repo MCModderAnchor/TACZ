@@ -67,7 +67,15 @@
     "aim": 0.1
   },
   "allow_attachments": {
-    "scope": {},
-    "muzzle": {}
+    "scope": {
+      "black_list": [
+        "tac:sro_dot"
+      ]
+    },
+    "muzzle": {
+      "black_list": [
+        "tac:muzzle_s_p_1"
+      ]
+    }
   }
 }
