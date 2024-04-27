@@ -18,6 +18,7 @@ import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
+import com.tac.guns.client.movement.RecoilHandler;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.renderer.other.MuzzleFlashRender;
 import com.tac.guns.client.renderer.other.ShellRender;
@@ -164,6 +165,8 @@ public class FirstPersonRenderGunEvent {
             // 关闭第一人称弹壳和火焰渲染
             MuzzleFlashRender.isSelf = false;
             ShellRender.isSelf = false;
+            // 枪口上跳动
+            RecoilHandler.onHandle(player);
             // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
             event.setCanceled(true);
         }, () -> {
@@ -171,7 +174,7 @@ public class FirstPersonRenderGunEvent {
         });
     }
 
-    private static void renderBulletTracer(LocalPlayer player, PoseStack poseStack, BedrockGunModel gunModel, float partialTicks){
+    private static void renderBulletTracer(LocalPlayer player, PoseStack poseStack, BedrockGunModel gunModel, float partialTicks) {
         Optional<BedrockModel> modelOptional = InternalAssetLoader.getBedrockModel(InternalAssetLoader.DEFAULT_BULLET_MODEL);
         if (modelOptional.isEmpty()) {
             return;
@@ -179,7 +182,7 @@ public class FirstPersonRenderGunEvent {
         BedrockModel model = modelOptional.get();
         Level level = player.getLevel();
         AABB renderArea = player.getBoundingBox().inflate(256, 256, 256);
-        for(Entity entity : level.getEntities(player, renderArea, entity -> {
+        for (Entity entity : level.getEntities(player, renderArea, entity -> {
             if (entity instanceof EntityBullet entityBullet) {
                 return entityBullet.getOwner() instanceof LocalPlayer;
             }
@@ -284,6 +287,8 @@ public class FirstPersonRenderGunEvent {
                 if (gunIndex.getShellEjection() != null) {
                     ShellRender.addShell(gunIndex.getShellEjection().getRandomVelocity());
                 }
+                // 后坐力
+                RecoilHandler.onShoot(player);
             });
         }
     }

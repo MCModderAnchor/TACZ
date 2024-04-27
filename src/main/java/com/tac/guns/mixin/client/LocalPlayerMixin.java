@@ -209,9 +209,6 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             });
             // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
             Minecraft.getInstance().submitAsync(() -> {
-                GunRecoil recoil = gunData.getRecoil();
-                player.setXRot(player.getXRot() - recoil.getRandomPitch(attachmentRecoilModifier[0]));
-                player.setYRot(player.getYRot() + recoil.getRandomYaw(attachmentRecoilModifier[1]));
                 // 开火需要打断检视
                 SoundPlayManager.stopPlayGunSound(gunIndex, SoundManager.INSPECT_SOUND);
                 if (useSilenceSound[0]) {
@@ -531,7 +528,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     }
 
     @Inject(method = "respawn", at = @At("RETURN"))
-    public void onRespawn(CallbackInfo ci){
+    public void onRespawn(CallbackInfo ci) {
         // 重置客户端的 shoot 时间戳
         tac$IsShootRecorded = true;
         tac$ClientShootTimestamp = -1;
