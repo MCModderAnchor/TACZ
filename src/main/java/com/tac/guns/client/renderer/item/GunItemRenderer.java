@@ -74,6 +74,10 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
                 return;
             }
+            // 第三人称副手也不渲染了
+            if (transformType == THIRD_PERSON_LEFT_HAND) {
+                return;
+            }
             // GUI 特殊渲染
             if (transformType == GUI) {
                 poseStack.translate(0.5, 1.5, 0.5);

@@ -42,9 +42,9 @@ public class HumanoidModelMixin<T extends LivingEntity> {
                 String animation = index.getThirdPersonAnimation();
                 float aimingProgress = operator.getSynAimingProgress();
                 if (aimingProgress <= 0) {
-                    ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, body, head, true);
+                    ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, body, head);
                 } else {
-                    ThirdPersonManager.getAnimation(animation).animateGunAim(entityIn, rightArm, leftArm, body, head, true, aimingProgress);
+                    ThirdPersonManager.getAnimation(animation).animateGunAim(entityIn, rightArm, leftArm, body, head, aimingProgress);
                 }
             });
         }
