@@ -1,7 +1,6 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tac.guns.GunMod;
@@ -18,7 +17,6 @@ import com.tac.guns.client.model.BedrockAttachmentModel;
 import com.tac.guns.client.model.BedrockGunModel;
 import com.tac.guns.client.model.bedrock.BedrockModel;
 import com.tac.guns.client.model.bedrock.BedrockPart;
-import com.tac.guns.client.movement.RecoilHandler;
 import com.tac.guns.client.renderer.item.GunItemRenderer;
 import com.tac.guns.client.renderer.other.MuzzleFlashRender;
 import com.tac.guns.client.renderer.other.ShellRender;
@@ -165,8 +163,6 @@ public class FirstPersonRenderGunEvent {
             // 关闭第一人称弹壳和火焰渲染
             MuzzleFlashRender.isSelf = false;
             ShellRender.isSelf = false;
-            // 枪口上跳动
-            RecoilHandler.onHandle(player);
             // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
             event.setCanceled(true);
         }, () -> {
@@ -287,8 +283,6 @@ public class FirstPersonRenderGunEvent {
                 if (gunIndex.getShellEjection() != null) {
                     ShellRender.addShell(gunIndex.getShellEjection().getRandomVelocity());
                 }
-                // 后坐力
-                RecoilHandler.onShoot(player);
             });
         }
     }

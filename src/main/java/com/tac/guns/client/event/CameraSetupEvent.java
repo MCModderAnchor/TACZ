@@ -1,6 +1,7 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import com.mojang.math.Quaternion;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.TimelessAPI;
@@ -9,14 +10,21 @@ import com.tac.guns.api.client.event.BeforeRenderHandEvent;
 import com.tac.guns.api.client.event.FieldOfView;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
+import com.tac.guns.api.event.common.GunShootEvent;
+import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
+import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.duck.KeepingItemRenderer;
+import com.tac.guns.resource.pojo.data.attachment.RecoilModifier;
+import com.tac.guns.resource.pojo.data.gun.GunData;
+import com.tac.guns.util.AttachmentDataUtils;
 import com.tac.guns.util.math.MathUtil;
 import com.tac.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -24,11 +32,19 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+
+import java.util.Optional;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class CameraSetupEvent {
     // 用于平滑 FOV 变化
     private static final SecondOrderDynamics FOV_DYNAMICS = new SecondOrderDynamics(0.5f, 1.2f, 0.5f, 0);
+    private static PolynomialSplineFunction pitchSplineFunction;
+    private static PolynomialSplineFunction yawSplineFunction;
+    private static long shootTimeStamp = -1L;
+    private static double xRotO = 0;
+    private static double yRot0 = 0;
     private static BedrockGunModel lastModel = null;
     @SubscribeEvent
     public static void applyLevelCameraAnimation(EntityViewRenderEvent.CameraSetup event) {
@@ -113,6 +129,60 @@ public class CameraSetupEvent {
                     }
                 }
             });
+        }
+    }
+
+    @SubscribeEvent
+    public static void initialCameraRecoil(GunShootEvent event) {
+        if (event.getLogicalSide().isClient()) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null) {
+                return;
+            }
+            ItemStack mainhandItem = player.getMainHandItem();
+            if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+                return;
+            }
+            ResourceLocation gunId = iGun.getGunId(mainhandItem);
+            Optional<ClientGunIndex> gunIndexOptional = TimelessAPI.getClientGunIndex(gunId);
+            if (gunIndexOptional.isEmpty()) {
+                return;
+            }
+            ClientGunIndex gunIndex = gunIndexOptional.get();
+            GunData gunData = gunIndex.getGunData();
+            // 获取所有配件对摄像机后坐力的修改
+            final float[] attachmentRecoilModifier = new float[]{0f, 0f};
+            AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> {
+                RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
+                if (recoilModifier == null) {
+                    return;
+                }
+                attachmentRecoilModifier[0] += recoilModifier.getPitch();
+                attachmentRecoilModifier[1] += recoilModifier.getYaw();
+            });
+            pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction(attachmentRecoilModifier[0]);
+            yawSplineFunction = gunData.getRecoil().genYawSplineFunction(attachmentRecoilModifier[1]);
+            shootTimeStamp = System.currentTimeMillis();
+            xRotO = 0;
+        }
+    }
+
+    @SubscribeEvent
+    public static void applyCameraRecoil(EntityViewRenderEvent.CameraSetup event) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        long timeTotal = System.currentTimeMillis() - shootTimeStamp;
+        if (pitchSplineFunction != null && pitchSplineFunction.isValidPoint(timeTotal)) {
+            double value = pitchSplineFunction.value(timeTotal);
+            player.setXRot(player.getXRot() - (float) (value - xRotO));
+            xRotO = value;
+        }
+        if (yawSplineFunction != null && yawSplineFunction.isValidPoint(timeTotal)) {
+            double value = yawSplineFunction.value(timeTotal);
+            player.setYRot(player.getYRot() - (float) (value - yRot0));
+            yRot0 = value;
         }
     }
 }

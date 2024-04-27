@@ -5,12 +5,11 @@ import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
-import com.tac.guns.resource.pojo.data.gun.BulletData;
-import com.tac.guns.resource.pojo.data.gun.GunData;
-import com.tac.guns.resource.pojo.data.gun.InaccuracyType;
+import com.tac.guns.resource.pojo.data.gun.*;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class CommonGunIndex {
@@ -72,6 +71,7 @@ public class CommonGunIndex {
             throw new IllegalArgumentException("fire mode is error");
         }
         checkInaccuracy(data);
+        checkRecoil(data);
         index.gunData = data;
     }
 
@@ -83,6 +83,43 @@ public class CommonGunIndex {
             data.setInaccuracy(defaultInaccuracy);
         } else {
             defaultInaccuracy.forEach(readInaccuracy::putIfAbsent);
+        }
+    }
+
+    private static void checkRecoil(GunData data) {
+        GunRecoil recoil = data.getRecoil();
+        GunRecoilKeyFrame[] pitch = recoil.getPitch();
+        GunRecoilKeyFrame[] yaw = recoil.getYaw();
+        if (pitch != null) {
+            for (GunRecoilKeyFrame keyFrame : pitch) {
+                float[] value = keyFrame.getValue();
+                if (value.length != 2) {
+                    throw new IllegalArgumentException("Recoil value's length must be 2");
+                }
+                if (value[0] > value[1]) {
+                    throw new IllegalArgumentException("Recoil value's left must be less than right");
+                }
+                if (keyFrame.getTime() < 0) {
+                    throw new IllegalArgumentException("Recoil time must be more than 0");
+                }
+            }
+            Arrays.sort(pitch);
+        }
+
+        if (yaw != null) {
+            for (GunRecoilKeyFrame keyFrame : yaw) {
+                float[] value = keyFrame.getValue();
+                if (value.length != 2) {
+                    throw new IllegalArgumentException("Recoil value's length must be 2");
+                }
+                if (value[0] > value[1]) {
+                    throw new IllegalArgumentException("Recoil value's left must be less than right");
+                }
+                if (keyFrame.getTime() < 0) {
+                    throw new IllegalArgumentException("Recoil time must be more than 0");
+                }
+            }
+            Arrays.sort(yaw);
         }
     }
 
