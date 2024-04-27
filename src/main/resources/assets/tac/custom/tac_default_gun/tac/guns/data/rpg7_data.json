@@ -1,7 +1,6 @@
 {
   "ammo": "tac:rpg_rocket",
   "rpm": 30,
-  "bolt": "open_bolt",
   "ammo_amount": 1,
   "bolt": "open_bolt",
   "bullet": {

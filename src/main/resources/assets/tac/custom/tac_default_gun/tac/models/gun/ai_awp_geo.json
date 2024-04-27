@@ -5437,6 +5437,11 @@
 					"pivot": [0, 4, 9]
 				},
 				{
+					"name": "muzzle_pos",
+					"parent": "AWP_body",
+					"pivot": [0, 7.6, -33.075]
+				},
+				{
 					"name": "muzzle_flash",
 					"parent": "AWP_body",
 					"pivot": [0, 7.6, -33]
@@ -6009,7 +6014,7 @@
 				{
 					"name": "refit_muzzle_view",
 					"parent": "views",
-					"pivot": [12.35, 7.85, -39.75],
+					"pivot": [15.35, 7.85, -43.75],
 					"rotation": [0, 120, 0]
 				},
 				{

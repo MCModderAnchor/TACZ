@@ -3755,7 +3755,7 @@
 				{
 					"name": "refit_muzzle_view",
 					"parent": "refit",
-					"pivot": [5, 5.35, -11],
+					"pivot": [7, 5.35, -12],
 					"rotation": [0, 120, 0]
 				}
 			]

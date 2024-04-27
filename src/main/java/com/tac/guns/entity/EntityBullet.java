@@ -489,6 +489,8 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         float normalDamagePercent = 1 - armorDamagePercent;
         // 普通伤害
         entity.hurt(source, damage * normalDamagePercent);
+        // 取消无敌时间
+        entity.invulnerableTime = 0;
         // 穿甲伤害
         source.bypassArmor();
         source.bypassMagic();

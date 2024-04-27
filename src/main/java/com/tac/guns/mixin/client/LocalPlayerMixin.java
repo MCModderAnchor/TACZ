@@ -198,14 +198,14 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             final boolean[] useSilenceSound = new boolean[]{false};
             AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> {
                 RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
+                if (attachmentData.getSilence() != null && attachmentData.getSilence().isUseSilenceSound()) {
+                    useSilenceSound[0] = true;
+                }
                 if (recoilModifier == null) {
                     return;
                 }
                 attachmentRecoilModifier[0] += recoilModifier.getPitch();
                 attachmentRecoilModifier[1] += recoilModifier.getYaw();
-                if (attachmentData.getSilence() != null && attachmentData.getSilence().isUseSilenceSound()) {
-                    useSilenceSound[0] = true;
-                }
             });
             // 摄像机后坐力、播放声音需要从异步线程上传到主线程执行。
             Minecraft.getInstance().submitAsync(() -> {

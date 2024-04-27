@@ -5620,6 +5620,11 @@
 					"pivot": [-3.025, 4.475, -0.625]
 				},
 				{
+					"name": "muzzle_pos",
+					"parent": "positioning2",
+					"pivot": [-2.275, 3.95, -20.225]
+				},
+				{
 					"name": "muzzle_flash",
 					"parent": "positioning2",
 					"pivot": [-2.275, 3.95, -20.475]
@@ -5686,7 +5691,7 @@
 				{
 					"name": "refit_muzzle_view",
 					"parent": "views",
-					"pivot": [10, 5, -22],
+					"pivot": [10, 5, -26],
 					"rotation": [0, 120, 0]
 				},
 				{
