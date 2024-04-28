@@ -1,6 +1,6 @@
 {
   "slot": "tac:attachment/slot/elcan4x",
-  "model": "tac:attachment/elcan4x",
+  "model": "tac:attachment/elcan4x_geo",
   "texture": "tac:attachment/uv/elcan4x",
   "zoom": [
     1.3,
