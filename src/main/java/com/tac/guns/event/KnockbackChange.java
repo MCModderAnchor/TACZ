@@ -1,6 +1,5 @@
 package com.tac.guns.event;
 
-import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.entity.KnockBackModifier;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

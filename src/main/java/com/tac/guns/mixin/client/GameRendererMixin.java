@@ -19,11 +19,11 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
-    @Shadow
-    public abstract void render(float pPartialTicks, long pNanoTime, boolean pRenderLevel);
-
     @Unique
     private boolean tac$useFovSetting;
+
+    @Shadow
+    public abstract void render(float pPartialTicks, long pNanoTime, boolean pRenderLevel);
 
     @Inject(method = "bobHurt", at = @At("HEAD"), cancellable = true)
     public void onBobHurt(PoseStack pMatrixStack, float pPartialTicks, CallbackInfo ci) {

@@ -8,6 +8,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MathUtil {
     public static final float[] QUATERNION_ONE = {0, 0, 0, 1};
+
     public static double magnificationToFovMultiplier(double magnification, double currentFov) {
         return magnificationToFov(magnification, currentFov) / currentFov;
     }
@@ -46,7 +47,7 @@ public class MathUtil {
         };
     }
 
-    public static float[] toEulerAngles(Quaternion q){
+    public static float[] toEulerAngles(Quaternion q) {
         float[] angles = new float[3];
         // roll (x-axis rotation)
         double sinrCosp = 2 * (q.r() * q.i() + q.j() * q.k());
@@ -60,7 +61,7 @@ public class MathUtil {
             angles[1] = (float) Math.asin(sinp);
         }
         // yaw (z-axis rotation)
-        double sinyCosp = 2 * (q.r() * q.k()+ q.j() * q.i());
+        double sinyCosp = 2 * (q.r() * q.k() + q.j() * q.i());
         double cosyCosp = 1 - 2 * (q.j() * q.j() + q.k() * q.k());
         angles[2] = (float) Math.atan2(sinyCosp, cosyCosp);
         return angles;
@@ -282,7 +283,7 @@ public class MathUtil {
         return solution;
     }
 
-    public static float[] getRelativeQuaternion(float[] qa, float[] qb){
+    public static float[] getRelativeQuaternion(float[] qa, float[] qb) {
         /*
         Given two quaternions A and B, find the quaternion C such that the result of A multiplied by C is equal to B.
         Solve the following equations:
@@ -292,12 +293,12 @@ public class MathUtil {
             -ai*ci -aj*cj -ak*ck +aw*cw = bw
         */
         float[][] coefficients = {
-                { qa[3], -qa[2],  qa[1],  qa[0] },
-                { qa[2],  qa[3], -qa[0],  qa[1] },
-                {-qa[1],  qa[0],  qa[3],  qa[2] },
-                {-qa[0], -qa[1], -qa[2],  qa[3] },
+                {qa[3], -qa[2], qa[1], qa[0]},
+                {qa[2], qa[3], -qa[0], qa[1]},
+                {-qa[1], qa[0], qa[3], qa[2]},
+                {-qa[0], -qa[1], -qa[2], qa[3]},
         };
-        float[] constants = { qb[0], qb[1], qb[2], qb[3] };
+        float[] constants = {qb[0], qb[1], qb[2], qb[3]};
         return solveEquations(coefficients, constants);
     }
 

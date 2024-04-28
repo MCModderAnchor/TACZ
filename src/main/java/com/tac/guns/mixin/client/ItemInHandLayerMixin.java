@@ -1,6 +1,7 @@
 package com.tac.guns.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.tac.guns.client.renderer.other.HumanoidOffhandRender;
 import com.tac.guns.client.renderer.other.MuzzleFlashRender;
 import com.tac.guns.client.renderer.other.ShellRender;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemInHandLayer.class)
 public class ItemInHandLayerMixin {
+    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At(value = "TAIL"))
+    private void render(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight, LivingEntity pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch, CallbackInfo ci) {
+        HumanoidOffhandRender.renderGun(pLivingEntity, pMatrixStack, pBuffer, pPackedLight);
+    }
+
     @Inject(method = "renderArmWithItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/client/renderer/block/model/ItemTransforms$TransformType;Lnet/minecraft/world/entity/HumanoidArm;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "HEAD"))
     private void renderArmWithItemHead(LivingEntity livingEntity, ItemStack itemStack, ItemTransforms.TransformType transformType, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;

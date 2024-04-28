@@ -3,7 +3,6 @@ package com.tac.guns.network.message;
 import com.tac.guns.api.entity.IGunOperator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;

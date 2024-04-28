@@ -2,6 +2,7 @@ package com.tac.guns.client.resource.index;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.tac.guns.GunMod;
 import com.tac.guns.client.animation.*;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
@@ -17,7 +18,9 @@ import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.resource.pojo.data.gun.GunData;
+import com.tac.guns.sound.SoundManager;
 import com.tac.guns.util.math.MathUtil;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -48,6 +51,8 @@ public class ClientGunIndex {
     private String type;
     private @Nullable ShellEjection shellEjection;
     private @Nullable MuzzleFlash muzzleFlash;
+    private LayerGunShow offhandShow;
+    private @Nullable Int2ObjectArrayMap<LayerGunShow> hotbarShow;
 
     private ClientGunIndex() {
     }
@@ -67,6 +72,7 @@ public class ClientGunIndex {
         checkTransform(display, index);
         checkShellEjection(display, index);
         checkMuzzleFlash(display, index);
+        checkLayerGunShow(display, index);
         return index;
     }
 
@@ -214,6 +220,11 @@ public class ClientGunIndex {
         if (soundMaps == null || soundMaps.isEmpty()) {
             return;
         }
+        // 部分音效为默认音效，不存在则需要添加默认音效
+        soundMaps.putIfAbsent(SoundManager.DRY_FIRE_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.DRY_FIRE_SOUND));
+        soundMaps.putIfAbsent(SoundManager.FIRE_SELECT, new ResourceLocation(GunMod.MOD_ID, SoundManager.FIRE_SELECT));
+        soundMaps.putIfAbsent(SoundManager.HEADSHOT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.HEADSHOT_SOUND));
+        soundMaps.putIfAbsent(SoundManager.FLESHSHOT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.FLESHSHOT_SOUND));
         index.sounds.putAll(soundMaps);
     }
 
@@ -245,6 +256,25 @@ public class ClientGunIndex {
         index.muzzleFlash = display.getMuzzleFlash();
         if (index.muzzleFlash != null && index.muzzleFlash.getTexture() == null) {
             index.muzzleFlash = null;
+        }
+    }
+
+    private static void checkLayerGunShow(GunDisplay display, ClientGunIndex index) {
+        index.offhandShow = display.getOffhandShow();
+        if (index.offhandShow == null) {
+            index.offhandShow = new LayerGunShow();
+        }
+        Map<String, LayerGunShow> show = display.getHotbarShow();
+        if (show == null || show.isEmpty()) {
+            return;
+        }
+        index.hotbarShow = new Int2ObjectArrayMap<>();
+        for (String key : show.keySet()) {
+            try {
+                index.hotbarShow.put(Integer.parseInt(key), show.get(key));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("index number is error: " + key);
+            }
         }
     }
 
@@ -363,5 +393,14 @@ public class ClientGunIndex {
     @Nullable
     public MuzzleFlash getMuzzleFlash() {
         return muzzleFlash;
+    }
+
+    public LayerGunShow getOffhandShow() {
+        return offhandShow;
+    }
+
+    @Nullable
+    public Int2ObjectArrayMap<LayerGunShow> getHotbarShow() {
+        return hotbarShow;
     }
 }

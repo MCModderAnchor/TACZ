@@ -11,9 +11,9 @@ import java.util.function.Supplier;
 
 public class AnimationController {
     protected final ArrayList<ObjectAnimationRunner> currentRunners = new ArrayList<>();
+    protected final ArrayList<Boolean> blending = new ArrayList<>();
     private final AnimationListenerSupplier listenerSupplier;
     private final ArrayList<Queue<AnimationPlan>> animationQueue = new ArrayList<>();
-    protected final ArrayList<Boolean> blending = new ArrayList<>();
     protected Map<String, ObjectAnimation> prototypes = Maps.newHashMap();
 
     public AnimationController(List<ObjectAnimation> animationPrototypes, AnimationListenerSupplier model) {

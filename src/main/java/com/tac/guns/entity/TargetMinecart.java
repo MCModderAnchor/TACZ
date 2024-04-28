@@ -42,23 +42,23 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
     }
 
     @Override
-    public boolean onProjectileHit(Entity p, EntityHitResult result, DamageSource source, float damage) {
-        if (!this.level.isClientSide() && !this.isRemoved()) {
-            if (source instanceof IndirectEntityDamageSource) {
-                Entity e = source.getEntity();
-                if (e instanceof Player player) {
-                    this.setHurtDir(-1);
-                    this.setHurtTime(10);
-                    this.markHurt();
-                    this.setDamage(10);
-                    double dis = this.position().distanceTo(e.position());
-                    player.displayClientMessage(new TranslatableComponent("message.tac.target_minecart.hit",
-                            String.format("%.1f", damage), String.format("%.2f", dis)), true);
-                    level.playSound(null, this, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 0.8f, this.level.random.nextFloat() * 0.1F + 0.9F);
-                }
-            }
+    public void onProjectileHit(Entity entity, EntityHitResult result, DamageSource source, float damage) {
+        if (this.level.isClientSide() || this.isRemoved()) {
+            return;
         }
-        return true;
+        if (!(source instanceof IndirectEntityDamageSource)) {
+            return;
+        }
+        Entity sourceEntity = source.getEntity();
+        if (sourceEntity instanceof Player player) {
+            this.setHurtDir(-1);
+            this.setHurtTime(10);
+            this.markHurt();
+            this.setDamage(10);
+            double dis = this.position().distanceTo(sourceEntity.position());
+            player.displayClientMessage(new TranslatableComponent("message.tac.target_minecart.hit", String.format("%.1f", damage), String.format("%.2f", dis)), true);
+            level.playSound(null, this, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 0.8f, this.level.random.nextFloat() * 0.1F + 0.9F);
+        }
     }
 
     @Override

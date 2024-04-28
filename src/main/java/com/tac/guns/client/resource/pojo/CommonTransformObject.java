@@ -49,22 +49,22 @@ public class CommonTransformObject {
     }
 
     @Override
-    public boolean equals(Object other){
+    public boolean equals(Object other) {
         if (other instanceof CommonTransformObject object) {
             boolean flag1, flag2, flag3;
-            if(translation == null || object.translation == null) {
+            if (translation == null || object.translation == null) {
                 flag1 = translation == null && object.translation == null;
-            }else {
+            } else {
                 flag1 = translation.equals(object.translation);
             }
-            if(rotation == null || object.rotation == null) {
+            if (rotation == null || object.rotation == null) {
                 flag2 = rotation == null && object.rotation == null;
-            }else {
+            } else {
                 flag2 = rotation.equals(object.rotation);
             }
-            if(scale == null || object.scale == null) {
+            if (scale == null || object.scale == null) {
                 flag3 = scale == null && object.scale == null;
-            }else {
+            } else {
                 flag3 = scale.equals(object.scale);
             }
             return flag1 && flag2 && flag3;

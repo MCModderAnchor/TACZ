@@ -68,7 +68,6 @@
     "sounds": {
         "shoot": "tac:ak47/ak47_shoot",
         "shoot_3p": "tac:ak47/ak47_shoot_3p",
-        "dry_fire": "tac:ak47/ak47_dry_fire",
         "reload_empty": "tac:ak47/ak47_reload_empty",
         "reload_tactical": "tac:ak47/ak47_reload_tactical",
         "inspect": "tac:ak47/ak47_inspect",
@@ -76,6 +75,32 @@
         "draw": "tac:ak47/ak47_draw",
         "put_away": "tac:ak47/ak47_put_away",
         "silence": "tac:ak47/ak47_silence",
-        "silence_3p": "tac:ak47/ak47_silence_3p"
+        "silence_3p": "tac:ak47/ak47_silence_3p",
+        // 下面四个音效可以不写，模组会自动添加默认音效
+        "dry_fire": "tac:dry_fire",
+        "fire_select": "tac:fire_select",
+        "headshot": "tac:headshot",
+        "fleshshot": "tac:fleshshot"
+    },
+    // 副手枪械显示
+    "offhand_show": {
+        // 位置，和基岩版的数值显示一致
+        // 默认是 [0, 18, 3]
+        "pos": [0, 18, 1.5],
+        // 旋转，单位为角度，默认就是 [0, 0, 30]
+        "rotate": [0, 180, -30],
+        // 缩放，默认就是 [0.6, 0.6, 0.6]
+        "scale": [0.6, 0.6, 0.6]
+    },
+    // 快捷栏枪械显示
+    // 没有此字段，不显示快捷栏枪械
+    "hotbar_show": {
+        // 快捷栏索引，默认是 0-8，共九个，但是实际上除去主手，只能显示八个
+        // 没有的，则不会显示
+        "0": {
+            "pos": [0, 20, 4],
+            "rotate": [0, 0, -15],
+            "scale": [0.6, 0.6, 0.6]
+        }
     }
 }

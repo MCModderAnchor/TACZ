@@ -73,17 +73,15 @@ public class FirstPersonRenderGunEvent {
     private static final float JUMPING_Y_SWAY = -2f;
     private static final float JUMPING_SWAY_TIME = 0.3f;
     private static final float LANDING_SWAY_TIME = 0.15f;
-    private static float jumpingSwayProgress = 0;
-    private static boolean lastOnGround = false;
-    private static long jumpingTimeStamp = -1;
     // 用于枪械后座的程序动画
     private static final PerlinNoise SHOOT_X_SWAY_NOISE = new PerlinNoise(-0.2f, 0.2f, 400);
     private static final PerlinNoise SHOOT_Y_ROTATION_NOISE = new PerlinNoise(-0.0136f, 0.0136f, 100);
     private static final float SHOOT_Y_SWAY = -0.1f;
     private static final float SHOOT_ANIMATION_TIME = 0.3f;
+    private static float jumpingSwayProgress = 0;
+    private static boolean lastOnGround = false;
+    private static long jumpingTimeStamp = -1;
     private static long shootTimeStamp = -1;
-    // 抛壳队列
-    private static final ConcurrentLinkedDeque<Pair<Long, Vector3f>> SHELL_QUEUE = new ConcurrentLinkedDeque<>();
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {

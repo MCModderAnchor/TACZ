@@ -18,10 +18,8 @@ import com.tac.guns.duck.KeepingItemRenderer;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.*;
 import com.tac.guns.resource.index.CommonGunIndex;
-import com.tac.guns.resource.pojo.data.attachment.RecoilModifier;
 import com.tac.guns.resource.pojo.data.gun.Bolt;
 import com.tac.guns.resource.pojo.data.gun.GunData;
-import com.tac.guns.resource.pojo.data.gun.GunRecoil;
 import com.tac.guns.sound.SoundManager;
 import com.tac.guns.util.AttachmentDataUtils;
 import net.minecraft.client.Minecraft;
@@ -443,6 +441,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+            // 播放音效
+            SoundPlayManager.playFireSelectSound(player, gunIndex);
             // 发送切换开火模式的数据包，通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
             // 动画状态机转移状态

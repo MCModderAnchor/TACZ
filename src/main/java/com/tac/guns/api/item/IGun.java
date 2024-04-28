@@ -8,7 +8,6 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 public interface IGun {
     /**
@@ -71,6 +70,7 @@ public interface IGun {
 
     /**
      * 获取输入的等级需要至少多少的经验值。
+     *
      * @param level 等级
      * @return 至少需要的经验值
      */
@@ -78,6 +78,7 @@ public interface IGun {
 
     /**
      * 返回允许的最大等级。
+     *
      * @return 最大等级
      */
     int getMaxLevel();

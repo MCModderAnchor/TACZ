@@ -1,7 +1,6 @@
 package com.tac.guns.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import com.mojang.math.Vector3f;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.client.model.BedrockAmmoModel;
@@ -77,7 +76,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
                     // 自己打的曳光弹在第一人称的渲染委托给 FirstPersonRenderGunEvent
                     poseStack.popPose();
                     return;
-                }else {
+                } else {
                     width *= (float) Math.max(1.0, disToEye / 3.5);
                     poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
                     poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));

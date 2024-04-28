@@ -26,10 +26,10 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
     public static final String CAMERA_NODE_NAME = "camera";
     private static final String CONSTRAINT_NODE = "constraint";
     private final CameraAnimationObject cameraAnimationObject = new CameraAnimationObject();
-    @Nullable
-    private ConstraintObject constraintObject;
     // 动画约束组的路径
     protected @Nullable List<BedrockPart> constraintPath;
+    @Nullable
+    private ConstraintObject constraintObject;
 
     public BedrockAnimatedModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
@@ -51,11 +51,6 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
         }
     }
 
-    @Nullable
-    public List<BedrockPart> getConstraintPath() {
-        return constraintPath;
-    }
-
     private static void toQuaternion(float roll, float pitch, float yaw, @Nonnull Quaternion quaternion) {
         double cy = Math.cos(yaw * 0.5);
         double sy = Math.sin(yaw * 0.5);
@@ -70,6 +65,11 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                 (float) (sy * cp * cr - cy * sp * sr),
                 (float) (cy * cp * cr + sy * sp * sr)
         );
+    }
+
+    @Nullable
+    public List<BedrockPart> getConstraintPath() {
+        return constraintPath;
     }
 
     public void setVisible(String bone, boolean visible) {
@@ -156,7 +156,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
         }
 
         if (constraintObject != null) {
-            AnimationListener constraintListener =constraintObject.supplyListeners(nodeName, type);
+            AnimationListener constraintListener = constraintObject.supplyListeners(nodeName, type);
             if (constraintListener != null) {
                 return constraintListener;
             }
@@ -403,10 +403,12 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                             rotationConstraint.set((float) MathUtil.toDegreePositive(-angles[0]), (float) MathUtil.toDegreePositive(-angles[1]), (float) MathUtil.toDegreePositive(angles[2]));
                         }
                     }
+
                     @Override
                     public float[] recover() {
                         return new float[]{0, 0, 0, 1};
                     }
+
                     @Override
                     public ObjectAnimationChannel.ChannelType getType() {
                         return ObjectAnimationChannel.ChannelType.ROTATION;
@@ -421,32 +423,33 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                             if (blend) {
                                 translationConstraint.set(
                                         Math.max(translationConstraint.x(), -values[0] * 16 - bonesItem.getPivot().get(0)),
-                                        Math.max(translationConstraint.y(),  values[1] * 16 - bonesItem.getPivot().get(1)),
-                                        Math.max(translationConstraint.z(),  values[2] * 16 - bonesItem.getPivot().get(2))
+                                        Math.max(translationConstraint.y(), values[1] * 16 - bonesItem.getPivot().get(1)),
+                                        Math.max(translationConstraint.z(), values[2] * 16 - bonesItem.getPivot().get(2))
                                 );
                             } else {
                                 translationConstraint.set(
                                         -values[0] * 16 - bonesItem.getPivot().get(0),
-                                         values[1] * 16 - bonesItem.getPivot().get(1),
-                                         values[2] * 16 - bonesItem.getPivot().get(2)
+                                        values[1] * 16 - bonesItem.getPivot().get(1),
+                                        values[2] * 16 - bonesItem.getPivot().get(2)
                                 );
                             }
                         } else {
                             if (blend) {
                                 translationConstraint.set(
                                         Math.max(translationConstraint.x(), -values[0] * 16 - node.x),
-                                        Math.max(translationConstraint.y(),  values[1] * 16 + node.y),
-                                        Math.max(translationConstraint.z(),  values[2] * 16 - node.z)
+                                        Math.max(translationConstraint.y(), values[1] * 16 + node.y),
+                                        Math.max(translationConstraint.z(), values[2] * 16 - node.z)
                                 );
                             } else {
                                 translationConstraint.set(
                                         -values[0] * 16 - node.x,
-                                         values[1] * 16 + node.y,
-                                         values[2] * 16 - node.z
+                                        values[1] * 16 + node.y,
+                                        values[2] * 16 - node.z
                                 );
                             }
                         }
                     }
+
                     @Override
                     public float[] recover() {
                         float[] recover = new float[3];
@@ -457,10 +460,11 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
                         } else {
                             recover[0] = -node.x / 16f;
                             recover[1] = -node.y / 16f;
-                            recover[2] =  node.z / 16f;
+                            recover[2] = node.z / 16f;
                         }
                         return recover;
                     }
+
                     @Override
                     public ObjectAnimationChannel.ChannelType getType() {
                         return ObjectAnimationChannel.ChannelType.TRANSLATION;

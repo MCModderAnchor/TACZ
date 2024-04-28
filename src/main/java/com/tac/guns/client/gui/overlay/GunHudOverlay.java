@@ -57,7 +57,7 @@ public class GunHudOverlay {
             return;
         }
         // 当前枪械弹药数
-        int ammoCount = iGun.getCurrentAmmoCount(stack) + (iGun.hasBulletInBarrel(stack) && gunIndex.getGunData().getBolt() != Bolt.OPEN_BOLT? 1 : 0);
+        int ammoCount = iGun.getCurrentAmmoCount(stack) + (iGun.hasBulletInBarrel(stack) && gunIndex.getGunData().getBolt() != Bolt.OPEN_BOLT ? 1 : 0);
         int ammoCountColor;
         if (ammoCount < (cacheMaxAmmoCount * 0.25)) {
             // 红色

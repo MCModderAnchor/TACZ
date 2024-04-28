@@ -29,5 +29,10 @@
     "shoot_3p": "tac:ai_awp/awp_shoot_3p",
     "silence": "tac:ai_awp/awp_silence",
     "silence_3p": "tac:ai_awp/awp_silence_3p"
+  },
+  "offhand_show": {
+    "pos": [0, 18, 1.5],
+    "rotate": [0, 180, -50],
+    "scale": [1, 1, 1]
   }
 }

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 
-public class ModelRendererWrapper{
+public class ModelRendererWrapper {
     private final BedrockPart modelRenderer;
 
     public ModelRendererWrapper(BedrockPart modelRenderer) {

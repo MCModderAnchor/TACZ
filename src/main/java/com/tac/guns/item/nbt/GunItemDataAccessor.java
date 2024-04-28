@@ -43,7 +43,7 @@ public interface GunItemDataAccessor extends IGun {
         nbt.putString(GUN_ID_TAG, DefaultAssets.DEFAULT_GUN_ID.toString());
     }
 
-    default int getLevel(ItemStack gun){
+    default int getLevel(ItemStack gun) {
         CompoundTag nbt = gun.getOrCreateTag();
         if (nbt.contains(GUN_EXP_TAG, Tag.TAG_INT)) {
             return getLevel(nbt.getInt(GUN_EXP_TAG));
@@ -51,7 +51,7 @@ public interface GunItemDataAccessor extends IGun {
         return 0;
     }
 
-    default int getExp(ItemStack gun){
+    default int getExp(ItemStack gun) {
         CompoundTag nbt = gun.getOrCreateTag();
         if (nbt.contains(GUN_EXP_TAG, Tag.TAG_INT)) {
             return nbt.getInt(GUN_EXP_TAG);
@@ -59,7 +59,7 @@ public interface GunItemDataAccessor extends IGun {
         return 0;
     }
 
-    default int getExpToNextLevel(ItemStack gun){
+    default int getExpToNextLevel(ItemStack gun) {
         int exp = getExp(gun);
         int level = getLevel(exp);
         if (level >= getMaxLevel()) {
@@ -69,7 +69,7 @@ public interface GunItemDataAccessor extends IGun {
         return nextLevelExp - exp;
     }
 
-    default int getExpCurrentLevel(ItemStack gun){
+    default int getExpCurrentLevel(ItemStack gun) {
         int exp = getExp(gun);
         int level = getLevel(exp);
         if (level <= 0) {
