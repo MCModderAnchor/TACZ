@@ -58,16 +58,14 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [2, 2]},
-      {"time": 0.32, "value": [2, 2]},
-      {"time": 0.57, "value": [-0.5, -0.5]},
-      {"time": 0.82, "value": [0.25, 0.25]},
-      {"time": 1.17, "value": [0, 0]},
-      {"time": 1.47, "value": [0, 0]}
+      {"time": 0, "value": [0.325, 0.325]},
+      {"time": 0.3, "value": [0.325, 0.325]},
+      {"time": 0.5, "value": [-0.05, -0.05]},
+      {"time": 0.65, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.3, 0.3]},
-      {"time": 0.4, "value": [0, 0]}
+      {"time": 0, "value": [-0.15, 0.15]},
+      {"time": 0.3, "value": [0, 0]}
     ]
   },
   "inaccuracy": {
