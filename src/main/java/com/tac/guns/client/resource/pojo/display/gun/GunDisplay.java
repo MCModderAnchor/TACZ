@@ -44,6 +44,11 @@ public class GunDisplay {
     @Nullable
     @SerializedName("muzzle_flash")
     private MuzzleFlash muzzleFlash;
+    @SerializedName("offhand_show")
+    private LayerGunShow offhandShow = new LayerGunShow();
+    @Nullable
+    @SerializedName("hotbar_show")
+    private Map<String, LayerGunShow> hotbarShow = null;
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -106,5 +111,14 @@ public class GunDisplay {
     @Nullable
     public MuzzleFlash getMuzzleFlash() {
         return muzzleFlash;
+    }
+
+    public LayerGunShow getOffhandShow() {
+        return offhandShow;
+    }
+
+    @Nullable
+    public Map<String, LayerGunShow> getHotbarShow() {
+        return hotbarShow;
     }
 }

@@ -14,7 +14,6 @@ public interface ITargetEntity {
      * @param result     击中实体的位置
      * @param source     伤害源类型
      * @param damage     伤害值
-     * @return true, 如果实体被击中并且应该被移除, 否则应返回 false
      */
-    boolean onProjectileHit(Entity projectile, EntityHitResult result, DamageSource source, float damage);
+    void onProjectileHit(Entity projectile, EntityHitResult result, DamageSource source, float damage);
 }

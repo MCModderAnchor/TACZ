@@ -20,6 +20,7 @@ import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.resource.pojo.data.gun.GunData;
 import com.tac.guns.sound.SoundManager;
 import com.tac.guns.util.math.MathUtil;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -50,6 +51,8 @@ public class ClientGunIndex {
     private String type;
     private @Nullable ShellEjection shellEjection;
     private @Nullable MuzzleFlash muzzleFlash;
+    private LayerGunShow offhandShow;
+    private @Nullable Int2ObjectArrayMap<LayerGunShow> hotbarShow;
 
     private ClientGunIndex() {
     }
@@ -69,6 +72,7 @@ public class ClientGunIndex {
         checkTransform(display, index);
         checkShellEjection(display, index);
         checkMuzzleFlash(display, index);
+        checkLayerGunShow(display, index);
         return index;
     }
 
@@ -255,6 +259,25 @@ public class ClientGunIndex {
         }
     }
 
+    private static void checkLayerGunShow(GunDisplay display, ClientGunIndex index) {
+        index.offhandShow = display.getOffhandShow();
+        if (index.offhandShow == null) {
+            index.offhandShow = new LayerGunShow();
+        }
+        Map<String, LayerGunShow> show = display.getHotbarShow();
+        if (show == null || show.isEmpty()) {
+            return;
+        }
+        index.hotbarShow = new Int2ObjectArrayMap<>();
+        for (String key : show.keySet()) {
+            try {
+                index.hotbarShow.put(Integer.parseInt(key), show.get(key));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("index number is error: " + key);
+            }
+        }
+    }
+
     private static ObjectAnimation createAnimationCopy(ObjectAnimation prototype, BedrockModel model) {
         ObjectAnimation animation = new ObjectAnimation(prototype);
         for (Map.Entry<String, List<ObjectAnimationChannel>> entry : animation.getChannels().entrySet()) {
@@ -370,5 +393,14 @@ public class ClientGunIndex {
     @Nullable
     public MuzzleFlash getMuzzleFlash() {
         return muzzleFlash;
+    }
+
+    public LayerGunShow getOffhandShow() {
+        return offhandShow;
+    }
+
+    @Nullable
+    public Int2ObjectArrayMap<LayerGunShow> getHotbarShow() {
+        return hotbarShow;
     }
 }
