@@ -68,15 +68,8 @@ public class GunRecoil {
         }
         for (int i = 0; i < keyFrames.length; i++) {
             float[] value = keyFrames[i].getValue();
-            values[i + 1] = modifierNumber(value[0] + Math.random() * (value[1] - value[0]), modifier);
+            values[i + 1] = (value[0] + Math.random() * (value[1] - value[0])) * modifier;
         }
         return INTERPOLATOR.interpolate(times, values);
-    }
-
-    private double modifierNumber(double number, float modifier) {
-        if (modifier == 0) {
-            return number;
-        }
-        return number * Math.max(0, 1 + modifier);
     }
 }

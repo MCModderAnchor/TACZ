@@ -30,23 +30,17 @@
       "armor_ignore": 0.25,
       // 爆头伤害 x1.5
       "head_shot_multiplier": 1.5,
-      // 远距伤害
-      "decay": {
-        // 距离从 2% 到 40%
-        "range_percent": [
-          0.02,
-          0.4
-        ],
-        // 最小伤害 40%
-        "min_damage_multiplier": 0.4
-      },
-      // 抵近伤害
-      "close": {
-        // 范围 0.5 格内算抵近伤害
-        "range_meters": 0.5,
-        // 伤害倍率 110%
-        "damage_multiplier": 1.1
-      }
+      // 距离-伤害分段常函数
+      "damage_adjust": [
+        // 这样就能写抵近伤害了
+        {"distance": 0.5, "damage": 10},
+        {"distance": 5, "damage": 7.2},
+        {"distance": 10, "damage": 6},
+        {"distance": 30, "damage": 5},
+        {"distance": 50, "damage": 4},
+        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
+        {"distance": "infinite", "damage": 3},
+      ]
     },
     // 速度 m/s
     "speed": 240,
@@ -101,6 +95,7 @@
     // 半自动
     "semi"
   ],
+  // 后坐力
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.4, 0.4]},

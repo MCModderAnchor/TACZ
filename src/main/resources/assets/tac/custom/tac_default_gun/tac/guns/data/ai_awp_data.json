@@ -10,18 +10,7 @@
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.75,
-      "head_shot_multiplier": 2,
-      "decay": {
-        "range_percent": [
-          0.08,
-          0.4
-        ],
-        "min_damage_multiplier": 0.3
-      },
-      "close": {
-        "range_meters": 0.5,
-        "damage_multiplier": 1.2
-      }
+      "head_shot_multiplier": 2
     },
     "speed": 450,
     "gravity": 0.0245,

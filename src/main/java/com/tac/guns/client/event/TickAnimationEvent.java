@@ -5,6 +5,7 @@ import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
+import com.tac.guns.resource.pojo.data.gun.Bolt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -49,7 +50,8 @@ public class TickAnimationEvent {
                 } else {
                     animationStateMachine.onShooterIdle();
                 }
-                int ammoCount = iGun.getCurrentAmmoCount(mainhandItem);
+                Bolt boltType = gunIndex.getGunData().getBolt();
+                int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (iGun.hasBulletInBarrel(mainhandItem) && boltType != Bolt.OPEN_BOLT ? 1 : 0);
                 if (ammoCount < 1) {
                     animationStateMachine.onGunCatchBolt();
                 } else {
