@@ -36,7 +36,12 @@ public class KillAmountOverlay {
             return;
         }
 
-        String text = "\u2620 x 0" + killAmount;
+        String text;
+        if (killAmount < 10) {
+            text = "\u2620 x 0" + killAmount;
+        } else {
+            text = "\u2620 x " + killAmount;
+        }
         int fontWith = mc.font.width(text);
         double fadeOutTime = timeout / 3.0 * 2;
         float hue = (1 - Math.min((killAmount / colorCount), 1)) * 0.15f;
