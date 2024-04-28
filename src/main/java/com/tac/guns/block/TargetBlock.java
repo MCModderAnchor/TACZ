@@ -198,7 +198,10 @@ public class TargetBlock extends BaseEntityBlock {
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos blockpos = pos.below();
         BlockState blockstate = level.getBlockState(blockpos);
-        return state.getValue(HALF) == DoubleBlockHalf.LOWER ? blockstate.isFaceSturdy(level, blockpos, Direction.UP) : blockstate.is(this);
+        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
+            return true;
+        }
+        return blockstate.is(this);
     }
 
     @Override
