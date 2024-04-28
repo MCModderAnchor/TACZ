@@ -7,6 +7,7 @@ import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.client.model.bedrock.BedrockPart;
 import com.tac.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tac.guns.client.resource.pojo.model.BedrockVersion;
+import com.tac.guns.compat.oculus.OculusCompat;
 import com.tac.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -157,7 +158,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
         part.render(poseStack, transformType, vertexConsumer, light, overlay);
-        bufferSource.endBatch(renderType);
+        if (!OculusCompat.endBatch(bufferSource)) {
+            bufferSource.endBatch(renderType);
+        }
         part.visible = false;
         poseStack.popPose();
     }
