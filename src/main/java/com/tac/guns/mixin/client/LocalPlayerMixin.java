@@ -388,8 +388,12 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
                 Bolt boltType = gunIndex.getGunData().getBolt();
-                boolean needBolt = boltType == Bolt.CLOSED_BOLT || boltType == Bolt.MANUAL_ACTION;
-                boolean noAmmo = needBolt && !iGun.hasBulletInBarrel(mainhandItem);
+                boolean noAmmo;
+                if (boltType == Bolt.OPEN_BOLT) {
+                    noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
+                } else {
+                    noAmmo = !iGun.hasBulletInBarrel(mainhandItem);
+                }
                 // 触发 reload，停止播放声音
                 SoundPlayManager.stopPlayGunSound();
                 SoundPlayManager.playReloadSound(player, gunIndex, noAmmo);
@@ -413,7 +417,13 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            boolean noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
+            Bolt boltType = gunIndex.getGunData().getBolt();
+            boolean noAmmo;
+            if (boltType == Bolt.OPEN_BOLT) {
+                noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
+            } else {
+                noAmmo = !iGun.hasBulletInBarrel(mainhandItem);
+            }
             // 触发 inspect，停止播放声音
             SoundPlayManager.stopPlayGunSound();
             SoundPlayManager.playInspectSound(player, gunIndex, noAmmo);
