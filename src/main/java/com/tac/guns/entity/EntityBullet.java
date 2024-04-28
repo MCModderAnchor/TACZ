@@ -453,53 +453,21 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         if (this.extraDamage == null) {
             return Math.max(0F, this.damageAmount);
         }
-        // 有？那就正常计算
-        float initialDamage = this.damageAmount;
-        double maxDistance = this.speed * (1 - Math.pow(1 - this.friction, this.life)) / this.friction;
-        double playerDistance = hitVec.distanceTo(this.startPos);
-        // 伤害衰减计算逻辑（包含贴脸加伤）
-        float modifier;
-        ExtraDamage.Close damageClose = extraDamage.getClose();
-        ExtraDamage.Decay damageDecay = extraDamage.getDecay();
-        // 以防万一检查一下
-        if (damageClose == null || damageDecay == null) {
+        // 调用距离伤害函数进行具体伤害计算
+        var damageDecay = extraDamage.getDamageAdjust();
+        // 距离伤害函数为空，直接全程默认伤害
+        if (damageDecay == null || damageDecay.isEmpty()) {
             return Math.max(0F, this.damageAmount);
         }
-        // 抵近伤害的判断
-        if (playerDistance <= damageClose.getRangeMeters()) {
-            modifier = Math.max(damageClose.getDamageMultiplier(), 1);
-        }
-        // 远距伤害的判断
-        else {
-            float[] rangePercent = damageDecay.getRangePercent();
-            // 以防万一检查一下
-            if (rangePercent.length < 2) {
-                return Math.max(0F, this.damageAmount);
-            }
-            // 数据检查
-            float decayStartDistance;
-            float decayEndDistance;
-            float minDecayMultiplier;
-            if (rangePercent[0] > rangePercent[1] && damageDecay.getMinDamageMultiplier() > 1f) {
-                decayStartDistance = (float) (Mth.clamp(rangePercent[1], 0f, 1f) * maxDistance);
-                decayEndDistance = (float) (Mth.clamp(rangePercent[0], 0f, 1f) * maxDistance);
-                minDecayMultiplier = damageDecay.getMinDamageMultiplier();
-            } else {
-                decayStartDistance = (float) (Mth.clamp(rangePercent[0], 0f, 1f) * maxDistance);
-                decayEndDistance = (float) (Mth.clamp(rangePercent[1], 0f, 1f) * maxDistance);
-                minDecayMultiplier = Mth.clamp(damageDecay.getMinDamageMultiplier(), 0f, 1f);
-            }
-            // 判断伤害
-            if (decayStartDistance == decayEndDistance) {
-                modifier = playerDistance > decayEndDistance ? minDecayMultiplier : 1f;
-            } else {
-                double value = (playerDistance - decayEndDistance) * (1 - minDecayMultiplier) / (decayStartDistance - decayEndDistance) + minDecayMultiplier;
-                modifier = (float) Mth.clamp(value, Math.min(minDecayMultiplier, 1f), Math.max(minDecayMultiplier, 1f));
+        // 遍历进行判断
+        double playerDistance = hitVec.distanceTo(this.startPos);
+        for (ExtraDamage.DistanceDamagePair pair : damageDecay) {
+            if (playerDistance < pair.getDistance()) {
+                return Math.max(0F, pair.getDamage());
             }
         }
-        initialDamage *= modifier;
-        float damage = initialDamage;
-        return Math.max(0F, damage);
+        // 如果忘记写最大值，那我就直接认为你伤害为 0
+        return 0;
     }
 
     private void tacAttackEntity(DamageSource source, Entity entity, float damage) {

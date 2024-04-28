@@ -9,18 +9,7 @@
     "damage": 20,
     "extra_damage": {
       "armor_ignore": 0,
-      "head_shot_multiplier": 1,
-      "decay": {
-        "range_percent": [
-          0.5,
-          1
-        ],
-        "min_damage_multiplier": 1
-      },
-      "close": {
-        "range_meters": 0,
-        "damage_multiplier": 1
-      }
+      "head_shot_multiplier": 1
     },
     "speed": 80,
     "gravity": 0.0245,

@@ -1,6 +1,9 @@
 package com.tac.guns.resource.pojo.data.gun;
 
+import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.LinkedList;
 
 public class ExtraDamage {
     @SerializedName("armor_ignore")
@@ -9,11 +12,8 @@ public class ExtraDamage {
     @SerializedName("head_shot_multiplier")
     private float headShotMultiplier = 1f;
 
-    @SerializedName("decay")
-    private Decay decay = new Decay();
-
-    @SerializedName("close")
-    private Close close = new Close();
+    @SerializedName("damage_adjust")
+    private LinkedList<DistanceDamagePair> damageAdjust = Lists.newLinkedList();
 
     public float getArmorIgnore() {
         return armorIgnore;
@@ -23,43 +23,28 @@ public class ExtraDamage {
         return headShotMultiplier;
     }
 
-    public Decay getDecay() {
-        return decay;
+    public LinkedList<DistanceDamagePair> getDamageAdjust() {
+        return damageAdjust;
     }
 
-    public Close getClose() {
-        return close;
-    }
+    public static class DistanceDamagePair {
+        @SerializedName("distance")
+        private float distance;
 
-    public static class Decay {
-        @SerializedName("range_percent")
-        private float[] rangePercent = new float[]{0, 1};
+        @SerializedName("damage")
+        private float damage;
 
-        @SerializedName("min_damage_multiplier")
-        private float minDamageMultiplier = 1.0f;
-
-        public float[] getRangePercent() {
-            return rangePercent;
+        public DistanceDamagePair(float distance, float damage) {
+            this.distance = distance;
+            this.damage = damage;
         }
 
-        public float getMinDamageMultiplier() {
-            return minDamageMultiplier;
-        }
-    }
-
-    public static class Close {
-        @SerializedName("range_meters")
-        private float rangeMeters = 0f;
-
-        @SerializedName("damage_multiplier")
-        private float damageMultiplier = 1.0f;
-
-        public float getRangeMeters() {
-            return rangeMeters;
+        public float getDistance() {
+            return distance;
         }
 
-        public float getDamageMultiplier() {
-            return damageMultiplier;
+        public float getDamage() {
+            return damage;
         }
     }
 }
