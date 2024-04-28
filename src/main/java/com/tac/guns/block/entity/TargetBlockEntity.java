@@ -34,18 +34,26 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
     public float oRot = 0;
     private @Nullable GameProfile owner;
     private @Nullable Component name;
-
     public TargetBlockEntity(BlockPos pos, BlockState blockState) {
         super(TYPE, pos, blockState);
     }
 
-    public void setOwner(@Nullable GameProfile owner) {
-        this.owner = owner;
+    public static void clientTick(Level level, BlockPos pos, BlockState state, TargetBlockEntity pBlockEntity) {
+        pBlockEntity.oRot = pBlockEntity.rot;
+        if (state.getValue(STAND)) {
+            pBlockEntity.rot = Math.max(pBlockEntity.rot - 18, 0);
+        } else {
+            pBlockEntity.rot = Math.min(pBlockEntity.rot + 45, 90);
+        }
     }
 
     @Nullable
     public GameProfile getOwner() {
         return owner;
+    }
+
+    public void setOwner(@Nullable GameProfile owner) {
+        this.owner = owner;
     }
 
     @Override
@@ -70,10 +78,6 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
         }
     }
 
-    public void setCustomName(Component name) {
-        this.name = name;
-    }
-
     @Override
     public Component getName() {
         return this.name != null ? this.name : TextComponent.EMPTY;
@@ -83,6 +87,10 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
     @Override
     public Component getCustomName() {
         return this.name;
+    }
+
+    public void setCustomName(Component name) {
+        this.name = name;
     }
 
     @Override
@@ -120,15 +128,6 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
             level.setBlock(blockPos, state.setValue(STAND, false).setValue(OUTPUT_POWER, redstoneStrength), Block.UPDATE_ALL);
             level.scheduleTick(blockPos, state.getBlock(), 100);
             level.playSound(null, blockPos, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 0.8f, this.level.random.nextFloat() * 0.1F + 0.9F);
-        }
-    }
-
-    public static void clientTick(Level level, BlockPos pos, BlockState state, TargetBlockEntity pBlockEntity) {
-        pBlockEntity.oRot = pBlockEntity.rot;
-        if (state.getValue(STAND)) {
-            pBlockEntity.rot = Math.max(pBlockEntity.rot - 18, 0);
-        } else {
-            pBlockEntity.rot = Math.min(pBlockEntity.rot + 45, 90);
         }
     }
 }

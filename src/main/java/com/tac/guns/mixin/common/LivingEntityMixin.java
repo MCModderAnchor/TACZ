@@ -852,7 +852,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     }
 
     @Inject(method = "die", at = @At("RETURN"))
-    public void onDie(DamageSource pDamageSource, CallbackInfo ci){
+    public void onDie(DamageSource pDamageSource, CallbackInfo ci) {
         // 重置各个状态
         initialData();
     }

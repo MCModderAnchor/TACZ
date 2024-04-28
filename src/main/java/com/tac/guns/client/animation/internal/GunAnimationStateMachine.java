@@ -16,16 +16,6 @@ import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public class GunAnimationStateMachine {
-    protected static final Set<Integer> blendingTracks = Sets.newHashSet();
-    protected static int trackIndexTop = 0;
-    // 射击轨道 12 个，支持 0.5 秒的射击动画在 rpm 1200 以内播放
-    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
-                                                 blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
-                                                 blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
-    public static final int MOVEMENT_TRACK = blendingTrack();
-    public static final int MAIN_TRACK = staticTrack();
-    public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
-    public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
     public static final String STATIC_BOLT_CAUGHT_ANIMATION = "static_bolt_caught";
     public static final String STATIC_IDLE_ANIMATION = "static_idle";
     public static final String SHOOT_ANIMATION = "shoot";
@@ -45,6 +35,18 @@ public class GunAnimationStateMachine {
     public static final String WALK_SIDEWAY_ANIMATION = "walk_sideway";
     public static final String WALK_BACKWARD_ANIMATION = "walk_backward";
     public static final String WALK_AIMING_ANIMATION = "walk_aiming";
+
+    protected static final Set<Integer> blendingTracks = Sets.newHashSet();
+    protected static int trackIndexTop = 0;
+    // 射击轨道 12 个，支持 0.5 秒的射击动画在 rpm 1200 以内播放
+    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
+            blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
+            blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
+    public static final int MOVEMENT_TRACK = blendingTrack();
+    public static final int MAIN_TRACK = staticTrack();
+    public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
+    public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
+
     protected AnimationController controller;
     protected boolean noAmmo = false;
     protected boolean onGround = true;
@@ -78,7 +80,7 @@ public class GunAnimationStateMachine {
         if (isPlayingInspectAnimation()) {
             controller.removeAnimation(MAIN_TRACK);
         }
-        for(int track : SHOOTING_TRACKS) {
+        for (int track : SHOOTING_TRACKS) {
             if (tryRunShootAnimation(track)) {
                 return;
             }
@@ -105,7 +107,7 @@ public class GunAnimationStateMachine {
     }
 
     public void onShooterRun(float walkDist) {
-        if(isPlayingRunIntroOrLoop()) {
+        if (isPlayingRunIntroOrLoop()) {
             if (!onGround && !isPlayingRunHold()) {
                 controller.runAnimation(MOVEMENT_TRACK, RUN_HOLD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.6f);
                 isWalkAiming = false;
@@ -322,6 +324,7 @@ public class GunAnimationStateMachine {
     public boolean isPlayingRunAnimation() {
         return isPlayingAnimation(MOVEMENT_TRACK, RUN_START_ANIMATION, RUN_LOOP_ANIMATION, RUN_HOLD_ANIMATION, RUN_END_ANIMATION);
     }
+
     public boolean isPlayingRunIntroOrLoop() {
         return isPlayingAnimation(MOVEMENT_TRACK, RUN_LOOP_ANIMATION, RUN_START_ANIMATION);
     }
@@ -410,7 +413,7 @@ public class GunAnimationStateMachine {
         BACKWARD,
         NONE;
 
-        public static WalkDirection fromInput(Input input){
+        public static WalkDirection fromInput(Input input) {
             if (input.up) {
                 return FORWARD;
             }

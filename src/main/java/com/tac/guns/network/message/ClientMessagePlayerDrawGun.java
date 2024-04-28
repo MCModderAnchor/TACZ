@@ -8,8 +8,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ClientMessagePlayerDrawGun {;
-
+public class ClientMessagePlayerDrawGun {
     public ClientMessagePlayerDrawGun() {
     }
 

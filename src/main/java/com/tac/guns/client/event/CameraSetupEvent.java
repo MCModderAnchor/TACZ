@@ -1,7 +1,6 @@
 package com.tac.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import com.mojang.math.Quaternion;
 import com.tac.guns.GunMod;
 import com.tac.guns.api.TimelessAPI;
@@ -11,7 +10,6 @@ import com.tac.guns.api.client.event.FieldOfView;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.event.common.GunShootEvent;
-import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.model.BedrockGunModel;
@@ -46,6 +44,7 @@ public class CameraSetupEvent {
     private static double xRotO = 0;
     private static double yRot0 = 0;
     private static BedrockGunModel lastModel = null;
+
     @SubscribeEvent
     public static void applyLevelCameraAnimation(EntityViewRenderEvent.CameraSetup event) {
         if (!Minecraft.getInstance().options.bobView) {

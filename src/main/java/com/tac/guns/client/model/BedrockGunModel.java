@@ -58,6 +58,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String ROOT_NODE = "root";
     protected final @Nonnull EnumMap<AttachmentType, List<BedrockPart>> refitAttachmentViewPath = Maps.newEnumMap(AttachmentType.class);
     private final EnumMap<AttachmentType, ItemStack> currentAttachmentItem = Maps.newEnumMap(AttachmentType.class);
+    private final Set<String> adapterToRender = new HashSet<>();
     // 第一人称机瞄摄像机定位组的路径
     protected @Nullable List<BedrockPart> ironSightPath;
     // 第一人称idle状态摄像机定位组的路径
@@ -77,7 +78,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private boolean renderHand = true;
     private ItemStack currentGunItem;
     private int currentExtendMagLevel = 0;
-    private final Set<String> adapterToRender = new HashSet<>();
 
     public BedrockGunModel(BedrockModelPOJO pojo, BedrockVersion version) {
         super(pojo, version);
@@ -193,7 +193,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         this.setFunctionalRenderer(MAG_EXTENDED_1, bedrockPart -> getExtendedMagLevel(bedrockPart, 1));
         this.setFunctionalRenderer(MAG_EXTENDED_2, bedrockPart -> getExtendedMagLevel(bedrockPart, 2));
         this.setFunctionalRenderer(MAG_EXTENDED_3, bedrockPart -> getExtendedMagLevel(bedrockPart, 3));
-        this.setFunctionalRenderer(MAG_STANDARD, bedrockPart ->  getExtendedMagLevel(bedrockPart, 0));
+        this.setFunctionalRenderer(MAG_STANDARD, bedrockPart -> getExtendedMagLevel(bedrockPart, 0));
         this.setFunctionalRenderer(MAG_ADDITIONAL_NODE, bedrockPart -> (poseStack, vertexBuffer, transformType, light, overlay) -> {
             if (bedrockPart.visible) {
                 bedrockPart.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
@@ -404,10 +404,12 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                         additionalMagazineNode.visible = true;
                     }
                 }
+
                 @Override
                 public float[] recover() {
                     return listener.recover();
                 }
+
                 @Override
                 public ObjectAnimationChannel.ChannelType getType() {
                     return listener.getType();

@@ -14,6 +14,7 @@ public class CommonComponents {
     public static final String MOUNT = "mount";
     public static final String SIGHT = "sight";
     public static final String SIGHT_FOLDED = "sight_folded";
+
     private CommonComponents() {
     }
 }

@@ -1,19 +1,17 @@
 package com.tac.guns.resource.pojo.data.gun;
 
 import com.google.gson.annotations.SerializedName;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import javax.annotation.Nullable;
 
 public class GunRecoil {
-    private static final SplineInterpolator interpolator = new SplineInterpolator();
+    private static final SplineInterpolator INTERPOLATOR = new SplineInterpolator();
 
     @SerializedName("pitch")
     @Nullable
     private GunRecoilKeyFrame[] pitch;
-
 
     @SerializedName("yaw")
     @Nullable
@@ -23,12 +21,12 @@ public class GunRecoil {
         return pitch;
     }
 
-    public GunRecoilKeyFrame[] getYaw() {
-        return yaw;
-    }
-
     public void setPitch(@Nullable GunRecoilKeyFrame[] pitch) {
         this.pitch = pitch;
+    }
+
+    public GunRecoilKeyFrame[] getYaw() {
+        return yaw;
     }
 
     public void setYaw(@Nullable GunRecoilKeyFrame[] yaw) {
@@ -37,21 +35,23 @@ public class GunRecoil {
 
     /**
      * 返回经过随机取值、缩放后摄像机垂直后坐力的样条插值函数。
+     *
      * @param modifier 配件对后坐力的修改
      * @return 样条插值函数
      */
     @Nullable
-    public PolynomialSplineFunction genPitchSplineFunction(float modifier){
+    public PolynomialSplineFunction genPitchSplineFunction(float modifier) {
         return getSplineFunction(pitch, modifier);
     }
 
     /**
      * 返回经过随机取值、缩放后摄像机水平后坐力的样条插值函数。
+     *
      * @param modifier 配件对后坐力的修改
      * @return 样条插值函数
      */
     @Nullable
-    public PolynomialSplineFunction genYawSplineFunction(float modifier){
+    public PolynomialSplineFunction genYawSplineFunction(float modifier) {
         return getSplineFunction(yaw, modifier);
     }
 
@@ -70,7 +70,7 @@ public class GunRecoil {
             float[] value = keyFrames[i].getValue();
             values[i + 1] = modifierNumber(value[0] + Math.random() * (value[1] - value[0]), modifier);
         }
-        return interpolator.interpolate(times, values);
+        return INTERPOLATOR.interpolate(times, values);
     }
 
     private double modifierNumber(double number, float modifier) {

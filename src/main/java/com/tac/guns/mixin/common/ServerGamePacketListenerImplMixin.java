@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ServerGamePacketListenerImpl.class)
 public class ServerGamePacketListenerImplMixin {
     @Redirect(method = "handlePlayerCommand", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setSprinting(Z)V"))
-    public void cancelSprintCommand(ServerPlayer player, boolean sprint){
+    public void cancelSprintCommand(ServerPlayer player, boolean sprint) {
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
         boolean isAiming = gunOperator.getSynIsAiming();
         ReloadState.StateType reloadStateType = gunOperator.getSynReloadState().getStateType();

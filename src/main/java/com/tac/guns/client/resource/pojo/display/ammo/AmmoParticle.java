@@ -45,12 +45,12 @@ public class AmmoParticle {
         return lifeTime;
     }
 
-    public void setParticleOptions(ParticleOptions particleOptions) {
-        this.particleOptions = particleOptions;
-    }
-
     @Nullable
     public ParticleOptions getParticleOptions() {
         return particleOptions;
+    }
+
+    public void setParticleOptions(ParticleOptions particleOptions) {
+        this.particleOptions = particleOptions;
     }
 }

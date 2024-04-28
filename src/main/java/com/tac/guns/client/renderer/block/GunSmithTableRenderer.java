@@ -2,7 +2,6 @@ package com.tac.guns.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import com.tac.guns.GunMod;
 import com.tac.guns.block.GunSmithTableBlock;
 import com.tac.guns.block.entity.GunSmithTableBlockEntity;
 import com.tac.guns.client.model.bedrock.BedrockModel;
@@ -20,7 +19,6 @@ import net.minecraft.world.level.block.state.properties.BedPart;
 import java.util.Optional;
 
 public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableBlockEntity> {
-
     public GunSmithTableRenderer(BlockEntityRendererProvider.Context context) {
     }
 

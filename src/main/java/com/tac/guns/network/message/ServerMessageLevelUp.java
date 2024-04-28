@@ -19,14 +19,6 @@ public class ServerMessageLevelUp {
         this.level = level;
     }
 
-    public ItemStack getGun() {
-        return this.gun;
-    }
-
-    public int getLevel() {
-        return this.level;
-    }
-
     public static void encode(ServerMessageLevelUp message, FriendlyByteBuf buf) {
         buf.writeItemStack(message.gun, true);
         buf.writeInt(message.level);
@@ -69,5 +61,13 @@ public class ServerMessageLevelUp {
                             new TranslatableComponent("toast.tac.level_up"),
                             new TranslatableComponent("toast.tac.sub.level_up")));
                 }*/
+    }
+
+    public ItemStack getGun() {
+        return this.gun;
+    }
+
+    public int getLevel() {
+        return this.level;
     }
 }
