@@ -6,7 +6,7 @@
 				"identifier": "geometry.ai_awp_json - Converted",
 				"texture_width": 128,
 				"texture_height": 128,
-				"visible_bounds_width": 5,
+				"visible_bounds_width": 7,
 				"visible_bounds_height": 6,
 				"visible_bounds_offset": [0, 1, 0]
 			},
@@ -4551,13 +4551,13 @@
 					]
 				},
 				{
-					"name": "bullet_in_barrel",
+					"name": "bullet",
 					"parent": "AWP_body",
 					"pivot": [0, 7.79688, -1.25]
 				},
 				{
 					"name": "bullet_shell",
-					"parent": "bullet_in_barrel",
+					"parent": "bullet",
 					"pivot": [0.0202, 7.54182, -1.43125],
 					"cubes": [
 						{
@@ -4654,8 +4654,8 @@
 					]
 				},
 				{
-					"name": "bullet_head",
-					"parent": "bullet_in_barrel",
+					"name": "bullet_in_barrel",
+					"parent": "bullet",
 					"pivot": [0, 7.79688, -1.25],
 					"cubes": [
 						{
