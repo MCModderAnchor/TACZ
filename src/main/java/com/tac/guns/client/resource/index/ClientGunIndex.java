@@ -2,6 +2,7 @@ package com.tac.guns.client.resource.index;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.tac.guns.GunMod;
 import com.tac.guns.client.animation.*;
 import com.tac.guns.client.animation.gltf.AnimationStructure;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
@@ -17,6 +18,7 @@ import com.tac.guns.resource.CommonAssetManager;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.pojo.GunIndexPOJO;
 import com.tac.guns.resource.pojo.data.gun.GunData;
+import com.tac.guns.sound.SoundManager;
 import com.tac.guns.util.math.MathUtil;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
@@ -214,6 +216,11 @@ public class ClientGunIndex {
         if (soundMaps == null || soundMaps.isEmpty()) {
             return;
         }
+        // 部分音效为默认音效，不存在则需要添加默认音效
+        soundMaps.putIfAbsent(SoundManager.DRY_FIRE_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.DRY_FIRE_SOUND));
+        soundMaps.putIfAbsent(SoundManager.FIRE_SELECT, new ResourceLocation(GunMod.MOD_ID, SoundManager.FIRE_SELECT));
+        soundMaps.putIfAbsent(SoundManager.HEADSHOT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.HEADSHOT_SOUND));
+        soundMaps.putIfAbsent(SoundManager.FLESHSHOT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.FLESHSHOT_SOUND));
         index.sounds.putAll(soundMaps);
     }
 

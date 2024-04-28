@@ -441,6 +441,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+            // 播放音效
+            SoundPlayManager.playFireSelectSound(player, gunIndex);
             // 发送切换开火模式的数据包，通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
             // 动画状态机转移状态

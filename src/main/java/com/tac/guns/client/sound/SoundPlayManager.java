@@ -56,7 +56,7 @@ public class SoundPlayManager {
 
     public static void playDryFireSound(LivingEntity entity, ClientGunIndex gunIndex) {
         if (DRY_SOUND_TRACK) {
-            playClientSound(entity, gunIndex.getSounds(SoundManager.DRY_FIRE_SOUND), 1.0f, 1.0f);
+            playClientSound(entity, gunIndex.getSounds(SoundManager.DRY_FIRE_SOUND), 1.0f, 0.9f + entity.getRandom().nextFloat() * 0.125f);
             DRY_SOUND_TRACK = false;
         }
     }
@@ -94,6 +94,18 @@ public class SoundPlayManager {
 
     public static void playPutAwaySound(LivingEntity entity, ClientGunIndex gunIndex) {
         tmpSoundInstance = playClientSound(entity, gunIndex.getSounds(SoundManager.PUT_AWAY_SOUND), 1.0f, 1.0f);
+    }
+
+    public static void playFireSelectSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.FIRE_SELECT), 1.0f, 1.0f);
+    }
+
+    public static void playHeadshotSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.HEADSHOT_SOUND), 1.0f, 1.0f);
+    }
+
+    public static void playFleshshotSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.FLESHSHOT_SOUND), 1.0f, 1.0f);
     }
 
     public static void playMessageSound(ServerMessageSound message) {

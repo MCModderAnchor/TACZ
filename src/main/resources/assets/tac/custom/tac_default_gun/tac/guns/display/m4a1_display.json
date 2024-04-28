@@ -39,7 +39,6 @@
     "sounds": {
         "shoot": "tac:m4a1/m4a1_shoot",
         "shoot_3p": "tac:m4a1/m4a1_shoot_3p",
-        "dry_fire": "tac:dry_fire",
         "reload_empty": "tac:m4a1/m4a1_reload_empty",
         "reload_tactical": "tac:m4a1/m4a1_reload_tactical",
         "inspect": "tac:m4a1/m4a1_inspect",

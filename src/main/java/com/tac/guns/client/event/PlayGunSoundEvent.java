@@ -14,7 +14,7 @@ public class PlayGunSoundEvent {
         if (event.getSound() instanceof GunSoundInstance instance) {
             SoundBuffer soundBuffer = instance.getSoundBuffer();
             if (soundBuffer != null) {
-                event.getChannel().attachStaticBuffer(instance.getSoundBuffer());
+                event.getChannel().attachStaticBuffer(soundBuffer);
                 event.getChannel().play();
             }
         }
