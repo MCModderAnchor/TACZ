@@ -28,7 +28,8 @@
     "shoot": "tac:ai_awp/awp_shoot",
     "shoot_3p": "tac:ai_awp/awp_shoot_3p",
     "silence": "tac:ai_awp/awp_silence",
-    "silence_3p": "tac:ai_awp/awp_silence_3p"
+    "silence_3p": "tac:ai_awp/awp_silence_3p",
+    "bolt": "tac:ai_awp/awp_bolt"
   },
   "offhand_show": {
     "pos": [0, 18, 1.5],

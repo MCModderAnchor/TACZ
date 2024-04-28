@@ -143,8 +143,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             // 弹药数大于 1 时渲染
             IGun iGun = IGun.getIGunOrNull(currentGunItem);
             if (iGun != null) {
-                int ammoCount = iGun.getCurrentAmmoCount(currentGunItem);
-                bedrockPart.visible = ammoCount > 0;
+                bedrockPart.visible = iGun.hasBulletInBarrel(currentGunItem);
             }
             return null;
         });
@@ -153,7 +152,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             IGun iGun = IGun.getIGunOrNull(currentGunItem);
             if (iGun != null) {
                 int ammoCount = iGun.getCurrentAmmoCount(currentGunItem);
-                bedrockPart.visible = ammoCount > 1;
+                bedrockPart.visible = ammoCount > 0;
             }
             return null;
         });
