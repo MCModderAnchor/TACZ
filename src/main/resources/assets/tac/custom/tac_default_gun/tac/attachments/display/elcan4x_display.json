@@ -1,0 +1,11 @@
+{
+  "slot": "tac:attachment/slot/elcan4x",
+  "model": "tac:attachment/elcan4x",
+  "texture": "tac:attachment/uv/elcan4x",
+  "zoom": [
+    1.3,
+    4.0
+  ],
+  "scope": true,
+  "fov": 70.0
+}
