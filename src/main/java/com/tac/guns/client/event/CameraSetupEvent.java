@@ -50,6 +50,10 @@ public class CameraSetupEvent {
         if (!Minecraft.getInstance().options.bobView) {
             return;
         }
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
         ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
@@ -57,10 +61,16 @@ public class CameraSetupEvent {
         TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             if (lastModel != gunModel) {
+                // 切换枪械模型的时候清理一下摄像机动画数据，以避免上一次播放到一半的摄像机动画影响观感。
                 gunModel.cleanCameraAnimationTransform();
                 lastModel = gunModel;
             }
-            Quaternion q = gunModel.getCameraAnimationObject().rotationQuaternion;
+            IClientPlayerGunOperator clientPlayerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
+            float partialTicks = Minecraft.getInstance().getFrameTime();
+            float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
+            float zoom = IGun.getAimingZoom(stack);
+            float multiplier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
+            Quaternion q = MathUtil.multiplyQuaternion(gunModel.getCameraAnimationObject().rotationQuaternion, multiplier);
             double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
             double pitch = Math.atan2(2 * (q.r() * q.i() + q.j() * q.k()), 1 - 2 * (q.i() * q.i() + q.j() * q.j()));
             double roll = Math.atan2(2 * (q.r() * q.k() + q.i() * q.j()), 1 - 2 * (q.j() * q.j() + q.k() * q.k()));
@@ -78,6 +88,10 @@ public class CameraSetupEvent {
         if (!Minecraft.getInstance().options.bobView) {
             return;
         }
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
         ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
@@ -85,7 +99,13 @@ public class CameraSetupEvent {
         TimelessAPI.getClientGunIndex(iGun.getGunId(stack)).ifPresent(gunIndex -> {
             BedrockGunModel gunModel = gunIndex.getGunModel();
             PoseStack poseStack = event.getPoseStack();
-            poseStack.mulPose(gunModel.getCameraAnimationObject().rotationQuaternion);
+            IClientPlayerGunOperator clientPlayerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
+            float partialTicks = Minecraft.getInstance().getFrameTime();
+            float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
+            float zoom = IGun.getAimingZoom(stack);
+            float multiplier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
+            Quaternion quaternion = MathUtil.multiplyQuaternion(gunModel.getCameraAnimationObject().rotationQuaternion, multiplier);
+            poseStack.mulPose(quaternion);
             // 截至目前，摄像机动画数据已消费完毕。是否有更好的清理动画数据的方法？
             gunModel.cleanCameraAnimationTransform();
         });
@@ -159,8 +179,13 @@ public class CameraSetupEvent {
                 attachmentRecoilModifier[0] += recoilModifier.getPitch();
                 attachmentRecoilModifier[1] += recoilModifier.getYaw();
             });
-            pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction(attachmentRecoilModifier[0]);
-            yawSplineFunction = gunData.getRecoil().genYawSplineFunction(attachmentRecoilModifier[1]);
+            IClientPlayerGunOperator clientPlayerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
+            float partialTicks = Minecraft.getInstance().getFrameTime();
+            float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
+            float zoom = IGun.getAimingZoom(mainhandItem);
+            float aimingRecoilModifier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
+            pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction(modifierNumber(attachmentRecoilModifier[0]) * aimingRecoilModifier);
+            yawSplineFunction = gunData.getRecoil().genYawSplineFunction(modifierNumber(attachmentRecoilModifier[1]) * aimingRecoilModifier);
             shootTimeStamp = System.currentTimeMillis();
             xRotO = 0;
         }
@@ -183,5 +208,9 @@ public class CameraSetupEvent {
             player.setYRot(player.getYRot() - (float) (value - yRot0));
             yRot0 = value;
         }
+    }
+
+    private static float modifierNumber(float modifier) {
+        return Math.max(0, 1 + modifier);
     }
 }

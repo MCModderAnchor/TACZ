@@ -5,6 +5,7 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class MathUtil {
     public static final float[] QUATERNION_ONE = {0, 0, 0, 1};
@@ -321,6 +322,28 @@ public class MathUtil {
         // 应用位移和旋转
         resultMatrix.translate(new Vector3f(translation.x(), translation.y(), translation.z()));
         resultMatrix.multiply(qLerped);
+    }
+
+    public static Pair<Float, Vector3f> getAngleAndAxis(Quaternion quaternion){
+        double angle = 2 * Math.acos(quaternion.r());
+        double sin = Math.sin(angle / 2);
+        // 旋转角为 0 或者 2*PI，旋转结果与旋转轴无关
+        if (sin == 0) {
+            return Pair.of(0f, new Vector3f(0, 0, 0));
+        }
+        Vector3f axis = new Vector3f(quaternion.i(), quaternion.j(), quaternion.k());
+        axis.mul((float) (1 / sin));
+        return Pair.of((float) angle, axis);
+    }
+
+    public static Quaternion multiplyQuaternion(Quaternion quaternion, float multiplier) {
+        Pair<Float, Vector3f> angleAndAxis = getAngleAndAxis(quaternion);
+        float newAngle = angleAndAxis.getLeft() * multiplier;
+        Vector3f axis = angleAndAxis.getRight();
+        double sin = Math.sin(newAngle / 2);
+        double cos = Math.cos(newAngle / 2);
+        axis.mul((float) sin);
+        return new Quaternion(axis.x(), axis.y(), axis.z(), (float) cos);
     }
 
     public static double getTwoVecAngle(Vec3 v1, Vec3 v2) {
