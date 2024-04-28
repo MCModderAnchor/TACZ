@@ -3,7 +3,7 @@
   "model": "tac:attachment/acog_geo",
   "texture": "tac:attachment/uv/acog",
   "zoom": [
-    4.0
+    2.5
   ],
   "scope": true,
   "fov": 70.0
