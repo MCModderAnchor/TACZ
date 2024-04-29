@@ -3,5 +3,9 @@
   // 配件的默认模型，不可为空
   "model": "tac:attachment/magpul_afg_2",
   // 配件默认模型使用的材质，不可为空
-  "texture": "tac:attachment/uv/magpul_afg_2"
+  "texture": "tac:attachment/uv/magpul_afg_2",
+  "sounds": {
+    "install": "tac:attachments/attachment_general_b",
+    "uninstall": "tac:attachments/attachment_general_uninstall"
+  }
 }

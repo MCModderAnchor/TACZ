@@ -3,5 +3,9 @@
   // 配件的默认模型，不可为空
   "model": "tac:attachment/flat",
   // 配件默认模型使用的材质，不可为空
-  "texture": "tac:attachment/slot/extended_mag_2"
+  "texture": "tac:attachment/slot/extended_mag_2",
+  "sounds": {
+    "install": "tac:attachments/extended_mag_install",
+    "uninstall": "tac:attachments/extended_mag_uninstall"
+  }
 }

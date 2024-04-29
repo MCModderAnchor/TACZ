@@ -29,6 +29,7 @@ public class ClientAttachmentIndex {
     private boolean isScope;
     private boolean isSight;
     private @Nullable String adapterNodeName;
+    private Map<String, ResourceLocation> sounds;
 
     private ClientAttachmentIndex() {
     }
@@ -42,6 +43,7 @@ public class ClientAttachmentIndex {
         checkSlotTexture(display, index);
         checkTextureAndModel(display, index);
         checkSkins(registryName, index);
+        checkSounds(display, index);
         return index;
     }
 
@@ -133,6 +135,15 @@ public class ClientAttachmentIndex {
         }
     }
 
+    private static void checkSounds(AttachmentDisplay display, ClientAttachmentIndex index) {
+        Map<String, ResourceLocation> displaySounds = display.getSounds();
+        if (displaySounds == null) {
+            index.sounds = Maps.newHashMap();
+            return;
+        }
+        index.sounds = displaySounds;
+    }
+
     public String getName() {
         return name;
     }
@@ -180,5 +191,9 @@ public class ClientAttachmentIndex {
     @Nullable
     public String getAdapterNodeName() {
         return adapterNodeName;
+    }
+
+    public Map<String, ResourceLocation> getSounds() {
+        return sounds;
     }
 }

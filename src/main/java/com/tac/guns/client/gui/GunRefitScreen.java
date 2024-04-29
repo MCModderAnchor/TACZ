@@ -2,13 +2,16 @@ package com.tac.guns.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.GunMod;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.gui.components.refit.*;
+import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.network.NetworkHandler;
 import com.tac.guns.network.message.ClientMessageRefitGun;
 import com.tac.guns.network.message.ClientMessageUnloadAttachment;
+import com.tac.guns.sound.SoundManager;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -24,6 +27,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 import java.util.Objects;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
@@ -169,6 +173,21 @@ public class GunRefitScreen extends Screen {
         return false;
     }
 
+    private static void playerSound(ItemStack attachmentItem, LocalPlayer player, String soundName) {
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+        if (iAttachment == null) {
+            return;
+        }
+        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
+        TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> {
+            Map<String, ResourceLocation> sounds = index.getSounds();
+            if (sounds.containsKey(soundName)) {
+                ResourceLocation resourceLocation = sounds.get(soundName);
+                SoundPlayManager.playClientSound(player, resourceLocation, 1.0f, 1.0f);
+            }
+        });
+    }
+
     private void addInventoryAttachmentButtons() {
         LocalPlayer player = getMinecraft().player;
         if (currentTransformType == AttachmentType.NONE || player == null) {
@@ -196,7 +215,9 @@ public class GunRefitScreen extends Screen {
                     continue;
                 }
                 InventoryAttachmentSlot button = new InventoryAttachmentSlot(startX, currentY, i, inventory, b -> {
-                    ClientMessageRefitGun message = new ClientMessageRefitGun(((InventoryAttachmentSlot) b).getSlotIndex(), inventory.selected, currentTransformType);
+                    int slotIndex = ((InventoryAttachmentSlot) b).getSlotIndex();
+                    playerSound(inventory.getItem(slotIndex), player, SoundManager.INSTALL_SOUND);
+                    ClientMessageRefitGun message = new ClientMessageRefitGun(slotIndex, inventory.selected, currentTransformType);
                     NetworkHandler.CHANNEL.sendToServer(message);
                 });
                 this.addRenderableWidget(button);
@@ -269,6 +290,7 @@ public class GunRefitScreen extends Screen {
                     if (!attachmentItem.isEmpty()) {
                         int freeSlot = inventory.getFreeSlot();
                         if (freeSlot != -1) {
+                            playerSound(attachmentItem, player, SoundManager.UNINSTALL_SOUND);
                             ClientMessageUnloadAttachment message = new ClientMessageUnloadAttachment(inventory.selected, currentTransformType);
                             NetworkHandler.CHANNEL.sendToServer(message);
                         } else {

@@ -6,5 +6,9 @@
     2.5
   ],
   "scope": true,
-  "fov": 70.0
+  "fov": 70.0,
+  "sounds": {
+    "install": "tac:attachments/scope_general_b",
+    "uninstall": "tac:attachments/scope_general_b"
+  }
 }

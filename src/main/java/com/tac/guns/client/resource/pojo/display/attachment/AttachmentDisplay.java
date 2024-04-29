@@ -1,9 +1,11 @@
 package com.tac.guns.client.resource.pojo.display.attachment;
 
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 public class AttachmentDisplay {
     @SerializedName("slot")
@@ -31,6 +33,9 @@ public class AttachmentDisplay {
 
     @SerializedName("fov")
     private float fov = 70;
+
+    @SerializedName("sounds")
+    private Map<String, ResourceLocation> sounds = Maps.newHashMap();
 
     public ResourceLocation getSlotTextureLocation() {
         return slotTextureLocation;
@@ -64,5 +69,9 @@ public class AttachmentDisplay {
 
     public float getFov() {
         return fov;
+    }
+
+    public Map<String, ResourceLocation> getSounds() {
+        return sounds;
     }
 }
