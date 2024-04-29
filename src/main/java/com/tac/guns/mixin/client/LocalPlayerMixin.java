@@ -6,12 +6,14 @@ import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.event.common.GunFireSelectEvent;
 import com.tac.guns.api.event.common.GunReloadEvent;
 import com.tac.guns.api.event.common.GunShootEvent;
+import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
+import com.tac.guns.client.input.ShootKey;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.sound.SoundPlayManager;
 import com.tac.guns.duck.KeepingItemRenderer;
@@ -131,7 +133,13 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
         GunData gunData = gunIndex.getGunData();
-        long coolDown = gunData.getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
+        FireMode fireMode = iGun.getFireMode(mainhandItem);
+        long coolDown;
+        if (fireMode == FireMode.BURST) {
+            coolDown = gunData.getBurstShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
+        } else {
+            coolDown = gunData.getShootInterval() - (System.currentTimeMillis() - tac$ClientShootTimestamp);
+        }
         // 如果射击冷却大于 1 tick (即 50 ms)，则不允许开火
         if (coolDown > 50) {
             return ShootResult.COOL_DOWN;
@@ -232,6 +240,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         if (tac$ClientDrawTimestamp == -1) {
             tac$ClientDrawTimestamp = System.currentTimeMillis();
         }
+        // 重置连发状态
+        ShootKey.resetBurstState();
         long drawTime = System.currentTimeMillis() - tac$ClientDrawTimestamp;
         IGun iGun = IGun.getIGunOrNull(currentItem);
         IGun iGun1 = IGun.getIGunOrNull(lastItem);

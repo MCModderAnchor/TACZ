@@ -52,6 +52,9 @@ public class GunData {
     @SerializedName("fire_mode")
     private List<FireMode> fireModeSet = Collections.singletonList(FireMode.UNKNOWN);
 
+    @SerializedName("burst_data")
+    private BurstData burstData = new BurstData();
+
     @SerializedName("recoil")
     private GunRecoil recoil = new GunRecoil();
 
@@ -119,6 +122,10 @@ public class GunData {
         return fireModeSet;
     }
 
+    public BurstData getBurstData() {
+        return burstData;
+    }
+
     public GunRecoil getRecoil() {
         return recoil;
     }
@@ -157,9 +164,20 @@ public class GunData {
      */
     public long getShootInterval() {
         // 为避免非法运算，随意返回一个默认值。
-        if (roundsPerMinute == 0) {
+        if (roundsPerMinute <= 0) {
             return 300;
         }
         return 60_000L / roundsPerMinute;
+    }
+
+    /**
+     * @return 枪械开火的间隔，单位为 ms 。
+     */
+    public long getBurstShootInterval() {
+        // 为避免非法运算，随意返回一个默认值。
+        if (burstData == null || burstData.getBpm() <= 0) {
+            return 300;
+        }
+        return 60_000L / burstData.getBpm();
     }
 }

@@ -1,15 +1,20 @@
 package com.tac.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.gun.FireMode;
+import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.sound.SoundPlayManager;
+import com.tac.guns.resource.pojo.data.gun.BurstData;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
@@ -25,6 +30,10 @@ import static com.tac.guns.util.InputExtraCheck.isInGame;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class ShootKey {
+    private static boolean burstContinuousShootState = false;
+    private static long burstNextTimestamp = -1L;
+    private static int burstShootCounter = 0;
+
     public static final KeyMapping SHOOT_KEY = new KeyMapping("key.tac.shoot.desc",
             KeyConflictContext.IN_GAME,
             KeyModifier.NONE,
@@ -42,9 +51,16 @@ public class ShootKey {
         if (player == null) {
             return;
         }
-        if (SHOOT_KEY.isDown()) {
-            if (IGun.mainhandHoldGun(player) && IGun.getMainhandFireMode(player) == FireMode.AUTO) {
-                IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
+        ItemStack mainHandItem = player.getMainHandItem();
+        if (mainHandItem.getItem() instanceof IGun iGun) {
+            FireMode fireMode = iGun.getFireMode(mainHandItem);
+            IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
+            if (SHOOT_KEY.isDown() && fireMode == FireMode.AUTO) {
+                operator.shoot();
+                return;
+            }
+            if (burstContinuousShootState && fireMode == FireMode.BURST) {
+                burstShoot(iGun, mainHandItem, operator);
             }
         }
     }
@@ -70,7 +86,41 @@ public class ShootKey {
                 if (fireMode == FireMode.SEMI) {
                     IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
                 }
+                if (fireMode == FireMode.BURST) {
+                    burstContinuousShootState = true;
+                }
             }
         }
+    }
+
+    public static void resetBurstState() {
+        burstContinuousShootState = false;
+        burstShootCounter = 0;
+    }
+
+    private static void burstShoot(IGun iGun, ItemStack mainHandItem, IClientPlayerGunOperator operator) {
+        ResourceLocation gunId = iGun.getGunId(mainHandItem);
+        TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
+            BurstData burstData = index.getGunData().getBurstData();
+            // 如果还没到下一组时间
+            if (System.currentTimeMillis() < burstNextTimestamp) {
+                return;
+            }
+            // 开始连发射击
+            ShootResult result = operator.shoot();
+            if (result == ShootResult.SUCCESS) {
+                burstShootCounter += 1;
+                // 检查连发计数
+                if (burstShootCounter >= Math.max(burstData.getCount(), 1)) {
+                    // 连发到达上限，记录相关数据
+                    long interval = Math.max((long) (burstData.getMinInterval() * 1000), 50L);
+                    burstNextTimestamp = System.currentTimeMillis() + interval;
+                    burstContinuousShootState = burstData.isContinuousShoot() && SHOOT_KEY.isDown();
+                    burstShootCounter = 0;
+                }
+            } else if (result != ShootResult.COOL_DOWN) {
+                resetBurstState();
+            }
+        });
     }
 }

@@ -39,7 +39,7 @@
         {"distance": 30, "damage": 5},
         {"distance": 50, "damage": 4},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 3},
+        {"distance": "infinite", "damage": 3}
       ]
     },
     // 速度 m/s
@@ -93,8 +93,21 @@
     // 全自动
     "auto",
     // 半自动
-    "semi"
+    "semi",
+    // 多连发
+    "burst"
   ],
+  // 多连续发数据，仅多连发会调用
+  "burst_data": {
+    // 是否连续射击
+    "continuous_shoot": false,
+    // 连发数
+    "count": 3,
+    // 组内连发的射速
+    "bpm": 800,
+    // 每组连发之间的时间间隔（上一组结束时间到下一组开始的时间间隔），单位秒
+    "min_interval": 0.3
+  },
   // 后坐力
   "recoil": {
     "pitch": [

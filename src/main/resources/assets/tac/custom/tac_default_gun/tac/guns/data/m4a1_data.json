@@ -40,11 +40,16 @@
   "aim_time": 0.2,
   "sprint_time": 0.3,
   "fire_mode": [
-    // 全自动
     "auto",
-    // 半自动
-    "semi"
+    "semi",
+    "burst"
   ],
+  "burst_data": {
+    "continuous_shoot": false,
+    "count": 3,
+    "bpm": 1200,
+    "min_interval": 0.2
+  },
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.325, 0.325]},
