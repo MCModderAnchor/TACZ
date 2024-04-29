@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 public interface AmmoBoxItemDataAccessor extends IAmmoBox {
     String AMMO_ID_TAG = "AmmoId";
     String AMMO_COUNT_TAG = "AmmoCount";
+    String UNBREAKABLE_TAG = "Unbreakable";
 
     @Override
     default ResourceLocation getAmmoId(ItemStack ammoBox) {
@@ -31,6 +32,9 @@ public interface AmmoBoxItemDataAccessor extends IAmmoBox {
     @Override
     default int getAmmoCount(ItemStack ammoBox) {
         CompoundTag tag = ammoBox.getOrCreateTag();
+        if (tag.contains(UNBREAKABLE_TAG, Tag.TAG_BYTE)) {
+            return Integer.MAX_VALUE;
+        }
         if (tag.contains(AMMO_COUNT_TAG, Tag.TAG_INT)) {
             return tag.getInt(AMMO_COUNT_TAG);
         }
@@ -40,6 +44,10 @@ public interface AmmoBoxItemDataAccessor extends IAmmoBox {
     @Override
     default void setAmmoCount(ItemStack ammoBox, int count) {
         CompoundTag tag = ammoBox.getOrCreateTag();
+        if (tag.contains(UNBREAKABLE_TAG, Tag.TAG_BYTE)) {
+            tag.putInt(AMMO_COUNT_TAG, Integer.MAX_VALUE);
+            return;
+        }
         tag.putInt(AMMO_COUNT_TAG, count);
     }
 
@@ -52,6 +60,14 @@ public interface AmmoBoxItemDataAccessor extends IAmmoBox {
             }
             ResourceLocation gunId = iGun.getGunId(gun);
             return TimelessAPI.getCommonGunIndex(gunId).map(gunIndex -> gunIndex.getGunData().getAmmoId().equals(ammoId)).orElse(false);
+        }
+        return false;
+    }
+
+    default boolean isCreative(ItemStack ammoBox) {
+        CompoundTag tag = ammoBox.getTag();
+        if (tag != null && tag.contains(UNBREAKABLE_TAG, Tag.TAG_BYTE)) {
+            return tag.getBoolean(UNBREAKABLE_TAG);
         }
         return false;
     }

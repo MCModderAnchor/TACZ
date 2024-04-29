@@ -23,6 +23,7 @@
   "block.tac.gun_smith_table": "Gun Smith Table",
   "block.tac.target": "Humanoid Target",
   "item.tac.ammo_box": "Ammo Box",
+  "item.tac.ammo_box.creative": "Creative Ammo Box",
   "item.tac.target_minecart": "Minecart with Target",
   "entity.tac.target_minecart": "Minecart with Target",
   "gui.tac.gun_smith_table.preview": "Preview",

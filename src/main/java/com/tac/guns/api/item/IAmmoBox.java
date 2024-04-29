@@ -13,4 +13,6 @@ public interface IAmmoBox {
     void setAmmoCount(ItemStack ammoBox, int count);
 
     boolean isAmmoBoxOfGun(ItemStack gun, ItemStack ammoBox);
+
+    boolean isCreative(ItemStack ammoBox);
 }

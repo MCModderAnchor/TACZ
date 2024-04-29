@@ -2,12 +2,14 @@ package com.tac.guns.client.tooltip;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
+import com.tac.guns.api.item.IAmmoBox;
 import com.tac.guns.inventory.tooltip.AmmoBoxTooltip;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 
@@ -18,7 +20,12 @@ public class ClientAmmoBoxTooltip implements ClientTooltipComponent {
 
     public ClientAmmoBoxTooltip(AmmoBoxTooltip tooltip) {
         this.ammo = tooltip.getAmmo();
-        this.count = new TranslatableComponent("tooltip.tac.ammo_box.count", tooltip.getCount());
+        ItemStack ammoBox = tooltip.getAmmoBox();
+        if (ammoBox.getItem() instanceof IAmmoBox box && box.isCreative(ammoBox)) {
+            this.count = new TextComponent("∞");
+        } else {
+            this.count = new TranslatableComponent("tooltip.tac.ammo_box.count", tooltip.getCount());
+        }
         this.ammoName = this.ammo.getHoverName();
     }
 

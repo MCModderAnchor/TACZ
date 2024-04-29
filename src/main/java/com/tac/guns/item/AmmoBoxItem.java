@@ -10,8 +10,12 @@ import com.tac.guns.inventory.tooltip.AmmoBoxTooltip;
 import com.tac.guns.item.builder.AmmoItemBuilder;
 import com.tac.guns.item.nbt.AmmoBoxItemDataAccessor;
 import com.tac.guns.resource.DefaultAssets;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -22,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -78,6 +83,10 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
 
             // 格子为空，那就是取出物品
             if (slotItem.isEmpty()) {
+                // 创造模式弹药箱不能取出任何东西
+                if (isCreative(ammoBox)) {
+                    return false;
+                }
                 // 啥也没有，不能取出
                 if (boxAmmoId.equals(DefaultAssets.EMPTY_AMMO_ID)) {
                     return false;
@@ -116,12 +125,18 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
                     return false;
                 }
                 TimelessAPI.getCommonAmmoIndex(slotAmmoId).ifPresent(index -> {
+                    // 创造模式弹药箱，那就直接存入最大
+                    if (isCreative(ammoBox)) {
+                        this.setAmmoCount(ammoBox, Integer.MAX_VALUE);
+                        return;
+                    }
                     int boxAmmoCount = this.getAmmoCount(ammoBox);
                     int needCount = index.getStackSize() * OtherConfig.AMMO_BOX_STACK_SIZE.get() - boxAmmoCount;
                     ItemStack takeItem = slot.safeTake(slotItem.getCount(), needCount, player);
                     this.setAmmoCount(ammoBox, boxAmmoCount + takeItem.getCount());
-                    this.playInsertSound(player);
                 });
+                // 播放取出声音
+                this.playInsertSound(player);
                 return true;
             }
         }
@@ -138,6 +153,10 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
+        boolean creative = isCreative(stack);
+        if (creative) {
+            return false;
+        }
         return !this.getAmmoId(stack).equals(DefaultAssets.EMPTY_AMMO_ID) && this.getAmmoCount(stack) > 0;
     }
 
@@ -153,8 +172,36 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
     }
 
     @Override
+    public Component getName(ItemStack stack) {
+        if (isCreative(stack)) {
+            return new TranslatableComponent("item.tac.ammo_box.creative").withStyle(ChatFormatting.DARK_PURPLE);
+        }
+        return super.getName(stack);
+    }
+
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        if (isCreative(stack)) {
+            return true;
+        }
+        return super.isFoil(stack);
+    }
+
+    @Override
     public int getBarColor(ItemStack stack) {
         return Mth.hsvToRgb(1 / 3f, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
+        if (this.allowdedIn(category)) {
+            items.add(new ItemStack(this));
+
+            ItemStack creativeItemstack = new ItemStack(this);
+            CompoundTag tag = creativeItemstack.getOrCreateTag();
+            tag.putBoolean(UNBREAKABLE_TAG, true);
+            items.add(creativeItemstack);
+        }
     }
 
     @Override
@@ -171,6 +218,6 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
             return Optional.empty();
         }
         ItemStack ammoStack = AmmoItemBuilder.create().setId(ammoId).build();
-        return Optional.of(new AmmoBoxTooltip(ammoStack, ammoCount));
+        return Optional.of(new AmmoBoxTooltip(stack, ammoStack, ammoCount));
     }
 }

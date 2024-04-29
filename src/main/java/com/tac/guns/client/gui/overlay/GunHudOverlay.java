@@ -83,6 +83,11 @@ public class GunHudOverlay {
                         cacheInventoryAmmoCount += inventoryItem.getCount();
                     }
                     if (inventoryItem.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(stack, inventoryItem)) {
+                        // 创造模式弹药箱？直接返回 9999
+                        if (iAmmoBox.isCreative(inventoryItem)) {
+                            cacheInventoryAmmoCount = 9999;
+                            break;
+                        }
                         cacheInventoryAmmoCount += iAmmoBox.getAmmoCount(inventoryItem);
                     }
                 }
