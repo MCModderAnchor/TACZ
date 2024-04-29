@@ -8,7 +8,15 @@
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0,
-      "head_shot_multiplier": 1.5
+      "head_shot_multiplier": 1.5,
+      "damage_adjust": [
+        {"distance": 0.5, "damage": 7},
+        {"distance": 4, "damage": 5},
+        {"distance": 9.5, "damage": 4},
+        {"distance": 17.5, "damage": 3.5},
+        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
+        {"distance": "infinite", "damage": 3.2}
+      ]
     },
     "speed": 150,
     "gravity": 0.0245,
@@ -51,9 +59,9 @@
   },
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.45, 0.45]},
-      {"time": 0.35, "value": [0.45, 0.45]},
-      {"time": 0.6, "value": [-0.15, -0.15]},
+      {"time": 0, "value": [0.55, 0.55]},
+      {"time": 0.35, "value": [0.55, 0.55]},
+      {"time": 0.6, "value": [-0.175, -0.175]},
       {"time": 0.8, "value": [0.05, 0.05]},
       {"time": 1.0, "value": [0, 0]}
     ],
@@ -64,9 +72,9 @@
   },
   "inaccuracy": {
     "stand": 2,
-    "move": 4,
+    "move": 2.5,
     "sneak": 1,
-    "lie": 0.5,
-    "aim": 0.1
+    "lie": 0.7,
+    "aim": 0.15
   }
 }

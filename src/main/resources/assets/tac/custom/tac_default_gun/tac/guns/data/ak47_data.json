@@ -27,19 +27,18 @@
     // 额外伤害的内容，为空则表示没有任何额外伤害计算内容
     "extra_damage": {
       // 护甲穿透率，默认为 0，也就是没有穿甲伤害
-      "armor_ignore": 0.25,
+      "armor_ignore": 0.3,
       // 爆头伤害 x1.5
-      "head_shot_multiplier": 1.5,
+      "head_shot_multiplier": 1.75,
       // 距离-伤害分段常函数
       "damage_adjust": [
         // 这样就能写抵近伤害了
         {"distance": 0.5, "damage": 10},
-        {"distance": 5, "damage": 7.2},
-        {"distance": 10, "damage": 6},
-        {"distance": 30, "damage": 5},
-        {"distance": 50, "damage": 4},
+        {"distance": 9.5, "damage": 8.5},
+        {"distance": 15, "damage": 7.5},
+        {"distance": 22, "damage": 6.5},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 3}
+        {"distance": "infinite", "damage": 5.5}
       ]
     },
     // 速度 m/s
@@ -111,14 +110,15 @@
   // 后坐力
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.4, 0.4]},
-      {"time": 0.3, "value": [0.4, 0.4]},
-      {"time": 0.5, "value": [-0.08, -0.08]},
-      {"time": 0.65, "value": [0, 0]}
+      {"time": 0, "value": [0.7, 0.7]},
+      {"time": 0.25, "value": [0.7, 0.7]},
+      {"time": 0.45, "value": [-0.175, -0.175]},
+      {"time": 0.6, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.2, 0.2]},
-      {"time": 0.35, "value": [0, 0]}
+      {"time": 0, "value": [-0.35, -0.15]},
+      {"time": 0.25, "value": [-0.35, -0.15]},
+      {"time": 0.45, "value": [0, 0]}
     ]
   },
   // 不准确度
@@ -126,13 +126,13 @@
     // 站立射击散布
     "stand": 5,
     // 移动射击散布
-    "move": 6,
+    "move": 7,
     // 潜行射击散布
     "sneak": 2,
     // 趴下射击散布
-    "lie": 0.8,
+    "lie": 1.25,
     // 瞄准射击时散布
-    "aim": 0.4
+    "aim": 0.125
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser

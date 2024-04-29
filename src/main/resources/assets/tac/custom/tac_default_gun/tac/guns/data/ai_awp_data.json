@@ -10,7 +10,13 @@
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.75,
-      "head_shot_multiplier": 2
+      "head_shot_multiplier": 2,
+      "damage_adjust": [
+        {"distance": 17, "damage": 42},
+        {"distance": 35, "damage": 32},
+        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
+        {"distance": "infinite", "damage": 22}
+      ]
     },
     "speed": 450,
     "gravity": 0.0245,
@@ -40,24 +46,25 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [2, 2]},
-      {"time": 0.32, "value": [2, 2]},
+      {"time": 0, "value": [2.2, 2.2]},
+      {"time": 0.32, "value": [2.2, 2.2]},
       {"time": 0.57, "value": [-0.5, -0.5]},
       {"time": 0.82, "value": [0.25, 0.25]},
       {"time": 1.17, "value": [0, 0]},
       {"time": 1.47, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.3, 0.3]},
-      {"time": 0.4, "value": [0, 0]}
+      {"time": 0, "value": [-0.6, -0.5]},
+      {"time": 0.32, "value": [-0.6, -0.5]},
+      {"time": 0.57, "value": [0, 0]}
     ]
   },
   "inaccuracy": {
-    "stand": 2,
-    "move": 4,
-    "sneak": 1,
-    "lie": 0.5,
-    "aim": 0.1
+    "stand": 8,
+    "move": 11,
+    "sneak": 4.5,
+    "lie": 3,
+    "aim": 0.05
   },
   "allow_attachments": {
     "scope": {
