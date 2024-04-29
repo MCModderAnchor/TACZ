@@ -5,11 +5,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class RefitUnloadButton extends Button implements IComponentTooltip {
@@ -34,9 +36,9 @@ public class RefitUnloadButton extends Button implements IComponentTooltip {
     }
 
     @Override
-    public void renderTooltip(Consumer<MutableComponent> consumer) {
+    public void renderTooltip(Consumer<List<Component>> consumer) {
         if (this.isHovered) {
-            consumer.accept(new TranslatableComponent("tooltip.tac.refit.unload"));
+            consumer.accept(Collections.singletonList(new TranslatableComponent("tooltip.tac.refit.unload")));
         }
     }
 }

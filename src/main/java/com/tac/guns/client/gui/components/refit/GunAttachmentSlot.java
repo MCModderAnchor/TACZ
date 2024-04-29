@@ -1,5 +1,6 @@
 package com.tac.guns.client.gui.components.refit;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tac.guns.api.attachment.AttachmentType;
@@ -8,13 +9,14 @@ import com.tac.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
@@ -24,6 +26,7 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     private final int gunItemIndex;
     private final String nameKey;
     private boolean selected = false;
+    private ItemStack attachmentItem = ItemStack.EMPTY;
 
     public GunAttachmentSlot(int pX, int pY, AttachmentType type, int gunItemIndex, Inventory inventory, Button.OnPress onPress) {
         super(pX, pY, 18, 18, TextComponent.EMPTY, onPress);
@@ -34,9 +37,13 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     }
 
     @Override
-    public void renderTooltip(Consumer<MutableComponent> consumer) {
+    public void renderTooltip(Consumer<List<Component>> consumer) {
         if (this.isHovered) {
-            consumer.accept(new TranslatableComponent(nameKey));
+            List<Component> tips = Lists.newArrayList(new TranslatableComponent(nameKey));
+            if (!attachmentItem.isEmpty()) {
+                tips.addAll(IComponentTooltip.getTooltipFromItem(attachmentItem));
+            }
+            consumer.accept(tips);
         }
     }
 
@@ -58,7 +65,7 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
             blit(poseStack, x + 1, y + 1, 1, 1, width - 2, height - 2, 18, 18);
         }
         // 渲染内部物品，或者空置时的icon
-        ItemStack attachmentItem = iGun.getAttachment(gunItem, type);
+        this.attachmentItem = iGun.getAttachment(gunItem, type);
         if (!attachmentItem.isEmpty()) {
             Minecraft.getInstance().getItemRenderer().renderGuiItem(attachmentItem, x + 1, y + 1);
         } else {
