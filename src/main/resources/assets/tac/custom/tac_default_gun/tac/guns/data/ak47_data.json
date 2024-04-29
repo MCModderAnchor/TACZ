@@ -99,11 +99,11 @@
   // 多连续发数据，仅多连发会调用
   "burst_data": {
     // 是否连续射击
-    "continuous_shoot": false,
+    "continuous_shoot": true,
     // 连发数
     "count": 3,
     // 组内连发的射速
-    "bpm": 800,
+    "bpm": 900,
     // 每组连发之间的时间间隔（上一组结束时间到下一组开始的时间间隔），单位秒
     "min_interval": 0.3
   },

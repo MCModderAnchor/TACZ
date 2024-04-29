@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 public interface AmmoBoxItemDataAccessor extends IAmmoBox {
     String AMMO_ID_TAG = "AmmoId";
     String AMMO_COUNT_TAG = "AmmoCount";
-    String UNBREAKABLE_TAG = "Unbreakable";
+    String CREATIVE_TAG = "Creative";
 
     @Override
     default ResourceLocation getAmmoId(ItemStack ammoBox) {
@@ -32,7 +32,7 @@ public interface AmmoBoxItemDataAccessor extends IAmmoBox {
     @Override
     default int getAmmoCount(ItemStack ammoBox) {
         CompoundTag tag = ammoBox.getOrCreateTag();
-        if (tag.contains(UNBREAKABLE_TAG, Tag.TAG_BYTE)) {
+        if (tag.contains(CREATIVE_TAG, Tag.TAG_BYTE)) {
             return Integer.MAX_VALUE;
         }
         if (tag.contains(AMMO_COUNT_TAG, Tag.TAG_INT)) {
@@ -44,7 +44,7 @@ public interface AmmoBoxItemDataAccessor extends IAmmoBox {
     @Override
     default void setAmmoCount(ItemStack ammoBox, int count) {
         CompoundTag tag = ammoBox.getOrCreateTag();
-        if (tag.contains(UNBREAKABLE_TAG, Tag.TAG_BYTE)) {
+        if (tag.contains(CREATIVE_TAG, Tag.TAG_BYTE)) {
             tag.putInt(AMMO_COUNT_TAG, Integer.MAX_VALUE);
             return;
         }
@@ -66,8 +66,8 @@ public interface AmmoBoxItemDataAccessor extends IAmmoBox {
 
     default boolean isCreative(ItemStack ammoBox) {
         CompoundTag tag = ammoBox.getTag();
-        if (tag != null && tag.contains(UNBREAKABLE_TAG, Tag.TAG_BYTE)) {
-            return tag.getBoolean(UNBREAKABLE_TAG);
+        if (tag != null && tag.contains(CREATIVE_TAG, Tag.TAG_BYTE)) {
+            return tag.getBoolean(CREATIVE_TAG);
         }
         return false;
     }

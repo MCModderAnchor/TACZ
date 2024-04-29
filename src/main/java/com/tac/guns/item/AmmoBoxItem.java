@@ -199,7 +199,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
 
             ItemStack creativeItemstack = new ItemStack(this);
             CompoundTag tag = creativeItemstack.getOrCreateTag();
-            tag.putBoolean(UNBREAKABLE_TAG, true);
+            tag.putBoolean(CREATIVE_TAG, true);
             items.add(creativeItemstack);
         }
     }
