@@ -507,7 +507,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
         }
         // 削减弹药数
-        if (this.needCheckAmmo()) {
+        if (this.consumesAmmoOrNot()) {
             if (boltType == Bolt.MANUAL_ACTION) {
                 iGun.setBulletInBarrel(currentGunItem, false);
             } else if (boltType == Bolt.CLOSED_BOLT) {
@@ -531,6 +531,16 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         LivingEntity entity = (LivingEntity) (Object) this;
         if (entity instanceof Player player) {
             return !player.isCreative();
+        }
+        return true;
+    }
+
+    @Unique
+    @Override
+    public boolean consumesAmmoOrNot() {
+        LivingEntity entity = (LivingEntity) (Object) this;
+        if (entity instanceof Player player) {
+            return !player.isCreative() || GunConfig.CREATIVE_PLAYER_CONSUME_AMMO.get();
         }
         return true;
     }

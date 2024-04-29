@@ -82,6 +82,8 @@
   "config.tac.common.gun": "Gun",
   "config.tac.common.gun.default_gun_fire_sound_distance": "Default Gun Fire Sound Distance",
   "config.tac.common.gun.default_gun_fire_sound_distance.desc": "The default fire sound range (block)",
+  "config.tac.common.gun.creative_player_consume_ammo": "Creative Player Consume Ammo",
+  "config.tac.common.gun.creative_player_consume_ammo.desc": "Whether or not the player will consume ammo in creative mode",
   "config.tac.common.ammo": "Ammo",
   "config.tac.common.ammo.explosive_ammo_destroys_blocks": "Explosive Ammo Destroys Blocks",
   "config.tac.common.ammo.explosive_ammo_destroys_blocks.desc": "Warning: Ammo with explosive properties can break blocks",

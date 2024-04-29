@@ -84,9 +84,16 @@ public interface IGunOperator {
     /**
      * 服务端，该操作者是否受弹药数影响
      *
-     * @return 如果为 false，那么开火不会检查弹药，也不会消耗枪械弹药
+     * @return 如果为 false，那么开火时不会检查弹药，无论是玩家背包内还是枪械内的
      */
     boolean needCheckAmmo();
+
+    /**
+     * 服务端，开火是否消耗弹药
+     *
+     * @return 如果为 false，那么开火不会消耗枪械弹药
+     */
+    boolean consumesAmmoOrNot();
 
     /**
      * 服务端，应用瞄准的逻辑

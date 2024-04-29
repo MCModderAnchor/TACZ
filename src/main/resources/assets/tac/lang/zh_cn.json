@@ -53,6 +53,8 @@
   "config.tac.common.ammo.pass_through_blocks": "穿透方块",
   "config.tac.common.ammo.pass_through_blocks.desc": "弹药可以穿透的方块",
   "config.tac.common.gun": "枪械",
+  "config.tac.common.gun.creative_player_consume_ammo": "创造模式玩家消耗弹药",
+  "config.tac.common.gun.creative_player_consume_ammo.desc": "玩家处于创造模式时，是否会消耗枪械内弹药",
   "config.tac.common.gun.default_gun_fire_sound_distance": "默认枪声范围",
   "config.tac.common.gun.default_gun_fire_sound_distance.desc": "默认枪声会传播的范围（格）",
   "config.tac.common.other": "其他",
