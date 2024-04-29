@@ -63,13 +63,17 @@ public class SoundManager {
      */
     public static String FIRE_SELECT = "fire_select";
     /**
-     * 爆头击杀声音
+     * 爆头击中声音
      */
-    public static String HEADSHOT_SOUND = "headshot";
+    public static String HEAD_HIT_SOUND = "head_hit";
     /**
-     * 普通击杀声音
+     * 普通击中声音
      */
-    public static String FLESHSHOT_SOUND = "fleshshot";
+    public static String FLESH_HIT_SOUND = "flesh_hit";
+    /**
+     * 击杀的声音
+     */
+    public static String KILL_SOUND = "kill";
     /**
      * 卸载配件的声音，用于配件的
      */

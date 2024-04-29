@@ -223,8 +223,9 @@ public class ClientGunIndex {
         // 部分音效为默认音效，不存在则需要添加默认音效
         soundMaps.putIfAbsent(SoundManager.DRY_FIRE_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.DRY_FIRE_SOUND));
         soundMaps.putIfAbsent(SoundManager.FIRE_SELECT, new ResourceLocation(GunMod.MOD_ID, SoundManager.FIRE_SELECT));
-        soundMaps.putIfAbsent(SoundManager.HEADSHOT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.HEADSHOT_SOUND));
-        soundMaps.putIfAbsent(SoundManager.FLESHSHOT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.FLESHSHOT_SOUND));
+        soundMaps.putIfAbsent(SoundManager.HEAD_HIT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.HEAD_HIT_SOUND));
+        soundMaps.putIfAbsent(SoundManager.FLESH_HIT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.FLESH_HIT_SOUND));
+        soundMaps.putIfAbsent(SoundManager.KILL_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.KILL_SOUND));
         index.sounds.putAll(soundMaps);
     }
 

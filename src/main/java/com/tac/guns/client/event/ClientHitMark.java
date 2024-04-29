@@ -25,9 +25,13 @@ public class ClientHitMark {
         LivingEntity attacker = event.getAttacker();
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && player.equals(attacker)) {
+            ResourceLocation gunId = event.getGunId();
             RenderCrosshairEvent.markHitTimestamp();
             if (event.isHeadShot()) {
                 RenderCrosshairEvent.markHeadShotTimestamp();
+                TimelessAPI.getClientGunIndex(gunId).ifPresent(index -> SoundPlayManager.playHeadHitSound(player, index));
+            } else {
+                TimelessAPI.getClientGunIndex(gunId).ifPresent(index -> SoundPlayManager.playFleshHitSound(player, index));
             }
         }
     }
@@ -39,16 +43,13 @@ public class ClientHitMark {
             return;
         }
         LivingEntity attacker = event.getAttacker();
-        ResourceLocation gunId = event.getGunId();
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && player.equals(attacker)) {
             RenderCrosshairEvent.markKillTimestamp();
             KillAmountOverlay.markTimestamp();
+            TimelessAPI.getClientGunIndex(event.getGunId()).ifPresent(index -> SoundPlayManager.playKillSound(player, index));
             if (event.isHeadShot()) {
                 RenderCrosshairEvent.markHeadShotTimestamp();
-                TimelessAPI.getClientGunIndex(gunId).ifPresent(index -> SoundPlayManager.playHeadshotSound(player, index));
-            } else {
-                TimelessAPI.getClientGunIndex(gunId).ifPresent(index -> SoundPlayManager.playFleshshotSound(player, index));
             }
         }
     }

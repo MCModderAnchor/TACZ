@@ -79,8 +79,9 @@
         // 下面四个音效可以不写，模组会自动添加默认音效
         "dry_fire": "tac:dry_fire",
         "fire_select": "tac:fire_select",
-        "headshot": "tac:headshot",
-        "fleshshot": "tac:fleshshot"
+        "head_hit": "tac:head_hit",
+        "flesh_hit": "tac:flesh_hit",
+        "kill": "tac:kill"
     },
     // 副手枪械显示
     "offhand_show": {

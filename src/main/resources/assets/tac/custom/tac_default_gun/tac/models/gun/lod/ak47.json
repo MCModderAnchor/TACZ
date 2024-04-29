@@ -917,6 +917,16 @@
 					"name": "thirdperson_hand",
 					"parent": "positioning",
 					"pivot": [0.025, 1.475, 5.15]
+				},
+				{
+					"name": "shell",
+					"parent": "positioning",
+					"pivot": [-0.625, 4.875, -1.225]
+				},
+				{
+					"name": "muzzle_flash",
+					"parent": "positioning",
+					"pivot": [-0.025, 4.1, -21.475]
 				}
 			]
 		}

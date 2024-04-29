@@ -100,12 +100,16 @@ public class SoundPlayManager {
         playClientSound(entity, gunIndex.getSounds(SoundManager.FIRE_SELECT), 1.0f, 1.0f);
     }
 
-    public static void playHeadshotSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        playClientSound(entity, gunIndex.getSounds(SoundManager.HEADSHOT_SOUND), 1.0f, 1.0f);
+    public static void playHeadHitSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.HEAD_HIT_SOUND), 1.0f, 1.0f);
     }
 
-    public static void playFleshshotSound(LivingEntity entity, ClientGunIndex gunIndex) {
-        playClientSound(entity, gunIndex.getSounds(SoundManager.FLESHSHOT_SOUND), 1.0f, 1.0f);
+    public static void playFleshHitSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.FLESH_HIT_SOUND), 1.0f, 1.0f);
+    }
+
+    public static void playKillSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.KILL_SOUND), 1.0f, 1.0f);
     }
 
     public static void playMessageSound(ServerMessageSound message) {
