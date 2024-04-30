@@ -51,6 +51,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     private static final String MAG_NORMAL_NODE = "magazine";
     private static final String MAG_ADDITIONAL_NODE = "additional_magazine";
     private static final String ATTACHMENT_ADAPTER_NODE = "attachment_adapter";
+    private static final String HANDGUARD_DEFAULT_NODE = "handguard_default";
+    private static final String HANDGUARD_TACTICAL_NODE = "handguard_tactical";
     private static final String ATTACHMENT_POS_SUFFIX = "_pos";
     private static final String DEFAULT_ATTACHMENT_SUFFIX = "_default";
     private static final String REFIT_VIEW_PREFIX = "refit_";
@@ -206,6 +208,18 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                     }
                 }
             }
+        });
+        this.setFunctionalRenderer(HANDGUARD_DEFAULT_NODE, bedrockPart -> {
+            ItemStack laserItem = currentAttachmentItem.get(AttachmentType.LASER);
+            ItemStack gripItem = currentAttachmentItem.get(AttachmentType.GRIP);
+            bedrockPart.visible = laserItem.isEmpty() && gripItem.isEmpty();
+            return null;
+        });
+        this.setFunctionalRenderer(HANDGUARD_TACTICAL_NODE, bedrockPart -> {
+            ItemStack laserItem = currentAttachmentItem.get(AttachmentType.LASER);
+            ItemStack gripItem = currentAttachmentItem.get(AttachmentType.GRIP);
+            bedrockPart.visible = !laserItem.isEmpty() || !gripItem.isEmpty();
+            return null;
         });
 
         ironSightPath = getPath(modelMap.get(IRON_VIEW_NODE));

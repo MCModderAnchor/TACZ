@@ -33,6 +33,17 @@
       }
     }
   },
+  "smg": {
+    // 名称
+    "name": "tac.type.smg.name",
+    // 图标，按照原版标准物品格式来写
+    "icon": {
+      "item": "tac:gun",
+      "nbt": {
+        "GunId": "tac:hk_mp5a5"
+      }
+    }
+  },
   "rpg": {
     // 名称
     "name": "tac.type.rpg.name",
