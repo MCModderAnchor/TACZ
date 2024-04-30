@@ -385,6 +385,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
         super.render(matrixStack, transformType, renderType, light, overlay);
         RenderHelper.disableItemEntityStencilTest();
+        RenderSystem.clearStencil(0);
+        RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
     }
 
     @Override
