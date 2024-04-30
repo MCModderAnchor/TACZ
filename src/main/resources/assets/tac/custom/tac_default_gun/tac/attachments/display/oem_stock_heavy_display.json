@@ -1,0 +1,10 @@
+{
+  "slot": "tac:attachment/slot/oem_stock_heavy",
+  "model": "tac:attachment/dummy",
+  "texture": "tac:attachment/slot/oem_stock_heavy",
+  "adapter": "oem_stock_heavy",
+  "sounds": {
+    "install": "tac:attachments/attachment_general_a",
+    "uninstall": "tac:attachments/attachment_general_uninstall"
+  }
+}

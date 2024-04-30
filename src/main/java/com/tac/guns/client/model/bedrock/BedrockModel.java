@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class BedrockModel {
+    public static BedrockModel dummyModel = new BedrockModel();
     /**
      * 存储 ModelRender 子模型的 HashMap
      */
@@ -56,6 +57,8 @@ public class BedrockModel {
         }
     }
 
+    protected BedrockModel() {}
+
     public void delegateRender(IFunctionalRenderer renderer) {
         delegateRenderers.add(renderer);
     }
@@ -70,7 +73,9 @@ public class BedrockModel {
     protected void loadNewModel(BedrockModelPOJO pojo) {
         assert pojo.getGeometryModelNew() != null;
         pojo.getGeometryModelNew().deco();
-
+        if (pojo.getGeometryModelNew().getBones() == null) {
+            return;
+        }
         Description description = pojo.getGeometryModelNew().getDescription();
         // 材质的长度、宽度
         int texWidth = description.getTextureWidth();
@@ -182,6 +187,9 @@ public class BedrockModel {
     protected void loadLegacyModel(BedrockModelPOJO pojo) {
         assert pojo.getGeometryModelLegacy() != null;
         pojo.getGeometryModelLegacy().deco();
+        if (pojo.getGeometryModelLegacy().getBones() == null) {
+            return;
+        }
 
         // 材质的长度、宽度
         int texWidth = pojo.getGeometryModelLegacy().getTextureWidth();

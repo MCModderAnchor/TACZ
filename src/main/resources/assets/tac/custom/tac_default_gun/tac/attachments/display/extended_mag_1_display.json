@@ -1,7 +1,7 @@
 {
   "slot": "tac:attachment/slot/extended_mag_1",
   // 配件的默认模型，不可为空
-  "model": "tac:attachment/flat",
+  "model": "tac:attachment/dummy",
   // 配件默认模型使用的材质，不可为空
   "texture": "tac:attachment/slot/extended_mag_1",
   "sounds": {

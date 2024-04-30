@@ -1,0 +1,7 @@
+{
+  "name": "tac.attachment.oem_stock_light.name",
+  "tooltip": "tac.attachment.oem_stock_light.tooltip",
+  "display": "tac:oem_stock_light_display",
+  "data": "tac:oem_stock_light_data",
+  "type": "stock"
+}

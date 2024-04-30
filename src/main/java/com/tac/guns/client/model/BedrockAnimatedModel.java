@@ -125,6 +125,9 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
     protected void loadNewModel(BedrockModelPOJO pojo) {
         assert pojo.getGeometryModelNew() != null;
         pojo.getGeometryModelNew().deco();
+        if (pojo.getGeometryModelNew().getBones() == null) {
+            return;
+        }
         for (BonesItem bones : pojo.getGeometryModelNew().getBones()) {
             // 将 FunctionalBedrockPart 先塞入 modelMap 中，以支持 functionalRender 操作
             modelMap.putIfAbsent(bones.getName(), new ModelRendererWrapper(new FunctionalBedrockPart(null, bones.getName())));
@@ -136,6 +139,9 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
     protected void loadLegacyModel(BedrockModelPOJO pojo) {
         assert pojo.getGeometryModelLegacy() != null;
         pojo.getGeometryModelLegacy().deco();
+        if (pojo.getGeometryModelLegacy().getBones() == null) {
+            return;
+        }
         for (BonesItem bones : pojo.getGeometryModelLegacy().getBones()) {
             // 将 FunctionalBedrockPart 先塞入 modelMap 中，以支持 functionalRender 操作
             modelMap.putIfAbsent(bones.getName(), new ModelRendererWrapper(new FunctionalBedrockPart(null, bones.getName())));

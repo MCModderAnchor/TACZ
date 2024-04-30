@@ -2,6 +2,7 @@ package com.tac.guns.client.resource.pojo.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class GeometryModelNew {
@@ -9,12 +10,14 @@ public class GeometryModelNew {
     private Description description;
 
     @SerializedName("bones")
+    @Nullable
     private List<BonesItem> bones;
 
     public Description getDescription() {
         return description;
     }
 
+    @Nullable
     public List<BonesItem> getBones() {
         return bones;
     }

@@ -2,10 +2,12 @@ package com.tac.guns.client.resource.pojo.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class GeometryModelLegacy {
     @SerializedName("bones")
+    @Nullable
     private List<BonesItem> bones;
 
     @SerializedName("textureheight")
@@ -23,6 +25,7 @@ public class GeometryModelLegacy {
     @SerializedName("visible_bounds_offset")
     private List<Float> visibleBoundsOffset;
 
+    @Nullable
     public List<BonesItem> getBones() {
         return bones;
     }
