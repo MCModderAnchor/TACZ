@@ -1,0 +1,6 @@
+{
+  "name": "tac.attachment.muzzle_c_trident.name",
+  "display": "tac:muzzle_c_trident_display",
+  "data": "tac:muzzle_c_trident_data",
+  "type": "muzzle"
+}
