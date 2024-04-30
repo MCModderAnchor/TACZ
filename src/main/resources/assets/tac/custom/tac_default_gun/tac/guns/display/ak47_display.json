@@ -51,6 +51,8 @@
       "texture": "tac:flash/common_muzzle_flash",
       "scale": 0.75
     },
+    // 机瞄的放大倍数，默认 1.2
+    "iron_zoom": 1.2,
     // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
     "shell": {
         // 抛壳的初速度

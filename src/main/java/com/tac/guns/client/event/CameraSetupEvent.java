@@ -68,7 +68,7 @@ public class CameraSetupEvent {
             IClientPlayerGunOperator clientPlayerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             float partialTicks = Minecraft.getInstance().getFrameTime();
             float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
-            float zoom = IGun.getAimingZoom(stack);
+            float zoom = iGun.getAimingZoom(stack);
             float multiplier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
             Quaternion q = MathUtil.multiplyQuaternion(gunModel.getCameraAnimationObject().rotationQuaternion, multiplier);
             double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
@@ -102,7 +102,7 @@ public class CameraSetupEvent {
             IClientPlayerGunOperator clientPlayerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             float partialTicks = Minecraft.getInstance().getFrameTime();
             float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
-            float zoom = IGun.getAimingZoom(stack);
+            float zoom = iGun.getAimingZoom(stack);
             float multiplier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
             Quaternion quaternion = MathUtil.multiplyQuaternion(gunModel.getCameraAnimationObject().rotationQuaternion, multiplier);
             poseStack.mulPose(quaternion);
@@ -125,29 +125,18 @@ public class CameraSetupEvent {
                 event.setFOV(fov);
                 return;
             }
-            ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
-            if (!(scopeItem.getItem() instanceof IAttachment iAttachment)) {
-                float fov = FOV_DYNAMICS.update((float) event.getFOV());
+            float zoom = iGun.getAimingZoom(stack);
+            if (livingEntity instanceof LocalPlayer localPlayer) {
+                IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
+                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTicks());
+                float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
                 event.setFOV(fov);
-                return;
+            } else {
+                IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
+                float aimingProgress = gunOperator.getSynAimingProgress();
+                float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
+                event.setFOV(fov);
             }
-            TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(scopeItem)).ifPresent(index -> {
-                float[] zoom = index.getZoom();
-                if (zoom != null && zoom.length != 0) {
-                    float z = zoom[iAttachment.getZoomNumber(scopeItem) % zoom.length];
-                    if (livingEntity instanceof LocalPlayer localPlayer) {
-                        IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
-                        float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTicks());
-                        float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (z - 1) * aimingProgress, event.getFOV()));
-                        event.setFOV(fov);
-                    } else {
-                        IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
-                        float aimingProgress = gunOperator.getSynAimingProgress();
-                        float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (z - 1) * aimingProgress, event.getFOV()));
-                        event.setFOV(fov);
-                    }
-                }
-            });
         }
     }
 
@@ -182,7 +171,7 @@ public class CameraSetupEvent {
             IClientPlayerGunOperator clientPlayerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             float partialTicks = Minecraft.getInstance().getFrameTime();
             float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
-            float zoom = IGun.getAimingZoom(mainhandItem);
+            float zoom = iGun.getAimingZoom(mainhandItem);
             float aimingRecoilModifier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
             pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction(modifierNumber(attachmentRecoilModifier[0]) * aimingRecoilModifier);
             yawSplineFunction = gunData.getRecoil().genYawSplineFunction(modifierNumber(attachmentRecoilModifier[1]) * aimingRecoilModifier);

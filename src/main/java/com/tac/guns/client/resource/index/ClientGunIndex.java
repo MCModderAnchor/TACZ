@@ -53,6 +53,7 @@ public class ClientGunIndex {
     private @Nullable MuzzleFlash muzzleFlash;
     private LayerGunShow offhandShow;
     private @Nullable Int2ObjectArrayMap<LayerGunShow> hotbarShow;
+    private float ironZoom;
 
     private ClientGunIndex() {
     }
@@ -73,6 +74,7 @@ public class ClientGunIndex {
         checkShellEjection(display, index);
         checkMuzzleFlash(display, index);
         checkLayerGunShow(display, index);
+        checkIronZoom(display, index);
         return index;
     }
 
@@ -117,6 +119,13 @@ public class ClientGunIndex {
             throw new IllegalArgumentException("there is no corresponding display file");
         }
         return display;
+    }
+
+    private static void checkIronZoom(GunDisplay display, ClientGunIndex index) {
+        index.ironZoom = display.getIronZoom();
+        if(index.ironZoom < 1) {
+            index.ironZoom = 1;
+        }
     }
 
     private static void checkTextureAndModel(GunDisplay display, ClientGunIndex index) {
@@ -403,5 +412,9 @@ public class ClientGunIndex {
     @Nullable
     public Int2ObjectArrayMap<LayerGunShow> getHotbarShow() {
         return hotbarShow;
+    }
+
+    public float getIronZoom() {
+        return ironZoom;
     }
 }
