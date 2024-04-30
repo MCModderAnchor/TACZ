@@ -25,6 +25,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -332,7 +333,13 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         AABB boundingBox = entity.getBoundingBox();
         boundingBox = boundingBox.expandTowards(0, expandHeight, 0);
         Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
-        if (entity.getVehicle() != null) {
+        if (entity instanceof ServerPlayer) {
+            if (entity.getVehicle() != null) {
+                boundingBox = boundingBox.move(velocity.multiply(-2.5, -2.5, -2.5));
+            }
+            boundingBox = boundingBox.move(velocity.multiply(-5, -5, -5));
+        }
+        if (entity.getVehicle() != null || entity instanceof ITargetEntity) {
             boundingBox = boundingBox.move(velocity.multiply(-2.5, -2.5, -2.5));
         }
         boundingBox = boundingBox.move(velocity.multiply(-5, -5, -5));

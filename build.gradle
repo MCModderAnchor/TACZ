@@ -145,8 +145,8 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
 
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
-    implementation fg.deobf("org.embeddedt:embeddium-1.18.2:${embeddedt_id}")
-    implementation fg.deobf("curse.maven:oculus-581495:${oculus_id}")
+    compileOnly fg.deobf("org.embeddedt:embeddium-1.18.2:${embeddedt_id}")
+    compileOnly fg.deobf("curse.maven:oculus-581495:${oculus_id}")
 
     runtimeOnly fg.deobf("curse.maven:customskinloader-286924:${csl_version}")
 
