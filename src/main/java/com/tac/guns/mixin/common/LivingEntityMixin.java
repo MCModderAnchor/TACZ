@@ -861,7 +861,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         entityData.define(DATA_SPRINT_TIME_ID, 0f);
     }
 
-    @Inject(method = "die", at = @At("RETURN"))
+    @Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;getEntity()Lnet/minecraft/world/entity/Entity;"))
     public void onDie(DamageSource pDamageSource, CallbackInfo ci) {
         // 重置各个状态
         initialData();

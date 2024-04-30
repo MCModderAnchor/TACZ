@@ -553,6 +553,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         tac$IsBolting = false;
         // 打开状态锁
         tac$ClientStateLock = false;
+        draw(ItemStack.EMPTY);
     }
 
     @Unique
