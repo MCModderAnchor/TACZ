@@ -1,6 +1,7 @@
 package com.tac.guns.mixin.client;
 
 import com.tac.guns.api.TimelessAPI;
+import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.event.common.GunFireSelectEvent;
@@ -11,6 +12,7 @@ import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
+import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.input.ShootKey;
@@ -403,6 +405,13 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                     noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
                 } else {
                     noAmmo = !iGun.hasBulletInBarrel(mainhandItem);
+                }
+                ItemStack extendedMagItem = iGun.getAttachment(mainhandItem, AttachmentType.EXTENDED_MAG);
+                IAttachment iAttachment = IAttachment.getIAttachmentOrNull(extendedMagItem);
+                if (iAttachment != null) {
+                    TimelessAPI.getCommonAttachmentIndex(iAttachment.getAttachmentId(extendedMagItem)).ifPresent(index -> {
+                        animationStateMachine.setMagExtended(index.getData().getExtendedMagLevel() > 0);
+                    });
                 }
                 // 触发 reload，停止播放声音
                 SoundPlayManager.stopPlayGunSound();

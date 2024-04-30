@@ -32,6 +32,10 @@ public class AnimationController {
         }
     }
 
+    public boolean containPrototype(String name) {
+        return prototypes.containsKey(name);
+    }
+
     @Nullable
     public ObjectAnimationRunner getAnimation(int track) {
         if (track >= currentRunners.size()) {
