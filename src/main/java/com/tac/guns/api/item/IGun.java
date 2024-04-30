@@ -1,9 +1,11 @@
 package com.tac.guns.api.item;
 
+import com.mojang.logging.LogUtils;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.gun.FireMode;
 import com.tac.guns.client.resource.index.ClientAttachmentIndex;
+import com.tac.guns.client.resource.index.ClientGunIndex;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +46,7 @@ public interface IGun {
         return FireMode.UNKNOWN;
     }
 
-    static float getAimingZoom(ItemStack gunItem) {
+    default float getAimingZoom(ItemStack gunItem) {
         float zoom = 1;
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {
@@ -59,6 +61,9 @@ public interface IGun {
             if (zooms != null) {
                 zoom = zooms[zoomNumber % zooms.length];
             }
+        } else {
+            zoom = TimelessAPI.getClientGunIndex(iGun.getGunId(gunItem)).map(ClientGunIndex::getIronZoom).orElse(1f);
+            LogUtils.getLogger().info(zoom + "");
         }
         return zoom;
     }

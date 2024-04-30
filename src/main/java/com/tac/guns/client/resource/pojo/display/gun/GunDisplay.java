@@ -11,6 +11,8 @@ public class GunDisplay {
     private ResourceLocation modelLocation;
     @SerializedName("texture")
     private ResourceLocation modelTexture;
+    @SerializedName("iron_zoom")
+    float ironZoom = 1.2f;
     @Nullable
     @SerializedName("lod")
     private GunLod gunLod;
@@ -120,5 +122,9 @@ public class GunDisplay {
     @Nullable
     public Map<String, LayerGunShow> getHotbarShow() {
         return hotbarShow;
+    }
+
+    public float getIronZoom() {
+        return ironZoom;
     }
 }

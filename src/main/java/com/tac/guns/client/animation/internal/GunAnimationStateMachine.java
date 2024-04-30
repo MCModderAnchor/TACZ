@@ -20,8 +20,10 @@ public class GunAnimationStateMachine {
     public static final String STATIC_IDLE_ANIMATION = "static_idle";
     public static final String SHOOT_ANIMATION = "shoot";
     public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";
+    public static final String RELOAD_EMPTY_EXTENDED_ANIMATION = "reload_empty_extended";
     public static final String BOLT_ANIMATION = "bolt";
     public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";
+    public static final String RELOAD_TACTICAL_EXTENDED_ANIMATION = "reload_tactical_extended";
     public static final String DRAW_ANIMATION = "draw";
     public static final String PUT_AWAY_ANIMATION = "put_away";
     public static final String INSPECT_ANIMATION = "inspect";
@@ -49,6 +51,7 @@ public class GunAnimationStateMachine {
 
     protected AnimationController controller;
     protected boolean noAmmo = false;
+    protected boolean magExtended = false;
     protected boolean onGround = true;
     protected boolean pauseWalkAndRun = false;
     protected boolean isAiming = false;
@@ -90,9 +93,17 @@ public class GunAnimationStateMachine {
 
     public void onGunReload() {
         if (noAmmo) {
-            controller.runAnimation(MAIN_TRACK, RELOAD_EMPTY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+            if (magExtended && controller.containPrototype(RELOAD_EMPTY_EXTENDED_ANIMATION)) {
+                controller.runAnimation(MAIN_TRACK, RELOAD_EMPTY_EXTENDED_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+            } else {
+                controller.runAnimation(MAIN_TRACK, RELOAD_EMPTY_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+            }
         } else {
-            controller.runAnimation(MAIN_TRACK, RELOAD_TACTICAL_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+            if (magExtended && controller.containPrototype(RELOAD_TACTICAL_EXTENDED_ANIMATION)) {
+                controller.runAnimation(MAIN_TRACK, RELOAD_TACTICAL_EXTENDED_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+            } else {
+                controller.runAnimation(MAIN_TRACK, RELOAD_TACTICAL_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+            }
         }
     }
 
@@ -235,6 +246,11 @@ public class GunAnimationStateMachine {
 
     public GunAnimationStateMachine setNoAmmo(boolean noAmmo) {
         this.noAmmo = noAmmo;
+        return this;
+    }
+
+    public GunAnimationStateMachine setMagExtended(boolean magExtended) {
+        this.magExtended = magExtended;
         return this;
     }
 

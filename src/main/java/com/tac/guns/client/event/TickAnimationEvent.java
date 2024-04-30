@@ -32,7 +32,7 @@ public class TickAnimationEvent {
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                animationStateMachine.setAiming(clientGunOperator.getClientAimingProgress(1) > 0.5f);
+                animationStateMachine.setAiming(clientGunOperator.getClientAimingProgress(1) == 1f);
                 boolean isShooting = clientGunOperator.getClientShootCoolDown() > 0;
                 // 如果玩家正在射击，只能处于 idle 状态
                 if (isShooting) {
