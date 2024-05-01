@@ -1,0 +1,36 @@
+{
+    "model": "tac:gun/db_short_geo",
+    "texture": "tac:gun/uv/db_short",
+    "hud": "tac:gun/hud/db_short",
+    "slot": "tac:gun/slot/db_short",
+    "animation": "tac:db_short",
+    "use_default_animation": "rifle",
+    "third_person_animation": "default",
+    "transform": {
+        "scale": {
+            "thirdperson": [
+                0.6,
+                0.6,
+                0.6
+            ],
+            "ground": [
+                0.6,
+                0.6,
+                0.6
+            ],
+            "fixed": [
+                1.2,
+                1.2,
+                1.2
+            ]
+        }
+    },
+    "muzzle_flash": {
+      "texture": "tac:flash/common_muzzle_flash",
+      "scale": 0.75
+    },
+    "sounds": {
+        "shoot": "tac:db_short/db_shoot",
+        "shoot_3p": "tac:db_short/db_shoot_3p"
+    }
+}
