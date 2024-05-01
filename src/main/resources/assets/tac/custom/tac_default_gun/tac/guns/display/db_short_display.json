@@ -4,7 +4,7 @@
     "hud": "tac:gun/hud/db_short",
     "slot": "tac:gun/slot/db_short",
     "animation": "tac:db_short",
-    "use_default_animation": "rifle",
+    "use_default_animation": "pistol",
     "third_person_animation": "default",
     "transform": {
         "scale": {

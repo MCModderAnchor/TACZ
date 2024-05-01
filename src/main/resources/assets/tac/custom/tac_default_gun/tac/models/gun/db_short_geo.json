@@ -33,7 +33,7 @@
 				{
 					"name": "righthand_pos",
 					"parent": "rightHand",
-					"pivot": [0, 0, 0],
+					"pivot": [0, 8, 8],
 					"cubes": [
 						{
 							"origin": [4, 8, 6],
@@ -3070,7 +3070,7 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "positioning2",
-					"pivot": [0, 9.125, -18]
+					"pivot": [0, 9.125, -15]
 				},
 				{
 					"name": "leftHand",
@@ -3080,7 +3080,7 @@
 				{
 					"name": "lefthand_pos",
 					"parent": "leftHand",
-					"pivot": [0, 0, 0],
+					"pivot": [0, 8, 8],
 					"cubes": [
 						{
 							"origin": [-7, 8, 6],

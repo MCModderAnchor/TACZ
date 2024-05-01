@@ -1,19 +1,19 @@
 {
   "ammo": "tac:12g",
-  "rpm": 150,
+  "rpm": 200,
   "bullet": {
     "life": 0.3,
     "bullet_amount": 12,
-    "damage": 3,
+    "damage": 36,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.0,
       "head_shot_multiplier": 1.1,
       "damage_adjust": [
-        {"distance": 1, "damage": 4},
-        {"distance": 8, "damage": 2},
-        {"distance": 15, "damage": 1.5},
-        {"distance": 20, "damage": 1},
+        {"distance": 8, "damage": 36},
+        {"distance": 18, "damage": 24},
+        {"distance": 24, "damage": 15},
+        {"distance": 28, "damage": 10},
         {"distance": "infinite", "damage": 1}
       ]
     },
@@ -29,15 +29,15 @@
   "reload": {
     "type": "magazine",
     "feed": {
-      "empty": 2.47,
-      "tactical": 1.80
+      "empty": 1.83,
+      "tactical": 1.23
     },
     "cooldown": {
-      "empty": 2.9,
-      "tactical": 2
+      "empty": 2.3,
+      "tactical": 1.6
     }
   },
-  "draw_time": 0.57,
+  "draw_time": 0.27,
   "put_away_time": 0.23,
   "aim_time": 0.2,
   "fire_mode": [
