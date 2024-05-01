@@ -49,11 +49,6 @@
     "semi"
   ],
   "allow_attachments": {
-    "scope": {
-      "black_list": [
-        "tac:sro_dot"
-      ]
-    },
     "extended_mag": {},
     "muzzle": {
       "white_list": [

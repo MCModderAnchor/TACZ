@@ -57,7 +57,11 @@
     "min_interval": 0.3
   },
   "allow_attachments": {
-    "scope": {},
+    "scope": {
+      "black_list": [
+        "tac:sro_dot"
+      ]
+    },
     "extended_mag": {},
     "grip": {},
     "muzzle": {

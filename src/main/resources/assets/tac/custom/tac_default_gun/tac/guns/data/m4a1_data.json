@@ -83,14 +83,20 @@
         "tac:sro_dot"
       ]
     },
-    "stock": {},
+    "stock": {
+      "white_list": [
+        "tac:ar_tactical_stock",
+        "tac:carbon_bone_c5_stock",
+        "tac:militech_b5_stock"
+      ]
+    },
     "grip": {},
     "muzzle": {
       "black_list": [
         "tac:muzzle_s_mirage"
       ]
     },
-    "laser": {},
+//    "laser": {},
     "extended_mag": {}
   },
   "exclusive_attachments": {
