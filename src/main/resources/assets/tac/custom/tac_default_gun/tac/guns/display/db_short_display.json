@@ -30,6 +30,12 @@
       "scale": 0.75
     },
     "sounds": {
+        "reload_empty": "tac:db_short/db_short_reload_empty",
+        "reload_tactical": "tac:db_short/db_short_reload_tactical",
+        "inspect": "tac:db_short/db_short_inspect",
+        "inspect_empty": "tac:db_short/db_short_inspect_empty",
+        "draw":"tac:db_short/db_short_inspect_empty",
+        "put_away": "tac:db_short/db_short_put_away",
         "shoot": "tac:db_short/db_shoot",
         "shoot_3p": "tac:db_short/db_shoot_3p"
     }
