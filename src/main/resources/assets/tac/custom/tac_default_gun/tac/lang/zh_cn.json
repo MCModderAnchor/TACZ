@@ -46,5 +46,8 @@
   "tac.attachment.militech_b5_stock.name": "军科 B5 战术枪托",
   "tac.attachment.muzzle_s_mirage.name": "幻象 手枪消音器",
   "tac.attachment.muzzle_s_phantom_s1.name": "幽影 S1 消音器",
-  "tac.attachment.carbon_bone_c5_stock.name": "碳骨 C5 轻型枪托"
+  "tac.attachment.carbon_bone_c5_stock.name": "碳骨 C5 轻型枪托",
+  "tac.attachment.oem_stock_heavy.name": "原厂重型枪托",
+  "tac.attachment.oem_stock_light.name": "原厂轻型枪托",
+  "tac.attachment.oem_stock_tactical.name": "原厂战术枪托"
 }

@@ -46,7 +46,10 @@
   "tac.attachment.militech_b5_stock.name": "Militech B5 Stock",
   "tac.attachment.muzzle_s_mirage.name": "Mirage Silencer",
   "tac.attachment.muzzle_s_phantom_s1.name": "Phantom S1 Silencer",
-  "tac.attachment.carbon_bone_c5_stock.name": "Carbon bone C5 Stock"
+  "tac.attachment.carbon_bone_c5_stock.name": "Carbon bone C5 Stock",
+  "tac.attachment.oem_stock_heavy.name": "Factory Issued Heavy Stock",
+  "tac.attachment.oem_stock_light.name": "Factory Issued light Stock",
+  "tac.attachment.oem_stock_tactical.name": "Factory Issued Tactical Stock"
 
  
 }
