@@ -48,6 +48,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSide;
@@ -369,54 +370,67 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     }
 
     protected void onHitEntity(TacHitResult result, Vec3 startVec, Vec3 endVec) {
-        if (result.getEntity() instanceof LivingEntity entity) {
-            // 点燃
-            if (this.hasIgnite && AmmoConfig.IGNITE_BLOCK.get()) {
-                entity.setSecondsOnFire(2);
+        if (result.getEntity() instanceof ITargetEntity targetEntity) {
+            targetEntity.onProjectileHit(this, result, DamageSource.thrown(this, this.getOwner()), this.getDamage(result.getLocation()));
+            // 打靶直接返回
+            return;
+        }
+        Entity entity = result.getEntity();
+        // 点燃
+        if (this.hasIgnite && AmmoConfig.IGNITE_BLOCK.get()) {
+            entity.setSecondsOnFire(2);
+        }
+        // 获取伤害
+        float damage = this.getDamage(result.getLocation());
+        // TODO 暴击判定（不是爆头）暴击判定内部逻辑，需要输出一个是否暴击的 flag
+        boolean headshot = result.isHeadshot();
+        if (headshot) {
+            // 默认爆头伤害是 1x
+            float headShotMultiplier = 1f;
+            if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
+                headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
             }
-            // 取消无敌时间
-            entity.invulnerableTime = 0;
-            // 造成伤害
-            float damage = this.getDamage(result.getLocation());
-            // TODO 暴击判定（不是爆头）暴击判定内部逻辑，需要输出一个是否暴击的 flag
-            @Nullable Entity owner = this.getOwner();
-            boolean headshot = result.isHeadshot();
-            if (headshot) {
-                // 默认爆头伤害是 1x
-                float headShotMultiplier = 1f;
-                if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
-                    headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
-                }
-                damage *= headShotMultiplier;
-            }
+            damage *= headShotMultiplier;
+        }
+        @Nullable Entity owner = this.getOwner();
+        // 对 LivingEntity 进行击退强度的自定义
+        if (entity instanceof LivingEntity livingEntity) {
             // 取消击退效果，设定自己的击退强度
-            KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(entity);
+            KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(livingEntity);
             modifier.setKnockBackStrength(this.knockback);
             // 创建伤害
             tacAttackEntity(DamageSource.thrown(this, owner), entity, damage);
             // 恢复原位
             modifier.resetKnockBackStrength();
-            // 爆炸逻辑
-            if (this.hasExplosion) {
-                // 取消无敌时间
-                entity.invulnerableTime = 0;
-                createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
-            }
+        } else {
+            // 创建伤害
+            tacAttackEntity(DamageSource.thrown(this, owner), entity, damage);
+        }
+        // 爆炸逻辑
+        if (this.hasExplosion) {
+            // 取消无敌时间
+            entity.invulnerableTime = 0;
+            createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
+        }
+        LivingEntity livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
+        if (entity instanceof PartEntity partEntity) {
+            livingEntity = partEntity.getParent() instanceof LivingEntity ? (LivingEntity) partEntity.getParent() : null;
+        }
+        // 只对 LivingEntity 执行击杀判定
+        if (livingEntity != null) {
             // 事件同步，从服务端到客户端
             if (!level.isClientSide) {
-                LivingEntity attacker = owner instanceof LivingEntity livingEntity ? livingEntity : null;
+                LivingEntity attacker = owner instanceof LivingEntity ? (LivingEntity) owner : null;
                 int attackerId = attacker == null ? 0 : attacker.getId();
                 // 如果生物死了
-                if (entity.isDeadOrDying()) {
-                    MinecraftForge.EVENT_BUS.post(new LivingKillByGunEvent(entity, attacker, this.gunId, headshot, LogicalSide.SERVER));
+                if (livingEntity.isDeadOrDying()) {
+                    MinecraftForge.EVENT_BUS.post(new LivingKillByGunEvent(livingEntity, attacker, this.gunId, headshot, LogicalSide.SERVER));
                     NetworkHandler.sendToNearby(entity, new ServerMessageGunKill(entity.getId(), attackerId, this.gunId, headshot));
                 } else {
-                    MinecraftForge.EVENT_BUS.post(new LivingHurtByGunEvent(entity, attacker, this.gunId, damage, headshot, LogicalSide.SERVER));
+                    MinecraftForge.EVENT_BUS.post(new LivingHurtByGunEvent(livingEntity, attacker, this.gunId, damage, headshot, LogicalSide.SERVER));
                     NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(entity.getId(), attackerId, this.gunId, damage, headshot));
                 }
             }
-        } else if (result.getEntity() instanceof ITargetEntity targetEntity) {
-            targetEntity.onProjectileHit(this, result, DamageSource.thrown(this, this.getOwner()), this.getDamage(result.getLocation()));
         }
     }
 
@@ -490,13 +504,15 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         // 穿甲伤害和普通伤害的比例计算
         float armorDamagePercent = Mth.clamp(armorIgnore, 0.0F, 1.0F);
         float normalDamagePercent = 1 - armorDamagePercent;
-        // 普通伤害
-        entity.hurt(source, damage * normalDamagePercent);
         // 取消无敌时间
         entity.invulnerableTime = 0;
+        // 普通伤害
+        entity.hurt(source, damage * normalDamagePercent);
         // 穿甲伤害
         source.bypassArmor();
         source.bypassMagic();
+        // 取消无敌时间
+        entity.invulnerableTime = 0;
         entity.hurt(source, damage * armorDamagePercent);
     }
 
