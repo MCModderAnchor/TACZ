@@ -945,7 +945,7 @@
 				{
 					"name": "stock_pos",
 					"parent": "positioning2",
-					"pivot": [0, 10.775, 8.5]
+					"pivot": [0, 10.775, 13.5]
 				},
 				{
 					"name": "grip_pos",
