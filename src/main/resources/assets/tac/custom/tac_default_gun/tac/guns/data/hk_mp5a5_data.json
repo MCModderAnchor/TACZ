@@ -60,7 +60,11 @@
     "scope": {},
     "extended_mag": {},
     "grip": {},
-    "muzzle": {},
+    "muzzle": {
+      "black_list": [
+        "tac:muzzle_s_phantom_s1"
+      ]
+    },
     "stock": {}
   },
   "recoil": {
