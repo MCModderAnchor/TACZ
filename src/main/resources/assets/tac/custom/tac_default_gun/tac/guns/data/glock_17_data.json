@@ -26,6 +26,11 @@
     "pierce": 1
   },
   "ammo_amount": 17,
+  "extended_mag_ammo_amount": [
+    20,
+    25,
+    30
+  ],
   "bolt": "closed_bolt",
   "reload": {
     "type": "magazine",
