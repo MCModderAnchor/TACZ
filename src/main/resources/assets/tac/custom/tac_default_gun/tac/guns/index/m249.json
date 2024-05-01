@@ -1,0 +1,6 @@
+{
+    "name": "tac.gun.m249.name",
+    "display": "tac:m249_display",
+    "data": "tac:m249_data",
+    "type": "mg"
+}

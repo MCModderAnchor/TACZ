@@ -65,5 +65,16 @@
         "GunId": "tac:rpg7"
       }
     }
+  },
+  "mg": {
+    // 名称
+    "name": "tac.type.mg.name",
+    // 图标，按照原版标准物品格式来写
+    "icon": {
+      "item": "tac:gun",
+      "nbt": {
+        "GunId": "tac:m249"
+      }
+    }
   }
 }
