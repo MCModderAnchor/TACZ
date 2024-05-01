@@ -397,9 +397,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
                 return;
             }
             Bolt boltType = gunIndex.getGunData().getBolt();
-            boolean needBolt = boltType == Bolt.CLOSED_BOLT || boltType == Bolt.MANUAL_ACTION;
-            boolean hasBulletInBarrel = iGun.hasBulletInBarrel(currentGunItem);
-            if (needBolt && !hasBulletInBarrel) {
+            int ammoCount = iGun.getCurrentAmmoCount(currentGunItem) + (iGun.hasBulletInBarrel(currentGunItem) && boltType != Bolt.OPEN_BOLT ? 1 : 0);
+            if (ammoCount <= 0) {
                 // 初始化空仓换弹的 tick 的状态
                 tac$ReloadStateType = ReloadState.StateType.EMPTY_RELOAD_FEEDING;
             } else {

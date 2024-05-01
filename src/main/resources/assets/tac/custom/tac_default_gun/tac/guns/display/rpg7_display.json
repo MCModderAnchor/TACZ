@@ -4,6 +4,7 @@
   "hud": "tac:gun/hud/rpg7",
   "slot": "tac:gun/slot/rpg7",
   "animation": "tac:rpg7",
+  "use_default_animation": "rifle",
   "sounds": {
     "reload_empty": "tac:rpg7/rpg7_reload",
     "inspect": "tac:rpg7/rpg7_inspect",

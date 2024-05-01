@@ -1,6 +1,6 @@
 {
   "ammo": "tac:rpg_rocket",
-  "rpm": 30,
+  "rpm": 150,
   "ammo_amount": 1,
   "bolt": "open_bolt",
   "bullet": {
@@ -25,16 +25,17 @@
   "reload": {
     "type": "magazine",
     "feed": {
-      "empty": 1.63,
-      "tactical": 1.05
+      "empty": 2.63,
+      "tactical": 2.63
     },
     "cooldown": {
-      "empty": 1.88,
-      "tactical": 1.5
+      "empty": 3.2,
+      "tactical": 3.2
     }
   },
-  "draw_time": 0.35,
-  "aim_time": 0.17,
+  "draw_time": 0.75,
+  "put_away_time": 0.73,
+  "aim_time": 0.2,
   "fire_mode": [
     "semi"
   ],

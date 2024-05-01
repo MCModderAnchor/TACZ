@@ -1,6 +1,5 @@
 package com.tac.guns.api.item;
 
-import com.mojang.logging.LogUtils;
 import com.tac.guns.api.TimelessAPI;
 import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.gun.FireMode;
@@ -63,7 +62,6 @@ public interface IGun {
             }
         } else {
             zoom = TimelessAPI.getClientGunIndex(iGun.getGunId(gunItem)).map(ClientGunIndex::getIronZoom).orElse(1f);
-            LogUtils.getLogger().info(zoom + "");
         }
         return zoom;
     }

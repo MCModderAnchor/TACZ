@@ -16,11 +16,6 @@
 					"pivot": [0, 3, -2]
 				},
 				{
-					"name": "constraint",
-					"parent": "root",
-					"pivot": [0.875, 8.4125, -7.75]
-				},
-				{
 					"name": "mag_hand",
 					"parent": "root",
 					"pivot": [0, 5.5, -8.15]
@@ -608,6 +603,11 @@
 					"name": "RPG",
 					"parent": "root",
 					"pivot": [0, 3, -2]
+				},
+				{
+					"name": "constraint",
+					"parent": "RPG",
+					"pivot": [0.875, 8.4125, -7.75]
 				},
 				{
 					"name": "righthand",
@@ -2550,7 +2550,21 @@
 				},
 				{
 					"name": "camera",
-					"pivot": [2.8, 8.15, 5.075]
+					"pivot": [2.8, 8.15, 5.075],
+					"cubes": [
+						{
+							"origin": [-2, 0, 0],
+							"size": [2, 2, 2],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [1, 1]},
+								"east": {"uv": [0, 0], "uv_size": [1, 1]},
+								"south": {"uv": [0, 0], "uv_size": [1, 1]},
+								"west": {"uv": [0, 0], "uv_size": [1, 1]},
+								"up": {"uv": [1, 1], "uv_size": [-1, -1]},
+								"down": {"uv": [1, 1], "uv_size": [-1, -1]}
+							}
+						}
+					]
 				},
 				{
 					"name": "idle_view",
@@ -2568,7 +2582,7 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0, 3.175, -1.85]
+					"pivot": [0, 3.575, -1.85]
 				},
 				{
 					"name": "ground",
@@ -2578,8 +2592,8 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0, 5.25, 1.225],
-					"rotation": [0, -90, 0]
+					"pivot": [1.4, 5.25, 1.225],
+					"rotation": [0, 90, 0]
 				}
 			]
 		}
