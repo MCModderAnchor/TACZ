@@ -4,6 +4,7 @@ import com.tac.guns.GunMod;
 import com.tac.guns.item.*;
 import com.tac.guns.item.builder.AmmoItemBuilder;
 import com.tac.guns.item.builder.AttachmentItemBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -16,6 +17,8 @@ import javax.annotation.Nonnull;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GunMod.MOD_ID);
+    public static final ResourceLocation ATTACHMENT_TAB_ICON_ID = new ResourceLocation(GunMod.MOD_ID, "sro_dot");
+    public static final ResourceLocation AMMO_TAB_ICON_ID = new ResourceLocation(GunMod.MOD_ID, "762x39");
     public static CreativeModeTab OTHER_TAB = new CreativeModeTab("tab.tac.other") {
         @Override
         public @Nonnull ItemStack makeIcon() {
@@ -25,13 +28,13 @@ public class ModItems {
     public static CreativeModeTab AMMO_TAB = new CreativeModeTab("tab.tac.ammo") {
         @Override
         public @Nonnull ItemStack makeIcon() {
-            return AmmoItemBuilder.create().build();
+            return AmmoItemBuilder.create().setId(AMMO_TAB_ICON_ID).build();
         }
     };
     public static CreativeModeTab ATTACHMENT_TAB = new CreativeModeTab("tab.tac.attachment") {
         @Override
         public @Nonnull ItemStack makeIcon() {
-            return AttachmentItemBuilder.create().build();
+            return AttachmentItemBuilder.create().setId(ATTACHMENT_TAB_ICON_ID).build();
         }
     };
 

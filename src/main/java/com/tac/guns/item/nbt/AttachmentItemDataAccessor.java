@@ -32,9 +32,7 @@ public interface AttachmentItemDataAccessor extends IAttachment {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
         if (attachmentId != null) {
             nbt.putString(ATTACHMENT_ID_TAG, attachmentId.toString());
-            return;
         }
-        nbt.putString(ATTACHMENT_ID_TAG, DefaultAssets.DEFAULT_ATTACHMENT_ID.toString());
     }
 
     @Override

@@ -1,6 +1,10 @@
 {
     "model": "tac:gun/m4a1_geo",
     "texture": "tac:gun/uv/m4a1",
+    "lod": {
+        "model": "tac:gun/lod/m4a1",
+        "texture": "tac:gun/lod/m4a1"
+    },
     "hud": "tac:gun/hud/m4a1",
     "slot": "tac:gun/slot/m4a1",
     "animation": "tac:m4a1",

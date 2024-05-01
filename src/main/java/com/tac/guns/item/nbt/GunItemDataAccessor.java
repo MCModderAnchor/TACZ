@@ -38,9 +38,7 @@ public interface GunItemDataAccessor extends IGun {
         CompoundTag nbt = gun.getOrCreateTag();
         if (gunId != null) {
             nbt.putString(GUN_ID_TAG, gunId.toString());
-            return;
         }
-        nbt.putString(GUN_ID_TAG, DefaultAssets.DEFAULT_GUN_ID.toString());
     }
 
     default int getLevel(ItemStack gun) {

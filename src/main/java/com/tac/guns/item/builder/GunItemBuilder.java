@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 public final class GunItemBuilder {
     private int count = 1;
     private int ammoCount = 0;
-    private ResourceLocation gunId = DefaultAssets.DEFAULT_GUN_ID;
+    private ResourceLocation gunId;
     private FireMode fireMode = FireMode.UNKNOWN;
     private boolean bulletInBarrel = false;
 
