@@ -10,16 +10,16 @@
       "armor_ignore": 0.0,
       "head_shot_multiplier": 1.1,
       "damage_adjust": [
-        {"distance": 8, "damage": 36},
-        {"distance": 18, "damage": 24},
-        {"distance": 24, "damage": 15},
-        {"distance": 28, "damage": 10},
+        {"distance": 1, "damage": 48},
+        {"distance": 3.5, "damage": 36},
+        {"distance": 10, "damage": 30},
+        {"distance": 20, "damage": 24},
         {"distance": "infinite", "damage": 1}
       ]
     },
     "speed": 120,
     "gravity": 0.0245,
-    "knockback": 0.25,
+    "knockback": 0.35,
     "friction": 0.012,
     "ignite": false,
     "pierce": 1
@@ -52,10 +52,10 @@
   },
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [8.5, 8.5]},
+      {"time": 0, "value": [7.5, 7.5]},
       {"time": 0.125, "value": [7.5, 7.5]},
-      {"time": 0.35, "value": [-0.25, -0.25]},
-      {"time": 0.5, "value": [0, 0]}
+      {"time": 0.5, "value": [-0.25, -0.25]},
+      {"time": 0.65, "value": [0, 0]}
     ],
     "yaw": [
       {"time": 0, "value": [-3, -2.5]},
@@ -64,10 +64,10 @@
     ]
   },
   "inaccuracy": {
-    "stand": 5,
-    "move": 5.25,
-    "sneak": 5,
+    "stand": 5.5,
+    "move": 5.65,
+    "sneak": 5.25,
     "lie": 5,
-    "aim": 4.75
+    "aim": 5
   }
 }

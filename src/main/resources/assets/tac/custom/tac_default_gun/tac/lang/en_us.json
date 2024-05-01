@@ -8,13 +8,14 @@
   "tac.type.sniper.name": "Sniper",
   "tac.type.shotgun.name": "Shotgun",
   "tac.type.smg.name": "SMG",
+  "tac.type.shotgun.name": "Shotgun",
   "tac.gun.ak47.name": "AK-47",
   "tac.gun.glock_17.name": "Glock 17",
   "tac.gun.ai_awp.name": "Accuracy International AWM",
   "tac.gun.m4a1.name": "M4A1 Carbine",
   "tac.gun.rpg7.name": "RPG-7",
   "tac.gun.hk_mp5a5.name": "HK-MP5A5",
-  "tac.gun.db_short.name": "Saw off DB-2",
+  "tac.gun.db_short.name": "DB-2 Durin",
   "tac.ammo.9mm.name": "9mm Bullet",
   "tac.ammo.12g.name": "12 Gauge Bullet",
   "tac.ammo.30_06.name": ".30-06 Springfield Bullet",
@@ -46,5 +47,8 @@
   "tac.attachment.militech_b5_stock.name": "Militech B5 Stock",
   "tac.attachment.muzzle_s_mirage.name": "Mirage Silencer",
   "tac.attachment.muzzle_s_phantom_s1.name": "Phantom S1 Silencer",
-  "tac.attachment.carbon_bone_c5_stock.name": "Carbon bone C5 Stock"
+  "tac.attachment.carbon_bone_c5_stock.name": "Carbon bone C5 Stock",
+  "tac.attachment.oem_stock_heavy.name": "Factory Issued Heavy Stock",
+  "tac.attachment.oem_stock_light.name": "Factory Issued light Stock",
+  "tac.attachment.oem_stock_tactical.name": "Factory Issued Tactical Stock"
 }

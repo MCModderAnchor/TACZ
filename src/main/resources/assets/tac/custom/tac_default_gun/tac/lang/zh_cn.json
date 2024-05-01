@@ -8,13 +8,14 @@
   "tac.type.sniper.name": "狙击枪",
   "tac.type.shotgun.name": "霰弹枪",
   "tac.type.smg.name": "冲锋枪",
+  "tac.type.shotgun.name": "霰弹枪",
   "tac.gun.ak47.name": "AK-47 突击步枪",
   "tac.gun.glock_17.name": "格洛克 17 手枪",
   "tac.gun.ai_awp.name": "精密国际 AWM 狙击步枪",
   "tac.gun.m4a1.name": "M4A1 卡宾枪",
   "tac.gun.rpg7.name": "RPG-7 火箭筒",
   "tac.gun.hk_mp5a5.name": "HK-MP5A5 冲锋枪",
-  "tac.gun.db_short.name": "手锯 DB-2",
+  "tac.gun.db_short.name": "DB-2 杜林人",
   "tac.ammo.9mm.name": "9mm 子弹",
   "tac.ammo.12g.name": "12 号口径霰弹",
   "tac.ammo.30_06.name": ".30-06 春田步枪弹",
@@ -46,5 +47,8 @@
   "tac.attachment.militech_b5_stock.name": "军科 B5 战术枪托",
   "tac.attachment.muzzle_s_mirage.name": "幻象 手枪消音器",
   "tac.attachment.muzzle_s_phantom_s1.name": "幽影 S1 消音器",
-  "tac.attachment.carbon_bone_c5_stock.name": "碳骨 C5 轻型枪托"
+  "tac.attachment.carbon_bone_c5_stock.name": "碳骨 C5 轻型枪托",
+  "tac.attachment.oem_stock_heavy.name": "原厂重型枪托",
+  "tac.attachment.oem_stock_light.name": "原厂轻型枪托",
+  "tac.attachment.oem_stock_tactical.name": "原厂战术枪托"
 }
