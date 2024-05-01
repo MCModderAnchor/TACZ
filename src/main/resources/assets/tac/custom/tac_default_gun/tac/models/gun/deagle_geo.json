@@ -1286,7 +1286,7 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "Deagle",
-					"pivot": [0, 5.85, -4.1]
+					"pivot": [0, 5.875, -3.2]
 				},
 				{
 					"name": "laser_pos",
@@ -1296,7 +1296,7 @@
 				{
 					"name": "muzzle_pos",
 					"parent": "Deagle",
-					"pivot": [0, 5.88125, -2.96875]
+					"pivot": [0, 5.875, -2.96875]
 				},
 				{
 					"name": "scope_pos",

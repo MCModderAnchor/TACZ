@@ -67,12 +67,12 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "gun_pos",
-					"pivot": [0, 7.6, -33]
+					"pivot": [0, 7.75, -33.225]
 				},
 				{
 					"name": "muzzle_pos",
 					"parent": "gun_pos",
-					"pivot": [0, 7.725, -33.3]
+					"pivot": [0, 7.75, -32.875]
 				},
 				{
 					"name": "barrel_default",

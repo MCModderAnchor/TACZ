@@ -1774,12 +1774,12 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "positioning2",
-					"pivot": [0, 10.9, -12.375]
+					"pivot": [0, 10.875, -12.975]
 				},
 				{
 					"name": "muzzle_pos",
 					"parent": "positioning2",
-					"pivot": [0, 10.875, -9.75]
+					"pivot": [0, 10.875, -10.975]
 				},
 				{
 					"name": "laser_pos",
@@ -1795,7 +1795,7 @@
 				{
 					"name": "stock_pos",
 					"parent": "positioning2",
-					"pivot": [0, 10.775, 13.5]
+					"pivot": [0, 10.95, 13.5]
 				},
 				{
 					"name": "grip_pos",
@@ -7560,13 +7560,18 @@
 					"pivot": [0, 13.4, -9.275]
 				},
 				{
-					"name": "ar_adapter",
+					"name": "attachment_adapter",
 					"parent": "Mp5",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "ar_stock_adapter",
+					"parent": "attachment_adapter",
 					"pivot": [0, -17, 0]
 				},
 				{
 					"name": "base3",
-					"parent": "ar_adapter",
+					"parent": "ar_stock_adapter",
 					"pivot": [8, -17, -8],
 					"cubes": [
 						{
@@ -7919,7 +7924,7 @@
 				},
 				{
 					"name": "tube",
-					"parent": "ar_adapter",
+					"parent": "ar_stock_adapter",
 					"pivot": [-0.01863, 11.48371, -1.04084],
 					"cubes": [
 						{
@@ -8032,11 +8037,6 @@
 							}
 						}
 					]
-				},
-				{
-					"name": "attachment_adapter",
-					"parent": "Mp5",
-					"pivot": [0, 0, 0]
 				},
 				{
 					"name": "oem_stock_light",

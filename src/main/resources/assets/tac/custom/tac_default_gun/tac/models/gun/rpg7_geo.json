@@ -2549,24 +2549,6 @@
 					]
 				},
 				{
-					"name": "camera",
-					"pivot": [2.8, 8.15, 5.075],
-					"cubes": [
-						{
-							"origin": [-2, 0, 0],
-							"size": [2, 2, 2],
-							"uv": {
-								"north": {"uv": [0, 0], "uv_size": [1, 1]},
-								"east": {"uv": [0, 0], "uv_size": [1, 1]},
-								"south": {"uv": [0, 0], "uv_size": [1, 1]},
-								"west": {"uv": [0, 0], "uv_size": [1, 1]},
-								"up": {"uv": [1, 1], "uv_size": [-1, -1]},
-								"down": {"uv": [1, 1], "uv_size": [-1, -1]}
-							}
-						}
-					]
-				},
-				{
 					"name": "idle_view",
 					"pivot": [2.8, 8.15, 5.075]
 				},
@@ -2593,6 +2575,16 @@
 					"name": "fixed",
 					"parent": "positioning",
 					"pivot": [1.4, 5.25, 1.225],
+					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "view",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "refit_view",
+					"parent": "view",
+					"pivot": [23, 5, 0],
 					"rotation": [0, 90, 0]
 				}
 			]

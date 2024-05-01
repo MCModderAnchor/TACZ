@@ -2856,7 +2856,7 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "barrel2",
-					"pivot": [0.00625, 5.35, -5.55]
+					"pivot": [0.00625, 5.35, -5.3]
 				},
 				{
 					"name": "slide",
