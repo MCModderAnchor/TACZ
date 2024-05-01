@@ -33,6 +33,17 @@
       }
     }
   },
+  "shotgun": {
+    // 名称
+    "name": "tac.type.shotgun.name",
+    // 图标，按照原版标准物品格式来写
+    "icon": {
+      "item": "tac:gun",
+      "nbt": {
+        "GunId": "tac:db_short"
+      }
+    }
+  },
   "smg": {
     // 名称
     "name": "tac.type.smg.name",
