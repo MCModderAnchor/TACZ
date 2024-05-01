@@ -1,0 +1,7 @@
+{
+  "name": "tac.attachment.carbon_bone_c5_stock.name",
+  "tooltip": "tac.attachment.carbon_bone_c5_stock.tooltip",
+  "display": "tac:carbon_bone_c5_stock_display",
+  "data": "tac:carbon_bone_c5_stock_data",
+  "type": "stock"
+}
