@@ -6,6 +6,7 @@
   "tac.type.rifle.name": "Rifle",
   "tac.type.rpg.name": "Heavy Weapon",
   "tac.type.sniper.name": "Sniper",
+  "tac.type.shotgun.name": "Shotgun",
   "tac.type.smg.name": "SMG",
   "tac.type.shotgun.name": "Shotgun",
   "tac.gun.ak47.name": "AK-47",
@@ -40,7 +41,6 @@
   "tac.attachment.extended_mag_2.name": "§9Medium Extended Mag",
   "tac.attachment.extended_mag_3.name": "§5Large Extended Mag",
   "tac.attachment.ar_tactical_stock.name": "§5Magpul CTR stock",
-  "tac.attachment.muzzle_s_p_1.name": "Pistol Silencer",
   "tac.attachment.magpul_afg_2.name": "Magpul AFG 2",
   "tac.attachment.cyclone_d2_brake.name": "Cyclone D2 Brake",
   "tac.attachment.muzzle_c_trident.name": "Tempest Trident Compensator",
@@ -51,6 +51,4 @@
   "tac.attachment.oem_stock_heavy.name": "Factory Issued Heavy Stock",
   "tac.attachment.oem_stock_light.name": "Factory Issued light Stock",
   "tac.attachment.oem_stock_tactical.name": "Factory Issued Tactical Stock"
-
- 
 }

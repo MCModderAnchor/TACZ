@@ -1,6 +1,6 @@
 {
   "ammo": "tac:12g",
-  "rpm": 180,
+  "rpm": 200,
   "bullet": {
     "life": 0.3,
     "bullet_amount": 12,
@@ -29,15 +29,15 @@
   "reload": {
     "type": "magazine",
     "feed": {
-      "empty": 2.3,
-      "tactical": 1.55
+      "empty": 1.83,
+      "tactical": 1.23
     },
     "cooldown": {
-      "empty": 2.35,
-      "tactical": 1.65
+      "empty": 2.3,
+      "tactical": 1.6
     }
   },
-  "draw_time": 0.57,
+  "draw_time": 0.27,
   "put_away_time": 0.23,
   "aim_time": 0.2,
   "fire_mode": [

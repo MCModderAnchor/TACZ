@@ -406,13 +406,15 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
                 } else {
                     noAmmo = !iGun.hasBulletInBarrel(mainhandItem);
                 }
+                //TODO 这块没完全弄好
+                /*
                 ItemStack extendedMagItem = iGun.getAttachment(mainhandItem, AttachmentType.EXTENDED_MAG);
                 IAttachment iAttachment = IAttachment.getIAttachmentOrNull(extendedMagItem);
                 if (iAttachment != null) {
                     TimelessAPI.getCommonAttachmentIndex(iAttachment.getAttachmentId(extendedMagItem)).ifPresent(index -> {
                         animationStateMachine.setMagExtended(index.getData().getExtendedMagLevel() > 0);
                     });
-                }
+                }*/
                 // 触发 reload，停止播放声音
                 SoundPlayManager.stopPlayGunSound();
                 SoundPlayManager.playReloadSound(player, gunIndex, noAmmo);

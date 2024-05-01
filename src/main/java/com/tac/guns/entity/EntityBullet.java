@@ -76,6 +76,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     private float explosionDamage = 3;
     private float explosionRadius = 3;
     private ExtraDamage extraDamage = null;
+    private float damageModifier = 1;
     // 穿透数
     private int pierce = 1;
     // 初始位置
@@ -110,7 +111,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         this.damageAmount = (float) Mth.clamp(data.getDamageAmount() * AmmoConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
         // 霰弹情况，每个伤害要扣去
         if (data.getBulletAmount() > 1) {
-            this.damageAmount = this.damageAmount / data.getBulletAmount();
+            this.damageModifier = 1f / data.getBulletAmount();
         }
         this.knockback = Mth.clamp(data.getKnockback(), 0, Float.MAX_VALUE);
         this.pierce = Mth.clamp(data.getPierce(), 1, Integer.MAX_VALUE);
@@ -458,19 +459,19 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     public float getDamage(Vec3 hitVec) {
         // 如果没有额外伤害，直接原样返回
         if (this.extraDamage == null) {
-            return Math.max(0F, this.damageAmount);
+            return Math.max(0F, this.damageAmount * this.damageModifier);
         }
         // 调用距离伤害函数进行具体伤害计算
         var damageDecay = extraDamage.getDamageAdjust();
         // 距离伤害函数为空，直接全程默认伤害
         if (damageDecay == null || damageDecay.isEmpty()) {
-            return Math.max(0F, this.damageAmount);
+            return Math.max(0F, this.damageAmount * this.damageModifier);
         }
         // 遍历进行判断
         double playerDistance = hitVec.distanceTo(this.startPos);
         for (ExtraDamage.DistanceDamagePair pair : damageDecay) {
             if (playerDistance < pair.getDistance()) {
-                return Math.max(0F, pair.getDamage());
+                return Math.max(0F, pair.getDamage()) * this.damageModifier;
             }
         }
         // 如果忘记写最大值，那我就直接认为你伤害为 0
