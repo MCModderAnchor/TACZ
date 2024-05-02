@@ -4,18 +4,18 @@
   "bullet": {
     "life": 0.6,
     "bullet_amount": 1,
-    "damage": 5,
+    "damage": 6,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
         {"distance": 0.5, "damage": 7},
-        {"distance": 4, "damage": 5},
-        {"distance": 9.5, "damage": 4},
-        {"distance": 17.5, "damage": 3.5},
+        {"distance": 5, "damage": 6},
+        {"distance": 9.5, "damage": 5},
+        {"distance": 17.5, "damage": 4.5},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 3.2}
+        {"distance": "infinite", "damage": 3}
       ]
     },
     "speed": 150,
