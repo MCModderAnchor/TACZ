@@ -5,9 +5,9 @@
   "ammo_amount": 30,
   // 扩容弹夹弹药总数
   "extended_mag_ammo_amount": [
-    40,
-    50,
-    60
+    35,
+    38,
+    40
   ],
   // 枪栓类型：开膛待机（open_bolt）、闭膛待击（closed_bolt）、手动上膛（manual_action)
   "bolt": "closed_bolt",
