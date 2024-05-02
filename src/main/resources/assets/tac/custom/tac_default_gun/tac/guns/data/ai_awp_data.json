@@ -1,6 +1,11 @@
 {
   "ammo": "tac:338",
-  "ammo_amount": 10,
+  "ammo_amount": 5,
+  "extended_mag_ammo_amount": [
+    6,
+    8,
+    10
+  ],
   "bolt": "manual_action",
   "rpm": 171,
   "bullet": {
