@@ -30,6 +30,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -37,6 +38,10 @@ import java.util.function.Consumer;
 public class GunItem extends Item implements GunItemDataAccessor {
     public GunItem() {
         super(new Properties().stacksTo(1).tab(ModItems.OTHER_TAB));
+    }
+
+    private static Comparator<Map.Entry<ResourceLocation, ClientGunIndex>> idNameSort() {
+        return Comparator.comparingInt(m -> m.getValue().getSort());
     }
 
     @Override
@@ -56,7 +61,7 @@ public class GunItem extends Item implements GunItemDataAccessor {
     public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
         if (modeTab instanceof CustomTab tab) {
             String key = tab.getKey();
-            TimelessAPI.getAllClientGunIndex().forEach(entry -> {
+            TimelessAPI.getAllClientGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
                 ClientGunIndex index = entry.getValue();
                 if (key.equals(index.getType())) {
                     GunData gunData = index.getGunData();

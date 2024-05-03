@@ -22,6 +22,9 @@ public class GunIndexPOJO {
     @SerializedName("type")
     private String type;
 
+    @SerializedName("sort")
+    private int sort;
+
     public String getName() {
         return name;
     }
@@ -41,5 +44,9 @@ public class GunIndexPOJO {
 
     public String getType() {
         return type;
+    }
+
+    public int getSort() {
+        return sort;
     }
 }
