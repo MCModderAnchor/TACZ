@@ -1775,7 +1775,7 @@
 					]
 				},
 				{
-					"name": "glow_sight2",
+					"name": "rear_sight_illuminated",
 					"parent": "slide2",
 					"pivot": [-0.74201, 8.52206, 4.75],
 					"cubes": [
@@ -5771,7 +5771,7 @@
 					]
 				},
 				{
-					"name": "glow_sight",
+					"name": "fore_sight_illuminated",
 					"parent": "sight",
 					"pivot": [0, 8.64456, -5.15214],
 					"cubes": [
