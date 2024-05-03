@@ -27,32 +27,31 @@
     // 额外伤害的内容，为空则表示没有任何额外伤害计算内容
     "extra_damage": {
       // 护甲穿透率，默认为 0，也就是没有穿甲伤害
-      "armor_ignore": 0.3,
+      "armor_ignore": 0.4,
       // 爆头伤害 x1.5
-      "head_shot_multiplier": 1.75,
+      "head_shot_multiplier": 1.5,
       // 距离-伤害分段常函数
       "damage_adjust": [
         // 这样就能写抵近伤害了
-        {"distance": 0.5, "damage": 13},
+        {"distance": 0.5, "damage": 13.5},
         {"distance": 15.5, "damage": 11},
-        {"distance": 25, "damage": 10},
-        {"distance": 40, "damage": 9},
+        {"distance": 32.5, "damage": 9.5},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 7}
+        {"distance": "infinite", "damage": 7.5}
       ]
     },
     // 速度 m/s
-    "speed": 340,
+    "speed": 270,
     // 重力
-    "gravity": 0.025,
+    "gravity": 0.0245,
     // 击退效果
     "knockback": 0,
     // 阻力
-    "friction": 0.01,
+    "friction": 0.012,
     // 点燃目标
     "ignite": false,
     // 穿透数
-    "pierce": 1
+    "pierce": 2
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
     //  "radius": 5
@@ -65,26 +64,26 @@
     // 弹匣供弹换弹时长（秒），到达此时间点，服务端就更新枪内子弹数量
     "feed": {
       // 空仓换弹
-      "empty": 2.75,
+      "empty": 2.7,
       // 战术换弹
-      "tactical": 1.75
+      "tactical": 1.55
     },
     // 弹匣供弹总时长（秒），到达此时间点，枪械才可以进行开火、检视等行为。
     "cooldown": {
       // 空仓换弹
-      "empty": 2.8,
+      "empty": 3.15,
       // 战术换弹
-      "tactical": 1.8
+      "tactical": 2.05
     }
   },
   // 枪械抬起的动作时长，单位秒。
   // 抬起动作完成后，枪械可以进行开火、检视等行为
-  "draw_time": 0.75,
+  "draw_time": 0.65,
   // 收枪的动作时长，单位秒。
-  "put_away_time": 0.4,
+  "put_away_time": 0.5,
   // 瞄准时长，单位秒。
-  "aim_time": 0.22,
-  "sprint_time": 0.3,
+  "aim_time": 0.24,
+  "sprint_time": 0.4,
   // 拉栓上膛的时间，仅当枪栓类型为 manual_action 时有效
   // "bolt_action_time": 0.9,
   // 开火模式
@@ -92,29 +91,19 @@
     "semi",
     "auto"
   ],
-  // 多连续发数据，仅多连发会调用
-  "burst_data": {
-    // 是否连续射击
-    "continuous_shoot": true,
-    // 连发数
-    "count": 3,
-    // 组内连发的射速
-    "bpm": 900,
-    // 每组连发之间的时间间隔（上一组结束时间到下一组开始的时间间隔），单位秒
-    "min_interval": 0.3
-  },
   // 后坐力
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [1.5, 1.5]},
-      {"time": 0.25, "value": [1.5, 1.5]},
-      {"time": 0.45, "value": [-0.175, -0.175]},
-      {"time": 0.6, "value": [0, 0]}
+      {"time": 0, "value": [1.25, 1.25]},
+      {"time": 0.3, "value": [1.25, 1.25]},
+      {"time": 0.55, "value": [-0.225, -0.225]},
+      {"time": 0.7, "value": [0, 0]},
+      {"time": 0.8, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-1.55, -1.25]},
-      {"time": 0.25, "value": [-0.35, -0.15]},
-      {"time": 0.45, "value": [0, 0]}
+      {"time": 0, "value": [-0.55, -0.3]},
+      {"time": 0.45, "value": [-0.55, -0.3]},
+      {"time": 0.7, "value": [0, 0]}
     ]
   },
   // 不准确度
@@ -122,23 +111,18 @@
     // 站立射击散布
     "stand": 5,
     // 移动射击散布
-    "move": 5.125,
+    "move": 5.5,
     // 潜行射击散布
-    "sneak": 3.75,
+    "sneak": 3.25,
     // 趴下射击散布
-    "lie": 1.25,
+    "lie": 1.5,
     // 瞄准射击时散布
-    "aim": 0.25
+    "aim": 0.15
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser
   "allow_attachments": {
     "scope": {
-      // 允许安装的配件的名单，没有则默认全部允许安装
-      //"white_list": [
-      //
-      //],
-      // 不允许安装的配件的名单，没有则默认全部允许安装
       "black_list": [
         "tac:sro_dot"
       ]

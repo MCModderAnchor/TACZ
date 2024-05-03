@@ -2,6 +2,7 @@
   "model": "tac:ammo/308",
   "texture": "tac:ammo/uv/308",
   "slot": "tac:ammo/slot/308",
+  "tracer_color": "#FF9999",
   "transform": {
     "scale": {
       "thirdperson": [

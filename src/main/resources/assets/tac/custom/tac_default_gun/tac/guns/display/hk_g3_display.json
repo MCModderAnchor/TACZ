@@ -47,7 +47,7 @@
     },
     "muzzle_flash": {
       "texture": "tac:flash/common_muzzle_flash",
-      "scale": 1.25
+      "scale": 1.0
     },
     // 机瞄的放大倍数，默认 1.2
     "iron_zoom": 1.2,

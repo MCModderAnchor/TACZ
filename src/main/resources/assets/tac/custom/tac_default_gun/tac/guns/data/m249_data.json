@@ -70,7 +70,12 @@
     "aim": 0.15
   },
   "allow_attachments": {
-    "scope": {},
+    "scope": {
+      "black_list": [
+        "tac:sro_dot",
+        "tac:8x"
+      ]
+    },
     "grip": {},
     "muzzle": {
       "black_list": [

@@ -7,8 +7,8 @@
     "damage": 5,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.3,
-      "head_shot_multiplier": 1.5,
+      "armor_ignore": 0.15,
+      "head_shot_multiplier": 1.25,
       "damage_adjust": [
         {"distance": 0.5, "damage": 7},
         {"distance": 4, "damage": 5},
@@ -59,7 +59,8 @@
   "allow_attachments": {
     "scope": {
       "black_list": [
-        "tac:sro_dot"
+        "tac:sro_dot",
+        "tac:8x"
       ]
     },
     "extended_mag": {},

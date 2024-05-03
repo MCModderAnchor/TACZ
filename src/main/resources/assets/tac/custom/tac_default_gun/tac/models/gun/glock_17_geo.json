@@ -3638,7 +3638,7 @@
 				{
 					"name": "scope_pos",
 					"parent": "slide",
-					"pivot": [0, 5.6, 2.275]
+					"pivot": [0, 5.8, 3.225]
 				},
 				{
 					"name": "constraint",

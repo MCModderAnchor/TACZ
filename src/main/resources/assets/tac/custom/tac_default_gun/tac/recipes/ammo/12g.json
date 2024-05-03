@@ -2,20 +2,26 @@
   "materials": [
     {
       "item": {
-        "tag": "forge:ingots/iron"
+        "tag": "forge:ingots/copper"
       },
-      "count": 2
+      "count": 15
     },
     {
       "item": {
         "tag": "forge:gunpowder"
       },
-      "count": 2
+      "count": 6
+    },
+    {
+      "item": {
+        "tag": "forge:nuggets/iron"
+      },
+      "count": 9
     }
   ],
   "result": {
     "type": "ammo",
     "id": "tac:12g",
-    "count": 60
+    "count": 18
   }
 }

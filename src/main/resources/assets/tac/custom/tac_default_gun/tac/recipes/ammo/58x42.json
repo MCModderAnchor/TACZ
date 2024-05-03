@@ -2,9 +2,9 @@
   "materials": [
     {
       "item": {
-        "tag": "forge:ingots/iron"
+        "tag": "forge:ingots/copper"
       },
-      "count": 3
+      "count": 15
     },
     {
       "item": {

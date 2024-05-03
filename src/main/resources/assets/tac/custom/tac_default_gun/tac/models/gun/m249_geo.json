@@ -5801,7 +5801,7 @@
 				{
 					"name": "scope_pos",
 					"parent": "top_rail",
-					"pivot": [0, 10.6875, 4.025]
+					"pivot": [0, 10.6875, 6.075]
 				},
 				{
 					"name": "rare_sight",

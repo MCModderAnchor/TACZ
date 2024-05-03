@@ -62,7 +62,7 @@
 				{
 					"name": "scope_pos",
 					"parent": "gun_pos",
-					"pivot": [0, 8.825, 1.125]
+					"pivot": [0, 8.825, 3.1]
 				},
 				{
 					"name": "muzzle_flash",
