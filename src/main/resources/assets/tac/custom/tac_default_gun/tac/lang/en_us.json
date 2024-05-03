@@ -36,6 +36,7 @@
   "tac.ammo.762x54.name": "7.62x54mm Bullet",
   "tac.ammo.magnum_r.name": ".357 Magnum Bullet",
   "tac.ammo.rpg_rocket.name": "RPG-7 Rocket",
+  "tac.type.attachment.name": "Attachment",
   "tac.attachment.sro_dot.name": "Trijicon SRO",
   "tac.attachment.8x.name": "8x Scope",
   "tac.attachment.coyote.name": "Coyote Sight",

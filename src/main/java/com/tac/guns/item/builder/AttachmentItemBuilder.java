@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class AttachmentItemBuilder {
     private int count = 1;
-    private ResourceLocation attachmentId;
+    private ResourceLocation attachmentId = DefaultAssets.DEFAULT_ATTACHMENT_ID;
     private ResourceLocation skinId = null;
 
     private AttachmentItemBuilder() {
