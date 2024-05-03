@@ -10,8 +10,12 @@ import com.tac.guns.client.resource.index.ClientAttachmentIndex;
 import com.tac.guns.client.resource.index.ClientGunIndex;
 import com.tac.guns.client.resource.loader.*;
 import com.tac.guns.client.resource.pojo.CommonTransformObject;
+import com.tac.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
+import com.tac.guns.client.resource.pojo.animation.bedrock.SoundEffectKeyframes;
 import com.tac.guns.client.resource.pojo.model.CubesItem;
+import com.tac.guns.client.resource.serialize.AnimationKeyframesSerializer;
 import com.tac.guns.client.resource.serialize.ItemStackSerializer;
+import com.tac.guns.client.resource.serialize.SoundEffectKeyframesSerializer;
 import com.tac.guns.client.resource.serialize.Vector3fSerializer;
 import com.tac.guns.config.common.OtherConfig;
 import com.tac.guns.resource.pojo.AmmoIndexPOJO;
@@ -50,6 +54,8 @@ public class ClientGunPackLoader {
             .registerTypeAdapter(Vector3f.class, new Vector3fSerializer())
             .registerTypeAdapter(CommonTransformObject.class, new CommonTransformObject.Serializer())
             .registerTypeAdapter(ItemStack.class, new ItemStackSerializer())
+            .registerTypeAdapter(AnimationKeyframes.class, new AnimationKeyframesSerializer())
+            .registerTypeAdapter(SoundEffectKeyframes.class, new SoundEffectKeyframesSerializer())
             .create();
 
     private static final Marker MARKER = MarkerManager.getMarker("ClientGunPackLoader");
