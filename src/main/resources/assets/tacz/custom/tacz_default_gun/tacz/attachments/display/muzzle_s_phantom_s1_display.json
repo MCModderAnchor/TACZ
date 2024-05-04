@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_s_phantom_s1_slot",
+  "model": "tacz:attachment/muzzle_s_phantom_s1",
+  "texture": "tacz:attachment/uv/muzzle_s_phantom_s1",
+  "sounds": {
+    "install": "tacz:attachments/muzzle_general",
+    "uninstall": "tacz:attachments/muzzle_general"
+  }
+}

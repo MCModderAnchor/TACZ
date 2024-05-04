@@ -1,7 +1,0 @@
-{
-  "name": "tac.attachment.muzzle_s_phantom_s1.name",
-  "tooltip": "tac.attachment.muzzle_s_phantom_s1.tooltip",
-  "display": "tac:muzzle_s_phantom_s1_display",
-  "data": "tac:muzzle_s_phantom_s1_data",
-  "type": "muzzle"
-}

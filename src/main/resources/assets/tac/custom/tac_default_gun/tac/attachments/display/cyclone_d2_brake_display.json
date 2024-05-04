@@ -1,9 +1,0 @@
-{
-  "slot": "tac:attachment/slot/cyclone_d2_brake",
-  "model": "tac:attachment/cyclone_d2_brake_geo",
-  "texture": "tac:attachment/uv/cyclone_d2_brake",
-  "sounds": {
-    "install": "tac:attachments/attachment_general_a",
-    "uninstall": "tac:attachments/attachment_general_uninstall"
-  }
-}

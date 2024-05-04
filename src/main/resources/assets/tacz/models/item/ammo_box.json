@@ -1,0 +1,16 @@
+{
+  "overrides": [
+    {
+      "predicate": {
+        "tacz:ammo_statue": 0
+      },
+      "model": "tacz:item/ammo_box_open"
+    },
+    {
+      "predicate": {
+        "tacz:ammo_statue": 1
+      },
+      "model": "tacz:item/ammo_box_close"
+    }
+  ]
+}

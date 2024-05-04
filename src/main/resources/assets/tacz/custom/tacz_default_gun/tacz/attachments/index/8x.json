@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.8x.name",
+  "tooltip": "tacz.attachment.8x.tooltip",
+  "display": "tacz:8x_display",
+  "data": "tacz:8x_data",
+  "type": "scope"
+}

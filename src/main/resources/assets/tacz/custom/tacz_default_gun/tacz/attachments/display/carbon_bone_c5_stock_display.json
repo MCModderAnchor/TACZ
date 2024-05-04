@@ -1,0 +1,10 @@
+{
+  "slot": "tacz:attachment/slot/carbon_bone_c5_stock_slot",
+  "model": "tacz:attachment/carbon_bone_c5_stock",
+  "texture": "tacz:attachment/uv/carbon_bone_c5_stock",
+  "adapter": "ar_stock_adapter",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

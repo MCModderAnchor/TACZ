@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.muzzle_s_mirage.name",
+  "tooltip": "tacz.attachment.muzzle_s_p_1.tooltip",
+  "display": "tacz:muzzle_s_mirage_display",
+  "data": "tacz:muzzle_s_mirage_data",
+  "type": "muzzle"
+}
