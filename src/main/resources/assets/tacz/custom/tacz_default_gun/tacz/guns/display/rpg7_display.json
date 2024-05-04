@@ -8,7 +8,9 @@
   "sounds": {
     "reload_empty": "tacz:rpg7/rpg7_reload",
     "inspect": "tacz:rpg7/rpg7_inspect",
+    "inspect_empty": "tacz:rpg7/rpg7_inspect_empty",
     "draw": "tacz:rpg7/rpg7_draw",
+    "put_away": "tacz:rpg7/rpg7_put_away",
     "shoot": "tacz:rpg7/rpg7_shoot",
     "shoot_3p": "tacz:rpg7/rpg7_shoot"
   }
