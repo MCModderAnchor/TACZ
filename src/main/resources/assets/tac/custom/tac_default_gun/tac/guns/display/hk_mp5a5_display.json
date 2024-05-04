@@ -1,6 +1,10 @@
 {
     "model": "tac:gun/hk_mp5a5_geo",
     "texture": "tac:gun/uv/hk_mp5a5",
+    "lod": {
+        "model": "tac:gun/lod/mp5a5",
+        "texture": "tac:gun/lod/mp5a5"
+    },
     "hud": "tac:gun/hud/hk_mp5a5",
     "slot": "tac:gun/slot/hk_mp5a5",
     "animation": "tac:hk_mp5a5",
