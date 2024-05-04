@@ -1,9 +1,0 @@
-{
-  "slot": "tac:attachment/slot/muzzle_s_mirage_slot",
-  "model": "tac:attachment/muzzle_s_mirage",
-  "texture": "tac:attachment/uv/muzzle_s_mirage",
-  "sounds": {
-    "install": "tac:attachments/muzzle_general",
-    "uninstall": "tac:attachments/muzzle_general"
-  }
-}

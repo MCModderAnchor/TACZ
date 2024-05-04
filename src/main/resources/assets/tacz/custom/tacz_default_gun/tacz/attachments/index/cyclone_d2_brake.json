@@ -1,0 +1,6 @@
+{
+  "name": "tacz.attachment.cyclone_d2_brake.name",
+  "display": "tacz:cyclone_d2_brake_display",
+  "data": "tacz:cyclone_d2_brake_data",
+  "type": "muzzle"
+}

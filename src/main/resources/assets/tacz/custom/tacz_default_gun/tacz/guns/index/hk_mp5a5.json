@@ -1,0 +1,10 @@
+{
+    // 枪械的显示名称，支持本地化
+    "name": "tacz.gun.hk_mp5a5.name",
+    // 枪械效果文件
+    "display": "tacz:hk_mp5a5_display",
+    // 枪械参数文件
+    "data": "tacz:hk_mp5a5_data",
+    // 枪械种类，用于创造标签栏归类。
+    "type": "smg"
+}

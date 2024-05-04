@@ -31,14 +31,14 @@ apply plugin: 'maven-publish'
 // version = "1.0.0"
 // 版本号，正式发布需要修改这一行
 version = FORMAT.format(new Date())
-group = "com.tac"
-archivesBaseName = "tac-1.18.2"
+group = "com.tacz"
+archivesBaseName = "tacz-1.18.2"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 mixin {
-    add sourceSets.main, "tac.refmap.json"
-    config "tac.mixins.json"
+    add sourceSets.main, "tacz.refmap.json"
+    config "tacz.mixins.json"
 }
 
 minecraft {
@@ -59,7 +59,7 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             mods {
-                tac {
+                tacz {
                     source sourceSets.main
                 }
             }
@@ -71,7 +71,7 @@ minecraft {
             // 设定用户名
             args '--username', 'mayday_memory'
             mods {
-                tac {
+                tacz {
                     source sourceSets.main
                 }
             }
@@ -85,7 +85,7 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
-                tac {
+                tacz {
                     source sourceSets.main
                 }
             }
@@ -96,9 +96,9 @@ minecraft {
             property 'mixin.env.disableRefMap', 'true'
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
-            args '--mod', 'tac', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'tacz', '--all', '--output', file('src/generated/resources/')
             mods {
-                tac {
+                tacz {
                     source sourceSets.main
                 }
             }
@@ -203,7 +203,7 @@ shadowJar {
         exclude('META-INF/maven/')
     }
     // 防止与其他模组导致的同名路径冲突
-    relocate 'org.apache.commons.math3', 'com.tac.guns.libs.org.apache.commons.math3'
+    relocate 'org.apache.commons.math3', 'com.tacz.guns.libs.org.apache.commons.math3'
     // 最小化
     minimize()
 }
