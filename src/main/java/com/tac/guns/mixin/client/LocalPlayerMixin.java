@@ -1,7 +1,6 @@
 package com.tac.guns.mixin.client;
 
 import com.tac.guns.api.TimelessAPI;
-import com.tac.guns.api.attachment.AttachmentType;
 import com.tac.guns.api.client.player.IClientPlayerGunOperator;
 import com.tac.guns.api.entity.IGunOperator;
 import com.tac.guns.api.event.common.GunFireSelectEvent;
@@ -12,7 +11,6 @@ import com.tac.guns.api.gun.ReloadState;
 import com.tac.guns.api.gun.ShootResult;
 import com.tac.guns.api.item.IAmmo;
 import com.tac.guns.api.item.IAmmoBox;
-import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tac.guns.client.input.ShootKey;

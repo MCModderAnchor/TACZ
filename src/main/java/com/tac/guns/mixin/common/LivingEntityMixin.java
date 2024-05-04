@@ -16,7 +16,7 @@ import com.tac.guns.api.item.IAttachment;
 import com.tac.guns.api.item.IGun;
 import com.tac.guns.config.common.GunConfig;
 import com.tac.guns.entity.EntityBullet;
-import com.tac.guns.entity.serializer.ModEntityDataSerializers;
+import com.tac.guns.entity.internal.ModEntityData;
 import com.tac.guns.resource.DefaultAssets;
 import com.tac.guns.resource.index.CommonGunIndex;
 import com.tac.guns.resource.pojo.data.attachment.Silence;
@@ -57,20 +57,6 @@ import java.util.function.Supplier;
 @SuppressWarnings("UnreachableCode")
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator, KnockBackModifier {
-    @Unique
-    private static final EntityDataAccessor<Long> DATA_SHOOT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
-    @Unique
-    private static final EntityDataAccessor<ReloadState> DATA_RELOAD_STATE_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.RELOAD_STATE);
-    @Unique
-    private static final EntityDataAccessor<Float> DATA_AIMING_PROGRESS_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-    @Unique
-    private static final EntityDataAccessor<Long> DATA_DRAW_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
-    @Unique
-    private static final EntityDataAccessor<Boolean> DATA_IS_AIMING_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
-    @Unique
-    private static final EntityDataAccessor<Float> DATA_SPRINT_TIME_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-    @Unique
-    private static final EntityDataAccessor<Long> DATA_BOLT_COOL_DOWN_ID = SynchedEntityData.defineId(LivingEntity.class, ModEntityDataSerializers.LONG);
     /**
      * 射击时间戳，射击成功时更新，单位 ms。
      * 用于计算射击的冷却时间。
@@ -158,43 +144,50 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Override
     @Unique
     public long getSynShootCoolDown() {
-        return this.getEntityData().get(DATA_SHOOT_COOL_DOWN_ID);
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        return ModEntityData.SHOOT_COOL_DOWN_KEY.getValue(livingEntity);
     }
 
     @Override
     @Unique
     public long getSynDrawCoolDown() {
-        return this.getEntityData().get(DATA_DRAW_COOL_DOWN_ID);
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        return ModEntityData.DRAW_COOL_DOWN_KEY.getValue(livingEntity);
     }
 
     @Override
     @Unique
     public long getSynBoltCoolDown() {
-        return this.getEntityData().get(DATA_BOLT_COOL_DOWN_ID);
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        return ModEntityData.BOLT_COOL_DOWN_KEY.getValue(livingEntity);
     }
 
     @Override
     @Unique
     public ReloadState getSynReloadState() {
-        return this.getEntityData().get(DATA_RELOAD_STATE_ID);
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        return ModEntityData.RELOAD_STATE_KEY.getValue(livingEntity);
     }
 
     @Override
     @Unique
     public float getSynAimingProgress() {
-        return this.getEntityData().get(DATA_AIMING_PROGRESS_ID);
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        return ModEntityData.AIMING_PROGRESS_KEY.getValue(livingEntity);
     }
 
     @Override
     @Unique
     public float getSynSprintTime() {
-        return this.getEntityData().get(DATA_SPRINT_TIME_ID);
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        return ModEntityData.SPRINT_TIME_KEY.getValue(livingEntity);
     }
 
     @Override
     @Unique
     public boolean getSynIsAiming() {
-        return this.getEntityData().get(DATA_IS_AIMING_ID);
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        return ModEntityData.IS_AIMING_KEY.getValue(livingEntity);
     }
 
     @Unique
@@ -241,8 +234,9 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         }).orElse(-1L);
     }
 
+    @Override
     @Unique
-    private void initialData() {
+    public void initialData() {
         // 重置各个状态
         tac$ShootTimestamp = -1;
         tac$IsAiming = false;
@@ -613,18 +607,18 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         tickSprint();
         tickBolt();
         // 从服务端同步数据
-        this.getEntityData().set(DATA_SHOOT_COOL_DOWN_ID, getShootCoolDown());
-        this.getEntityData().set(DATA_DRAW_COOL_DOWN_ID, getDrawCoolDown());
-        this.getEntityData().set(DATA_BOLT_COOL_DOWN_ID, tac$BoltCoolDown);
-        this.getEntityData().set(DATA_RELOAD_STATE_ID, reloadState);
-        this.getEntityData().set(DATA_AIMING_PROGRESS_ID, tac$AimingProgress);
-        this.getEntityData().set(DATA_IS_AIMING_ID, tac$IsAiming);
-        this.getEntityData().set(DATA_SPRINT_TIME_ID, tac$SprintTimeS);
+        ModEntityData.SHOOT_COOL_DOWN_KEY.setValue(entity, getShootCoolDown());
+        ModEntityData.DRAW_COOL_DOWN_KEY.setValue(entity, getDrawCoolDown());
+        ModEntityData.BOLT_COOL_DOWN_KEY.setValue(entity, tac$BoltCoolDown);
+        ModEntityData.RELOAD_STATE_KEY.setValue(entity, reloadState);
+        ModEntityData.AIMING_PROGRESS_KEY.setValue(entity, tac$AimingProgress);
+        ModEntityData.IS_AIMING_KEY.setValue(entity, tac$IsAiming);
+        ModEntityData.SPRINT_TIME_KEY.setValue(entity, tac$SprintTimeS);
     }
 
     private void tickSprint() {
         LivingEntity entity = (LivingEntity) (Object) this;
-        ReloadState reloadState = this.getEntityData().get(DATA_RELOAD_STATE_ID);
+        ReloadState reloadState = getSynReloadState();
         if (tac$IsAiming || (reloadState.getStateType().isReloading() && !reloadState.getStateType().isReloadFinishing())) {
             entity.setSprinting(false);
         }
@@ -847,23 +841,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             }).orElse(currentAmmoCount);
         }
         return maxAmmoCount;
-    }
-
-    @Inject(method = "defineSynchedData", at = @At("RETURN"))
-    public void defineSynData(CallbackInfo ci) {
-        entityData.define(DATA_SHOOT_COOL_DOWN_ID, -1L);
-        entityData.define(DATA_RELOAD_STATE_ID, new ReloadState());
-        entityData.define(DATA_AIMING_PROGRESS_ID, 0f);
-        entityData.define(DATA_DRAW_COOL_DOWN_ID, -1L);
-        entityData.define(DATA_BOLT_COOL_DOWN_ID, -1L);
-        entityData.define(DATA_IS_AIMING_ID, false);
-        entityData.define(DATA_SPRINT_TIME_ID, 0f);
-    }
-
-    @Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;getEntity()Lnet/minecraft/world/entity/Entity;"))
-    public void onDie(DamageSource pDamageSource, CallbackInfo ci) {
-        // 重置各个状态
-        initialData();
     }
 
     @Override

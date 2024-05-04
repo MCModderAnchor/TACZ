@@ -3,7 +3,6 @@ package com.tac.guns.init;
 import com.tac.guns.GunMod;
 import com.tac.guns.entity.EntityBullet;
 import com.tac.guns.entity.TargetMinecart;
-import com.tac.guns.entity.serializer.ModEntityDataSerializers;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.DeferredRegister;
@@ -16,7 +15,4 @@ public class ModEntities {
 
     public static RegistryObject<EntityType<EntityBullet>> BULLET = ENTITY_TYPES.register("bullet", () -> EntityBullet.TYPE);
     public static RegistryObject<EntityType<TargetMinecart>> TARGET_MINECART = ENTITY_TYPES.register("target_minecart", () -> TargetMinecart.TYPE);
-
-    public static RegistryObject<DataSerializerEntry> LONG_SERIALIZERS = DATA_SERIALIZERS.register("long", () -> new DataSerializerEntry(ModEntityDataSerializers.LONG));
-    public static RegistryObject<DataSerializerEntry> RELOAD_STATE_SERIALIZERS = DATA_SERIALIZERS.register("reload_state", () -> new DataSerializerEntry(ModEntityDataSerializers.RELOAD_STATE));
 }

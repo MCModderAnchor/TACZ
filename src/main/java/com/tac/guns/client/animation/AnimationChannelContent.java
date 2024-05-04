@@ -24,4 +24,8 @@ public class AnimationChannelContent {
                     .toArray(float[][]::new);
         }
     }
+
+    public enum LerpMode{
+        LINEAR, SPHERICAL_LINEAR, CATMULL_ROM
+    }
 }
