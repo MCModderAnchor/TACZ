@@ -337,9 +337,9 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
         if (entity instanceof ServerPlayer) {
             if (entity.getVehicle() != null) {
-                boundingBox = boundingBox.move(velocity.multiply(-2.5, -2.5, -2.5));
+                boundingBox = boundingBox.move(velocity.multiply(-5, -5, -5));
             }
-            boundingBox = boundingBox.move(velocity.multiply(-5, -5, -5));
+            boundingBox = boundingBox.move(velocity.multiply(-10, -10, -10));
         }
         if (entity.getVehicle() != null || entity instanceof ITargetEntity) {
             boundingBox = boundingBox.move(velocity.multiply(-2.5, -2.5, -2.5));
