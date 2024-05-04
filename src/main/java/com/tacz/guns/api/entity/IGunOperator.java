@@ -51,6 +51,11 @@ public interface IGunOperator {
     float getSynSprintTime();
 
     /**
+     * 初始化枪械操作的各个数据，如换弹冷却、开火冷却等。
+     */
+    void initialData();
+
+    /**
      * 服务端切枪逻辑
      */
     void draw(Supplier<ItemStack> itemStackSupplier);
