@@ -59,7 +59,7 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             mods {
-                tac {
+                tacz {
                     source sourceSets.main
                 }
             }
@@ -71,7 +71,7 @@ minecraft {
             // 设定用户名
             args '--username', 'mayday_memory'
             mods {
-                tac {
+                tacz {
                     source sourceSets.main
                 }
             }
@@ -85,7 +85,7 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
-                tac {
+                tacz {
                     source sourceSets.main
                 }
             }
@@ -98,7 +98,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             args '--mod', 'tacz', '--all', '--output', file('src/generated/resources/')
             mods {
-                tac {
+                tacz {
                     source sourceSets.main
                 }
             }
