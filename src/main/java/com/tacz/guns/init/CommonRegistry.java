@@ -1,6 +1,6 @@
 package com.tacz.guns.init;
 
-import com.tac.guns.entity.internal.ModEntityData;
+import com.tacz.guns.entity.internal.ModEntityData;
 import com.tacz.guns.network.NetworkHandler;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

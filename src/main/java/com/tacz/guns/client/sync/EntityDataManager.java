@@ -1,8 +1,8 @@
-package com.tac.guns.client.sync;
+package com.tacz.guns.client.sync;
 
-import com.tac.guns.entity.sync.DataEntry;
-import com.tac.guns.entity.sync.SyncedEntityData;
-import com.tac.guns.network.message.ServerMessageUpdateEntityData;
+import com.tacz.guns.entity.sync.DataEntry;
+import com.tacz.guns.entity.sync.SyncedEntityData;
+import com.tacz.guns.network.message.ServerMessageUpdateEntityData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;

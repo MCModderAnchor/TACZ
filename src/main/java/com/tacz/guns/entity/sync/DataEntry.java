@@ -1,11 +1,10 @@
-package com.tac.guns.entity.sync;
+package com.tacz.guns.entity.sync;
 
-import com.tac.guns.api.sync.SyncedDataKey;
+import com.tacz.guns.api.sync.SyncedDataKey;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import org.apache.commons.lang3.Validate;
-
 
 public class DataEntry<E extends Entity, T>
 {

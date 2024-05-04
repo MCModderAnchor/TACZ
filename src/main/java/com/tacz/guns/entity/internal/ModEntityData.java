@@ -1,11 +1,11 @@
-package com.tac.guns.entity.internal;
+package com.tacz.guns.entity.internal;
 
-import com.tac.guns.GunMod;
-import com.tac.guns.api.gun.ReloadState;
-import com.tac.guns.api.sync.Serializers;
-import com.tac.guns.api.sync.SyncedClassKey;
-import com.tac.guns.api.sync.SyncedDataKey;
-import com.tac.guns.api.sync.SyncedEntityDataManager;
+import com.tacz.guns.GunMod;
+import com.tacz.guns.api.gun.ReloadState;
+import com.tacz.guns.api.sync.Serializers;
+import com.tacz.guns.api.sync.SyncedClassKey;
+import com.tacz.guns.api.sync.SyncedDataKey;
+import com.tacz.guns.api.sync.SyncedEntityDataManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 

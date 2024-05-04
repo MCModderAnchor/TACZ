@@ -1,7 +1,7 @@
-package com.tac.guns.entity.sync;
+package com.tacz.guns.entity.sync;
 
-import com.tac.guns.api.sync.SyncedClassKey;
-import com.tac.guns.api.sync.SyncedDataKey;
+import com.tacz.guns.api.sync.SyncedClassKey;
+import com.tacz.guns.api.sync.SyncedDataKey;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -15,7 +15,6 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
 
 public class DataHolderCapabilityProvider implements ICapabilitySerializable<ListTag>
 {

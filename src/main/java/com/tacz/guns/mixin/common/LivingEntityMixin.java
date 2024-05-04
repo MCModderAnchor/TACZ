@@ -1,6 +1,6 @@
 package com.tacz.guns.mixin.common;
 
-import com.tac.guns.entity.internal.ModEntityData;
+import com.tacz.guns.entity.internal.ModEntityData;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.attachment.AttachmentType;
 import com.tacz.guns.api.entity.IGunOperator;

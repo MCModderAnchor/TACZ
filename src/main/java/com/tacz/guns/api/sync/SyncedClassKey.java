@@ -1,4 +1,4 @@
-package com.tac.guns.api.sync;
+package com.tacz.guns.api.sync;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.*;

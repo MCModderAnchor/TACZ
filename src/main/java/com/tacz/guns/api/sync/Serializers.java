@@ -1,4 +1,4 @@
-package com.tac.guns.api.sync;
+package com.tacz.guns.api.sync;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ByteTag;

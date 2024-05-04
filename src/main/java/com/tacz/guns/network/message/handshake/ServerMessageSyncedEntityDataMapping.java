@@ -1,8 +1,8 @@
 package com.tacz.guns.network.message.handshake;
 
 import com.tacz.guns.GunMod;
-import com.tac.guns.api.sync.SyncedDataKey;
-import com.tac.guns.entity.sync.SyncedEntityData;
+import com.tacz.guns.api.sync.SyncedDataKey;
+import com.tacz.guns.entity.sync.SyncedEntityData;
 import com.tacz.guns.network.IMessage;
 import com.tacz.guns.network.LoginIndexHolder;
 import com.tacz.guns.network.NetworkHandler;

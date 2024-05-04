@@ -1,11 +1,11 @@
-package com.tac.guns.entity.sync;
+package com.tacz.guns.entity.sync;
 
 import com.google.common.collect.ImmutableSet;
-import com.tac.guns.GunMod;
-import com.tac.guns.api.sync.SyncedClassKey;
-import com.tac.guns.api.sync.SyncedDataKey;
-import com.tac.guns.init.CommonRegistry;
-import com.tac.guns.network.message.handshake.ServerMessageSyncedEntityDataMapping;
+import com.tacz.guns.GunMod;
+import com.tacz.guns.api.sync.SyncedClassKey;
+import com.tacz.guns.api.sync.SyncedDataKey;
+import com.tacz.guns.init.CommonRegistry;
+import com.tacz.guns.network.message.handshake.ServerMessageSyncedEntityDataMapping;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;

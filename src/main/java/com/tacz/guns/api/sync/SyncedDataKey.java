@@ -1,6 +1,6 @@
-package com.tac.guns.api.sync;
+package com.tacz.guns.api.sync;
 
-import com.tac.guns.entity.sync.SyncedEntityData;
+import com.tacz.guns.entity.sync.SyncedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.apache.commons.lang3.Validate;

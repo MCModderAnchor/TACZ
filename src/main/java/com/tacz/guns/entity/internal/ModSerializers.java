@@ -1,7 +1,7 @@
-package com.tac.guns.entity.internal;
+package com.tacz.guns.entity.internal;
 
-import com.tac.guns.api.gun.ReloadState;
-import com.tac.guns.api.sync.IDataSerializer;
+import com.tacz.guns.api.gun.ReloadState;
+import com.tacz.guns.api.sync.IDataSerializer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
