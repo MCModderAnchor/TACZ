@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_c_trident_slot",
+  "model": "tacz:attachment/muzzle_c_trident.geo",
+  "texture": "tacz:attachment/uv/muzzle_c_trident",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

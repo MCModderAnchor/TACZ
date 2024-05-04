@@ -1,7 +1,0 @@
-{
-  "name": "tac.attachment.muzzle_s_mirage.name",
-  "tooltip": "tac.attachment.muzzle_s_p_1.tooltip",
-  "display": "tac:muzzle_s_mirage_display",
-  "data": "tac:muzzle_s_mirage_data",
-  "type": "muzzle"
-}

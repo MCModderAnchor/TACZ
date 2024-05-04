@@ -1,8 +1,0 @@
-{
-  "slot": "tac:ammo/slot/556x45",
-  "shell": {
-    "model": "tac:shell/556x45_shell",
-    "texture": "tac:shell/556x45_shell"
-  },
-  "tracer_color": "#FF8888"
-}

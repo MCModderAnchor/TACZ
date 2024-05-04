@@ -1,0 +1,48 @@
+{
+  // 调用的模型，在包目录下的 models 文件夹中寻找
+  "model": "tacz:ammo/762x39",
+  // 渲染模型使用的材质
+  "texture": "tacz:ammo/uv/762x39",
+  // GUI 格子中显示
+  "slot": "tacz:ammo/slot/762x39",
+  // 子弹实体
+  //  "entity": {
+  //    // 模型
+  //    "model": "tacz:ammo_entity/rpg_rocket",
+  //    // 材质
+  //    "texture": "tacz:ammo_entity/rpg_rocket"
+  //  },
+  // 抛壳模型
+  "shell": {
+    "model": "tacz:shell/762x39_shell",
+    "texture": "tacz:shell/762x39_shell"
+  },
+  // 曳光弹颜色，没有则为 #FFFFFF
+  // 严格遵循 RGB 颜色代码
+  "tracer_color": "#FF9999",
+  // 调整各个视角下模型的变换参数，可为空
+  "transform": {
+    // 暂时只有缩放需要在这里指定，旋转和位移使用模型内定位组。
+    // 可以为空，若为空，则不缩放模型。
+    "scale": {
+      // 第三人称手部
+      "thirdperson": [
+        0.75,
+        0.75,
+        0.75
+      ],
+      // 地面实体
+      "ground": [
+        0.75,
+        0.75,
+        0.75
+      ],
+      // 展示框
+      "fixed": [
+        1.5,
+        1.5,
+        1.5
+      ]
+    }
+  }
+}

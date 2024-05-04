@@ -5,7 +5,7 @@
 <p align="center">Timeless and Classics Guns Zero</p>
 <p align="center">
     <a href="https://www.curseforge.com/minecraft/mc-mods/timeless-and-classic-guns-tac">
-        <img src="http://cf.way2muchnoise.eu/full_timeless-and-classic-guns-tac.svg" alt="CurseForge Download">
+        <img src="http://cf.way2muchnoise.eu/full_timeless-and-classic-guns-tacz.svg" alt="CurseForge Download">
     </a>
     <a href="https://discord.gg/FdDTDWgU">
         <img src="https://img.shields.io/discord/851263928721866752?logo=discord" alt="chat on Discord">
@@ -67,7 +67,7 @@ repositories {
 
 dependencies {
     // Add implementation
-    // tac_version: copy from https://jitpack.io/#MCModderAnchor/TimelessAndClassicsZero
-    implementation 'com.github.MCModderAnchor:TimelessAndClassicsZero:${tac_version}'
+    // tacz_version: copy from https://jitpack.io/#MCModderAnchor/TimelessAndClassicsZero
+    implementation 'com.github.MCModderAnchor:TimelessAndClassicsZero:${tacz_version}'
 }
 ```

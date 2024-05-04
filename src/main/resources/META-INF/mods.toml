@@ -3,22 +3,22 @@ loaderVersion="[40,)"
 license="GPL3"
 
 [[mods]]
-    modId="tac"
+    modId="tacz"
     version="${file.jarVersion}"
-    displayName="Timeless and Classics Guns"
+    displayName="Timeless and Classics Guns: Zero"
     updateJSONURL=""
     displayURL=""
-    authors="Timeless Development Team"
+    authors="Serene Wave Studio | Timeless Squad"
     description='''
 '''
 
-[[dependencies.tac]]
+[[dependencies.tacz]]
     modId="forge"
     mandatory=true
     versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.tac]]
+[[dependencies.tacz]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.18.2,1.19)"

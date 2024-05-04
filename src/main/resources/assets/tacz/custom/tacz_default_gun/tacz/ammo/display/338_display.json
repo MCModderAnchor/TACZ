@@ -1,0 +1,25 @@
+{
+  "model": "tacz:ammo/338",
+  "texture": "tacz:ammo/uv/338",
+  "slot": "tacz:ammo/slot/338",
+  "tracer_color": "#FFAAAA",
+  "transform": {
+    "scale": {
+      "thirdperson": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "ground": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "fixed": [
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}

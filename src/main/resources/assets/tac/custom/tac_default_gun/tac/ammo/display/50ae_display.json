@@ -1,9 +1,0 @@
-{
-  "slot": "tac:ammo/slot/50ae",
-  "shell": {
-    "model": "tac:shell/50ae_shell",
-    "texture": "tac:shell/50ae_shell"
-  },
-  "tracer_color": "#FF9999"
-}
-    

@@ -1,7 +1,0 @@
-{
-  "name": "tac.attachment.elcan4x.name",
-  "tooltip": "tac.attachment.elcan4x.tooltip",
-  "display": "tac:elcan4x_display",
-  "data": "tac:elcan4x_data",
-  "type": "scope"
-}
