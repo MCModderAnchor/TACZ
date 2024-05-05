@@ -72,6 +72,7 @@
     "aim": 0.05
   },
   "allow_attachments": {
+    "extended_mag": {},
     "scope": {
       "black_list": [
         "tacz:sro_dot"
