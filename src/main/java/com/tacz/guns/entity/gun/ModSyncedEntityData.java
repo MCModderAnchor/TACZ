@@ -5,8 +5,9 @@ import com.tacz.guns.api.gun.ReloadState;
 import com.tacz.guns.entity.sync.Serializers;
 import com.tacz.guns.entity.sync.SyncedClassKey;
 import com.tacz.guns.entity.sync.SyncedDataKey;
-import com.tacz.guns.entity.sync.SyncedEntityDataManager;
+import com.tacz.guns.entity.sync.SyncedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public class ModSyncedEntityData {
@@ -53,12 +54,16 @@ public class ModSyncedEntityData {
             .build();
 
     public static void init() {
-        SyncedEntityDataManager.registerEntityData(SHOOT_COOL_DOWN_KEY);
-        SyncedEntityDataManager.registerEntityData(RELOAD_STATE_KEY);
-        SyncedEntityDataManager.registerEntityData(AIMING_PROGRESS_KEY);
-        SyncedEntityDataManager.registerEntityData(DRAW_COOL_DOWN_KEY);
-        SyncedEntityDataManager.registerEntityData(IS_AIMING_KEY);
-        SyncedEntityDataManager.registerEntityData(SPRINT_TIME_KEY);
-        SyncedEntityDataManager.registerEntityData(BOLT_COOL_DOWN_KEY);
+        registerEntityData(SHOOT_COOL_DOWN_KEY);
+        registerEntityData(RELOAD_STATE_KEY);
+        registerEntityData(AIMING_PROGRESS_KEY);
+        registerEntityData(DRAW_COOL_DOWN_KEY);
+        registerEntityData(IS_AIMING_KEY);
+        registerEntityData(SPRINT_TIME_KEY);
+        registerEntityData(BOLT_COOL_DOWN_KEY);
+    }
+
+    private static void registerEntityData(SyncedDataKey<? extends Entity, ?> dataKey) {
+        SyncedEntityData.instance().registerDataKey(dataKey);
     }
 }

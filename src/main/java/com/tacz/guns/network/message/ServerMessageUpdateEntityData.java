@@ -1,8 +1,13 @@
 package com.tacz.guns.network.message;
 
-import com.tacz.guns.client.sync.EntityDataManager;
 import com.tacz.guns.entity.sync.DataEntry;
+import com.tacz.guns.entity.sync.SyncedEntityData;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
@@ -10,11 +15,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class ServerMessageUpdateEntityData {
-    private int entityId;
-    private List<DataEntry<?, ?>> entries;
-
-    public ServerMessageUpdateEntityData() {
-    }
+    private final int entityId;
+    private final List<DataEntry<?, ?>> entries;
 
     public ServerMessageUpdateEntityData(int entityId, List<DataEntry<?, ?>> entries) {
         this.entityId = entityId;
@@ -37,16 +39,25 @@ public class ServerMessageUpdateEntityData {
         return new ServerMessageUpdateEntityData(entityId, entries);
     }
 
-    public static void handle(ServerMessageUpdateEntityData message, Supplier<NetworkEvent.Context> supplier) {
-        supplier.get().enqueueWork(() -> EntityDataManager.handleSyncEntityData(message));
-        supplier.get().setPacketHandled(true);
+    public static void handle(ServerMessageUpdateEntityData message, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        if (context.getDirection().getReceptionSide().isClient()) {
+            context.enqueueWork(() -> onHandle(message));
+        }
+        context.setPacketHandled(true);
     }
 
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public List<DataEntry<?, ?>> getEntries() {
-        return this.entries;
+    @OnlyIn(Dist.CLIENT)
+    private static void onHandle(ServerMessageUpdateEntityData message) {
+        Level level = Minecraft.getInstance().level;
+        if (level == null) {
+            return;
+        }
+        Entity entity = level.getEntity(message.entityId);
+        if (entity == null) {
+            return;
+        }
+        SyncedEntityData instance = SyncedEntityData.instance();
+        message.entries.forEach(entry -> instance.set(entity, entry.getKey(), entry.getValue()));
     }
 }
