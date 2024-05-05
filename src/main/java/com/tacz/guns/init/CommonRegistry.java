@@ -1,6 +1,6 @@
 package com.tacz.guns.init;
 
-import com.tacz.guns.entity.internal.ModEntityData;
+import com.tacz.guns.entity.gun.ModSyncedEntityData;
 import com.tacz.guns.network.NetworkHandler;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -14,7 +14,7 @@ public final class CommonRegistry {
     @SubscribeEvent
     public static void onSetupEvent(FMLCommonSetupEvent event) {
         event.enqueueWork(NetworkHandler::init);
-        event.enqueueWork(ModEntityData::init);
+        event.enqueueWork(ModSyncedEntityData::init);
     }
 
     @SubscribeEvent

@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.internal;
+package com.tacz.guns.entity.gun;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.gun.ReloadState;
@@ -9,7 +9,7 @@ import com.tacz.guns.entity.sync.SyncedEntityDataManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
-public class ModEntityData {
+public class ModSyncedEntityData {
     public static final SyncedDataKey<LivingEntity, Long> SHOOT_COOL_DOWN_KEY = SyncedDataKey.builder(SyncedClassKey.LIVING_ENTITY, Serializers.LONG)
             .id(new ResourceLocation(GunMod.MOD_ID, "shoot_cool_down"))
             .defaultValueSupplier(() -> -1L)

@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.internal;
+package com.tacz.guns.entity.gun;
 
 import com.tacz.guns.api.gun.ReloadState;
 import com.tacz.guns.entity.sync.IDataSerializer;
