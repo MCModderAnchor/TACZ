@@ -2,8 +2,8 @@
     "model": "tacz:gun/hk_mp5a5_geo",
     "texture": "tacz:gun/uv/hk_mp5a5",
     "lod": {
-        "model": "tacz:gun/lod/hk_mp5a5",
-        "texture": "tacz:gun/lod/hk_mp5a5"
+        "model": "tacz:gun/lod/mp5a5",
+        "texture": "tacz:gun/lod/mp5a5"
     },
     "hud": "tacz:gun/hud/hk_mp5a5",
     "slot": "tacz:gun/slot/hk_mp5a5",
