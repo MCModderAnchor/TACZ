@@ -9403,11 +9403,6 @@
 					"pivot": [0, 8.5, 0.8]
 				},
 				{
-					"name": "shell",
-					"parent": "positioning2",
-					"pivot": [-0.2, 10.775, 9.55]
-				},
-				{
 					"name": "camera",
 					"pivot": [2.725, 13.25, 24.5]
 				},
@@ -9430,6 +9425,11 @@
 					"parent": "positioning",
 					"pivot": [0, 9.1, 9.225],
 					"rotation": [0, -90, 0]
+				},
+				{
+					"name": "shell",
+					"parent": "positioning",
+					"pivot": [-0.2, 10.775, 9.55]
 				},
 				{
 					"name": "view",
