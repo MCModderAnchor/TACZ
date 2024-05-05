@@ -212,6 +212,11 @@
 					"parent": "positioning",
 					"pivot": [0, 9.1, 1.6],
 					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "muzzle_flash",
+					"parent": "positioning",
+					"pivot": [0, 9, -11]
 				}
 			]
 		}

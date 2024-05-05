@@ -625,8 +625,8 @@
 							}
 						},
 						{
-							"origin": [-0.625, 10.75, 11.5],
-							"size": [1.25, 0.375, 7],
+							"origin": [-0.6875, 10.75, 11.5],
+							"size": [1.375, 0.375, 7],
 							"uv": {
 								"north": {"uv": [57, 36], "uv_size": [1.5, 0.5]},
 								"east": {"uv": [46, 22], "uv_size": [7, 0.5]},
@@ -657,6 +657,16 @@
 					"parent": "positioning",
 					"pivot": [1.25, 9.1, 9.225],
 					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "shell",
+					"parent": "positioning",
+					"pivot": [-0.5, 10.5, 9]
+				},
+				{
+					"name": "muzzle_flash",
+					"parent": "positioning",
+					"pivot": [0, 9.875, -16.5]
 				}
 			]
 		}
