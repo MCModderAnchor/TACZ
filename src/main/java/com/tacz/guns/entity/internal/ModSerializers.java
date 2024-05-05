@@ -1,14 +1,13 @@
 package com.tacz.guns.entity.internal;
 
 import com.tacz.guns.api.gun.ReloadState;
-import com.tacz.guns.api.sync.IDataSerializer;
+import com.tacz.guns.entity.sync.IDataSerializer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class ModSerializers {
-    public static final IDataSerializer<ReloadState> RELOAD_STATE = new IDataSerializer<>(){
-
+    public static final IDataSerializer<ReloadState> RELOAD_STATE = new IDataSerializer<>() {
         @Override
         public void write(FriendlyByteBuf buf, ReloadState value) {
             buf.writeInt(value.getStateType().ordinal());
@@ -41,7 +40,8 @@ public class ModSerializers {
                 reloadState.setStateType(stateType);
                 reloadState.setCountDown(countDown);
                 return reloadState;
-            } catch (IllegalArgumentException ignore) {}
+            } catch (IllegalArgumentException ignore) {
+            }
             return new ReloadState();
         }
     };

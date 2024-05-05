@@ -6,23 +6,19 @@ import java.util.function.IntSupplier;
  * <p>Author: MrCrayfish</p>
  * <p>Open source at <a href="https://github.com/MrCrayfish/Framework">Github</a> under LGPL License.</p>
  */
-public abstract class LoginIndexHolder implements IntSupplier
-{
+public abstract class LoginIndexHolder implements IntSupplier {
     private int loginIndex;
 
-    public void setLoginIndex(final int loginIndex)
-    {
+    public void setLoginIndex(final int loginIndex) {
         this.loginIndex = loginIndex;
     }
 
-    public int getLoginIndex()
-    {
+    public int getLoginIndex() {
         return this.loginIndex;
     }
 
     @Override
-    public int getAsInt()
-    {
+    public int getAsInt() {
         return this.getLoginIndex();
     }
 }

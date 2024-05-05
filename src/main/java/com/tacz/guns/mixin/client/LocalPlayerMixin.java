@@ -634,7 +634,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
         ReloadState reloadState = gunOperator.getSynReloadState();
         // 如果还没完成上锁，则不能释放状态锁
-        long maxLockTime = 250; // 上锁允许的最大响应时间，毫秒
+        // 上锁允许的最大响应时间，毫秒
+        long maxLockTime = 250;
         long lockTime = System.currentTimeMillis() - tacz$LockTimestamp;
         if (lockTime < maxLockTime && tacz$LockedCondition != null && !tacz$LockedCondition.test(gunOperator)) {
             return;

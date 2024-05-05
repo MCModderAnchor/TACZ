@@ -1,6 +1,5 @@
 package com.tacz.guns.mixin.common;
 
-import com.tacz.guns.entity.internal.ModEntityData;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.attachment.AttachmentType;
 import com.tacz.guns.api.entity.IGunOperator;
@@ -17,6 +16,7 @@ import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.entity.EntityBullet;
+import com.tacz.guns.entity.internal.ModEntityData;
 import com.tacz.guns.resource.DefaultAssets;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.Silence;

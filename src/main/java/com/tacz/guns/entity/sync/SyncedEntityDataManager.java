@@ -1,6 +1,5 @@
-package com.tacz.guns.api.sync;
+package com.tacz.guns.entity.sync;
 
-import com.tacz.guns.entity.sync.SyncedEntityData;
 import net.minecraft.world.entity.Entity;
 
 /**
