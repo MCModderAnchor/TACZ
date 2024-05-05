@@ -1153,6 +1153,16 @@
 					"parent": "positioning",
 					"pivot": [0, 8.1, -6.775],
 					"rotation": [0, -90, 0]
+				},
+				{
+					"name": "shell",
+					"parent": "positioning",
+					"pivot": [-0.75, 10, -6]
+				},
+				{
+					"name": "muzzle_flash",
+					"parent": "positioning",
+					"pivot": [0, 9.5, -27]
 				}
 			]
 		}

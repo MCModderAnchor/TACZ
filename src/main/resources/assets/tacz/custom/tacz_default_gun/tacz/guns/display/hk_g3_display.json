@@ -5,6 +5,8 @@
     "texture": "tacz:gun/uv/hk_g3",
     // 低模
     "lod": {
+        "model": "tacz:gun/lod/hk_g3",
+        "texture": "tacz:gun/lod/hk_g3"
     },
     // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
     "hud": "tacz:gun/hud/hk_g3_hud",
