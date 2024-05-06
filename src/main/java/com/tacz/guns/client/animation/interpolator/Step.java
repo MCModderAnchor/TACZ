@@ -12,11 +12,14 @@ public class Step implements Interpolator {
 
     @Override
     public void interpolate(int indexFrom, int indexTo, float alpha, float[] result) {
-        for (int i = 0; i < content.values[indexFrom].length; i++) {
-            if (alpha < 1)
-                result[i] = content.values[indexFrom][i];
-            else
+        // 如果动画值有 6 个，后三个为 Post 数值，用于插值起点
+        int offset = content.values[indexFrom].length == 6 ? 3 : 0;
+        for (int i = 0; i < result.length; i++) {
+            if (alpha < 1 || indexFrom == indexTo) {
+                result[i] = content.values[indexFrom][i + offset];
+            } else {
                 result[i] = content.values[indexTo][i];
+            }
         }
     }
 

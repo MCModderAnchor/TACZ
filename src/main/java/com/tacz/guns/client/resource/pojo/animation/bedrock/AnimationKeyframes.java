@@ -1,19 +1,19 @@
 package com.tacz.guns.client.resource.pojo.animation.bedrock;
 
 import com.mojang.math.Vector3f;
-import it.unimi.dsi.fastutil.doubles.Double2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("MapOrSetKeyShouldOverrideHashCodeEquals")
 public class AnimationKeyframes {
-    private final Double2ObjectLinkedOpenHashMap<Keyframe> keyframes;
+    private final Double2ObjectRBTreeMap<Keyframe> keyframes;
 
-    public AnimationKeyframes(Double2ObjectLinkedOpenHashMap<Keyframe> keyframes) {
+    public AnimationKeyframes(Double2ObjectRBTreeMap<Keyframe> keyframes) {
         this.keyframes = keyframes;
     }
 
-    public Double2ObjectLinkedOpenHashMap<Keyframe> getKeyframes() {
+    public Double2ObjectRBTreeMap<Keyframe> getKeyframes() {
         return keyframes;
     }
 

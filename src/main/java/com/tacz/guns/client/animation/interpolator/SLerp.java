@@ -15,14 +15,16 @@ public class SLerp implements Interpolator {
 
     @Override
     public void interpolate(int indexFrom, int indexTo, float alpha, float[] result) {
-        float ax = content.values[indexFrom][0];
-        float ay = content.values[indexFrom][1];
-        float az = content.values[indexFrom][2];
-        float aw = content.values[indexFrom][3];
-        float bx = content.values[indexTo][0];
-        float by = content.values[indexTo][1];
-        float bz = content.values[indexTo][2];
-        float bw = content.values[indexTo][3];
+        // 如果旋转值有 8 个，后四个为 Post 数值，用于插值起点
+        int offset = content.values[indexFrom].length == 8 ? 4 : 0;
+        float ax = content.values[indexFrom][offset];
+        float ay = content.values[indexFrom][1 + offset];
+        float az = content.values[indexFrom][2 + offset];
+        float aw = content.values[indexFrom][3 + offset];
+        float bx = indexFrom == indexTo ? content.values[indexFrom][offset] : content.values[indexTo][0];
+        float by = indexFrom == indexTo ? content.values[indexFrom][1 + offset] : content.values[indexTo][1];
+        float bz = indexFrom == indexTo ? content.values[indexFrom][2 + offset] : content.values[indexTo][2];
+        float bw = indexFrom == indexTo ? content.values[indexFrom][3 + offset] : content.values[indexTo][3];
 
         float dot = ax * bx + ay * by + az * bz + aw * bw;
         if (dot < 0) {

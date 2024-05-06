@@ -1,4 +1,4 @@
-package com.tacz.guns.util.math;
+package com.tacz.guns.util;
 
 import com.tacz.guns.entity.EntityBullet;
 import net.minecraft.world.phys.EntityHitResult;

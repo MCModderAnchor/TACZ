@@ -4,7 +4,7 @@ import com.google.gson.*;
 import com.mojang.math.Vector3f;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
-import it.unimi.dsi.fastutil.doubles.Double2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
 import net.minecraft.util.GsonHelper;
 
 import java.lang.reflect.Type;
@@ -14,7 +14,7 @@ import java.util.Map;
 public class AnimationKeyframesSerializer implements JsonDeserializer<AnimationKeyframes> {
     @Override
     public AnimationKeyframes deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
-        Double2ObjectLinkedOpenHashMap<AnimationKeyframes.Keyframe> keyframes = new Double2ObjectLinkedOpenHashMap<>();
+        Double2ObjectRBTreeMap<AnimationKeyframes.Keyframe> keyframes = new Double2ObjectRBTreeMap<>();
         // 如果是数字
         if (json.isJsonPrimitive()) {
             if (json.getAsJsonPrimitive().isString()) {
@@ -81,8 +81,8 @@ public class AnimationKeyframesSerializer implements JsonDeserializer<AnimationK
         JsonElement yElement = array.get(1);
         JsonElement zElement = array.get(2);
         float x = readVector3fElement(xElement, "(array i=0)");
-        float y = readVector3fElement(xElement, "(array i=1)");
-        float z = readVector3fElement(xElement, "(array i=2)");
+        float y = readVector3fElement(yElement, "(array i=1)");
+        float z = readVector3fElement(zElement, "(array i=2)");
         return new Vector3f(x, y, z);
     }
 

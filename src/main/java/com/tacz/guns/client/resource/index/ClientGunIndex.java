@@ -11,6 +11,7 @@ import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.InternalAssetLoader;
+import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.gun.*;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
@@ -195,12 +196,16 @@ public class ClientGunIndex {
             controller = new AnimationController(Lists.newArrayList(), index.gunModel);
         } else {
             // 目前支持的动画为 gltf 动画。此处从缓存取出 gltf 的动画资源。
-            AnimationStructure animations = ClientAssetManager.INSTANCE.getAnimations(location);
-            if (animations == null) {
+            AnimationStructure gltfAnimations = ClientAssetManager.INSTANCE.getGltfAnimations(location);
+            BedrockAnimationFile bedrockAnimationFile = ClientAssetManager.INSTANCE.getBedrockAnimations(location);
+            if (bedrockAnimationFile != null) {
+                // 用 gltf 动画资源创建动画控制器
+                controller = Animations.createControllerFromBedrock(bedrockAnimationFile, index.gunModel);
+            } else if (gltfAnimations != null) {
+                controller = Animations.createControllerFromGltf(gltfAnimations, index.gunModel);
+            } else {
                 throw new IllegalArgumentException("animation not found: " + location);
             }
-            // 用 gltf 动画资源创建动画控制器
-            controller = Animations.createControllerFromGltf(animations, index.gunModel);
             // 将默认动画填入动画控制器
             DefaultAnimation defaultAnimation = display.getDefaultAnimation();
             if (defaultAnimation != null) {
