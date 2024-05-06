@@ -57,7 +57,8 @@ public class MathUtil {
         // pitch (y-axis rotation)
         double sinp = 2 * (q.r() * q.j() - q.i() * q.k());
         if (Math.abs(sinp) >= 1) {
-            angles[1] = (float) copySign(Math.PI / 2, sinp); // use 90 degrees if out of range
+            // use 90 degrees if out of range
+            angles[1] = (float) copySign(Math.PI / 2, sinp);
         } else {
             angles[1] = (float) Math.asin(sinp);
         }
@@ -324,7 +325,7 @@ public class MathUtil {
         resultMatrix.multiply(qLerped);
     }
 
-    public static Pair<Float, Vector3f> getAngleAndAxis(Quaternion quaternion){
+    public static Pair<Float, Vector3f> getAngleAndAxis(Quaternion quaternion) {
         double angle = 2 * Math.acos(quaternion.r());
         double sin = Math.sin(angle / 2);
         // 旋转角为 0 或者 2*PI，旋转结果与旋转轴无关

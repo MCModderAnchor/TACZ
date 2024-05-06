@@ -12,7 +12,7 @@ public class GunDisplay {
     @SerializedName("texture")
     private ResourceLocation modelTexture;
     @SerializedName("iron_zoom")
-    float ironZoom = 1.2f;
+    private float ironZoom = 1.2f;
     @Nullable
     @SerializedName("lod")
     private GunLod gunLod;

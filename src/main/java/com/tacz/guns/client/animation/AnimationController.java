@@ -1,7 +1,6 @@
 package com.tacz.guns.client.animation;
 
 import com.google.common.collect.Maps;
-import com.mojang.logging.LogUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -123,7 +122,9 @@ public class AnimationController {
         for (int i = currentRunners.size() - 1; i >= 0; i--) {
             boolean blend = i < blending.size() ? blending.get(i) : false;
             ObjectAnimationRunner runner = currentRunners.get(i);
-            if (runner == null) continue;
+            if (runner == null) {
+                continue;
+            }
             //更新当前动画runner
             if (runner.isRunning() || runner.isHolding() || runner.isTransitioning()) {
                 runner.update(blend);

@@ -1,10 +1,10 @@
 package com.tacz.guns.client.animation.interpolator;
 
 import com.tacz.guns.client.animation.AnimationChannelContent;
-import com.tacz.guns.client.animation.AnimationChannelContent.*;
+import com.tacz.guns.client.animation.AnimationChannelContent.LerpMode;
 import com.tacz.guns.util.math.MathUtil;
 
-public class CustomInterpolator implements Interpolator{
+public class CustomInterpolator implements Interpolator {
     private AnimationChannelContent content;
 
     @Override

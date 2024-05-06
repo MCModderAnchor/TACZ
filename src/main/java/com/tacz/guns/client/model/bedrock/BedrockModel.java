@@ -57,7 +57,8 @@ public class BedrockModel {
         }
     }
 
-    protected BedrockModel() {}
+    protected BedrockModel() {
+    }
 
     public void delegateRender(IFunctionalRenderer renderer) {
         delegateRenderers.add(renderer);

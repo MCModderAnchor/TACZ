@@ -24,7 +24,9 @@ import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Animations {
     public static AnimationController createControllerFromGltf(@Nonnull AnimationStructure structure, @Nonnull AnimationListenerSupplier supplier) {
@@ -190,28 +192,28 @@ public class Animations {
                     Vector3f post = keyframe.post().copy();
                     pre.add(base);
                     post.add(base);
-                    pre.mul( -1 / 16f, 1 / 16f, 1 / 16f);
-                    post.mul( -1 / 16f, 1 / 16f, 1 / 16f);
+                    pre.mul(-1 / 16f, 1 / 16f, 1 / 16f);
+                    post.mul(-1 / 16f, 1 / 16f, 1 / 16f);
                     readVector3fToArray(animationChannel.content.values[index], pre, 0);
                     readVector3fToArray(animationChannel.content.values[index], post, 3);
                 } else if (keyframe.pre() != null) {
                     animationChannel.content.values[index] = new float[3];
                     Vector3f pre = keyframe.pre().copy();
                     pre.add(base);
-                    pre.mul( -1 / 16f, 1 / 16f, 1 / 16f);
+                    pre.mul(-1 / 16f, 1 / 16f, 1 / 16f);
                     readVector3fToArray(animationChannel.content.values[index], pre, 0);
                 } else {
                     animationChannel.content.values[index] = new float[3];
                     Vector3f post = keyframe.post().copy();
                     post.add(base);
-                    post.mul( -1 / 16f, 1 / 16f, 1 / 16f);
+                    post.mul(-1 / 16f, 1 / 16f, 1 / 16f);
                     readVector3fToArray(animationChannel.content.values[index], post, 0);
                 }
-            } else if (keyframe.data() != null){
+            } else if (keyframe.data() != null) {
                 animationChannel.content.values[index] = new float[3];
                 Vector3f data = keyframe.data().copy();
                 data.add(base);
-                data.mul( -1 / 16f, 1 / 16f, 1 / 16f);
+                data.mul(-1 / 16f, 1 / 16f, 1 / 16f);
                 readVector3fToArray(animationChannel.content.values[index], data, 0);
             }
             // 写入关键帧插值类型
@@ -276,7 +278,7 @@ public class Animations {
                     float[] q = MathUtil.toQuaternion(post.x() + base.x(), post.y() + base.y(), post.z() + base.z());
                     System.arraycopy(q, 0, animationChannel.content.values[index], 0, 4);
                 }
-            } else if (keyframe.data() != null){
+            } else if (keyframe.data() != null) {
                 animationChannel.content.values[index] = new float[4];
                 Vector3f data = keyframe.data().copy();
                 toAngle(data);
@@ -317,7 +319,7 @@ public class Animations {
                     Vector3f post = keyframe.post();
                     readVector3fToArray(animationChannel.content.values[index], post, 0);
                 }
-            } else if (keyframe.data() != null){
+            } else if (keyframe.data() != null) {
                 animationChannel.content.values[index] = new float[3];
                 Vector3f data = keyframe.data();
                 readVector3fToArray(animationChannel.content.values[index], data, 0);
@@ -340,6 +342,7 @@ public class Animations {
     private static void toAngle(Vector3f vector3f) {
         vector3f.set((float) Math.toRadians(vector3f.x()), (float) Math.toRadians(vector3f.y()), (float) Math.toRadians(vector3f.z()));
     }
+
     private static void readVector3fToArray(float[] array, Vector3f vector3f, int offset) {
         array[offset] = vector3f.x();
         array[offset + 1] = vector3f.y();
