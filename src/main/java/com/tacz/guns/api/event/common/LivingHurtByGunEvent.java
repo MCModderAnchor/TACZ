@@ -7,6 +7,9 @@ import net.minecraftforge.fml.LogicalSide;
 
 import javax.annotation.Nullable;
 
+/**
+ * 生物被枪械子弹伤害时触发的事件
+ */
 public class LivingHurtByGunEvent extends Event {
     private final @Nullable LivingEntity hurtEntity;
     private final @Nullable LivingEntity attacker;

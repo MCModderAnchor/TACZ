@@ -28,9 +28,9 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     private final @Unique GunFireSelect tacz$fireSelect = new GunFireSelect(tacz$shooter, this.tacz$data);
     private final @Unique GunDraw tacz$draw = new GunDraw(tacz$shooter, tacz$data);
     private final @Unique GunPutAway tacz$putAway = new GunPutAway(tacz$data);
-    private final @Unique GunShoot tacz$shoot = new GunShoot(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$ammoCheck);
+    private final @Unique GunShoot tacz$shoot = new GunShoot(tacz$shooter, this.tacz$data, this.tacz$draw);
     private final @Unique GunBolt tacz$bolt = new GunBolt(this.tacz$data, this.tacz$draw, this.tacz$shoot);
-    private final @Unique GunReload tacz$reload = new GunReload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot, this.tacz$ammoCheck);
+    private final @Unique GunReload tacz$reload = new GunReload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot);
 
     public LivingEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);

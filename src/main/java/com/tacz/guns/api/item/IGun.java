@@ -1,10 +1,7 @@
 package com.tacz.guns.api.item;
 
-import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.attachment.AttachmentType;
 import com.tacz.guns.api.gun.FireMode;
-import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
-import com.tacz.guns.client.resource.index.ClientGunIndex;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -45,33 +42,12 @@ public interface IGun {
         return FireMode.UNKNOWN;
     }
 
-    default float getAimingZoom(ItemStack gunItem) {
-        float zoom = 1;
-        IGun iGun = IGun.getIGunOrNull(gunItem);
-        if (iGun == null) {
-            return zoom;
-        }
-        ItemStack scopeItem = iGun.getAttachment(gunItem, AttachmentType.SCOPE);
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(scopeItem);
-        if (iAttachment != null) {
-            ResourceLocation scopeId = iAttachment.getAttachmentId(scopeItem);
-            int zoomNumber = iAttachment.getZoomNumber(scopeItem);
-            float[] zooms = TimelessAPI.getClientAttachmentIndex(scopeId).map(ClientAttachmentIndex::getZoom).orElse(null);
-            if (zooms != null) {
-                zoom = zooms[zoomNumber % zooms.length];
-            }
-        } else {
-            zoom = TimelessAPI.getClientGunIndex(iGun.getGunId(gunItem)).map(ClientGunIndex::getIronZoom).orElse(1f);
-        }
-        return zoom;
-    }
-
     /**
-     * 是否副手持枪
+     * 获取瞄准进度
+     *
+     * @return 0-1，1 代表 100% 进度
      */
-    static boolean offhandHoldGun(LivingEntity livingEntity) {
-        return livingEntity.getOffhandItem().getItem() instanceof IGun;
-    }
+    float getAimingZoom(ItemStack gunItem);
 
     /**
      * 获取枪械 ID
@@ -82,6 +58,9 @@ public interface IGun {
     @Nonnull
     ResourceLocation getGunId(ItemStack gun);
 
+    /**
+     * 设置枪械 ID
+     */
     void setGunId(ItemStack gun, @Nullable ResourceLocation gunId);
 
     /**
@@ -107,6 +86,9 @@ public interface IGun {
      */
     int getMaxLevel();
 
+    /**
+     * 获取枪械当前等级
+     */
     int getLevel(ItemStack gun);
 
     /**
@@ -141,26 +123,59 @@ public interface IGun {
      */
     FireMode getFireMode(ItemStack gun);
 
+    /**
+     * 设置开火模式
+     */
     void setFireMode(ItemStack gun, @Nullable FireMode fireMode);
 
+    /**
+     * 获取当前枪械弹药数
+     */
     int getCurrentAmmoCount(ItemStack gun);
 
+    /**
+     * 获取当前枪械弹药数
+     */
     void setCurrentAmmoCount(ItemStack gun, int ammoCount);
 
+    /**
+     * 减少当前枪械弹药数
+     */
     void reduceCurrentAmmoCount(ItemStack gun);
 
+    /**
+     * 获取当前枪械指定类型配件
+     */
     @Nonnull
     ItemStack getAttachment(ItemStack gun, AttachmentType type);
 
+    /**
+     * 安装配件
+     */
     void installAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment);
 
+    /**
+     * 卸载配件
+     */
     void unloadAttachment(@Nonnull ItemStack gun, AttachmentType type);
 
+    /**
+     * 该枪械是否允许该配件
+     */
     boolean allowAttachment(ItemStack gun, ItemStack attachmentItem);
 
+    /**
+     * 该枪械是否允许某类型配件
+     */
     boolean allowAttachmentType(ItemStack gun, AttachmentType type);
 
+    /**
+     * 枪管中是否有子弹，用于闭膛待击的枪械
+     */
     boolean hasBulletInBarrel(ItemStack gun);
 
+    /**
+     * 设置枪管中的子弹有无，用于闭膛待击的枪械
+     */
     void setBulletInBarrel(ItemStack gun, boolean bulletInBarrel);
 }

@@ -1,6 +1,7 @@
 package com.tacz.guns.entity.gun;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.gun.ShootResult;
 import com.tacz.guns.api.item.IGun;
@@ -28,13 +29,11 @@ public class GunShoot {
     private final LivingEntity shooter;
     private final ModDataHolder data;
     private final GunDraw draw;
-    private final GunAmmoCheck ammoCheck;
 
-    public GunShoot(LivingEntity shooter, ModDataHolder data, GunDraw draw, GunAmmoCheck ammoCheck) {
+    public GunShoot(LivingEntity shooter, ModDataHolder data, GunDraw draw) {
         this.shooter = shooter;
         this.data = data;
         this.draw = draw;
-        this.ammoCheck = ammoCheck;
     }
 
     public ShootResult shoot(float pitch, float yaw) {
@@ -80,7 +79,7 @@ public class GunShoot {
         boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(currentGunItem) && boltType != Bolt.OPEN_BOLT;
         int ammoCount = iGun.getCurrentAmmoCount(currentGunItem) + (hasAmmoInBarrel ? 1 : 0);
         // 创造模式不判断子弹数
-        if (ammoCheck.needCheckAmmo() && ammoCount < 1) {
+        if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && ammoCount < 1) {
             return ShootResult.NO_AMMO;
         }
         // 检查膛内子弹
@@ -122,7 +121,7 @@ public class GunShoot {
         // 生成子弹实体
         this.spawnBullet(pitch, yaw, gunIndex, currentGunItem, gunId);
         // 削减弹药数
-        if (ammoCheck.consumesAmmoOrNot()) {
+        if (IGunOperator.fromLivingEntity(shooter).consumesAmmoOrNot()) {
             this.reduceAmmo(iGun, currentGunItem, boltType);
         }
         data.shootTimestamp = System.currentTimeMillis();

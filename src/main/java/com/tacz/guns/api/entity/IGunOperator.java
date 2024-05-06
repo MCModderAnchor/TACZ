@@ -25,6 +25,9 @@ public interface IGunOperator {
      */
     long getSynDrawCoolDown();
 
+    /**
+     * 获取从服务端同步的手动换弹的冷却
+     */
     long getSynBoltCoolDown();
 
     /**
@@ -75,6 +78,9 @@ public interface IGunOperator {
      */
     void fireSelect();
 
+    /**
+     * 服务端调整倍镜的逻辑
+     */
     void zoom();
 
     /**

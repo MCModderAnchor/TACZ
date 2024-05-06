@@ -28,7 +28,17 @@ public interface IAmmo {
      */
     ResourceLocation getAmmoId(ItemStack ammo);
 
-    void setAmmoId(ItemStack gun, @Nullable ResourceLocation ammoId);
+    /**
+     * 设置弹药 ID
+     */
+    void setAmmoId(ItemStack ammo, @Nullable ResourceLocation ammoId);
 
+    /**
+     * 弹药是否属于这把枪
+     *
+     * @param gun  检查的枪械物品
+     * @param ammo 检查的子弹物品
+     * @return 是否属于这把枪
+     */
     boolean isAmmoOfGun(ItemStack gun, ItemStack ammo);
 }

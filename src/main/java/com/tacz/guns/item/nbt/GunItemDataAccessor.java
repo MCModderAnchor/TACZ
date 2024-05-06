@@ -1,9 +1,12 @@
 package com.tacz.guns.item.nbt;
 
+import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.attachment.AttachmentType;
 import com.tacz.guns.api.gun.FireMode;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
+import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.resource.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -41,6 +44,7 @@ public interface GunItemDataAccessor extends IGun {
         }
     }
 
+    @Override
     default int getLevel(ItemStack gun) {
         CompoundTag nbt = gun.getOrCreateTag();
         if (nbt.contains(GUN_EXP_TAG, Tag.TAG_INT)) {
@@ -49,6 +53,7 @@ public interface GunItemDataAccessor extends IGun {
         return 0;
     }
 
+    @Override
     default int getExp(ItemStack gun) {
         CompoundTag nbt = gun.getOrCreateTag();
         if (nbt.contains(GUN_EXP_TAG, Tag.TAG_INT)) {
@@ -57,6 +62,7 @@ public interface GunItemDataAccessor extends IGun {
         return 0;
     }
 
+    @Override
     default int getExpToNextLevel(ItemStack gun) {
         int exp = getExp(gun);
         int level = getLevel(exp);
@@ -67,6 +73,7 @@ public interface GunItemDataAccessor extends IGun {
         return nextLevelExp - exp;
     }
 
+    @Override
     default int getExpCurrentLevel(ItemStack gun) {
         int exp = getExp(gun);
         int level = getLevel(exp);
@@ -156,6 +163,24 @@ public interface GunItemDataAccessor extends IGun {
         CompoundTag attachmentTag = new CompoundTag();
         ItemStack.EMPTY.save(attachmentTag);
         nbt.put(key, attachmentTag);
+    }
+
+    @Override
+    default float getAimingZoom(ItemStack gunItem) {
+        float zoom = 1;
+        ItemStack scopeItem = this.getAttachment(gunItem, AttachmentType.SCOPE);
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(scopeItem);
+        if (iAttachment != null) {
+            ResourceLocation scopeId = iAttachment.getAttachmentId(scopeItem);
+            int zoomNumber = iAttachment.getZoomNumber(scopeItem);
+            float[] zooms = TimelessAPI.getClientAttachmentIndex(scopeId).map(ClientAttachmentIndex::getZoom).orElse(null);
+            if (zooms != null) {
+                zoom = zooms[zoomNumber % zooms.length];
+            }
+        } else {
+            zoom = TimelessAPI.getClientGunIndex(this.getGunId(gunItem)).map(ClientGunIndex::getIronZoom).orElse(1f);
+        }
+        return zoom;
     }
 
     @Override

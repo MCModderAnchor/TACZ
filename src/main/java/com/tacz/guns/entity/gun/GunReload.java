@@ -1,6 +1,7 @@
 package com.tacz.guns.entity.gun;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunReloadEvent;
 import com.tacz.guns.api.gun.ReloadState;
 import com.tacz.guns.api.item.IAmmo;
@@ -27,14 +28,12 @@ public class GunReload {
     private final ModDataHolder data;
     private final GunDraw draw;
     private final GunShoot shoot;
-    private final GunAmmoCheck ammoCheck;
 
-    public GunReload(LivingEntity shooter, ModDataHolder data, GunDraw draw, GunShoot shoot, GunAmmoCheck ammoCheck) {
+    public GunReload(LivingEntity shooter, ModDataHolder data, GunDraw draw, GunShoot shoot) {
         this.shooter = shooter;
         this.data = data;
         this.draw = draw;
         this.shoot = shoot;
-        this.ammoCheck = ammoCheck;
     }
 
     public void reload() {
@@ -66,7 +65,7 @@ public class GunReload {
             int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
             int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunIndex.getGunData());
             // 检查弹药
-            if (ammoCheck.needCheckAmmo() && !inventoryHasAmmo(currentAmmoCount, maxAmmoCount, currentGunItem)) {
+            if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !inventoryHasAmmo(currentAmmoCount, maxAmmoCount, currentGunItem)) {
                 return;
             }
             // 触发装弹事件
@@ -189,7 +188,7 @@ public class GunReload {
         }
         ItemStack currentGunItem = data.currentGunItem.get();
         int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
-        if (ammoCheck.needCheckAmmo()) {
+        if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo()) {
             return shooter.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
                     .map(cap -> getAndExtractInventoryAmmoCount(cap, maxAmmoCount, currentAmmoCount, currentGunItem))
                     .orElse(currentAmmoCount);

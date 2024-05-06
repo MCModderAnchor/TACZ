@@ -1,6 +1,9 @@
 package com.tacz.guns.api.gun;
 
 public class ReloadState {
+    /**
+     * 没有进行换弹操作时，倒计时为 -1
+     */
     public static final int NOT_RELOADING_COUNTDOWN = -1;
     /**
      * 换弹状态
