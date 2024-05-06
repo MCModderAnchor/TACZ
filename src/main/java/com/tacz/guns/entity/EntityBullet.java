@@ -17,7 +17,7 @@ import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.util.block.BlockRayTrace;
 import com.tacz.guns.util.block.ProjectileExplosion;
-import com.tacz.guns.util.math.TacHitResult;
+import com.tacz.guns.util.TacHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;

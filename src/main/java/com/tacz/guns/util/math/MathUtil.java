@@ -356,4 +356,32 @@ public class MathUtil {
         double cos = dotProduct / (magnitude1 * magnitude2);
         return Math.acos(cos);
     }
+
+    public static float inverseLerp(float start, float end, float value) {
+        if (value < start) {
+            return 0;
+        } else if (value > end) {
+            return 1;
+        } else {
+            return (value - start) / (end - start);
+        }
+    }
+
+    public static float catmullRom(float[] y, float tension, float alpha) {
+        if (y.length != 4) {
+            throw new IllegalArgumentException("y value length must be 4 when doing catmull-rom spline");
+        }
+        if (tension < 0 || tension > 1) {
+            throw new IllegalArgumentException("tension must be 0~1 when doing catmull-rom spline");
+        }
+        float alpha2 = alpha * alpha;
+        float alpha3 = alpha2 * alpha2;
+
+        float q1 = -alpha3 + 2f * alpha2 - alpha;
+        float q2 = 3f * alpha3 - 5f * alpha2 + 2f;
+        float q3 = -3f * alpha3 + 4f * alpha2 + alpha;
+        float q4 = alpha3 - alpha2;
+
+        return (1f - tension) * (y[0] * q1 + y[1] * q2 + y[2] * q3 + y[3] * q4);
+    }
 }

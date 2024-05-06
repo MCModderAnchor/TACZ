@@ -343,6 +343,10 @@ public class BedrockModel {
         }
     }
 
+    public BonesItem getBone(String name) {
+        return indexBones.get(name);
+    }
+
     public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
         render(matrixStack, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
     }

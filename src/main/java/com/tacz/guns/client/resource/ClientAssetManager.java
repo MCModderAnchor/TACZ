@@ -7,6 +7,7 @@ import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
+import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tacz.guns.client.resource.pojo.display.gun.GunDisplay;
@@ -45,9 +46,13 @@ public enum ClientAssetManager {
      */
     private final Map<ResourceLocation, Map<ResourceLocation, AttachmentSkin>> attachmentSkins = Maps.newHashMap();
     /**
-     * 储存动画
+     * 储存 GLTF 动画
      */
-    private final Map<ResourceLocation, AnimationStructure> animations = Maps.newHashMap();
+    private final Map<ResourceLocation, AnimationStructure> gltfAnimations = Maps.newHashMap();
+    /**
+     * 储存 基岩版动画
+     */
+    private final Map<ResourceLocation, BedrockAnimationFile> bedrockAnimations = Maps.newHashMap();
     /**
      * 储存模型
      */
@@ -109,8 +114,12 @@ public enum ClientAssetManager {
         });
     }
 
-    public void putAnimation(ResourceLocation registryName, AnimationStructure animation) {
-        animations.put(registryName, animation);
+    public void putGltfAnimation(ResourceLocation registryName, AnimationStructure animation) {
+        gltfAnimations.put(registryName, animation);
+    }
+
+    public void putBedrockAnimation(ResourceLocation registryName, BedrockAnimationFile bedrockAnimationFile) {
+        bedrockAnimations.put(registryName, bedrockAnimationFile);
     }
 
     public void putModel(ResourceLocation registryName, BedrockModelPOJO model) {
@@ -144,8 +153,12 @@ public enum ClientAssetManager {
         return attachmentSkins.get(registryName);
     }
 
-    public AnimationStructure getAnimations(ResourceLocation registryName) {
-        return animations.get(registryName);
+    public AnimationStructure getGltfAnimations(ResourceLocation registryName) {
+        return gltfAnimations.get(registryName);
+    }
+
+    public BedrockAnimationFile getBedrockAnimations(ResourceLocation registryName) {
+        return bedrockAnimations.get(registryName);
     }
 
     public BedrockModelPOJO getModels(ResourceLocation registryName) {
@@ -200,7 +213,7 @@ public enum ClientAssetManager {
         this.ammoDisplays.clear();
         this.attachmentDisplays.clear();
         this.attachmentSkins.clear();
-        this.animations.clear();
+        this.gltfAnimations.clear();
         this.models.clear();
         this.soundBuffers.clear();
         this.languages.clear();
