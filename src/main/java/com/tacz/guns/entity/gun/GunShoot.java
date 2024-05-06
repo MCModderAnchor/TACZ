@@ -112,12 +112,9 @@ public class GunShoot {
         Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
         return gunIndex.map(index -> {
             long coolDown = index.getGunData().getShootInterval() - (System.currentTimeMillis() - data.shootTimestamp);
-            // 给 5 ms 的窗口时间，以平衡延迟
-            coolDown = coolDown - 5;
-            if (coolDown < 0) {
-                return 0L;
-            }
-            return coolDown;
+            // 给 25 ms 的窗口时间，以平衡延迟
+            coolDown = coolDown - 25;
+            return Math.max(coolDown, 0L);
         }).orElse(-1L);
     }
 

@@ -67,35 +67,10 @@ public class GunHudOverlay {
             ammoCountColor = 0xFFFFFF;
         }
         String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(ammoCount);
-        // 玩家背包弹药数
-        if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
-            // 0.2 秒检查一次
-            if ((System.currentTimeMillis() - checkAmmoTimestamp) > 200) {
-                // 当前枪械的总弹药数
-                cacheMaxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(stack, gunIndex.getGunData());
 
-                // 缓存背包内的弹药数
-                Inventory inventory = player.getInventory();
-                cacheInventoryAmmoCount = 0;
-                for (int i = 0; i < inventory.getContainerSize(); i++) {
-                    ItemStack inventoryItem = inventory.getItem(i);
-                    if (inventoryItem.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(stack, inventoryItem)) {
-                        cacheInventoryAmmoCount += inventoryItem.getCount();
-                    }
-                    if (inventoryItem.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(stack, inventoryItem)) {
-                        // 创造模式弹药箱？直接返回 9999
-                        if (iAmmoBox.isCreative(inventoryItem)) {
-                            cacheInventoryAmmoCount = 9999;
-                            break;
-                        }
-                        cacheInventoryAmmoCount += iAmmoBox.getAmmoCount(inventoryItem);
-                    }
-                }
-                checkAmmoTimestamp = System.currentTimeMillis();
-            }
-        } else {
-            cacheInventoryAmmoCount = 9999;
-        }
+        // 计算弹药数
+        handleCacheCount(player, stack, gunIndex);
+
         // 竖线
         GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 25, 0xFFFFFFFF);
 
@@ -151,5 +126,39 @@ public class GunHudOverlay {
         }
         RenderSystem.setShaderColor(1, 1, 1, 1);
         GuiComponent.blit(poseStack, (int) (width - 68.5 + mc.font.width(currentAmmoCountText) * 1.5), height - 38, 0, 0, 10, 10, 10, 10);
+    }
+
+    private static void handleCacheCount(LocalPlayer player, ItemStack stack, ClientGunIndex gunIndex) {
+        // 0.2 秒检查一次
+        if ((System.currentTimeMillis() - checkAmmoTimestamp) > 200) {
+            checkAmmoTimestamp = System.currentTimeMillis();
+            // 当前枪械的总弹药数
+            cacheMaxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(stack, gunIndex.getGunData());
+            // 玩家背包弹药数
+            if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
+                // 缓存背包内的弹药数
+                handleInventoryAmmo(stack, player.getInventory());
+            } else {
+                cacheInventoryAmmoCount = 9999;
+            }
+        }
+    }
+
+    private static void handleInventoryAmmo(ItemStack stack, Inventory inventory) {
+        cacheInventoryAmmoCount = 0;
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack inventoryItem = inventory.getItem(i);
+            if (inventoryItem.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(stack, inventoryItem)) {
+                cacheInventoryAmmoCount += inventoryItem.getCount();
+            }
+            if (inventoryItem.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(stack, inventoryItem)) {
+                // 创造模式弹药箱？直接返回 9999
+                if (iAmmoBox.isCreative(inventoryItem)) {
+                    cacheInventoryAmmoCount = 9999;
+                    return;
+                }
+                cacheInventoryAmmoCount += iAmmoBox.getAmmoCount(inventoryItem);
+            }
+        }
     }
 }
