@@ -13,7 +13,7 @@
   // 没有此字段时，不生成粒子
   "particle": {
     // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
-    "name": "dust_color_transition 1.0 0.0 0.0 1.0 0.0 0.0 1.0",
+    "name": "campfire_signal_smoke",
     // 生成的区域，默认为 0 0 0
     "delta": [
       0,

@@ -55,7 +55,7 @@
     "continuous_shoot": false,
     "count": 3,
     "bpm": 1200,
-    "min_interval": 0.2
+    "min_interval": 0.3
   },
   "recoil": {
     "pitch": [
