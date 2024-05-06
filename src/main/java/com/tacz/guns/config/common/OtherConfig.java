@@ -9,6 +9,7 @@ public class OtherConfig {
     public static ForgeConfigSpec.IntValue AMMO_BOX_STACK_SIZE;
     public static ForgeConfigSpec.BooleanValue DEFAULT_PACK_DEBUG;
     public static ForgeConfigSpec.ConfigValue<List<String>> HEAD_SHOT_AABB;
+    public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_ADJUST;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("other");
@@ -22,6 +23,9 @@ public class OtherConfig {
         builder.comment("The entity's head hitbox during the headshot");
         builder.comment("Format: touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]");
         HEAD_SHOT_AABB = builder.define("HeadShotAABB", Lists.newArrayList());
+
+        builder.comment("DEV: Server hitbox adjust");
+        SERVER_HITBOX_ADJUST = builder.defineInRange("ServerHitboxAdjust", -10, -Double.MAX_VALUE, Double.MAX_VALUE);
 
         builder.pop();
     }

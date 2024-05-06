@@ -57,6 +57,9 @@ public class BulletHoleParticle extends TextureSheetParticle {
 
     private int getLifetimeFromConfig(ClientLevel world) {
         int configLife = RenderConfig.BULLET_HOLE_PARTICLE_LIFE.get();
+        if (configLife <= 1) {
+            return configLife;
+        }
         return configLife + world.random.nextInt(configLife / 2);
     }
 
