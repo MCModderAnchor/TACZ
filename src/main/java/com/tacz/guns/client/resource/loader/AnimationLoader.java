@@ -1,5 +1,7 @@
 package com.tacz.guns.client.resource.loader;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.client.resource.ClientAssetManager;
@@ -43,10 +45,9 @@ public final class AnimationLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
                 RawAnimationStructure rawStructure = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), RawAnimationStructure.class);
                 ClientAssetManager.INSTANCE.putGltfAnimation(registryName, new AnimationStructure(rawStructure));
-            } catch (IOException ioe) {
-                // 可能用来判定错误，打印下
-                GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", zipPath);
-                ioe.printStackTrace();
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read animation file: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         Matcher bedrockMatcher = BEDROCK_ANIMATION_PATTERN.matcher(zipPath);
@@ -62,16 +63,15 @@ public final class AnimationLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
                 BedrockAnimationFile bedrockAnimationFile = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), BedrockAnimationFile.class);
                 ClientAssetManager.INSTANCE.putBedrockAnimation(registryName, bedrockAnimationFile);
-            } catch (IOException ioe) {
-                // 可能用来判定错误，打印下
-                GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", zipPath);
-                ioe.printStackTrace();
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read animation file: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         return false;
     }
 
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path animationPath = root.toPath().resolve("animations");
         if (Files.isDirectory(animationPath)) {
             TacPathVisitor gltfVisitor = new TacPathVisitor(animationPath.toFile(), root.getName(), ".gltf", (id, file) -> {
@@ -83,17 +83,28 @@ public final class AnimationLoader {
                     exception.printStackTrace();
                 }
             });
-            Files.walkFileTree(animationPath, gltfVisitor);
+            try {
+                Files.walkFileTree(animationPath, gltfVisitor);
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", animationPath);
+                exception.printStackTrace();
+            }
+
             TacPathVisitor bedrockVisitor = new TacPathVisitor(animationPath.toFile(), root.getName(), ".animation.json", (id, file) -> {
                 try (InputStream animationFileStream = Files.newInputStream(file)) {
                     BedrockAnimationFile bedrockAnimationFile = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), BedrockAnimationFile.class);
                     ClientAssetManager.INSTANCE.putBedrockAnimation(id, bedrockAnimationFile);
-                } catch (IOException exception) {
+                } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read animation file: {}", file);
                     exception.printStackTrace();
                 }
             });
-            Files.walkFileTree(animationPath, bedrockVisitor);
+            try {
+                Files.walkFileTree(animationPath, bedrockVisitor);
+            } catch (IOException e) {
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", animationPath);
+                e.printStackTrace();
+            }
         }
     }
 }
