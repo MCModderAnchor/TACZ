@@ -12,18 +12,18 @@ import java.util.function.Supplier;
 
 public class Acknowledge extends LoginIndexHolder implements IMessage<Acknowledge> {
     public static final Marker ACKNOWLEDGE = MarkerManager.getMarker("HANDSHAKE_ACKNOWLEDGE");
-    @Override
-    public void encode(Acknowledge message, FriendlyByteBuf buffer) {}
 
     @Override
-    public Acknowledge decode(FriendlyByteBuf buf)
-    {
+    public void encode(Acknowledge message, FriendlyByteBuf buffer) {
+    }
+
+    @Override
+    public Acknowledge decode(FriendlyByteBuf buf) {
         return new Acknowledge();
     }
 
     @Override
-    public void handle(Acknowledge message, Supplier<NetworkEvent.Context> c)
-    {
+    public void handle(Acknowledge message, Supplier<NetworkEvent.Context> c) {
         GunMod.LOGGER.debug(ACKNOWLEDGE, "Received acknowledgement from client");
         c.get().setPacketHandled(true);
     }

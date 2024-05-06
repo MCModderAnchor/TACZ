@@ -1,7 +1,7 @@
 package com.tacz.guns.event;
 
 import com.tacz.guns.GunMod;
-import com.tacz.guns.api.sync.SyncedDataKey;
+import com.tacz.guns.entity.sync.SyncedDataKey;
 import com.tacz.guns.entity.sync.DataEntry;
 import com.tacz.guns.entity.sync.DataHolder;
 import com.tacz.guns.entity.sync.DataHolderCapabilityProvider;
@@ -21,41 +21,35 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber
-public final class SyncedEntityDataEvent
-{
+public final class SyncedEntityDataEvent {
     @SubscribeEvent
-    public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event)
-    {
-        if(SyncedEntityData.instance().hasSyncedDataKey(event.getObject().getClass()))
-        {
+    public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        if (SyncedEntityData.instance().hasSyncedDataKey(event.getObject().getClass())) {
             DataHolderCapabilityProvider provider = new DataHolderCapabilityProvider();
             event.addCapability(new ResourceLocation(GunMod.MOD_ID, "synced_entity_data"), provider);
-            if(!(event.getObject() instanceof ServerPlayer)) // Don't add invalidate to server player since it's persistent
-            {
+            // Don't add invalidate to server player since it's persistent
+            if (!(event.getObject() instanceof ServerPlayer)) {
                 event.addListener(provider::invalidate);
             }
         }
     }
 
     @SubscribeEvent
-    public static void onStartTracking(PlayerEvent.StartTracking event)
-    {
-        if(!event.getPlayer().level.isClientSide())
-        {
+    public static void onStartTracking(PlayerEvent.StartTracking event) {
+        if (!event.getPlayer().level.isClientSide()) {
             Entity entity = event.getTarget();
             DataHolder holder = SyncedEntityData.instance().getDataHolder(entity);
-            if(holder != null)
-            {
+            if (holder != null) {
                 List<DataEntry<?, ?>> entries = holder.gatherAll();
                 entries.removeIf(entry -> !entry.getKey().syncMode().isTracking());
-                if(!entries.isEmpty())
-                {
+                if (!entries.isEmpty()) {
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new ServerMessageUpdateEntityData(entity.getId(), entries));
                 }
             }
@@ -63,17 +57,13 @@ public final class SyncedEntityDataEvent
     }
 
     @SubscribeEvent
-    public static void onPlayerJoinWorld(EntityJoinWorldEvent event)
-    {
+    public static void onPlayerJoinWorld(EntityJoinWorldEvent event) {
         Entity entity = event.getEntity();
-        if(entity instanceof Player player && !event.getWorld().isClientSide())
-        {
+        if (entity instanceof Player player && !event.getWorld().isClientSide()) {
             DataHolder holder = SyncedEntityData.instance().getDataHolder(player);
-            if(holder != null)
-            {
+            if (holder != null) {
                 List<DataEntry<?, ?>> entries = holder.gatherAll();
-                if(!entries.isEmpty())
-                {
+                if (!entries.isEmpty()) {
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ServerMessageUpdateEntityData(player.getId(), entries));
                 }
             }
@@ -81,69 +71,58 @@ public final class SyncedEntityDataEvent
     }
 
     @SubscribeEvent
-    public static void onPlayerClone(PlayerEvent.Clone event)
-    {
+    public static void onPlayerClone(PlayerEvent.Clone event) {
         Player original = event.getOriginal();
         original.reviveCaps();
-
         DataHolder oldHolder = SyncedEntityData.instance().getDataHolder(original);
-        if(oldHolder == null)
+        if (oldHolder == null) {
             return;
-
+        }
         original.invalidateCaps();
-
         Player player = event.getPlayer();
         DataHolder newHolder = SyncedEntityData.instance().getDataHolder(player);
-        if(newHolder == null)
+        if (newHolder == null) {
             return;
-
+        }
         Map<SyncedDataKey<?, ?>, DataEntry<?, ?>> dataMap = new HashMap<>(oldHolder.dataMap);
-        if(event.isWasDeath())
-        {
+        if (event.isWasDeath()) {
             dataMap.entrySet().removeIf(entry -> !entry.getKey().persistent());
         }
         newHolder.dataMap = dataMap;
     }
 
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event)
-    {
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
         SyncedEntityData instance = SyncedEntityData.instance();
-        if(event.side != LogicalSide.SERVER)
+        if (event.side != LogicalSide.SERVER) {
             return;
-
-        if(event.phase != TickEvent.Phase.END)
+        }
+        if (event.phase != TickEvent.Phase.END) {
             return;
-
-        if(!instance.isDirty())
+        }
+        if (!instance.isDirty()) {
             return;
-
+        }
         List<Entity> dirtyEntities = instance.getDirtyEntities();
-        if(dirtyEntities.isEmpty())
-        {
+        if (dirtyEntities.isEmpty()) {
             instance.setDirty(false);
             return;
         }
-
-        for(Entity entity : dirtyEntities)
-        {
+        for (Entity entity : dirtyEntities) {
             DataHolder holder = instance.getDataHolder(entity);
-            if(holder == null || !holder.isDirty())
+            if (holder == null || !holder.isDirty()) {
                 continue;
-
+            }
             List<DataEntry<?, ?>> entries = holder.gatherDirty();
-            if(entries.isEmpty())
+            if (entries.isEmpty()) {
                 continue;
-
+            }
             List<DataEntry<?, ?>> selfEntries = entries.stream().filter(entry -> entry.getKey().syncMode().isSelf()).collect(Collectors.toList());
-            if(!selfEntries.isEmpty() && entity instanceof ServerPlayer)
-            {
+            if (!selfEntries.isEmpty() && entity instanceof ServerPlayer) {
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) entity), new ServerMessageUpdateEntityData(entity.getId(), selfEntries));
             }
-
             List<DataEntry<?, ?>> trackingEntries = entries.stream().filter(entry -> entry.getKey().syncMode().isTracking()).collect(Collectors.toList());
-            if(!trackingEntries.isEmpty())
-            {
+            if (!trackingEntries.isEmpty()) {
                 NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), new ServerMessageUpdateEntityData(entity.getId(), trackingEntries));
             }
             holder.clean();
@@ -153,8 +132,7 @@ public final class SyncedEntityDataEvent
     }
 
     @SubscribeEvent
-    public static void registerCapability(RegisterCapabilitiesEvent event)
-    {
+    public static void registerCapability(RegisterCapabilitiesEvent event) {
         event.register(DataHolder.class);
     }
 }

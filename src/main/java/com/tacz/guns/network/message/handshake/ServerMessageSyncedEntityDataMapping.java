@@ -1,7 +1,7 @@
 package com.tacz.guns.network.message.handshake;
 
 import com.tacz.guns.GunMod;
-import com.tacz.guns.api.sync.SyncedDataKey;
+import com.tacz.guns.entity.sync.SyncedDataKey;
 import com.tacz.guns.entity.sync.SyncedEntityData;
 import com.tacz.guns.network.IMessage;
 import com.tacz.guns.network.LoginIndexHolder;
@@ -18,20 +18,19 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Supplier;
 
-public class ServerMessageSyncedEntityDataMapping extends LoginIndexHolder implements IMessage<ServerMessageSyncedEntityDataMapping>{
-    public static final Marker HANDSHAKE = MarkerManager.getMarker("TAC_HANDSHAKE");
+public class ServerMessageSyncedEntityDataMapping extends LoginIndexHolder implements IMessage<ServerMessageSyncedEntityDataMapping> {
+    public static final Marker HANDSHAKE = MarkerManager.getMarker("TACZ_HANDSHAKE");
     private Map<ResourceLocation, List<Pair<ResourceLocation, Integer>>> keyMap;
 
-    public ServerMessageSyncedEntityDataMapping() {}
+    public ServerMessageSyncedEntityDataMapping() {
+    }
 
-    private ServerMessageSyncedEntityDataMapping(Map<ResourceLocation, List<Pair<ResourceLocation, Integer>>> keyMap)
-    {
+    private ServerMessageSyncedEntityDataMapping(Map<ResourceLocation, List<Pair<ResourceLocation, Integer>>> keyMap) {
         this.keyMap = keyMap;
     }
 
     @Override
-    public void encode(ServerMessageSyncedEntityDataMapping message, FriendlyByteBuf buffer)
-    {
+    public void encode(ServerMessageSyncedEntityDataMapping message, FriendlyByteBuf buffer) {
         Set<SyncedDataKey<?, ?>> keys = SyncedEntityData.instance().getKeys();
         buffer.writeInt(keys.size());
         keys.forEach(key -> {
@@ -43,12 +42,10 @@ public class ServerMessageSyncedEntityDataMapping extends LoginIndexHolder imple
     }
 
     @Override
-    public ServerMessageSyncedEntityDataMapping decode(FriendlyByteBuf buffer)
-    {
+    public ServerMessageSyncedEntityDataMapping decode(FriendlyByteBuf buffer) {
         int size = buffer.readInt();
         Map<ResourceLocation, List<Pair<ResourceLocation, Integer>>> keyMap = new HashMap<>();
-        for(int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             ResourceLocation classId = buffer.readResourceLocation();
             ResourceLocation keyId = buffer.readResourceLocation();
             int id = buffer.readVarInt();
@@ -58,32 +55,25 @@ public class ServerMessageSyncedEntityDataMapping extends LoginIndexHolder imple
     }
 
     @Override
-    public void handle(ServerMessageSyncedEntityDataMapping message, Supplier<NetworkEvent.Context> supplier)
-    {
+    public void handle(ServerMessageSyncedEntityDataMapping message, Supplier<NetworkEvent.Context> supplier) {
         GunMod.LOGGER.debug(HANDSHAKE, "Received synced key mappings from server");
         CountDownLatch block = new CountDownLatch(1);
-        supplier.get().enqueueWork(() ->
-        {
-            if(!SyncedEntityData.instance().updateMappings(message))
-            {
+        supplier.get().enqueueWork(() -> {
+            if (!SyncedEntityData.instance().updateMappings(message)) {
                 supplier.get().getNetworkManager().disconnect(new TextComponent("Connection closed - [TacZ] Received unknown synced data keys."));
             }
             block.countDown();
         });
-        try
-        {
+        try {
             block.await();
-        }
-        catch(InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         supplier.get().setPacketHandled(true);
         NetworkHandler.HANDSHAKE_CHANNEL.reply(new Acknowledge(), supplier.get());
     }
 
-    public Map<ResourceLocation, List<Pair<ResourceLocation, Integer>>> getKeyMap()
-    {
+    public Map<ResourceLocation, List<Pair<ResourceLocation, Integer>>> getKeyMap() {
         return this.keyMap;
     }
 }
