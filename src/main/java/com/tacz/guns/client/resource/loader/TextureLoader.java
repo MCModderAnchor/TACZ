@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
@@ -40,7 +39,7 @@ public final class TextureLoader {
         return false;
     }
 
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path filePath = root.toPath().resolve("textures");
         if (Files.isDirectory(filePath)) {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".png", (id, file) -> {
@@ -50,6 +49,7 @@ public final class TextureLoader {
             try {
                 Files.walkFileTree(filePath, visitor);
             } catch (Exception e) {
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", filePath);
                 e.printStackTrace();
             }
         }

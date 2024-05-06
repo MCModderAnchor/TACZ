@@ -5,7 +5,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.resource.ClientAssetManager;
-import com.tacz.guns.client.resource.loader.ShellDisplay;
+import com.tacz.guns.client.resource.pojo.display.ammo.ShellDisplay;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoEntityDisplay;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoParticle;

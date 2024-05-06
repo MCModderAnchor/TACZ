@@ -1,5 +1,7 @@
 package com.tacz.guns.client.resource.loader;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
@@ -41,28 +43,32 @@ public final class BedrockModelLoader {
                 BedrockModelPOJO modelPOJO = GSON.fromJson(new InputStreamReader(modelFileStream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
                 ClientAssetManager.INSTANCE.putModel(registryName, modelPOJO);
                 return true;
-            } catch (IOException ioe) {
-                // 可能用来判定错误，打印下
-                GunMod.LOGGER.warn(MARKER, "Failed to load model: {}", zipPath);
-                ioe.printStackTrace();
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read model file: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         return false;
     }
 
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path modelPath = root.toPath().resolve("models");
         if (Files.isDirectory(modelPath)) {
             TacPathVisitor visitor = new TacPathVisitor(modelPath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream modelFileStream = Files.newInputStream(file)) {
                     BedrockModelPOJO modelPOJO = GSON.fromJson(new InputStreamReader(modelFileStream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
                     ClientAssetManager.INSTANCE.putModel(id, modelPOJO);
-                } catch (IOException exception) {
+                } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read model file: {}", file);
                     exception.printStackTrace();
                 }
             });
-            Files.walkFileTree(modelPath, visitor);
+            try {
+                Files.walkFileTree(modelPath, visitor);
+            } catch (IOException e) {
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", modelPath);
+                e.printStackTrace();
+            }
         }
     }
 }

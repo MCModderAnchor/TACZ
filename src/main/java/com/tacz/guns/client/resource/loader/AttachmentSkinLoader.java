@@ -1,5 +1,7 @@
 package com.tacz.guns.client.resource.loader;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.ClientGunPackLoader;
@@ -25,7 +27,7 @@ public class AttachmentSkinLoader {
     private static final Marker MARKER = MarkerManager.getMarker("AttachmentSkinLoader");
     private static final Pattern SKIN_PATTERN = Pattern.compile("^(\\w+)/attachments/skin/([\\w/]+)\\.json$");
 
-    public static boolean load(ZipFile zipFile, String zipPath) throws IOException {
+    public static boolean load(ZipFile zipFile, String zipPath) {
         Matcher matcher = SKIN_PATTERN.matcher(zipPath);
         if (matcher.find()) {
             String namespace = matcher.group(1);
@@ -40,24 +42,32 @@ public class AttachmentSkinLoader {
                 AttachmentSkin display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentSkin.class);
                 ClientAssetManager.INSTANCE.putAttachmentSkin(registryName, display);
                 return true;
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read skin display file: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         return false;
     }
 
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path displayPath = root.toPath().resolve("attachments/skin");
         if (Files.isDirectory(displayPath)) {
             TacPathVisitor visitor = new TacPathVisitor(displayPath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
                     AttachmentSkin display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentSkin.class);
                     ClientAssetManager.INSTANCE.putAttachmentSkin(id, display);
-                } catch (IOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read display file: {}", file);
+                } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                    GunMod.LOGGER.warn(MARKER, "Failed to read skin display file: {}", file);
                     exception.printStackTrace();
                 }
             });
-            Files.walkFileTree(displayPath, visitor);
+            try {
+                Files.walkFileTree(displayPath, visitor);
+            } catch (IOException e) {
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", displayPath);
+                e.printStackTrace();
+            }
         }
     }
 }

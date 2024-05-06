@@ -1,6 +1,8 @@
 package com.tacz.guns.client.resource.loader;
 
 import com.google.common.reflect.TypeToken;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
@@ -42,17 +44,16 @@ public class CustomTabLoader {
                 Map<String, CustomTabPOJO> customTabs = GSON.fromJson(new InputStreamReader(inputStream, StandardCharsets.UTF_8), type);
                 ClientAssetManager.INSTANCE.putAllCustomTab(customTabs);
                 return true;
-            } catch (IOException ioe) {
-                // 可能用来判定错误，打印下
-                GunMod.LOGGER.warn(MARKER, "Failed to load tab json: {}", zipPath);
-                ioe.printStackTrace();
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read tab json: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         return false;
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path tabFilePath = root.toPath().resolve("tab.json");
         if (Files.isRegularFile(tabFilePath)) {
             try (InputStream stream = Files.newInputStream(tabFilePath)) {
@@ -60,7 +61,7 @@ public class CustomTabLoader {
                 }.getType();
                 Map<String, CustomTabPOJO> customTabs = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), type);
                 ClientAssetManager.INSTANCE.putAllCustomTab(customTabs);
-            } catch (IOException exception) {
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                 GunMod.LOGGER.warn(MARKER, "Failed to read tab json: {}", tabFilePath);
                 exception.printStackTrace();
             }

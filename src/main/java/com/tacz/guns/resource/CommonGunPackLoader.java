@@ -3,6 +3,8 @@ package com.tacz.guns.resource;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
@@ -159,12 +161,8 @@ public class CommonGunPackLoader {
 
     private static void readDirAsset(File root) {
         if (root.isDirectory()) {
-            try {
-                GunDataLoader.load(root);
-                AttachmentDataLoader.load(root);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            GunDataLoader.load(root);
+            AttachmentDataLoader.load(root);
         }
     }
 
@@ -246,11 +244,7 @@ public class CommonGunPackLoader {
 
     private static void readDirRecipes(File root) {
         if (root.isDirectory()) {
-            try {
-                RecipeLoader.load(root);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            RecipeLoader.load(root);
         }
     }
 
@@ -270,7 +264,7 @@ public class CommonGunPackLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
                     GUN_INDEX.put(registryName, CommonGunIndex.getInstance(indexPOJO));
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", path);
                     exception.printStackTrace();
                 }
@@ -286,10 +280,7 @@ public class CommonGunPackLoader {
                     // 获取枪械的定义文件
                     GunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunIndexPOJO.class);
                     GUN_INDEX.put(id, CommonGunIndex.getInstance(indexPOJO));
-                } catch (IOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
-                    exception.printStackTrace();
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", file);
                     exception.printStackTrace();
                 }
@@ -314,7 +305,7 @@ public class CommonGunPackLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
                     AMMO_INDEX.put(registryName, CommonAmmoIndex.getInstance(indexPOJO));
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", path);
                     exception.printStackTrace();
                 }
@@ -330,10 +321,7 @@ public class CommonGunPackLoader {
                     // 获取枪械的定义文件
                     AmmoIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AmmoIndexPOJO.class);
                     AMMO_INDEX.put(id, CommonAmmoIndex.getInstance(indexPOJO));
-                } catch (IOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
-                    exception.printStackTrace();
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", file);
                     exception.printStackTrace();
                 }
@@ -358,7 +346,7 @@ public class CommonGunPackLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
                     ATTACHMENT_INDEX.put(registryName, CommonAttachmentIndex.getInstance(indexPOJO));
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", path);
                     exception.printStackTrace();
                 }
@@ -374,10 +362,7 @@ public class CommonGunPackLoader {
                     // 获取枪械的定义文件
                     AttachmentIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentIndexPOJO.class);
                     ATTACHMENT_INDEX.put(id, CommonAttachmentIndex.getInstance(indexPOJO));
-                } catch (IOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
-                    exception.printStackTrace();
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", file);
                     exception.printStackTrace();
                 }

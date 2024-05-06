@@ -3,6 +3,8 @@ package com.tacz.guns.client.resource;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.math.Vector3f;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
@@ -178,21 +180,17 @@ public class ClientGunPackLoader {
 
     private static void readDirAsset(File root) {
         if (root.isDirectory()) {
-            try {
-                GunDisplayLoader.load(root);
-                AmmoDisplayLoader.load(root);
-                AttachmentDisplayLoader.load(root);
-                AttachmentSkinLoader.load(root);
-                AnimationLoader.load(root);
-                BedrockModelLoader.load(root);
-                TextureLoader.load(root);
-                SoundLoader.load(root);
-                LanguageLoader.load(root);
-                CustomTabLoader.load(root);
-                PackInfoLoader.load(root);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            GunDisplayLoader.load(root);
+            AmmoDisplayLoader.load(root);
+            AttachmentDisplayLoader.load(root);
+            AttachmentSkinLoader.load(root);
+            AnimationLoader.load(root);
+            BedrockModelLoader.load(root);
+            TextureLoader.load(root);
+            SoundLoader.load(root);
+            LanguageLoader.load(root);
+            CustomTabLoader.load(root);
+            PackInfoLoader.load(root);
         }
     }
 
@@ -289,7 +287,7 @@ public class ClientGunPackLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
                     GUN_INDEX.put(registryName, ClientGunIndex.getInstance(indexPOJO));
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", path);
                     exception.printStackTrace();
                 }
@@ -305,10 +303,7 @@ public class ClientGunPackLoader {
                     // 获取枪械的定义文件
                     GunIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunIndexPOJO.class);
                     GUN_INDEX.put(id, ClientGunIndex.getInstance(indexPOJO));
-                } catch (IOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
-                    exception.printStackTrace();
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", file);
                     exception.printStackTrace();
                 }
@@ -333,7 +328,7 @@ public class ClientGunPackLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
                     AMMO_INDEX.put(registryName, ClientAmmoIndex.getInstance(indexPOJO));
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", path);
                     exception.printStackTrace();
                 }
@@ -349,10 +344,7 @@ public class ClientGunPackLoader {
                     // 获取枪械的定义文件
                     AmmoIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AmmoIndexPOJO.class);
                     AMMO_INDEX.put(id, ClientAmmoIndex.getInstance(indexPOJO));
-                } catch (IOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
-                    exception.printStackTrace();
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", file);
                     exception.printStackTrace();
                 }
@@ -377,7 +369,7 @@ public class ClientGunPackLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, id);
                 try {
                     ATTACHMENT_INDEX.put(registryName, ClientAttachmentIndex.getInstance(registryName, indexPOJO));
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", path);
                     exception.printStackTrace();
                 }
@@ -393,10 +385,7 @@ public class ClientGunPackLoader {
                     // 获取配件的定义文件
                     AttachmentIndexPOJO indexPOJO = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentIndexPOJO.class);
                     ATTACHMENT_INDEX.put(id, ClientAttachmentIndex.getInstance(id, indexPOJO));
-                } catch (IOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read index file: {}", file);
-                    exception.printStackTrace();
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn("{} index file read fail!", file);
                     exception.printStackTrace();
                 }

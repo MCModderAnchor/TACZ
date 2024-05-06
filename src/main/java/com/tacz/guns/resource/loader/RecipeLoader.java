@@ -1,5 +1,7 @@
 package com.tacz.guns.resource.loader;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.resource.CommonAssetManager;
@@ -26,7 +28,7 @@ public final class RecipeLoader {
     private static final Marker MARKER = MarkerManager.getMarker("RecipeLoader");
     private static final Pattern RECIPES_PATTERN = Pattern.compile("^(\\w+)/recipes/([\\w/]+)\\.json$");
 
-    public static boolean load(ZipFile zipFile, String zipPath) throws IOException {
+    public static boolean load(ZipFile zipFile, String zipPath) {
         Matcher matcher = RECIPES_PATTERN.matcher(zipPath);
         if (matcher.find()) {
             String namespace = matcher.group(1);
@@ -41,24 +43,32 @@ public final class RecipeLoader {
                 TableRecipe tableRecipe = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), TableRecipe.class);
                 CommonAssetManager.INSTANCE.putRecipe(registryName, new GunSmithTableRecipe(registryName, tableRecipe));
                 return true;
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read recipe file: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         return false;
     }
 
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path filePath = root.toPath().resolve("recipes");
         if (Files.isDirectory(filePath)) {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
                     TableRecipe tableRecipe = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), TableRecipe.class);
                     CommonAssetManager.INSTANCE.putRecipe(id, new GunSmithTableRecipe(id, tableRecipe));
-                } catch (IOException exception) {
+                } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read recipe file: {}", file);
                     exception.printStackTrace();
                 }
             });
-            Files.walkFileTree(filePath, visitor);
+            try {
+                Files.walkFileTree(filePath, visitor);
+            } catch (IOException e) {
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", filePath);
+                e.printStackTrace();
+            }
         }
     }
 }

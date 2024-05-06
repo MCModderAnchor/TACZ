@@ -1,5 +1,7 @@
 package com.tacz.guns.client.resource.loader;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.client.resource.ClientAssetManager;
@@ -41,28 +43,32 @@ public final class AnimationLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
                 RawAnimationStructure rawStructure = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), RawAnimationStructure.class);
                 ClientAssetManager.INSTANCE.putAnimation(registryName, new AnimationStructure(rawStructure));
-            } catch (IOException ioe) {
-                // 可能用来判定错误，打印下
-                GunMod.LOGGER.warn(MARKER, "Failed to load animation: {}", zipPath);
-                ioe.printStackTrace();
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read animation file: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         return false;
     }
 
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path animationPath = root.toPath().resolve("animations");
         if (Files.isDirectory(animationPath)) {
             TacPathVisitor visitor = new TacPathVisitor(animationPath.toFile(), root.getName(), ".gltf", (id, file) -> {
                 try (InputStream animationFileStream = Files.newInputStream(file)) {
                     RawAnimationStructure rawStructure = GSON.fromJson(new InputStreamReader(animationFileStream, StandardCharsets.UTF_8), RawAnimationStructure.class);
                     ClientAssetManager.INSTANCE.putAnimation(id, new AnimationStructure(rawStructure));
-                } catch (IOException exception) {
+                } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read animation file: {}", file);
                     exception.printStackTrace();
                 }
             });
-            Files.walkFileTree(animationPath, visitor);
+            try {
+                Files.walkFileTree(animationPath, visitor);
+            } catch (IOException e) {
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", animationPath);
+                e.printStackTrace();
+            }
         }
     }
 }

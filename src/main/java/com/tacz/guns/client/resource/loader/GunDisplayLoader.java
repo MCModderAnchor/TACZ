@@ -1,5 +1,7 @@
 package com.tacz.guns.client.resource.loader;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.ClientGunPackLoader;
@@ -25,7 +27,7 @@ public final class GunDisplayLoader {
     private static final Marker MARKER = MarkerManager.getMarker("GunDisplayLoader");
     private static final Pattern DISPLAY_PATTERN = Pattern.compile("^(\\w+)/guns/display/([\\w/]+)\\.json$");
 
-    public static boolean load(ZipFile zipFile, String zipPath) throws IOException {
+    public static boolean load(ZipFile zipFile, String zipPath) {
         Matcher matcher = DISPLAY_PATTERN.matcher(zipPath);
         if (matcher.find()) {
             String namespace = matcher.group(1);
@@ -40,24 +42,32 @@ public final class GunDisplayLoader {
                 GunDisplay display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunDisplay.class);
                 ClientAssetManager.INSTANCE.putGunDisplay(registryName, display);
                 return true;
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read display file: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         return false;
     }
 
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path displayPath = root.toPath().resolve("guns/display");
         if (Files.isDirectory(displayPath)) {
             TacPathVisitor visitor = new TacPathVisitor(displayPath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
                     GunDisplay display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunDisplay.class);
                     ClientAssetManager.INSTANCE.putGunDisplay(id, display);
-                } catch (IOException exception) {
+                } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read display file: {}", file);
                     exception.printStackTrace();
                 }
             });
-            Files.walkFileTree(displayPath, visitor);
+            try {
+                Files.walkFileTree(displayPath, visitor);
+            } catch (IOException e) {
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", displayPath);
+                e.printStackTrace();
+            }
         }
     }
 }

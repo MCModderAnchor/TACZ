@@ -1,8 +1,10 @@
 package com.tacz.guns.client.resource;
 
 import com.google.common.collect.Maps;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.animation.AnimationListenerSupplier;
 import com.tacz.guns.client.animation.Animations;
@@ -70,7 +72,7 @@ public class InternalAssetLoader {
             JsonObject json = JsonParser.parseReader(bufferedReader).getAsJsonObject();
             RawAnimationStructure rawAnimationStructure = ClientGunPackLoader.GSON.fromJson(json, RawAnimationStructure.class);
             return new AnimationStructure(rawAnimationStructure);
-        } catch (IOException e) {
+        } catch (IOException | JsonSyntaxException | JsonIOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -79,8 +81,8 @@ public class InternalAssetLoader {
         try (InputStream stream = Minecraft.getInstance().getResourceManager().getResource(location).getInputStream()) {
             BedrockModelPOJO pojo = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
             BEDROCK_MODELS.put(location, new BedrockModel(pojo, BedrockVersion.NEW));
-        } catch (IOException ioException) {
-            ioException.fillInStackTrace();
+        } catch (IOException | JsonSyntaxException | JsonIOException e) {
+            e.fillInStackTrace();
         }
     }
 

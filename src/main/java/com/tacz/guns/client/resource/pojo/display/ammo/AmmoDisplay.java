@@ -1,7 +1,6 @@
 package com.tacz.guns.client.resource.pojo.display.ammo;
 
 import com.google.gson.annotations.SerializedName;
-import com.tacz.guns.client.resource.loader.ShellDisplay;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;

@@ -1,5 +1,7 @@
 package com.tacz.guns.client.resource.loader;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.PackInfo;
@@ -38,23 +40,22 @@ public class PackInfoLoader {
                 PackInfo packInfo = GSON.fromJson(new InputStreamReader(inputStream, StandardCharsets.UTF_8), PackInfo.class);
                 ClientAssetManager.INSTANCE.putPackInfo(namespace, packInfo);
                 return true;
-            } catch (IOException ioe) {
-                // 可能用来判定错误，打印下
-                GunMod.LOGGER.warn(MARKER, "Failed to load info json: {}", zipPath);
-                ioe.printStackTrace();
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read info json: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         return false;
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path packInfoFilePath = root.toPath().resolve("pack.json");
         if (Files.isRegularFile(packInfoFilePath)) {
             try (InputStream stream = Files.newInputStream(packInfoFilePath)) {
                 PackInfo packInfo = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), PackInfo.class);
                 ClientAssetManager.INSTANCE.putPackInfo(root.getName(), packInfo);
-            } catch (IOException exception) {
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                 GunMod.LOGGER.warn(MARKER, "Failed to read info json: {}", packInfoFilePath);
                 exception.printStackTrace();
             }

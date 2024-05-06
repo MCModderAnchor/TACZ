@@ -49,7 +49,7 @@ public final class SoundLoader {
         return false;
     }
 
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path filePath = root.toPath().resolve("sounds");
         if (Files.isDirectory(filePath)) {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".ogg", (id, file) -> {
@@ -61,7 +61,12 @@ public final class SoundLoader {
                     exception.printStackTrace();
                 }
             });
-            Files.walkFileTree(filePath, visitor);
+            try {
+                Files.walkFileTree(filePath, visitor);
+            } catch (IOException e) {
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", filePath);
+                e.printStackTrace();
+            }
         }
     }
 }

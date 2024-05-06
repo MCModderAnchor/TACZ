@@ -1,6 +1,8 @@
 package com.tacz.guns.client.resource.loader;
 
 import com.google.common.collect.Maps;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import net.minecraft.locale.Language;
@@ -38,15 +40,15 @@ public class LanguageLoader {
                 Language.loadFromJson(zipEntryStream, languages::put);
                 ClientAssetManager.INSTANCE.putLanguage(languageCode, languages);
                 return true;
-            } catch (IOException ioe) {
-                GunMod.LOGGER.warn(MARKER, "Failed to load language file: {}", zipPath);
-                ioe.printStackTrace();
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read language file: {}, entry: {}", zipFile, entry);
+                exception.printStackTrace();
             }
         }
         return false;
     }
 
-    public static void load(File root) throws IOException {
+    public static void load(File root) {
         Path filePath = root.toPath().resolve("lang");
         if (!Files.isDirectory(filePath)) {
             return;
@@ -65,9 +67,9 @@ public class LanguageLoader {
                 Map<String, String> languages = Maps.newHashMap();
                 Language.loadFromJson(inputStream, languages::put);
                 ClientAssetManager.INSTANCE.putLanguage(languageCode, languages);
-            } catch (IOException ioe) {
-                GunMod.LOGGER.warn(MARKER, "Failed to load language file: {}", file);
-                ioe.printStackTrace();
+            } catch (IOException | JsonSyntaxException | JsonIOException exception) {
+                GunMod.LOGGER.warn(MARKER, "Failed to read language file: {}", file);
+                exception.printStackTrace();
             }
         }
     }
