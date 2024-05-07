@@ -4,21 +4,27 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
- * Create a {@link ObjectAnimationRunner} instance to run a {@link ObjectAnimation}
+ * 创建一个 {@link ObjectAnimationRunner} 实例以运行 {@link ObjectAnimation}
  */
 public class ObjectAnimation {
+    /**
+     * 动画名称
+     */
     public final String name;
     /**
-     * key of this map is node name.
+     * 此 map 的 key 是节点名称
      */
     private final Map<String, List<ObjectAnimationChannel>> channels = new HashMap<>();
+    /**
+     * 播放类型
+     */
     public @Nonnull PlayType playType = PlayType.PLAY_ONCE_HOLD;
     /**
-     * The current playing progress time, in nanoseconds
+     * 当前播放进度时间，以纳秒为单位
      */
     public long timeNs = 0;
     /**
-     * The maximum {@link ObjectAnimationChannel#getEndTimeS()} of all channels
+     * 所有轨道的最大结束时间 {@link ObjectAnimationChannel#getEndTimeS()}
      */
     private float maxEndTimeS = 0f;
 
@@ -27,9 +33,9 @@ public class ObjectAnimation {
     }
 
     /**
-     * Create a copy of source object animation,
-     * The values of the new object animation is the same as the source,
-     * but the new one won't hold any Animation Listener.
+     * 创建源对象动画的拷贝，
+     * 新对象动画的值与源动画的值相同，
+     * 但新对象动画不会包含任何动画监听器。
      */
     public ObjectAnimation(ObjectAnimation source) {
         this.name = source.name;
@@ -50,11 +56,12 @@ public class ObjectAnimation {
 
     protected void addChannel(ObjectAnimationChannel channel) {
         channels.compute(channel.node, (node, list) -> {
-            if (list == null) list = new ArrayList<>();
+            if (list == null) {
+                list = new ArrayList<>();
+            }
             list.add(channel);
             return list;
         });
-
         if (channel.getEndTimeS() > maxEndTimeS) {
             maxEndTimeS = channel.getEndTimeS();
         }
@@ -68,14 +75,15 @@ public class ObjectAnimation {
         for (List<ObjectAnimationChannel> channelList : channels.values()) {
             for (ObjectAnimationChannel channel : channelList) {
                 AnimationListener listener = supplier.supplyListeners(channel.node, channel.type);
-                if (listener != null)
+                if (listener != null) {
                     channel.addListener(listener);
+                }
             }
         }
     }
 
     /**
-     * Trigger all listeners to notify them of the updated value.
+     * 触发所有监听器，通知它们更新相关数值
      */
     public void update(boolean blend) {
         for (List<ObjectAnimationChannel> channels : channels.values()) {
@@ -90,8 +98,17 @@ public class ObjectAnimation {
     }
 
     public enum PlayType {
+        /**
+         * 播放一次，停留在最后一帧
+         */
         PLAY_ONCE_HOLD,
+        /**
+         * 播放一次后停止
+         */
         PLAY_ONCE_STOP,
+        /**
+         * 循环播放
+         */
         LOOP
     }
 }

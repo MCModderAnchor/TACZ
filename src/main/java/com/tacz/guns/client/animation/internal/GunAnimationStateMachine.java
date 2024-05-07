@@ -14,40 +14,25 @@ import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
 import java.util.Set;
 
+import static com.tacz.guns.client.animation.internal.GunAnimationConstant.*;
+
 @OnlyIn(Dist.CLIENT)
 public class GunAnimationStateMachine {
-    public static final String STATIC_BOLT_CAUGHT_ANIMATION = "static_bolt_caught";
-    public static final String STATIC_IDLE_ANIMATION = "static_idle";
-    public static final String SHOOT_ANIMATION = "shoot";
-    public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";
-    public static final String RELOAD_EMPTY_EXTENDED_ANIMATION = "reload_empty_extended";
-    public static final String BOLT_ANIMATION = "bolt";
-    public static final String RELOAD_TACTICAL_ANIMATION = "reload_tactical";
-    public static final String RELOAD_TACTICAL_EXTENDED_ANIMATION = "reload_tactical_extended";
-    public static final String DRAW_ANIMATION = "draw";
-    public static final String PUT_AWAY_ANIMATION = "put_away";
-    public static final String INSPECT_ANIMATION = "inspect";
-    public static final String INSPECT_EMPTY_ANIMATION = "inspect_empty";
-    public static final String IDLE_ANIMATION = "idle";
-    public static final String RUN_START_ANIMATION = "run_start";
-    public static final String RUN_LOOP_ANIMATION = "run";
-    public static final String RUN_HOLD_ANIMATION = "run_hold";
-    public static final String RUN_END_ANIMATION = "run_end";
-    public static final String WALK_FORWARD_ANIMATION = "walk_forward";
-    public static final String WALK_SIDEWAY_ANIMATION = "walk_sideway";
-    public static final String WALK_BACKWARD_ANIMATION = "walk_backward";
-    public static final String WALK_AIMING_ANIMATION = "walk_aiming";
-
-    protected static final Set<Integer> blendingTracks = Sets.newHashSet();
-    protected static int trackIndexTop = 0;
-    // 射击轨道 12 个，支持 0.5 秒的射击动画在 rpm 1200 以内播放
-    public static final int[] SHOOTING_TRACKS = {blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
+    public static final Set<Integer> BLENDING_TRACKS = Sets.newHashSet();
+    /**
+     * 射击轨道 12 个，支持 0.5 秒的射击动画在 rpm 1200 以内播放
+     */
+    public static final int[] SHOOTING_TRACKS = {
             blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
-            blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()};
+            blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
+            blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()
+    };
     public static final int MOVEMENT_TRACK = blendingTrack();
     public static final int MAIN_TRACK = staticTrack();
     public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
     public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
+
+    protected static int TRACK_INDEX_TOP = 0;
 
     protected AnimationController controller;
     protected boolean noAmmo = false;
@@ -55,7 +40,9 @@ public class GunAnimationStateMachine {
     protected boolean onGround = true;
     protected boolean pauseWalkAndRun = false;
     protected boolean isAiming = false;
-    //记录开始冲刺时玩家的walk distance，以便让冲刺动画有统一的开头
+    /**
+     * 记录开始冲刺时玩家的 walk distance，以便让冲刺动画有统一的开头
+     */
     protected float baseDistanceWalked = 0.0f;
     protected float keepDistanceWalked = 0.0f;
     protected WalkDirection lastWalkDirection = WalkDirection.NONE;
@@ -63,18 +50,18 @@ public class GunAnimationStateMachine {
 
     public GunAnimationStateMachine(AnimationController controller) {
         this.controller = controller;
-        for (int i = 0; i < trackIndexTop; i++) {
-            controller.setBlending(i, blendingTracks.contains(i));
+        for (int i = 0; i < TRACK_INDEX_TOP; i++) {
+            controller.setBlending(i, BLENDING_TRACKS.contains(i));
         }
     }
 
     protected static int staticTrack() {
-        return trackIndexTop++;
+        return TRACK_INDEX_TOP++;
     }
 
     protected static int blendingTrack() {
-        int track = trackIndexTop++;
-        blendingTracks.add(track);
+        int track = TRACK_INDEX_TOP++;
+        BLENDING_TRACKS.add(track);
         return track;
     }
 
@@ -220,15 +207,12 @@ public class GunAnimationStateMachine {
                 deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f));
             }
             switch (direction) {
-                case FORWARD -> {
-                    deque.add(new AnimationPlan(WALK_FORWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-                }
-                case BACKWARD -> {
-                    deque.add(new AnimationPlan(WALK_BACKWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-                }
-                case SIDE_WAY -> {
-                    deque.add(new AnimationPlan(WALK_SIDEWAY_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-                }
+                case FORWARD ->
+                        deque.add(new AnimationPlan(WALK_FORWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                case BACKWARD ->
+                        deque.add(new AnimationPlan(WALK_BACKWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                case SIDE_WAY ->
+                        deque.add(new AnimationPlan(WALK_SIDEWAY_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
             }
             controller.queueAnimation(MOVEMENT_TRACK, deque);
             baseDistanceWalked = walkDist;
@@ -236,6 +220,7 @@ public class GunAnimationStateMachine {
     }
 
     public void onGunFireSelect() {
+        // TODO：切换开火方式的动画
     }
 
     public void onGunCatchBolt() {
@@ -280,15 +265,14 @@ public class GunAnimationStateMachine {
         if (isPlayingInspectAnimation()) {
             return true;
         }
-
         return isPlayingRunHold() || isPlayingRunLoop();
     }
 
     public void update(float partialTicks, Entity entity) {
         ObjectAnimationRunner runner = controller.getAnimation(MOVEMENT_TRACK);
         if (runner != null) {
-            //为了让冲刺和行走动画和原版的viewBobbing相适应，需要手动更新冲刺动画的进度
-            //当前动画是run或者正在过渡向run动画的时候，就手动设置run动画的进度。
+            // 为了让冲刺和行走动画和原版的 viewBobbing 相适应，需要手动更新冲刺动画的进度
+            // 当前动画是run或者正在过渡向 run 动画的时候，就手动设置 run 动画的进度。
             float deltaDistanceWalked = entity.walkDist - entity.walkDistO;
             float distanceWalked;
             if (pauseWalkAndRun) {
@@ -421,25 +405,5 @@ public class GunAnimationStateMachine {
         }
         controller.runAnimation(track, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0);
         return true;
-    }
-
-    protected enum WalkDirection {
-        FORWARD,
-        SIDE_WAY,
-        BACKWARD,
-        NONE;
-
-        public static WalkDirection fromInput(Input input) {
-            if (input.up) {
-                return FORWARD;
-            }
-            if (input.down) {
-                return BACKWARD;
-            }
-            if (input.left || input.right) {
-                return SIDE_WAY;
-            }
-            return NONE;
-        }
     }
 }

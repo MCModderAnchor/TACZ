@@ -23,7 +23,7 @@ public class AnimationChannelContent {
             this.keyframeTimeS = Arrays.copyOf(source.keyframeTimeS, source.keyframeTimeS.length);
         }
         if (source.values != null) {
-            // deep copy animation values
+            // 深拷贝动画数值
             this.values = Arrays.stream(source.values)
                     .map(values -> Arrays.copyOf(values, values.length))
                     .toArray(float[][]::new);

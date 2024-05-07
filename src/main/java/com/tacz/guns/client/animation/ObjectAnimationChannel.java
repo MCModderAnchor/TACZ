@@ -10,17 +10,17 @@ public class ObjectAnimationChannel {
     public final ChannelType type;
     private final List<AnimationListener> listeners = new ArrayList<>();
     /**
-     * name of node
+     * 节点名称
      */
     public String node;
     /**
-     * Content of this channel, including keyframes
+     * 这个轨道的内容，包括关键帧
      */
     public AnimationChannelContent content;
     public Interpolator interpolator;
     /**
-     * This variable is used for animation transitions.
-     * Please don't change it if you don't understand what you are doing.
+     * 此变量用于动画过渡，
+     * 如果你不明白在做什么，请不要更改它
      */
     boolean transitioning = false;
 
@@ -35,10 +35,11 @@ public class ObjectAnimationChannel {
     }
 
     public void addListener(AnimationListener listener) {
-        if (listener.getType().equals(type))
+        if (listener.getType().equals(type)) {
             listeners.add(listener);
-        else
+        } else {
             throw new RuntimeException("trying to add wrong type of listener to channel.");
+        }
     }
 
     public void removeListener(AnimationListener listener) {
@@ -58,9 +59,9 @@ public class ObjectAnimationChannel {
     }
 
     /**
-     * Perform a calculation based on the input time and notify all AnimationListener of the result
+     * 根据输入时间执行计算，并将结果通知所有 AnimationListener
      *
-     * @param timeS absolute time in seconds
+     * @param timeS 绝对时间（以秒为单位）
      */
     public void update(float timeS, boolean blend) {
         if (!transitioning) {
@@ -102,8 +103,17 @@ public class ObjectAnimationChannel {
     }
 
     public enum ChannelType {
+        /**
+         * 位移
+         */
         TRANSLATION,
+        /**
+         * 旋转
+         */
         ROTATION,
+        /**
+         * 缩放
+         */
         SCALE
     }
 }

@@ -31,7 +31,7 @@ public class ObjectAnimationRunner {
     private boolean running = false;
     private long lastUpdateNs;
     /**
-     * current animation playback progress
+     * 当前动画播放进度
      */
     private long progressNs;
     private boolean isTransitioning = false;
@@ -100,7 +100,7 @@ public class ObjectAnimationRunner {
             for (Map.Entry<String, List<ObjectAnimationChannel>> entry : animation.getChannels().entrySet()) {
                 List<ObjectAnimationChannel> toChannels = transitionTo.animation.getChannels().get(entry.getKey());
                 if (toChannels != null) {
-                    //如果过渡终点的动画中 同一个node 包含相同类型的动画数据(位移、旋转、缩放)，那么加入到list中用于更新。
+                    // 如果过渡终点的动画中同一个node 包含相同类型的动画数据(位移、旋转、缩放)，那么加入到 list 中用于更新。
                     for (ObjectAnimationChannel channel : entry.getValue()) {
                         Optional<ObjectAnimationChannel> toChannel =
                                 toChannels.stream().filter(c -> c.type.equals(channel.type)).findAny();
@@ -108,7 +108,7 @@ public class ObjectAnimationRunner {
                             valueFrom.add(channel.getResult(progressNs / 1e9f));
                             transitionFromChannels.add(channel);
                             transitionToChannels.add(toChannel.get());
-                            //取消过渡目标的channel对模型的更新，统一在起点channel进行更新。
+                            // 取消过渡目标的channel对模型的更新，统一在起点channel进行更新。
                             toChannel.get().transitioning = true;
                         } else {
                             valueRecover.add(channel.getResult(progressNs / 1e9f));
@@ -116,7 +116,7 @@ public class ObjectAnimationRunner {
                         }
                     }
                 } else {
-                    //如果过渡终点的动画中 同一个node 不包含动画数据，那么将过渡到原位。
+                    // 如果过渡终点的动画中 同一个 node 不包含动画数据，那么将过渡到原位。
                     for (ObjectAnimationChannel channel : entry.getValue()) {
                         valueRecover.add(channel.getResult(progressNs / 1e9f));
                         recoverChannels.add(channel);
@@ -129,7 +129,7 @@ public class ObjectAnimationRunner {
             ArrayList<ObjectAnimationChannel> newTransitionFromChannels = new ArrayList<>();
             ArrayList<ObjectAnimationChannel> newTransitionToChannels = new ArrayList<>();
             ArrayList<ObjectAnimationChannel> newRecoverChannels = new ArrayList<>();
-            //如果正在过渡，则需要把当前过渡计算出的插值保存，作为下次过渡的起点
+            // 如果正在过渡，则需要把当前过渡计算出的插值保存，作为下次过渡的起点
             for (int i = 0; i < transitionFromChannels.size(); i++) {
                 assert this.transitionTo != null;
                 ObjectAnimationChannel fromChannel = transitionFromChannels.get(i);
@@ -154,7 +154,7 @@ public class ObjectAnimationRunner {
                         newValueFrom.add(result);
                         newTransitionFromChannels.add(fromChannel);
                         newTransitionToChannels.add(newToChannel.get());
-                        //取消过渡目标的channel对模型的更新，统一在起点channel进行更新。
+                        // 取消过渡目标的channel对模型的更新，统一在起点channel进行更新。
                         newToChannel.get().transitioning = true;
                     } else {
                         newValueRecover.add(result);

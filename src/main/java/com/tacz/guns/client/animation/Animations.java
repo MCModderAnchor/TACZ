@@ -1,7 +1,7 @@
 package com.tacz.guns.client.animation;
 
-import com.mojang.logging.LogUtils;
 import com.mojang.math.Vector3f;
+import com.tacz.guns.GunMod;
 import com.tacz.guns.client.animation.gltf.AccessorModel;
 import com.tacz.guns.client.animation.gltf.AnimationModel;
 import com.tacz.guns.client.animation.gltf.AnimationStructure;
@@ -40,42 +40,36 @@ public class Animations {
         for (AnimationModel animationModel : animationModels) {
             ObjectAnimation animation = new ObjectAnimation(animationModel.getName());
 
-            //init animation channels
+            // 初始化动画轨道
             List<AnimationModel.Channel> channelModels = animationModel.getChannels();
             for (AnimationModel.Channel channelModel : channelModels) {
-                ObjectAnimationChannel channel =
-                        new ObjectAnimationChannel(
-                                ObjectAnimationChannel.ChannelType.valueOf(channelModel.path().toUpperCase())
-                        );
+                ObjectAnimationChannel channel = new ObjectAnimationChannel(ObjectAnimationChannel.ChannelType.valueOf(channelModel.path().toUpperCase()));
                 AnimationModel.Sampler sampler = channelModel.sampler();
 
-                //init channel's node name and interpolator
+                // 初始化轨道的节点名称和插值器
                 AnimationModel.Interpolation interpolation = sampler.interpolation();
                 NodeModel nodeModel = channelModel.nodeModel();
-                //Quaternions require special interpolation
-                if (channel.type.equals(ObjectAnimationChannel.ChannelType.ROTATION)
-                        && interpolation.equals(AnimationModel.Interpolation.LINEAR)) {
+                // 四元数需要特殊的插值
+                if (channel.type.equals(ObjectAnimationChannel.ChannelType.ROTATION) && interpolation.equals(AnimationModel.Interpolation.LINEAR)) {
                     channel.interpolator = InterpolatorUtil.fromInterpolation(InterpolatorUtil.InterpolatorType.SLERP);
                 } else {
                     channel.interpolator = InterpolatorUtil.fromInterpolation(InterpolatorUtil.InterpolatorType.valueOf(interpolation.name()));
                 }
                 channel.node = nodeModel.getName();
 
-                //init channel's keyframe time and keyframe values
-                AccessorModel input = sampler.input();                 //accessor of key frame time
+                // 初始化轨道的关键帧时间和关键帧数值
+                // 关键帧时间的访问器
+                AccessorModel input = sampler.input();
                 AccessorData inputData = input.getAccessorData();
                 if (!(inputData instanceof AccessorFloatData inputFloatData)) {
-                    LogUtils.getLogger().warn(
-                            "Input data is not an AccessorFloatData, but "
-                                    + inputData.getClass());
+                    GunMod.LOGGER.warn("Input data is not an AccessorFloatData, but {}", inputData.getClass());
                     return result;
                 }
-                AccessorModel output = sampler.output();               //accessor of key frame values
+                // 关键帧时间的访问器
+                AccessorModel output = sampler.output();
                 AccessorData outputData = output.getAccessorData();
                 if (!(outputData instanceof AccessorFloatData outputFloatData)) {
-                    LogUtils.getLogger().warn(
-                            "Output data is not an AccessorFloatData, but "
-                                    + inputData.getClass());
+                    GunMod.LOGGER.warn("Output data is not an AccessorFloatData, but {}", inputData.getClass());
                     return result;
                 }
                 int numKeyElements = inputFloatData.getNumElements();
@@ -91,23 +85,24 @@ public class Animations {
                 channel.content.keyframeTimeS = keyframeTimeS;
                 channel.content.values = values;
 
-                //compile the interpolator after everything loaded
+                // 加载完所有内容后编译插值器
                 channel.interpolator.compile(channel.content);
 
-                //add channel to animation
+                // 将轨道添加到动画
                 animation.addChannel(channel);
 
-                //add Animation Listeners to animation
+                // 将动画监听器添加到动画中
                 if (suppliers != null) {
                     for (AnimationListenerSupplier supplier : suppliers) {
                         AnimationListener listener = supplier.supplyListeners(channel.node, channel.type);
-                        if (listener != null)
+                        if (listener != null) {
                             channel.addListener(listener);
+                        }
                     }
                 }
             }
 
-            //add animation to result list
+            // 将动画添加到结果列表
             result.add(animation);
         }
         return result;
@@ -161,8 +156,8 @@ public class Animations {
     }
 
     private static void writeBedrockTranslation(ObjectAnimationChannel animationChannel, AnimationKeyframes keyframes, BedrockModel model) {
-        /* 基岩版动画中储存的动画数据为相对值，而 tac 的动画系统使用的是绝对值，所以需要叠加初始值。
-           此处就是在获取动画数据的初始值。 */
+        // 基岩版动画中储存的动画数据为相对值，而 tac 的动画系统使用的是绝对值，所以需要叠加初始值。
+        // 此处就是在获取动画数据的初始值。
         Vector3f base;
         BedrockPart node = model.getNode(animationChannel.node);
         if (node != null) {

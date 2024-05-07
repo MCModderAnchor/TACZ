@@ -5,6 +5,9 @@ import com.tacz.guns.api.client.animation.IThirdPersonAnimation;
 
 import java.util.Map;
 
+/**
+ * 简单的第三人称持枪动画 Manager
+ */
 public final class ThirdPersonManager {
     private static final Map<String, IThirdPersonAnimation> CACHE = Maps.newHashMap();
     private static final IThirdPersonAnimation DEFAULT = new DefaultAnimation();

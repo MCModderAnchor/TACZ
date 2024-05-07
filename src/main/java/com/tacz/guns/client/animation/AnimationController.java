@@ -54,13 +54,11 @@ public class AnimationController {
     }
 
     public void queueAnimation(int track, Queue<AnimationPlan> queue) {
-        //ensure the capability
+        // 确保数组长度正确
         for (int i = animationQueue.size(); i <= track; i++) {
             animationQueue.add(null);
         }
-
         animationQueue.set(track, queue);
-
         if (queue != null) {
             AnimationPlan plan = null;
             while (plan == null && !queue.isEmpty()) {
@@ -73,7 +71,7 @@ public class AnimationController {
     }
 
     public void runAnimation(int track, String animationName, ObjectAnimation.PlayType playType, float transitionTimeS) {
-        //运行单个动画的时候视为执行一个只有一个动画的动画队列，因此需要清理旧的队列。
+        // 运行单个动画的时候视为执行一个只有一个动画的动画队列，因此需要清理旧的队列。
         if (track < animationQueue.size()) {
             animationQueue.set(track, null);
         }
@@ -85,7 +83,7 @@ public class AnimationController {
         if (prototype == null) {
             return;
         }
-        //ensure the capability
+        // 确保数组长度正确
         for (int i = currentRunners.size(); i <= track; i++) {
             currentRunners.add(null);
         }
@@ -110,7 +108,7 @@ public class AnimationController {
     }
 
     public void setBlending(int track, boolean blend) {
-        //ensure the capability
+        // 确保数组长度正确
         for (int i = blending.size(); i <= track; i++) {
             blending.add(false);
         }
@@ -137,7 +135,7 @@ public class AnimationController {
                     runner = runner.getTransitionTo();
                 }
             }
-            //如果动画结束，检查队列是否有下一个动画，有则播放
+            // 如果动画结束，检查队列是否有下一个动画，有则播放
             if ((runner.isHolding() || runner.isStopped()) && !runner.isTransitioning()) {
                 if (i < animationQueue.size()) {
                     Queue<AnimationPlan> queue = animationQueue.get(i);
