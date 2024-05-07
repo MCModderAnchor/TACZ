@@ -6,7 +6,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.player.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.api.gun.FireMode;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.IGun;

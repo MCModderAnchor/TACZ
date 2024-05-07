@@ -1,6 +1,6 @@
 package com.tacz.guns.item.builder;
 
-import com.tacz.guns.api.gun.FireMode;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.init.ModItems;
 import net.minecraft.resources.ResourceLocation;

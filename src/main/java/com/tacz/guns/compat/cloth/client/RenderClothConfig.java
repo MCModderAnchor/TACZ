@@ -58,5 +58,9 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startIntField(new TranslatableComponent("config.tacz.client.render.target_render_distance"), RenderConfig.TARGET_RENDER_DISTANCE.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(128).setTooltip(new TranslatableComponent("config.tacz.client.render.target_render_distance.desc"))
                 .setSaveConsumer(RenderConfig.TARGET_RENDER_DISTANCE::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.client.render.first_person_bullet_tracer_enable"), RenderConfig.FIRST_PERSON_BULLET_TRACER_ENABLE.get())
+                .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.client.render.first_person_bullet_tracer_enable.desc"))
+                .setSaveConsumer(RenderConfig.FIRST_PERSON_BULLET_TRACER_ENABLE::set).build());
     }
 }

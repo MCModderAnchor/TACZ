@@ -1,7 +1,5 @@
 package com.tacz.guns.api.entity;
 
-import com.tacz.guns.api.gun.ReloadState;
-import com.tacz.guns.api.gun.ShootResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 

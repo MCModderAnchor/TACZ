@@ -2,7 +2,7 @@ package com.tacz.guns.item.nbt;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.attachment.AttachmentType;
-import com.tacz.guns.api.gun.FireMode;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;

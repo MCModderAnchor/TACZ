@@ -1,6 +1,6 @@
 package com.tacz.guns.entity.shooter;
 
-import com.tacz.guns.api.gun.ReloadState;
+import com.tacz.guns.api.entity.ReloadState;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;

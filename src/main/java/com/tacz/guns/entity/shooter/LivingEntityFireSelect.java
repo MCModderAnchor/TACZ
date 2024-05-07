@@ -2,7 +2,7 @@ package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.event.common.GunFireSelectEvent;
-import com.tacz.guns.api.gun.FireMode;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.IGun;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;

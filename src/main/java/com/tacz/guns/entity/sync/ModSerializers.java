@@ -1,6 +1,6 @@
 package com.tacz.guns.entity.sync;
 
-import com.tacz.guns.api.gun.ReloadState;
+import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.entity.sync.core.IDataSerializer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;

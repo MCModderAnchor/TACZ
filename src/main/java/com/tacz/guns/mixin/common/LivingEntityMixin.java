@@ -2,8 +2,8 @@ package com.tacz.guns.mixin.common;
 
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.KnockBackModifier;
-import com.tacz.guns.api.gun.ReloadState;
-import com.tacz.guns.api.gun.ShootResult;
+import com.tacz.guns.api.entity.ReloadState;
+import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.entity.shooter.*;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import net.minecraft.world.entity.Entity;

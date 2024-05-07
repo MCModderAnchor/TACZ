@@ -43,7 +43,6 @@ public class SecondOrderDynamics {
     }
 
     /**
-     * @param T abandoned.
      * @return processed y value
      */
     public float update(float x) {

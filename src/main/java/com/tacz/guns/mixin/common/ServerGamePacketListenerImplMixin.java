@@ -1,7 +1,7 @@
 package com.tacz.guns.mixin.common;
 
 import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.api.gun.ReloadState;
+import com.tacz.guns.api.entity.ReloadState;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.spongepowered.asm.mixin.Mixin;
