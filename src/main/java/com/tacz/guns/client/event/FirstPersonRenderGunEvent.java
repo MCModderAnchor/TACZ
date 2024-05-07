@@ -23,6 +23,7 @@ import com.tacz.guns.client.model.functional.ShellRender;
 import com.tacz.guns.client.resource.InternalAssetLoader;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.duck.KeepingItemRenderer;
 import com.tacz.guns.entity.EntityBullet;
 import com.tacz.guns.util.math.Easing;
@@ -171,6 +172,9 @@ public class FirstPersonRenderGunEvent {
     }
 
     private static void renderBulletTracer(LocalPlayer player, PoseStack poseStack, BedrockGunModel gunModel, float partialTicks) {
+        if (!RenderConfig.FIRST_PERSON_BULLET_TRACER_ENABLE.get()) {
+            return;
+        }
         Optional<BedrockModel> modelOptional = InternalAssetLoader.getBedrockModel(InternalAssetLoader.DEFAULT_BULLET_MODEL);
         if (modelOptional.isEmpty()) {
             return;

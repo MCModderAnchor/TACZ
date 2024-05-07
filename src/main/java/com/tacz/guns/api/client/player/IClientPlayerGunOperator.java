@@ -1,6 +1,6 @@
 package com.tacz.guns.api.client.player;
 
-import com.tacz.guns.api.gun.ShootResult;
+import com.tacz.guns.api.entity.ShootResult;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;

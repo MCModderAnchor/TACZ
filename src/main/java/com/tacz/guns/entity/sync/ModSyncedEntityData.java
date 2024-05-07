@@ -1,7 +1,7 @@
 package com.tacz.guns.entity.sync;
 
 import com.tacz.guns.GunMod;
-import com.tacz.guns.api.gun.ReloadState;
+import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.entity.sync.core.Serializers;
 import com.tacz.guns.entity.sync.core.SyncedClassKey;
 import com.tacz.guns.entity.sync.core.SyncedDataKey;

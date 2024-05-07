@@ -1,7 +1,7 @@
 package com.tacz.guns.resource.index;
 
 import com.google.common.collect.Maps;
-import com.tacz.guns.api.gun.FireMode;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.DefaultAssets;
 import com.tacz.guns.resource.pojo.GunIndexPOJO;

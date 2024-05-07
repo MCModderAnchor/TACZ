@@ -3,7 +3,7 @@ package com.tacz.guns.entity.shooter;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunReloadEvent;
-import com.tacz.guns.api.gun.ReloadState;
+import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.IGun;

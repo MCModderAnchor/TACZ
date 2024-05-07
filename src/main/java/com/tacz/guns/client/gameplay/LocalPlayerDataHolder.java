@@ -1,7 +1,7 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.api.gun.ReloadState;
+import com.tacz.guns.api.entity.ReloadState;
 import net.minecraft.client.player.LocalPlayer;
 
 import javax.annotation.Nullable;

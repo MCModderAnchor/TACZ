@@ -14,6 +14,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue KILL_AMOUNT_ENABLE;
     public static ForgeConfigSpec.DoubleValue KILL_AMOUNT_DURATION_SECOND;
     public static ForgeConfigSpec.IntValue TARGET_RENDER_DISTANCE;
+    public static ForgeConfigSpec.BooleanValue FIRST_PERSON_BULLET_TRACER_ENABLE;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -47,6 +48,9 @@ public class RenderConfig {
 
         builder.comment("The farthest render distance of the target, including minecarts type");
         TARGET_RENDER_DISTANCE = builder.defineInRange("TargetRenderDistance", 128, 0, Integer.MAX_VALUE);
+
+        builder.comment("Whether or not to render first person bullet trail");
+        FIRST_PERSON_BULLET_TRACER_ENABLE = builder.define("FirstPersonBulletTracerEnable", true);
 
         builder.pop();
     }

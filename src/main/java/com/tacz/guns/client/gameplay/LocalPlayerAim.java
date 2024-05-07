@@ -2,7 +2,7 @@ package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.api.gun.ReloadState;
+import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerAim;
