@@ -7,6 +7,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
+
 public class MathUtil {
     public static final float[] QUATERNION_ONE = {0, 0, 0, 1};
 
@@ -46,6 +48,22 @@ public class MathUtil {
                 (float) (sy * cp * cr - cy * sp * sr),
                 (float) (cy * cp * cr + sy * sp * sr)
         };
+    }
+
+    public static void toQuaternion(float roll, float pitch, float yaw, @Nonnull Quaternion quaternion) {
+        double cy = Math.cos(yaw * 0.5);
+        double sy = Math.sin(yaw * 0.5);
+        double cp = Math.cos(pitch * 0.5);
+        double sp = Math.sin(pitch * 0.5);
+        double cr = Math.cos(roll * 0.5);
+        double sr = Math.sin(roll * 0.5);
+
+        quaternion.set(
+                (float) (cy * cp * sr - sy * sp * cr),
+                (float) (sy * cp * sr + cy * sp * cr),
+                (float) (sy * cp * cr - cy * sp * sr),
+                (float) (cy * cp * cr + sy * sp * sr)
+        );
     }
 
     public static float[] toEulerAngles(Quaternion q) {

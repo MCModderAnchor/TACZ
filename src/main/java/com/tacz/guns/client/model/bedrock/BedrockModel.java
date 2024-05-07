@@ -398,4 +398,12 @@ public class BedrockModel {
     public Vec2 getSize() {
         return size;
     }
+
+    public List<BedrockPart> getShouldRender() {
+        return shouldRender;
+    }
+
+    public HashMap<String, BonesItem> getIndexBones() {
+        return indexBones;
+    }
 }

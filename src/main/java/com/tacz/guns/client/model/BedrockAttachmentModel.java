@@ -27,16 +27,13 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     private static final String OCULAR_RING_NODE = "ocular_ring";
     private static final String DIVISION_NODE = "division";
     private static final String OCULAR_NODE = "ocular";
-    @Nullable
-    protected List<BedrockPart> scopeViewPath;
-    @Nullable
-    protected List<BedrockPart> scopeBodyPath;
-    @Nullable
-    protected List<BedrockPart> ocularRingPath;
-    @Nullable
-    protected List<BedrockPart> ocularNodePath;
-    @Nullable
-    protected List<BedrockPart> divisionNodePath;
+
+    protected @Nullable List<BedrockPart> scopeViewPath;
+    protected @Nullable List<BedrockPart> scopeBodyPath;
+    protected @Nullable List<BedrockPart> ocularRingPath;
+    protected @Nullable List<BedrockPart> ocularNodePath;
+    protected @Nullable List<BedrockPart> divisionNodePath;
+
     private boolean isScope = true;
     private boolean isSight = false;
     private float scopeViewRadiusModifier = 1;
