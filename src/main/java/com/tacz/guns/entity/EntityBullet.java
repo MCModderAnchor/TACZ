@@ -335,14 +335,16 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     protected EntityResult getHitResult(Entity entity, Vec3 startVec, Vec3 endVec) {
         double expandHeight = entity instanceof Player && !entity.isCrouching() ? 0.0625 : 0.0;
         AABB boundingBox = entity.getBoundingBox();
+        Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
         // 根据延迟进行 hitbox 获取
-        // 只有被击中者是玩家才进行此类偏移计算
+        // 只有射击者是玩家（且被击中者也是玩家）才进行此类延迟补偿计算
         if (OtherConfig.SERVER_HITBOX_LATENCY_FIX.get() && entity instanceof ServerPlayer player && this.getOwner() instanceof ServerPlayer serverPlayerOwner) {
             int ping = Mth.floor((serverPlayerOwner.latency / 1000.0) * 20.0 + 0.5);
             boundingBox = HitboxHelperEvent.getBoundingBox(player, ping);
+            velocity = HitboxHelperEvent.getVelocity(player, ping);
         }
         boundingBox = boundingBox.expandTowards(0, expandHeight, 0);
-        Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
+        // 服务器玩家 hitbox 修正，通过 Config 实现快速调整
         double serverHitboxOffset = OtherConfig.SERVER_HITBOX_OFFSET.get();
         if (entity instanceof ServerPlayer) {
             if (entity.getVehicle() != null) {
@@ -350,6 +352,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             }
             boundingBox = boundingBox.move(velocity.multiply(serverHitboxOffset, serverHitboxOffset, serverHitboxOffset));
         }
+        // 客户端测算经验值（Hitbox 总是会在玩家运动方向前约 5 Tick 的位置）
         if (entity.getVehicle() != null || entity instanceof ITargetEntity) {
             boundingBox = boundingBox.move(velocity.multiply(-2.5, -2.5, -2.5));
         }
