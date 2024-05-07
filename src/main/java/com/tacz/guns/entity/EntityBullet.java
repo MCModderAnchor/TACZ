@@ -339,12 +339,12 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         }
         boundingBox = boundingBox.expandTowards(0, expandHeight, 0);
         Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
-        double serverHitboxAdjust = OtherConfig.SERVER_HITBOX_OFFSET.get();
+        double serverHitboxOffset = OtherConfig.SERVER_HITBOX_OFFSET.get();
         if (entity instanceof ServerPlayer) {
             if (entity.getVehicle() != null) {
-                boundingBox = boundingBox.move(velocity.multiply(serverHitboxAdjust / 2, serverHitboxAdjust / 2, serverHitboxAdjust / 2));
+                boundingBox = boundingBox.move(velocity.multiply(serverHitboxOffset / 2, serverHitboxOffset / 2, serverHitboxOffset / 2));
             }
-            boundingBox = boundingBox.move(velocity.multiply(serverHitboxAdjust, serverHitboxAdjust, serverHitboxAdjust));
+            boundingBox = boundingBox.move(velocity.multiply(serverHitboxOffset, serverHitboxOffset, serverHitboxOffset));
         }
         if (entity.getVehicle() != null || entity instanceof ITargetEntity) {
             boundingBox = boundingBox.move(velocity.multiply(-2.5, -2.5, -2.5));
