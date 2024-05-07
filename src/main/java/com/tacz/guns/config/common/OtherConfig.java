@@ -9,7 +9,9 @@ public class OtherConfig {
     public static ForgeConfigSpec.IntValue AMMO_BOX_STACK_SIZE;
     public static ForgeConfigSpec.BooleanValue DEFAULT_PACK_DEBUG;
     public static ForgeConfigSpec.ConfigValue<List<String>> HEAD_SHOT_AABB;
-    public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_ADJUST;
+    public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_OFFSET;
+    public static ForgeConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
+    public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_LATENCY_MAX_SAVE_MS;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("other");
@@ -24,8 +26,14 @@ public class OtherConfig {
         builder.comment("Format: touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]");
         HEAD_SHOT_AABB = builder.define("HeadShotAABB", Lists.newArrayList());
 
-        builder.comment("DEV: Server hitbox adjust");
-        SERVER_HITBOX_ADJUST = builder.defineInRange("ServerHitboxAdjust", -10, -Double.MAX_VALUE, Double.MAX_VALUE);
+        builder.comment("DEV: Server hitbox offset (If the hitbox is ahead, fill in a negative number)");
+        SERVER_HITBOX_OFFSET = builder.defineInRange("ServerHitboxOffset", 0, -Double.MAX_VALUE, Double.MAX_VALUE);
+
+        builder.comment("Server hitbox latency fix");
+        SERVER_HITBOX_LATENCY_FIX = builder.define("ServerHitboxLatencyFix", true);
+
+        builder.comment("The maximum latency (in milliseconds) for the server hitbox latency fix saved");
+        SERVER_HITBOX_LATENCY_MAX_SAVE_MS = builder.defineInRange("ServerHitboxLatencyMaxSaveMs", 1000, 0, Double.MAX_VALUE);
 
         builder.pop();
     }
