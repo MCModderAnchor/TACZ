@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class RefitUnloadButton extends Button implements IComponentTooltip {
-
     public RefitUnloadButton(int pX, int pY, Button.OnPress pOnPress) {
         super(pX, pY, 8, 8, TextComponent.EMPTY, pOnPress);
     }

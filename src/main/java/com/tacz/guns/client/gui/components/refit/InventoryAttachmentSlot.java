@@ -25,6 +25,7 @@ public class InventoryAttachmentSlot extends Button implements IComponentTooltip
         this.inventory = inventory;
     }
 
+    @Override
     public void renderTooltip(Consumer<List<Component>> consumer) {
         if (this.isHovered && 0 <= this.slotIndex && this.slotIndex < this.inventory.getContainerSize()) {
             ItemStack item = this.inventory.getItem(slotIndex);

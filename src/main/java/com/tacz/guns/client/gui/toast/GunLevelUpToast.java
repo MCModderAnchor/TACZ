@@ -29,6 +29,7 @@ public class GunLevelUpToast implements Toast {
     }
 
     @NotNull
+    @Override
     public Visibility render(@NotNull PoseStack pPoseStack, ToastComponent toastComponent, long timeSinceLastVisible) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, TEXTURE);

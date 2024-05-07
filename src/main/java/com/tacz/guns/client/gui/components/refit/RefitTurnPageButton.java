@@ -38,10 +38,6 @@ public class RefitTurnPageButton extends Button implements IComponentTooltip {
         RenderSystem.disableBlend();
     }
 
-    public boolean isUpPage() {
-        return isUpPage;
-    }
-
     @Override
     public void renderTooltip(Consumer<List<Component>> consumer) {
         if (this.isHovered) {

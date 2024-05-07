@@ -36,8 +36,10 @@ public class GunRefitScreen extends Screen {
     public static final ResourceLocation TURN_PAGE_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_turn_page.png");
     public static final ResourceLocation UNLOAD_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_unload.png");
     public static final ResourceLocation ICONS_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_slot_icons.png");
+
     public static final int ICON_SIZE = 32;
     private static final int INVENTORY_ATTACHMENT_SLOT_COUNT = 8;
+
     // 以下参数、变量用于改装窗口动画插值
     private static final float REFIT_SCREEN_TRANSFORM_TIMES = 0.25f;
     private static float refitScreenTransformProgress = 1;
@@ -46,6 +48,7 @@ public class GunRefitScreen extends Screen {
     private static AttachmentType currentTransformType = AttachmentType.NONE;
     private static float refitScreenOpeningProgress = 0;
     private static long refitScreenOpeningTimestamp = -1;
+
     private int currentPage = 0;
 
     public GunRefitScreen() {
