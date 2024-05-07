@@ -76,6 +76,7 @@ public class FirstPersonRenderGunEvent {
     private static final PerlinNoise SHOOT_Y_ROTATION_NOISE = new PerlinNoise(-0.0136f, 0.0136f, 100);
     private static final float SHOOT_Y_SWAY = -0.1f;
     private static final float SHOOT_ANIMATION_TIME = 0.3f;
+
     private static float jumpingSwayProgress = 0;
     private static boolean lastOnGround = false;
     private static long jumpingTimeStamp = -1;
@@ -114,13 +115,14 @@ public class FirstPersonRenderGunEvent {
             if (animationStateMachine != null) {
                 animationStateMachine.update(event.getPartialTicks(), player);
             }
+
             PoseStack poseStack = event.getPoseStack();
             poseStack.pushPose();
             // 逆转原版施加在手上的延滞效果，改为写入模型动画数据中
-            float f2 = Mth.lerp(event.getPartialTicks(), player.xBobO, player.xBob);
-            float f3 = Mth.lerp(event.getPartialTicks(), player.yBobO, player.yBob);
-            float xRot = player.getViewXRot(event.getPartialTicks()) - f2;
-            float yRot = player.getViewYRot(event.getPartialTicks()) - f3;
+            float xRotOffset = Mth.lerp(event.getPartialTicks(), player.xBobO, player.xBob);
+            float yRotOffset = Mth.lerp(event.getPartialTicks(), player.yBobO, player.yBob);
+            float xRot = player.getViewXRot(event.getPartialTicks()) - xRotOffset;
+            float yRot = player.getViewYRot(event.getPartialTicks()) - yRotOffset;
             poseStack.mulPose(Vector3f.XP.rotationDegrees(xRot * -0.1F));
             poseStack.mulPose(Vector3f.YP.rotationDegrees(yRot * -0.1F));
             BedrockPart rootNode = gunModel.getRootNode();
@@ -138,32 +140,34 @@ public class FirstPersonRenderGunEvent {
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
             // 应用持枪姿态变换，如第一人称摄像机定位
             applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTicks());
-            // 如果正在打开改装界面，则取消手臂渲染
-            boolean renderHand = gunModel.getRenderHand();
-            if (GunRefitScreen.getOpeningProgress() != 0) {
-                gunModel.setRenderHand(false);
-            }
+
             // 开启第一人称弹壳和火焰渲染
             MuzzleFlashRender.isSelf = true;
             ShellRender.isSelf = true;
-            // 调用枪械模型渲染
-            RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
-            gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
-            // 调用曳光弹渲染
-            renderBulletTracer(player, poseStack, gunModel, event.getPartialTicks());
-            // 恢复手臂渲染
-            gunModel.setRenderHand(renderHand);
-            // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
-            poseStack.popPose();
-            gunModel.cleanAnimationTransform();
+            {
+                // 如果正在打开改装界面，则取消手臂渲染
+                boolean renderHand = gunModel.getRenderHand();
+                if (GunRefitScreen.getOpeningProgress() != 0) {
+                    gunModel.setRenderHand(false);
+                }
+                // 调用枪械模型渲染
+                RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
+                gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+                // 调用曳光弹渲染
+                renderBulletTracer(player, poseStack, gunModel, event.getPartialTicks());
+                // 恢复手臂渲染
+                gunModel.setRenderHand(renderHand);
+                // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
+                poseStack.popPose();
+                gunModel.cleanAnimationTransform();
+            }
             // 关闭第一人称弹壳和火焰渲染
             MuzzleFlashRender.isSelf = false;
             ShellRender.isSelf = false;
+
             // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
             event.setCanceled(true);
-        }, () -> {
-            renderBulletTracer(player, event.getPoseStack(), null, event.getPartialTicks());
-        });
+        }, () -> renderBulletTracer(player, event.getPoseStack(), null, event.getPartialTicks()));
     }
 
     private static void renderBulletTracer(LocalPlayer player, PoseStack poseStack, BedrockGunModel gunModel, float partialTicks) {
@@ -174,12 +178,7 @@ public class FirstPersonRenderGunEvent {
         BedrockModel model = modelOptional.get();
         Level level = player.getLevel();
         AABB renderArea = player.getBoundingBox().inflate(256, 256, 256);
-        for (Entity entity : level.getEntities(player, renderArea, entity -> {
-            if (entity instanceof EntityBullet entityBullet) {
-                return entityBullet.getOwner() instanceof LocalPlayer;
-            }
-            return false;
-        })) {
+        for (Entity entity : level.getEntities(player, renderArea, FirstPersonRenderGunEvent::bulletFromPlayer)) {
             EntityBullet entityBullet = (EntityBullet) entity;
             if (!entityBullet.isTracerAmmo()) {
                 continue;
@@ -237,8 +236,8 @@ public class FirstPersonRenderGunEvent {
             TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(index -> {
                 float[] tracerColor = index.getTracerColor();
                 RenderType type = RenderType.energySwirl(InternalAssetLoader.DEFAULT_BULLET_TEXTURE, 15, 15);
-                model.render(poseStack1, ItemTransforms.TransformType.NONE, type, LightTexture.pack(15, 15), OverlayTexture.NO_OVERLAY,
-                        tracerColor[0], tracerColor[1], tracerColor[2], 1);
+                model.render(poseStack1, ItemTransforms.TransformType.NONE, type, LightTexture.pack(15, 15),
+                        OverlayTexture.NO_OVERLAY, tracerColor[0], tracerColor[1], tracerColor[2], 1);
             });
         }
     }
@@ -283,8 +282,14 @@ public class FirstPersonRenderGunEvent {
         }
     }
 
-    private static void applyFirstPersonGunTransform(LocalPlayer player, ItemStack gunItemStack, ClientGunIndex gunIndex,
-                                                     PoseStack poseStack, BedrockGunModel model, float partialTicks) {
+    private static boolean bulletFromPlayer(Entity entity) {
+        if (entity instanceof EntityBullet entityBullet) {
+            return entityBullet.getOwner() instanceof LocalPlayer;
+        }
+        return false;
+    }
+
+    private static void applyFirstPersonGunTransform(LocalPlayer player, ItemStack gunItemStack, ClientGunIndex gunIndex, PoseStack poseStack, BedrockGunModel model, float partialTicks) {
         // 配合运动曲线，计算改装枪口的打开进度
         float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(GunRefitScreen.getOpeningProgress());
         // 配合运动曲线，计算瞄准进度
@@ -305,8 +310,7 @@ public class FirstPersonRenderGunEvent {
     /**
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。会在几个摄像机定位之间插值。
      */
-    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, ItemStack stack, float aimingProgress,
-                                                             float refitScreenOpeningProgress) {
+    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, ItemStack stack, float aimingProgress, float refitScreenOpeningProgress) {
         IGun iGun = IGun.getIGunOrNull(stack);
         if (iGun == null) {
             return;
@@ -417,7 +421,8 @@ public class FirstPersonRenderGunEvent {
                 }
             } else {
                 if (lastOnGround) {
-                    jumpingSwayProgress = velocityY / 0.42f; // 0.42 是玩家自然起跳的速度
+                    // 0.42 是玩家自然起跳的速度
+                    jumpingSwayProgress = velocityY / 0.42f;
                     if (jumpingSwayProgress > 1) {
                         jumpingSwayProgress = 1;
                     }
@@ -446,8 +451,7 @@ public class FirstPersonRenderGunEvent {
      * @param animatedTranslation 用于输出约束点经过动画变换之后的坐标
      * @param rotation            用于输出约束点的旋转
      */
-    private static void getAnimationConstraintTransform(List<BedrockPart> nodePath, @Nonnull Vector3f originTranslation, @Nonnull Vector3f animatedTranslation,
-                                                        @Nonnull Vector3f rotation) {
+    private static void getAnimationConstraintTransform(List<BedrockPart> nodePath, @Nonnull Vector3f originTranslation, @Nonnull Vector3f animatedTranslation, @Nonnull Vector3f rotation) {
         if (nodePath == null) {
             return;
         }
@@ -480,17 +484,9 @@ public class FirstPersonRenderGunEvent {
 
             // 乘组位移
             if (part.getParent() != null) {
-                originMatrix.multiplyWithTranslation(
-                        part.x / 16.0F,
-                        part.y / 16.0F,
-                        part.z / 16.0F
-                );
+                originMatrix.multiplyWithTranslation(part.x / 16.0F, part.y / 16.0F, part.z / 16.0F);
             } else {
-                originMatrix.multiplyWithTranslation(
-                        part.x / 16.0F,
-                        (part.y / 16.0F - 1.5F),
-                        part.z / 16.0F
-                );
+                originMatrix.multiplyWithTranslation(part.x / 16.0F, (part.y / 16.0F - 1.5F), part.z / 16.0F);
             }
             // 乘组旋转
             originMatrix.multiply(Vector3f.ZP.rotation(part.zRot));
@@ -541,8 +537,6 @@ public class FirstPersonRenderGunEvent {
         poseStack.mulPose(Vector3f.ZP.rotation(inverseRotation.z() * weight));
         poseStack.translate(-animatedTranslation.x(), -animatedTranslation.y() - 1.5f, -animatedTranslation.z());
         // 约束位移
-        poseStack.last().pose().translate(new Vector3f(
-                -inverseTranslation.x() * weight, -inverseTranslation.y() * weight, inverseTranslation.z() * weight
-        ));
+        poseStack.last().pose().translate(new Vector3f(-inverseTranslation.x() * weight, -inverseTranslation.y() * weight, inverseTranslation.z() * weight));
     }
 }

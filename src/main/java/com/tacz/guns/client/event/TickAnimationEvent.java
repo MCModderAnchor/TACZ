@@ -31,34 +31,32 @@ public class TickAnimationEvent {
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-            if (animationStateMachine != null) {
-                animationStateMachine.setAiming(clientGunOperator.getClientAimingProgress(1) == 1f);
-                boolean isShooting = clientGunOperator.getClientShootCoolDown() > 0;
-                // 如果玩家正在射击，只能处于 idle 状态
-                if (isShooting) {
-                    animationStateMachine
-                            .onShooterIdle();
-                }// 如果玩家正在移动，播放移动动画，否则播放 idle 动画
-                else if (player.isSprinting()) {
-                    animationStateMachine
-                            .setOnGround(player.isOnGround())
-                            .onShooterRun(player.walkDist);
-                } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
-                    animationStateMachine
-                            .setOnGround(player.isOnGround())
-                            .onShooterWalk(player.input, player.walkDist);
-                } else {
-                    animationStateMachine.onShooterIdle();
-                }
-                Bolt boltType = gunIndex.getGunData().getBolt();
-                int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (iGun.hasBulletInBarrel(mainhandItem) && boltType != Bolt.OPEN_BOLT ? 1 : 0);
-                if (ammoCount < 1) {
-                    animationStateMachine.onGunCatchBolt();
-                } else {
-                    animationStateMachine.onGunReleaseBolt();
-                }
-                animationStateMachine.onIdleHoldingPose();
+            if (animationStateMachine == null) {
+                return;
             }
+            animationStateMachine.setAiming(clientGunOperator.getClientAimingProgress(1) == 1f);
+            boolean isShooting = clientGunOperator.getClientShootCoolDown() > 0;
+
+            if (isShooting) {
+                // 如果玩家正在射击，只能处于 idle 状态
+                animationStateMachine.onShooterIdle();
+            } else if (player.isSprinting()) {
+                // 如果玩家正在移动，播放移动动画，否则播放 idle 动画
+                animationStateMachine.setOnGround(player.isOnGround()).onShooterRun(player.walkDist);
+            } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
+                animationStateMachine.setOnGround(player.isOnGround()).onShooterWalk(player.input, player.walkDist);
+            } else {
+                animationStateMachine.onShooterIdle();
+            }
+
+            Bolt boltType = gunIndex.getGunData().getBolt();
+            int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (iGun.hasBulletInBarrel(mainhandItem) && boltType != Bolt.OPEN_BOLT ? 1 : 0);
+            if (ammoCount < 1) {
+                animationStateMachine.onGunCatchBolt();
+            } else {
+                animationStateMachine.onGunReleaseBolt();
+            }
+            animationStateMachine.onIdleHoldingPose();
         });
     }
 }
