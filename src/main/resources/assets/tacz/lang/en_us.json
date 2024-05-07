@@ -87,6 +87,8 @@
   "config.tacz.client.render.crosshair_type.desc": "The crosshair when holding a gun",
   "config.tacz.client.render.target_render_distance": "Target Render Distance",
   "config.tacz.client.render.target_render_distance.desc": "The farthest render distance of the target, including minecarts type",
+  "config.tacz.client.render.first_person_bullet_tracer_enable": "First Person Bullet Tracer Enable",
+  "config.tacz.client.render.first_person_bullet_tracer_enable.desc": "Whether or not to render first person bullet trail",
   "config.tacz.client.zoom": "Zoom",
   "config.tacz.client.zoom.screen_distance_coefficient": "Screen Distance Coefficient",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Screen distance coefficient for zoom, using MDV standard, default is MDV133",
