@@ -83,7 +83,7 @@
   "put_away_time": 0.5,
   // 瞄准时长，单位秒。
   "aim_time": 0.24,
-  "sprint_time": 0.4,
+  "sprint_time": 0.2,
   // 拉栓上膛的时间，仅当枪栓类型为 manual_action 时有效
   // "bolt_action_time": 0.9,
   // 开火模式

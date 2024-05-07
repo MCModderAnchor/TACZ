@@ -45,7 +45,7 @@
   "draw_time": 1,
   "put_away_time": 0.67,
   "aim_time": 0.3,
-  "sprint_time": 0.8,
+  "sprint_time": 0.2,
   "fire_mode": [
     "auto"
   ],
