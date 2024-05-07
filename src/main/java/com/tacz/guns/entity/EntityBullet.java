@@ -16,6 +16,7 @@ import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.DefaultAssets;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
+import com.tacz.guns.util.HitboxHelper;
 import com.tacz.guns.util.TacHitResult;
 import com.tacz.guns.util.block.BlockRayTrace;
 import com.tacz.guns.util.block.ProjectileExplosion;
@@ -57,10 +58,7 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class EntityBullet extends Projectile implements IEntityAdditionalSpawnData {
@@ -334,9 +332,14 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     protected EntityResult getHitResult(Entity entity, Vec3 startVec, Vec3 endVec) {
         double expandHeight = entity instanceof Player && !entity.isCrouching() ? 0.0625 : 0.0;
         AABB boundingBox = entity.getBoundingBox();
+        // 根据延迟进行 hitbox 获取
+        if (OtherConfig.SERVER_HITBOX_LATENCY_FIX.get() && entity instanceof ServerPlayer && this.getOwner() != null) {
+            int ping = Mth.floor((((ServerPlayer) this.getOwner()).latency / 1000.0) * 20.0 + 0.5);
+            boundingBox = HitboxHelper.getBoundingBox((Player) entity, ping);
+        }
         boundingBox = boundingBox.expandTowards(0, expandHeight, 0);
         Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
-        double serverHitboxAdjust = OtherConfig.SERVER_HITBOX_ADJUST.get();
+        double serverHitboxAdjust = OtherConfig.SERVER_HITBOX_OFFSET.get();
         if (entity instanceof ServerPlayer) {
             if (entity.getVehicle() != null) {
                 boundingBox = boundingBox.move(velocity.multiply(serverHitboxAdjust / 2, serverHitboxAdjust / 2, serverHitboxAdjust / 2));
