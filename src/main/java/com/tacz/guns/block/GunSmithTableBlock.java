@@ -127,5 +127,4 @@ public class GunSmithTableBlock extends BaseEntityBlock {
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return BLOCK_AABB;
     }
-
 }

@@ -124,5 +124,7 @@
   "config.tacz.common.other.default_pack_debug": "Default Pack Debug",
   "config.tacz.common.other.default_pack_debug.desc": "When enabled, the reload command will not overwrite the default model file under config",
   "config.tacz.common.other.head_shot_aabb": "Head Shot AABB",
-  "config.tacz.common.other.head_shot_aabb.desc": "The entity's head hitbox during the headshot\nFormat: touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]"
+  "config.tacz.common.other.head_shot_aabb.desc": "The entity's head hitbox during the headshot\nFormat: touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]",
+  "config.tacz.common.other.target_sound_distance": "Target Sound Distance",
+  "config.tacz.common.other.target_sound_distance.desc": "The farthest sound distance of the target, including minecarts type"
 }

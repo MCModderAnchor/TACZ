@@ -45,12 +45,12 @@ public interface IAttachment {
     void setSkinId(ItemStack attachmentStack, @Nullable ResourceLocation skinId);
 
     /**
-     * 获取瞄具配件的缩放倍率数字索引，仅瞄具配件可用
+     * 获取瞄具配件的缩放倍率的数字索引，仅瞄具配件可用
      */
     int getZoomNumber(ItemStack attachmentStack);
 
     /**
-     * 设置瞄具配件的缩放倍率数字索引
+     * 设置瞄具配件的缩放倍率的数字索引
      */
     void setZoomNumber(ItemStack attachmentStack, int zoomNumber);
 

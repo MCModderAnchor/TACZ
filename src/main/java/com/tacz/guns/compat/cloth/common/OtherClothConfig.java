@@ -25,6 +25,10 @@ public class OtherClothConfig {
         other.addEntry(entryBuilder.startStrList(new TranslatableComponent("config.tacz.common.other.head_shot_aabb"), OtherConfig.HEAD_SHOT_AABB.get())
                 .setDefaultValue(Lists.newArrayList()).setTooltip(new TranslatableComponent("config.tacz.common.other.head_shot_aabb.desc"))
                 .setSaveConsumer(OtherClothConfig::setAABBData).build());
+
+        other.addEntry(entryBuilder.startIntField(new TranslatableComponent("config.tacz.common.other.target_sound_distance"), OtherConfig.TARGET_SOUND_DISTANCE.get())
+                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(128).setTooltip(new TranslatableComponent("config.tacz.common.other.target_sound_distance.desc"))
+                .setSaveConsumer(OtherConfig.TARGET_SOUND_DISTANCE::set).build());
     }
 
     private static void setAABBData(List<String> data) {

@@ -9,6 +9,7 @@ public class OtherConfig {
     public static ForgeConfigSpec.IntValue AMMO_BOX_STACK_SIZE;
     public static ForgeConfigSpec.BooleanValue DEFAULT_PACK_DEBUG;
     public static ForgeConfigSpec.ConfigValue<List<String>> HEAD_SHOT_AABB;
+    public static ForgeConfigSpec.IntValue TARGET_SOUND_DISTANCE;
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_OFFSET;
     public static ForgeConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_LATENCY_MAX_SAVE_MS;
@@ -26,6 +27,18 @@ public class OtherConfig {
         builder.comment("Format: touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]");
         HEAD_SHOT_AABB = builder.define("HeadShotAABB", Lists.newArrayList());
 
+        builder.comment("The farthest sound distance of the target, including minecarts type");
+        TARGET_SOUND_DISTANCE = builder.defineInRange("TargetSoundDistance", 128, 0, Integer.MAX_VALUE);
+
+        serverHitBoxLatencyFixConfig(builder);
+
+        builder.pop();
+    }
+
+    /**
+     * 下面这三个不加入 cloth config api 中
+     */
+    private static void serverHitBoxLatencyFixConfig(ForgeConfigSpec.Builder builder) {
         builder.comment("DEV: Server hitbox offset (If the hitbox is ahead, fill in a negative number)");
         SERVER_HITBOX_OFFSET = builder.defineInRange("ServerHitboxOffset", 0, -Double.MAX_VALUE, Double.MAX_VALUE);
 
@@ -34,7 +47,5 @@ public class OtherConfig {
 
         builder.comment("The maximum latency (in milliseconds) for the server hitbox latency fix saved");
         SERVER_HITBOX_LATENCY_MAX_SAVE_MS = builder.defineInRange("ServerHitboxLatencyMaxSaveMs", 1000, 0, Double.MAX_VALUE);
-
-        builder.pop();
     }
 }

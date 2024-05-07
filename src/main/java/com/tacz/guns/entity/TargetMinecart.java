@@ -3,6 +3,7 @@ package com.tacz.guns.entity;
 import com.mojang.authlib.GameProfile;
 import com.tacz.guns.api.entity.ITargetEntity;
 import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.init.ModSounds;
@@ -57,7 +58,11 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
             this.setDamage(10);
             double dis = this.position().distanceTo(sourceEntity.position());
             player.displayClientMessage(new TranslatableComponent("message.tacz.target_minecart.hit", String.format("%.1f", damage), String.format("%.2f", dis)), true);
-            level.playSound(null, this, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 0.8f, this.level.random.nextFloat() * 0.1F + 0.9F);
+            // 原版的声音传播距离由 volume 决定
+            // 当声音大于 1 时，距离为 = 16 * volume
+            float volume = OtherConfig.TARGET_SOUND_DISTANCE.get() / 16.0f;
+            volume = Math.max(volume, 0);
+            level.playSound(null, this, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, volume, this.level.random.nextFloat() * 0.1F + 0.9F);
         }
     }
 

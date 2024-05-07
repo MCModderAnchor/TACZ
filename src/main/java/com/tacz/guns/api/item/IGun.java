@@ -51,9 +51,6 @@ public interface IGun {
 
     /**
      * 获取枪械 ID
-     *
-     * @param gun 输入物品
-     * @return 枪械 ID
      */
     @Nonnull
     ResourceLocation getGunId(ItemStack gun);
@@ -134,17 +131,17 @@ public interface IGun {
     int getCurrentAmmoCount(ItemStack gun);
 
     /**
-     * 获取当前枪械弹药数
+     * 设置当前枪械弹药数
      */
     void setCurrentAmmoCount(ItemStack gun, int ammoCount);
 
     /**
-     * 减少当前枪械弹药数
+     * 减少一个当前枪械弹药数
      */
     void reduceCurrentAmmoCount(ItemStack gun);
 
     /**
-     * 获取当前枪械指定类型配件
+     * 获取当前枪械指定类型的配件
      */
     @Nonnull
     ItemStack getAttachment(ItemStack gun, AttachmentType type);
@@ -160,7 +157,7 @@ public interface IGun {
     void unloadAttachment(@Nonnull ItemStack gun, AttachmentType type);
 
     /**
-     * 该枪械是否允许该配件
+     * 该枪械是否允许装配该配件
      */
     boolean allowAttachment(ItemStack gun, ItemStack attachmentItem);
 

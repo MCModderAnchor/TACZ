@@ -2,6 +2,7 @@ package com.tacz.guns.block.entity;
 
 import com.mojang.authlib.GameProfile;
 import com.tacz.guns.block.TargetBlock;
+import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.init.ModSounds;
 import net.minecraft.core.BlockPos;
@@ -30,10 +31,17 @@ import static com.tacz.guns.block.TargetBlock.STAND;
 
 public class TargetBlockEntity extends BlockEntity implements Nameable {
     public static final BlockEntityType<TargetBlockEntity> TYPE = BlockEntityType.Builder.of(TargetBlockEntity::new, ModBlocks.TARGET.get()).build(null);
+    /**
+     * 标靶复位时间，暂定为 5 秒
+     */
+    private static int RESET_TIME = 5 * 20;
+    private static final String OWNER_TAG = "Owner";
+    private static final String CUSTOM_NAME_TAG = "CustomName";
     public float rot = 0;
     public float oRot = 0;
     private @Nullable GameProfile owner;
     private @Nullable Component name;
+
     public TargetBlockEntity(BlockPos pos, BlockState blockState) {
         super(TYPE, pos, blockState);
     }
@@ -59,11 +67,11 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        if (tag.contains("Owner", Tag.TAG_COMPOUND)) {
-            this.owner = NbtUtils.readGameProfile(tag.getCompound("Owner"));
+        if (tag.contains(OWNER_TAG, Tag.TAG_COMPOUND)) {
+            this.owner = NbtUtils.readGameProfile(tag.getCompound(OWNER_TAG));
         }
-        if (tag.contains("CustomName", Tag.TAG_STRING)) {
-            this.name = Component.Serializer.fromJson(tag.getString("CustomName"));
+        if (tag.contains(CUSTOM_NAME_TAG, Tag.TAG_STRING)) {
+            this.name = Component.Serializer.fromJson(tag.getString(CUSTOM_NAME_TAG));
         }
     }
 
@@ -71,10 +79,10 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         if (owner != null) {
-            tag.put("Owner", NbtUtils.writeGameProfile(new CompoundTag(), owner));
+            tag.put(OWNER_TAG, NbtUtils.writeGameProfile(new CompoundTag(), owner));
         }
         if (this.name != null) {
-            tag.putString("CustomName", Component.Serializer.toJson(this.name));
+            tag.putString(CUSTOM_NAME_TAG, Component.Serializer.toJson(this.name));
         }
     }
 
@@ -126,8 +134,12 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
             }
             int redstoneStrength = TargetBlock.getRedstoneStrength(hit, isUpperBlock);
             level.setBlock(blockPos, state.setValue(STAND, false).setValue(OUTPUT_POWER, redstoneStrength), Block.UPDATE_ALL);
-            level.scheduleTick(blockPos, state.getBlock(), 100);
-            level.playSound(null, blockPos, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, 0.8f, this.level.random.nextFloat() * 0.1F + 0.9F);
+            level.scheduleTick(blockPos, state.getBlock(), RESET_TIME);
+            // 原版的声音传播距离由 volume 决定
+            // 当声音大于 1 时，距离为 = 16 * volume
+            float volume = OtherConfig.TARGET_SOUND_DISTANCE.get() / 16.0f;
+            volume = Math.max(volume, 0);
+            level.playSound(null, blockPos, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, volume, this.level.random.nextFloat() * 0.1F + 0.9F);
         }
     }
 }
