@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.gun;
+package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
@@ -25,12 +25,12 @@ import net.minecraftforge.fml.LogicalSide;
 
 import java.util.Optional;
 
-public class GunShoot {
+public class LivingEntityShoot {
     private final LivingEntity shooter;
-    private final ModDataHolder data;
-    private final GunDraw draw;
+    private final ShooterDataHolder data;
+    private final LivingEntityDrawGun draw;
 
-    public GunShoot(LivingEntity shooter, ModDataHolder data, GunDraw draw) {
+    public LivingEntityShoot(LivingEntity shooter, ShooterDataHolder data, LivingEntityDrawGun draw) {
         this.shooter = shooter;
         this.data = data;
         this.draw = draw;

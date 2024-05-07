@@ -1,4 +1,4 @@
-package com.tacz.guns.client.gun;
+package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.gun.ReloadState;

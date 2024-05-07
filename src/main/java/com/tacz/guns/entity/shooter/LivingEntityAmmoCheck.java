@@ -1,13 +1,13 @@
-package com.tacz.guns.entity.gun;
+package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.config.common.GunConfig;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-public class GunAmmoCheck {
+public class LivingEntityAmmoCheck {
     private final LivingEntity shooter;
 
-    public GunAmmoCheck(LivingEntity shooter) {
+    public LivingEntityAmmoCheck(LivingEntity shooter) {
         this.shooter = shooter;
     }
 

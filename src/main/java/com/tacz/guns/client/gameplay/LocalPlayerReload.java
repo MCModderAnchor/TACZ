@@ -1,4 +1,4 @@
-package com.tacz.guns.client.gun;
+package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.attachment.AttachmentType;

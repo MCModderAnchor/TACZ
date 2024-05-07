@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.gun;
+package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.gun.ReloadState;
 import net.minecraft.world.item.ItemStack;
@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public class ModDataHolder {
+public class ShooterDataHolder {
     /**
      * 射击时间戳，射击成功时更新，单位 ms。
      * 用于计算射击的冷却时间。

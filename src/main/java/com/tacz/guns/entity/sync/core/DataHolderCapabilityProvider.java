@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.sync;
+package com.tacz.guns.entity.sync.core;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

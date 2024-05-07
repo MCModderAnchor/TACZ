@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.gun;
+package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
@@ -7,10 +7,10 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
 
-public class GunPutAway {
-    private final ModDataHolder data;
+public class LivingEntityPutAwayGun {
+    private final ShooterDataHolder data;
 
-    public GunPutAway(ModDataHolder data) {
+    public LivingEntityPutAwayGun(ShooterDataHolder data) {
         this.data = data;
     }
 

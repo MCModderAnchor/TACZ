@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.gun;
+package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
@@ -11,11 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class GunDraw {
+public class LivingEntityDrawGun {
     private final LivingEntity shooter;
-    private final ModDataHolder data;
+    private final ShooterDataHolder data;
 
-    public GunDraw(LivingEntity shooter, ModDataHolder data) {
+    public LivingEntityDrawGun(LivingEntity shooter, ShooterDataHolder data) {
         this.shooter = shooter;
         this.data = data;
     }

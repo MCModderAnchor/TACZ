@@ -1,7 +1,7 @@
 package com.tacz.guns.network.message;
 
-import com.tacz.guns.entity.sync.DataEntry;
-import com.tacz.guns.entity.sync.SyncedEntityData;
+import com.tacz.guns.entity.sync.core.DataEntry;
+import com.tacz.guns.entity.sync.core.SyncedEntityData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;

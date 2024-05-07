@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.gun;
+package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.event.common.GunFireSelectEvent;
@@ -12,11 +12,11 @@ import net.minecraftforge.fml.LogicalSide;
 
 import java.util.List;
 
-public class GunFireSelect {
+public class LivingEntityFireSelect {
     private final LivingEntity shooter;
-    private final ModDataHolder data;
+    private final ShooterDataHolder data;
 
-    public GunFireSelect(LivingEntity shooter, ModDataHolder data) {
+    public LivingEntityFireSelect(LivingEntity shooter, ShooterDataHolder data) {
         this.shooter = shooter;
         this.data = data;
     }

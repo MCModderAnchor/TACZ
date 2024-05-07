@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.sync;
+package com.tacz.guns.entity.sync.core;
 
 import com.google.common.collect.ImmutableSet;
 import com.tacz.guns.GunMod;

@@ -4,7 +4,8 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.KnockBackModifier;
 import com.tacz.guns.api.gun.ReloadState;
 import com.tacz.guns.api.gun.ShootResult;
-import com.tacz.guns.entity.gun.*;
+import com.tacz.guns.entity.shooter.*;
+import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,15 +23,15 @@ import java.util.function.Supplier;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IGunOperator, KnockBackModifier {
     private final @Unique LivingEntity tacz$shooter = (LivingEntity) (Object) this;
-    private final @Unique ModDataHolder tacz$data = new ModDataHolder();
-    private final @Unique GunAim tacz$aim = new GunAim(tacz$shooter, this.tacz$data);
-    private final @Unique GunAmmoCheck tacz$ammoCheck = new GunAmmoCheck(tacz$shooter);
-    private final @Unique GunFireSelect tacz$fireSelect = new GunFireSelect(tacz$shooter, this.tacz$data);
-    private final @Unique GunDraw tacz$draw = new GunDraw(tacz$shooter, tacz$data);
-    private final @Unique GunPutAway tacz$putAway = new GunPutAway(tacz$data);
-    private final @Unique GunShoot tacz$shoot = new GunShoot(tacz$shooter, this.tacz$data, this.tacz$draw);
-    private final @Unique GunBolt tacz$bolt = new GunBolt(this.tacz$data, this.tacz$draw, this.tacz$shoot);
-    private final @Unique GunReload tacz$reload = new GunReload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot);
+    private final @Unique ShooterDataHolder tacz$data = new ShooterDataHolder();
+    private final @Unique LivingEntityAim tacz$aim = new LivingEntityAim(tacz$shooter, this.tacz$data);
+    private final @Unique LivingEntityAmmoCheck tacz$ammoCheck = new LivingEntityAmmoCheck(tacz$shooter);
+    private final @Unique LivingEntityFireSelect tacz$fireSelect = new LivingEntityFireSelect(tacz$shooter, this.tacz$data);
+    private final @Unique LivingEntityDrawGun tacz$draw = new LivingEntityDrawGun(tacz$shooter, tacz$data);
+    private final @Unique LivingEntityPutAwayGun tacz$putAway = new LivingEntityPutAwayGun(tacz$data);
+    private final @Unique LivingEntityShoot tacz$shoot = new LivingEntityShoot(tacz$shooter, this.tacz$data, this.tacz$draw);
+    private final @Unique LivingEntityBolt tacz$bolt = new LivingEntityBolt(this.tacz$data, this.tacz$draw, this.tacz$shoot);
+    private final @Unique LivingEntityReload tacz$reload = new LivingEntityReload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot);
 
     public LivingEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);

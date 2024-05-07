@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.sync;
+package com.tacz.guns.entity.sync.core;
 
 import net.minecraft.world.entity.Entity;
 

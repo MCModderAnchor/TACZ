@@ -1,4 +1,4 @@
-package com.tacz.guns.entity.sync;
+package com.tacz.guns.entity.sync.core;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;

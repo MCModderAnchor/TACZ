@@ -1,11 +1,11 @@
 package com.tacz.guns.event;
 
 import com.tacz.guns.GunMod;
-import com.tacz.guns.entity.sync.SyncedDataKey;
-import com.tacz.guns.entity.sync.DataEntry;
-import com.tacz.guns.entity.sync.DataHolder;
-import com.tacz.guns.entity.sync.DataHolderCapabilityProvider;
-import com.tacz.guns.entity.sync.SyncedEntityData;
+import com.tacz.guns.entity.sync.core.SyncedDataKey;
+import com.tacz.guns.entity.sync.core.DataEntry;
+import com.tacz.guns.entity.sync.core.DataHolder;
+import com.tacz.guns.entity.sync.core.DataHolderCapabilityProvider;
+import com.tacz.guns.entity.sync.core.SyncedEntityData;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageUpdateEntityData;
 import net.minecraft.resources.ResourceLocation;
