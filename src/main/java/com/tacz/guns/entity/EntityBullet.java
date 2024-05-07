@@ -16,7 +16,7 @@ import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.DefaultAssets;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
-import com.tacz.guns.util.HitboxHelper;
+import com.tacz.guns.event.HitboxHelperEvent;
 import com.tacz.guns.util.TacHitResult;
 import com.tacz.guns.util.block.BlockRayTrace;
 import com.tacz.guns.util.block.ProjectileExplosion;
@@ -58,7 +58,10 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
 public class EntityBullet extends Projectile implements IEntityAdditionalSpawnData {
@@ -333,9 +336,10 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
         double expandHeight = entity instanceof Player && !entity.isCrouching() ? 0.0625 : 0.0;
         AABB boundingBox = entity.getBoundingBox();
         // 根据延迟进行 hitbox 获取
-        if (OtherConfig.SERVER_HITBOX_LATENCY_FIX.get() && entity instanceof ServerPlayer && this.getOwner() != null) {
-            int ping = Mth.floor((((ServerPlayer) this.getOwner()).latency / 1000.0) * 20.0 + 0.5);
-            boundingBox = HitboxHelper.getBoundingBox((Player) entity, ping);
+        // 只有被击中者是玩家才进行此类偏移计算
+        if (OtherConfig.SERVER_HITBOX_LATENCY_FIX.get() && entity instanceof ServerPlayer player && this.getOwner() instanceof ServerPlayer serverPlayerOwner) {
+            int ping = Mth.floor((serverPlayerOwner.latency / 1000.0) * 20.0 + 0.5);
+            boundingBox = HitboxHelperEvent.getBoundingBox(player, ping);
         }
         boundingBox = boundingBox.expandTowards(0, expandHeight, 0);
         Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
@@ -418,7 +422,7 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
             createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
         }
         LivingEntity livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
-        if (entity instanceof PartEntity partEntity) {
+        if (entity instanceof PartEntity<?> partEntity) {
             livingEntity = partEntity.getParent() instanceof LivingEntity ? (LivingEntity) partEntity.getParent() : null;
         }
         // 只对 LivingEntity 执行击杀判定
