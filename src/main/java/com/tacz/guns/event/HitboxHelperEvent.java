@@ -16,6 +16,8 @@ import java.util.WeakHashMap;
 
 @Mod.EventBusSubscriber
 public class HitboxHelperEvent {
+    // 玩家位置缓存表
+    private static final WeakHashMap<Player, LinkedList<Vec3>> PLAYER_POSITION = new WeakHashMap<>();
     // 玩家命中箱缓存表
     private static final WeakHashMap<Player, LinkedList<AABB>> PLAYER_HITBOXES = new WeakHashMap<>();
     // 玩家速度缓存表
@@ -30,24 +32,37 @@ public class HitboxHelperEvent {
         }
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END) {
             if (event.player.isSpectator()) {
+                PLAYER_POSITION.remove(event.player);
                 PLAYER_HITBOXES.remove(event.player);
                 PLAYER_VELOCITY.remove(event.player);
                 return;
             }
+            LinkedList<Vec3> positions = PLAYER_POSITION.computeIfAbsent(event.player, player -> new LinkedList<>());
             LinkedList<AABB> boxes = PLAYER_HITBOXES.computeIfAbsent(event.player, player -> new LinkedList<>());
             LinkedList<Vec3> velocities = PLAYER_VELOCITY.computeIfAbsent(event.player, player -> new LinkedList<>());
+            positions.addFirst(event.player.position());
             boxes.addFirst(event.player.getBoundingBox());
             velocities.addFirst(getPlayerVelocity(event.player));
-            // 命中箱缓存数量限制
-            if (boxes.size() > SAVE_TICK || velocities.size() > SAVE_TICK) {
+            // Position 用于速度计算，所以只需要缓存 2 个位置
+            if (positions.size() > 2) {
+                positions.removeLast();
+            }
+            // 命中箱和速度缓存数量限制
+            if (boxes.size() > SAVE_TICK) {
                 boxes.removeLast();
                 velocities.removeLast();
             }
         }
     }
 
-    private static Vec3 getPlayerVelocity(Player player) {
-        return new Vec3(player.getX() - player.xOld, player.getY() - player.yOld, player.getZ() - player.zOld);
+    public static Vec3 getPlayerVelocity(Player entity) {
+        LinkedList<Vec3> positions = PLAYER_POSITION.computeIfAbsent(entity, player -> new LinkedList<>());
+        if (positions.size() > 1) {
+            Vec3 currPos = positions.getFirst();
+            Vec3 prevPos = positions.getLast();
+            return new Vec3(currPos.x - prevPos.x, currPos.y - prevPos.y, currPos.z - prevPos.z);
+        }
+        return new Vec3(0, 0, 0);
     }
 
     @SubscribeEvent(receiveCanceled = true)

@@ -40,12 +40,12 @@ public class OtherConfig {
      */
     private static void serverHitBoxLatencyFixConfig(ForgeConfigSpec.Builder builder) {
         builder.comment("DEV: Server hitbox offset (If the hitbox is ahead, fill in a negative number)");
-        SERVER_HITBOX_OFFSET = builder.defineInRange("ServerHitboxOffset", 0, -Double.MAX_VALUE, Double.MAX_VALUE);
+        SERVER_HITBOX_OFFSET = builder.defineInRange("ServerHitboxOffset", 3, -Double.MAX_VALUE, Double.MAX_VALUE);
 
         builder.comment("Server hitbox latency fix");
         SERVER_HITBOX_LATENCY_FIX = builder.define("ServerHitboxLatencyFix", true);
 
         builder.comment("The maximum latency (in milliseconds) for the server hitbox latency fix saved");
-        SERVER_HITBOX_LATENCY_MAX_SAVE_MS = builder.defineInRange("ServerHitboxLatencyMaxSaveMs", 1000, 0, Double.MAX_VALUE);
+        SERVER_HITBOX_LATENCY_MAX_SAVE_MS = builder.defineInRange("ServerHitboxLatencyMaxSaveMs", 1000, 250, Double.MAX_VALUE);
     }
 }
