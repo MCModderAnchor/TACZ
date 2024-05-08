@@ -281,8 +281,16 @@ public class Animations {
                 float[] q = MathUtil.toQuaternion(data.x() + base.x(), data.y() + base.y(), data.z() + base.z());
                 System.arraycopy(q, 0, animationChannel.content.values[index], 0, 4);
             }
-            // 写入关键帧插值类型，暂时只有 SLerp 一种
-            animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.SPHERICAL_LINEAR;
+            String lerpModeName = keyframe.lerpMode();
+            if (lerpModeName != null) {
+                if (lerpModeName.equals(AnimationChannelContent.LerpMode.CATMULLROM.name().toLowerCase())) {
+                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.SPHERICAL_CATMULLROM;
+                } else {
+                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.SPHERICAL_LINEAR;
+                }
+            } else {
+                animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.SPHERICAL_LINEAR;
+            }
             index++;
         }
     }

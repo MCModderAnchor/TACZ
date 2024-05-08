@@ -34,6 +34,6 @@ public class AnimationChannelContent {
     }
 
     public enum LerpMode {
-        LINEAR, SPHERICAL_LINEAR, CATMULLROM
+        LINEAR, SPHERICAL_LINEAR, CATMULLROM, SPHERICAL_CATMULLROM
     }
 }

@@ -322,6 +322,26 @@ public class MathUtil {
         return solveEquations(coefficients, constants);
     }
 
+    public static Quaternion getRelativeQuaternion(Quaternion qa, Quaternion qb) {
+        /*
+        Given two quaternions A and B, find the quaternion C such that the result of A multiplied by C is equal to B.
+        Solve the following equations:
+             aw*ci -ak*cj +aj*ck +ai*cw = bi
+             ak*ci +aw*cj -ai*ck +aj*cw = bj
+            -aj*ci +ai*cj +aw*ck +ak*cw = bk
+            -ai*ci -aj*cj -ak*ck +aw*cw = bw
+        */
+        float[][] coefficients = {
+                {qa.r(), -qa.k(), qa.j(), qa.i()},
+                {qa.k(), qa.r(), -qa.i(), qa.j()},
+                {-qa.j(), qa.i(), qa.r(), qa.k()},
+                {-qa.i(), -qa.j(), -qa.k(), qa.r()},
+        };
+        float[] constants = {qb.i(), qb.j(), qb.k(), qb.r()};
+        float[] result = solveEquations(coefficients, constants);
+        return new Quaternion(result[0], result[1], result[2], result[3]);
+    }
+
     /**
      * 在两个变换矩阵之间旋转、位移的插值。
      *
@@ -355,6 +375,19 @@ public class MathUtil {
         return Pair.of((float) angle, axis);
     }
 
+    public static Pair<Float, Vector3f> getAngleAndAxis(float[] quaternion) {
+        double angle = 2 * Math.acos(quaternion[3]);
+        double sin = Math.sin(angle / 2);
+        // 旋转角为 0 或者 2*PI，旋转结果与旋转轴无关
+        if (sin == 0) {
+            return Pair.of(0f, new Vector3f(0, 0, 0));
+        }
+        Vector3f axis = new Vector3f(quaternion[0], quaternion[1], quaternion[2]);
+        axis.mul((float) (1 / sin));
+        return Pair.of((float) angle, axis);
+    }
+
+
     public static Quaternion multiplyQuaternion(Quaternion quaternion, float multiplier) {
         Pair<Float, Vector3f> angleAndAxis = getAngleAndAxis(quaternion);
         float newAngle = angleAndAxis.getLeft() * multiplier;
@@ -363,6 +396,16 @@ public class MathUtil {
         double cos = Math.cos(newAngle / 2);
         axis.mul((float) sin);
         return new Quaternion(axis.x(), axis.y(), axis.z(), (float) cos);
+    }
+
+    public static float[] multiplyQuaternion(float[] quaternion, float multiplier) {
+        Pair<Float, Vector3f> angleAndAxis = getAngleAndAxis(quaternion);
+        float newAngle = angleAndAxis.getLeft() * multiplier;
+        Vector3f axis = angleAndAxis.getRight();
+        double sin = Math.sin(newAngle / 2);
+        double cos = Math.cos(newAngle / 2);
+        axis.mul((float) sin);
+        return new float[]{axis.x(), axis.y(), axis.z(), (float) cos};
     }
 
     public static double getTwoVecAngle(Vec3 v1, Vec3 v2) {
@@ -374,16 +417,6 @@ public class MathUtil {
         }
         double cos = dotProduct / (magnitude1 * magnitude2);
         return Math.acos(cos);
-    }
-
-    public static float inverseLerp(float start, float end, float value) {
-        if (value < start) {
-            return 0;
-        } else if (value > end) {
-            return 1;
-        } else {
-            return (value - start) / (end - start);
-        }
     }
 
     public static float catmullRom(float[] y, float tension, float alpha) {
@@ -402,5 +435,24 @@ public class MathUtil {
         float q4 = alpha3 - alpha2;
 
         return (1f - tension) * (y[0] * q1 + y[1] * q2 + y[2] * q3 + y[3] * q4);
+    }
+
+    public static float[] catmullRomQuaternion(float[][] quaternions, float tension, float alpha) {
+        if (quaternions.length != 4) {
+            throw new IllegalArgumentException("y value length must be 4 when doing catmull-rom spline");
+        }
+        if (tension < 0 || tension > 1) {
+            throw new IllegalArgumentException("tension must be 0~1 when doing catmull-rom spline");
+        }
+        float[] angles0 = toEulerAngles(quaternions[0]);
+        float[] angles1 = toEulerAngles(quaternions[1]);
+        float[] angles2 = toEulerAngles(quaternions[2]);
+        float[] angles3 = toEulerAngles(quaternions[3]);
+        float[] result = new float[3];
+        for (int i = 0; i < 3; i++) {
+            float[] input = new float[]{angles0[i], angles1[i], angles2[i], angles3[i]};
+            result[i] = catmullRom(input, tension, alpha);
+        }
+        return toQuaternion(result[0], result[1], result[2]);
     }
 }

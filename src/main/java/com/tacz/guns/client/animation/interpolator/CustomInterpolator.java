@@ -1,5 +1,6 @@
 package com.tacz.guns.client.animation.interpolator;
 
+import com.mojang.math.Quaternion;
 import com.tacz.guns.client.animation.AnimationChannelContent;
 import com.tacz.guns.client.animation.AnimationChannelContent.LerpMode;
 import com.tacz.guns.util.math.MathUtil;
@@ -19,7 +20,10 @@ public class CustomInterpolator implements Interpolator {
         if (fromLerpMode == LerpMode.SPHERICAL_LINEAR && toLerpMode == LerpMode.SPHERICAL_LINEAR) {
             // 球面线性插值
             this.doSphericalLinearLerp(indexFrom, indexTo, alpha, result);
-        } else if (fromLerpMode == LerpMode.CATMULLROM || toLerpMode == LerpMode.CATMULLROM) {
+        } if (fromLerpMode == LerpMode.SPHERICAL_CATMULLROM || toLerpMode == LerpMode.SPHERICAL_CATMULLROM) {
+            // 球面 Catmull-Rom 插值
+            this.doSphericalCatmullRomLerp(indexFrom, indexTo, alpha, result);
+        }else if (fromLerpMode == LerpMode.CATMULLROM || toLerpMode == LerpMode.CATMULLROM) {
             // Catmull-Rom 插值
             this.doCatmullromLerp(indexFrom, indexTo, alpha, result);
         } else {
@@ -103,6 +107,19 @@ public class CustomInterpolator implements Interpolator {
         result[1] = ry;
         result[2] = rz;
         result[3] = rw;
+    }
+
+    private void doSphericalCatmullRomLerp(int indexFrom, int indexTo, float alpha, float[] result) {
+        int prev = indexFrom == 0 ? 0 : indexFrom - 1;
+        int next = indexTo == (content.values.length - 1) ? (content.values.length - 1) : indexTo + 1;
+        int prevOffset = content.values[prev].length == 8 ? 4 : 0;
+        float[] prevValue = content.values[prev];
+        float[] q0 = new float[]{prevValue[prevOffset], prevValue[1 + prevOffset], prevValue[2 + prevOffset], prevValue[3 + prevOffset]};
+        float[] r = MathUtil.catmullRomQuaternion(new float[][]{q0, content.values[indexFrom], content.values[indexTo], content.values[next]}, 0.5f, alpha);
+        result[0] = r[0];
+        result[1] = r[1];
+        result[2] = r[2];
+        result[3] = r[3];
     }
 
     @Override
