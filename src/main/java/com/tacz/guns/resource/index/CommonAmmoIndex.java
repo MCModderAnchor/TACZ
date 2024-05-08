@@ -1,5 +1,6 @@
 package com.tacz.guns.resource.index;
 
+import com.google.common.base.Preconditions;
 import com.tacz.guns.resource.pojo.AmmoIndexPOJO;
 
 public class CommonAmmoIndex {
@@ -15,9 +16,7 @@ public class CommonAmmoIndex {
     }
 
     private static void checkIndex(AmmoIndexPOJO ammoIndexPOJO, CommonAmmoIndex index) {
-        if (ammoIndexPOJO == null) {
-            throw new IllegalArgumentException("index object file is empty");
-        }
+        Preconditions.checkArgument(ammoIndexPOJO != null, "index object file is empty");
         index.stackSize = Math.max(ammoIndexPOJO.getStackSize(), 1);
     }
 

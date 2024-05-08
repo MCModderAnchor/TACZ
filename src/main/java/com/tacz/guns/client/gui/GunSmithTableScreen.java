@@ -104,7 +104,8 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         });
     }
 
-    private @Nullable GunSmithTableRecipe getSelectedRecipe(ResourceLocation recipeId) {
+    @Nullable
+    private GunSmithTableRecipe getSelectedRecipe(ResourceLocation recipeId) {
         return TimelessAPI.getAllRecipes().get(recipeId);
     }
 

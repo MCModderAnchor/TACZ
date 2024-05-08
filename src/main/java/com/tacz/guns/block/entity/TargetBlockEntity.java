@@ -34,7 +34,7 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
     /**
      * 标靶复位时间，暂定为 5 秒
      */
-    private static int RESET_TIME = 5 * 20;
+    private static final int RESET_TIME = 5 * 20;
     private static final String OWNER_TAG = "Owner";
     private static final String CUSTOM_NAME_TAG = "CustomName";
     public float rot = 0;

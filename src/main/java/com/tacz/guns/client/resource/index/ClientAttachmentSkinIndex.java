@@ -1,5 +1,6 @@
 package com.tacz.guns.client.resource.index;
 
+import com.google.common.base.Preconditions;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
@@ -22,9 +23,7 @@ public class ClientAttachmentSkinIndex {
     }
 
     private static void checkIndex(AttachmentSkin skinPojo, ClientAttachmentSkinIndex index) {
-        if (skinPojo == null) {
-            throw new IllegalArgumentException("skin index file is empty");
-        }
+        Preconditions.checkArgument(skinPojo != null, "skin index file is empty");
     }
 
     private static void checkName(AttachmentSkin skinPojo, ClientAttachmentSkinIndex index) {
@@ -37,18 +36,12 @@ public class ClientAttachmentSkinIndex {
     private static void checkTextureAndModel(AttachmentSkin skinPojo, ClientAttachmentSkinIndex index) {
         // 检查模型
         ResourceLocation modelLocation = skinPojo.getModel();
-        if (modelLocation == null) {
-            throw new IllegalArgumentException("display object missing model field");
-        }
+        Preconditions.checkArgument(modelLocation != null, "display object missing model field");
         index.model = ClientAssetManager.INSTANCE.getOrLoadAttachmentModel(modelLocation);
-        if (index.model == null) {
-            throw new IllegalArgumentException("there is no model data in the model file");
-        }
+        Preconditions.checkArgument(index.model != null, "there is no model data in the model file");
         // 检查默认材质
         ResourceLocation textureLocation = skinPojo.getTexture();
-        if (textureLocation == null) {
-            throw new IllegalArgumentException("missing default texture");
-        }
+        Preconditions.checkArgument(textureLocation != null, "missing default texture");
         index.texture = textureLocation;
     }
 

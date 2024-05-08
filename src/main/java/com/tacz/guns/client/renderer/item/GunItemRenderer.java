@@ -32,11 +32,9 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.Transform
  */
 public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final SlotModel SLOT_GUN_MODEL = new SlotModel();
-    private final BlockEntityRenderDispatcher dispatcher;
 
     public GunItemRenderer(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
-        this.dispatcher = pBlockEntityRenderDispatcher;
     }
 
     private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, Vector3f scale) {
@@ -131,15 +129,9 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     private void applyPositioningTransform(ItemTransforms.TransformType transformType, TransformScale scale, BedrockGunModel model, PoseStack poseStack) {
         switch (transformType) {
-            case FIXED -> {
-                applyPositioningNodeTransform(model.getFixedOriginPath(), poseStack, scale.getFixed());
-            }
-            case GROUND -> {
-                applyPositioningNodeTransform(model.getGroundOriginPath(), poseStack, scale.getGround());
-            }
-            case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> {
-                applyPositioningNodeTransform(model.getThirdPersonHandOriginPath(), poseStack, scale.getThirdPerson());
-            }
+            case FIXED -> applyPositioningNodeTransform(model.getFixedOriginPath(), poseStack, scale.getFixed());
+            case GROUND -> applyPositioningNodeTransform(model.getGroundOriginPath(), poseStack, scale.getGround());
+            case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> applyPositioningNodeTransform(model.getThirdPersonHandOriginPath(), poseStack, scale.getThirdPerson());
         }
     }
 
@@ -149,15 +141,9 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
         }
         Vector3f vector3f = null;
         switch (transformType) {
-            case FIXED -> {
-                vector3f = scale.getFixed();
-            }
-            case GROUND -> {
-                vector3f = scale.getGround();
-            }
-            case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> {
-                vector3f = scale.getThirdPerson();
-            }
+            case FIXED -> vector3f = scale.getFixed();
+            case GROUND -> vector3f = scale.getGround();
+            case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> vector3f = scale.getThirdPerson();
         }
         if (vector3f != null) {
             poseStack.translate(0, 1.5, 0);

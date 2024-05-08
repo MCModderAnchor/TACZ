@@ -1,5 +1,6 @@
 package com.tacz.guns.client.resource.index;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tacz.guns.GunMod;
@@ -82,12 +83,8 @@ public class ClientGunIndex {
     }
 
     private static void checkIndex(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
-        if (gunIndexPOJO == null) {
-            throw new IllegalArgumentException("index object file is empty");
-        }
-        if (StringUtils.isBlank(gunIndexPOJO.getType())) {
-            throw new IllegalArgumentException("index object missing type field");
-        }
+        Preconditions.checkArgument(gunIndexPOJO != null, "index object file is empty");
+        Preconditions.checkArgument(StringUtils.isNoneBlank(gunIndexPOJO.getType()), "index object missing type field");
         index.type = gunIndexPOJO.getType();
         index.sort = Mth.clamp(gunIndexPOJO.getSort(), 0, 65536);
     }
@@ -101,13 +98,9 @@ public class ClientGunIndex {
 
     private static void checkData(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
         ResourceLocation pojoData = gunIndexPOJO.getData();
-        if (pojoData == null) {
-            throw new IllegalArgumentException("index object missing pojoData field");
-        }
+        Preconditions.checkArgument(pojoData != null, "index object missing pojoData field");
         GunData data = CommonAssetManager.INSTANCE.getGunData(pojoData);
-        if (data == null) {
-            throw new IllegalArgumentException("there is no corresponding data file");
-        }
+        Preconditions.checkArgument(data != null, "there is no corresponding data file");
         // 剩下的不需要校验了，Common的读取逻辑中已经校验过了
         index.gunData = data;
     }
@@ -115,13 +108,9 @@ public class ClientGunIndex {
     @NotNull
     private static GunDisplay checkDisplay(GunIndexPOJO gunIndexPOJO) {
         ResourceLocation pojoDisplay = gunIndexPOJO.getDisplay();
-        if (pojoDisplay == null) {
-            throw new IllegalArgumentException("index object missing display field");
-        }
+        Preconditions.checkArgument(pojoDisplay != null, "index object missing display field");
         GunDisplay display = ClientAssetManager.INSTANCE.getGunDisplay(pojoDisplay);
-        if (display == null) {
-            throw new IllegalArgumentException("there is no corresponding display file");
-        }
+        Preconditions.checkArgument(display != null, "there is no corresponding display file");
         return display;
     }
 
@@ -135,18 +124,12 @@ public class ClientGunIndex {
     private static void checkTextureAndModel(GunDisplay display, ClientGunIndex index) {
         // 检查模型
         ResourceLocation modelLocation = display.getModelLocation();
-        if (modelLocation == null) {
-            throw new IllegalArgumentException("display object missing model field");
-        }
+        Preconditions.checkArgument(modelLocation != null, "display object missing model field");
         BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(modelLocation);
-        if (modelPOJO == null) {
-            throw new IllegalArgumentException("there is no corresponding model file");
-        }
+        Preconditions.checkArgument(modelPOJO != null, "there is no corresponding model file");
         // 检查默认材质是否存在
         ResourceLocation textureLocation = display.getModelTexture();
-        if (textureLocation == null) {
-            throw new IllegalArgumentException("missing default texture");
-        }
+        Preconditions.checkArgument(textureLocation != null, "missing default texture");
         index.modelTexture = textureLocation;
         // 先判断是不是 1.10.0 版本基岩版模型文件
         if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
@@ -156,10 +139,7 @@ public class ClientGunIndex {
         if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
             index.gunModel = new BedrockGunModel(modelPOJO, BedrockVersion.NEW);
         }
-
-        if (index.gunModel == null) {
-            throw new IllegalArgumentException("there is no model data in the model file");
-        }
+        Preconditions.checkArgument(index.gunModel != null, "there is no model data in the model file");
     }
 
     private static void checkLod(GunDisplay display, ClientGunIndex index) {

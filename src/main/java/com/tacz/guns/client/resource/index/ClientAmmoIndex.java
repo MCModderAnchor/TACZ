@@ -57,9 +57,7 @@ public class ClientAmmoIndex {
     }
 
     private static void checkIndex(AmmoIndexPOJO ammoIndexPOJO, ClientAmmoIndex index) {
-        if (ammoIndexPOJO == null) {
-            throw new IllegalArgumentException("index object file is empty");
-        }
+        Preconditions.checkArgument(ammoIndexPOJO != null, "index object file is empty");
     }
 
     private static void checkName(AmmoIndexPOJO ammoIndexPOJO, ClientAmmoIndex index) {
@@ -72,13 +70,10 @@ public class ClientAmmoIndex {
     @NotNull
     private static AmmoDisplay checkDisplay(AmmoIndexPOJO ammoIndexPOJO) {
         ResourceLocation pojoDisplay = ammoIndexPOJO.getDisplay();
-        if (pojoDisplay == null) {
-            throw new IllegalArgumentException("index object missing display field");
-        }
+        Preconditions.checkArgument(pojoDisplay != null, "index object missing display field");
+
         AmmoDisplay display = ClientAssetManager.INSTANCE.getAmmoDisplay(pojoDisplay);
-        if (display == null) {
-            throw new IllegalArgumentException("there is no corresponding display file");
-        }
+        Preconditions.checkArgument(display != null, "there is no corresponding display file");
         return display;
     }
 
@@ -89,9 +84,7 @@ public class ClientAmmoIndex {
             return;
         }
         BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(modelLocation);
-        if (modelPOJO == null) {
-            throw new IllegalArgumentException("there is no corresponding model file");
-        }
+        Preconditions.checkArgument(modelPOJO != null, "there is no corresponding model file");
         // 检查材质
         index.modelTextureLocation = display.getModelTexture();
         // 先判断是不是 1.10.0 版本基岩版模型文件

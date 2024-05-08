@@ -90,11 +90,13 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
         }
     }
 
-    public @Nonnull CameraAnimationObject getCameraAnimationObject() {
+    @Nonnull
+    public CameraAnimationObject getCameraAnimationObject() {
         return cameraAnimationObject;
     }
 
-    public @Nullable ConstraintObject getConstraintObject() {
+    @Nullable
+    public ConstraintObject getConstraintObject() {
         return constraintObject;
     }
 

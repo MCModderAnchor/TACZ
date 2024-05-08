@@ -1,5 +1,6 @@
 package com.tacz.guns.client.resource.index;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.resource.ClientAssetManager;
@@ -48,24 +49,16 @@ public class ClientAttachmentIndex {
     }
 
     private static void checkIndex(AttachmentIndexPOJO attachmentIndexPOJO, ClientAttachmentIndex index) {
-        if (attachmentIndexPOJO == null) {
-            throw new IllegalArgumentException("index object file is empty");
-        }
+        Preconditions.checkArgument(attachmentIndexPOJO != null, "index object file is empty");
     }
 
     @Nonnull
     private static AttachmentDisplay checkDisplay(AttachmentIndexPOJO indexPOJO, ClientAttachmentIndex index) {
         ResourceLocation pojoDisplay = indexPOJO.getDisplay();
-        if (pojoDisplay == null) {
-            throw new IllegalArgumentException("index object missing display field");
-        }
+        Preconditions.checkArgument(pojoDisplay != null, "index object missing display field");
         AttachmentDisplay display = ClientAssetManager.INSTANCE.getAttachmentDisplay(pojoDisplay);
-        if (display == null) {
-            throw new IllegalArgumentException("there is no corresponding display file");
-        }
-        if (display.getFov() <= 0) {
-            throw new IllegalArgumentException("fov must > 0");
-        }
+        Preconditions.checkArgument(display != null, "there is no corresponding display file");
+        Preconditions.checkArgument(display.getFov() > 0, "fov must > 0");
         index.fov = display.getFov();
         index.zoom = display.getZoom();
         if (index.zoom != null) {
@@ -83,13 +76,9 @@ public class ClientAttachmentIndex {
 
     private static void checkData(AttachmentIndexPOJO indexPOJO, ClientAttachmentIndex index) {
         ResourceLocation dataId = indexPOJO.getData();
-        if (dataId == null) {
-            throw new IllegalArgumentException("index object missing pojoData field");
-        }
+        Preconditions.checkArgument(dataId != null, "index object missing pojoData field");
         AttachmentData data = CommonAssetManager.INSTANCE.getAttachmentData(dataId);
-        if (data == null) {
-            throw new IllegalArgumentException("there is no corresponding data file");
-        }
+        Preconditions.checkArgument(data != null, "there is no corresponding data file");
         // 剩下的不需要校验了，Common的读取逻辑中已经校验过了
         index.data = data;
     }
@@ -108,20 +97,14 @@ public class ClientAttachmentIndex {
     private static void checkTextureAndModel(AttachmentDisplay display, ClientAttachmentIndex index) {
         // 检查模型
         ResourceLocation modelLocation = display.getModel();
-        if (modelLocation == null) {
-            throw new IllegalArgumentException("display object missing model field");
-        }
+        Preconditions.checkArgument(modelLocation != null, "display object missing model field");
         index.attachmentModel = ClientAssetManager.INSTANCE.getOrLoadAttachmentModel(modelLocation);
-        if (index.attachmentModel == null) {
-            throw new IllegalArgumentException("there is no model data in the model file");
-        }
+        Preconditions.checkArgument(index.attachmentModel != null, "there is no model data in the model file");
         index.attachmentModel.setIsScope(display.isScope());
         index.attachmentModel.setIsSight(display.isSight());
         // 检查默认材质
         ResourceLocation textureLocation = display.getTexture();
-        if (textureLocation == null) {
-            throw new IllegalArgumentException("missing default texture");
-        }
+        Preconditions.checkArgument(textureLocation != null, "missing default texture");
         index.modelTexture = textureLocation;
     }
 

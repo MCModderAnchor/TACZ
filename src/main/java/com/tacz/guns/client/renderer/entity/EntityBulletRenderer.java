@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
-
     public EntityBulletRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
     }

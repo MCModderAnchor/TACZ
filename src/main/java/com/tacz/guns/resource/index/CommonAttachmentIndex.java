@@ -1,5 +1,6 @@
 package com.tacz.guns.resource.index;
 
+import com.google.common.base.Preconditions;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
@@ -21,24 +22,16 @@ public class CommonAttachmentIndex {
     }
 
     private static void checkIndex(AttachmentIndexPOJO attachmentIndexPOJO, CommonAttachmentIndex index) {
-        if (attachmentIndexPOJO == null) {
-            throw new IllegalArgumentException("index object file is empty");
-        }
-        if (attachmentIndexPOJO.getType() == null) {
-            throw new IllegalArgumentException("attachment type must be nonnull.");
-        }
+        Preconditions.checkArgument(attachmentIndexPOJO != null, "index object file is empty");
+        Preconditions.checkArgument(attachmentIndexPOJO.getType() != null, "attachment type must be nonnull.");
         index.type = attachmentIndexPOJO.getType();
     }
 
     private static void checkData(AttachmentIndexPOJO attachmentIndexPOJO, CommonAttachmentIndex index) {
         ResourceLocation pojoData = attachmentIndexPOJO.getData();
-        if (pojoData == null) {
-            throw new IllegalArgumentException("index object missing pojoData field");
-        }
+        Preconditions.checkArgument(pojoData != null, "index object missing pojoData field");
         AttachmentData data = CommonAssetManager.INSTANCE.getAttachmentData(pojoData);
-        if (data == null) {
-            throw new IllegalArgumentException("there is no corresponding data file");
-        }
+        Preconditions.checkArgument(data != null, "there is no corresponding data file");
         index.data = data;
     }
 
