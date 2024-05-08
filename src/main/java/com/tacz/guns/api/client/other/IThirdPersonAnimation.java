@@ -1,4 +1,4 @@
-package com.tacz.guns.api.client.animation;
+package com.tacz.guns.api.client.other;
 
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.LivingEntity;

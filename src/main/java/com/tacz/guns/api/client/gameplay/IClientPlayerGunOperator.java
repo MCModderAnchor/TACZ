@@ -1,4 +1,4 @@
-package com.tacz.guns.api.client.player;
+package com.tacz.guns.api.client.gameplay;
 
 import com.tacz.guns.api.entity.ShootResult;
 import net.minecraft.client.player.LocalPlayer;

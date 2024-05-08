@@ -1,6 +1,6 @@
 package com.tacz.guns.mixin.client;
 
-import com.tacz.guns.api.client.player.IClientPlayerGunOperator;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.client.gameplay.*;
 import net.minecraft.client.player.LocalPlayer;

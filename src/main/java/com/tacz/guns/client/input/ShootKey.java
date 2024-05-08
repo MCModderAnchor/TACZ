@@ -2,7 +2,7 @@ package com.tacz.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.client.player.IClientPlayerGunOperator;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.api.item.IGun;

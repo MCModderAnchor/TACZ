@@ -2,7 +2,7 @@ package com.tacz.guns.client.event;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.event.SwapItemWithOffHand;
-import com.tacz.guns.api.client.player.IClientPlayerGunOperator;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

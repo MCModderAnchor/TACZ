@@ -2,7 +2,7 @@ package com.tacz.guns.client.gui.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.tacz.guns.api.client.player.IClientPlayerGunOperator;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;

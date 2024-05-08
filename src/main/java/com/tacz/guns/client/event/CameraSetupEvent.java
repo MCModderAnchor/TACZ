@@ -6,7 +6,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.event.BeforeRenderHandEvent;
 import com.tacz.guns.api.client.event.FieldOfView;
-import com.tacz.guns.api.client.player.IClientPlayerGunOperator;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.IGun;

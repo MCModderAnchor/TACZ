@@ -2,7 +2,7 @@ package com.tacz.guns.resource.pojo.data.gun;
 
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
-import com.tacz.guns.api.attachment.AttachmentType;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.resources.ResourceLocation;

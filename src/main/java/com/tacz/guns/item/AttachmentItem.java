@@ -1,7 +1,7 @@
 package com.tacz.guns.item;
 
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.attachment.AttachmentType;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.client.renderer.item.AttachmentItemRenderer;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;

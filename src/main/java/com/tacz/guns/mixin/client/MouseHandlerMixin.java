@@ -1,7 +1,7 @@
 package com.tacz.guns.mixin.client;
 
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.attachment.AttachmentType;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;

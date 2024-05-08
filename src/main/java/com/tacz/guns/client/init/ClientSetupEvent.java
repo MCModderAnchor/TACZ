@@ -1,7 +1,7 @@
 package com.tacz.guns.client.init;
 
 import com.tacz.guns.GunMod;
-import com.tacz.guns.client.animation.thrid.ThirdPersonManager;
+import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.client.gui.overlay.GunHudOverlay;
 import com.tacz.guns.client.gui.overlay.KillAmountOverlay;
 import com.tacz.guns.client.input.*;
@@ -44,7 +44,7 @@ public class ClientSetupEvent {
         });
 
         // 注册自己的的硬编码第三人称动画
-        event.enqueueWork(ThirdPersonManager::registerInner);
+        event.enqueueWork(ThirdPersonManager::registerDefault);
 
         // 注册颜色
         event.enqueueWork(() -> Minecraft.getInstance().getItemColors().register(AmmoBoxItem::getColor, ModItems.AMMO_BOX.get()));

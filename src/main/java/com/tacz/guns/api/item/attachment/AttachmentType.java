@@ -1,4 +1,4 @@
-package com.tacz.guns.api.attachment;
+package com.tacz.guns.api.item.attachment;
 
 import com.google.gson.annotations.SerializedName;
 

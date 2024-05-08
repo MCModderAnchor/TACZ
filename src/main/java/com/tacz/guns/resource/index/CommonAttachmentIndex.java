@@ -1,6 +1,6 @@
 package com.tacz.guns.resource.index;
 
-import com.tacz.guns.api.attachment.AttachmentType;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;

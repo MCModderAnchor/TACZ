@@ -3,7 +3,7 @@ package com.tacz.guns.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.attachment.AttachmentType;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.gui.components.refit.*;

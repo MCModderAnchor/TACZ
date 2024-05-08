@@ -1,7 +1,7 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.client.player.IClientPlayerGunOperator;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.gun.FireMode;

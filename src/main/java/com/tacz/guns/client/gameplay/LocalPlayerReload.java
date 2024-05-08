@@ -1,7 +1,7 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.attachment.AttachmentType;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunReloadEvent;
 import com.tacz.guns.api.item.IAmmo;

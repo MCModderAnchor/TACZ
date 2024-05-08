@@ -1,7 +1,7 @@
 package com.tacz.guns.api;
 
-import com.tacz.guns.api.client.animation.IThirdPersonAnimation;
-import com.tacz.guns.client.animation.thrid.ThirdPersonManager;
+import com.tacz.guns.api.client.other.IThirdPersonAnimation;
+import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.client.resource.ClientGunPackLoader;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;

@@ -3,7 +3,7 @@ package com.tacz.guns.mixin.client;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.thrid.ThirdPersonManager;
+import com.tacz.guns.api.client.other.ThirdPersonManager;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.LivingEntity;

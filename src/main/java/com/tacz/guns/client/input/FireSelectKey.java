@@ -1,7 +1,7 @@
 package com.tacz.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.tacz.guns.api.client.player.IClientPlayerGunOperator;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
