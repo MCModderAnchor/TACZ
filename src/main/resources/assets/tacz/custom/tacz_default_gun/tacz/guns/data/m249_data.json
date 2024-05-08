@@ -72,14 +72,14 @@
   "allow_attachments": {
     "scope": {
       "black_list": [
-        "tacz:sro_dot",
-        "tacz:8x"
+        "tacz:sight_sro_dot",
+        "tacz:scope_standard_8x"
       ]
     },
     "grip": {},
     "muzzle": {
       "black_list": [
-        "tacz:muzzle_s_mirage"
+        "tacz:muzzle_silence_mirage"
       ]
     },
     "extended_mag": {}

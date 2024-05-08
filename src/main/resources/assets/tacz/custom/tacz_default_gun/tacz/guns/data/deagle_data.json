@@ -54,7 +54,7 @@
     "extended_mag": {},
     "muzzle": {
       "white_list": [
-        "tacz:muzzle_s_phantom_s1"
+        "tacz:muzzle_silence_phantom_s1"
       ]
     }
   },
