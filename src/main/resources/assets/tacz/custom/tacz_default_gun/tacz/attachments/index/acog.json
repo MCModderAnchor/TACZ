@@ -1,7 +1,0 @@
-{
-  "name": "tacz.attachment.acog.name",
-  "tooltip": "tacz.attachment.acog.tooltip",
-  "display": "tacz:acog_display",
-  "data": "tacz:acog_data",
-  "type": "scope"
-}

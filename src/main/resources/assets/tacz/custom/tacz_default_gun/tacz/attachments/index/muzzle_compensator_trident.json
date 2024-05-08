@@ -1,0 +1,6 @@
+{
+  "name": "tacz.attachment.muzzle_compensator_trident.name",
+  "display": "tacz:muzzle_compensator_trident_display",
+  "data": "tacz:muzzle_compensator_trident_data",
+  "type": "muzzle"
+}

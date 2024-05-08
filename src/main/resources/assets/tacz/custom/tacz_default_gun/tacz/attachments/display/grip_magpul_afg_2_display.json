@@ -1,0 +1,11 @@
+{
+  "slot": "tacz:attachment/slot/grip_magpul_afg_2",
+  // 配件的默认模型，不可为空
+  "model": "tacz:attachment/grip_magpul_afg_2_geo",
+  // 配件默认模型使用的材质，不可为空
+  "texture": "tacz:attachment/uv/grip_magpul_afg_2",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_b",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}
