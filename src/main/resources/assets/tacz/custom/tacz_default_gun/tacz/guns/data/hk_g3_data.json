@@ -124,14 +124,14 @@
   "allow_attachments": {
     "scope": {
       "black_list": [
-        "tacz:sro_dot"
+        "tacz:sight_sro_dot"
       ]
     },
     "stock": {},
     "grip": {},
     "muzzle": {
       "black_list": [
-        "tacz:muzzle_s_mirage"
+        "tacz:muzzle_silence_mirage"
       ]
     },
     "extended_mag": {}
@@ -139,7 +139,7 @@
   // 专属的配件属性
   "exclusive_attachments": {
     // 配件 ID，后面的数据和配件的 data 部分结构完全一致
-    "tacz:8x": {
+    "tacz:scope_standard_8x": {
       "weight": 2.0,
       "ads_addend": 0.04,
       "inaccuracy_addend": -0.4,

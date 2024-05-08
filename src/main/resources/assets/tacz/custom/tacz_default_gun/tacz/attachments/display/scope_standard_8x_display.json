@@ -1,0 +1,15 @@
+{
+  "slot": "tacz:attachment/slot/scope_standard_8x",
+  "model": "tacz:attachment/scope_standard_8x_geo",
+  "texture": "tacz:attachment/uv/scope_standard_8x",
+  "zoom": [
+    4.0,
+    8.0
+  ],
+  "scope": true,
+  "fov": 70.0,
+  "sounds": {
+    "install": "tacz:attachments/scope_general_a",
+    "uninstall": "tacz:attachments/scope_general_a"
+  }
+}

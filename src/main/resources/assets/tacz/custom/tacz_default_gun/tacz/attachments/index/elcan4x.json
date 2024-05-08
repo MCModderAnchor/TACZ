@@ -1,7 +1,0 @@
-{
-  "name": "tacz.attachment.elcan4x.name",
-  "tooltip": "tacz.attachment.elcan4x.tooltip",
-  "display": "tacz:elcan4x_display",
-  "data": "tacz:elcan4x_data",
-  "type": "scope"
-}

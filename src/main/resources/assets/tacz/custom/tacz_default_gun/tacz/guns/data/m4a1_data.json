@@ -80,20 +80,20 @@
   "allow_attachments": {
     "scope": {
       "black_list": [
-        "tacz:sro_dot"
+        "tacz:sight_sro_dot"
       ]
     },
     "stock": {
       "white_list": [
-        "tacz:ar_tactical_stock",
-        "tacz:carbon_bone_c5_stock",
-        "tacz:militech_b5_stock"
+        "tacz:stock_tactical_ar",
+        "tacz:stock_carbon_bone_c5",
+        "tacz:stock_militech_b5"
       ]
     },
     "grip": {},
     "muzzle": {
       "black_list": [
-        "tacz:muzzle_s_mirage"
+        "tacz:muzzle_silence_mirage"
       ]
     },
 //    "laser": {},

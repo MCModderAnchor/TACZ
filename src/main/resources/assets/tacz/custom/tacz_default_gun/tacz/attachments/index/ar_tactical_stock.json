@@ -1,7 +1,0 @@
-{
-  "name": "tacz.attachment.ar_tactical_stock.name",
-  "tooltip": "tacz.attachment.ar_tactical_stock.tooltip",
-  "display": "tacz:ar_tactical_stock_display",
-  "data": "tacz:ar_tactical_stock_data",
-  "type": "stock"
-}

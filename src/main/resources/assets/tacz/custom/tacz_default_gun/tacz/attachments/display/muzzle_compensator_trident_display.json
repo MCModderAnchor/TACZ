@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_compensator_trident",
+  "model": "tacz:attachment/muzzle_compensator_trident_geo",
+  "texture": "tacz:attachment/uv/muzzle_compensator_trident",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

@@ -1,7 +1,0 @@
-{
-  "name": "tacz.attachment.militech_b5_stock.name",
-  "tooltip": "tacz.attachment.militech_b5_stock.tooltip",
-  "display": "tacz:militech_b5_stock_display",
-  "data": "tacz:militech_b5_stock_data",
-  "type": "stock"
-}

@@ -53,13 +53,13 @@
   "allow_attachments": {
     "scope": {
       "white_list": [
-        "tacz:sro_dot"
+        "tacz:sight_sro_dot"
       ]
     },
     "extended_mag": {},
     "muzzle": {
       "white_list": [
-        "tacz:muzzle_s_mirage"
+        "tacz:muzzle_silence_mirage"
       ]
     }
   },
