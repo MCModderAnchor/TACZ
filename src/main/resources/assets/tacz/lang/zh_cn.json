@@ -26,6 +26,8 @@
   "config.tacz.client.render.kill_amount_enable.desc": "是否显示连杀计数",
   "config.tacz.client.render.target_render_distance": "标靶显示距离",
   "config.tacz.client.render.target_render_distance.desc": "标靶最远显示距离，包括标靶车",
+  "config.tacz.client.render.first_person_bullet_tracer_enable": "第一人称曳光渲染",
+  "config.tacz.client.render.first_person_bullet_tracer_enable.desc": "是否开启第一人称的曳光弹渲染",
   "config.tacz.client.zoom": "缩放",
   "config.tacz.client.zoom.screen_distance_coefficient": "荧幕距离系数",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "缩放时的荧幕距离系数，使用 MDV 标准，默认为 MDV133",
