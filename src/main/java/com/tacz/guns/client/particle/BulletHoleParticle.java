@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -145,7 +146,10 @@ public class BulletHoleParticle extends TextureSheetParticle {
         float u1 = this.getU1();
         float v0 = this.getV0();
         float v1 = this.getV1();
-        int lightColor = this.getLightColor(partialTicks);
+
+        // 0 - 30 tick 内，从 15 亮度到 0 亮度
+        int light = Math.max(15 - this.age / 2, 0);
+        int lightColor = LightTexture.pack(light, light);
         double threshold = RenderConfig.BULLET_HOLE_PARTICLE_FADE_THRESHOLD.get() * this.lifetime;
         float fade = 1.0f - (float) (Math.max(this.age - threshold, 0) / (this.lifetime - threshold));
         buffer.vertex(points[0].x(), points[0].y(), points[0].z()).uv(u1, v1).color(this.rCol, this.gCol, this.bCol, this.alpha * fade).uv2(lightColor).endVertex();
