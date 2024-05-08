@@ -67,6 +67,7 @@ public class HitboxHelperEvent {
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        PLAYER_POSITION.remove(event.getEntity());
         PLAYER_HITBOXES.remove(event.getEntity());
         PLAYER_VELOCITY.remove(event.getEntity());
     }
