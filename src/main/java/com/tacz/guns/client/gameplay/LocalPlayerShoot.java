@@ -144,8 +144,8 @@ public class LocalPlayerShoot {
         return useSilenceSound[0];
     }
 
-    private long getCoolDown(IGun iGun, ItemStack mainhandItem, GunData gunData) {
-        FireMode fireMode = iGun.getFireMode(mainhandItem);
+    private long getCoolDown(IGun iGun, ItemStack mainHandItem, GunData gunData) {
+        FireMode fireMode = iGun.getFireMode(mainHandItem);
         long coolDown;
         if (fireMode == FireMode.BURST) {
             coolDown = gunData.getBurstShootInterval() - (System.currentTimeMillis() - data.clientShootTimestamp);
@@ -161,8 +161,12 @@ public class LocalPlayerShoot {
         if (iGun == null) {
             return -1;
         }
+        FireMode fireMode = iGun.getFireMode(mainHandItem);
         ResourceLocation gunId = iGun.getGunId(mainHandItem);
         Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
+        if (fireMode == FireMode.BURST) {
+            return gunIndexOptional.map(gunIndex -> gunIndex.getGunData().getBurstShootInterval() - (System.currentTimeMillis() - data.clientShootTimestamp)).orElse(-1L);
+        }
         return gunIndexOptional.map(gunIndex -> gunIndex.getGunData().getShootInterval() - (System.currentTimeMillis() - data.clientShootTimestamp)).orElse(-1L);
     }
 }

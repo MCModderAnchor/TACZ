@@ -5,6 +5,7 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.entity.EntityBullet;
 import com.tacz.guns.resource.index.CommonGunIndex;
@@ -109,6 +110,15 @@ public class LivingEntityShoot {
         }
         ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
+        FireMode fireMode = iGun.getFireMode(currentGunItem);
+        if (fireMode == FireMode.BURST) {
+            return gunIndex.map(index -> {
+                long coolDown = index.getGunData().getBurstShootInterval() - (System.currentTimeMillis() - data.shootTimestamp);
+                // 给 25 ms 的窗口时间，以平衡延迟
+                coolDown = coolDown - 25;
+                return Math.max(coolDown, 0L);
+            }).orElse(-1L);
+        }
         return gunIndex.map(index -> {
             long coolDown = index.getGunData().getShootInterval() - (System.currentTimeMillis() - data.shootTimestamp);
             // 给 25 ms 的窗口时间，以平衡延迟
