@@ -2,6 +2,10 @@
     "model": "tacz:gun/uzi_geo",
     "texture": "tacz:gun/uv/uzi",
     "hud": "tacz:gun/hud/uzi",
+    "lod": {
+        "model": "tacz:gun/lod/uzi",
+        "texture": "tacz:gun/lod/uzi"
+    },
     "slot": "tacz:gun/slot/uzi",
     "animation": "tacz:uzi",
     "use_default_animation": "rifle",
