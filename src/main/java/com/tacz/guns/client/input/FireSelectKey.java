@@ -31,7 +31,7 @@ public class FireSelectKey {
     public static void onFireSelectPress(InputEvent.KeyInputEvent event) {
         if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && FIRE_SELECT_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) {
+            if (player == null || player.isSpectator()) {
                 return;
             }
             if (IGun.mainhandHoldGun(player)) {
