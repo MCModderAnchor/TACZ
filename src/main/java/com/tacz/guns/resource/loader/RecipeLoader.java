@@ -6,16 +6,18 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.CommonGunPackLoader;
+import com.tacz.guns.resource.network.CommonGunPackNetwork;
+import com.tacz.guns.resource.network.DataType;
 import com.tacz.guns.resource.pojo.data.recipe.TableRecipe;
 import com.tacz.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,8 +42,9 @@ public final class RecipeLoader {
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
-                TableRecipe tableRecipe = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), TableRecipe.class);
-                CommonAssetManager.INSTANCE.putRecipe(registryName, new GunSmithTableRecipe(registryName, tableRecipe));
+                String json = IOUtils.toString(stream, StandardCharsets.UTF_8);
+                loadFromJsonString(registryName, json);
+                CommonGunPackNetwork.addData(DataType.RECIPES, registryName, json);
                 return true;
             } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                 GunMod.LOGGER.warn(MARKER, "Failed to read recipe file: {}, entry: {}", zipFile, entry);
@@ -56,8 +59,9 @@ public final class RecipeLoader {
         if (Files.isDirectory(filePath)) {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
-                    TableRecipe tableRecipe = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), TableRecipe.class);
-                    CommonAssetManager.INSTANCE.putRecipe(id, new GunSmithTableRecipe(id, tableRecipe));
+                    String json = IOUtils.toString(stream, StandardCharsets.UTF_8);
+                    loadFromJsonString(id, json);
+                    CommonGunPackNetwork.addData(DataType.RECIPES, id, json);
                 } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read recipe file: {}", file);
                     exception.printStackTrace();
@@ -70,5 +74,10 @@ public final class RecipeLoader {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void loadFromJsonString(ResourceLocation id, String json) {
+        TableRecipe tableRecipe = CommonGunPackLoader.GSON.fromJson(json, TableRecipe.class);
+        CommonAssetManager.INSTANCE.putRecipe(id, new GunSmithTableRecipe(id, tableRecipe));
     }
 }

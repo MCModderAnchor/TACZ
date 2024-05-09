@@ -5,16 +5,18 @@ import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.CommonGunPackLoader;
+import com.tacz.guns.resource.network.CommonGunPackNetwork;
+import com.tacz.guns.resource.network.DataType;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,8 +41,9 @@ public final class AttachmentDataLoader {
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
-                AttachmentData data = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentData.class);
-                CommonAssetManager.INSTANCE.putAttachmentData(registryName, data);
+                String json = IOUtils.toString(stream, StandardCharsets.UTF_8);
+                loadFromJsonString(registryName, json);
+                CommonGunPackNetwork.addData(DataType.ATTACHMENT_DATA, registryName, json);
                 return true;
             } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                 GunMod.LOGGER.warn(MARKER, "Failed to read data file: {}, entry: {}", zipFile, entry);
@@ -55,8 +58,9 @@ public final class AttachmentDataLoader {
         if (Files.isDirectory(filePath)) {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
-                    AttachmentData data = CommonGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentData.class);
-                    CommonAssetManager.INSTANCE.putAttachmentData(id, data);
+                    String json = IOUtils.toString(stream, StandardCharsets.UTF_8);
+                    loadFromJsonString(id, json);
+                    CommonGunPackNetwork.addData(DataType.ATTACHMENT_DATA, id, json);
                 } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read data file: {}", file);
                     exception.printStackTrace();
@@ -69,5 +73,10 @@ public final class AttachmentDataLoader {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void loadFromJsonString(ResourceLocation id, String json) {
+        AttachmentData data = CommonGunPackLoader.GSON.fromJson(json, AttachmentData.class);
+        CommonAssetManager.INSTANCE.putAttachmentData(id, data);
     }
 }
