@@ -419,25 +419,25 @@ public class MathUtil {
         return Math.acos(cos);
     }
 
-    public static float catmullRom(float[] y, float tension, float alpha) {
+    public static float splineCurve(float[] y, float tension, float alpha) {
         if (y.length != 4) {
             throw new IllegalArgumentException("y value length must be 4 when doing catmull-rom spline");
         }
         if (tension < 0 || tension > 1) {
             throw new IllegalArgumentException("tension must be 0~1 when doing catmull-rom spline");
         }
-        float alpha2 = alpha * alpha;
-        float alpha3 = alpha2 * alpha2;
-
-        float q1 = -alpha3 + 2f * alpha2 - alpha;
-        float q2 = 3f * alpha3 - 5f * alpha2 + 2f;
-        float q3 = -3f * alpha3 + 4f * alpha2 + alpha;
-        float q4 = alpha3 - alpha2;
-
-        return (1f - tension) * (y[0] * q1 + y[1] * q2 + y[2] * q3 + y[3] * q4);
+        float v0 = (y[2] - y[0]) * 0.5f;
+        float v1 = (y[3] - y[1]) * 0.5f;
+        float t2 = alpha * alpha;
+        float t3 = alpha * t2;
+        float h1 = 2f * t3 - 3f * t2 + 1f;
+        float h2 = -2f * t3 + 3f * t2;
+        float h3 = t3 - 2f * t2 + alpha;
+        float h4 = t3 - t2;
+        return h1 * y[1] + h2 * y[2] + h3 * v0 + h4 * v1;
     }
 
-    public static float[] catmullRomQuaternion(float[][] quaternions, float tension, float alpha) {
+    public static float[] quaternionSplineCurve(float[][] quaternions, float tension, float alpha) {
         if (quaternions.length != 4) {
             throw new IllegalArgumentException("y value length must be 4 when doing catmull-rom spline");
         }
@@ -451,7 +451,7 @@ public class MathUtil {
         float[] result = new float[3];
         for (int i = 0; i < 3; i++) {
             float[] input = new float[]{angles0[i], angles1[i], angles2[i], angles3[i]};
-            result[i] = catmullRom(input, tension, alpha);
+            result[i] = splineCurve(input, tension, alpha);
         }
         return toQuaternion(result[0], result[1], result[2]);
     }

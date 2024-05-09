@@ -1,13 +1,11 @@
 package com.tacz.guns.client.animation.interpolator;
 
-import com.mojang.math.Quaternion;
 import com.tacz.guns.client.animation.AnimationChannelContent;
 import com.tacz.guns.client.animation.AnimationChannelContent.LerpMode;
 import com.tacz.guns.util.math.MathUtil;
 
 public class CustomInterpolator implements Interpolator {
     private AnimationChannelContent content;
-
     @Override
     public void compile(AnimationChannelContent content) {
         this.content = content;
@@ -45,6 +43,12 @@ public class CustomInterpolator implements Interpolator {
     }
 
     private void doCatmullromLerp(int indexFrom, int indexTo, float alpha, float[] result) {
+        if (content.values.length == 1) {
+            result[0] = content.values[0][0];
+            result[1] = content.values[0][1];
+            result[2] = content.values[0][2];
+            return;
+        }
         float[] vx = new float[4];
         float[] vy = new float[4];
         float[] vz = new float[4];
@@ -63,12 +67,21 @@ public class CustomInterpolator implements Interpolator {
         vx[3] = content.values[next][0];
         vy[3] = content.values[next][1];
         vz[3] = content.values[next][2];
-        result[0] = MathUtil.catmullRom(vx, 0.5f, alpha);
-        result[1] = MathUtil.catmullRom(vy, 0.5f, alpha);
-        result[2] = MathUtil.catmullRom(vz, 0.5f, alpha);
+        // 这里用的是三次样条插值，主要是为了和 BlockBench 中的表现贴合。
+        // BlockBench 中调用的是 THREE.SplineCurve，其实现是三次样条插值。如果用 Catmull-Rom 插值，区别会比较大。
+        result[0] = MathUtil.splineCurve(vx, 0.5f, alpha);
+        result[1] = MathUtil.splineCurve(vy, 0.5f, alpha);
+        result[2] = MathUtil.splineCurve(vz, 0.5f, alpha);
     }
 
     private void doSphericalLinearLerp(int indexFrom, int indexTo, float alpha, float[] result) {
+        if (content.values.length == 1) {
+            result[0] = content.values[0][0];
+            result[1] = content.values[0][1];
+            result[2] = content.values[0][2];
+            result[3] = content.values[0][3];
+            return;
+        }
         // 如果旋转值有 8 个，后四个为 Post 数值，用于插值起点
         int offset = content.values[indexFrom].length == 8 ? 4 : 0;
         float ax = content.values[indexFrom][offset];
@@ -110,12 +123,21 @@ public class CustomInterpolator implements Interpolator {
     }
 
     private void doSphericalCatmullRomLerp(int indexFrom, int indexTo, float alpha, float[] result) {
+        if (content.values.length == 1) {
+            result[0] = content.values[0][0];
+            result[1] = content.values[0][1];
+            result[2] = content.values[0][2];
+            result[3] = content.values[0][3];
+            return;
+        }
         int prev = indexFrom == 0 ? 0 : indexFrom - 1;
         int next = indexTo == (content.values.length - 1) ? (content.values.length - 1) : indexTo + 1;
         int prevOffset = content.values[prev].length == 8 ? 4 : 0;
         float[] prevValue = content.values[prev];
         float[] q0 = new float[]{prevValue[prevOffset], prevValue[1 + prevOffset], prevValue[2 + prevOffset], prevValue[3 + prevOffset]};
-        float[] r = MathUtil.catmullRomQuaternion(new float[][]{q0, content.values[indexFrom], content.values[indexTo], content.values[next]}, 0.5f, alpha);
+        // 这里用的是三次样条插值，主要是为了和 BlockBench 中的表现贴合。
+        // BlockBench 中调用的是 THREE.SplineCurve，其实现是三次样条插值。如果用 Catmull-Rom 插值，区别会比较大。
+        float[] r = MathUtil.quaternionSplineCurve(new float[][]{q0, content.values[indexFrom], content.values[indexTo], content.values[next]}, 0.5f, alpha);
         result[0] = r[0];
         result[1] = r[1];
         result[2] = r[2];
