@@ -33,6 +33,9 @@ public class AimKey {
     public static void onAimPress(InputEvent.MouseInputEvent event) {
         if (isInGame() && AIM_KEY.matchesMouse(event.getButton())) {
             LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null || player.isSpectator()) {
+                return;
+            }
             if (!(player instanceof IClientPlayerGunOperator operator)) {
                 return;
             }
