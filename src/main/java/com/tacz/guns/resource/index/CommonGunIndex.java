@@ -16,12 +16,14 @@ import java.util.Map;
 public class CommonGunIndex {
     private GunData gunData;
     private String type;
+    private GunIndexPOJO pojo;
 
     private CommonGunIndex() {
     }
 
     public static CommonGunIndex getInstance(GunIndexPOJO gunIndexPOJO) throws IllegalArgumentException {
         CommonGunIndex index = new CommonGunIndex();
+        index.pojo = gunIndexPOJO;
         checkIndex(gunIndexPOJO, index);
         checkData(gunIndexPOJO, index);
         return index;
@@ -98,5 +100,9 @@ public class CommonGunIndex {
 
     public String getType() {
         return type;
+    }
+
+    public GunIndexPOJO getPojo() {
+        return pojo;
     }
 }

@@ -5,12 +5,14 @@ import com.tacz.guns.resource.pojo.AmmoIndexPOJO;
 
 public class CommonAmmoIndex {
     private int stackSize;
+    private AmmoIndexPOJO pojo;
 
     private CommonAmmoIndex() {
     }
 
     public static CommonAmmoIndex getInstance(AmmoIndexPOJO ammoIndexPOJO) throws IllegalArgumentException {
         CommonAmmoIndex index = new CommonAmmoIndex();
+        index.pojo = ammoIndexPOJO;
         checkIndex(ammoIndexPOJO, index);
         return index;
     }
@@ -22,5 +24,9 @@ public class CommonAmmoIndex {
 
     public int getStackSize() {
         return stackSize;
+    }
+
+    public AmmoIndexPOJO getPojo() {
+        return pojo;
     }
 }

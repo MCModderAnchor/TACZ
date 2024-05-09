@@ -10,12 +10,14 @@ import net.minecraft.resources.ResourceLocation;
 public class CommonAttachmentIndex {
     private AttachmentData data;
     private AttachmentType type;
+    private AttachmentIndexPOJO pojo;
 
     private CommonAttachmentIndex() {
     }
 
     public static CommonAttachmentIndex getInstance(AttachmentIndexPOJO attachmentIndexPOJO) throws IllegalArgumentException {
         CommonAttachmentIndex index = new CommonAttachmentIndex();
+        index.pojo = attachmentIndexPOJO;
         checkIndex(attachmentIndexPOJO, index);
         checkData(attachmentIndexPOJO, index);
         return index;
@@ -41,5 +43,9 @@ public class CommonAttachmentIndex {
 
     public AttachmentType getType() {
         return type;
+    }
+
+    public AttachmentIndexPOJO getPojo() {
+        return pojo;
     }
 }
