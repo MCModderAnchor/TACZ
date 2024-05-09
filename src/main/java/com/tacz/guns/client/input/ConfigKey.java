@@ -41,7 +41,7 @@ public class ConfigKey {
                 && OPEN_CONFIG_KEY.matches(event.getKey(), event.getScanCode())
                 && OPEN_CONFIG_KEY.getKeyModifier().equals(KeyModifier.getActiveModifier())) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) {
+            if (player == null || player.isSpectator()) {
                 return;
             }
             if (!ModList.get().isLoaded(CompatRegistry.CLOTH_CONFIG)) {
