@@ -40,7 +40,7 @@ public class TickAnimationEvent {
             if (isShooting) {
                 // 如果玩家正在射击，只能处于 idle 状态
                 animationStateMachine.onShooterIdle();
-            } else if (player.isSprinting()) {
+            } else if (!player.isMovingSlowly() && player.isSprinting()) {
                 // 如果玩家正在移动，播放移动动画，否则播放 idle 动画
                 animationStateMachine.setOnGround(player.isOnGround()).onShooterRun(player.walkDist);
             } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {

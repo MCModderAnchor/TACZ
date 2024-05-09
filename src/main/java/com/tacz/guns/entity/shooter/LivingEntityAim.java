@@ -105,7 +105,7 @@ public class LivingEntityAim {
         }
         TimelessAPI.getCommonGunIndex(iGun.getGunId(gunItem)).ifPresentOrElse(gunIndex -> {
             float gunSprintTime = gunIndex.getGunData().getSprintTime();
-            if (shooter.isSprinting()) {
+            if (shooter.isSprinting() && !shooter.isCrouching()) {
                 data.sprintTimeS += (System.currentTimeMillis() - data.sprintTimestamp) / 1000f;
                 if (data.sprintTimeS > gunSprintTime) {
                     data.sprintTimeS = gunSprintTime;
