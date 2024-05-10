@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerPlayer.class)
 public class ServerPlayerMixin {
     @Inject(method = "restoreFrom", at = @At("RETURN"))
-    public void initialGunOperateData(ServerPlayer pThat, boolean pKeepEverything, CallbackInfo ci){
+    public void initialGunOperateData(ServerPlayer pThat, boolean pKeepEverything, CallbackInfo ci) {
         ServerPlayer player = (ServerPlayer) (Object) this;
         IGunOperator.fromLivingEntity(player).initialData();
     }

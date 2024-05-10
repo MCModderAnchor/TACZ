@@ -18,6 +18,10 @@ public class LocalPlayerDataHolder {
      */
     public static float oldAimingProgress = 0;
     /**
+     * 玩家对象
+     */
+    private final LocalPlayer player;
+    /**
      * 与延迟射击有关的几个变量
      */
     public volatile long clientShootTimestamp = -1L;
@@ -59,10 +63,6 @@ public class LocalPlayerDataHolder {
      * 计算上锁响应时间，不允许超过最大响应时间，避免死锁
      */
     public long lockTimestamp = -1;
-    /**
-     * 玩家对象
-     */
-    private final LocalPlayer player;
 
     public LocalPlayerDataHolder(LocalPlayer player) {
         this.player = player;

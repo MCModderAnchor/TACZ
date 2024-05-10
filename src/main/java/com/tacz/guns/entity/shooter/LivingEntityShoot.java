@@ -2,11 +2,11 @@ package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.entity.ShootResult;
+import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;

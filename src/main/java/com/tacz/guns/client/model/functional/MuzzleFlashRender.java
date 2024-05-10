@@ -41,39 +41,6 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
         this.bedrockGunModel = bedrockGunModel;
     }
 
-    @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
-        if (OculusCompat.isRenderShadow()) {
-            return;
-        }
-        if (!isSelf) {
-            return;
-        }
-        long time = System.currentTimeMillis() - shootTimeStamp;
-        if (time > TIME_RANGE) {
-            return;
-        }
-        ItemStack currentGunItem = bedrockGunModel.getCurrentGunItem();
-        IGun iGun = IGun.getIGunOrNull(currentGunItem);
-        if (iGun == null) {
-            return;
-        }
-        ResourceLocation gunId = iGun.getGunId(currentGunItem);
-        // 如果安装了消音器，则不渲染枪口火光
-        ItemStack muzzleAttachment = bedrockGunModel.getCurrentAttachmentItem().get(AttachmentType.MUZZLE);
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(muzzleAttachment);
-        if (iAttachment != null) {
-            TimelessAPI.getCommonAttachmentIndex(iAttachment.getAttachmentId(muzzleAttachment)).ifPresent(index -> {
-                if (index.getData().getSilence() != null) {
-                    return;
-                }
-                renderMuzzleFlash(gunId, poseStack, bedrockGunModel, time);
-            });
-        } else {
-            renderMuzzleFlash(gunId, poseStack, bedrockGunModel, time);
-        }
-    }
-
     public static void onShoot() {
         // 记录开火时间戳
         shootTimeStamp = System.currentTimeMillis();
@@ -131,6 +98,39 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
                 MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeLight), light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
             }
             poseStack2.popPose();
+        }
+    }
+
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
+        if (OculusCompat.isRenderShadow()) {
+            return;
+        }
+        if (!isSelf) {
+            return;
+        }
+        long time = System.currentTimeMillis() - shootTimeStamp;
+        if (time > TIME_RANGE) {
+            return;
+        }
+        ItemStack currentGunItem = bedrockGunModel.getCurrentGunItem();
+        IGun iGun = IGun.getIGunOrNull(currentGunItem);
+        if (iGun == null) {
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
+        // 如果安装了消音器，则不渲染枪口火光
+        ItemStack muzzleAttachment = bedrockGunModel.getCurrentAttachmentItem().get(AttachmentType.MUZZLE);
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(muzzleAttachment);
+        if (iAttachment != null) {
+            TimelessAPI.getCommonAttachmentIndex(iAttachment.getAttachmentId(muzzleAttachment)).ifPresent(index -> {
+                if (index.getData().getSilence() != null) {
+                    return;
+                }
+                renderMuzzleFlash(gunId, poseStack, bedrockGunModel, time);
+            });
+        } else {
+            renderMuzzleFlash(gunId, poseStack, bedrockGunModel, time);
         }
     }
 }

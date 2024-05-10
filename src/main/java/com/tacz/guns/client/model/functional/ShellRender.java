@@ -30,23 +30,6 @@ public class ShellRender implements IFunctionalRenderer {
         this.bedrockGunModel = bedrockGunModel;
     }
 
-    @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
-        if (OculusCompat.isRenderShadow()) {
-            return;
-        }
-        if (!isSelf) {
-            return;
-        }
-        ItemStack currentGunItem = bedrockGunModel.getCurrentGunItem();
-        IGun iGun = IGun.getIGunOrNull(currentGunItem);
-        if (iGun == null) {
-            return;
-        }
-        ResourceLocation gunId = iGun.getGunId(currentGunItem);
-        ShellRender.renderShell(gunId, poseStack, bedrockGunModel);
-    }
-
     public static void addShell(Vector3f randomVelocity) {
         double xRandom = Math.random() * randomVelocity.x();
         double yRandom = Math.random() * randomVelocity.y();
@@ -139,6 +122,22 @@ public class ShellRender implements IFunctionalRenderer {
         }
     }
 
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
+        if (OculusCompat.isRenderShadow()) {
+            return;
+        }
+        if (!isSelf) {
+            return;
+        }
+        ItemStack currentGunItem = bedrockGunModel.getCurrentGunItem();
+        IGun iGun = IGun.getIGunOrNull(currentGunItem);
+        if (iGun == null) {
+            return;
+        }
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
+        ShellRender.renderShell(gunId, poseStack, bedrockGunModel);
+    }
 
     public static class Data {
         public final long timeStamp;

@@ -29,13 +29,13 @@ import java.util.function.Function;
 public class NetworkHandler {
     private static final String VERSION = "1.0.0";
 
-    private static final AtomicInteger ID_COUNT = new AtomicInteger(1);
-    private static final AtomicInteger HANDSHAKE_ID_COUNT = new AtomicInteger(1);
-
     public static final SimpleChannel HANDSHAKE_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(GunMod.MOD_ID, "handshake"),
             () -> VERSION, it -> it.equals(VERSION), it -> it.equals(VERSION));
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(GunMod.MOD_ID, "network"),
             () -> VERSION, it -> it.equals(VERSION), it -> it.equals(VERSION));
+
+    private static final AtomicInteger ID_COUNT = new AtomicInteger(1);
+    private static final AtomicInteger HANDSHAKE_ID_COUNT = new AtomicInteger(1);
 
     public static void init() {
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessagePlayerShoot.class, ClientMessagePlayerShoot::encode, ClientMessagePlayerShoot::decode, ClientMessagePlayerShoot::handle,

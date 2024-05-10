@@ -2,11 +2,11 @@ package com.tacz.guns.item;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
+import com.tacz.guns.api.item.gun.FireMode;
+import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
-import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
@@ -28,8 +28,9 @@ import java.util.Optional;
 /**
  * 现代枪的逻辑实现
  */
-public class ModernKineticGunItem extends AbstractGunItem implements GunItemDataAccessor{
+public class ModernKineticGunItem extends AbstractGunItem implements GunItemDataAccessor {
     public static final String TYPE_NAME = "modern_kinetic";
+
     public ModernKineticGunItem() {
         super(new Properties().stacksTo(1).tab(ModItems.OTHER_TAB));
     }

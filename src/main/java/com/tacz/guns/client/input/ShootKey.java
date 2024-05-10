@@ -3,9 +3,9 @@ package com.tacz.guns.client.input;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
-import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.resource.pojo.data.gun.BurstData;
 import net.minecraft.Util;
@@ -30,16 +30,15 @@ import static com.tacz.guns.util.InputExtraCheck.isInGame;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class ShootKey {
-    private static boolean burstContinuousShootState = false;
-    private static long burstNextTimestamp = -1L;
-    private static int burstShootCounter = 0;
-
     public static final KeyMapping SHOOT_KEY = new KeyMapping("key.tacz.shoot.desc",
             KeyConflictContext.IN_GAME,
             KeyModifier.NONE,
             InputConstants.Type.MOUSE,
             GLFW.GLFW_MOUSE_BUTTON_LEFT,
             "key.category.tacz");
+    private static boolean burstContinuousShootState = false;
+    private static long burstNextTimestamp = -1L;
+    private static int burstShootCounter = 0;
 
     @SubscribeEvent
     public static void autoShoot(TickEvent.ClientTickEvent event) {

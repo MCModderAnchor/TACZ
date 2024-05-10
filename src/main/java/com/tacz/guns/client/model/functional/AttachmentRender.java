@@ -31,24 +31,6 @@ public class AttachmentRender implements IFunctionalRenderer {
         this.type = type;
     }
 
-    @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
-        EnumMap<AttachmentType, ItemStack> currentAttachmentItem = bedrockGunModel.getCurrentAttachmentItem();
-        ItemStack attachmentItem = currentAttachmentItem.get(type);
-        if (attachmentItem != null && !attachmentItem.isEmpty()) {
-            Matrix3f normal = poseStack.last().normal().copy();
-            Matrix4f pose = poseStack.last().pose().copy();
-            //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染
-            bedrockGunModel.delegateRender((poseStack1, vertexBuffer1, transformType1, light1, overlay1) -> {
-                PoseStack poseStack2 = new PoseStack();
-                poseStack2.last().normal().mul(normal);
-                poseStack2.last().pose().multiply(pose);
-                // 渲染配件
-                renderAttachment(attachmentItem, poseStack2, transformType, light, overlay);
-            });
-        }
-    }
-
     public static void renderAttachment(ItemStack attachmentItem, PoseStack poseStack, ItemTransforms.TransformType transformType, int light, int overlay) {
         poseStack.translate(0, -1.5, 0);
         if (attachmentItem.getItem() instanceof IAttachment iAttachment) {
@@ -74,6 +56,24 @@ public class AttachmentRender implements IFunctionalRenderer {
                 MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
                 VertexConsumer buffer = bufferSource.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
                 AttachmentItemRenderer.SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+            });
+        }
+    }
+
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
+        EnumMap<AttachmentType, ItemStack> currentAttachmentItem = bedrockGunModel.getCurrentAttachmentItem();
+        ItemStack attachmentItem = currentAttachmentItem.get(type);
+        if (attachmentItem != null && !attachmentItem.isEmpty()) {
+            Matrix3f normal = poseStack.last().normal().copy();
+            Matrix4f pose = poseStack.last().pose().copy();
+            //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染
+            bedrockGunModel.delegateRender((poseStack1, vertexBuffer1, transformType1, light1, overlay1) -> {
+                PoseStack poseStack2 = new PoseStack();
+                poseStack2.last().normal().mul(normal);
+                poseStack2.last().pose().multiply(pose);
+                // 渲染配件
+                renderAttachment(attachmentItem, poseStack2, transformType, light, overlay);
             });
         }
     }

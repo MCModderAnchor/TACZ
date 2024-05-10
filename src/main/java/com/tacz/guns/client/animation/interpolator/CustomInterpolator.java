@@ -6,6 +6,7 @@ import com.tacz.guns.util.math.MathUtil;
 
 public class CustomInterpolator implements Interpolator {
     private AnimationChannelContent content;
+
     @Override
     public void compile(AnimationChannelContent content) {
         this.content = content;
@@ -18,10 +19,11 @@ public class CustomInterpolator implements Interpolator {
         if (fromLerpMode == LerpMode.SPHERICAL_LINEAR && toLerpMode == LerpMode.SPHERICAL_LINEAR) {
             // 球面线性插值
             this.doSphericalLinearLerp(indexFrom, indexTo, alpha, result);
-        } if (fromLerpMode == LerpMode.SPHERICAL_CATMULLROM || toLerpMode == LerpMode.SPHERICAL_CATMULLROM) {
+        }
+        if (fromLerpMode == LerpMode.SPHERICAL_CATMULLROM || toLerpMode == LerpMode.SPHERICAL_CATMULLROM) {
             // 球面 Catmull-Rom 插值
             this.doSphericalCatmullRomLerp(indexFrom, indexTo, alpha, result);
-        }else if (fromLerpMode == LerpMode.CATMULLROM || toLerpMode == LerpMode.CATMULLROM) {
+        } else if (fromLerpMode == LerpMode.CATMULLROM || toLerpMode == LerpMode.CATMULLROM) {
             // Catmull-Rom 插值
             this.doCatmullromLerp(indexFrom, indexTo, alpha, result);
         } else {

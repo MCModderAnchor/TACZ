@@ -36,6 +36,10 @@ public abstract class AbstractGunItem extends Item implements IGun {
         super(pProperties);
     }
 
+    private static Comparator<Map.Entry<ResourceLocation, ClientGunIndex>> idNameSort() {
+        return Comparator.comparingInt(m -> m.getValue().getSort());
+    }
+
     /**
      * 拉栓完成时调用
      */
@@ -44,7 +48,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
     /**
      * 射击时触发
      */
-    public abstract  void shoot(ItemStack gunItem, float pitch, float yaw, boolean tracer, LivingEntity shooter);
+    public abstract void shoot(ItemStack gunItem, float pitch, float yaw, boolean tracer, LivingEntity shooter);
 
     /**
      * 切换开火模式时调用
@@ -53,8 +57,9 @@ public abstract class AbstractGunItem extends Item implements IGun {
 
     /**
      * 换弹时触发枪械子弹更新时调用
-     * @param gunItem 枪械物品
-     * @param ammoCount 填充的子弹数量
+     *
+     * @param gunItem    枪械物品
+     * @param ammoCount  填充的子弹数量
      * @param loadBarrel 是否需要往枪管里填子弹
      */
     public abstract void reloadAmmo(ItemStack gunItem, int ammoCount, boolean loadBarrel);
@@ -123,9 +128,5 @@ public abstract class AbstractGunItem extends Item implements IGun {
             }
         }
         return Optional.empty();
-    }
-
-    private static Comparator<Map.Entry<ResourceLocation, ClientGunIndex>> idNameSort() {
-        return Comparator.comparingInt(m -> m.getValue().getSort());
     }
 }

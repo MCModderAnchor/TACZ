@@ -1,9 +1,9 @@
 package com.tacz.guns.util;
 
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.resources.ResourceLocation;

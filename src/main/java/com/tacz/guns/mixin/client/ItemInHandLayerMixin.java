@@ -1,9 +1,9 @@
 package com.tacz.guns.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.tacz.guns.client.renderer.other.HumanoidOffhandRender;
 import com.tacz.guns.client.model.functional.MuzzleFlashRender;
 import com.tacz.guns.client.model.functional.ShellRender;
+import com.tacz.guns.client.renderer.other.HumanoidOffhandRender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;

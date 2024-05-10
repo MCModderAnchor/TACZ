@@ -1,9 +1,9 @@
 package com.tacz.guns.item.builder;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
-import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.GunItemManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;

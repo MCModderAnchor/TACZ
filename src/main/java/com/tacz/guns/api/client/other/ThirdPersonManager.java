@@ -21,6 +21,7 @@ public final class ThirdPersonManager {
             rightArm.xRot = -1.4F + head.xRot;
             leftArm.xRot = -1.4F + head.xRot;
         }
+
         @Override
         public void animateGunAim(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart body, ModelPart head, float aimProgress) {
             float lerp1 = Mth.lerp(aimProgress, 0.3f, 0.35f);

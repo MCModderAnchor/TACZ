@@ -2,11 +2,11 @@ package com.tacz.guns.item;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAmmo;
+import com.tacz.guns.api.item.nbt.AmmoItemDataAccessor;
 import com.tacz.guns.client.renderer.item.AmmoItemRenderer;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.item.builder.AmmoItemBuilder;
-import com.tacz.guns.api.item.nbt.AmmoItemDataAccessor;
 import com.tacz.guns.resource.index.CommonAmmoIndex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;

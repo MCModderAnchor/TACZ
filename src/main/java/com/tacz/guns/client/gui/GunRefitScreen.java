@@ -3,9 +3,9 @@ package com.tacz.guns.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.gui.components.refit.*;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
@@ -152,6 +152,21 @@ public class GunRefitScreen extends Screen {
         return ICON_SIZE * 7;
     }
 
+    private static void playerSound(ItemStack attachmentItem, LocalPlayer player, String soundName) {
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+        if (iAttachment == null) {
+            return;
+        }
+        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
+        TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> {
+            Map<String, ResourceLocation> sounds = index.getSounds();
+            if (sounds.containsKey(soundName)) {
+                ResourceLocation resourceLocation = sounds.get(soundName);
+                SoundPlayManager.playClientSound(player, resourceLocation, 1.0f, 1.0f);
+            }
+        });
+    }
+
     @Override
     public void init() {
         super.init();
@@ -172,21 +187,6 @@ public class GunRefitScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
-    }
-
-    private static void playerSound(ItemStack attachmentItem, LocalPlayer player, String soundName) {
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
-        if (iAttachment == null) {
-            return;
-        }
-        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
-        TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> {
-            Map<String, ResourceLocation> sounds = index.getSounds();
-            if (sounds.containsKey(soundName)) {
-                ResourceLocation resourceLocation = sounds.get(soundName);
-                SoundPlayManager.playClientSound(player, resourceLocation, 1.0f, 1.0f);
-            }
-        });
     }
 
     private void addInventoryAttachmentButtons() {

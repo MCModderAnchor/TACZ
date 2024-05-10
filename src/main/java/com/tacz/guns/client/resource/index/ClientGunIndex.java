@@ -334,7 +334,10 @@ public class ClientGunIndex {
     public String getType() {
         return type;
     }
-    public String getItemType() {return itemType;}
+
+    public String getItemType() {
+        return itemType;
+    }
 
     public int getSort() {
         return sort;
