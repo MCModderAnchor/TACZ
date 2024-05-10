@@ -6,6 +6,7 @@ import com.tacz.guns.client.renderer.item.GunItemRenderer;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.tab.CustomTab;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
+import com.tacz.guns.item.ModernKineticGunItem;
 import com.tacz.guns.item.builder.GunItemBuilder;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
@@ -79,9 +80,6 @@ public abstract class AbstractGunItem extends Item implements IGun {
             String key = tab.getKey();
             TimelessAPI.getAllClientGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
                 ClientGunIndex index = entry.getValue();
-                if (!index.getItemType().equals(getTypeName())) {
-                    return;
-                }
                 if (key.equals(index.getType())) {
                     GunData gunData = index.getGunData();
                     ItemStack itemStack = GunItemBuilder.create()
@@ -90,7 +88,9 @@ public abstract class AbstractGunItem extends Item implements IGun {
                             .setAmmoCount(gunData.getAmmoAmount())
                             .setAmmoInBarrel(true)
                             .build();
-                    stacks.add(itemStack);
+                    if (itemStack.getItem() instanceof ModernKineticGunItem) {
+                        stacks.add(itemStack);
+                    }
                 }
             });
         }

@@ -5,7 +5,7 @@
     "name": "tacz.type.pistol.name",
     // 图标，按照原版标准物品格式来写
     "icon": {
-      "item": "tacz:modern_kinetic",
+      "item": "tacz:modern_kinetic_gun",
       "nbt": {
         "GunId": "tacz:glock_17"
       }
@@ -16,7 +16,7 @@
     "name": "tacz.type.sniper.name",
     // 图标，按照原版标准物品格式来写
     "icon": {
-      "item": "tacz:modern_kinetic",
+      "item": "tacz:modern_kinetic_gun",
       "nbt": {
         "GunId": "tacz:ai_awp"
       }
@@ -27,7 +27,7 @@
     "name": "tacz.type.rifle.name",
     // 图标，按照原版标准物品格式来写
     "icon": {
-      "item": "tacz:modern_kinetic",
+      "item": "tacz:modern_kinetic_gun",
       "nbt": {
         "GunId": "tacz:ak47"
       }
@@ -38,7 +38,7 @@
     "name": "tacz.type.shotgun.name",
     // 图标，按照原版标准物品格式来写
     "icon": {
-      "item": "tacz:modern_kinetic",
+      "item": "tacz:modern_kinetic_gun",
       "nbt": {
         "GunId": "tacz:db_short"
       }
@@ -49,7 +49,7 @@
     "name": "tacz.type.smg.name",
     // 图标，按照原版标准物品格式来写
     "icon": {
-      "item": "tacz:modern_kinetic",
+      "item": "tacz:modern_kinetic_gun",
       "nbt": {
         "GunId": "tacz:hk_mp5a5"
       }
@@ -60,7 +60,7 @@
     "name": "tacz.type.rpg.name",
     // 图标，按照原版标准物品格式来写
     "icon": {
-      "item": "tacz:modern_kinetic",
+      "item": "tacz:modern_kinetic_gun",
       "nbt": {
         "GunId": "tacz:rpg7"
       }
@@ -71,7 +71,7 @@
     "name": "tacz.type.mg.name",
     // 图标，按照原版标准物品格式来写
     "icon": {
-      "item": "tacz:modern_kinetic",
+      "item": "tacz:modern_kinetic_gun",
       "nbt": {
         "GunId": "tacz:m249"
       }

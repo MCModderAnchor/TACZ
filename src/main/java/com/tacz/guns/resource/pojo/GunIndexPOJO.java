@@ -23,7 +23,7 @@ public class GunIndexPOJO {
     private String type;
 
     @SerializedName("item_type")
-    private String itemType;
+    private String itemType = "modern_kinetic";
 
     @SerializedName("sort")
     private int sort;

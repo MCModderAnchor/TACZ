@@ -7,6 +7,7 @@ import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.resource.DefaultAssets;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
@@ -141,17 +142,16 @@ public class LivingEntityReload {
         int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunData);
         if (data.reloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
-                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount));
-                Bolt boltType = gunIndexOptional.get().getGunData().getBolt();
-                if (boltType == Bolt.MANUAL_ACTION || boltType == Bolt.CLOSED_BOLT) {
-                    iGun.reduceCurrentAmmoCount(currentGunItem);
-                    iGun.setBulletInBarrel(currentGunItem, true);
+                if (iGun instanceof AbstractGunItem abstractGunItem) {
+                    abstractGunItem.reloadAmmo(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount), true);
                 }
             }
         }
         if (data.reloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
-                iGun.setCurrentAmmoCount(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount));
+                if (iGun instanceof AbstractGunItem abstractGunItem) {
+                    abstractGunItem.reloadAmmo(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount), false);
+                }
             }
         }
         // 更新换弹状态缓存

@@ -29,7 +29,7 @@ import java.util.Optional;
  * 现代枪的逻辑实现
  */
 public class ModernKineticGunItem extends AbstractGunItem implements GunItemDataAccessor{
-    private static final String TYPE_NAME = "modern_kinetic";
+    public static final String TYPE_NAME = "modern_kinetic";
     public ModernKineticGunItem() {
         super(new Properties().stacksTo(1).tab(ModItems.OTHER_TAB));
     }
@@ -68,12 +68,33 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
 
     @Override
     public void reloadAmmo(ItemStack gunItem, int ammoCount, boolean loadBarrel) {
-
+        ResourceLocation gunId = getGunId(gunItem);
+        Bolt boltType = TimelessAPI.getCommonGunIndex(gunId).map(index -> index.getGunData().getBolt()).orElse(null);
+        this.setCurrentAmmoCount(gunItem, ammoCount);
+        if (loadBarrel && (boltType == Bolt.MANUAL_ACTION || boltType == Bolt.CLOSED_BOLT)) {
+            this.reduceCurrentAmmoCount(gunItem);
+            this.setBulletInBarrel(gunItem, true);
+        }
     }
 
     @Override
     public String getTypeName() {
-        return "";
+        return TYPE_NAME;
+    }
+
+    @Override
+    public int getLevel(int exp) {
+        return 0;
+    }
+
+    @Override
+    public int getExp(int level) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 0;
     }
 
     protected void spawnBulletEntity(float pitch, float yaw, boolean tracer, LivingEntity shooter, ItemStack currentGunItem) {
@@ -147,20 +168,5 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                 useSilenceSound[0] = true;
             }
         }
-    }
-
-    @Override
-    public int getLevel(int exp) {
-        return 0;
-    }
-
-    @Override
-    public int getExp(int level) {
-        return 0;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 0;
     }
 }

@@ -1,6 +1,7 @@
 package com.tacz.guns.init;
 
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.item.gun.GunItemManager;
 import com.tacz.guns.item.*;
 import com.tacz.guns.item.builder.AmmoItemBuilder;
 import com.tacz.guns.item.builder.AttachmentItemBuilder;
@@ -38,7 +39,10 @@ public class ModItems {
         }
     };
 
-    public static RegistryObject<Item> MODERN_KINETIC_GUN = ITEMS.register("modern_kinetic_gun", ModernKineticGunItem::new);
+    public static RegistryObject<ModernKineticGunItem> MODERN_KINETIC_GUN = ITEMS.register("modern_kinetic_gun", ModernKineticGunItem::new);
+    static {
+        GunItemManager.registerGunItem(ModernKineticGunItem.TYPE_NAME, MODERN_KINETIC_GUN);
+    }
     public static RegistryObject<Item> AMMO = ITEMS.register("ammo", AmmoItem::new);
     public static RegistryObject<Item> ATTACHMENT = ITEMS.register("attachment", AttachmentItem::new);
     public static RegistryObject<Item> GUN_SMITH_TABLE = ITEMS.register("gun_smith_table", GunSmithTableItem::new);
