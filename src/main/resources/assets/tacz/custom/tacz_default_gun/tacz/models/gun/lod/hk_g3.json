@@ -645,7 +645,7 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0, 6.875, 14.85]
+					"pivot": [0, 5.875, 15.35]
 				},
 				{
 					"name": "ground",
@@ -655,13 +655,13 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1.25, 9.1, 9.225],
-					"rotation": [0, 90, 0]
+					"pivot": [0, 9.1, 9.225],
+					"rotation": [0, -90, 0]
 				},
 				{
 					"name": "shell",
 					"parent": "positioning",
-					"pivot": [-0.5, 10.5, 9]
+					"pivot": [-0.2, 10.775, 9.55]
 				},
 				{
 					"name": "muzzle_flash",
