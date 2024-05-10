@@ -6,7 +6,7 @@
 				"identifier": "geometry.uzi_stock - Converted",
 				"texture_width": 64,
 				"texture_height": 64,
-				"visible_bounds_width": 3,
+				"visible_bounds_width": 4,
 				"visible_bounds_height": 2.5,
 				"visible_bounds_offset": [0, 0.75, 0]
 			},
@@ -446,18 +446,18 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0, 7.025, 9.1]
+					"pivot": [0.95, 6.025, 1.1]
 				},
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0.95, 8.55, 9.825],
+					"pivot": [0.95, 8.55, 1.825],
 					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "ground",
 					"parent": "positioning",
-					"pivot": [0, -2.875, 9]
+					"pivot": [0, -2.875, 1]
 				}
 			]
 		}
