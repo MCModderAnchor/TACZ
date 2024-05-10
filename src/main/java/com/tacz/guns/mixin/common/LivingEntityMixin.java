@@ -28,7 +28,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     private final @Unique LivingEntityAmmoCheck tacz$ammoCheck = new LivingEntityAmmoCheck(tacz$shooter);
     private final @Unique LivingEntityFireSelect tacz$fireSelect = new LivingEntityFireSelect(tacz$shooter, this.tacz$data);
     private final @Unique LivingEntityDrawGun tacz$draw = new LivingEntityDrawGun(tacz$shooter, tacz$data);
-    private final @Unique LivingEntityPutAwayGun tacz$putAway = new LivingEntityPutAwayGun(tacz$data);
     private final @Unique LivingEntityShoot tacz$shoot = new LivingEntityShoot(tacz$shooter, this.tacz$data, this.tacz$draw);
     private final @Unique LivingEntityBolt tacz$bolt = new LivingEntityBolt(this.tacz$data, this.tacz$draw, this.tacz$shoot);
     private final @Unique LivingEntityReload tacz$reload = new LivingEntityReload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot);
@@ -95,12 +94,6 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Override
     public void bolt() {
         this.tacz$bolt.bolt();
-    }
-
-    @Unique
-    @Override
-    public void updatePutAwayTime() {
-        this.tacz$putAway.updatePutAwayTime();
     }
 
     @Unique

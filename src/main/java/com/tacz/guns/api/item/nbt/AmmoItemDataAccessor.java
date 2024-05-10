@@ -1,4 +1,4 @@
-package com.tacz.guns.item.nbt;
+package com.tacz.guns.api.item.nbt;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAmmo;

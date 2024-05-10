@@ -6,7 +6,7 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.resource.InternalAssetLoader;
-import com.tacz.guns.entity.EntityBullet;
+import com.tacz.guns.entity.EntityKineticBullet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
+public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
     public EntityBulletRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
     }
@@ -35,7 +35,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
     }
 
     @Override
-    public void render(EntityBullet bullet, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    public void render(EntityKineticBullet bullet, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         ResourceLocation ammoId = bullet.getAmmoId();
         TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(index -> {
             BedrockAmmoModel ammoEntityModel = index.getAmmoEntityModel();
@@ -58,7 +58,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
         });
     }
 
-    public void renderTracerAmmo(EntityBullet bullet, float[] tracerColor, float partialTicks, PoseStack poseStack, int packedLight) {
+    public void renderTracerAmmo(EntityKineticBullet bullet, float[] tracerColor, float partialTicks, PoseStack poseStack, int packedLight) {
         getModel().ifPresent(model -> {
             Entity shooter = bullet.getOwner();
             if (shooter == null) {
@@ -95,12 +95,12 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
     }
 
     @Override
-    protected int getBlockLightLevel(@NotNull EntityBullet entityBullet, @NotNull BlockPos blockPos) {
+    protected int getBlockLightLevel(@NotNull EntityKineticBullet entityBullet, @NotNull BlockPos blockPos) {
         return 15;
     }
 
     @Override
-    public boolean shouldRender(EntityBullet bullet, Frustum camera, double pCamX, double pCamY, double pCamZ) {
+    public boolean shouldRender(EntityKineticBullet bullet, Frustum camera, double pCamX, double pCamY, double pCamZ) {
         AABB aabb = bullet.getBoundingBoxForCulling().inflate(0.5);
         if (aabb.hasNaN() || aabb.getSize() == 0) {
             aabb = new AABB(bullet.getX() - 2.0, bullet.getY() - 2.0, bullet.getZ() - 2.0, bullet.getX() + 2.0, bullet.getY() + 2.0, bullet.getZ() + 2.0);
@@ -109,7 +109,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityBullet> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(@NotNull EntityBullet entity) {
+    public ResourceLocation getTextureLocation(@NotNull EntityKineticBullet entity) {
         return null;
     }
 }

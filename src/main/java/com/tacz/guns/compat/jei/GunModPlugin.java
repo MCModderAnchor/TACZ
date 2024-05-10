@@ -34,7 +34,7 @@ public class GunModPlugin implements IModPlugin {
 
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
-        registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.GUN.get(), GunModSubtype.getGunSubtype());
+        registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.MODERN_KINETIC_GUN.get(), GunModSubtype.getGunSubtype());
         registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.AMMO.get(), GunModSubtype.getAmmoSubtype());
     }
 

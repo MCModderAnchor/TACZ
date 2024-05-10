@@ -1,4 +1,4 @@
-package com.tacz.guns.item.nbt;
+package com.tacz.guns.api.item.nbt;
 
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.resource.DefaultAssets;

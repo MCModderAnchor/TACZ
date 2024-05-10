@@ -31,13 +31,15 @@ public class LivingEntityDrawGun {
         if (drawTime >= 0) {
             // 如果不处于收枪状态，则需要计算收枪时长
             if (drawTime < data.currentPutAwayTimeS * 1000) {
+                // 从开始切枪到现在，抬枪的时间小于收枪需要的时间，则按抬枪时间计算。
                 data.drawTimestamp = System.currentTimeMillis() + drawTime;
             } else {
+                // 从开始切枪到现在，抬枪的时间大于收枪需要的时间，则按收枪时间计算。
                 data.drawTimestamp = System.currentTimeMillis() + (long) (data.currentPutAwayTimeS * 1000);
             }
         }
         data.currentGunItem = gunItemSupplier;
-        IGunOperator.fromLivingEntity(shooter).updatePutAwayTime();
+        updatePutAwayTime();
     }
 
     public long getDrawCoolDown() {
@@ -59,5 +61,16 @@ public class LivingEntityDrawGun {
             }
             return coolDown;
         }).orElse(-1L);
+    }
+
+    private void updatePutAwayTime() {
+        ItemStack gunItem = data.currentGunItem == null ? ItemStack.EMPTY : data.currentGunItem.get();
+        IGun iGun = IGun.getIGunOrNull(gunItem);
+        if (iGun != null) {
+            Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(iGun.getGunId(gunItem));
+            data.currentPutAwayTimeS = gunIndex.map(index -> index.getGunData().getPutAwayTime()).orElse(0F);
+        } else {
+            data.currentPutAwayTimeS = 0;
+        }
     }
 }

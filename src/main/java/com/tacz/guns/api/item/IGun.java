@@ -1,14 +1,21 @@
 package com.tacz.guns.api.item;
 
+import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
+import com.tacz.guns.resource.pojo.data.gun.AttachmentPass;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 
+/**
+ * 这里不包含枪械的逻辑，只包含枪械的各种 nbt 访问。你可以在 {@link AbstractGunItem} 看到枪械逻辑
+ */
 public interface IGun {
     /**
      * @return 如果物品类型为 IGun 则返回显式转换后的实例，否则返回 null。
@@ -159,12 +166,45 @@ public interface IGun {
     /**
      * 该枪械是否允许装配该配件
      */
-    boolean allowAttachment(ItemStack gun, ItemStack attachmentItem);
+    default boolean allowAttachment(ItemStack gun, ItemStack attachmentItem) {
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+        IGun iGun = IGun.getIGunOrNull(gun);
+        if (iGun != null && iAttachment != null) {
+            AttachmentType type = iAttachment.getType(attachmentItem);
+            ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
+            return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
+                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
+                if (map == null) {
+                    return false;
+                }
+                AttachmentPass pass = map.get(type);
+                if (pass == null) {
+                    return false;
+                }
+                return pass.isAllow(attachmentId);
+            }).orElse(false);
+        } else {
+            return false;
+        }
+    }
 
     /**
      * 该枪械是否允许某类型配件
      */
-    boolean allowAttachmentType(ItemStack gun, AttachmentType type);
+    default boolean allowAttachmentType(ItemStack gun, AttachmentType type) {
+        IGun iGun = IGun.getIGunOrNull(gun);
+        if (iGun != null) {
+            return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
+                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
+                if (map == null) {
+                    return false;
+                }
+                return map.containsKey(type);
+            }).orElse(false);
+        } else {
+            return false;
+        }
+    }
 
     /**
      * 枪管中是否有子弹，用于闭膛待击的枪械

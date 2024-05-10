@@ -1,0 +1,166 @@
+package com.tacz.guns.item;
+
+import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.entity.IGunOperator;
+import com.tacz.guns.api.item.gun.FireMode;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
+import com.tacz.guns.config.common.GunConfig;
+import com.tacz.guns.entity.EntityKineticBullet;
+import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
+import com.tacz.guns.init.ModItems;
+import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tacz.guns.resource.pojo.data.attachment.Silence;
+import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.resource.pojo.data.gun.BulletData;
+import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
+import com.tacz.guns.sound.SoundManager;
+import com.tacz.guns.util.AttachmentDataUtils;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * 现代枪的逻辑实现
+ */
+public class ModernKineticGunItem extends AbstractGunItem implements GunItemDataAccessor{
+    private static final String TYPE_NAME = "modern_kinetic";
+    public ModernKineticGunItem() {
+        super(new Properties().stacksTo(1).tab(ModItems.OTHER_TAB));
+    }
+
+    @Override
+    public void bolt(ItemStack gunItem) {
+        if (this.getCurrentAmmoCount(gunItem) > 0) {
+            this.reduceCurrentAmmoCount(gunItem);
+            this.setBulletInBarrel(gunItem, true);
+        }
+    }
+
+    @Override
+    public void shoot(ItemStack gunItem, float pitch, float yaw, boolean tracer, LivingEntity shooter) {
+        // 生成子弹实体
+        this.spawnBulletEntity(pitch, yaw, tracer, shooter, gunItem);
+        // 削减弹药数
+        if (IGunOperator.fromLivingEntity(shooter).consumesAmmoOrNot()) {
+            this.reduceAmmo(gunItem);
+        }
+    }
+
+    @Override
+    public void fireSelect(ItemStack gunItem) {
+        ResourceLocation gunId = this.getGunId(gunItem);
+        TimelessAPI.getCommonGunIndex(gunId).map(gunIndex -> {
+            FireMode fireMode = this.getFireMode(gunItem);
+            List<FireMode> fireModeSet = gunIndex.getGunData().getFireModeSet();
+            // 即使玩家拿的是没有的 FireMode，这里也能切换到正常情况
+            int nextIndex = (fireModeSet.indexOf(fireMode) + 1) % fireModeSet.size();
+            FireMode nextFireMode = fireModeSet.get(nextIndex);
+            this.setFireMode(gunItem, nextFireMode);
+            return nextFireMode;
+        });
+    }
+
+    @Override
+    public void reloadAmmo(ItemStack gunItem, int ammoCount, boolean loadBarrel) {
+
+    }
+
+    @Override
+    public String getTypeName() {
+        return "";
+    }
+
+    protected void spawnBulletEntity(float pitch, float yaw, boolean tracer, LivingEntity shooter, ItemStack currentGunItem) {
+        ResourceLocation gunId = getGunId(currentGunItem);
+        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
+        if (gunIndexOptional.isEmpty()) {
+            return;
+        }
+        CommonGunIndex gunIndex = gunIndexOptional.get();
+        // 散射影响
+        InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
+        final float[] inaccuracy = new float[]{gunIndex.getGunData().getInaccuracy(inaccuracyState)};
+
+        // 消音器影响
+        final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
+        final boolean[] useSilenceSound = new boolean[]{false};
+
+        // 配件属性的读取计算
+        AttachmentDataUtils.getAllAttachmentData(currentGunItem, gunIndex.getGunData(), attachmentData ->
+                calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
+        inaccuracy[0] = Math.max(0, inaccuracy[0]);
+
+        // 其他数据的读取，预先校验一次
+        BulletData bulletData = gunIndex.getBulletData();
+        float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
+        int bulletAmount = Math.max(bulletData.getBulletAmount(), 1);
+        ResourceLocation ammoId = gunIndex.getGunData().getAmmoId();
+
+        // 开始生成子弹
+        Level world = shooter.getLevel();
+        for (int i = 0; i < bulletAmount; i++) {
+            EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, ammoId, bulletData, tracer, gunId);
+            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
+            world.addFreshEntity(bullet);
+        }
+
+        // 播放枪声
+        if (soundDistance[0] > 0) {
+            String soundId = useSilenceSound[0] ? SoundManager.SILENCE_3P_SOUND : SoundManager.SHOOT_3P_SOUND;
+            SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
+        }
+    }
+
+    protected void reduceAmmo(ItemStack currentGunItem) {
+        Bolt boltType = TimelessAPI.getCommonGunIndex(getGunId(currentGunItem)).map(index -> index.getGunData().getBolt()).orElse(null);
+        if (boltType == null) {
+            return;
+        }
+        if (boltType == Bolt.MANUAL_ACTION) {
+            this.setBulletInBarrel(currentGunItem, false);
+        } else if (boltType == Bolt.CLOSED_BOLT) {
+            if (this.getCurrentAmmoCount(currentGunItem) > 0) {
+                this.reduceCurrentAmmoCount(currentGunItem);
+            } else {
+                this.setBulletInBarrel(currentGunItem, false);
+            }
+        } else {
+            this.reduceCurrentAmmoCount(currentGunItem);
+        }
+    }
+
+    private void calculateAttachmentData(AttachmentData attachmentData, InaccuracyType inaccuracyState, float[] inaccuracy, int[] soundDistance, boolean[] useSilenceSound) {
+        // 影响除瞄准外所有的不准确度
+        if (!inaccuracyState.isAim()) {
+            inaccuracy[0] += attachmentData.getInaccuracyAddend();
+        }
+        Silence silence = attachmentData.getSilence();
+        if (silence != null) {
+            soundDistance[0] += silence.getDistanceAddend();
+            if (silence.isUseSilenceSound()) {
+                useSilenceSound[0] = true;
+            }
+        }
+    }
+
+    @Override
+    public int getLevel(int exp) {
+        return 0;
+    }
+
+    @Override
+    public int getExp(int level) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 0;
+    }
+}

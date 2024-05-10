@@ -52,6 +52,7 @@ public class ClientGunIndex {
     private ResourceLocation hudTexture;
     private @Nullable ResourceLocation hudEmptyTexture;
     private String type;
+    private String itemType;
     private @Nullable ShellEjection shellEjection;
     private @Nullable MuzzleFlash muzzleFlash;
     private LayerGunShow offhandShow;
@@ -86,6 +87,7 @@ public class ClientGunIndex {
         Preconditions.checkArgument(gunIndexPOJO != null, "index object file is empty");
         Preconditions.checkArgument(StringUtils.isNoneBlank(gunIndexPOJO.getType()), "index object missing type field");
         index.type = gunIndexPOJO.getType();
+        index.itemType = gunIndexPOJO.getItemType();
         index.sort = Mth.clamp(gunIndexPOJO.getSort(), 0, 65536);
     }
 
@@ -332,6 +334,7 @@ public class ClientGunIndex {
     public String getType() {
         return type;
     }
+    public String getItemType() {return itemType;}
 
     public int getSort() {
         return sort;

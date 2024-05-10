@@ -1,16 +1,12 @@
 package com.tacz.guns.entity.shooter;
 
-import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.event.common.GunFireSelectEvent;
-import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.IGun;
-import net.minecraft.resources.ResourceLocation;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
-
-import java.util.List;
 
 public class LivingEntityFireSelect {
     private final LivingEntity shooter;
@@ -32,16 +28,8 @@ public class LivingEntityFireSelect {
         if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
             return;
         }
-        // 应用切换逻辑
-        ResourceLocation gunId = iGun.getGunId(currentGunItem);
-        TimelessAPI.getCommonGunIndex(gunId).map(gunIndex -> {
-            FireMode fireMode = iGun.getFireMode(currentGunItem);
-            List<FireMode> fireModeSet = gunIndex.getGunData().getFireModeSet();
-            // 即使玩家拿的是没有的 FireMode，这里也能切换到正常情况
-            int nextIndex = (fireModeSet.indexOf(fireMode) + 1) % fireModeSet.size();
-            FireMode nextFireMode = fireModeSet.get(nextIndex);
-            iGun.setFireMode(currentGunItem, nextFireMode);
-            return nextFireMode;
-        });
+        if (iGun instanceof AbstractGunItem logicGun) {
+            logicGun.fireSelect(currentGunItem);
+        }
     }
 }

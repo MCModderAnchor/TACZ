@@ -2,6 +2,7 @@ package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import net.minecraft.resources.ResourceLocation;
@@ -91,9 +92,8 @@ public class LivingEntityBolt {
             return coolDown;
         }).orElse(-1L);
         if (data.boltCoolDown == 0) {
-            if (iGun.getCurrentAmmoCount(currentGunItem) > 0) {
-                iGun.reduceCurrentAmmoCount(currentGunItem);
-                iGun.setBulletInBarrel(currentGunItem, true);
+            if (iGun instanceof AbstractGunItem logicGun) {
+                logicGun.bolt(currentGunItem);
             }
             data.boltCoolDown = -1;
         }

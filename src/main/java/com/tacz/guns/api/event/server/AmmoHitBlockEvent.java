@@ -1,6 +1,6 @@
 package com.tacz.guns.api.event.server;
 
-import com.tacz.guns.entity.EntityBullet;
+import com.tacz.guns.entity.EntityKineticBullet;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -13,9 +13,9 @@ public class AmmoHitBlockEvent extends Event {
     private final Level level;
     private final BlockHitResult hitResult;
     private final BlockState state;
-    private final EntityBullet ammo;
+    private final EntityKineticBullet ammo;
 
-    public AmmoHitBlockEvent(Level level, BlockHitResult hitResult, BlockState state, EntityBullet ammo) {
+    public AmmoHitBlockEvent(Level level, BlockHitResult hitResult, BlockState state, EntityKineticBullet ammo) {
         this.level = level;
         this.hitResult = hitResult;
         this.state = state;
@@ -34,7 +34,7 @@ public class AmmoHitBlockEvent extends Event {
         return state;
     }
 
-    public EntityBullet getAmmo() {
+    public EntityKineticBullet getAmmo() {
         return ammo;
     }
 }

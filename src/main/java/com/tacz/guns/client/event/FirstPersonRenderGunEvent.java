@@ -25,7 +25,7 @@ import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.duck.KeepingItemRenderer;
-import com.tacz.guns.entity.EntityBullet;
+import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.PerlinNoise;
@@ -183,7 +183,7 @@ public class FirstPersonRenderGunEvent {
         Level level = player.getLevel();
         AABB renderArea = player.getBoundingBox().inflate(256, 256, 256);
         for (Entity entity : level.getEntities(player, renderArea, FirstPersonRenderGunEvent::bulletFromPlayer)) {
-            EntityBullet entityBullet = (EntityBullet) entity;
+            EntityKineticBullet entityBullet = (EntityKineticBullet) entity;
             if (!entityBullet.isTracerAmmo()) {
                 continue;
             }
@@ -287,7 +287,7 @@ public class FirstPersonRenderGunEvent {
     }
 
     private static boolean bulletFromPlayer(Entity entity) {
-        if (entity instanceof EntityBullet entityBullet) {
+        if (entity instanceof EntityKineticBullet entityBullet) {
             return entityBullet.getOwner() instanceof LocalPlayer;
         }
         return false;

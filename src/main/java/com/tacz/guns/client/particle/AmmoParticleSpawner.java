@@ -3,7 +3,7 @@ package com.tacz.guns.client.particle;
 import com.mojang.math.Vector3f;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoParticle;
-import com.tacz.guns.entity.EntityBullet;
+import com.tacz.guns.entity.EntityKineticBullet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
@@ -17,7 +17,7 @@ import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public class AmmoParticleSpawner {
-    public static void addParticle(Level level, EntityBullet bullet) {
+    public static void addParticle(Level level, EntityKineticBullet bullet) {
         TimelessAPI.getClientAmmoIndex(bullet.getAmmoId()).ifPresent(ammoIndex -> {
             AmmoParticle particle = ammoIndex.getParticle();
             if (particle == null) {

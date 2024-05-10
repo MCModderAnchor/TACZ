@@ -110,10 +110,4 @@ public interface IGunOperator {
      * @param isAim 是否瞄准
      */
     void aim(boolean isAim);
-
-    /**
-     * 根据当前持握的枪械属性更新收枪时间。
-     * 应当在切枪、枪械改装、附魔等时机调用
-     */
-    void updatePutAwayTime();
 }

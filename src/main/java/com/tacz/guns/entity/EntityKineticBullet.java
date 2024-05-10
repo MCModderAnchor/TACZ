@@ -64,8 +64,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public class EntityBullet extends Projectile implements IEntityAdditionalSpawnData {
-    public static final EntityType<EntityBullet> TYPE = EntityType.Builder.<EntityBullet>of(EntityBullet::new, MobCategory.MISC).noSummon().noSave().fireImmune().sized(0.0625F, 0.0625F).clientTrackingRange(5).updateInterval(5).setShouldReceiveVelocityUpdates(false).build("bullet");
+/**
+ * 动能武器打出的子弹实体。
+ */
+public class EntityKineticBullet extends Projectile implements IEntityAdditionalSpawnData {
+    public static final EntityType<EntityKineticBullet> TYPE = EntityType.Builder.<EntityKineticBullet>of(EntityKineticBullet::new, MobCategory.MISC).noSummon().noSave().fireImmune().sized(0.0625F, 0.0625F).clientTrackingRange(5).updateInterval(5).setShouldReceiveVelocityUpdates(false).build("bullet");
     private static final Predicate<Entity> PROJECTILE_TARGETS = input -> input != null && input.isPickable() && !input.isSpectator();
     private ResourceLocation ammoId = DefaultAssets.EMPTY_AMMO_ID;
     private int life = 200;
@@ -92,16 +95,16 @@ public class EntityBullet extends Projectile implements IEntityAdditionalSpawnDa
     // 发射的枪械 ID
     private ResourceLocation gunId;
 
-    public EntityBullet(EntityType<? extends Projectile> type, Level worldIn) {
+    public EntityKineticBullet(EntityType<? extends Projectile> type, Level worldIn) {
         super(type, worldIn);
     }
 
-    public EntityBullet(EntityType<? extends Projectile> type, double x, double y, double z, Level worldIn) {
+    public EntityKineticBullet(EntityType<? extends Projectile> type, double x, double y, double z, Level worldIn) {
         this(type, worldIn);
         this.setPos(x, y, z);
     }
 
-    public EntityBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, BulletData data, boolean isTracerAmmo, ResourceLocation gunId) {
+    public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, BulletData data, boolean isTracerAmmo, ResourceLocation gunId) {
         this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         this.ammoId = ammoId;

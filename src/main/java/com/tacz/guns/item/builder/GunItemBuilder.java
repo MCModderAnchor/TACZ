@@ -1,10 +1,14 @@
 package com.tacz.guns.item.builder;
 
+import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.gun.GunItemManager;
 import com.tacz.guns.init.ModItems;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.RegistryObject;
 
 public final class GunItemBuilder {
     private int count = 1;
@@ -46,7 +50,15 @@ public final class GunItemBuilder {
     }
 
     public ItemStack build() {
-        ItemStack gun = new ItemStack(ModItems.GUN.get(), this.count);
+        String itemType = TimelessAPI.getCommonGunIndex(gunId).map(index -> index.getPojo().getItemType()).orElse(null);
+        if (itemType == null) {
+            throw new IllegalArgumentException("Could not found gun id: " + gunId);
+        }
+        RegistryObject<? extends AbstractGunItem> gunItemRegistryObject = GunItemManager.getGunItemRegistryObject(itemType);
+        if (gunItemRegistryObject == null) {
+            throw new IllegalArgumentException("Could not found gun item type: " + itemType);
+        }
+        ItemStack gun = new ItemStack(gunItemRegistryObject.get(), this.count);
         if (gun.getItem() instanceof IGun iGun) {
             iGun.setGunId(gun, this.gunId);
             iGun.setFireMode(gun, this.fireMode);
