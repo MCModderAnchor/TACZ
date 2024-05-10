@@ -8,7 +8,7 @@ import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.display.ammo.*;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
-import com.tacz.guns.resource.DefaultAssets;
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.resource.pojo.AmmoIndexPOJO;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.commands.arguments.ParticleArgument;

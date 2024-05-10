@@ -7,7 +7,7 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
-import com.tacz.guns.resource.DefaultAssets;
+import com.tacz.guns.api.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;

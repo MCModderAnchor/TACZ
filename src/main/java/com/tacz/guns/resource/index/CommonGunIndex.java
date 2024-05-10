@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.resource.CommonAssetManager;
-import com.tacz.guns.resource.DefaultAssets;
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.resource.pojo.GunIndexPOJO;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import net.minecraft.resources.ResourceLocation;

@@ -9,7 +9,7 @@ import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import com.tacz.guns.item.builder.AmmoItemBuilder;
-import com.tacz.guns.resource.DefaultAssets;
+import com.tacz.guns.api.DefaultAssets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.NonNullList;

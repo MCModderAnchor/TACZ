@@ -2,7 +2,7 @@ package com.tacz.guns.item.builder;
 
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.init.ModItems;
-import com.tacz.guns.resource.DefaultAssets;
+import com.tacz.guns.api.DefaultAssets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 

@@ -3,7 +3,7 @@ package com.tacz.guns.api.item.nbt;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.resource.DefaultAssets;
+import com.tacz.guns.api.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;

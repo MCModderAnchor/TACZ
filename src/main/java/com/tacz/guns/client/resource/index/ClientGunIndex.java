@@ -17,7 +17,7 @@ import com.tacz.guns.client.resource.pojo.display.gun.*;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.resource.CommonAssetManager;
-import com.tacz.guns.resource.DefaultAssets;
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.resource.pojo.GunIndexPOJO;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.sound.SoundManager;

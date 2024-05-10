@@ -1,4 +1,4 @@
-package com.tacz.guns.resource;
+package com.tacz.guns.api;
 
 import com.tacz.guns.GunMod;
 import net.minecraft.resources.ResourceLocation;

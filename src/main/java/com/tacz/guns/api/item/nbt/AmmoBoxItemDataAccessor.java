@@ -3,7 +3,7 @@ package com.tacz.guns.api.item.nbt;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.resource.DefaultAssets;
+import com.tacz.guns.api.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -64,6 +64,7 @@ public interface AmmoBoxItemDataAccessor extends IAmmoBox {
         return false;
     }
 
+    @Override
     default boolean isCreative(ItemStack ammoBox) {
         CompoundTag tag = ammoBox.getTag();
         if (tag != null && tag.contains(CREATIVE_TAG, Tag.TAG_BYTE)) {

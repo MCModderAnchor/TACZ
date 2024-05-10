@@ -4,18 +4,15 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
 public class LivingEntityDrawGun {
-    private final LivingEntity shooter;
     private final ShooterDataHolder data;
 
-    public LivingEntityDrawGun(LivingEntity shooter, ShooterDataHolder data) {
-        this.shooter = shooter;
+    public LivingEntityDrawGun(ShooterDataHolder data) {
         this.data = data;
     }
 

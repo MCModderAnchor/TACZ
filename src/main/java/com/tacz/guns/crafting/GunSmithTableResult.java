@@ -54,14 +54,16 @@ public class GunSmithTableResult {
                 if (jsonObject.has("count")) {
                     count = Math.max(GsonHelper.getAsInt(jsonObject, "count"), 1);
                 }
-                if (GUN.equals(typeName)) {
-                    return getGunStack(id, count);
-                }
-                if (AMMO.equals(typeName)) {
-                    return getAmmoStack(id, count);
-                }
-                if (ATTACHMENT.equals(typeName)) {
-                    return getAttachmentStack(id, count);
+                switch (typeName) {
+                    case GUN -> {
+                        return getGunStack(id, count);
+                    }
+                    case AMMO -> {
+                        return getAmmoStack(id, count);
+                    }
+                    case ATTACHMENT -> {
+                        return getAttachmentStack(id, count);
+                    }
                 }
             }
             return new GunSmithTableResult(ItemStack.EMPTY, StringUtils.EMPTY);

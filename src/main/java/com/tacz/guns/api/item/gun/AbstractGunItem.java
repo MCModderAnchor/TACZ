@@ -1,14 +1,16 @@
 package com.tacz.guns.api.item.gun;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.renderer.item.GunItemRenderer;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.tab.CustomTab;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
-import com.tacz.guns.item.ModernKineticGunItem;
 import com.tacz.guns.item.builder.GunItemBuilder;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.pojo.data.gun.AttachmentPass;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -64,8 +66,68 @@ public abstract class AbstractGunItem extends Item implements IGun {
      */
     public abstract void reloadAmmo(ItemStack gunItem, int ammoCount, boolean loadBarrel);
 
+    /**
+     * 枪械的物品类型，决定枪械的逻辑，如开火、装填等。<br>
+     * 默认是 modern_kinetic (现代动能枪械)。
+     */
     public abstract String getTypeName();
 
+    /**
+     * 能否添加到此 CustomTab 中
+     *
+     * @param tab   CustomTab
+     * @param stack 待添加的物品
+     */
+    public abstract boolean canAddInTab(CustomTab tab, ItemStack stack);
+
+    /**
+     * 该方法具有通用的实现，放在此处
+     */
+    @Override
+    public boolean allowAttachment(ItemStack gun, ItemStack attachmentItem) {
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+        IGun iGun = IGun.getIGunOrNull(gun);
+        if (iGun != null && iAttachment != null) {
+            AttachmentType type = iAttachment.getType(attachmentItem);
+            ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
+            return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
+                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
+                if (map == null) {
+                    return false;
+                }
+                AttachmentPass pass = map.get(type);
+                if (pass == null) {
+                    return false;
+                }
+                return pass.isAllow(attachmentId);
+            }).orElse(false);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 该方法具有通用的实现，放在此处
+     */
+    @Override
+    public boolean allowAttachmentType(ItemStack gun, AttachmentType type) {
+        IGun iGun = IGun.getIGunOrNull(gun);
+        if (iGun != null) {
+            return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
+                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
+                if (map == null) {
+                    return false;
+                }
+                return map.containsKey(type);
+            }).orElse(false);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 该方法具有通用的实现，放在此处
+     */
     @Override
     @Nonnull
     @OnlyIn(Dist.CLIENT)
@@ -78,6 +140,9 @@ public abstract class AbstractGunItem extends Item implements IGun {
         return super.getName(stack);
     }
 
+    /**
+     * 该方法具有通用的实现，放在此处
+     */
     @Override
     @OnlyIn(Dist.CLIENT)
     public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
@@ -93,7 +158,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
                             .setAmmoCount(gunData.getAmmoAmount())
                             .setAmmoInBarrel(true)
                             .build();
-                    if (itemStack.getItem() instanceof ModernKineticGunItem) {
+                    if (canAddInTab(tab, itemStack)) {
                         stacks.add(itemStack);
                     }
                 }
@@ -101,11 +166,17 @@ public abstract class AbstractGunItem extends Item implements IGun {
         }
     }
 
+    /**
+     * 阻止玩家手臂挥动动画的播放
+     */
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         return true;
     }
 
+    /**
+     * 该方法具有通用的实现，放在此处
+     */
     @Override
     public void initializeClient(Consumer<IItemRenderProperties> consumer) {
         consumer.accept(new IItemRenderProperties() {
@@ -117,8 +188,12 @@ public abstract class AbstractGunItem extends Item implements IGun {
         });
     }
 
+    /**
+     * 该方法具有通用的实现，放在此处
+     */
     @Override
-    public @Nonnull Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+    @Nonnull
+    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         if (stack.getItem() instanceof IGun iGun) {
             Optional<CommonGunIndex> optional = TimelessAPI.getCommonGunIndex(this.getGunId(stack));
             if (optional.isPresent()) {

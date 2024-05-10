@@ -5,6 +5,7 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
+import com.tacz.guns.client.tab.CustomTab;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.init.ModItems;
@@ -81,6 +82,11 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     @Override
     public String getTypeName() {
         return TYPE_NAME;
+    }
+
+    @Override
+    public boolean canAddInTab(CustomTab tab, ItemStack stack) {
+        return true;
     }
 
     @Override

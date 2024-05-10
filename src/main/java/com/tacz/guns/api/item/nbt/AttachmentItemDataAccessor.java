@@ -1,7 +1,7 @@
 package com.tacz.guns.api.item.nbt;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.item.IAttachment;
-import com.tacz.guns.resource.DefaultAssets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -55,6 +55,7 @@ public interface AttachmentItemDataAccessor extends IAttachment {
         }
     }
 
+    @Override
     default int getZoomNumber(ItemStack attachmentStack) {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
         if (nbt.contains(ZOOM_NUMBER_TAG, Tag.TAG_INT)) {
@@ -63,6 +64,7 @@ public interface AttachmentItemDataAccessor extends IAttachment {
         return 0;
     }
 
+    @Override
     default void setZoomNumber(ItemStack attachmentStack, int zoomNumber) {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
         nbt.putInt(ZOOM_NUMBER_TAG, zoomNumber);

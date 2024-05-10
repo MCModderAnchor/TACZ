@@ -14,7 +14,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageGunHurt;
 import com.tacz.guns.network.message.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
-import com.tacz.guns.resource.DefaultAssets;
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.util.TacHitResult;
