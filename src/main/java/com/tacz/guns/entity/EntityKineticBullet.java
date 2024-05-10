@@ -1,5 +1,6 @@
 package com.tacz.guns.entity;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.entity.ITargetEntity;
 import com.tacz.guns.api.entity.KnockBackModifier;
 import com.tacz.guns.api.event.common.LivingHurtByGunEvent;
@@ -14,7 +15,6 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageGunHurt;
 import com.tacz.guns.network.message.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
-import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.util.TacHitResult;
@@ -104,7 +104,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.setPos(x, y, z);
     }
 
-    public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, BulletData data, boolean isTracerAmmo, ResourceLocation gunId) {
+    public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, BulletData data) {
         this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         this.ammoId = ammoId;

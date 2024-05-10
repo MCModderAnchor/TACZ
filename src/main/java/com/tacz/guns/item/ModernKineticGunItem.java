@@ -79,6 +79,16 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         }
     }
 
+    /**
+     * 生成子弹实体
+     */
+    protected void doSpawnBulletEntity(Level world, LivingEntity shooter, float pitch, float yaw, float speed, float inaccuracy,
+                                       ResourceLocation ammoId, ResourceLocation gunId, boolean tracer, BulletData bulletData) {
+        EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, ammoId, gunId, tracer, bulletData);
+        bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
+        world.addFreshEntity(bullet);
+    }
+
     @Override
     public String getTypeName() {
         return TYPE_NAME;
@@ -133,9 +143,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         // 开始生成子弹
         Level world = shooter.getLevel();
         for (int i = 0; i < bulletAmount; i++) {
-            EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, ammoId, bulletData, tracer, gunId);
-            bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy[0]);
-            world.addFreshEntity(bullet);
+            this.doSpawnBulletEntity(world, shooter, pitch, yaw, speed, inaccuracy[0], ammoId, gunId, tracer, bulletData);
         }
 
         // 播放枪声

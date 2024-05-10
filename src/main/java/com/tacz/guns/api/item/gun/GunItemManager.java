@@ -3,6 +3,7 @@ package com.tacz.guns.api.item.gun;
 import com.google.common.collect.Maps;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class GunItemManager {
@@ -17,5 +18,9 @@ public class GunItemManager {
 
     public static RegistryObject<? extends AbstractGunItem> getGunItemRegistryObject(String key) {
         return GUN_ITEM_MAP.get(key);
+    }
+
+    public static Collection<RegistryObject<? extends AbstractGunItem>> getAllGunItems() {
+        return GUN_ITEM_MAP.values();
     }
 }
