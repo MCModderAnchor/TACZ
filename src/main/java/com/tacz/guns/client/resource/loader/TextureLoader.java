@@ -31,9 +31,9 @@ public final class TextureLoader {
                 GunMod.LOGGER.warn(MARKER, "{} file don't exist", zipPath);
                 return false;
             }
-            ResourceLocation registryName = new ResourceLocation(namespace, path);
-            ZipPackTexture zipPackTexture = new ZipPackTexture(zipFile.getName(), namespace, path);
-            Minecraft.getInstance().textureManager.register(registryName, zipPackTexture);
+            ResourceLocation id = new ResourceLocation(namespace, path);
+            ZipPackTexture zipPackTexture = new ZipPackTexture(id, zipFile.getName());
+            Minecraft.getInstance().textureManager.register(id, zipPackTexture);
             return true;
         }
         return false;
@@ -43,7 +43,7 @@ public final class TextureLoader {
         Path filePath = root.toPath().resolve("textures");
         if (Files.isDirectory(filePath)) {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".png", (id, file) -> {
-                FilePackTexture filePackTexture = new FilePackTexture(file);
+                FilePackTexture filePackTexture = new FilePackTexture(id, file);
                 Minecraft.getInstance().textureManager.register(id, filePackTexture);
             });
             try {

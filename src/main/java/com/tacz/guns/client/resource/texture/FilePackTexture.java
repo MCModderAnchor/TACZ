@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.File;
@@ -14,9 +15,11 @@ import java.nio.file.Path;
 
 
 public class FilePackTexture extends AbstractTexture {
+    private final ResourceLocation registerId;
     private final Path filePath;
 
-    public FilePackTexture(Path filePath) {
+    public FilePackTexture(ResourceLocation registerId, Path filePath) {
+        this.registerId = registerId;
         this.filePath = filePath;
     }
 
@@ -42,5 +45,9 @@ public class FilePackTexture extends AbstractTexture {
                 e.printStackTrace();
             }
         }
+    }
+
+    public ResourceLocation getRegisterId() {
+        return registerId;
     }
 }
