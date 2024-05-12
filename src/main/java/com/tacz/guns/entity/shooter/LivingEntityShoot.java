@@ -1,7 +1,6 @@
 package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.IGun;
@@ -71,8 +70,8 @@ public class LivingEntityShoot {
         Bolt boltType = gunIndex.getGunData().getBolt();
         boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(currentGunItem) && boltType != Bolt.OPEN_BOLT;
         int ammoCount = iGun.getCurrentAmmoCount(currentGunItem) + (hasAmmoInBarrel ? 1 : 0);
-        // 创造模式不判断子弹数
-        if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && ammoCount < 1) {
+        // 创造模式也要判断子弹数
+        if (ammoCount < 1) {
             return ShootResult.NO_AMMO;
         }
         // 检查膛内子弹

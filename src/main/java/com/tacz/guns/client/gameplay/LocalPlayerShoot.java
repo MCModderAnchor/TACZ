@@ -83,9 +83,7 @@ public class LocalPlayerShoot {
         int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (hasAmmoInBarrel ? 1 : 0);
         if (ammoCount < 1) {
             SoundPlayManager.playDryFireSound(player, gunIndex);
-            if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
-                return ShootResult.NO_AMMO;
-            }
+            return ShootResult.NO_AMMO;
         }
         // 判断膛内子弹
         if (boltType == Bolt.MANUAL_ACTION && !hasAmmoInBarrel) {
