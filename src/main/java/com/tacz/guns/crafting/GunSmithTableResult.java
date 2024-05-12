@@ -2,9 +2,9 @@ package com.tacz.guns.crafting;
 
 import com.google.gson.*;
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.item.builder.AmmoItemBuilder;
-import com.tacz.guns.item.builder.AttachmentItemBuilder;
-import com.tacz.guns.item.builder.GunItemBuilder;
+import com.tacz.guns.api.item.builder.AmmoItemBuilder;
+import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
+import com.tacz.guns.api.item.builder.GunItemBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;

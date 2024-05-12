@@ -1,4 +1,4 @@
-package com.tacz.guns.item.builder;
+package com.tacz.guns.api.item.builder;
 
 import com.google.common.base.Preconditions;
 import com.tacz.guns.api.TimelessAPI;

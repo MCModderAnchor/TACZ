@@ -8,7 +8,7 @@ import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
-import com.tacz.guns.item.builder.AmmoItemBuilder;
+import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.ChatFormatting;

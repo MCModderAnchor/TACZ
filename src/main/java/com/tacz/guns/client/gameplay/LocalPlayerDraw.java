@@ -127,7 +127,5 @@ public class LocalPlayerDraw {
         if (data.clientDrawTimestamp == -1) {
             data.clientDrawTimestamp = System.currentTimeMillis();
         }
-        // 重置连发状态
-        ShootKey.resetBurstState();
     }
 }

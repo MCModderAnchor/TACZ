@@ -8,7 +8,7 @@ import com.tacz.guns.client.renderer.item.GunItemRenderer;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.tab.CustomTab;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
-import com.tacz.guns.item.builder.GunItemBuilder;
+import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.AttachmentPass;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
@@ -65,12 +65,6 @@ public abstract class AbstractGunItem extends Item implements IGun {
      * @param loadBarrel 是否需要往枪管里填子弹
      */
     public abstract void reloadAmmo(ItemStack gunItem, int ammoCount, boolean loadBarrel);
-
-    /**
-     * 枪械的物品类型，决定枪械的逻辑，如开火、装填等。<br>
-     * 默认是 modern_kinetic (现代动能枪械)。
-     */
-    public abstract String getTypeName();
 
     /**
      * 能否添加到此 CustomTab 中

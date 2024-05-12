@@ -3,7 +3,7 @@ package com.tacz.guns.network.message;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
-import com.tacz.guns.item.builder.AmmoItemBuilder;
+import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.network.FriendlyByteBuf;

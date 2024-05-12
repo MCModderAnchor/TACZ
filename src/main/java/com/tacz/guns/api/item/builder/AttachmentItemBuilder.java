@@ -1,4 +1,4 @@
-package com.tacz.guns.item.builder;
+package com.tacz.guns.api.item.builder;
 
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.init.ModItems;

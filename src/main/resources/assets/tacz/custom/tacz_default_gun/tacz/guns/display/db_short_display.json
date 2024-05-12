@@ -8,7 +8,7 @@
     "hud": "tacz:gun/hud/db_short",
     "slot": "tacz:gun/slot/db_short",
     "animation": "tacz:db_short",
-    "use_default_animation": "pistol",
+    "use_default_animation": "rifle",
     "third_person_animation": "default",
     "transform": {
         "scale": {

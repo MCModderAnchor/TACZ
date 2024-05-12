@@ -2,12 +2,14 @@ package com.tacz.guns.item;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
+import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
 import com.tacz.guns.client.tab.CustomTab;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
+import com.tacz.guns.event.CycleTaskHelperEvent;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
@@ -22,6 +24,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.LogicalSide;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,12 +50,70 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
 
     @Override
     public void shoot(ItemStack gunItem, float pitch, float yaw, boolean tracer, LivingEntity shooter) {
-        // 生成子弹实体
-        this.spawnBulletEntity(pitch, yaw, tracer, shooter, gunItem);
-        // 削减弹药数
-        if (IGunOperator.fromLivingEntity(shooter).consumesAmmoOrNot()) {
-            this.reduceAmmo(gunItem);
+        ResourceLocation gunId = getGunId(gunItem);
+        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
+        if (gunIndexOptional.isEmpty()) {
+            return;
         }
+        CommonGunIndex gunIndex = gunIndexOptional.get();
+        // 散射影响
+        InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
+        final float[] inaccuracy = new float[]{gunIndex.getGunData().getInaccuracy(inaccuracyState)};
+
+        // 消音器影响
+        final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
+        final boolean[] useSilenceSound = new boolean[]{false};
+
+        // 配件属性的读取计算
+        AttachmentDataUtils.getAllAttachmentData(gunItem, gunIndex.getGunData(), attachmentData ->
+                calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
+        inaccuracy[0] = Math.max(0, inaccuracy[0]);
+
+        BulletData bulletData = gunIndex.getBulletData();
+        ResourceLocation ammoId = gunIndex.getGunData().getAmmoId();
+        FireMode fireMode = getFireMode(gunItem);
+        // 子弹飞行速度
+        float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
+        // 弹丸数量
+        int bulletAmount = Math.max(bulletData.getBulletAmount(), 1);
+        // 连发数量
+        int cycles = fireMode == FireMode.BURST ? gunIndex.getGunData().getBurstData().getCount() : 1;
+        // 连发间隔
+        long period = fireMode == FireMode.BURST ? gunIndex.getGunData().getBurstShootInterval() : 1;
+        // 是否消耗弹药
+        boolean consumeAmmo = IGunOperator.fromLivingEntity(shooter).consumesAmmoOrNot();
+
+        // 将连发任务委托到循环任务工具
+        CycleTaskHelperEvent.addCycleTask(() -> {
+            // 削减弹药数
+            if (consumeAmmo) {
+                Bolt boltType = gunIndex.getGunData().getBolt();
+                boolean hasAmmoInBarrel = this.hasBulletInBarrel(gunItem) && boltType != Bolt.OPEN_BOLT;
+                int ammoCount = this.getCurrentAmmoCount(gunItem) + (hasAmmoInBarrel ? 1 : 0);
+                if (ammoCount <= 0) {
+                    return false;
+                }
+            }
+            // 触发击发事件
+            boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(shooter, gunItem, LogicalSide.SERVER));
+            if (fire) {
+                if (consumeAmmo) {
+                    // 削减弹药
+                    this.reduceAmmo(gunItem);
+                }
+                // 生成子弹
+                Level world = shooter.getLevel();
+                for (int i = 0; i < bulletAmount; i++) {
+                    this.doSpawnBulletEntity(world, shooter, pitch, yaw, speed, inaccuracy[0], ammoId, gunId, tracer, bulletData);
+                }
+                // 播放枪声
+                if (soundDistance[0] > 0) {
+                    String soundId = useSilenceSound[0] ? SoundManager.SILENCE_3P_SOUND : SoundManager.SHOOT_3P_SOUND;
+                    SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
+                }
+            }
+            return true;
+        }, period, cycles);
     }
 
     @Override
@@ -90,11 +152,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     }
 
     @Override
-    public String getTypeName() {
-        return TYPE_NAME;
-    }
-
-    @Override
     public boolean canAddInTab(CustomTab tab, ItemStack stack) {
         return true;
     }
@@ -114,45 +171,10 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         return 0;
     }
 
-    protected void spawnBulletEntity(float pitch, float yaw, boolean tracer, LivingEntity shooter, ItemStack currentGunItem) {
-        ResourceLocation gunId = getGunId(currentGunItem);
-        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
-        if (gunIndexOptional.isEmpty()) {
-            return;
-        }
-        CommonGunIndex gunIndex = gunIndexOptional.get();
-        // 散射影响
-        InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
-        final float[] inaccuracy = new float[]{gunIndex.getGunData().getInaccuracy(inaccuracyState)};
-
-        // 消音器影响
-        final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
-        final boolean[] useSilenceSound = new boolean[]{false};
-
-        // 配件属性的读取计算
-        AttachmentDataUtils.getAllAttachmentData(currentGunItem, gunIndex.getGunData(), attachmentData ->
-                calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
-        inaccuracy[0] = Math.max(0, inaccuracy[0]);
-
-        // 其他数据的读取，预先校验一次
-        BulletData bulletData = gunIndex.getBulletData();
-        float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
-        int bulletAmount = Math.max(bulletData.getBulletAmount(), 1);
-        ResourceLocation ammoId = gunIndex.getGunData().getAmmoId();
-
-        // 开始生成子弹
-        Level world = shooter.getLevel();
-        for (int i = 0; i < bulletAmount; i++) {
-            this.doSpawnBulletEntity(world, shooter, pitch, yaw, speed, inaccuracy[0], ammoId, gunId, tracer, bulletData);
-        }
-
-        // 播放枪声
-        if (soundDistance[0] > 0) {
-            String soundId = useSilenceSound[0] ? SoundManager.SILENCE_3P_SOUND : SoundManager.SHOOT_3P_SOUND;
-            SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
-        }
-    }
-
+    /**
+     * 将枪内的弹药数减少。
+     * @param currentGunItem 枪械物品
+     */
     protected void reduceAmmo(ItemStack currentGunItem) {
         Bolt boltType = TimelessAPI.getCommonGunIndex(getGunId(currentGunItem)).map(index -> index.getGunData().getBolt()).orElse(null);
         if (boltType == null) {

@@ -36,9 +36,6 @@ public class ShootKey {
             InputConstants.Type.MOUSE,
             GLFW.GLFW_MOUSE_BUTTON_LEFT,
             "key.category.tacz");
-    private static boolean burstContinuousShootState = false;
-    private static long burstNextTimestamp = -1L;
-    private static int burstShootCounter = 0;
 
     @SubscribeEvent
     public static void autoShoot(TickEvent.ClientTickEvent event) {
@@ -53,13 +50,12 @@ public class ShootKey {
         ItemStack mainHandItem = player.getMainHandItem();
         if (mainHandItem.getItem() instanceof IGun iGun) {
             FireMode fireMode = iGun.getFireMode(mainHandItem);
+            boolean isBurstAuto = fireMode == FireMode.BURST && TimelessAPI.getCommonGunIndex(iGun.getGunId(mainHandItem))
+                    .map(index -> index.getGunData().getBurstData().isContinuousShoot())
+                    .orElse(false);
             IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
-            if (SHOOT_KEY.isDown() && fireMode == FireMode.AUTO) {
+            if (SHOOT_KEY.isDown() && (fireMode == FireMode.AUTO || isBurstAuto)) {
                 operator.shoot();
-                return;
-            }
-            if (burstContinuousShootState && fireMode == FireMode.BURST) {
-                burstShoot(iGun, mainHandItem, operator);
             }
         }
     }
@@ -77,49 +73,19 @@ public class ShootKey {
             if (player == null) {
                 return;
             }
-            if (IGun.mainhandHoldGun(player)) {
-                FireMode fireMode = IGun.getMainhandFireMode(player);
+            ItemStack mainHandItem = player.getMainHandItem();
+            if (mainHandItem.getItem() instanceof IGun iGun) {
+                FireMode fireMode = iGun.getFireMode(mainHandItem);
+                boolean isBurstSemi = fireMode == FireMode.BURST && TimelessAPI.getCommonGunIndex(iGun.getGunId(mainHandItem))
+                        .map(index -> !index.getGunData().getBurstData().isContinuousShoot())
+                        .orElse(false);
                 if (fireMode == FireMode.UNKNOWN) {
                     player.sendMessage(new TranslatableComponent("message.tacz.fire_select.fail"), Util.NIL_UUID);
                 }
-                if (fireMode == FireMode.SEMI) {
+                if (fireMode == FireMode.SEMI || isBurstSemi) {
                     IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
-                }
-                if (fireMode == FireMode.BURST) {
-                    burstContinuousShootState = true;
                 }
             }
         }
-    }
-
-    public static void resetBurstState() {
-        burstContinuousShootState = false;
-        burstShootCounter = 0;
-    }
-
-    private static void burstShoot(IGun iGun, ItemStack mainHandItem, IClientPlayerGunOperator operator) {
-        ResourceLocation gunId = iGun.getGunId(mainHandItem);
-        TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
-            BurstData burstData = index.getGunData().getBurstData();
-            // 如果还没到下一组时间
-            if (System.currentTimeMillis() < burstNextTimestamp) {
-                return;
-            }
-            // 开始连发射击
-            ShootResult result = operator.shoot();
-            if (result == ShootResult.SUCCESS) {
-                burstShootCounter += 1;
-                // 检查连发计数
-                if (burstShootCounter >= Math.max(burstData.getCount(), 1)) {
-                    // 连发到达上限，记录相关数据
-                    long interval = Math.max((long) (burstData.getMinInterval() * 1000), 50L);
-                    burstNextTimestamp = System.currentTimeMillis() + interval;
-                    burstContinuousShootState = burstData.isContinuousShoot() && SHOOT_KEY.isDown();
-                    burstShootCounter = 0;
-                }
-            } else if (result != ShootResult.COOL_DOWN) {
-                resetBurstState();
-            }
-        });
     }
 }

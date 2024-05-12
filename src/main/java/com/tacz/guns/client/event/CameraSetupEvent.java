@@ -8,7 +8,7 @@ import com.tacz.guns.api.client.event.BeforeRenderHandEvent;
 import com.tacz.guns.api.client.event.FieldOfView;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.api.event.common.GunShootEvent;
+import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
@@ -141,7 +141,7 @@ public class CameraSetupEvent {
     }
 
     @SubscribeEvent
-    public static void initialCameraRecoil(GunShootEvent event) {
+    public static void initialCameraRecoil(GunFireEvent event) {
         if (event.getLogicalSide().isClient()) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {

@@ -111,9 +111,9 @@ public class LivingEntityShoot {
         FireMode fireMode = iGun.getFireMode(currentGunItem);
         if (fireMode == FireMode.BURST) {
             return gunIndex.map(index -> {
-                long coolDown = index.getGunData().getBurstShootInterval() - (System.currentTimeMillis() - data.shootTimestamp);
-                // 给 25 ms 的窗口时间，以平衡延迟
-                coolDown = coolDown - 25;
+                long coolDown = (long) (index.getGunData().getBurstData().getMinInterval() * 1000f) - (System.currentTimeMillis() - data.shootTimestamp);
+                // 给 5 ms 的窗口时间，以平衡延迟
+                coolDown = coolDown - 5;
                 return Math.max(coolDown, 0L);
             }).orElse(-1L);
         }

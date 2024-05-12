@@ -7,7 +7,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
-import com.tacz.guns.api.event.common.GunShootEvent;
+import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -262,7 +262,7 @@ public class FirstPersonRenderGunEvent {
     }
 
     @SubscribeEvent
-    public static void onGunFire(GunShootEvent event) {
+    public static void onGunFire(GunFireEvent event) {
         if (event.getLogicalSide().isClient()) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
