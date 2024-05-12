@@ -10,23 +10,25 @@ import java.util.function.BooleanSupplier;
 
 @Mod.EventBusSubscriber
 public class CycleTaskHelperEvent {
-    private static final List<CycleTaskTicker> cycleTasks = new LinkedList<>();
+    private static final List<CycleTaskTicker> CYCLE_TASKS = new LinkedList<>();
+
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         // 迭代、调用并删除返回 false 的任务
-        cycleTasks.removeIf(ticker -> !ticker.tick());
+        CYCLE_TASKS.removeIf(ticker -> !ticker.tick());
     }
 
     /**
      * 根据提供的时间间隔循环执行任务。会立刻调用一次。
-     * @param task 循环执行的任务，会根据返回的 boolean 值决定是否继续下一次循环。如果返回 false ，则将不再循环。
+     *
+     * @param task     循环执行的任务，会根据返回的 boolean 值决定是否继续下一次循环。如果返回 false ，则将不再循环。
      * @param periodMs 循环调用的时间间隔，单位为毫秒。
-     * @param cycles 最大循环次数。
+     * @param cycles   最大循环次数。
      */
     public static void addCycleTask(BooleanSupplier task, long periodMs, int cycles) {
         CycleTaskTicker ticker = new CycleTaskTicker(task, periodMs, cycles);
         if (ticker.tick()) {
-            cycleTasks.add(ticker);
+            CYCLE_TASKS.add(ticker);
         }
     }
 
@@ -60,7 +62,7 @@ public class CycleTaskHelperEvent {
                     if (++count > cycles) {
                         return false;
                     }
-                    if(!task.getAsBoolean()) {
+                    if (!task.getAsBoolean()) {
                         return false;
                     }
                     compensation -= periodS;

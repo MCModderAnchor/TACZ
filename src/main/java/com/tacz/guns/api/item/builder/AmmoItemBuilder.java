@@ -1,8 +1,8 @@
 package com.tacz.guns.api.item.builder;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.init.ModItems;
-import com.tacz.guns.api.DefaultAssets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 

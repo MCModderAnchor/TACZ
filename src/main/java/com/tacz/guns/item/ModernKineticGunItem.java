@@ -173,6 +173,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
 
     /**
      * 将枪内的弹药数减少。
+     *
      * @param currentGunItem 枪械物品
      */
     protected void reduceAmmo(ItemStack currentGunItem) {
