@@ -81,9 +81,11 @@ public class LocalPlayerShoot {
         Bolt boltType = gunIndex.getGunData().getBolt();
         boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem) && boltType != Bolt.OPEN_BOLT;
         int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (hasAmmoInBarrel ? 1 : 0);
-        if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && ammoCount < 1) {
+        if (ammoCount < 1) {
             SoundPlayManager.playDryFireSound(player, gunIndex);
-            return ShootResult.NO_AMMO;
+            if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
+                return ShootResult.NO_AMMO;
+            }
         }
         // 判断膛内子弹
         if (boltType == Bolt.MANUAL_ACTION && !hasAmmoInBarrel) {
