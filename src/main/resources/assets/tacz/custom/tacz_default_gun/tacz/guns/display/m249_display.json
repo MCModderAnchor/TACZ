@@ -6,6 +6,10 @@
     "animation": "tacz:m249",
     "use_default_animation": "rifle",
     "third_person_animation": "default",
+    "lod": {
+        "model": "tacz:gun/lod/m249",
+        "texture": "tacz:gun/lod/m249"
+    },
     "transform": {
         "scale": {
             "thirdperson": [
@@ -30,8 +34,8 @@
       "scale": 0.75
     },
     "shell": {
-        "initial_velocity": [5, 2, 1],
-        "random_velocity": [1, 1, 0.25],
+        "initial_velocity": [5, 0, 1],
+        "random_velocity": [1, 0, 0.25],
         "acceleration": [0.0, -10, 0.0],
         "angular_velocity": [360, -1200, 90],
         "living_time": 1.0

@@ -91,7 +91,7 @@
 				{
 					"name": "shell",
 					"parent": "attachment_positioning",
-					"pivot": [-0.55, 7.23125, 1.4625]
+					"pivot": [-1.05, 9.23125, 2.4625]
 				},
 				{
 					"name": "muzzle_pos",
