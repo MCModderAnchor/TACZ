@@ -105,5 +105,23 @@
         //    "rotate": [0, 0, -15],
         //    "scale": [0.6, 0.6, 0.6]
         //}
+    },
+    // 枪械模型上的文本显示
+    "text_show": {
+        // 作用的组名，该组的旋转点决定文本的位置和朝向
+        "ammo_count_text_show_pos": {
+            // 文本缩放，默认大小对于 BlockBench 里的 1
+            "scale": 1,
+            // 对齐方式：right，center，left
+            "align": "center",
+            // 阴影
+            "shadow": false,
+            // 文本颜色
+            "color": "#FFFFFF",
+            // 亮度：1-15
+            "light": 15,
+            // 本地化，且支持PlaceholderAPI 风格的占位符，类似于 Server TPS: %server_tps%
+            "text": "text_show.tacz.ak47.ammo_count"
+        }
     }
 }

@@ -15,6 +15,7 @@ import com.tacz.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tacz.guns.client.model.functional.*;
 import com.tacz.guns.client.model.listener.model.ModelAdditionalMagazineListener;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
+import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.util.RenderHelper;
@@ -26,10 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.tacz.guns.client.model.GunModelConstant.*;
@@ -202,6 +200,13 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 }
             }
         };
+    }
+
+    /**
+     * 添加枪械自定义的文本显示
+     */
+    public void setTextShowList(Map<String, TextShow> textShowList) {
+        textShowList.forEach((name, textShow) -> this.setFunctionalRenderer(name, bedrockPart -> new TextShowRender(this, textShow)));
     }
 
     public void render(PoseStack matrixStack, ItemStack gunItem, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {

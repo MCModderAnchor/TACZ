@@ -21,6 +21,7 @@ import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.pojo.GunIndexPOJO;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.sound.SoundManager;
+import com.tacz.guns.util.ColorHex;
 import com.tacz.guns.util.math.MathUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -80,6 +81,7 @@ public class ClientGunIndex {
         checkMuzzleFlash(display, index);
         checkLayerGunShow(display, index);
         checkIronZoom(display, index);
+        checkTextShow(display, index);
         return index;
     }
 
@@ -120,6 +122,21 @@ public class ClientGunIndex {
         index.ironZoom = display.getIronZoom();
         if (index.ironZoom < 1) {
             index.ironZoom = 1;
+        }
+    }
+
+    private static void checkTextShow(GunDisplay display, ClientGunIndex index) {
+        Map<String, TextShow> textShowMap = Maps.newHashMap();
+        display.getTextShows().forEach((key, value) -> {
+            if (StringUtils.isNoneBlank(key)) {
+                int color = ColorHex.colorTextToRbgInt(value.getColorText());
+                value.setColorInt(color);
+                textShowMap.put(key, value);
+            }
+        });
+        index.gunModel.setTextShowList(textShowMap);
+        if (index.lodModel != null) {
+            index.lodModel.getKey().setTextShowList(textShowMap);
         }
     }
 

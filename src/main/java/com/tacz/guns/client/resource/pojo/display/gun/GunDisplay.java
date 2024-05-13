@@ -1,5 +1,6 @@
 package com.tacz.guns.client.resource.pojo.display.gun;
 
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
 
@@ -51,6 +52,8 @@ public class GunDisplay {
     @Nullable
     @SerializedName("hotbar_show")
     private Map<String, LayerGunShow> hotbarShow = null;
+    @SerializedName("text_show")
+    private Map<String, TextShow> textShows = Maps.newHashMap();
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -126,5 +129,9 @@ public class GunDisplay {
 
     public float getIronZoom() {
         return ironZoom;
+    }
+
+    public Map<String, TextShow> getTextShows() {
+        return textShows;
     }
 }
