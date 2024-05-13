@@ -135,9 +135,6 @@ public class ClientGunIndex {
             }
         });
         index.gunModel.setTextShowList(textShowMap);
-        if (index.lodModel != null) {
-            index.lodModel.getKey().setTextShowList(textShowMap);
-        }
     }
 
     private static void checkTextureAndModel(GunDisplay display, ClientGunIndex index) {

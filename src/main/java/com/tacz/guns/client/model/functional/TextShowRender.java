@@ -7,27 +7,33 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.IFunctionalRenderer;
+import com.tacz.guns.client.model.papi.PapiManager;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
 public class TextShowRender implements IFunctionalRenderer {
     private final BedrockGunModel bedrockGunModel;
     private final TextShow textShow;
+    private final ItemStack gunStack;
 
-    public TextShowRender(BedrockGunModel bedrockGunModel, TextShow textShow) {
+    public TextShowRender(BedrockGunModel bedrockGunModel, TextShow textShow, ItemStack gunStack) {
         this.bedrockGunModel = bedrockGunModel;
         this.textShow = textShow;
+        this.gunStack = gunStack;
     }
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
-        String text = I18n.get(textShow.getTextKey());
+        if (!transformType.firstPerson()) {
+            return;
+        }
+        String text = PapiManager.getTextShow(textShow.getTextKey(), gunStack);
         if (StringUtils.isBlank(text)) {
             return;
         }

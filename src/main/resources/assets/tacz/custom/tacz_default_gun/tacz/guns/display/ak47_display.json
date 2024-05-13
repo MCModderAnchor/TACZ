@@ -120,7 +120,8 @@
             "color": "#FFFFFF",
             // 亮度：1-15
             "light": 15,
-            // 本地化，且支持PlaceholderAPI 风格的占位符，类似于 Server TPS: %server_tps%
+            // 本地化，且支持PlaceholderAPI 风格的占位符
+            // 目前仅支持两个：%player_name% %ammo_count%
             "text": "text_show.tacz.ak47.ammo_count"
         }
     }
