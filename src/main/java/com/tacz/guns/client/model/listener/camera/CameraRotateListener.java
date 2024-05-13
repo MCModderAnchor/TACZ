@@ -15,20 +15,17 @@ public class CameraRotateListener implements AnimationListener {
     @Override
     public void update(float[] values, boolean blend) {
         float[] angles = MathUtil.toEulerAngles(values);
-        // 计算 roll（绕 x 轴的旋转角）
-        float roll = angles[0];
-        // 计算 pitch（绕 y 轴的旋转角）
-        float pitch = angles[1];
-        // 计算 yaw（绕 z 轴的旋转角）
-        float yaw = angles[2];
+        float xRot = angles[0];
+        float yRot = angles[1];
+        float zRot = angles[2];
         // 在关键帧中储存的旋转数值并不是摄像头的旋转数值，是世界箱体的旋转数值
         // 最终需要存入rotationQuaternion的是摄像机的旋转（即世界箱体旋转的反相）
         if (blend) {
-            float[] q = MathUtil.toQuaternion(-roll, -pitch, -yaw);
+            float[] q = MathUtil.toQuaternion(-xRot, -yRot, -zRot);
             Quaternion quaternion = MathUtil.toQuaternion(q);
             MathUtil.blendQuaternion(camera.rotationQuaternion, quaternion);
         } else {
-            MathUtil.toQuaternion(-roll, -pitch, -yaw, camera.rotationQuaternion);
+            MathUtil.toQuaternion(-xRot, -yRot, -zRot, camera.rotationQuaternion);
         }
     }
 

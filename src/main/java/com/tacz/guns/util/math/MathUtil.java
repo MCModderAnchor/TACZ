@@ -35,13 +35,13 @@ public class MathUtil {
         return Math.abs(magnitude) * (sign < 0 ? -1 : 1);
     }
 
-    public static float[] toQuaternion(float roll, float pitch, float yaw) {
-        double cy = Math.cos(yaw * 0.5);
-        double sy = Math.sin(yaw * 0.5);
-        double cp = Math.cos(pitch * 0.5);
-        double sp = Math.sin(pitch * 0.5);
-        double cr = Math.cos(roll * 0.5);
-        double sr = Math.sin(roll * 0.5);
+    public static float[] toQuaternion(float pitch, float yaw, float roll) {
+        double cy = Math.cos(roll * 0.5);
+        double sy = Math.sin(roll * 0.5);
+        double cp = Math.cos(yaw * 0.5);
+        double sp = Math.sin(yaw * 0.5);
+        double cr = Math.cos(pitch * 0.5);
+        double sr = Math.sin(pitch * 0.5);
         return new float[]{
                 (float) (cy * cp * sr - sy * sp * cr),
                 (float) (sy * cp * sr + cy * sp * cr),
@@ -50,13 +50,13 @@ public class MathUtil {
         };
     }
 
-    public static void toQuaternion(float roll, float pitch, float yaw, @Nonnull Quaternion quaternion) {
-        double cy = Math.cos(yaw * 0.5);
-        double sy = Math.sin(yaw * 0.5);
-        double cp = Math.cos(pitch * 0.5);
-        double sp = Math.sin(pitch * 0.5);
-        double cr = Math.cos(roll * 0.5);
-        double sr = Math.sin(roll * 0.5);
+    public static void toQuaternion(float pitch, float yaw, float roll, @Nonnull Quaternion quaternion) {
+        double cy = Math.cos(roll * 0.5);
+        double sy = Math.sin(roll * 0.5);
+        double cp = Math.cos(yaw * 0.5);
+        double sp = Math.sin(yaw * 0.5);
+        double cr = Math.cos(pitch * 0.5);
+        double sr = Math.sin(pitch * 0.5);
 
         quaternion.set(
                 (float) (cy * cp * sr - sy * sp * cr),
@@ -68,11 +68,11 @@ public class MathUtil {
 
     public static float[] toEulerAngles(Quaternion q) {
         float[] angles = new float[3];
-        // roll (x-axis rotation)
+        // pitch (x-axis rotation)
         double sinrCosp = 2 * (q.r() * q.i() + q.j() * q.k());
         double cosrCosp = 1 - 2 * (q.i() * q.i() + q.j() * q.j());
         angles[0] = (float) Math.atan2(sinrCosp, cosrCosp);
-        // pitch (y-axis rotation)
+        // yaw (y-axis rotation)
         double sinp = 2 * (q.r() * q.j() - q.i() * q.k());
         if (Math.abs(sinp) >= 1) {
             // use 90 degrees if out of range
@@ -80,7 +80,7 @@ public class MathUtil {
         } else {
             angles[1] = (float) Math.asin(sinp);
         }
-        // yaw (z-axis rotation)
+        // roll (z-axis rotation)
         double sinyCosp = 2 * (q.r() * q.k() + q.j() * q.i());
         double cosyCosp = 1 - 2 * (q.j() * q.j() + q.k() * q.k());
         angles[2] = (float) Math.atan2(sinyCosp, cosyCosp);
@@ -89,18 +89,18 @@ public class MathUtil {
 
     public static float[] toEulerAngles(float[] q) {
         float[] angles = new float[3];
-        // roll (x-axis rotation)
+        // pitch (x-axis rotation)
         double sinrCosp = 2 * (q[3] * q[0] + q[1] * q[2]);
         double cosrCosp = 1 - 2 * (q[0] * q[0] + q[1] * q[1]);
         angles[0] = (float) Math.atan2(sinrCosp, cosrCosp);
-        // pitch (y-axis rotation)
+        // yaw (y-axis rotation)
         double sinp = 2 * (q[3] * q[1] - q[2] * q[0]);
         if (Math.abs(sinp) >= 1) {
             angles[1] = (float) copySign(Math.PI / 2, sinp); // use 90 degrees if out of range
         } else {
             angles[1] = (float) Math.asin(sinp);
         }
-        // yaw (z-axis rotation)
+        // roll (z-axis rotation)
         double sinyCosp = 2 * (q[3] * q[2] + q[1] * q[0]);
         double cosyCosp = 1 - 2 * (q[1] * q[1] + q[2] * q[2]);
         angles[2] = (float) Math.atan2(sinyCosp, cosyCosp);
