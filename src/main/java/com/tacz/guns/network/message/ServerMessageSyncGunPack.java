@@ -39,6 +39,6 @@ public class ServerMessageSyncGunPack {
 
     @OnlyIn(Dist.CLIENT)
     private static void doSync(ServerMessageSyncGunPack message) {
-        CommonGunPackNetwork.loadFromCache(message.cache);
+        CommonGunPackNetwork.loadFromCache(message.cache, true);
     }
 }

@@ -19,6 +19,7 @@ import com.tacz.guns.client.resource.serialize.ItemStackSerializer;
 import com.tacz.guns.client.resource.serialize.SoundEffectKeyframesSerializer;
 import com.tacz.guns.client.resource.serialize.Vector3fSerializer;
 import com.tacz.guns.config.common.OtherConfig;
+import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.pojo.AmmoIndexPOJO;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tacz.guns.resource.pojo.GunIndexPOJO;
@@ -68,6 +69,7 @@ public class ClientGunPackLoader {
     public static void init() {
         createFolder();
         checkDefaultPack();
+        CommonGunPackNetwork.clear();
     }
 
     /**

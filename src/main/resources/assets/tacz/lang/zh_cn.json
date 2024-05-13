@@ -1,7 +1,7 @@
 {
   "block.tacz.gun_smith_table": "枪械工作台",
   "block.tacz.target": "人形标靶",
-  "commands.tacz.reload.success": "所有资源成功加载！",
+  "commands.tacz.reload.success": "所有资源成功加载！耗时：%.3f ms",
   "config.tacz.client.key": "按键",
   "config.tacz.client.key.hold_to_aim": "长按瞄准",
   "config.tacz.client.key.hold_to_aim.desc": "当设置为 true 时，玩家需要按住按键才能维持瞄准状态",

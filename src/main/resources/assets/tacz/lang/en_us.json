@@ -5,7 +5,7 @@
   "toast.tacz.sub.final_level": "Man and gun become one",
   "tooltip.tacz.gun.level": "Level: ",
   "custom.tacz.error.no_name": "Error: No Name",
-  "commands.tacz.reload.success": "All pack is reload!",
+  "commands.tacz.reload.success": "All pack is reload, time: %.3f ms",
   "message.tacz.fire_select.fail": "Unknown fire mode, unable to shoot",
   "key.category.tacz": "Timeless & Classics Guns: Zero",
   "message.tacz.target_minecart.hit": "Damage: %s Distance: %s",
