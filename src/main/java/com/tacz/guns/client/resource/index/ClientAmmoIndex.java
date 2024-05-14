@@ -85,11 +85,11 @@ public class ClientAmmoIndex {
         // 检查材质
         index.modelTextureLocation = display.getModelTexture();
         // 先判断是不是 1.10.0 版本基岩版模型文件
-        if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+        if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
             index.ammoModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.LEGACY);
         }
         // 判定是不是 1.12.0 版本基岩版模型文件
-        if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+        if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
             index.ammoModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.NEW);
         }
     }
@@ -109,11 +109,11 @@ public class ClientAmmoIndex {
                 return;
             }
             // 先判断是不是 1.10.0 版本基岩版模型文件
-            if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+            if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
                 index.ammoEntityModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.LEGACY);
             }
             // 判定是不是 1.12.0 版本基岩版模型文件
-            if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+            if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
                 index.ammoEntityModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.NEW);
             }
         }
@@ -129,11 +129,11 @@ public class ClientAmmoIndex {
                 return;
             }
             // 先判断是不是 1.10.0 版本基岩版模型文件
-            if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+            if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
                 index.shellModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.LEGACY);
             }
             // 判定是不是 1.12.0 版本基岩版模型文件
-            if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+            if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
                 index.shellModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.NEW);
             }
         }

@@ -148,11 +148,11 @@ public class ClientGunIndex {
         Preconditions.checkArgument(textureLocation != null, "missing default texture");
         index.modelTexture = textureLocation;
         // 先判断是不是 1.10.0 版本基岩版模型文件
-        if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+        if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
             index.gunModel = new BedrockGunModel(modelPOJO, BedrockVersion.LEGACY);
         }
         // 判定是不是 1.12.0 版本基岩版模型文件
-        if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+        if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
             index.gunModel = new BedrockGunModel(modelPOJO, BedrockVersion.NEW);
         }
         Preconditions.checkArgument(index.gunModel != null, "there is no model data in the model file");
@@ -173,12 +173,12 @@ public class ClientGunIndex {
                 return;
             }
             // 先判断是不是 1.10.0 版本基岩版模型文件
-            if (modelPOJO.getFormatVersion().equals(BedrockVersion.LEGACY.getVersion()) && modelPOJO.getGeometryModelLegacy() != null) {
+            if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
                 BedrockGunModel model = new BedrockGunModel(modelPOJO, BedrockVersion.LEGACY);
                 index.lodModel = Pair.of(model, texture);
             }
             // 判定是不是 1.12.0 版本基岩版模型文件
-            if (modelPOJO.getFormatVersion().equals(BedrockVersion.NEW.getVersion()) && modelPOJO.getGeometryModelNew() != null) {
+            if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
                 BedrockGunModel model = new BedrockGunModel(modelPOJO, BedrockVersion.NEW);
                 index.lodModel = Pair.of(model, texture);
             }
