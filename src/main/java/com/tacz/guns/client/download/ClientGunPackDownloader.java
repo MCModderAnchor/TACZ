@@ -34,8 +34,8 @@ public class ClientGunPackDownloader {
      */
     private static final int MAX_FILE_SIZE = 250 * 1024 * 1024;
     private final ReentrantLock downloadLock = new ReentrantLock();
-    private @Nullable CompletableFuture<?> currentDownload;
     private final Path serverGunPackPath;
+    private @Nullable CompletableFuture<?> currentDownload;
 
     public ClientGunPackDownloader(Path serverGunPackPath) {
         this.serverGunPackPath = serverGunPackPath;
@@ -66,6 +66,8 @@ public class ClientGunPackDownloader {
             this.clearDownloadingGunPack();
             // 将 hash 作为下载资源包的名称
             File gunPack = serverGunPackPath.resolve(hash).toFile();
+            // 检查缓存的文件对不对，不对进行删除
+            this.removeMismatchFile(hash, gunPack);
             // 下载线程
             CompletableFuture<?> downloadFuture;
             // 如果此资源包存在，那么直接加载即可
@@ -82,7 +84,7 @@ public class ClientGunPackDownloader {
             }
 
             // 下载完成后的处理
-            this.currentDownload = downloadFuture.thenCompose((target) -> {
+            this.currentDownload = downloadFuture.thenCompose(target -> {
                 // 文件 hash 不匹配，抛出错误
                 if (!this.checkHash(hash, gunPack)) {
                     return Util.failedFuture(new RuntimeException("Hash check failure for file " + gunPack + ", see log"));
@@ -116,7 +118,7 @@ public class ClientGunPackDownloader {
         TranslatableComponent subTitle = new TranslatableComponent("multiplayer.texturePrompt.failure.line2");
         Component yesButton = CommonComponents.GUI_PROCEED;
         TranslatableComponent noButton = new TranslatableComponent("menu.disconnect");
-        mc.setScreen(new ConfirmScreen((button) -> {
+        mc.setScreen(new ConfirmScreen(button -> {
             if (button) {
                 mc.setScreen(null);
             } else {
@@ -137,6 +139,16 @@ public class ClientGunPackDownloader {
             this.currentDownload = null;
         } finally {
             this.downloadLock.unlock();
+        }
+    }
+
+    public void removeMismatchFile(String expectedHash, File file) {
+        if (file.exists() && !checkHash(expectedHash, file)) {
+            try {
+                Files.delete(file.toPath());
+            } catch (IOException exception) {
+                GunMod.LOGGER.warn("Failed to delete file {}: {}", file, exception.getMessage());
+            }
         }
     }
 

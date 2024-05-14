@@ -2,6 +2,7 @@ package com.tacz.guns.client.init;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
+import com.tacz.guns.client.download.ClientGunPackDownloadManager;
 import com.tacz.guns.client.gui.overlay.GunHudOverlay;
 import com.tacz.guns.client.gui.overlay.KillAmountOverlay;
 import com.tacz.guns.client.input.*;
@@ -56,5 +57,8 @@ public class ClientSetupEvent {
         // 注册文本提示
         event.enqueueWork(() -> MinecraftForgeClient.registerTooltipComponentFactory(GunTooltip.class, ClientGunTooltip::new));
         event.enqueueWork(() -> MinecraftForgeClient.registerTooltipComponentFactory(AmmoBoxTooltip.class, ClientAmmoBoxTooltip::new));
+
+        // 初始化自己的枪包下载器
+        event.enqueueWork(ClientGunPackDownloadManager::init);
     }
 }
