@@ -13,6 +13,7 @@ public class OtherConfig {
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_OFFSET;
     public static ForgeConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_LATENCY_MAX_SAVE_MS;
+    public static ForgeConfigSpec.ConfigValue<List<List<String>>> CLIENT_GUN_PACK_DOWNLOAD_URLS;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("other");
@@ -30,15 +31,15 @@ public class OtherConfig {
         builder.comment("The farthest sound distance of the target, including minecarts type");
         TARGET_SOUND_DISTANCE = builder.defineInRange("TargetSoundDistance", 128, 0, Integer.MAX_VALUE);
 
-        serverHitBoxLatencyFixConfig(builder);
+        serverConfig(builder);
 
         builder.pop();
     }
 
     /**
-     * 下面这三个不加入 cloth config api 中
+     * 这些配置不加入 cloth config api 中
      */
-    private static void serverHitBoxLatencyFixConfig(ForgeConfigSpec.Builder builder) {
+    private static void serverConfig(ForgeConfigSpec.Builder builder) {
         builder.comment("DEV: Server hitbox offset (If the hitbox is ahead, fill in a negative number)");
         SERVER_HITBOX_OFFSET = builder.defineInRange("ServerHitboxOffset", 3, -Double.MAX_VALUE, Double.MAX_VALUE);
 
@@ -47,5 +48,8 @@ public class OtherConfig {
 
         builder.comment("The maximum latency (in milliseconds) for the server hitbox latency fix saved");
         SERVER_HITBOX_LATENCY_MAX_SAVE_MS = builder.defineInRange("ServerHitboxLatencyMaxSaveMs", 1000, 250, Double.MAX_VALUE);
+
+        builder.comment("The gun pack that the client player needs to download, needs to fill in the URL and the SHA1 value of the file");
+        CLIENT_GUN_PACK_DOWNLOAD_URLS = builder.define("ClientGunPackDownloadUrls", Lists.newArrayList());
     }
 }

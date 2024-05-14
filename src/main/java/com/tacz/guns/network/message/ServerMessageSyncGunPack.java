@@ -1,5 +1,6 @@
 package com.tacz.guns.network.message;
 
+import com.tacz.guns.client.resource.ClientReloadManager;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.network.DataType;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,24 +10,28 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 
 public class ServerMessageSyncGunPack {
+    private final List<List<String>> download;
     private final EnumMap<DataType, Map<ResourceLocation, String>> cache;
 
-    public ServerMessageSyncGunPack(EnumMap<DataType, Map<ResourceLocation, String>> cache) {
+    public ServerMessageSyncGunPack(List<List<String>> download, EnumMap<DataType, Map<ResourceLocation, String>> cache) {
+        this.download = download;
         this.cache = cache;
     }
 
     public static void encode(ServerMessageSyncGunPack message, FriendlyByteBuf buf) {
-        CommonGunPackNetwork.toNetwork(message.cache, buf);
+        CommonGunPackNetwork.toNetwork(message.download, message.cache, buf);
     }
 
     public static ServerMessageSyncGunPack decode(FriendlyByteBuf buf) {
-        var cache = CommonGunPackNetwork.fromNetwork(buf);
-        return new ServerMessageSyncGunPack(cache);
+        var download = CommonGunPackNetwork.fromNetworkDownload(buf);
+        var cache = CommonGunPackNetwork.fromNetworkCache(buf);
+        return new ServerMessageSyncGunPack(download, cache);
     }
 
     public static void handle(ServerMessageSyncGunPack message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -37,8 +42,17 @@ public class ServerMessageSyncGunPack {
         context.setPacketHandled(true);
     }
 
+    public List<List<String>> getDownload() {
+        return download;
+    }
+
+    public EnumMap<DataType, Map<ResourceLocation, String>> getCache() {
+        return cache;
+    }
+
     @OnlyIn(Dist.CLIENT)
     private static void doSync(ServerMessageSyncGunPack message) {
-        CommonGunPackNetwork.loadFromCache(message.cache, true);
+        ClientReloadManager.cacheAll(message);
+        ClientReloadManager.reloadAllPack();
     }
 }

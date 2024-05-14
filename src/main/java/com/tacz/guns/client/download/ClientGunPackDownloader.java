@@ -2,6 +2,7 @@ package com.tacz.guns.client.download;
 
 import com.google.common.collect.Maps;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.client.resource.ClientReloadManager;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.WorldVersion;
@@ -16,6 +17,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.HttpUtil;
 import net.minecraftforge.fml.ModList;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -86,7 +88,7 @@ public class ClientGunPackDownloader {
             // 下载完成后的处理
             this.currentDownload = downloadFuture.thenCompose(target -> {
                 // 文件 hash 不匹配，抛出错误
-                if (!this.checkHash(hash, gunPack)) {
+                if (this.notMatchHash(hash, gunPack)) {
                     return Util.failedFuture(new RuntimeException("Hash check failure for file " + gunPack + ", see log"));
                 } else {
                     // 否则，加载枪械包客户端部分
@@ -143,31 +145,31 @@ public class ClientGunPackDownloader {
     }
 
     public void removeMismatchFile(String expectedHash, File file) {
-        if (file.exists() && !checkHash(expectedHash, file)) {
+        if (file.exists() && notMatchHash(expectedHash, file)) {
             try {
-                Files.delete(file.toPath());
+                FileUtils.delete(file);
             } catch (IOException exception) {
                 GunMod.LOGGER.warn("Failed to delete file {}: {}", file, exception.getMessage());
             }
         }
     }
 
-    private boolean checkHash(String expectedHash, File file) {
-        try {
-            String fileHash = DigestUtils.sha1Hex(new FileInputStream(file));
+    private boolean notMatchHash(String expectedHash, File file) {
+        try (FileInputStream stream = new FileInputStream(file)) {
+            String fileHash = DigestUtils.sha1Hex(stream);
             if (fileHash.toLowerCase(Locale.ROOT).equals(expectedHash.toLowerCase(Locale.ROOT))) {
                 GunMod.LOGGER.info("Found file {} matching requested fileHash {}", file, expectedHash);
-                return true;
+                return false;
             }
             GunMod.LOGGER.warn("File {} had wrong fileHash (expected {}, found {}).", file, expectedHash, fileHash);
         } catch (IOException ioexception) {
             GunMod.LOGGER.warn("File {} couldn't be hashed.", file, ioexception);
         }
-        return false;
+        return true;
     }
 
     public CompletableFuture<?> loadClientGunPack(File file) {
-        // TODO 完成加载部分
+        ClientReloadManager.loadClientDownloadGunPack(file);
         return CompletableFuture.completedFuture("");
     }
 }

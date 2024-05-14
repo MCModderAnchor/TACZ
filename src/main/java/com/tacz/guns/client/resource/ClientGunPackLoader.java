@@ -214,7 +214,7 @@ public class ClientGunPackLoader {
         }
     }
 
-    private static void readZipAsset(File file) {
+    public static void readZipAsset(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {

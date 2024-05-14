@@ -1,8 +1,10 @@
 package com.tacz.guns.resource.network;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.tacz.guns.client.download.ClientGunPackDownloadManager;
 import com.tacz.guns.client.resource.ClientGunPackLoader;
-import com.tacz.guns.client.resource.ClientReloadManager;
+import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageSyncGunPack;
 import com.tacz.guns.resource.CommonGunPackLoader;
@@ -15,11 +17,15 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class CommonGunPackNetwork {
+    private static final Pattern SHA1 = Pattern.compile("^[a-fA-F0-9]{40}$");
     private static final EnumMap<DataType, Map<ResourceLocation, String>> NETWORK_CACHE = new EnumMap<>(DataType.class);
 
     public static void clear() {
@@ -31,14 +37,21 @@ public class CommonGunPackNetwork {
     }
 
     public static void syncClient(MinecraftServer server) {
-        server.getPlayerList().getPlayers().forEach(player -> NetworkHandler.sendToClientPlayer(new ServerMessageSyncGunPack(NETWORK_CACHE), player));
+        server.getPlayerList().getPlayers().forEach(player -> NetworkHandler.sendToClientPlayer(
+                new ServerMessageSyncGunPack(OtherConfig.CLIENT_GUN_PACK_DOWNLOAD_URLS.get(), NETWORK_CACHE), player));
     }
 
     public static void syncClient(ServerPlayer player) {
-        NetworkHandler.sendToClientPlayer(new ServerMessageSyncGunPack(NETWORK_CACHE), player);
+        NetworkHandler.sendToClientPlayer(new ServerMessageSyncGunPack(OtherConfig.CLIENT_GUN_PACK_DOWNLOAD_URLS.get(), NETWORK_CACHE), player);
     }
 
-    public static void toNetwork(EnumMap<DataType, Map<ResourceLocation, String>> cache, FriendlyByteBuf buf) {
+    public static void toNetwork(List<List<String>> download, EnumMap<DataType, Map<ResourceLocation, String>> cache, FriendlyByteBuf buf) {
+        buf.writeVarInt(download.size());
+        download.forEach(data -> {
+            buf.writeUtf(data.get(0));
+            buf.writeUtf(data.get(1));
+        });
+
         buf.writeVarInt(cache.size());
         cache.forEach((type, caches) -> {
             buf.writeEnum(type);
@@ -50,7 +63,18 @@ public class CommonGunPackNetwork {
         });
     }
 
-    public static EnumMap<DataType, Map<ResourceLocation, String>> fromNetwork(FriendlyByteBuf buf) {
+    public static List<List<String>> fromNetworkDownload(FriendlyByteBuf buf) {
+        List<List<String>> download = Lists.newArrayList();
+        int size = buf.readVarInt();
+        for (int i = 0; i < size; i++) {
+            String url = buf.readUtf();
+            String sha1 = buf.readUtf();
+            download.add(Lists.newArrayList(url, sha1));
+        }
+        return download;
+    }
+
+    public static EnumMap<DataType, Map<ResourceLocation, String>> fromNetworkCache(FriendlyByteBuf buf) {
         EnumMap<DataType, Map<ResourceLocation, String>> cache = Maps.newEnumMap(DataType.class);
         int typeSize = buf.readVarInt();
         for (int i = 0; i < typeSize; i++) {
@@ -73,7 +97,7 @@ public class CommonGunPackNetwork {
      * 3) 服务器玩家重载自己客户端资源时调用<br>
      */
     @OnlyIn(Dist.CLIENT)
-    public static void loadFromCache(EnumMap<DataType, Map<ResourceLocation, String>> allCache, boolean fromNetwork) {
+    public static void loadFromCache(EnumMap<DataType, Map<ResourceLocation, String>> allCache) {
         // 这个更新是增量式的更新
         // 玩家安装了服务端没有的枪械包，也会显示，但无法使用
         allCache.forEach((type, cache) -> cache.forEach((id, json) -> {
@@ -86,10 +110,21 @@ public class CommonGunPackNetwork {
                 case RECIPES -> RecipeLoader.loadFromJsonString(id, json);
             }
         }));
-        // 如果是接受的网络包，则缓存一下服务端的这个参数，后续玩家重载自己客户端资源包时要读取
-        if (fromNetwork) {
-            ClientReloadManager.putAllCache(allCache);
-        }
         ClientGunPackLoader.reloadIndex();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void downloadClientGunPack(List<List<String>> download) {
+        download.forEach(data -> {
+            String url = data.get(0);
+            String sha1 = data.get(1);
+            if (StringUtils.isBlank(url)) {
+                return;
+            }
+            if (!SHA1.matcher(sha1).matches()) {
+                return;
+            }
+            ClientGunPackDownloadManager.download(url, sha1);
+        });
     }
 }
