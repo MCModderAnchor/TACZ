@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class RecoilModifier {
     @SerializedName("pitch")
     private float pitch;
+
     @SerializedName("yaw")
     private float yaw;
 

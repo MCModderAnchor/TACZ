@@ -19,6 +19,8 @@ import com.tacz.guns.resource.loader.index.CommonGunIndexLoader;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.resource.serialize.DistanceDamagePairSerializer;
+import com.tacz.guns.resource.serialize.GunSmithTableIngredientSerializer;
+import com.tacz.guns.resource.serialize.GunSmithTableResultSerializer;
 import com.tacz.guns.resource.serialize.PairSerializer;
 import com.tacz.guns.util.GetJarResources;
 import net.minecraft.resources.ResourceLocation;
@@ -39,8 +41,8 @@ import java.util.zip.ZipFile;
 public class CommonGunPackLoader {
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(Pair.class, new PairSerializer())
-            .registerTypeAdapter(GunSmithTableIngredient.class, new GunSmithTableIngredient.Serializer())
-            .registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResult.Serializer())
+            .registerTypeAdapter(GunSmithTableIngredient.class, new GunSmithTableIngredientSerializer())
+            .registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResultSerializer())
             .registerTypeAdapter(ExtraDamage.DistanceDamagePair.class, new DistanceDamagePairSerializer())
             .create();
     /**

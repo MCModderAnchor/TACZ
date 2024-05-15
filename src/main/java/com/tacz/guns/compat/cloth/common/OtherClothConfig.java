@@ -2,7 +2,7 @@ package com.tacz.guns.compat.cloth.common;
 
 import com.google.common.collect.Lists;
 import com.tacz.guns.config.common.OtherConfig;
-import com.tacz.guns.event.HeadShotAABBConfigRead;
+import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;

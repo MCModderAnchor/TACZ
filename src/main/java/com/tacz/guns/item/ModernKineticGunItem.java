@@ -9,7 +9,6 @@ import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
 import com.tacz.guns.client.tab.CustomTab;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
-import com.tacz.guns.event.CycleTaskHelperEvent;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
@@ -19,6 +18,7 @@ import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.AttachmentDataUtils;
+import com.tacz.guns.util.CycleTaskHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -84,7 +84,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         boolean consumeAmmo = IGunOperator.fromLivingEntity(shooter).consumesAmmoOrNot();
 
         // 将连发任务委托到循环任务工具
-        CycleTaskHelperEvent.addCycleTask(() -> {
+        CycleTaskHelper.addCycleTask(() -> {
             // 削减弹药数
             if (consumeAmmo) {
                 Bolt boltType = gunIndex.getGunData().getBolt();

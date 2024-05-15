@@ -1,7 +1,7 @@
 package com.tacz.guns.mixin.client;
 
+import com.tacz.guns.api.client.other.KeepingItemRenderer;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.duck.KeepingItemRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;

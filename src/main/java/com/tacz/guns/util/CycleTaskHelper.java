@@ -1,22 +1,11 @@
-package com.tacz.guns.event;
-
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+package com.tacz.guns.util;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-@Mod.EventBusSubscriber
-public class CycleTaskHelperEvent {
-    private static final List<CycleTaskTicker> CYCLE_TASKS = new LinkedList<>();
-
-    @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
-        // 迭代、调用并删除返回 false 的任务
-        CYCLE_TASKS.removeIf(ticker -> !ticker.tick());
-    }
+public final class CycleTaskHelper {
+    private static final List<CycleTaskHelper.CycleTaskTicker> CYCLE_TASKS = new LinkedList<>();
 
     /**
      * 根据提供的时间间隔循环执行任务。会立刻调用一次。
@@ -26,10 +15,15 @@ public class CycleTaskHelperEvent {
      * @param cycles   最大循环次数。
      */
     public static void addCycleTask(BooleanSupplier task, long periodMs, int cycles) {
-        CycleTaskTicker ticker = new CycleTaskTicker(task, periodMs, cycles);
+        CycleTaskHelper.CycleTaskTicker ticker = new CycleTaskHelper.CycleTaskTicker(task, periodMs, cycles);
         if (ticker.tick()) {
             CYCLE_TASKS.add(ticker);
         }
+    }
+
+    public static void tick() {
+        // 迭代、调用并删除返回 false 的任务
+        CYCLE_TASKS.removeIf(ticker -> !ticker.tick());
     }
 
     private static class CycleTaskTicker {

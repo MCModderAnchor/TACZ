@@ -1,10 +1,10 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.client.other.KeepingItemRenderer;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tacz.guns.client.sound.SoundPlayManager;
-import com.tacz.guns.duck.KeepingItemRenderer;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerDrawGun;
 import com.tacz.guns.resource.index.CommonGunIndex;
