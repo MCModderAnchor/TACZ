@@ -256,7 +256,7 @@ public class GunRefitScreen extends Screen {
         if (iGun == null) {
             return;
         }
-        int startX = (this.width + (AttachmentType.values().length - 2) * SLOT_SIZE) / 2;
+        int startX = this.width - 30;
         int startY = 10;
         for (AttachmentType type : AttachmentType.values()) {
             if (type == AttachmentType.NONE) {
