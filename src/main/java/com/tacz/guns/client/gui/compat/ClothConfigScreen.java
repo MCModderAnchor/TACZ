@@ -18,13 +18,12 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ClothConfigScreen extends Screen {
     public static final String CLOTH_CONFIG_URL = "https://www.curseforge.com/minecraft/mc-mods/cloth-config";
-    private final MultiLineLabel message;
     private final Screen lastScreen;
+    private MultiLineLabel message = MultiLineLabel.EMPTY;
 
     protected ClothConfigScreen(Screen lastScreen) {
         super(new TextComponent("Cloth Config API"));
         this.lastScreen = lastScreen;
-        this.message = MultiLineLabel.create(this.font, new TranslatableComponent("gui.tacz.cloth_config_warning.tips"), 300);
     }
 
     public static void registerNoClothConfigPage() {
@@ -38,6 +37,7 @@ public class ClothConfigScreen extends Screen {
     protected void init() {
         int posX = (this.width - 200) / 2;
         int posY = this.height / 2;
+        this.message = MultiLineLabel.create(this.font, new TranslatableComponent("gui.tacz.cloth_config_warning.tips"), 300);
         this.addRenderableWidget(new Button(posX, posY - 15, 200, 20, new TranslatableComponent("gui.tacz.cloth_config_warning.download"), b -> openUrl(CLOTH_CONFIG_URL)));
         this.addRenderableWidget(new Button(posX, posY + 50, 200, 20, CommonComponents.GUI_BACK, (pressed) -> Minecraft.getInstance().setScreen(this.lastScreen)));
     }
