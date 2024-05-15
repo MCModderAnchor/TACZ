@@ -339,23 +339,25 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         double expandHeight = entity instanceof Player && !entity.isCrouching() ? 0.0625 : 0.0;
         AABB boundingBox = entity.getBoundingBox();
         Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
-        // 根据延迟进行 hitbox 获取
-        // 只有射击者是玩家（且被击中者也是玩家）才进行此类延迟补偿计算
+        // hitbox 延迟补偿。只有射击者是玩家（且被击中者也是玩家）才进行此类延迟补偿计算
         if (OtherConfig.SERVER_HITBOX_LATENCY_FIX.get() && entity instanceof ServerPlayer player && this.getOwner() instanceof ServerPlayer serverPlayerOwner) {
             int ping = Mth.floor((serverPlayerOwner.latency / 1000.0) * 20.0 + 0.5);
             boundingBox = HitboxHelperEvent.getBoundingBox(player, ping);
             velocity = HitboxHelperEvent.getVelocity(player, ping);
         }
+        // 应用蹲伏导致的 hitbox 变形
         boundingBox = boundingBox.expandTowards(0, expandHeight, 0);
-        // 服务器玩家 hitbox 修正，通过 Config 实现快速调整
-        double serverHitboxOffset = OtherConfig.SERVER_HITBOX_OFFSET.get();
+        // 根据速度一定程度地扩展 hitbox
+        boundingBox = boundingBox.expandTowards(velocity.x, velocity.y, velocity.z);
+        // 玩家 hitbox 修正，可以通过 Config 调整
+        double playerHitboxOffset = OtherConfig.SERVER_HITBOX_OFFSET.get();
         if (entity instanceof ServerPlayer) {
             if (entity.getVehicle() != null) {
-                boundingBox = boundingBox.move(velocity.multiply(serverHitboxOffset / 2, serverHitboxOffset / 2, serverHitboxOffset / 2));
+                boundingBox = boundingBox.move(velocity.multiply(playerHitboxOffset / 2, playerHitboxOffset / 2, playerHitboxOffset / 2));
             }
-            boundingBox = boundingBox.move(velocity.multiply(serverHitboxOffset, serverHitboxOffset, serverHitboxOffset));
+            boundingBox = boundingBox.move(velocity.multiply(playerHitboxOffset, playerHitboxOffset, playerHitboxOffset));
         }
-        // 客户端测算经验值（Hitbox 总是会在玩家运动方向前约 5 Tick 的位置）
+        // 给所有实体统一应用的 Hitbox 偏移，其数值为实验得出的定值。
         if (entity.getVehicle() != null || entity instanceof ITargetEntity) {
             boundingBox = boundingBox.move(velocity.multiply(-2.5, -2.5, -2.5));
         }
