@@ -5,11 +5,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.math.Vector3f;
 import com.tacz.guns.GunMod;
-import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
-import com.tacz.guns.client.resource.loader.*;
+import com.tacz.guns.client.resource.loader.asset.*;
+import com.tacz.guns.client.resource.loader.index.ClientAmmoIndexLoader;
+import com.tacz.guns.client.resource.loader.index.ClientAttachmentIndexLoader;
+import com.tacz.guns.client.resource.loader.index.ClientGunIndexLoader;
 import com.tacz.guns.client.resource.pojo.CommonTransformObject;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.SoundEffectKeyframes;
@@ -20,16 +22,11 @@ import com.tacz.guns.client.resource.serialize.SoundEffectKeyframesSerializer;
 import com.tacz.guns.client.resource.serialize.Vector3fSerializer;
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
-import com.tacz.guns.resource.pojo.AmmoIndexPOJO;
-import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
-import com.tacz.guns.resource.pojo.GunIndexPOJO;
 import com.tacz.guns.util.GetJarResources;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,13 +52,12 @@ public class ClientGunPackLoader {
             .registerTypeAdapter(SoundEffectKeyframes.class, new SoundEffectKeyframesSerializer())
             .create();
 
-    private static final Marker MARKER = MarkerManager.getMarker("ClientGunPackLoader");
     /**
      * 储存修改过的客户端 index
      */
-    private static final Map<ResourceLocation, ClientGunIndex> GUN_INDEX = Maps.newHashMap();
-    private static final Map<ResourceLocation, ClientAmmoIndex> AMMO_INDEX = Maps.newHashMap();
-    private static final Map<ResourceLocation, ClientAttachmentIndex> ATTACHMENT_INDEX = Maps.newHashMap();
+    public static final Map<ResourceLocation, ClientGunIndex> GUN_INDEX = Maps.newHashMap();
+    public static final Map<ResourceLocation, ClientAmmoIndex> AMMO_INDEX = Maps.newHashMap();
+    public static final Map<ResourceLocation, ClientAttachmentIndex> ATTACHMENT_INDEX = Maps.newHashMap();
 
     /**
      * 创建存放枪包的文件夹、放入默认枪包
@@ -92,75 +88,9 @@ public class ClientGunPackLoader {
         GUN_INDEX.clear();
         ATTACHMENT_INDEX.clear();
 
-        loadAmmoIndex();
-        loadGunIndex();
-        loadAttachmentIndex();
-    }
-
-    private static void loadAttachmentIndex() {
-        TimelessAPI.getAllCommonAttachmentIndex().forEach(index -> {
-            ResourceLocation id = index.getKey();
-            AttachmentIndexPOJO pojo = index.getValue().getPojo();
-            try {
-                // 获取枪械的定义文件
-                ATTACHMENT_INDEX.put(id, ClientAttachmentIndex.getInstance(id, pojo));
-            } catch (IllegalArgumentException exception) {
-                GunMod.LOGGER.warn(MARKER, "{} index file read fail!", id);
-                exception.printStackTrace();
-            }
-        });
-    }
-
-    private static void loadGunIndex() {
-        TimelessAPI.getAllCommonGunIndex().forEach(index -> {
-            ResourceLocation id = index.getKey();
-            GunIndexPOJO pojo = index.getValue().getPojo();
-            try {
-                // 获取枪械的定义文件
-                GUN_INDEX.put(id, ClientGunIndex.getInstance(pojo));
-            } catch (IllegalArgumentException exception) {
-                GunMod.LOGGER.warn(MARKER, "{} index file read fail!", id);
-                exception.printStackTrace();
-            }
-        });
-    }
-
-    private static void loadAmmoIndex() {
-        TimelessAPI.getAllCommonAmmoIndex().forEach(index -> {
-            ResourceLocation id = index.getKey();
-            AmmoIndexPOJO pojo = index.getValue().getPojo();
-            try {
-                // 获取枪械的定义文件
-                AMMO_INDEX.put(id, ClientAmmoIndex.getInstance(pojo));
-            } catch (IllegalArgumentException exception) {
-                GunMod.LOGGER.warn(MARKER, "{} index file read fail!", id);
-                exception.printStackTrace();
-            }
-        });
-    }
-
-    public static Set<Map.Entry<ResourceLocation, ClientGunIndex>> getAllGuns() {
-        return GUN_INDEX.entrySet();
-    }
-
-    public static Set<Map.Entry<ResourceLocation, ClientAmmoIndex>> getAllAmmo() {
-        return AMMO_INDEX.entrySet();
-    }
-
-    public static Set<Map.Entry<ResourceLocation, ClientAttachmentIndex>> getAllAttachments() {
-        return ATTACHMENT_INDEX.entrySet();
-    }
-
-    public static Optional<ClientGunIndex> getGunIndex(ResourceLocation registryName) {
-        return Optional.ofNullable(GUN_INDEX.get(registryName));
-    }
-
-    public static Optional<ClientAmmoIndex> getAmmoIndex(ResourceLocation registryName) {
-        return Optional.ofNullable(AMMO_INDEX.get(registryName));
-    }
-
-    public static Optional<ClientAttachmentIndex> getAttachmentIndex(ResourceLocation registryName) {
-        return Optional.ofNullable(ATTACHMENT_INDEX.get(registryName));
+        ClientAmmoIndexLoader.loadAmmoIndex();
+        ClientGunIndexLoader.loadGunIndex();
+        ClientAttachmentIndexLoader.loadAttachmentIndex();
     }
 
     private static void createFolder() {
@@ -261,5 +191,29 @@ public class ClientGunPackLoader {
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
+    }
+
+    public static Set<Map.Entry<ResourceLocation, ClientGunIndex>> getAllGuns() {
+        return GUN_INDEX.entrySet();
+    }
+
+    public static Set<Map.Entry<ResourceLocation, ClientAmmoIndex>> getAllAmmo() {
+        return AMMO_INDEX.entrySet();
+    }
+
+    public static Set<Map.Entry<ResourceLocation, ClientAttachmentIndex>> getAllAttachments() {
+        return ATTACHMENT_INDEX.entrySet();
+    }
+
+    public static Optional<ClientGunIndex> getGunIndex(ResourceLocation registryName) {
+        return Optional.ofNullable(GUN_INDEX.get(registryName));
+    }
+
+    public static Optional<ClientAmmoIndex> getAmmoIndex(ResourceLocation registryName) {
+        return Optional.ofNullable(AMMO_INDEX.get(registryName));
+    }
+
+    public static Optional<ClientAttachmentIndex> getAttachmentIndex(ResourceLocation registryName) {
+        return Optional.ofNullable(ATTACHMENT_INDEX.get(registryName));
     }
 }

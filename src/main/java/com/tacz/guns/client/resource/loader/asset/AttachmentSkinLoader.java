@@ -1,11 +1,11 @@
-package com.tacz.guns.client.resource.loader;
+package com.tacz.guns.client.resource.loader.asset;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.ClientGunPackLoader;
-import com.tacz.guns.client.resource.pojo.display.gun.GunDisplay;
+import com.tacz.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
 import com.tacz.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;
@@ -23,12 +23,12 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public final class GunDisplayLoader {
-    private static final Marker MARKER = MarkerManager.getMarker("GunDisplayLoader");
-    private static final Pattern DISPLAY_PATTERN = Pattern.compile("^(\\w+)/guns/display/([\\w/]+)\\.json$");
+public final class AttachmentSkinLoader {
+    private static final Marker MARKER = MarkerManager.getMarker("AttachmentSkinLoader");
+    private static final Pattern SKIN_PATTERN = Pattern.compile("^(\\w+)/attachments/skin/([\\w/]+)\\.json$");
 
     public static boolean load(ZipFile zipFile, String zipPath) {
-        Matcher matcher = DISPLAY_PATTERN.matcher(zipPath);
+        Matcher matcher = SKIN_PATTERN.matcher(zipPath);
         if (matcher.find()) {
             String namespace = matcher.group(1);
             String path = matcher.group(2);
@@ -39,11 +39,11 @@ public final class GunDisplayLoader {
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
-                GunDisplay display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunDisplay.class);
-                ClientAssetManager.INSTANCE.putGunDisplay(registryName, display);
+                AttachmentSkin display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentSkin.class);
+                ClientAssetManager.INSTANCE.putAttachmentSkin(registryName, display);
                 return true;
             } catch (IOException | JsonSyntaxException | JsonIOException exception) {
-                GunMod.LOGGER.warn(MARKER, "Failed to read display file: {}, entry: {}", zipFile, entry);
+                GunMod.LOGGER.warn(MARKER, "Failed to read skin display file: {}, entry: {}", zipFile, entry);
                 exception.printStackTrace();
             }
         }
@@ -51,14 +51,14 @@ public final class GunDisplayLoader {
     }
 
     public static void load(File root) {
-        Path displayPath = root.toPath().resolve("guns/display");
+        Path displayPath = root.toPath().resolve("attachments/skin");
         if (Files.isDirectory(displayPath)) {
             TacPathVisitor visitor = new TacPathVisitor(displayPath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
-                    GunDisplay display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), GunDisplay.class);
-                    ClientAssetManager.INSTANCE.putGunDisplay(id, display);
+                    AttachmentSkin display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AttachmentSkin.class);
+                    ClientAssetManager.INSTANCE.putAttachmentSkin(id, display);
                 } catch (IOException | JsonSyntaxException | JsonIOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read display file: {}", file);
+                    GunMod.LOGGER.warn(MARKER, "Failed to read skin display file: {}", file);
                     exception.printStackTrace();
                 }
             });

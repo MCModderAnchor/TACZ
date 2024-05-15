@@ -1,35 +1,26 @@
-package com.tacz.guns.event;
+package com.tacz.guns.config.util;
 
 import com.google.common.collect.Maps;
 import com.tacz.guns.config.common.OtherConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class HeadShotAABBConfigRead {
-    private static final String CONFIG_NAME = "tacz-common.toml";
     private static final Map<ResourceLocation, AABB> AABB_CHECK = Maps.newHashMap();
     // 书写格式：touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]
     // 生物 ID + 碰撞箱
     private static final Pattern REG = Pattern.compile("^([a-z0-9_.-]+:[a-z0-9/._-]+)\s*?\\[([-+]?[0-9]*\\.?[0-9]+),\s*?([-+]?[0-9]*\\.?[0-9]+),\s*?([-+]?[0-9]*\\.?[0-9]+),\s*?([-+]?[0-9]*\\.?[0-9]+),\s*?([-+]?[0-9]*\\.?[0-9]+),\s*?([-+]?[0-9]*\\.?[0-9]+),*?\s*?]");
 
-    @SubscribeEvent
-    public static void onEvent(ModConfigEvent.Loading event) {
-        String fileName = event.getConfig().getFileName();
-        if (CONFIG_NAME.equals(fileName)) {
-            AABB_CHECK.clear();
-            List<String> configData = OtherConfig.HEAD_SHOT_AABB.get();
-            for (String text : configData) {
-                addCheck(text);
-            }
+    public static void init() {
+        AABB_CHECK.clear();
+        List<String> configData = OtherConfig.HEAD_SHOT_AABB.get();
+        for (String text : configData) {
+            addCheck(text);
         }
     }
 
@@ -56,3 +47,4 @@ public class HeadShotAABBConfigRead {
         return AABB_CHECK.get(id);
     }
 }
+

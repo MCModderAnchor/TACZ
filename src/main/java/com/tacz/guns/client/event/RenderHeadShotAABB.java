@@ -2,7 +2,7 @@ package com.tacz.guns.client.event;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.config.client.RenderConfig;
-import com.tacz.guns.event.HeadShotAABBConfigRead;
+import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;

@@ -1,11 +1,10 @@
-package com.tacz.guns.client.resource.loader;
+package com.tacz.guns.client.resource.loader.asset;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientAssetManager;
-import com.tacz.guns.client.resource.ClientGunPackLoader;
-import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
+import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Marker;
@@ -23,12 +22,14 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class AmmoDisplayLoader {
-    private static final Marker MARKER = MarkerManager.getMarker("AmmoDisplayLoader");
-    private static final Pattern DISPLAY_PATTERN = Pattern.compile("^(\\w+)/ammo/display/([\\w/]+)\\.json$");
+import static com.tacz.guns.client.resource.ClientGunPackLoader.GSON;
+
+public final class BedrockModelLoader {
+    private static final Marker MARKER = MarkerManager.getMarker("BedrockModelLoader");
+    private static final Pattern MODEL_PATTERN = Pattern.compile("^(\\w+)/models/([\\w/]+)\\.json$");
 
     public static boolean load(ZipFile zipFile, String zipPath) {
-        Matcher matcher = DISPLAY_PATTERN.matcher(zipPath);
+        Matcher matcher = MODEL_PATTERN.matcher(zipPath);
         if (matcher.find()) {
             String namespace = matcher.group(1);
             String path = matcher.group(2);
@@ -37,13 +38,13 @@ public class AmmoDisplayLoader {
                 GunMod.LOGGER.warn(MARKER, "{} file don't exist", zipPath);
                 return false;
             }
-            try (InputStream stream = zipFile.getInputStream(entry)) {
+            try (InputStream modelFileStream = zipFile.getInputStream(entry)) {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
-                AmmoDisplay display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AmmoDisplay.class);
-                ClientAssetManager.INSTANCE.putAmmoDisplay(registryName, display);
+                BedrockModelPOJO modelPOJO = GSON.fromJson(new InputStreamReader(modelFileStream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
+                ClientAssetManager.INSTANCE.putModel(registryName, modelPOJO);
                 return true;
             } catch (IOException | JsonSyntaxException | JsonIOException exception) {
-                GunMod.LOGGER.warn(MARKER, "Failed to read display file: {}, entry: {}", zipFile, entry);
+                GunMod.LOGGER.warn(MARKER, "Failed to read model file: {}, entry: {}", zipFile, entry);
                 exception.printStackTrace();
             }
         }
@@ -51,21 +52,21 @@ public class AmmoDisplayLoader {
     }
 
     public static void load(File root) {
-        Path displayPath = root.toPath().resolve("ammo/display");
-        if (Files.isDirectory(displayPath)) {
-            TacPathVisitor visitor = new TacPathVisitor(displayPath.toFile(), root.getName(), ".json", (id, file) -> {
-                try (InputStream stream = Files.newInputStream(file)) {
-                    AmmoDisplay display = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), AmmoDisplay.class);
-                    ClientAssetManager.INSTANCE.putAmmoDisplay(id, display);
+        Path modelPath = root.toPath().resolve("models");
+        if (Files.isDirectory(modelPath)) {
+            TacPathVisitor visitor = new TacPathVisitor(modelPath.toFile(), root.getName(), ".json", (id, file) -> {
+                try (InputStream modelFileStream = Files.newInputStream(file)) {
+                    BedrockModelPOJO modelPOJO = GSON.fromJson(new InputStreamReader(modelFileStream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
+                    ClientAssetManager.INSTANCE.putModel(id, modelPOJO);
                 } catch (IOException | JsonSyntaxException | JsonIOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read display file: {}", file);
+                    GunMod.LOGGER.warn(MARKER, "Failed to read model file: {}", file);
                     exception.printStackTrace();
                 }
             });
             try {
-                Files.walkFileTree(displayPath, visitor);
+                Files.walkFileTree(modelPath, visitor);
             } catch (IOException e) {
-                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", displayPath);
+                GunMod.LOGGER.warn(MARKER, "Failed to walk file tree: {}", modelPath);
                 e.printStackTrace();
             }
         }

@@ -214,6 +214,7 @@ public enum ClientAssetManager {
         this.attachmentDisplays.clear();
         this.attachmentSkins.clear();
         this.gltfAnimations.clear();
+        this.bedrockAnimations.clear();
         this.models.clear();
         this.soundBuffers.clear();
         this.languages.clear();

@@ -7,10 +7,12 @@ import com.tacz.guns.client.resource.ClientGunPackLoader;
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageSyncGunPack;
-import com.tacz.guns.resource.CommonGunPackLoader;
-import com.tacz.guns.resource.loader.AttachmentDataLoader;
-import com.tacz.guns.resource.loader.GunDataLoader;
-import com.tacz.guns.resource.loader.RecipeLoader;
+import com.tacz.guns.resource.loader.asset.AttachmentDataLoader;
+import com.tacz.guns.resource.loader.asset.GunDataLoader;
+import com.tacz.guns.resource.loader.asset.RecipeLoader;
+import com.tacz.guns.resource.loader.index.CommonAmmoIndexLoader;
+import com.tacz.guns.resource.loader.index.CommonAttachmentIndexLoader;
+import com.tacz.guns.resource.loader.index.CommonGunIndexLoader;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -104,9 +106,9 @@ public class CommonGunPackNetwork {
             switch (type) {
                 case GUN_DATA -> GunDataLoader.loadFromJsonString(id, json);
                 case ATTACHMENT_DATA -> AttachmentDataLoader.loadFromJsonString(id, json);
-                case AMMO_INDEX -> CommonGunPackLoader.loadAmmoFromJsonString(id, json);
-                case GUN_INDEX -> CommonGunPackLoader.loadGunFromJsonString(id, json);
-                case ATTACHMENT_INDEX -> CommonGunPackLoader.loadAttachmentFromJsonString(id, json);
+                case AMMO_INDEX -> CommonAmmoIndexLoader.loadAmmoFromJsonString(id, json);
+                case GUN_INDEX -> CommonGunIndexLoader.loadGunFromJsonString(id, json);
+                case ATTACHMENT_INDEX -> CommonAttachmentIndexLoader.loadAttachmentFromJsonString(id, json);
                 case RECIPES -> RecipeLoader.loadFromJsonString(id, json);
             }
         }));

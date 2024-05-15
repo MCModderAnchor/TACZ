@@ -10,6 +10,7 @@ import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -65,8 +66,10 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         this.ammoName = ammo.getHoverName();
         this.maxWidth = Math.max(font.width(this.ammoName) + 22, this.maxWidth);
 
-        int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(gun, gunIndex.getGunData());
-        this.ammoCountText = new TextComponent("%d/%d".formatted(iGun.getCurrentAmmoCount(this.gun), maxAmmoCount));
+        int barrelBulletAmount = (iGun.hasBulletInBarrel(gun) && gunIndex.getGunData().getBolt() != Bolt.OPEN_BOLT) ? 1 : 0;
+        int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(gun, gunIndex.getGunData()) + barrelBulletAmount;
+        int currentAmmoCount = iGun.getCurrentAmmoCount(this.gun) + barrelBulletAmount;
+        this.ammoCountText = new TextComponent("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
         this.maxWidth = Math.max(font.width(this.ammoCountText) + 22, this.maxWidth);
 
         CustomTabPOJO tab = ClientAssetManager.INSTANCE.getAllCustomTabs().get(gunIndex.getType());

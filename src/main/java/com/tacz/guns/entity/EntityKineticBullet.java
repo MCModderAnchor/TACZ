@@ -9,14 +9,14 @@ import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
 import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.config.common.OtherConfig;
-import com.tacz.guns.event.HeadShotAABBConfigRead;
-import com.tacz.guns.event.HitboxHelperEvent;
+import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageGunHurt;
 import com.tacz.guns.network.message.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
+import com.tacz.guns.util.HitboxHelper;
 import com.tacz.guns.util.TacHitResult;
 import com.tacz.guns.util.block.BlockRayTrace;
 import com.tacz.guns.util.block.ProjectileExplosion;
@@ -342,8 +342,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         // hitbox 延迟补偿。只有射击者是玩家（且被击中者也是玩家）才进行此类延迟补偿计算
         if (OtherConfig.SERVER_HITBOX_LATENCY_FIX.get() && entity instanceof ServerPlayer player && this.getOwner() instanceof ServerPlayer serverPlayerOwner) {
             int ping = Mth.floor((serverPlayerOwner.latency / 1000.0) * 20.0 + 0.5);
-            boundingBox = HitboxHelperEvent.getBoundingBox(player, ping);
-            velocity = HitboxHelperEvent.getVelocity(player, ping);
+            boundingBox = HitboxHelper.getBoundingBox(player, ping);
+            velocity = HitboxHelper.getVelocity(player, ping);
         }
         // 应用蹲伏导致的 hitbox 变形
         boundingBox = boundingBox.expandTowards(0, expandHeight, 0);

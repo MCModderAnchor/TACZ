@@ -195,8 +195,10 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
     @Override
     public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
         if (this.allowdedIn(category)) {
+            // 添加普通版本的弹药盒
             items.add(new ItemStack(this));
 
+            // 添加创造模式弹药盒
             ItemStack creativeItemstack = new ItemStack(this);
             CompoundTag tag = creativeItemstack.getOrCreateTag();
             tag.putBoolean(CREATIVE_TAG, true);

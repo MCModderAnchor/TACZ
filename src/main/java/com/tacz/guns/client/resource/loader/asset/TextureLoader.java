@@ -1,4 +1,4 @@
-package com.tacz.guns.client.resource.loader;
+package com.tacz.guns.client.resource.loader.asset;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.texture.FilePackTexture;

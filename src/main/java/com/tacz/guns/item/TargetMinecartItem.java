@@ -20,7 +20,9 @@ public class TargetMinecartItem extends Item {
         super((new Item.Properties()).stacksTo(1).tab(ModItems.OTHER_TAB));
     }
 
-    public @NotNull InteractionResult useOn(UseOnContext context) {
+    @NotNull
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos blockpos = context.getClickedPos();
         BlockState blockstate = level.getBlockState(blockpos);
