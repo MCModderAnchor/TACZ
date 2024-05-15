@@ -14,6 +14,8 @@ public class OtherConfig {
     public static ForgeConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_LATENCY_MAX_SAVE_MS;
     public static ForgeConfigSpec.ConfigValue<List<List<String>>> CLIENT_GUN_PACK_DOWNLOAD_URLS;
+    public static ForgeConfigSpec.ConfigValue<List<List<String>>> INTERACT_KEY_WHITELIST_BLOCKS;
+    public static ForgeConfigSpec.ConfigValue<List<List<String>>> INTERACT_KEY_WHITELIST_ENTITIES;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("other");
@@ -51,5 +53,13 @@ public class OtherConfig {
 
         builder.comment("The gun pack that the client player needs to download, needs to fill in the URL and the SHA1 value of the file");
         CLIENT_GUN_PACK_DOWNLOAD_URLS = builder.define("ClientGunPackDownloadUrls", Lists.newArrayList());
+
+        builder.comment("These whitelist blocks can be interacted with when the interact key is pressed");
+        builder.comment("Format: [Block ID, Text Key]");
+        INTERACT_KEY_WHITELIST_BLOCKS = builder.define("InteractKeyWhitelistBlocks", Lists.newArrayList());
+
+        builder.comment("These whitelist entities can be interacted with when the interact key is pressed");
+        builder.comment("Format: [Entity ID, Text Key]");
+        INTERACT_KEY_WHITELIST_ENTITIES = builder.define("InteractKeyWhitelistEntities", Lists.newArrayList());
     }
 }

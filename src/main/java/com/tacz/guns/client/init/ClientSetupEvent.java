@@ -4,6 +4,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.client.download.ClientGunPackDownloadManager;
 import com.tacz.guns.client.gui.overlay.GunHudOverlay;
+import com.tacz.guns.client.gui.overlay.InteractKeyTextOverlay;
 import com.tacz.guns.client.gui.overlay.KillAmountOverlay;
 import com.tacz.guns.client.input.*;
 import com.tacz.guns.client.tooltip.ClientAmmoBoxTooltip;
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,6 +33,7 @@ public class ClientSetupEvent {
             ClientRegistry.registerKeyBinding(InspectKey.INSPECT_KEY);
             ClientRegistry.registerKeyBinding(ReloadKey.RELOAD_KEY);
             ClientRegistry.registerKeyBinding(ShootKey.SHOOT_KEY);
+            ClientRegistry.registerKeyBinding(InteractKey.INTERACT_KEY);
             ClientRegistry.registerKeyBinding(FireSelectKey.FIRE_SELECT_KEY);
             ClientRegistry.registerKeyBinding(AimKey.AIM_KEY);
             ClientRegistry.registerKeyBinding(RefitKey.REFIT_KEY);
@@ -42,6 +45,7 @@ public class ClientSetupEvent {
         event.enqueueWork(() -> {
             OverlayRegistry.registerOverlayTop("TAC Gun HUD Overlay", GunHudOverlay::render);
             OverlayRegistry.registerOverlayTop("TAC Kill Amount Overlay", KillAmountOverlay::render);
+            OverlayRegistry.registerOverlayAbove(ForgeIngameGui.CROSSHAIR_ELEMENT, "TAC Interact Key Overlay", InteractKeyTextOverlay::render);
         });
 
         // 注册自己的的硬编码第三人称动画

@@ -15,6 +15,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.DoubleValue KILL_AMOUNT_DURATION_SECOND;
     public static ForgeConfigSpec.IntValue TARGET_RENDER_DISTANCE;
     public static ForgeConfigSpec.BooleanValue FIRST_PERSON_BULLET_TRACER_ENABLE;
+    public static ForgeConfigSpec.BooleanValue DISABLE_INTERACT_HUD_TEXT;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -51,6 +52,9 @@ public class RenderConfig {
 
         builder.comment("Whether or not to render first person bullet trail");
         FIRST_PERSON_BULLET_TRACER_ENABLE = builder.define("FirstPersonBulletTracerEnable", true);
+
+        builder.comment("Disable the interact hud text in center of the screen");
+        DISABLE_INTERACT_HUD_TEXT = builder.define("DisableInteractHudText", false);
 
         builder.pop();
     }

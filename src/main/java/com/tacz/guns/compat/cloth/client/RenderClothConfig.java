@@ -62,5 +62,9 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.client.render.first_person_bullet_tracer_enable"), RenderConfig.FIRST_PERSON_BULLET_TRACER_ENABLE.get())
                 .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.client.render.first_person_bullet_tracer_enable.desc"))
                 .setSaveConsumer(RenderConfig.FIRST_PERSON_BULLET_TRACER_ENABLE::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.client.render.disable_interact_hud_text"), RenderConfig.DISABLE_INTERACT_HUD_TEXT.get())
+                .setDefaultValue(false).setTooltip(new TranslatableComponent("config.tacz.client.render.disable_interact_hud_text.desc"))
+                .setSaveConsumer(RenderConfig.DISABLE_INTERACT_HUD_TEXT::set).build());
     }
 }
