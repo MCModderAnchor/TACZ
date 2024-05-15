@@ -2,6 +2,7 @@ package com.tacz.guns.client.download;
 
 import com.google.common.collect.Maps;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.client.gui.ClientGunPackDownloadProgressScreen;
 import com.tacz.guns.client.resource.ClientReloadManager;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
@@ -9,7 +10,6 @@ import net.minecraft.WorldVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.screens.ConfirmScreen;
-import net.minecraft.client.gui.screens.ProgressScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -79,7 +79,7 @@ public class ClientGunPackDownloader {
             // 否则下载，并打开下载界面
             else {
                 // 下载进度界面
-                ProgressScreen progressScreen = new ProgressScreen(true);
+                ClientGunPackDownloadProgressScreen progressScreen = new ClientGunPackDownloadProgressScreen();
                 Minecraft minecraft = Minecraft.getInstance();
                 minecraft.executeBlocking(() -> minecraft.setScreen(progressScreen));
                 downloadFuture = HttpUtil.downloadTo(gunPack, url, getDownloadHeaders(), MAX_FILE_SIZE, progressScreen, minecraft.getProxy());
@@ -116,8 +116,8 @@ public class ClientGunPackDownloader {
     }
 
     private void displayFailScreen(Minecraft mc) {
-        TranslatableComponent title = new TranslatableComponent("multiplayer.texturePrompt.failure.line1");
-        TranslatableComponent subTitle = new TranslatableComponent("multiplayer.texturePrompt.failure.line2");
+        TranslatableComponent title = new TranslatableComponent("gui.tacz.client_gun_pack_downloader.fail.title");
+        TranslatableComponent subTitle = new TranslatableComponent("gui.tacz.client_gun_pack_downloader.fail.subtitle");
         Component yesButton = CommonComponents.GUI_PROCEED;
         TranslatableComponent noButton = new TranslatableComponent("menu.disconnect");
         mc.setScreen(new ConfirmScreen(button -> {
