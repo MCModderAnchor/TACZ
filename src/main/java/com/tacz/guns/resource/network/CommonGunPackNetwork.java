@@ -17,10 +17,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,15 @@ public class CommonGunPackNetwork {
     public static void syncClient(MinecraftServer server) {
         server.getPlayerList().getPlayers().forEach(player -> NetworkHandler.sendToClientPlayer(
                 new ServerMessageSyncGunPack(OtherConfig.CLIENT_GUN_PACK_DOWNLOAD_URLS.get(), NETWORK_CACHE), player));
+    }
+
+    public static void syncClientExceptSelf(MinecraftServer server, @Nullable Player self) {
+        server.getPlayerList().getPlayers().forEach(player -> {
+            if (!player.equals(self)) {
+                ServerMessageSyncGunPack message = new ServerMessageSyncGunPack(OtherConfig.CLIENT_GUN_PACK_DOWNLOAD_URLS.get(), NETWORK_CACHE);
+                NetworkHandler.sendToClientPlayer(message, player);
+            }
+        });
     }
 
     public static void syncClient(ServerPlayer player) {

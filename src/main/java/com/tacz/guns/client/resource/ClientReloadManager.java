@@ -34,8 +34,9 @@ public class ClientReloadManager {
         // 联机 / 非联机情况判断
         Minecraft mc = Minecraft.getInstance();
         // 局域网联机（自己是主机），需要给其他玩家发送自己的同步数据
+        // 不需要给自己发
         if (mc.hasSingleplayerServer() && mc.getSingleplayerServer() != null && mc.getSingleplayerServer().isPublished()) {
-            CommonGunPackNetwork.syncClient(mc.getSingleplayerServer());
+            CommonGunPackNetwork.syncClientExceptSelf(mc.getSingleplayerServer(), Minecraft.getInstance().player);
             return;
         }
         // 多人游戏，自己是客户端，则需要主动加载服务端缓存数据

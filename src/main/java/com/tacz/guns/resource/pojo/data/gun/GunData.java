@@ -58,6 +58,9 @@ public class GunData {
     @SerializedName("recoil")
     private GunRecoil recoil = new GunRecoil();
 
+    @SerializedName("hurt_bob_tweak_multiplier")
+    private float hurtBobTweakMultiplier = 0.05f;
+
     @SerializedName("inaccuracy")
     private Map<InaccuracyType, Float> inaccuracy = null;
 
@@ -128,6 +131,10 @@ public class GunData {
 
     public GunRecoil getRecoil() {
         return recoil;
+    }
+
+    public float getHurtBobTweakMultiplier() {
+        return hurtBobTweakMultiplier;
     }
 
     public Map<InaccuracyType, Float> getInaccuracy() {
