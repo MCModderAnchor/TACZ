@@ -11,6 +11,7 @@
     "common.ServerPlayNetHandlerMixin"
   ],
   "client": [
+    "client.AbstractButtonMixin",
     "client.GameRendererMixin",
     "client.HumanoidModelMixin",
     "client.ItemInHandLayerMixin",

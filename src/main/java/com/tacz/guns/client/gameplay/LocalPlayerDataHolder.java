@@ -18,6 +18,10 @@ public class LocalPlayerDataHolder {
      */
     public static float oldAimingProgress = 0;
     /**
+     * 点击按钮的时间戳，防止客户端点击按钮后误触开火
+     */
+    public static long clientClickButtonTimestamp = -1L;
+    /**
      * 玩家对象
      */
     private final LocalPlayer player;
