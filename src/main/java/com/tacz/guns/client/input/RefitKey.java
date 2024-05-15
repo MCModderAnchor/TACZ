@@ -29,13 +29,17 @@ public class RefitKey {
 
     @SubscribeEvent
     public static void onInspectPress(InputEvent.KeyInputEvent event) {
-        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && REFIT_KEY.matches(event.getKey(), event.getScanCode())) {
+        if (event.getAction() == GLFW.GLFW_PRESS && REFIT_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null || player.isSpectator()) {
                 return;
             }
-            if (IGun.mainhandHoldGun(player) && Minecraft.getInstance().screen == null) {
-                Minecraft.getInstance().setScreen(new GunRefitScreen());
+            if (isInGame()) {
+                if (IGun.mainhandHoldGun(player) && Minecraft.getInstance().screen == null) {
+                    Minecraft.getInstance().setScreen(new GunRefitScreen());
+                }
+            } else if (Minecraft.getInstance().screen instanceof GunRefitScreen) {
+                Minecraft.getInstance().setScreen(null);
             }
         }
     }
