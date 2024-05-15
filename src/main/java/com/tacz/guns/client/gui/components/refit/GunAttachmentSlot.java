@@ -29,7 +29,7 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     private ItemStack attachmentItem = ItemStack.EMPTY;
 
     public GunAttachmentSlot(int pX, int pY, AttachmentType type, int gunItemIndex, Inventory inventory, Button.OnPress onPress) {
-        super(pX, pY, 18, 18, TextComponent.EMPTY, onPress);
+        super(pX, pY, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE, TextComponent.EMPTY, onPress);
         this.type = type;
         this.inventory = inventory;
         this.gunItemIndex = gunItemIndex;
@@ -60,9 +60,9 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
         RenderSystem.enableBlend();
         // 渲染外框
         if (isHoveredOrFocused() || selected) {
-            blit(poseStack, x, y, 0, 0, width, height, 18, 18);
+            blit(poseStack, x, y, 0, 0, width, height, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
         } else {
-            blit(poseStack, x + 1, y + 1, 1, 1, width - 2, height - 2, 18, 18);
+            blit(poseStack, x + 1, y + 1, 1, 1, width - 2, height - 2, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
         }
         // 渲染内部物品，或者空置时的icon
         this.attachmentItem = iGun.getAttachment(gunItem, type);
@@ -71,7 +71,7 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
         } else {
             RenderSystem.setShaderTexture(0, GunRefitScreen.ICONS_TEXTURE);
             int xOffset = GunRefitScreen.getSlotTextureXOffset(gunItem, type);
-            blit(poseStack, x + 2, y + 2, width - 4, height - 4, xOffset, 0, GunRefitScreen.ICON_SIZE, GunRefitScreen.ICON_SIZE, GunRefitScreen.getSlotsTextureWidth(), GunRefitScreen.ICON_SIZE);
+            blit(poseStack, x + 2, y + 2, width - 4, height - 4, xOffset, 0, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.getSlotsTextureWidth(), GunRefitScreen.ICON_UV_SIZE);
         }
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();

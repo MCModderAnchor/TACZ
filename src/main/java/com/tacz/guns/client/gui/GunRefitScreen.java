@@ -37,7 +37,8 @@ public class GunRefitScreen extends Screen {
     public static final ResourceLocation UNLOAD_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_unload.png");
     public static final ResourceLocation ICONS_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_slot_icons.png");
 
-    public static final int ICON_SIZE = 32;
+    public static final int ICON_UV_SIZE = 32;
+    public static final int SLOT_SIZE = 18;
     private static final int INVENTORY_ATTACHMENT_SLOT_COUNT = 8;
 
     // 以下参数、变量用于改装窗口动画插值
@@ -123,33 +124,33 @@ public class GunRefitScreen extends Screen {
             return -1;
         }
         if (!iGun.allowAttachmentType(gunItem, attachmentType)) {
-            return ICON_SIZE * 6;
+            return ICON_UV_SIZE * 6;
         }
         switch (attachmentType) {
             case GRIP -> {
                 return 0;
             }
             case LASER -> {
-                return ICON_SIZE;
+                return ICON_UV_SIZE;
             }
             case MUZZLE -> {
-                return ICON_SIZE * 2;
+                return ICON_UV_SIZE * 2;
             }
             case SCOPE -> {
-                return ICON_SIZE * 3;
+                return ICON_UV_SIZE * 3;
             }
             case STOCK -> {
-                return ICON_SIZE * 4;
+                return ICON_UV_SIZE * 4;
             }
             case EXTENDED_MAG -> {
-                return ICON_SIZE * 5;
+                return ICON_UV_SIZE * 5;
             }
         }
         return -1;
     }
 
     public static int getSlotsTextureWidth() {
-        return ICON_SIZE * 7;
+        return ICON_UV_SIZE * 7;
     }
 
     private static void playerSound(ItemStack attachmentItem, LocalPlayer player, String soundName) {
@@ -222,7 +223,7 @@ public class GunRefitScreen extends Screen {
                     NetworkHandler.CHANNEL.sendToServer(message);
                 });
                 this.addRenderableWidget(button);
-                currentY = currentY + 18;
+                currentY = currentY + SLOT_SIZE;
             }
         }
         int totalPage = (count - 1) / INVENTORY_ATTACHMENT_SLOT_COUNT;
@@ -232,7 +233,7 @@ public class GunRefitScreen extends Screen {
                 init();
             }
         });
-        RefitTurnPageButton turnPageButtonDown = new RefitTurnPageButton(startX, startY + 18 * INVENTORY_ATTACHMENT_SLOT_COUNT + 2, false, b -> {
+        RefitTurnPageButton turnPageButtonDown = new RefitTurnPageButton(startX, startY + SLOT_SIZE * INVENTORY_ATTACHMENT_SLOT_COUNT + 2, false, b -> {
             if (currentPage < totalPage) {
                 currentPage++;
                 init();
@@ -255,7 +256,7 @@ public class GunRefitScreen extends Screen {
         if (iGun == null) {
             return;
         }
-        int startX = this.width - 30;
+        int startX = (this.width + (AttachmentType.values().length - 2) * SLOT_SIZE) / 2;
         int startY = 10;
         for (AttachmentType type : AttachmentType.values()) {
             if (type == AttachmentType.NONE) {
@@ -286,7 +287,7 @@ public class GunRefitScreen extends Screen {
             if (currentTransformType == type) {
                 button.setSelected(true);
                 // 添加拆卸配件按钮
-                RefitUnloadButton unloadButton = new RefitUnloadButton(startX + 5, startY + 18 + 2, b -> {
+                RefitUnloadButton unloadButton = new RefitUnloadButton(startX + 5, startY + SLOT_SIZE + 2, b -> {
                     ItemStack attachmentItem = button.getAttachmentItem();
                     if (!attachmentItem.isEmpty()) {
                         int freeSlot = inventory.getFreeSlot();
@@ -304,7 +305,7 @@ public class GunRefitScreen extends Screen {
                 }
             }
             this.addRenderableWidget(button);
-            startX = startX - 18;
+            startX = startX - SLOT_SIZE;
         }
     }
 }
