@@ -1,4 +1,4 @@
-package com.tacz.guns.client.resource.loader;
+package com.tacz.guns.client.resource.loader.asset;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -22,7 +22,7 @@ import java.util.zip.ZipFile;
 
 import static com.tacz.guns.client.resource.ClientGunPackLoader.GSON;
 
-public class PackInfoLoader {
+public final class PackInfoLoader {
     private static final Marker MARKER = MarkerManager.getMarker("CreativeTabLoader");
     private static final Pattern PACK_INFO_PATTERN = Pattern.compile("^(\\w+)/pack\\.json$");
 

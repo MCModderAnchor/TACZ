@@ -1,4 +1,4 @@
-package com.tacz.guns.client.resource.loader;
+package com.tacz.guns.client.resource.loader.asset;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonIOException;
@@ -9,7 +9,6 @@ import net.minecraft.locale.Language;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +20,10 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class LanguageLoader {
+public final class LanguageLoader {
     private static final Marker MARKER = MarkerManager.getMarker("LanguageLoader");
     private static final Pattern LANG_PATTERN = Pattern.compile("^\\w+/lang/(\\w+)\\.json$");
 
-    @Nullable
     public static boolean load(ZipFile zipFile, String zipPath) {
         Matcher matcher = LANG_PATTERN.matcher(zipPath);
         if (matcher.find()) {

@@ -1,4 +1,4 @@
-package com.tacz.guns.client.resource.loader;
+package com.tacz.guns.client.resource.loader.asset;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonIOException;
@@ -25,7 +25,7 @@ import java.util.zip.ZipFile;
 
 import static com.tacz.guns.client.resource.ClientGunPackLoader.GSON;
 
-public class CustomTabLoader {
+public final class CustomTabLoader {
     private static final Marker MARKER = MarkerManager.getMarker("CreativeTabLoader");
     private static final Pattern TAB_PATTERN = Pattern.compile("^\\w+/tab\\.json$");
 

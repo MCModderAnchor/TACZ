@@ -1,4 +1,4 @@
-package com.tacz.guns.client.resource.loader;
+package com.tacz.guns.client.resource.loader.asset;
 
 import com.mojang.blaze3d.audio.OggAudioStream;
 import com.mojang.blaze3d.audio.SoundBuffer;

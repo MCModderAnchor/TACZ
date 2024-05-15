@@ -1,4 +1,4 @@
-package com.tacz.guns.client.resource.loader;
+package com.tacz.guns.client.resource.loader.asset;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;

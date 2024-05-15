@@ -1,13 +1,14 @@
-package com.tacz.guns.resource.loader;
+package com.tacz.guns.resource.loader.asset;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.network.DataType;
-import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tacz.guns.resource.pojo.data.recipe.TableRecipe;
 import com.tacz.guns.util.TacPathVisitor;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.io.IOUtils;
@@ -25,12 +26,12 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public final class AttachmentDataLoader {
-    private static final Marker MARKER = MarkerManager.getMarker("AttachmentDataLoader");
-    private static final Pattern DATA_PATTERN = Pattern.compile("^(\\w+)/attachments/data/([\\w/]+)\\.json$");
+public final class RecipeLoader {
+    private static final Marker MARKER = MarkerManager.getMarker("RecipeLoader");
+    private static final Pattern RECIPES_PATTERN = Pattern.compile("^(\\w+)/recipes/([\\w/]+)\\.json$");
 
     public static boolean load(ZipFile zipFile, String zipPath) {
-        Matcher matcher = DATA_PATTERN.matcher(zipPath);
+        Matcher matcher = RECIPES_PATTERN.matcher(zipPath);
         if (matcher.find()) {
             String namespace = matcher.group(1);
             String path = matcher.group(2);
@@ -43,10 +44,10 @@ public final class AttachmentDataLoader {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
                 String json = IOUtils.toString(stream, StandardCharsets.UTF_8);
                 loadFromJsonString(registryName, json);
-                CommonGunPackNetwork.addData(DataType.ATTACHMENT_DATA, registryName, json);
+                CommonGunPackNetwork.addData(DataType.RECIPES, registryName, json);
                 return true;
             } catch (IOException | JsonSyntaxException | JsonIOException exception) {
-                GunMod.LOGGER.warn(MARKER, "Failed to read data file: {}, entry: {}", zipFile, entry);
+                GunMod.LOGGER.warn(MARKER, "Failed to read recipe file: {}, entry: {}", zipFile, entry);
                 exception.printStackTrace();
             }
         }
@@ -54,15 +55,15 @@ public final class AttachmentDataLoader {
     }
 
     public static void load(File root) {
-        Path filePath = root.toPath().resolve("attachments/data");
+        Path filePath = root.toPath().resolve("recipes");
         if (Files.isDirectory(filePath)) {
             TacPathVisitor visitor = new TacPathVisitor(filePath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
                     String json = IOUtils.toString(stream, StandardCharsets.UTF_8);
                     loadFromJsonString(id, json);
-                    CommonGunPackNetwork.addData(DataType.ATTACHMENT_DATA, id, json);
+                    CommonGunPackNetwork.addData(DataType.RECIPES, id, json);
                 } catch (IOException | JsonSyntaxException | JsonIOException exception) {
-                    GunMod.LOGGER.warn(MARKER, "Failed to read data file: {}", file);
+                    GunMod.LOGGER.warn(MARKER, "Failed to read recipe file: {}", file);
                     exception.printStackTrace();
                 }
             });
@@ -76,7 +77,7 @@ public final class AttachmentDataLoader {
     }
 
     public static void loadFromJsonString(ResourceLocation id, String json) {
-        AttachmentData data = CommonGunPackLoader.GSON.fromJson(json, AttachmentData.class);
-        CommonAssetManager.INSTANCE.putAttachmentData(id, data);
+        TableRecipe tableRecipe = CommonGunPackLoader.GSON.fromJson(json, TableRecipe.class);
+        CommonAssetManager.INSTANCE.putRecipe(id, new GunSmithTableRecipe(id, tableRecipe));
     }
 }
