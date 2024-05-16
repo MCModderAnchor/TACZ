@@ -2,7 +2,7 @@ package com.tacz.guns.client.model;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Vector3f;
+
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.util.Mth;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
@@ -139,7 +140,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         for (BedrockPart part : path) {
             part.translateAndRotateAndScale(poseStack);
         }
-        Vector3f result = new Vector3f(poseStack.last().pose().m03, poseStack.last().pose().m13, poseStack.last().pose().m23);
+        Vector3f result = new Vector3f(poseStack.last().pose().m03(), poseStack.last().pose().m13(), poseStack.last().pose().m23());
         poseStack.popPose();
         return result;
     }

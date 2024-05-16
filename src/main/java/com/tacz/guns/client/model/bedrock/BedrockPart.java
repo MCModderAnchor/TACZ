@@ -2,14 +2,14 @@ package com.tacz.guns.client.model.bedrock;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -35,7 +35,7 @@ public class BedrockPart {
     /**
      * 通常用于动画旋转。
      */
-    public Quaternion additionalQuaternion = new Quaternion(0, 0, 0, 1);
+    public Quaternionf additionalQuaternion = new Quaternionf(0, 0, 0, 1);
     public float xScale = 1;
     public float yScale = 1;
     public float zScale = 1;
@@ -83,13 +83,13 @@ public class BedrockPart {
         poseStack.translate(this.offsetX, this.offsetY, this.offsetZ);
         poseStack.translate((this.x / 16.0F), (this.y / 16.0F), (this.z / 16.0F));
         if (this.zRot != 0.0F) {
-            poseStack.mulPose(Vector3f.ZP.rotation(this.zRot));
+            poseStack.mulPose(Axis.ZP.rotation(this.zRot));
         }
         if (this.yRot != 0.0F) {
-            poseStack.mulPose(Vector3f.YP.rotation(this.yRot));
+            poseStack.mulPose(Axis.YP.rotation(this.yRot));
         }
         if (this.xRot != 0.0F) {
-            poseStack.mulPose(Vector3f.XP.rotation(this.xRot));
+            poseStack.mulPose(Axis.XP.rotation(this.xRot));
         }
         poseStack.mulPose(additionalQuaternion);
         poseStack.scale(xScale, yScale, zScale);

@@ -1,6 +1,6 @@
 package com.tacz.guns.client.particle;
 
-import com.mojang.math.Vector3f;
+
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoParticle;
 import com.tacz.guns.entity.EntityKineticBullet;
@@ -8,10 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Vector3f;
 
 import java.util.Random;
 
@@ -40,7 +42,7 @@ public class AmmoParticleSpawner {
                     result.setLifetime(particle.getLifeTime());
                 }
             } else {
-                Random random = bullet.getRandom();
+                RandomSource random = bullet.getRandom();
                 for (int i = 0; i < count; ++i) {
                     Vec3 deltaMovement = bullet.getDeltaMovement();
                     double deltaMovementRandom = random.nextDouble();

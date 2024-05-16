@@ -30,7 +30,7 @@ public class AimKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onAimPress(InputEvent.MouseInputEvent event) {
+    public static void onAimPress(InputEvent.MouseButton event) {
         if (isInGame() && AIM_KEY.matchesMouse(event.getButton())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null || player.isSpectator()) {

@@ -16,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -129,7 +128,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
         ResourceLocation gunId = this.getGunId(stack);
         Optional<ClientGunIndex> gunIndex = TimelessAPI.getClientGunIndex(gunId);
         if (gunIndex.isPresent()) {
-            return new TranslatableComponent(gunIndex.get().getName());
+            return Component.translatable(gunIndex.get().getName());
         }
         return super.getName(stack);
     }

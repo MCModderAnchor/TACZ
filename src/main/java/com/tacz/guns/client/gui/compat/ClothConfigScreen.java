@@ -9,8 +9,7 @@ import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -22,7 +21,7 @@ public class ClothConfigScreen extends Screen {
     private MultiLineLabel message = MultiLineLabel.EMPTY;
 
     protected ClothConfigScreen(Screen lastScreen) {
-        super(new TextComponent("Cloth Config API"));
+        super(Component.literal("Cloth Config API"));
         this.lastScreen = lastScreen;
     }
 

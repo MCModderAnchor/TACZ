@@ -1,7 +1,6 @@
 package com.tacz.guns.client.tooltip;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.client.input.RefitKey;
@@ -70,21 +69,21 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         int barrelBulletAmount = (iGun.hasBulletInBarrel(gun) && gunIndex.getGunData().getBolt() != Bolt.OPEN_BOLT) ? 1 : 0;
         int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(gun, gunIndex.getGunData()) + barrelBulletAmount;
         int currentAmmoCount = iGun.getCurrentAmmoCount(this.gun) + barrelBulletAmount;
-        this.ammoCountText = new TextComponent("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
+        this.ammoCountText = Component.literal("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
         this.maxWidth = Math.max(font.width(this.ammoCountText) + 22, this.maxWidth);
 
         CustomTabPOJO tab = ClientAssetManager.INSTANCE.getAllCustomTabs().get(gunIndex.getType());
         if (tab != null) {
-            this.gunType = new TranslatableComponent("tooltip.tacz.gun.type").append(new TranslatableComponent(tab.getNameKey()).withStyle(ChatFormatting.AQUA));
+            this.gunType = Component.translatable("tooltip.tacz.gun.type").append(Component.translatable(tab.getNameKey()).withStyle(ChatFormatting.AQUA));
             this.maxWidth = Math.max(font.width(this.gunType), this.maxWidth);
         }
 
-        MutableComponent value = new TextComponent(String.valueOf(gunIndex.getBulletData().getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
-        this.damage = new TranslatableComponent("tooltip.tacz.gun.damage").append(value);
+        MutableComponent value = Component.literal(String.valueOf(gunIndex.getBulletData().getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
+        this.damage = Component.translatable("tooltip.tacz.gun.damage").append(value);
         this.maxWidth = Math.max(font.width(this.damage), this.maxWidth);
 
-        String keyName = new KeybindComponent(RefitKey.REFIT_KEY.getName()).getString().toUpperCase(Locale.ENGLISH);
-        this.tips = new TranslatableComponent("tooltip.tacz.gun.tips", keyName).withStyle(ChatFormatting.YELLOW).withStyle(ChatFormatting.ITALIC);
+        String keyName = Component.keybind(RefitKey.REFIT_KEY.getName()).getString().toUpperCase(Locale.ENGLISH);
+        this.tips = Component.translatable("tooltip.tacz.gun.tips", keyName).withStyle(ChatFormatting.YELLOW).withStyle(ChatFormatting.ITALIC);
         this.maxWidth = Math.max(font.width(this.tips), this.maxWidth);
 
         int expToNextLevel = iGun.getExpToNextLevel(gun);
@@ -92,17 +91,17 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         int level = iGun.getLevel(gun);
         if (level >= iGun.getMaxLevel()) {
             String levelText = String.format("%d (MAX)", level);
-            this.levelInfo = new TranslatableComponent("tooltip.tacz.gun.level").append(new TextComponent(levelText).withStyle(ChatFormatting.DARK_PURPLE));
+            this.levelInfo = Component.translatable("tooltip.tacz.gun.level").append(Component.literal(levelText).withStyle(ChatFormatting.DARK_PURPLE));
         } else {
             String levelText = String.format("%d (%.1f%%)", level, expCurrentLevel / (expToNextLevel + expCurrentLevel) * 100f);
-            this.levelInfo = new TranslatableComponent("tooltip.tacz.gun.level").append(new TextComponent(levelText).withStyle(ChatFormatting.YELLOW));
+            this.levelInfo = Component.translatable("tooltip.tacz.gun.level").append(Component.literal(levelText).withStyle(ChatFormatting.YELLOW));
         }
         this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
 
         ResourceLocation gunId = iGun.getGunId(gun);
         PackInfo packInfoObject = ClientAssetManager.INSTANCE.getPackInfo(gunId);
         if (packInfoObject != null) {
-            packInfo = new TranslatableComponent(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
+            packInfo = Component.translatable(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
             this.maxWidth = Math.max(font.width(this.packInfo), this.maxWidth);
         }
     }

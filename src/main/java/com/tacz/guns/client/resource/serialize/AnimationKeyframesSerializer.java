@@ -1,11 +1,12 @@
 package com.tacz.guns.client.resource.serialize;
 
 import com.google.gson.*;
-import com.mojang.math.Vector3f;
+
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
 import net.minecraft.util.GsonHelper;
+import org.joml.Vector3f;
 
 import java.lang.reflect.Type;
 import java.util.Map;

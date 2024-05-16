@@ -54,7 +54,7 @@ public class AmmoItem extends Item implements AmmoItemDataAccessor {
         ResourceLocation ammoId = this.getAmmoId(stack);
         Optional<ClientAmmoIndex> ammoIndex = TimelessAPI.getClientAmmoIndex(ammoId);
         if (ammoIndex.isPresent()) {
-            return new TranslatableComponent(ammoIndex.get().getName());
+            return Component.translatable(ammoIndex.get().getName());
         }
         return super.getName(stack);
     }
@@ -87,7 +87,7 @@ public class AmmoItem extends Item implements AmmoItemDataAccessor {
         ResourceLocation ammoId = this.getAmmoId(stack);
         PackInfo packInfoObject = ClientAssetManager.INSTANCE.getPackInfo(ammoId);
         if (packInfoObject != null) {
-            MutableComponent component = new TranslatableComponent(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
+            MutableComponent component = Component.translatable(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
             components.add(component);
         }
     }

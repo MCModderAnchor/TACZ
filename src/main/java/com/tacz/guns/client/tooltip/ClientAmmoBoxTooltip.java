@@ -1,17 +1,16 @@
 package com.tacz.guns.client.tooltip;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 
 public class ClientAmmoBoxTooltip implements ClientTooltipComponent {
     private final ItemStack ammo;
@@ -22,9 +21,9 @@ public class ClientAmmoBoxTooltip implements ClientTooltipComponent {
         this.ammo = tooltip.getAmmo();
         ItemStack ammoBox = tooltip.getAmmoBox();
         if (ammoBox.getItem() instanceof IAmmoBox box && box.isCreative(ammoBox)) {
-            this.count = new TextComponent("∞");
+            this.count = Component.literal("∞");
         } else {
-            this.count = new TranslatableComponent("tooltip.tacz.ammo_box.count", tooltip.getCount());
+            this.count = Component.translatable("tooltip.tacz.ammo_box.count", tooltip.getCount());
         }
         this.ammoName = this.ammo.getHoverName();
     }
@@ -41,12 +40,12 @@ public class ClientAmmoBoxTooltip implements ClientTooltipComponent {
 
     @Override
     public void renderText(Font font, int pX, int pY, Matrix4f matrix4f, MultiBufferSource.BufferSource bufferSource) {
-        font.drawInBatch(ammoName, pX + 20, pY + 4, 0xffaa00, false, matrix4f, bufferSource, false, 0, 0xF000F0);
-        font.drawInBatch(count, pX + 20, pY + 15, 0x666666, false, matrix4f, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(ammoName, pX + 20, pY + 4, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        font.drawInBatch(count, pX + 20, pY + 15, 0x666666, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
     }
 
     @Override
-    public void renderImage(Font font, int mouseX, int mouseY, PoseStack poseStack, ItemRenderer itemRenderer, int blitOffset) {
-        itemRenderer.renderGuiItem(ammo, mouseX, mouseY + 5);
+    public void renderImage(Font pFont, int pX, int pY, GuiGraphics pGuiGraphics) {
+        pGuiGraphics.renderItem(ammo, pX, pY + 5);
     }
 }

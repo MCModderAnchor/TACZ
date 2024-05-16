@@ -28,7 +28,7 @@ public class FireSelectKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onFireSelectPress(InputEvent.KeyInputEvent event) {
+    public static void onFireSelectPress(InputEvent.Key event) {
         if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && FIRE_SELECT_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null || player.isSpectator()) {

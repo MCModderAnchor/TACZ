@@ -10,8 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
@@ -29,7 +27,7 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     private ItemStack attachmentItem = ItemStack.EMPTY;
 
     public GunAttachmentSlot(int pX, int pY, AttachmentType type, int gunItemIndex, Inventory inventory, Button.OnPress onPress) {
-        super(pX, pY, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE, TextComponent.EMPTY, onPress);
+        super(pX, pY, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE, Component.empty(), onPress);
         this.type = type;
         this.inventory = inventory;
         this.gunItemIndex = gunItemIndex;
@@ -39,7 +37,7 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     @Override
     public void renderTooltip(Consumer<List<Component>> consumer) {
         if (this.isHovered) {
-            List<Component> tips = Lists.newArrayList(new TranslatableComponent(nameKey));
+            List<Component> tips = Lists.newArrayList(Component.translatable(nameKey));
             if (!attachmentItem.isEmpty()) {
                 tips.addAll(IComponentTooltip.getTooltipFromItem(attachmentItem));
             }

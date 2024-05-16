@@ -1,7 +1,7 @@
 package com.tacz.guns.client.resource.pojo.display.gun;
 
 import com.google.gson.annotations.SerializedName;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
 public class LayerGunShow {
     @SerializedName("pos")

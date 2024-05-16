@@ -2,8 +2,8 @@ package com.tacz.guns.client.model.bedrock;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import org.joml.Quaternionf;
 
 public class ModelRendererWrapper {
     private final BedrockPart modelRenderer;
@@ -108,11 +108,11 @@ public class ModelRendererWrapper {
         return modelRenderer.getInitRotZ();
     }
 
-    public Quaternion getAdditionalQuaternion() {
+    public Quaternionf getAdditionalQuaternion() {
         return modelRenderer.additionalQuaternion;
     }
 
-    public void setAdditionalQuaternion(Quaternion quaternion) {
+    public void setAdditionalQuaternion(Quaternionf quaternion) {
         modelRenderer.additionalQuaternion = quaternion;
     }
 

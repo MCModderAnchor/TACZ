@@ -1,11 +1,11 @@
 package com.tacz.guns.util.math;
 
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 
@@ -64,7 +64,7 @@ public class MathUtil {
      * @param roll 绕 z 轴旋转的弧度
      * @param quaternion 求解的结果将写入这个四元数中。
      */
-    public static void toQuaternion(float pitch, float yaw, float roll, @Nonnull Quaternion quaternion) {
+    public static void toQuaternion(float pitch, float yaw, float roll, @Nonnull Quaternionf quaternion) {
         double cy = Math.cos(roll * 0.5);
         double sy = Math.sin(roll * 0.5);
         double cp = Math.cos(yaw * 0.5);
@@ -85,14 +85,14 @@ public class MathUtil {
      * @param q 四元数
      * @return 按照 x(pitch) -> y(yaw) -> z(roll) 的顺序的三轴角数组。
      */
-    public static float[] toEulerAngles(Quaternion q) {
+    public static float[] toEulerAngles(Quaternionf q) {
         float[] angles = new float[3];
         // pitch (x-axis rotation)
-        double sinrCosp = 2 * (q.r() * q.i() + q.j() * q.k());
-        double cosrCosp = 1 - 2 * (q.i() * q.i() + q.j() * q.j());
+        double sinrCosp = 2 * (q.w() * q.x() + q.y() * q.z());
+        double cosrCosp = 1 - 2 * (q.x() * q.x() + q.y() * q.y());
         angles[0] = (float) Math.atan2(sinrCosp, cosrCosp);
         // yaw (y-axis rotation)
-        double sinp = 2 * (q.r() * q.j() - q.i() * q.k());
+        double sinp = 2 * (q.w() * q.y() - q.x() * q.z());
         if (Math.abs(sinp) >= 1) {
             // use 90 degrees if out of range
             angles[1] = (float) copySign(Math.PI / 2, sinp);
@@ -100,8 +100,8 @@ public class MathUtil {
             angles[1] = (float) Math.asin(sinp);
         }
         // roll (z-axis rotation)
-        double sinyCosp = 2 * (q.r() * q.k() + q.j() * q.i());
-        double cosyCosp = 1 - 2 * (q.j() * q.j() + q.k() * q.k());
+        double sinyCosp = 2 * (q.w() * q.z() + q.y() * q.x());
+        double cosyCosp = 1 - 2 * (q.y() * q.y() + q.z() * q.z());
         angles[2] = (float) Math.atan2(sinyCosp, cosyCosp);
         return angles;
     }
@@ -164,33 +164,33 @@ public class MathUtil {
         return result;
     }
 
-    public static void blendQuaternion(Quaternion to, Quaternion from) {
-        Quaternion q1 = new Quaternion(to);
-        Quaternion q2 = new Quaternion(from);
+    public static void blendQuaternion(Quaternionf to, Quaternionf from) {
+        Quaternionf q1 = new Quaternionf(to);
+        Quaternionf q2 = new Quaternionf(from);
         normalizeQuaternion(q1);
         normalizeQuaternion(q2);
         logQuaternion(q1);
         logQuaternion(q2);
-        q1.set(q1.i() + q2.i(), q1.j() + q2.j(), q1.k() + q2.k(), q1.r() + q2.r());
+        q1.set(q1.x() + q2.x(), q1.y() + q2.y(), q1.z() + q2.z(), q1.w() + q2.w());
         expQuaternion(q1);
         normalizeQuaternion(q1);
-        to.set(q1.i(), q1.j(), q1.k(), q1.r());
+        to.set(q1.x(), q1.y(), q1.z(), q1.w());
     }
 
-    public static void normalizeQuaternion(Quaternion q) {
-        float f = q.i() * q.i() + q.j() * q.j() + q.k() * q.k() + q.r() * q.r();
+    public static void normalizeQuaternion(Quaternionf q) {
+        float f = q.x() * q.x() + q.y() * q.y() + q.z() * q.z() + q.w() * q.w();
         if (f > 0) {
-            float f1 = Mth.fastInvSqrt(f);
-            q.set(f1 * q.i(), f1 * q.j(), f1 * q.k(), f1 * q.r());
+            float f1 = (float) Mth.fastInvSqrt(f);
+            q.set(f1 * q.x(), f1 * q.y(), f1 * q.z(), f1 * q.w());
         } else {
             q.set(0, 0, 0, 1);
         }
     }
 
-    public static void logQuaternion(Quaternion q) {
-        double norm = Math.sqrt(q.i() * q.i() + q.j() * q.j() + q.k() * q.k() + q.r() * q.r());
-        double vec = Math.sqrt(q.i() * q.i() + q.j() * q.j() + q.k() * q.k());
-        double i = q.r() / norm;
+    public static void logQuaternion(Quaternionf q) {
+        double norm = Math.sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z() + q.w() * q.w());
+        double vec = Math.sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
+        double i = q.w() / norm;
         if (i > 1) {
             i = 1;
         }
@@ -200,22 +200,22 @@ public class MathUtil {
         double theta = Math.acos(i);
         double factor = vec == 0 ? 0 : theta / vec;
         q.set(
-                (float) (q.i() * factor),
-                (float) (q.j() * factor),
-                (float) (q.k() * factor),
+                (float) (q.x() * factor),
+                (float) (q.y() * factor),
+                (float) (q.z() * factor),
                 (float) Math.log(norm)
         );
     }
 
-    public static void expQuaternion(Quaternion q) {
-        double magnitude = Math.sqrt(q.i() * q.i() + q.j() * q.j() + q.k() * q.k());
-        double expW = Math.exp(q.r());
+    public static void expQuaternion(Quaternionf q) {
+        double magnitude = Math.sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
+        double expW = Math.exp(q.w());
         double sinMagnitude = Math.sin(magnitude);
         double coef = magnitude == 0 ? 0 : expW * sinMagnitude / magnitude;
         q.set(
-                (float) (coef * q.i()),
-                (float) (coef * q.j()),
-                (float) (coef * q.k()),
+                (float) (coef * q.x()),
+                (float) (coef * q.y()),
+                (float) (coef * q.z()),
                 (float) (expW * Math.cos(magnitude))
         );
     }
@@ -257,19 +257,19 @@ public class MathUtil {
         return result;
     }
 
-    public static Quaternion toQuaternion(float[] q) {
-        return new Quaternion(q[0], q[1], q[2], q[3]);
+    public static Quaternionf toQuaternion(float[] q) {
+        return new Quaternionf(q[0], q[1], q[2], q[3]);
     }
 
-    public static Quaternion slerp(Quaternion from, Quaternion to, float alpha) {
-        float ax = from.i();
-        float ay = from.j();
-        float az = from.k();
-        float aw = from.r();
-        float bx = to.i();
-        float by = to.j();
-        float bz = to.k();
-        float bw = to.r();
+    public static Quaternionf slerp(Quaternionf from, Quaternionf to, float alpha) {
+        float ax = from.x();
+        float ay = from.y();
+        float az = from.z();
+        float aw = from.w();
+        float bx = to.x();
+        float by = to.y();
+        float bz = to.z();
+        float bw = to.w();
 
         float dot = ax * bx + ay * by + az * bz + aw * bw;
         if (dot < 0) {
@@ -294,20 +294,20 @@ public class MathUtil {
         float ry = s0 * ay + s1 * by;
         float rz = s0 * az + s1 * bz;
         float rw = s0 * aw + s1 * bw;
-        return new Quaternion(rx, ry, rz, rw);
+        return new Quaternionf(rx, ry, rz, rw);
     }
 
     public static Vector3f getEulerAngles(Matrix4f matrix) {
-        double sy = Math.sqrt(matrix.m00 * matrix.m00 + matrix.m10 * matrix.m10);
+        double sy = Math.sqrt(matrix.m00() * matrix.m00() + matrix.m10() * matrix.m10());
         boolean singular = sy < 1e-6;
         double x, y, z;
         if (!singular) {
-            x = Math.atan2(matrix.m21, matrix.m22);
-            y = Math.atan2(-matrix.m20, sy);
-            z = Math.atan2(matrix.m10, matrix.m00);
+            x = Math.atan2(matrix.m21(), matrix.m22());
+            y = Math.atan2(-matrix.m20(), sy);
+            z = Math.atan2(matrix.m10(), matrix.m00());
         } else {
-            x = Math.atan2(-matrix.m12, matrix.m11);
-            y = Math.atan2(-matrix.m20, sy);
+            x = Math.atan2(-matrix.m12(), matrix.m11());
+            y = Math.atan2(-matrix.m20(), sy);
             z = 0;
         }
         return new Vector3f((float) x, (float) y, (float) z);
@@ -356,7 +356,7 @@ public class MathUtil {
         return solveEquations(coefficients, constants);
     }
 
-    public static Quaternion getRelativeQuaternion(Quaternion qa, Quaternion qb) {
+    public static Quaternionf getRelativeQuaternion(Quaternionf qa, Quaternionf qb) {
         /*
         Given two quaternions A and B, find the quaternion C such that the result of A multiplied by C is equal to B.
         Solve the following equations:
@@ -366,14 +366,14 @@ public class MathUtil {
             -ai*ci -aj*cj -ak*ck +aw*cw = bw
         */
         float[][] coefficients = {
-                {qa.r(), -qa.k(), qa.j(), qa.i()},
-                {qa.k(), qa.r(), -qa.i(), qa.j()},
-                {-qa.j(), qa.i(), qa.r(), qa.k()},
-                {-qa.i(), -qa.j(), -qa.k(), qa.r()},
+                {qa.w(), -qa.z(), qa.y(), qa.x()},
+                {qa.z(), qa.w(), -qa.x(), qa.y()},
+                {-qa.y(), qa.x(), qa.w(), qa.z()},
+                {-qa.x(), -qa.y(), -qa.z(), qa.w()},
         };
-        float[] constants = {qb.i(), qb.j(), qb.k(), qb.r()};
+        float[] constants = {qb.x(), qb.y(), qb.z(), qb.w()};
         float[] result = solveEquations(coefficients, constants);
-        return new Quaternion(result[0], result[1], result[2], result[3]);
+        return new Quaternionf(result[0], result[1], result[2], result[3]);
     }
 
     /**
@@ -383,7 +383,7 @@ public class MathUtil {
      */
     public static void applyMatrixLerp(Matrix4f fromMatrix, Matrix4f toMatrix, Matrix4f resultMatrix, float alpha) {
         // 计算位移的插值
-        Vector3f translation = new Vector3f(toMatrix.m03 - fromMatrix.m03, toMatrix.m13 - fromMatrix.m13, toMatrix.m23 - fromMatrix.m23);
+        Vector3f translation = new Vector3f(toMatrix.m03() - fromMatrix.m03(), toMatrix.m13() - fromMatrix.m13(), toMatrix.m23() - fromMatrix.m23());
         translation.mul(alpha);
         // 计算旋转的插值
         Vector3f fromRotation = MathUtil.getEulerAngles(fromMatrix);
@@ -391,20 +391,20 @@ public class MathUtil {
         Vector3f toRotation = MathUtil.getEulerAngles(toMatrix);
         float[] qTo = MathUtil.toQuaternion(toRotation.x(), toRotation.y(), toRotation.z());
         float[] qRelative = getRelativeQuaternion(qFrom, qTo);
-        Quaternion qLerped = MathUtil.toQuaternion(MathUtil.slerp(QUATERNION_ONE, qRelative, alpha));
+        Quaternionf qLerped = MathUtil.toQuaternion(MathUtil.slerp(QUATERNION_ONE, qRelative, alpha));
         // 应用位移和旋转
         resultMatrix.translate(new Vector3f(translation.x(), translation.y(), translation.z()));
         resultMatrix.multiply(qLerped);
     }
 
-    public static Pair<Float, Vector3f> getAngleAndAxis(Quaternion quaternion) {
-        double angle = 2 * Math.acos(quaternion.r());
+    public static Pair<Float, Vector3f> getAngleAndAxis(Quaternionf quaternion) {
+        double angle = 2 * Math.acos(quaternion.w());
         double sin = Math.sin(angle / 2);
         // 旋转角为 0 或者 2*PI，旋转结果与旋转轴无关
         if (sin == 0) {
             return Pair.of(0f, new Vector3f(0, 0, 0));
         }
-        Vector3f axis = new Vector3f(quaternion.i(), quaternion.j(), quaternion.k());
+        Vector3f axis = new Vector3f(quaternion.x(), quaternion.y(), quaternion.z());
         axis.mul((float) (1 / sin));
         return Pair.of((float) angle, axis);
     }
@@ -422,14 +422,14 @@ public class MathUtil {
     }
 
 
-    public static Quaternion multiplyQuaternion(Quaternion quaternion, float multiplier) {
+    public static Quaternionf multiplyQuaternion(Quaternionf quaternion, float multiplier) {
         Pair<Float, Vector3f> angleAndAxis = getAngleAndAxis(quaternion);
         float newAngle = angleAndAxis.getLeft() * multiplier;
         Vector3f axis = angleAndAxis.getRight();
         double sin = Math.sin(newAngle / 2);
         double cos = Math.cos(newAngle / 2);
         axis.mul((float) sin);
-        return new Quaternion(axis.x(), axis.y(), axis.z(), (float) cos);
+        return new Quaternionf(axis.x(), axis.y(), axis.z(), (float) cos);
     }
 
     public static float[] multiplyQuaternion(float[] quaternion, float multiplier) {

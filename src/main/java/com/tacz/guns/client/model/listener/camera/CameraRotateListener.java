@@ -1,9 +1,9 @@
 package com.tacz.guns.client.model.listener.camera;
 
-import com.mojang.math.Quaternion;
 import com.tacz.guns.client.animation.AnimationListener;
 import com.tacz.guns.client.animation.ObjectAnimationChannel;
 import com.tacz.guns.util.math.MathUtil;
+import org.joml.Quaternionf;
 
 public class CameraRotateListener implements AnimationListener {
     private final CameraAnimationObject camera;
@@ -22,7 +22,7 @@ public class CameraRotateListener implements AnimationListener {
         // 最终需要存入rotationQuaternion的是摄像机的旋转（即世界箱体旋转的反相）
         if (blend) {
             float[] q = MathUtil.toQuaternion(-xRot, -yRot, -zRot);
-            Quaternion quaternion = MathUtil.toQuaternion(q);
+            Quaternionf quaternion = MathUtil.toQuaternion(q);
             MathUtil.blendQuaternion(camera.rotationQuaternion, quaternion);
         } else {
             MathUtil.toQuaternion(-xRot, -yRot, -zRot, camera.rotationQuaternion);

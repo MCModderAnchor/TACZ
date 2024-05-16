@@ -1,7 +1,7 @@
 package com.tacz.guns.client.resource.pojo;
 
 import com.google.gson.*;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

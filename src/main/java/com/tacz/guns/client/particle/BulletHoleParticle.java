@@ -1,8 +1,6 @@
 package com.tacz.guns.client.particle;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.init.ModBlocks;
 import net.minecraft.client.Camera;
@@ -21,6 +19,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 /**
  * Author: Forked from MrCrayfish, continued by Timeless devs
@@ -125,7 +125,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
         float particleX = (float) (Mth.lerp(partialTicks, this.xo, this.x) - view.x());
         float particleY = (float) (Mth.lerp(partialTicks, this.yo, this.y) - view.y());
         float particleZ = (float) (Mth.lerp(partialTicks, this.zo, this.z) - view.z());
-        Quaternion quaternion = this.direction.getRotation();
+        Quaternionf quaternion = this.direction.getRotation();
         Vector3f[] points = new Vector3f[]{
                 // Y 值稍微大一点点，防止 z-fight
                 new Vector3f(-1.0F, 0.01F, -1.0F),

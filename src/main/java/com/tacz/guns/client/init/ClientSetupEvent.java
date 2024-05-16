@@ -18,10 +18,8 @@ import com.tacz.guns.item.AmmoBoxItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.gui.ForgeIngameGui;
-import net.minecraftforge.client.gui.OverlayRegistry;
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -29,20 +27,29 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class ClientSetupEvent {
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
+    public static void onClientSetup(RegisterKeyMappingsEvent event) {
         // 注册键位
-        event.enqueueWork(() -> {
-            ClientRegistry.registerKeyBinding(InspectKey.INSPECT_KEY);
-            ClientRegistry.registerKeyBinding(ReloadKey.RELOAD_KEY);
-            ClientRegistry.registerKeyBinding(ShootKey.SHOOT_KEY);
-            ClientRegistry.registerKeyBinding(InteractKey.INTERACT_KEY);
-            ClientRegistry.registerKeyBinding(FireSelectKey.FIRE_SELECT_KEY);
-            ClientRegistry.registerKeyBinding(AimKey.AIM_KEY);
-            ClientRegistry.registerKeyBinding(RefitKey.REFIT_KEY);
-            ClientRegistry.registerKeyBinding(ZoomKey.ZOOM_KEY);
-            ClientRegistry.registerKeyBinding(ConfigKey.OPEN_CONFIG_KEY);
-        });
+        event.register(InspectKey.INSPECT_KEY);
+        event.register(ReloadKey.RELOAD_KEY);
+        event.register(ShootKey.SHOOT_KEY);
+        event.register(InteractKey.INTERACT_KEY);
+        event.register(FireSelectKey.FIRE_SELECT_KEY);
+        event.register(AimKey.AIM_KEY);
+        event.register(RefitKey.REFIT_KEY);
+        event.register(ZoomKey.ZOOM_KEY);
+        event.register(ConfigKey.OPEN_CONFIG_KEY);
+    }
 
+    @SubscribeEvent
+    public static void onClientSetup(RegisterClientTooltipComponentFactoriesEvent event) {
+        // 注册文本提示
+        event.register(GunTooltip.class, ClientGunTooltip::new);
+        event.register(AmmoBoxTooltip.class, ClientAmmoBoxTooltip::new);
+        event.register(AttachmentItemTooltip.class, ClientAttachmentItemTooltip::new);
+    }
+
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event) {
         // 注册 HUD
         event.enqueueWork(() -> {
             OverlayRegistry.registerOverlayTop("TAC Gun HUD Overlay", GunHudOverlay::render);
@@ -59,11 +66,6 @@ public class ClientSetupEvent {
         // 注册变种
         // noinspection deprecation
         event.enqueueWork(() -> ItemProperties.register(ModItems.AMMO_BOX.get(), AmmoBoxItem.PROPERTY_NAME, AmmoBoxItem::getStatue));
-
-        // 注册文本提示
-        event.enqueueWork(() -> MinecraftForgeClient.registerTooltipComponentFactory(GunTooltip.class, ClientGunTooltip::new));
-        event.enqueueWork(() -> MinecraftForgeClient.registerTooltipComponentFactory(AmmoBoxTooltip.class, ClientAmmoBoxTooltip::new));
-        event.enqueueWork(() -> MinecraftForgeClient.registerTooltipComponentFactory(AttachmentItemTooltip.class, ClientAttachmentItemTooltip::new));
 
         // 初始化自己的枪包下载器
         event.enqueueWork(ClientGunPackDownloadManager::init);

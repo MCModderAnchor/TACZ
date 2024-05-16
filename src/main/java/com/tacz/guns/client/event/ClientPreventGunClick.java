@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class ClientPreventGunClick {
     @SubscribeEvent
-    public static void onClickInput(InputEvent.ClickInputEvent event) {
+    public static void onClickInput(InputEvent.InteractionKeyMappingTriggered event) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             return;

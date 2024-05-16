@@ -25,11 +25,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -62,7 +64,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Predicate;
 
 /**
@@ -144,13 +145,13 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     public static void createExplosion(Entity exploder, float damage, float radius, boolean knockback, Vec3 hitPos) {
         // 客户端不执行
-        if (!(exploder.level instanceof ServerLevel level)) {
+        if (!(exploder.level() instanceof ServerLevel level)) {
             return;
         }
         // 依据配置文件读取方块破坏方式
-        Explosion.BlockInteraction mode = Explosion.BlockInteraction.NONE;
+        Explosion.BlockInteraction mode = Explosion.BlockInteraction.KEEP;
         if (AmmoConfig.EXPLOSIVE_AMMO_DESTROYS_BLOCKS.get()) {
-            mode = Explosion.BlockInteraction.BREAK;
+            mode = Explosion.BlockInteraction.DESTROY;
         }
         // 创建爆炸
         ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null, hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, knockback, mode);
@@ -161,7 +162,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         // 执行爆炸逻辑
         explosion.explode();
         explosion.finalizeExplosion(true);
-        if (mode == Explosion.BlockInteraction.NONE) {
+        if (mode == Explosion.BlockInteraction.KEEP) {
             explosion.clearToBlow();
         }
         // 客户端发包，发送爆炸相关信息
@@ -181,8 +182,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         // 调用 TaC 子弹服务器事件
         this.onBulletTick();
         // 粒子效果
-        if (this.level.isClientSide) {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(level, this));
+        if (this.level().isClientSide) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(this.level(), this));
         }
         // 子弹模型的旋转与抛物线
         Vec3 movement = this.getDeltaMovement();
@@ -210,7 +211,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         // 子弹入水后的调整
         if (this.isInWater()) {
             for (int i = 0; i < 4; i++) {
-                this.level.addParticle(ParticleTypes.BUBBLE, nextPosX - x * 0.25F, nextPosY - y * 0.25F, nextPosZ - z * 0.25F, x, y, z);
+                this.level().addParticle(ParticleTypes.BUBBLE, nextPosX - x * 0.25F, nextPosY - y * 0.25F, nextPosZ - z * 0.25F, x, y, z);
             }
             // 在水中的阻力
             friction = 0.4F;
@@ -228,13 +229,13 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     // 子弹的逻辑处理
     protected void onBulletTick() {
         // 服务器端子弹逻辑
-        if (!this.level.isClientSide()) {
+        if (!this.level().isClientSide()) {
             // 子弹在 tick 起始的位置
             Vec3 startVec = this.position();
             // 子弹在 tick 结束的位置
             Vec3 endVec = startVec.add(this.getDeltaMovement());
             // 子弹的碰撞检测
-            HitResult result = BlockRayTrace.rayTraceBlocks(this.level, new ClipContext(startVec, endVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+            HitResult result = BlockRayTrace.rayTraceBlocks(this.level(), new ClipContext(startVec, endVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
             BlockHitResult resultB = (BlockHitResult) result;
             if (resultB.getType() != HitResult.Type.MISS) {
                 // 子弹击中方块时，设置击中方块的位置为子弹的结束位置
@@ -288,7 +289,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         Entity hitEntity = null;
         boolean headshot = false;
         // 获取子弹 tick 路径上所有的实体
-        List<Entity> entities = this.level.getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0), PROJECTILE_TARGETS);
+        List<Entity> entities = this.level().getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0), PROJECTILE_TARGETS);
         double closestDistance = Double.MAX_VALUE;
         Entity owner = this.getOwner();
         for (Entity entity : entities) {
@@ -320,7 +321,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     @Nullable
     protected List<EntityResult> findEntitiesOnPath(Vec3 startVec, Vec3 endVec) {
         List<EntityResult> hitEntities = new ArrayList<>();
-        List<Entity> entities = this.level.getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0), PROJECTILE_TARGETS);
+        List<Entity> entities = this.level().getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0), PROJECTILE_TARGETS);
         Entity owner = this.getOwner();
         for (Entity entity : entities) {
             if (!entity.equals(owner)) {
@@ -374,7 +375,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             return null;
         }
         Vec3 hitBoxPos = hitPos.subtract(entity.position());
-        ResourceLocation entityId = ForgeRegistries.ENTITIES.getKey(entity.getType());
+        ResourceLocation entityId = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
         // 有配置的调用配置
         if (entityId != null) {
             AABB aabb = HeadShotAABBConfigRead.getAABB(entityId);
@@ -441,7 +442,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         // 只对 LivingEntity 执行击杀判定
         if (livingEntity != null) {
             // 事件同步，从服务端到客户端
-            if (!level.isClientSide) {
+            if (!level().isClientSide) {
                 LivingEntity attacker = owner instanceof LivingEntity ? (LivingEntity) owner : null;
                 int attackerId = attacker == null ? 0 : attacker.getId();
                 // 如果生物死了
@@ -464,7 +465,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         Vec3 hitVec = result.getLocation();
         BlockPos pos = result.getBlockPos();
         // 触发事件
-        MinecraftForge.EVENT_BUS.post(new AmmoHitBlockEvent(level, result, this.level.getBlockState(pos), this));
+        MinecraftForge.EVENT_BUS.post(new AmmoHitBlockEvent(this.level(), result, this.level().getBlockState(pos), this));
         // 爆炸
         if (this.hasExplosion) {
             createExplosion(this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, hitVec);
@@ -473,7 +474,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             return;
         }
         // 弹孔与点燃特效
-        if (this.level instanceof ServerLevel serverLevel) {
+        if (this.level() instanceof ServerLevel serverLevel) {
             BulletHoleOption bulletHoleOption = new BulletHoleOption(result.getDirection(), result.getBlockPos());
             serverLevel.sendParticles(bulletHoleOption, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);
             if (this.hasIgnite) {
@@ -482,10 +483,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         if (this.hasIgnite && AmmoConfig.IGNITE_BLOCK.get()) {
             BlockPos offsetPos = pos.relative(result.getDirection());
-            if (BaseFireBlock.canBePlacedAt(this.level, offsetPos, result.getDirection())) {
-                BlockState fireState = BaseFireBlock.getState(this.level, offsetPos);
-                this.level.setBlock(offsetPos, fireState, Block.UPDATE_ALL_IMMEDIATE);
-                ((ServerLevel) this.level).sendParticles(ParticleTypes.LAVA, hitVec.x - 1.0 + this.random.nextDouble() * 2.0, hitVec.y, hitVec.z - 1.0 + this.random.nextDouble() * 2.0, 4, 0, 0, 0, 0);
+            if (BaseFireBlock.canBePlacedAt(this.level(), offsetPos, result.getDirection())) {
+                BlockState fireState = BaseFireBlock.getState(this.level(), offsetPos);
+                this.level().setBlock(offsetPos, fireState, Block.UPDATE_ALL_IMMEDIATE);
+                ((ServerLevel) this.level()).sendParticles(ParticleTypes.LAVA, hitVec.x - 1.0 + this.random.nextDouble() * 2.0, hitVec.y, hitVec.z - 1.0 + this.random.nextDouble() * 2.0, 4, 0, 0, 0, 0);
             }
         }
         this.discard();
@@ -539,7 +540,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
@@ -571,7 +572,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         setXRot(additionalData.readFloat());
         setYRot(additionalData.readFloat());
         setDeltaMovement(additionalData.readDouble(), additionalData.readDouble(), additionalData.readDouble());
-        Entity entity = this.level.getEntity(additionalData.readInt());
+        Entity entity = this.level().getEntity(additionalData.readInt());
         if (entity != null) {
             this.setOwner(entity);
         }
@@ -597,7 +598,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         return isTracerAmmo;
     }
 
-    public Random getRandom() {
+    public RandomSource getRandom() {
         return this.random;
     }
 

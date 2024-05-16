@@ -34,7 +34,7 @@ public class InteractKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onReloadPress(InputEvent.KeyInputEvent event) {
+    public static void onReloadPress(InputEvent.Key event) {
         if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && INTERACT_KEY.matches(event.getKey(), event.getScanCode())) {
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
@@ -60,7 +60,7 @@ public class InteractKey {
 
     private static void interactBlock(BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc) {
         BlockPos blockPos = blockHitResult.getBlockPos();
-        Block block = player.level.getBlockState(blockPos).getBlock();
+        Block block = player.level().getBlockState(blockPos).getBlock();
         if (InteractKeyConfigRead.canInteractBlock(block)) {
             mc.startUseItem();
         }

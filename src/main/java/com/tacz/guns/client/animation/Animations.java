@@ -1,6 +1,6 @@
 package com.tacz.guns.client.animation;
 
-import com.mojang.math.Vector3f;
+
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.animation.gltf.AccessorModel;
 import com.tacz.guns.client.animation.gltf.AnimationModel;
@@ -21,6 +21,7 @@ import com.tacz.guns.client.resource.pojo.model.BonesItem;
 import com.tacz.guns.util.math.MathUtil;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -183,8 +184,8 @@ public class Animations {
             if (keyframe.pre() != null || keyframe.post() != null) {
                 if (keyframe.pre() != null && keyframe.post() != null) {
                     animationChannel.content.values[index] = new float[6];
-                    Vector3f pre = keyframe.pre().copy();
-                    Vector3f post = keyframe.post().copy();
+                    Vector3f pre = new Vector3f(keyframe.pre());
+                    Vector3f post = new Vector3f(keyframe.post());
                     pre.add(base);
                     post.add(base);
                     pre.mul(-1 / 16f, 1 / 16f, 1 / 16f);
@@ -193,20 +194,20 @@ public class Animations {
                     readVector3fToArray(animationChannel.content.values[index], post, 3);
                 } else if (keyframe.pre() != null) {
                     animationChannel.content.values[index] = new float[3];
-                    Vector3f pre = keyframe.pre().copy();
+                    Vector3f pre = new Vector3f(keyframe.pre());
                     pre.add(base);
                     pre.mul(-1 / 16f, 1 / 16f, 1 / 16f);
                     readVector3fToArray(animationChannel.content.values[index], pre, 0);
                 } else {
                     animationChannel.content.values[index] = new float[3];
-                    Vector3f post = keyframe.post().copy();
+                    Vector3f post = new Vector3f(keyframe.post());
                     post.add(base);
                     post.mul(-1 / 16f, 1 / 16f, 1 / 16f);
                     readVector3fToArray(animationChannel.content.values[index], post, 0);
                 }
             } else if (keyframe.data() != null) {
                 animationChannel.content.values[index] = new float[3];
-                Vector3f data = keyframe.data().copy();
+                Vector3f data = new Vector3f(keyframe.data());
                 data.add(base);
                 data.mul(-1 / 16f, 1 / 16f, 1 / 16f);
                 readVector3fToArray(animationChannel.content.values[index], data, 0);
@@ -248,8 +249,8 @@ public class Animations {
             if (keyframe.pre() != null || keyframe.post() != null) {
                 if (keyframe.pre() != null && keyframe.post() != null) {
                     animationChannel.content.values[index] = new float[8];
-                    Vector3f pre = keyframe.pre().copy();
-                    Vector3f post = keyframe.post().copy();
+                    Vector3f pre =  new Vector3f(keyframe.pre());
+                    Vector3f post =  new Vector3f(keyframe.post());
                     toAngle(pre);
                     toAngle(post);
                     pre.mul(-1, -1, 1);
@@ -260,14 +261,14 @@ public class Animations {
                     System.arraycopy(q2, 0, animationChannel.content.values[index], 4, 4);
                 } else if (keyframe.pre() != null) {
                     animationChannel.content.values[index] = new float[4];
-                    Vector3f pre = keyframe.pre().copy();
+                    Vector3f pre =  new Vector3f(keyframe.pre());
                     toAngle(pre);
                     pre.mul(-1, -1, 1);
                     float[] q = MathUtil.toQuaternion(pre.x() + base.x(), pre.y() + base.y(), pre.z() + base.z());
                     System.arraycopy(q, 0, animationChannel.content.values[index], 0, 4);
                 } else {
                     animationChannel.content.values[index] = new float[4];
-                    Vector3f post = keyframe.post().copy();
+                    Vector3f post =  new Vector3f(keyframe.post());
                     toAngle(post);
                     post.mul(-1, -1, 1);
                     float[] q = MathUtil.toQuaternion(post.x() + base.x(), post.y() + base.y(), post.z() + base.z());
@@ -275,7 +276,7 @@ public class Animations {
                 }
             } else if (keyframe.data() != null) {
                 animationChannel.content.values[index] = new float[4];
-                Vector3f data = keyframe.data().copy();
+                Vector3f data =  new Vector3f(keyframe.data());
                 toAngle(data);
                 data.mul(-1, -1, 1);
                 float[] q = MathUtil.toQuaternion(data.x() + base.x(), data.y() + base.y(), data.z() + base.z());

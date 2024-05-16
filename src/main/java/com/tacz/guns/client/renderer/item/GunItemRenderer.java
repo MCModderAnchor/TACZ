@@ -2,8 +2,7 @@ package com.tacz.guns.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.model.BedrockGunModel;
@@ -21,6 +20,8 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -48,9 +49,9 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
         poseStack.translate(0, 1.5, 0);
         for (int i = nodePath.size() - 1; i >= 0; i--) {
             BedrockPart t = nodePath.get(i);
-            poseStack.mulPose(Vector3f.XN.rotation(t.xRot));
-            poseStack.mulPose(Vector3f.YN.rotation(t.yRot));
-            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot));
+            poseStack.mulPose(Axis.XN.rotation(t.xRot));
+            poseStack.mulPose(Axis.YN.rotation(t.yRot));
+            poseStack.mulPose(Axis.ZN.rotation(t.zRot));
             if (t.getParent() != null) {
                 poseStack.translate(-t.x * scale.x() / 16.0F, -t.y * scale.y() / 16.0F, -t.z * scale.z() / 16.0F);
             } else {
@@ -122,7 +123,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             return false;
         }
         Matrix4f matrix4f = poseStack.last().pose();
-        float viewDistance = matrix4f.m03 * matrix4f.m03 + matrix4f.m13 * matrix4f.m13 + matrix4f.m23 * matrix4f.m23;
+        float viewDistance = matrix4f.m03() * matrix4f.m03() + matrix4f.m13() * matrix4f.m13() + matrix4f.m23() * matrix4f.m23();
         return viewDistance < distance * distance;
     }
 

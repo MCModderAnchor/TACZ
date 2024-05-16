@@ -15,7 +15,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -144,11 +143,11 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
     }
 
     private void playRemoveOneSound(Entity entity) {
-        entity.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + entity.getLevel().getRandom().nextFloat() * 0.4F);
+        entity.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
     }
 
     private void playInsertSound(Entity entity) {
-        entity.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + entity.getLevel().getRandom().nextFloat() * 0.4F);
+        entity.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
     }
 
     @Override
@@ -174,7 +173,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
     @Override
     public Component getName(ItemStack stack) {
         if (isCreative(stack)) {
-            return new TranslatableComponent("item.tacz.ammo_box.creative").withStyle(ChatFormatting.DARK_PURPLE);
+            return Component.translatable("item.tacz.ammo_box.creative").withStyle(ChatFormatting.DARK_PURPLE);
         }
         return super.getName(stack);
     }
@@ -192,19 +191,19 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
         return Mth.hsvToRgb(1 / 3f, 1.0F, 1.0F);
     }
 
-    @Override
-    public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(category)) {
-            // 添加普通版本的弹药盒
-            items.add(new ItemStack(this));
-
-            // 添加创造模式弹药盒
-            ItemStack creativeItemstack = new ItemStack(this);
-            CompoundTag tag = creativeItemstack.getOrCreateTag();
-            tag.putBoolean(CREATIVE_TAG, true);
-            items.add(creativeItemstack);
-        }
-    }
+//    @Override
+//    public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
+//        if (this.allowdedIn(category)) {
+//            // 添加普通版本的弹药盒
+//            items.add(new ItemStack(this));
+//
+//            // 添加创造模式弹药盒
+//            ItemStack creativeItemstack = new ItemStack(this);
+//            CompoundTag tag = creativeItemstack.getOrCreateTag();
+//            tag.putBoolean(CREATIVE_TAG, true);
+//            items.add(creativeItemstack);
+//        }
+//    }
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {

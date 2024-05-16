@@ -1,7 +1,7 @@
 package com.tacz.guns.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.tacz.guns.client.renderer.block.GunSmithTableRenderer;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -25,7 +25,7 @@ public class GunSmithTableItemRenderer extends BlockEntityWithoutLevelRenderer {
             ResourceLocation texture = GunSmithTableRenderer.getTextureLocation();
             poseStack.pushPose();
             poseStack.translate(0.5, 1.5, 0.5);
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            poseStack.mulPose(Axis.ZN.rotationDegrees(180));
             RenderType renderType = RenderType.entityTranslucent(texture);
             model.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay);
             poseStack.popPose();

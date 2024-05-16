@@ -2,6 +2,7 @@ package com.tacz.guns.client.model.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector3f;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -104,9 +106,9 @@ public class ShellRender implements IFunctionalRenderer {
         double xw = time * angularVelocity.x();
         double yw = time * angularVelocity.y();
         double zw = time * angularVelocity.z();
-        poseStack2.mulPose(Vector3f.XN.rotationDegrees((float) xw));
-        poseStack2.mulPose(Vector3f.YN.rotationDegrees((float) yw));
-        poseStack2.mulPose(Vector3f.ZP.rotationDegrees((float) zw));
+        poseStack2.mulPose(Axis.XN.rotationDegrees((float) xw));
+        poseStack2.mulPose(Axis.YN.rotationDegrees((float) yw));
+        poseStack2.mulPose(Axis.ZP.rotationDegrees((float) zw));
         poseStack2.translate(0, -1.5, 0);
 
         model.render(poseStack2, transformType1, RenderType.itemEntityTranslucentCull(location), light, overlay);

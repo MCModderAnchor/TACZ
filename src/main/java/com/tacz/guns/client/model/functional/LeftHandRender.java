@@ -2,9 +2,9 @@ package com.tacz.guns.client.model.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.util.RenderHelper;
@@ -25,7 +25,7 @@ public class LeftHandRender implements IFunctionalRenderer {
             if (!bedrockGunModel.getRenderHand()) {
                 return;
             }
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
             Matrix3f normal = poseStack.last().normal().copy();
             Matrix4f pose = poseStack.last().pose().copy();
             //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染

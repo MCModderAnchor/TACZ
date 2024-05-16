@@ -1,17 +1,18 @@
 package com.tacz.guns.client.resource.pojo.display.ammo;
 
 import com.google.gson.annotations.SerializedName;
-import com.mojang.math.Vector3f;
 import net.minecraft.core.particles.ParticleOptions;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
 public class AmmoParticle {
+    private static final Vector3f ZERO = new Vector3f(0, 0, 0);
     @SerializedName("name")
     private String name;
 
     @SerializedName("delta")
-    private Vector3f delta = Vector3f.ZERO;
+    private Vector3f delta = ZERO;
 
     @SerializedName("speed")
     private float speed = 0f;

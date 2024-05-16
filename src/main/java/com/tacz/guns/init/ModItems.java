@@ -27,19 +27,19 @@ public class ModItems {
 
     public static CreativeModeTab OTHER_TAB = new CreativeModeTab("tab.tacz.other") {
         @Override
-        public @Nonnull ItemStack makeIcon() {
+        public @Nonnull ItemStack getIconItem() {
             return ModItems.GUN_SMITH_TABLE.get().getDefaultInstance();
         }
     };
     public static CreativeModeTab AMMO_TAB = new CreativeModeTab("tab.tacz.ammo") {
         @Override
-        public @Nonnull ItemStack makeIcon() {
+        public @Nonnull ItemStack getIconItem() {
             return AmmoItemBuilder.create().setId(AMMO_TAB_ICON_ID).build();
         }
     };
     public static CreativeModeTab ATTACHMENT_TAB = new CreativeModeTab("tab.tacz.attachment") {
         @Override
-        public @Nonnull ItemStack makeIcon() {
+        public @Nonnull ItemStack getIconItem() {
             return AttachmentItemBuilder.create().setId(ATTACHMENT_TAB_ICON_ID).build();
         }
     };
