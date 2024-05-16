@@ -1,0 +1,15 @@
+{
+    // 枪械的显示名称，支持本地化
+    "name": "tacz.gun.ak47.name",
+    // 枪械效果文件
+    "display": "tacz:ak47_display",
+    // 枪械参数文件
+    "data": "tacz:ak47_data",
+    // 枪械种类，用于创造标签栏归类。
+    "type": "rifle",
+    // 枪械的物品类型，决定枪械的逻辑，如开火、装填等，默认是 modern_kinetic (现代动能枪械)
+    "item_type": "modern_kinetic",
+    // 排序数，决定了在创造模式标签页中的顺序
+    // 数字越小，优先级越高
+    "sort": 10
+}

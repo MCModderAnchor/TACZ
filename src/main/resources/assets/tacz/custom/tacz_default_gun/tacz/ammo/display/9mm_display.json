@@ -1,0 +1,29 @@
+{
+  "model": "tacz:ammo/9mm",
+  "texture": "tacz:ammo/uv/9mm",
+  "slot": "tacz:ammo/slot/9mm",
+  "shell": {
+    "model": "tacz:shell/9mm_shell",
+    "texture": "tacz:shell/9mm_shell"
+  },
+  "tracer_color": "#FF8888",
+  "transform": {
+    "scale": {
+      "thirdperson": [
+        0.4,
+        0.4,
+        0.4
+      ],
+      "ground": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "fixed": [
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}

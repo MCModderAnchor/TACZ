@@ -1,0 +1,27 @@
+modLoader = "javafml"
+loaderVersion = "[46,)"
+license = "GPL3 / CC BY-NC-SA 4.0"
+
+[[mods]]
+modId = "tacz"
+version = "${file.jarVersion}"
+displayName = "Timeless & Classics Guns: Zero"
+logoFile = "logo.png"
+updateJSONURL = ""
+displayURL = ""
+authors = "Serene Wave Studio | Timeless Squad"
+description = '''
+'''
+
+[[dependencies.tacz]]
+modId = "forge"
+mandatory = true
+versionRange = "[46,)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.tacz]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20,1.20.2)"
+ordering = "NONE"
+side = "BOTH"

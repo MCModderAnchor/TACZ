@@ -1,0 +1,17 @@
+{
+  "model": "tacz:gun/rpg7_geo",
+  "texture": "tacz:gun/uv/rpg7",
+  "hud": "tacz:gun/hud/rpg7",
+  "slot": "tacz:gun/slot/rpg7",
+  "animation": "tacz:rpg7",
+  "use_default_animation": "rifle",
+  "sounds": {
+    "reload_empty": "tacz:rpg7/rpg7_reload",
+    "inspect": "tacz:rpg7/rpg7_inspect",
+    "inspect_empty": "tacz:rpg7/rpg7_inspect_empty",
+    "draw": "tacz:rpg7/rpg7_draw",
+    "put_away": "tacz:rpg7/rpg7_put_away",
+    "shoot": "tacz:rpg7/rpg7_shoot",
+    "shoot_3p": "tacz:rpg7/rpg7_shoot"
+  }
+}

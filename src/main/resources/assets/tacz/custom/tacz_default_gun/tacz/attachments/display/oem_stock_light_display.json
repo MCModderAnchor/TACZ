@@ -1,0 +1,10 @@
+{
+  "slot": "tacz:attachment/slot/oem_stock_light",
+  "model": "tacz:attachment/dummy",
+  "texture": "tacz:attachment/slot/oem_stock_light",
+  "adapter": "oem_stock_light",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}
