@@ -10,28 +10,23 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 
 public class ServerMessageSyncGunPack {
-    private final List<List<String>> download;
     private final EnumMap<DataType, Map<ResourceLocation, String>> cache;
 
-    public ServerMessageSyncGunPack(List<List<String>> download, EnumMap<DataType, Map<ResourceLocation, String>> cache) {
-        this.download = download;
+    public ServerMessageSyncGunPack(EnumMap<DataType, Map<ResourceLocation, String>> cache) {
         this.cache = cache;
     }
 
     public static void encode(ServerMessageSyncGunPack message, FriendlyByteBuf buf) {
-        CommonGunPackNetwork.toNetwork(message.download, message.cache, buf);
+        CommonGunPackNetwork.toNetwork(message.cache, buf);
     }
 
     public static ServerMessageSyncGunPack decode(FriendlyByteBuf buf) {
-        var download = CommonGunPackNetwork.fromNetworkDownload(buf);
-        var cache = CommonGunPackNetwork.fromNetworkCache(buf);
-        return new ServerMessageSyncGunPack(download, cache);
+        return new ServerMessageSyncGunPack(CommonGunPackNetwork.fromNetworkCache(buf));
     }
 
     public static void handle(ServerMessageSyncGunPack message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -42,9 +37,6 @@ public class ServerMessageSyncGunPack {
         context.setPacketHandled(true);
     }
 
-    public List<List<String>> getDownload() {
-        return download;
-    }
 
     public EnumMap<DataType, Map<ResourceLocation, String>> getCache() {
         return cache;

@@ -7,7 +7,7 @@ import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.api.item.nbt.AmmoBoxItemDataAccessor;
-import com.tacz.guns.config.common.OtherConfig;
+import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import net.minecraft.ChatFormatting;
@@ -131,7 +131,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
                         return;
                     }
                     int boxAmmoCount = this.getAmmoCount(ammoBox);
-                    int needCount = index.getStackSize() * OtherConfig.AMMO_BOX_STACK_SIZE.get() - boxAmmoCount;
+                    int needCount = index.getStackSize() * SyncConfig.AMMO_BOX_STACK_SIZE.get() - boxAmmoCount;
                     ItemStack takeItem = slot.safeTake(slotItem.getCount(), needCount, player);
                     this.setAmmoCount(ammoBox, boxAmmoCount + takeItem.getCount());
                 });
@@ -165,7 +165,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
         ResourceLocation ammoId = this.getAmmoId(stack);
         int ammoCount = this.getAmmoCount(stack);
         double widthPercent = TimelessAPI.getCommonAmmoIndex(ammoId).map(index -> {
-            double totalCount = index.getStackSize() * OtherConfig.AMMO_BOX_STACK_SIZE.get();
+            double totalCount = index.getStackSize() * SyncConfig.AMMO_BOX_STACK_SIZE.get();
             return ammoCount / totalCount;
         }).orElse(0d);
         return (int) Math.min(1 + 12 * widthPercent, 13);

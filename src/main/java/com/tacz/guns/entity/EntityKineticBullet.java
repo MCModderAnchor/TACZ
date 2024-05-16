@@ -9,6 +9,7 @@ import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
 import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.config.common.OtherConfig;
+import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageGunHurt;
@@ -114,7 +115,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.gravity = Mth.clamp(data.getGravity(), 0, Float.MAX_VALUE);
         this.friction = Mth.clamp(data.getFriction(), 0, Float.MAX_VALUE);
         this.hasIgnite = data.isHasIgnite();
-        this.damageAmount = (float) Mth.clamp(data.getDamageAmount() * AmmoConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
+        this.damageAmount = (float) Mth.clamp(data.getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
         // 霰弹情况，每个伤害要扣去
         if (data.getBulletAmount() > 1) {
             this.damageModifier = 1f / data.getBulletAmount();
@@ -405,7 +406,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             // 默认爆头伤害是 1x
             float headShotMultiplier = 1f;
             if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
-                headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+                headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
             }
             damage *= headShotMultiplier;
         }
@@ -512,7 +513,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private void tacAttackEntity(DamageSource source, Entity entity, float damage) {
         float armorIgnore = 0;
         if (this.extraDamage != null && this.extraDamage.getArmorIgnore() > 0) {
-            armorIgnore = (float) (this.extraDamage.getArmorIgnore() * AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
+            armorIgnore = (float) (this.extraDamage.getArmorIgnore() * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
         }
         // 给末影人造成伤害
         if (entity instanceof EnderMan) {

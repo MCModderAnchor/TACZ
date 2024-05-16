@@ -1,7 +1,7 @@
 package com.tacz.guns.config.util;
 
 import com.google.common.collect.Lists;
-import com.tacz.guns.config.common.OtherConfig;
+import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.mixin.client.StairBlockAccessor;
 import com.tacz.guns.util.InheritanceChecker;
 import net.minecraft.resources.ResourceLocation;
@@ -21,10 +21,10 @@ public class InteractKeyConfigRead {
     public static void init() {
         WHITELIST.clear();
         BLACKLIST.clear();
-        handleConfigData(OtherConfig.INTERACT_KEY_WHITELIST_BLOCKS.get(), WHITELIST, Type.BLOCK);
-        handleConfigData(OtherConfig.INTERACT_KEY_WHITELIST_ENTITIES.get(), WHITELIST, Type.ENTITY);
-        handleConfigData(OtherConfig.INTERACT_KEY_BLACKLIST_BLOCKS.get(), BLACKLIST, Type.BLOCK);
-        handleConfigData(OtherConfig.INTERACT_KEY_BLACKLIST_ENTITIES.get(), BLACKLIST, Type.ENTITY);
+        handleConfigData(SyncConfig.INTERACT_KEY_WHITELIST_BLOCKS.get(), WHITELIST, Type.BLOCK);
+        handleConfigData(SyncConfig.INTERACT_KEY_WHITELIST_ENTITIES.get(), WHITELIST, Type.ENTITY);
+        handleConfigData(SyncConfig.INTERACT_KEY_BLACKLIST_BLOCKS.get(), BLACKLIST, Type.BLOCK);
+        handleConfigData(SyncConfig.INTERACT_KEY_BLACKLIST_ENTITIES.get(), BLACKLIST, Type.ENTITY);
     }
 
     public static boolean canInteractBlock(Block block) {

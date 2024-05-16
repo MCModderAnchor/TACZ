@@ -1,10 +1,7 @@
 package com.tacz.guns.resource.network;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.tacz.guns.client.download.ClientGunPackDownloadManager;
 import com.tacz.guns.client.resource.ClientGunPackLoader;
-import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageSyncGunPack;
 import com.tacz.guns.resource.loader.asset.AttachmentDataLoader;
@@ -20,11 +17,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -42,29 +37,23 @@ public class CommonGunPackNetwork {
 
     public static void syncClient(MinecraftServer server) {
         server.getPlayerList().getPlayers().forEach(player -> NetworkHandler.sendToClientPlayer(
-                new ServerMessageSyncGunPack(OtherConfig.CLIENT_GUN_PACK_DOWNLOAD_URLS.get(), NETWORK_CACHE), player));
+                new ServerMessageSyncGunPack(NETWORK_CACHE), player));
     }
 
     public static void syncClientExceptSelf(MinecraftServer server, @Nullable Player self) {
         server.getPlayerList().getPlayers().forEach(player -> {
             if (!player.equals(self)) {
-                ServerMessageSyncGunPack message = new ServerMessageSyncGunPack(OtherConfig.CLIENT_GUN_PACK_DOWNLOAD_URLS.get(), NETWORK_CACHE);
+                ServerMessageSyncGunPack message = new ServerMessageSyncGunPack(NETWORK_CACHE);
                 NetworkHandler.sendToClientPlayer(message, player);
             }
         });
     }
 
     public static void syncClient(ServerPlayer player) {
-        NetworkHandler.sendToClientPlayer(new ServerMessageSyncGunPack(OtherConfig.CLIENT_GUN_PACK_DOWNLOAD_URLS.get(), NETWORK_CACHE), player);
+        NetworkHandler.sendToClientPlayer(new ServerMessageSyncGunPack(NETWORK_CACHE), player);
     }
 
-    public static void toNetwork(List<List<String>> download, EnumMap<DataType, Map<ResourceLocation, String>> cache, FriendlyByteBuf buf) {
-        buf.writeVarInt(download.size());
-        download.forEach(data -> {
-            buf.writeUtf(data.get(0));
-            buf.writeUtf(data.get(1));
-        });
-
+    public static void toNetwork(EnumMap<DataType, Map<ResourceLocation, String>> cache, FriendlyByteBuf buf) {
         buf.writeVarInt(cache.size());
         cache.forEach((type, caches) -> {
             buf.writeEnum(type);
@@ -74,17 +63,6 @@ public class CommonGunPackNetwork {
                 buf.writeUtf(data);
             });
         });
-    }
-
-    public static List<List<String>> fromNetworkDownload(FriendlyByteBuf buf) {
-        List<List<String>> download = Lists.newArrayList();
-        int size = buf.readVarInt();
-        for (int i = 0; i < size; i++) {
-            String url = buf.readUtf();
-            String sha1 = buf.readUtf();
-            download.add(Lists.newArrayList(url, sha1));
-        }
-        return download;
     }
 
     public static EnumMap<DataType, Map<ResourceLocation, String>> fromNetworkCache(FriendlyByteBuf buf) {
@@ -124,20 +102,5 @@ public class CommonGunPackNetwork {
             }
         }));
         ClientGunPackLoader.reloadIndex();
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static void downloadClientGunPack(List<List<String>> download) {
-        download.forEach(data -> {
-            String url = data.get(0);
-            String sha1 = data.get(1);
-            if (StringUtils.isBlank(url)) {
-                return;
-            }
-            if (!SHA1.matcher(sha1).matches()) {
-                return;
-            }
-            ClientGunPackDownloadManager.download(url, sha1);
-        });
     }
 }
