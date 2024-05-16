@@ -76,7 +76,7 @@ public class BedrockCubePerFace implements BedrockCube {
         Matrix3f matrix3f = pose.normal();
 
         for (BedrockPolygon polygon : this.polygons) {
-            Vector3f vector3f = polygon.normal.copy();
+            Vector3f vector3f = new Vector3f(polygon.normal);
             vector3f.transform(matrix3f);
             float nx = vector3f.x();
             float ny = vector3f.y();

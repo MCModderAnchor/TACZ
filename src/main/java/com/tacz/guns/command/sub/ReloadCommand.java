@@ -9,7 +9,7 @@ import com.tacz.guns.resource.DedicatedServerReloadManager;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -35,7 +35,7 @@ public class ReloadCommand {
         watch.stop();
         double time = watch.getTime(TimeUnit.MICROSECONDS) / 1000.0;
         if (context.getSource().getEntity() instanceof ServerPlayer serverPlayer) {
-            serverPlayer.sendMessage(new TranslatableComponent("commands.tacz.reload.success", time), Util.NIL_UUID);
+            serverPlayer.sendSystemMessage(Component.translatable("commands.tacz.reload.success", time));
         }
         GunMod.LOGGER.info("Model loading time: {} ms", time);
         return Command.SINGLE_SUCCESS;

@@ -6,8 +6,6 @@ import com.tacz.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -16,7 +14,7 @@ import java.util.function.Consumer;
 
 public class RefitUnloadButton extends Button implements IComponentTooltip {
     public RefitUnloadButton(int pX, int pY, Button.OnPress pOnPress) {
-        super(pX, pY, 8, 8, TextComponent.EMPTY, pOnPress);
+        super(pX, pY, 8, 8, Component.EMPTY, pOnPress);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class RefitUnloadButton extends Button implements IComponentTooltip {
     @Override
     public void renderTooltip(Consumer<List<Component>> consumer) {
         if (this.isHovered) {
-            consumer.accept(Collections.singletonList(new TranslatableComponent("tooltip.tacz.refit.unload")));
+            consumer.accept(Collections.singletonList(Component.translatable("tooltip.tacz.refit.unload")));
         }
     }
 }

@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -88,7 +87,7 @@ public class TargetBlockEntity extends BlockEntity implements Nameable {
 
     @Override
     public Component getName() {
-        return this.name != null ? this.name : TextComponent.EMPTY;
+        return this.name != null ? this.name : Component.empty();
     }
 
     @Nullable

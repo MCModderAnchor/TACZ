@@ -3,9 +3,6 @@ package com.tacz.guns.client.model.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.model.BedrockAmmoModel;
@@ -16,7 +13,10 @@ import com.tacz.guns.compat.oculus.OculusCompat;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -69,8 +69,8 @@ public class ShellRender implements IFunctionalRenderer {
                 // 缓存一下 PoseStack
                 for (Data data : SHELL_QUEUE) {
                     if (data.normal == null && data.pose == null) {
-                        data.normal = poseStack.last().normal().copy();
-                        data.pose = poseStack.last().pose().copy();
+                        data.normal = new Matrix3f(poseStack.last().normal());
+                        data.pose = new Matrix4f(poseStack.last().pose());
                     }
                 }
 
@@ -81,7 +81,7 @@ public class ShellRender implements IFunctionalRenderer {
         });
     }
 
-    private static void renderSingleShell(ItemTransforms.TransformType transformType1, int light, int overlay, Data data, Vector3f initialVelocity, Vector3f acceleration, Vector3f angularVelocity, BedrockAmmoModel model, ResourceLocation location) {
+    private static void renderSingleShell(ItemDisplayContext transformType1, int light, int overlay, Data data, Vector3f initialVelocity, Vector3f acceleration, Vector3f angularVelocity, BedrockAmmoModel model, ResourceLocation location) {
         // 再检查一次
         if (data.normal == null && data.pose == null) {
             return;
@@ -125,7 +125,7 @@ public class ShellRender implements IFunctionalRenderer {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
         if (OculusCompat.isRenderShadow()) {
             return;
         }

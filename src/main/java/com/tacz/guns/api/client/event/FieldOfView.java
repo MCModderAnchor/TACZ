@@ -2,13 +2,13 @@ package com.tacz.guns.api.client.event;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.ViewportEvent;
 
 /**
  * 在调用 GameRenderer#getFov 方法时触发该事件
  * 用于瞄准镜瞄准时 FOV 相关变化时调用
  */
-public class FieldOfView extends EntityViewRenderEvent {
+public class FieldOfView extends ViewportEvent {
     private final boolean isItemWithHand;
     private double fov;
 

@@ -2,9 +2,7 @@ package com.tacz.guns.client.model.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
@@ -20,7 +18,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 public class MuzzleFlashRender implements IFunctionalRenderer {
     private static final SlotModel MUZZLE_FLASH_MODEL = new SlotModel(true);
@@ -57,8 +58,8 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
                 return;
             }
             if (muzzleFlashStartMark) {
-                muzzleFlashNormal = poseStack.last().normal().copy();
-                muzzleFlashPose = poseStack.last().pose().copy();
+                muzzleFlashNormal = new Matrix3f(poseStack.last().normal());
+                muzzleFlashPose = new Matrix4f(poseStack.last().pose());
             }
             bedrockModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) -> doRender(light, overlay, muzzleFlash, time));
         });
@@ -81,7 +82,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
             poseStack2.pushPose();
             {
                 poseStack2.scale(scale, scale, scale);
-                poseStack2.mulPose(Vector3f.ZP.rotationDegrees(muzzleFlashRandomRotate));
+                poseStack2.mulPose(Axis.ZP.rotationDegrees(muzzleFlashRandomRotate));
                 poseStack2.translate(0, -1, 0);
                 RenderType renderTypeBg = RenderType.entityTranslucent(muzzleFlash.getTexture());
                 MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeBg), light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
@@ -92,7 +93,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
             poseStack2.pushPose();
             {
                 poseStack2.scale(scale / 2, scale / 2, scale / 2);
-                poseStack2.mulPose(Vector3f.ZP.rotationDegrees(muzzleFlashRandomRotate));
+                poseStack2.mulPose(Axis.ZP.rotationDegrees(muzzleFlashRandomRotate));
                 poseStack2.translate(0, -0.9, 0);
                 RenderType renderTypeLight = RenderType.energySwirl(muzzleFlash.getTexture(), 1, 1);
                 MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeLight), light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
@@ -102,7 +103,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
         if (OculusCompat.isRenderShadow()) {
             return;
         }

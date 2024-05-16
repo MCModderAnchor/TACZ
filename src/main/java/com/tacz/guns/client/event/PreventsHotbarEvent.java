@@ -6,13 +6,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class PreventsHotbarEvent {
     @SubscribeEvent
-    public static void onRenderHotbarEvent(RenderGameOverlayEvent event) {
+    public static void onRenderHotbarEvent(RenderGuiOverlayEvent event) {
         if (event.getType() == RenderGameOverlayEvent.ElementType.LAYER) {
             Screen screen = Minecraft.getInstance().screen;
             // 枪械合成台界面关闭背景

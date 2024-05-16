@@ -28,7 +28,7 @@ public class RefitKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onInspectPress(InputEvent.KeyInputEvent event) {
+    public static void onInspectPress(InputEvent.Key event) {
         if (event.getAction() == GLFW.GLFW_PRESS && REFIT_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null || player.isSpectator()) {

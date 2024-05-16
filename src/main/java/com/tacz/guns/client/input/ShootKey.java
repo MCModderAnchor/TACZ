@@ -10,7 +10,7 @@ import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -58,7 +58,7 @@ public class ShootKey {
     }
 
     @SubscribeEvent
-    public static void semiShoot(InputEvent.MouseInputEvent event) {
+    public static void semiShoot(InputEvent.MouseButton event) {
         if (isInGame() && SHOOT_KEY.matchesMouse(event.getButton())) {
             // 松开鼠标，重置 DryFire 状态
             if (event.getAction() == GLFW.GLFW_RELEASE) {
@@ -77,7 +77,7 @@ public class ShootKey {
                         .map(index -> !index.getGunData().getBurstData().isContinuousShoot())
                         .orElse(false);
                 if (fireMode == FireMode.UNKNOWN) {
-                    player.sendMessage(new TranslatableComponent("message.tacz.fire_select.fail"), Util.NIL_UUID);
+                    player.sendSystemMessage(Component.translatable("message.tacz.fire_select.fail"));
                 }
                 if (fireMode == FireMode.SEMI || isBurstSemi) {
                     IClientPlayerGunOperator.fromLocalPlayer(player).shoot();

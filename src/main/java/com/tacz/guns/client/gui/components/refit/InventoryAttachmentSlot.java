@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
@@ -20,7 +19,7 @@ public class InventoryAttachmentSlot extends Button implements IComponentTooltip
     private final Inventory inventory;
 
     public InventoryAttachmentSlot(int pX, int pY, int slotIndex, Inventory inventory, Button.OnPress onPress) {
-        super(pX, pY, 18, 18, TextComponent.EMPTY, onPress);
+        super(pX, pY, 18, 18, Component.EMPTY, onPress);
         this.slotIndex = slotIndex;
         this.inventory = inventory;
     }

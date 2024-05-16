@@ -24,7 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
@@ -46,8 +46,8 @@ public class CameraSetupEvent {
     private static BedrockGunModel lastModel = null;
 
     @SubscribeEvent
-    public static void applyLevelCameraAnimation(EntityViewRenderEvent.CameraSetup event) {
-        if (!Minecraft.getInstance().options.bobView) {
+    public static void applyLevelCameraAnimation(ViewportEvent.ComputeCameraAngles event) {
+        if (!Minecraft.getInstance().options.bobView().get()) {
             return;
         }
         LocalPlayer player = Minecraft.getInstance().player;
@@ -85,7 +85,7 @@ public class CameraSetupEvent {
 
     @SubscribeEvent
     public static void applyItemInHandCameraAnimation(BeforeRenderHandEvent event) {
-        if (!Minecraft.getInstance().options.bobView) {
+        if (!Minecraft.getInstance().options.bobView().get()) {
             return;
         }
         LocalPlayer player = Minecraft.getInstance().player;
@@ -128,7 +128,7 @@ public class CameraSetupEvent {
             float zoom = iGun.getAimingZoom(stack);
             if (livingEntity instanceof LocalPlayer localPlayer) {
                 IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
-                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTicks());
+                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
                 float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
                 event.setFOV(fov);
             } else {
@@ -181,7 +181,7 @@ public class CameraSetupEvent {
     }
 
     @SubscribeEvent
-    public static void applyCameraRecoil(EntityViewRenderEvent.CameraSetup event) {
+    public static void applyCameraRecoil(ViewportEvent.ComputeCameraAngles event) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             return;

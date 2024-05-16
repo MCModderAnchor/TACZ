@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 public class KnockbackChange {
     @SubscribeEvent
     public static void onKnockback(LivingKnockBackEvent event) {
-        KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(event.getEntityLiving());
+        KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(event.getEntity());
         double strength = modifier.getKnockBackStrength();
         if (strength >= 0) {
             event.setStrength((float) strength);

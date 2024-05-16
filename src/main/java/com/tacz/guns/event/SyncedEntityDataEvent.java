@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,23 +40,23 @@ public final class SyncedEntityDataEvent {
 
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
-        if (!event.getPlayer().level.isClientSide()) {
+        if (!event.getEntity().level().isClientSide()) {
             Entity entity = event.getTarget();
             DataHolder holder = SyncedEntityData.instance().getDataHolder(entity);
             if (holder != null) {
                 List<DataEntry<?, ?>> entries = holder.gatherAll();
                 entries.removeIf(entry -> !entry.getKey().syncMode().isTracking());
                 if (!entries.isEmpty()) {
-                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new ServerMessageUpdateEntityData(entity.getId(), entries));
+                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()), new ServerMessageUpdateEntityData(entity.getId(), entries));
                 }
             }
         }
     }
 
     @SubscribeEvent
-    public static void onPlayerJoinWorld(EntityJoinWorldEvent event) {
+    public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof Player player && !event.getWorld().isClientSide()) {
+        if (entity instanceof Player player && !event.getLevel().isClientSide()) {
             DataHolder holder = SyncedEntityData.instance().getDataHolder(player);
             if (holder != null) {
                 List<DataEntry<?, ?>> entries = holder.gatherAll();

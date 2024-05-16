@@ -2,9 +2,7 @@ package com.tacz.guns.client.model.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.model.papi.PapiManager;
@@ -14,8 +12,11 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 public class TextShowRender implements IFunctionalRenderer {
     private final BedrockGunModel bedrockGunModel;
@@ -29,7 +30,7 @@ public class TextShowRender implements IFunctionalRenderer {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
         if (!transformType.firstPerson()) {
             return;
         }
@@ -37,7 +38,7 @@ public class TextShowRender implements IFunctionalRenderer {
         if (StringUtils.isBlank(text)) {
             return;
         }
-        poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
         Matrix3f normal = poseStack.last().normal().copy();
         Matrix4f pose = poseStack.last().pose().copy();
 

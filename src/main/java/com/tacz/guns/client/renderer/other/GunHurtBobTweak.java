@@ -21,7 +21,7 @@ public class GunHurtBobTweak {
         }
         zRot /= (float) player.hurtDuration;
         zRot = Mth.sin(zRot * zRot * zRot * zRot * (float) Math.PI);
-        float yRot = player.hurtDir;
+        float yRot = player.getHurtDir();
 
         yRot = yRot * lastTweakMultiplier;
         zRot = zRot * lastTweakMultiplier;

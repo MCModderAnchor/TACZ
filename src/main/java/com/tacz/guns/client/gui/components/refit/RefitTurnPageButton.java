@@ -6,8 +6,6 @@ import com.tacz.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -18,7 +16,7 @@ public class RefitTurnPageButton extends Button implements IComponentTooltip {
     private final boolean isUpPage;
 
     public RefitTurnPageButton(int pX, int pY, boolean isUpPage, OnPress pOnPress) {
-        super(pX, pY, 18, 8, TextComponent.EMPTY, pOnPress);
+        super(pX, pY, 18, 8, Component.EMPTY, pOnPress);
         this.isUpPage = isUpPage;
     }
 
@@ -42,7 +40,7 @@ public class RefitTurnPageButton extends Button implements IComponentTooltip {
     public void renderTooltip(Consumer<List<Component>> consumer) {
         if (this.isHovered) {
             String key = isUpPage ? "tooltip.tacz.page.previous" : "tooltip.tacz.page.next";
-            consumer.accept(Collections.singletonList(new TranslatableComponent(key)));
+            consumer.accept(Collections.singletonList(Component.translatable(key)));
         }
     }
 }
