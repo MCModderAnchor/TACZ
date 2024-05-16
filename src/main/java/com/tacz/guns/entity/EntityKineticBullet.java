@@ -395,7 +395,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         Entity entity = result.getEntity();
         // 点燃
-        if (this.hasIgnite && AmmoConfig.IGNITE_BLOCK.get()) {
+        if (this.hasIgnite && AmmoConfig.IGNITE_ENTITY.get()) {
             entity.setSecondsOnFire(2);
         }
         // 获取伤害

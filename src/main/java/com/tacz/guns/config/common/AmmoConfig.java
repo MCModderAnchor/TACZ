@@ -13,6 +13,7 @@ public class AmmoConfig {
     public static ForgeConfigSpec.ConfigValue<List<String>> PASS_THROUGH_BLOCKS;
     public static ForgeConfigSpec.BooleanValue DESTROY_GLASS;
     public static ForgeConfigSpec.BooleanValue IGNITE_BLOCK;
+    public static ForgeConfigSpec.BooleanValue IGNITE_ENTITY;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("ammo");
@@ -37,6 +38,9 @@ public class AmmoConfig {
 
         builder.comment("Whether a ammo can ignite the block");
         IGNITE_BLOCK = builder.define("IgniteBlock", true);
+
+        builder.comment("Whether a ammo can ignite the entity");
+        IGNITE_ENTITY = builder.define("IgniteEntity", true);
 
         builder.pop();
     }

@@ -51,5 +51,9 @@ public class AmmoClothConfig {
         ammo.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.common.ammo.ignite_block"), AmmoConfig.IGNITE_BLOCK.get())
                 .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.common.ammo.ignite_block.desc"))
                 .setSaveConsumer(AmmoConfig.IGNITE_BLOCK::set).build());
+
+        ammo.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.common.ammo.ignite_entity"), AmmoConfig.IGNITE_ENTITY.get())
+                .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.common.ammo.ignite_entity.desc"))
+                .setSaveConsumer(AmmoConfig.IGNITE_ENTITY::set).build());
     }
 }

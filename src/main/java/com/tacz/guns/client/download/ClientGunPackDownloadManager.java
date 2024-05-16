@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public final class ClientGunPackDownloadManager {
@@ -36,10 +37,12 @@ public final class ClientGunPackDownloadManager {
     }
 
     public static void download(String url, String hash) {
-        DOWNLOADER.downloadAndLoadGunPack(url, hash).thenRun(() -> {
-            // TODO 向服务端发包，我成功加载了
+        // 统一使用小写
+        String lowerCaseHash = hash.toLowerCase(Locale.US);
+        DOWNLOADER.downloadAndLoadGunPack(url, lowerCaseHash).thenRun(() -> {
+            // 我成功下载资源并加载了
         }).exceptionally(throwable -> {
-            // TODO 向服务端发包，加载失败了
+            // 失败了
             return null;
         });
     }

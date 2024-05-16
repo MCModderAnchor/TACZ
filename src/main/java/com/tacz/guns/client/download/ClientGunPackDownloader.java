@@ -157,7 +157,7 @@ public class ClientGunPackDownloader {
     private boolean notMatchHash(String expectedHash, File file) {
         try (FileInputStream stream = new FileInputStream(file)) {
             String fileHash = DigestUtils.sha1Hex(stream);
-            if (fileHash.toLowerCase(Locale.ROOT).equals(expectedHash.toLowerCase(Locale.ROOT))) {
+            if (fileHash.toLowerCase(Locale.US).equals(expectedHash.toLowerCase(Locale.US))) {
                 GunMod.LOGGER.info("Found file {} matching requested fileHash {}", file, expectedHash);
                 return false;
             }

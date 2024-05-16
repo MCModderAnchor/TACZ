@@ -128,6 +128,8 @@
   "config.tacz.common.ammo.destroy_glass.desc": "Whether a ammo can break the glass",
   "config.tacz.common.ammo.ignite_block": "Ignite Block",
   "config.tacz.common.ammo.ignite_block.desc": "Whether a ammo can ignite the block",
+  "config.tacz.common.ammo.ignite_entity": "Ignite Entity",
+  "config.tacz.common.ammo.ignite_entity.desc": "Whether a ammo can ignite the entity",
   "config.tacz.common.other": "Other",
   "config.tacz.common.other.ammo_box_stack_size": "Ammo Box Stack Size",
   "config.tacz.common.other.ammo_box_stack_size.desc": "The maximum stack size of ammo that the ammo box can hold",
