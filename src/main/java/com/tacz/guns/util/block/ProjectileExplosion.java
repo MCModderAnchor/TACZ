@@ -34,10 +34,11 @@ public class ProjectileExplosion extends Explosion {
     private final double z;
     private final float power;
     private final float radius;
+    private final boolean knockback;
     private final Entity exploder;
     private final ExplosionDamageCalculator damageCalculator;
 
-    public ProjectileExplosion(Level level, Entity exploder, @Nullable DamageSource source, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float power, float radius, Explosion.BlockInteraction mode) {
+    public ProjectileExplosion(Level level, Entity exploder, @Nullable DamageSource source, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float power, float radius, boolean knockback, Explosion.BlockInteraction mode) {
         super(level, exploder, source, damageCalculator, x, y, z, radius, AmmoConfig.EXPLOSIVE_AMMO_FIRE.get(), mode);
         this.level = level;
         this.x = x;
@@ -47,6 +48,7 @@ public class ProjectileExplosion extends Explosion {
         this.radius = radius;
         this.exploder = exploder;
         this.damageCalculator = damageCalculator == null ? DEFAULT_CONTEXT : damageCalculator;
+        this.knockback = knockback;
     }
 
     @Override
@@ -179,7 +181,7 @@ public class ProjectileExplosion extends Explosion {
             }
 
             // 启用击退效果
-            if (AmmoConfig.EXPLOSIVE_AMMO_KNOCK_BACK.get()) {
+            if (AmmoConfig.EXPLOSIVE_AMMO_KNOCK_BACK.get() && this.knockback) {
                 entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * damage * radius / 5, deltaY * damage * radius / 5, deltaZ * damage * radius / 5));
                 if (entity instanceof Player player) {
                     if (!player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {

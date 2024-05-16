@@ -80,8 +80,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private float knockback = 0;
     private boolean hasExplosion = false;
     private boolean hasIgnite = false;
+    private int igniteEntityTime = 2;
     private float explosionDamage = 3;
     private float explosionRadius = 3;
+    private boolean explosionKnockback = false;
     private ExtraDamage extraDamage = null;
     private float damageModifier = 1;
     // 穿透数
@@ -115,6 +117,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.gravity = Mth.clamp(data.getGravity(), 0, Float.MAX_VALUE);
         this.friction = Mth.clamp(data.getFriction(), 0, Float.MAX_VALUE);
         this.hasIgnite = data.isHasIgnite();
+        this.igniteEntityTime = Math.max(data.getIgniteEntityTime(), 0);
         this.damageAmount = (float) Mth.clamp(data.getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
         // 霰弹情况，每个伤害要扣去
         if (data.getBulletAmount() > 1) {
@@ -127,6 +130,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             this.hasExplosion = true;
             this.explosionDamage = Mth.clamp(data.getExplosionData().getDamage(), 0, Float.MAX_VALUE);
             this.explosionRadius = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
+            this.explosionKnockback = data.getExplosionData().isKnockback();
         }
         // 子弹初始位置重置
         double posX = throwerIn.xOld + (throwerIn.getX() - throwerIn.xOld) / 2.0;
@@ -138,7 +142,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.gunId = gunId;
     }
 
-    public static void createExplosion(Entity exploder, float damage, float radius, Vec3 hitPos) {
+    public static void createExplosion(Entity exploder, float damage, float radius, boolean knockback, Vec3 hitPos) {
         // 客户端不执行
         if (!(exploder.level instanceof ServerLevel level)) {
             return;
@@ -149,7 +153,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             mode = Explosion.BlockInteraction.BREAK;
         }
         // 创建爆炸
-        ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null, hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, mode);
+        ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null, hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, knockback, mode);
         // 监听 forge 事件
         if (ForgeEventFactory.onExplosionStart(level, explosion)) {
             return;
@@ -396,7 +400,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         Entity entity = result.getEntity();
         // 点燃
         if (this.hasIgnite && AmmoConfig.IGNITE_ENTITY.get()) {
-            entity.setSecondsOnFire(2);
+            entity.setSecondsOnFire(this.igniteEntityTime);
         }
         // 获取伤害
         float damage = this.getDamage(result.getLocation());
@@ -428,7 +432,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         if (this.hasExplosion) {
             // 取消无敌时间
             entity.invulnerableTime = 0;
-            createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
+            createExplosion(this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, result.getLocation());
         }
         LivingEntity livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
         if (entity instanceof PartEntity<?> partEntity) {
@@ -463,7 +467,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         MinecraftForge.EVENT_BUS.post(new AmmoHitBlockEvent(level, result, this.level.getBlockState(pos), this));
         // 爆炸
         if (this.hasExplosion) {
-            createExplosion(this, this.explosionDamage, this.explosionRadius, hitVec);
+            createExplosion(this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, hitVec);
             // 爆炸直接结束不留弹孔，不处理之后的逻辑
             this.discard();
             return;

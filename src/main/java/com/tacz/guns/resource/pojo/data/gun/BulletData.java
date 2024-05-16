@@ -34,6 +34,9 @@ public class BulletData {
     @SerializedName("ignite")
     private boolean hasIgnite = false;
 
+    @SerializedName("ignite_entity_time")
+    private int igniteEntityTime = 2;
+
     @SerializedName("tracer_count_interval")
     private int tracerCountInterval = -1;
 
@@ -79,6 +82,10 @@ public class BulletData {
 
     public boolean isHasIgnite() {
         return hasIgnite;
+    }
+
+    public int getIgniteEntityTime() {
+        return igniteEntityTime;
     }
 
     public boolean hasTracerAmmo() {

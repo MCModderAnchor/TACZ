@@ -51,11 +51,16 @@
     "friction": 0.01,
     // 点燃目标
     "ignite": false,
+    // 点燃时间，默认为 2 秒，仅用于实体
+    "ignite_entity_time": 2,
     // 穿透数
     "pierce": 1
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
-    //  "radius": 5
+    //  "radius": 5,
+    //  "damage": 5,
+    //  爆炸导致的击退，默认为 false，需要服务器也开启爆炸击退才能使用
+    //  "knockback": false
     //}
   },
   // 换弹相关
