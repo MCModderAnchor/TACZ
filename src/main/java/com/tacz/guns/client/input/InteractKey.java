@@ -2,12 +2,11 @@ package com.tacz.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.config.common.OtherConfig;
+import com.tacz.guns.config.util.InteractKeyConfigRead;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
@@ -20,7 +19,6 @@ import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.lwjgl.glfw.GLFW;
 
 import static com.tacz.guns.util.InputExtraCheck.isInGame;
@@ -63,26 +61,14 @@ public class InteractKey {
     private static void interactBlock(BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc) {
         BlockPos blockPos = blockHitResult.getBlockPos();
         Block block = player.level.getBlockState(blockPos).getBlock();
-        ResourceLocation blockId = ForgeRegistries.BLOCKS.getKey(block);
-        if (blockId == null) {
-            return;
-        }
-        var whiteList = OtherConfig.INTERACT_KEY_WHITELIST_BLOCKS.get();
-        boolean match = whiteList.stream().anyMatch(list -> list.get(0).equals(blockId.toString()));
-        if (match) {
+        if (InteractKeyConfigRead.canInteractBlock(block)) {
             mc.startUseItem();
         }
     }
 
     private static void interactEntity(EntityHitResult entityHitResult, Minecraft mc) {
         Entity entity = entityHitResult.getEntity();
-        ResourceLocation entityId = ForgeRegistries.ENTITIES.getKey(entity.getType());
-        if (entityId == null) {
-            return;
-        }
-        var whiteList = OtherConfig.INTERACT_KEY_WHITELIST_ENTITIES.get();
-        boolean match = whiteList.stream().anyMatch(list -> list.get(0).equals(entityId.toString()));
-        if (match) {
+        if (InteractKeyConfigRead.canInteractEntity(entity)) {
             mc.startUseItem();
         }
     }

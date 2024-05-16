@@ -14,8 +14,11 @@ public class OtherConfig {
     public static ForgeConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_LATENCY_MAX_SAVE_MS;
     public static ForgeConfigSpec.ConfigValue<List<List<String>>> CLIENT_GUN_PACK_DOWNLOAD_URLS;
-    public static ForgeConfigSpec.ConfigValue<List<List<String>>> INTERACT_KEY_WHITELIST_BLOCKS;
-    public static ForgeConfigSpec.ConfigValue<List<List<String>>> INTERACT_KEY_WHITELIST_ENTITIES;
+
+    public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_WHITELIST_BLOCKS;
+    public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_WHITELIST_ENTITIES;
+    public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_BLOCKS;
+    public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_ENTITIES;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("other");
@@ -55,11 +58,15 @@ public class OtherConfig {
         CLIENT_GUN_PACK_DOWNLOAD_URLS = builder.define("ClientGunPackDownloadUrls", Lists.newArrayList());
 
         builder.comment("These whitelist blocks can be interacted with when the interact key is pressed");
-        builder.comment("Format: [Block ID, Text Key]");
-        INTERACT_KEY_WHITELIST_BLOCKS = builder.define("InteractKeyWhitelistBlocks", Lists.newArrayList());
+        INTERACT_KEY_WHITELIST_BLOCKS = builder.define("InteractKeyWhitelistBlocks", Lists.newArrayList("minecraft:chest", "minecraft:trapped_chest", "minecraft:ender_chest"));
 
         builder.comment("These whitelist entities can be interacted with when the interact key is pressed");
-        builder.comment("Format: [Entity ID, Text Key]");
-        INTERACT_KEY_WHITELIST_ENTITIES = builder.define("InteractKeyWhitelistEntities", Lists.newArrayList());
+        INTERACT_KEY_WHITELIST_ENTITIES = builder.define("InteractKeyWhitelistEntities", Lists.newArrayList("minecraft:minecart", "minecraft:boat", "minecraft:horse"));
+
+        builder.comment("These blacklist blocks can be interacted with when the interact key is pressed");
+        INTERACT_KEY_BLACKLIST_BLOCKS = builder.define("InteractKeyBlacklistBlocks", Lists.newArrayList());
+
+        builder.comment("These blacklist entities can be interacted with when the interact key is pressed");
+        INTERACT_KEY_BLACKLIST_ENTITIES = builder.define("InteractKeyBlacklistEntities", Lists.newArrayList());
     }
 }

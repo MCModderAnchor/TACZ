@@ -1,6 +1,7 @@
 package com.tacz.guns.event;
 
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
+import com.tacz.guns.config.util.InteractKeyConfigRead;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -14,6 +15,7 @@ public class LoadingConfigEvent {
         String fileName = event.getConfig().getFileName();
         if (CONFIG_NAME.equals(fileName)) {
             HeadShotAABBConfigRead.init();
+            InteractKeyConfigRead.init();
         }
     }
 }
