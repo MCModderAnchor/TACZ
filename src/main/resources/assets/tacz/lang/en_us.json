@@ -64,6 +64,8 @@
   "tooltip.tacz.attachment.pitch.decrease": "- Vertical Recoil",
   "tooltip.tacz.attachment.yaw.increase": "+ Horizontal Recoil",
   "tooltip.tacz.attachment.yaw.decrease": "- Horizontal Recoil",
+  "tooltip.tacz.attachment.yaw.shift": "Press [Shift] to see the support guns",
+  "tooltip.tacz.attachment.yaw.support": "Support Guns:",
   "tooltip.tacz.page.previous": "Previous",
   "tooltip.tacz.page.next": "Next",
   "tooltip.tacz.refit.unload": "Unload",

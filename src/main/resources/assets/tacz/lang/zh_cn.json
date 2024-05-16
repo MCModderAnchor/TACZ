@@ -131,6 +131,8 @@
   "tooltip.tacz.attachment.stock": "枪托",
   "tooltip.tacz.attachment.yaw.decrease": "- 水平后座力",
   "tooltip.tacz.attachment.yaw.increase": "+ 水平后座力",
+  "tooltip.tacz.attachment.yaw.shift": "按下 [Shift] 键查看支持枪械",
+  "tooltip.tacz.attachment.yaw.support": "支持枪械：",
   "tooltip.tacz.attachment.zoom": "放大倍率：%s",
   "tooltip.tacz.gun.damage": "伤害: ",
   "tooltip.tacz.gun.level": "经验等级：",
