@@ -66,7 +66,6 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
             }
             if (iGun.allowAttachment(gun, attachment)) {
                 output.add(gun);
-                output.add(gun);
             }
         });
         return output;
