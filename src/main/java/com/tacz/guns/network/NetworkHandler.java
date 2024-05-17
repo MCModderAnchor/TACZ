@@ -86,7 +86,7 @@ public class NetworkHandler {
                 .loginIndex(Acknowledge::getLoginIndex, Acknowledge::setLoginIndex)
                 .decoder(acknowledge::decode)
                 .encoder(acknowledge::encode)
-                .consumer(HandshakeHandler.indexFirst((handler, msg, s) -> acknowledge.handle(msg, s)))
+                .consumerNetworkThread(HandshakeHandler.indexFirst((handler, msg, s) -> acknowledge.handle(msg, s)))
                 .add();
     }
 
@@ -98,7 +98,7 @@ public class NetworkHandler {
                     .loginIndex(LoginIndexHolder::getLoginIndex, LoginIndexHolder::setLoginIndex)
                     .encoder(message::encode)
                     .decoder(message::decode)
-                    .consumer(message::handle);
+                    .consumerNetworkThread(message::handle);
             if (messages != null) {
                 builder.buildLoginPacketList(messages);
             } else {
