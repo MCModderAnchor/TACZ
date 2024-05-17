@@ -53,7 +53,7 @@ public class ProjectileExplosion extends Explosion {
 
     @Override
     public void explode() {
-        this.level.gameEvent(this.exploder, GameEvent.EXPLODE, new BlockPos(this.x, this.y, this.z));
+        this.level.gameEvent(this.exploder, GameEvent.EXPLODE, BlockPos.containing(this.x, this.y, this.z));
         Set<BlockPos> set = Sets.newHashSet();
         int i = 16;
 
@@ -74,7 +74,7 @@ public class ProjectileExplosion extends Explosion {
                         double blockZ = this.z;
 
                         for (float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
-                            BlockPos pos = new BlockPos(blockX, blockY, blockZ);
+                            BlockPos pos = BlockPos.containing(blockX, blockY, blockZ);
                             BlockState blockState = this.level.getBlockState(pos);
                             FluidState fluidState = this.level.getFluidState(pos);
                             if (!this.level.isInWorldBounds(pos)) {

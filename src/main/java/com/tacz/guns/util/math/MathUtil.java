@@ -394,7 +394,7 @@ public class MathUtil {
         Quaternionf qLerped = MathUtil.toQuaternion(MathUtil.slerp(QUATERNION_ONE, qRelative, alpha));
         // 应用位移和旋转
         resultMatrix.translate(new Vector3f(translation.x(), translation.y(), translation.z()));
-        resultMatrix.multiply(qLerped);
+        resultMatrix.rotate(qLerped);
     }
 
     public static Pair<Float, Vector3f> getAngleAndAxis(Quaternionf quaternion) {

@@ -47,7 +47,7 @@ public final class BlockRayTrace {
             return getBlockHitResult(level, rayTraceContext, blockPos, blockState);
         }, (rayTraceContext) -> {
             Vec3 vec3 = rayTraceContext.getFrom().subtract(rayTraceContext.getTo());
-            return BlockHitResult.miss(rayTraceContext.getTo(), Direction.getNearest(vec3.x, vec3.y, vec3.z), new BlockPos(rayTraceContext.getTo()));
+            return BlockHitResult.miss(rayTraceContext.getTo(), Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(rayTraceContext.getTo()));
         });
     }
 
