@@ -26,7 +26,7 @@ public class ClientMessagePlayerShoot {
                 if (entity == null) {
                     return;
                 }
-                IGunOperator.fromLivingEntity(entity).shoot(entity.getXRot(), entity.getYRot());
+                IGunOperator.fromLivingEntity(entity).shoot(entity::getXRot, entity::getYRot);
             });
         }
         context.setPacketHandled(true);
