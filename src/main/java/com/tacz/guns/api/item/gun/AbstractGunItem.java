@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class AbstractGunItem extends Item implements IGun {
     protected AbstractGunItem(Properties pProperties) {
@@ -50,7 +51,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
     /**
      * 射击时触发
      */
-    public abstract void shoot(ItemStack gunItem, float pitch, float yaw, boolean tracer, LivingEntity shooter);
+    public abstract void shoot(ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, boolean tracer, LivingEntity shooter);
 
     /**
      * 切换开火模式时调用

@@ -29,6 +29,7 @@ import net.minecraftforge.fml.LogicalSide;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * 现代枪的逻辑实现
@@ -49,7 +50,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     }
 
     @Override
-    public void shoot(ItemStack gunItem, float pitch, float yaw, boolean tracer, LivingEntity shooter) {
+    public void shoot(ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, boolean tracer, LivingEntity shooter) {
         ResourceLocation gunId = getGunId(gunItem);
         Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
@@ -104,7 +105,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                 // 生成子弹
                 Level world = shooter.getLevel();
                 for (int i = 0; i < bulletAmount; i++) {
-                    this.doSpawnBulletEntity(world, shooter, pitch, yaw, speed, inaccuracy[0], ammoId, gunId, tracer, bulletData);
+                    this.doSpawnBulletEntity(world, shooter, pitch.get(), yaw.get(), speed, inaccuracy[0], ammoId, gunId, tracer, bulletData);
                 }
                 // 播放枪声
                 if (soundDistance[0] > 0) {

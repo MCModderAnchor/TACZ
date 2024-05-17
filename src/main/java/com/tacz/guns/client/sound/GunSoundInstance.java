@@ -2,7 +2,6 @@ package com.tacz.guns.client.sound;
 
 import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tacz.guns.client.resource.ClientAssetManager;
-import com.tacz.guns.config.common.GunConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
@@ -16,12 +15,11 @@ import javax.annotation.Nullable;
 public class GunSoundInstance extends EntityBoundSoundInstance {
     private final ResourceLocation registryName;
 
-    public GunSoundInstance(SoundEvent soundEvent, SoundSource source, float volume, float pitch, Entity entity, ResourceLocation registryName) {
+    public GunSoundInstance(SoundEvent soundEvent, SoundSource source, float volume, float pitch, Entity entity, int soundDistance, ResourceLocation registryName) {
         super(soundEvent, source, volume, pitch, entity);
         this.attenuation = Attenuation.NONE;
         this.registryName = registryName;
         LocalPlayer player = Minecraft.getInstance().player;
-        int soundDistance = GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get();
         if (player != null) {
             this.volume = volume * (1.0F - Math.min(1.0F, (float) Math.sqrt(player.distanceToSqr(x, y, z)) / soundDistance));
             this.volume *= this.volume;

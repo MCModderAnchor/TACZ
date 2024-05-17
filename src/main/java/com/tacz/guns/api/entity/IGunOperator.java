@@ -88,7 +88,7 @@ public interface IGunOperator {
      * @param yaw   开火方向的偏航角(即 yRot )
      * @return 本次射击的结果
      */
-    ShootResult shoot(float pitch, float yaw);
+    ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw);
 
     /**
      * 服务端，该操作者是否受弹药数影响

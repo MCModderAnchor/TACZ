@@ -8,6 +8,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.gui.components.refit.*;
 import com.tacz.guns.client.sound.SoundPlayManager;
+import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessageRefitGun;
 import com.tacz.guns.network.message.ClientMessageUnloadAttachment;
@@ -163,7 +164,7 @@ public class GunRefitScreen extends Screen {
             Map<String, ResourceLocation> sounds = index.getSounds();
             if (sounds.containsKey(soundName)) {
                 ResourceLocation resourceLocation = sounds.get(soundName);
-                SoundPlayManager.playClientSound(player, resourceLocation, 1.0f, 1.0f);
+                SoundPlayManager.playClientSound(player, resourceLocation, 1.0f, 1.0f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
             }
         });
     }

@@ -16,6 +16,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class LivingEntityShoot {
     private final LivingEntity shooter;
@@ -28,7 +29,7 @@ public class LivingEntityShoot {
         this.draw = draw;
     }
 
-    public ShootResult shoot(float pitch, float yaw) {
+    public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw) {
         if (data.currentGunItem == null) {
             return ShootResult.NOT_DRAW;
         }
