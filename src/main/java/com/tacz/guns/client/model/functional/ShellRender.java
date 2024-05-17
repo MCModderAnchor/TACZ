@@ -11,7 +11,6 @@ import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.resource.pojo.display.gun.ShellEjection;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -89,7 +88,7 @@ public class ShellRender implements IFunctionalRenderer {
         // 先初始化到缓存位置和朝向
         PoseStack poseStack2 = new PoseStack();
         poseStack2.last().normal().mul(data.normal);
-        poseStack2.last().pose().multiply(data.pose);
+        poseStack2.last().pose().mul(data.pose);
 
         // 获取存留时间和各种参数
         long remindTime = System.currentTimeMillis() - data.timeStamp;

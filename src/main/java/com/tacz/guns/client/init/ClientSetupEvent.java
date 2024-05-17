@@ -52,11 +52,11 @@ public class ClientSetupEvent {
     }
 
     @SubscribeEvent
-    public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event){
+    public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event) {
         // 注册 HUD
-        event.registerAboveAll("TAC Gun HUD Overlay", new GunHudOverlay());
-        event.registerAboveAll("TAC Kill Amount Overlay", new KillAmountOverlay());
-        event.registerAbove(CROSSHAIR.id(), "TAC Interact Key Overlay", new InteractKeyTextOverlay());
+        event.registerAboveAll("tac_gun_hud_overlay", new GunHudOverlay());
+        event.registerAboveAll("tac_kill_amount_overlay", new KillAmountOverlay());
+        event.registerAbove(CROSSHAIR.id(), "tac_interact_key_overlay", new InteractKeyTextOverlay());
 
     }
 

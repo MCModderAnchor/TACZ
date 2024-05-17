@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -33,7 +32,7 @@ public class GunSmithTableBlock extends BaseEntityBlock {
     public static final EnumProperty<BedPart> PART = BlockStateProperties.BED_PART;
 
     public GunSmithTableBlock() {
-        super(Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(2.0F, 3.0F).noOcclusion());
+        super(Properties.of().sound(SoundType.WOOD).strength(2.0F, 3.0F).noOcclusion());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, BedPart.FOOT));
     }
 

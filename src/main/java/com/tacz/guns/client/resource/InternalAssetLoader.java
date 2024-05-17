@@ -16,7 +16,6 @@ import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,9 +64,7 @@ public class InternalAssetLoader {
     }
 
     private static AnimationStructure loadAnimations(ResourceLocation resourceLocation) {
-        try {
-            Resource resource = Minecraft.getInstance().getResourceManager().getResource(resourceLocation);
-            InputStream inputStream = resource.getInputStream();
+        try (InputStream inputStream = Minecraft.getInstance().getResourceManager().open(resourceLocation)) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             JsonObject json = JsonParser.parseReader(bufferedReader).getAsJsonObject();
             RawAnimationStructure rawAnimationStructure = ClientGunPackLoader.GSON.fromJson(json, RawAnimationStructure.class);
@@ -78,7 +75,7 @@ public class InternalAssetLoader {
     }
 
     private static void loadBedrockModels(ResourceLocation location) {
-        try (InputStream stream = Minecraft.getInstance().getResourceManager().getResource(location).getInputStream()) {
+        try (InputStream stream = Minecraft.getInstance().getResourceManager().open(location)) {
             BedrockModelPOJO pojo = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
             BEDROCK_MODELS.put(location, new BedrockModel(pojo, BedrockVersion.NEW));
         } catch (IOException | JsonSyntaxException | JsonIOException e) {

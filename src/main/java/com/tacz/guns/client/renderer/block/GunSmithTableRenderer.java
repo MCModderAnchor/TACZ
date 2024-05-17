@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 
@@ -43,7 +44,7 @@ public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableB
             poseStack.mulPose(Axis.ZN.rotationDegrees(180));
             poseStack.mulPose(Axis.YN.rotationDegrees(90 - facing.get2DDataValue() * 90));
             RenderType renderType = RenderType.entityTranslucent(InternalAssetLoader.SMITH_TABLE_TEXTURE_LOCATION);
-            model.render(poseStack, ItemTransforms.TransformType.NONE, renderType, combinedLightIn, combinedOverlayIn);
+            model.render(poseStack, ItemDisplayContext.NONE, renderType, combinedLightIn, combinedOverlayIn);
             poseStack.popPose();
         });
     }

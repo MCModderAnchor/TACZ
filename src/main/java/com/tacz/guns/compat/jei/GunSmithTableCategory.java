@@ -1,6 +1,5 @@
 package com.tacz.guns.compat.jei;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
@@ -17,7 +16,6 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -96,18 +94,6 @@ public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecip
     @Override
     public IDrawable getIcon() {
         return iconDraw;
-    }
-
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getUid() {
-        return GUN_SMITH_TABLE.getUid();
-    }
-
-    @Override
-    @SuppressWarnings("removal")
-    public Class<? extends GunSmithTableRecipe> getRecipeClass() {
-        return GUN_SMITH_TABLE.getRecipeClass();
     }
 
     @Override

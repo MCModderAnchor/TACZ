@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -32,8 +32,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 public class TargetBlock extends BaseEntityBlock {
     public static final IntegerProperty OUTPUT_POWER = BlockStateProperties.POWER;
@@ -47,7 +45,7 @@ public class TargetBlock extends BaseEntityBlock {
     public static final VoxelShape BOX_UPPER_Z = Block.box(2, 0, 6, 14, 16, 10);
 
     public TargetBlock() {
-        super(Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(2.0F, 3.0F).noOcclusion());
+        super(Properties.of().sound(SoundType.WOOD).strength(2.0F, 3.0F).noOcclusion());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER).setValue(STAND, true).setValue(OUTPUT_POWER, 0));
     }
 
@@ -108,7 +106,7 @@ public class TargetBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos, Random random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         // 计划刻的内容
         if (!state.getValue(STAND)) {
             level.setBlock(pos, state.setValue(STAND, true).setValue(OUTPUT_POWER, 0), Block.UPDATE_ALL);

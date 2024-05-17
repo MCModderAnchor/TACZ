@@ -2,6 +2,7 @@ package com.tacz.guns.crafting;
 
 import com.tacz.guns.init.ModRecipe;
 import com.tacz.guns.resource.pojo.data.recipe.TableRecipe;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +36,7 @@ public class GunSmithTableRecipe implements Recipe<Inventory> {
 
     @Override
     @Deprecated
-    public ItemStack assemble(Inventory playerInventory) {
+    public ItemStack assemble(Inventory playerInventory, RegistryAccess registryAccess) {
         return ItemStack.EMPTY;
     }
 
@@ -45,7 +46,7 @@ public class GunSmithTableRecipe implements Recipe<Inventory> {
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
         return this.result.getResult().copy();
     }
 

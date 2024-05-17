@@ -18,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -136,26 +135,20 @@ public abstract class AbstractGunItem extends Item implements IGun {
     /**
      * 该方法具有通用的实现，放在此处
      */
-    @OnlyIn(Dist.CLIENT)
-    public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
-//        if (modeTab instanceof CustomTab tab) {
-//            String key = tab.getKey();
-//            TimelessAPI.getAllClientGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
-//                ClientGunIndex index = entry.getValue();
-//                if (key.equals(index.getType())) {
-//                    GunData gunData = index.getGunData();
-//                    ItemStack itemStack = GunItemBuilder.create()
-//                            .setId(entry.getKey())
-//                            .setFireMode(gunData.getFireModeSet().get(0))
-//                            .setAmmoCount(gunData.getAmmoAmount())
-//                            .setAmmoInBarrel(true)
-//                            .build();
-//                    if (canAddInTab(tab, itemStack)) {
-//                        stacks.add(itemStack);
-//                    }
-//                }
-//            });
-//        }
+    public static NonNullList<ItemStack> fillItemCategory() {
+        NonNullList<ItemStack> stacks = NonNullList.create();
+        TimelessAPI.getAllClientGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
+            ClientGunIndex index = entry.getValue();
+            GunData gunData = index.getGunData();
+            ItemStack itemStack = GunItemBuilder.create()
+                    .setId(entry.getKey())
+                    .setFireMode(gunData.getFireModeSet().get(0))
+                    .setAmmoCount(gunData.getAmmoAmount())
+                    .setAmmoInBarrel(true)
+                    .build();
+            stacks.add(itemStack);
+        });
+        return stacks;
     }
 
     /**

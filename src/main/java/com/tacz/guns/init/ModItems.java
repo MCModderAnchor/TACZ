@@ -20,41 +20,6 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GunMod.MOD_ID);
-    public static final ResourceLocation ATTACHMENT_TAB_ICON_ID = new ResourceLocation(GunMod.MOD_ID, "sight_sro_dot");
-    public static final ResourceLocation AMMO_TAB_ICON_ID = new ResourceLocation(GunMod.MOD_ID, "762x39");
-
-    public static CreativeModeTab OTHER_TAB = CreativeModeTab.builder().title(
-            Component.translatable("itemGroup.tab.tacz.other")
-    ).icon(
-            () -> ModItems.GUN_SMITH_TABLE.get().getDefaultInstance()
-    ).displayItems(
-            (parameters, output) -> {
-                output.accept(ModItems.GUN_SMITH_TABLE.get());
-                output.accept(ModItems.TARGET.get());
-                output.acceptAll(ModItems.ATTACHMENT.get().fillItemCategory());
-            }
-    ).build();
-
-    public static CreativeModeTab AMMO_TAB = CreativeModeTab.builder().title(
-            Component.translatable("itemGroup.tab.tacz.ammo")
-    ).icon(
-            () -> AmmoItemBuilder.create().setId(AMMO_TAB_ICON_ID).build()
-    ).displayItems(
-            (parameters, output) -> {
-                output.accept(ModItems.AMMO.get());
-                output.accept(ModItems.AMMO_BOX.get());
-            }
-    ).build();
-
-    public static CreativeModeTab ATTACHMENT_TAB = CreativeModeTab.builder().title(
-            Component.translatable("itemGroup.tab.tacz.attachment")
-    ).icon(
-            () -> AttachmentItemBuilder.create().setId(ATTACHMENT_TAB_ICON_ID).build()
-    ).displayItems(
-            (parameters, output) -> {
-                output.accept(ModItems.ATTACHMENT.get());
-            }
-    ).build();
 
     public static RegistryObject<ModernKineticGunItem> MODERN_KINETIC_GUN = ITEMS.register("modern_kinetic_gun", ModernKineticGunItem::new);
 
@@ -67,7 +32,7 @@ public class ModItems {
 
     @SubscribeEvent
     public static void onItemRegister(RegisterEvent event) {
-        if(event.getRegistryKey().equals(ForgeRegistries.ITEMS.getRegistryKey())){
+        if (event.getRegistryKey().equals(ForgeRegistries.ITEMS.getRegistryKey())) {
             GunItemManager.registerGunItem(ModernKineticGunItem.TYPE_NAME, MODERN_KINETIC_GUN);
         }
     }

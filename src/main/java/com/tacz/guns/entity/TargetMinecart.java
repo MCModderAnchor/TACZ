@@ -9,13 +9,14 @@ import com.tacz.guns.init.ModItems;
 import com.tacz.guns.init.ModSounds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -47,7 +48,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
         if (this.level().isClientSide() || this.isRemoved()) {
             return;
         }
-        if (!(source instanceof IndirectEntityDamageSource)) {
+        if (!(source.isIndirect())) {
             return;
         }
         Entity sourceEntity = source.getEntity();
@@ -68,7 +69,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
-        return source.isExplosion() || super.isInvulnerableTo(source);
+        return source.is(DamageTypeTags.IS_EXPLOSION) || super.isInvulnerableTo(source);
     }
 
     @Override
@@ -96,6 +97,11 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
             }
             this.spawnAtLocation(itemStack);
         }
+    }
+
+    @Override
+    protected Item getDropItem() {
+        return ModItems.TARGET_MINECART.get();
     }
 
     @Override

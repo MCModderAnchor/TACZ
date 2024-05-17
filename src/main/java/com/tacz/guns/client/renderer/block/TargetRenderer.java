@@ -12,15 +12,14 @@ import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.core.Direction;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -64,7 +63,7 @@ public class TargetRenderer implements BlockEntityRenderer<TargetBlockEntity> {
                 if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
                     skin = minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
                 } else {
-                    skin = DefaultPlayerSkin.getDefaultSkin(Player.createPlayerUUID(blockEntity.getOwner()));
+                    skin = DefaultPlayerSkin.getDefaultSkin(UUIDUtil.getOrCreatePlayerUUID(blockEntity.getOwner()));
                 }
                 headModel.visible = true;
                 RenderType skullRenderType = RenderType.entityTranslucentCull(skin);

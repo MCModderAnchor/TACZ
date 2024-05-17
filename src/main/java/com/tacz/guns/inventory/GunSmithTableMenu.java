@@ -13,8 +13,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.List;
 
@@ -26,12 +26,17 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
     }
 
     @Override
+    public ItemStack quickMoveStack(Player player, int pIndex) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     public boolean stillValid(Player player) {
         return player.isAlive();
     }
 
     public void doCraft(ResourceLocation recipeId, Player player) {
-        TimelessAPI.getRecipe(recipeId).ifPresent(recipe -> player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).ifPresent(handler -> {
+        TimelessAPI.getRecipe(recipeId).ifPresent(recipe -> player.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(handler -> {
             Int2IntArrayMap recordCount = new Int2IntArrayMap();
             List<GunSmithTableIngredient> ingredients = recipe.getInputs();
 
@@ -66,9 +71,9 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
             }
 
             // 给玩家对应的物品
-            Level level = player.level;
+            Level level = player.level();
             if (!level.isClientSide) {
-                ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(), recipe.getResultItem().copy());
+                ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(), recipe.getResultItem(player.level().registryAccess()).copy());
                 itemEntity.setPickUpDelay(0);
                 level.addFreshEntity(itemEntity);
             }

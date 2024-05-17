@@ -3,10 +3,10 @@ package com.tacz.guns.item;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
 import com.tacz.guns.client.renderer.item.AttachmentItemRenderer;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
-import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
 import com.tacz.guns.resource.index.CommonAttachmentIndex;
 import net.minecraft.client.Minecraft;
@@ -15,7 +15,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -43,12 +42,10 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
         return super.getName(stack);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public @Nonnull NonNullList<ItemStack> fillItemCategory() {
+    public static NonNullList<ItemStack> fillItemCategory() {
         NonNullList<ItemStack> stacks = NonNullList.create();
-        TimelessAPI.getAllClientAttachmentIndex().forEach(entry -> {
-            ItemStack itemStack = this.getDefaultInstance();
-            this.setAttachmentId(itemStack, entry.getKey());
+        TimelessAPI.getAllCommonAttachmentIndex().forEach(entry -> {
+            ItemStack itemStack = AttachmentItemBuilder.create().setId(entry.getKey()).build();
             stacks.add(itemStack);
         });
         return stacks;

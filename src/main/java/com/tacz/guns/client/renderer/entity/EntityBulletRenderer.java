@@ -1,7 +1,6 @@
 package com.tacz.guns.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import com.mojang.math.Axis;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.client.model.BedrockAmmoModel;
@@ -11,7 +10,6 @@ import com.tacz.guns.entity.EntityKineticBullet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -20,10 +18,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 import java.util.Optional;
 
@@ -48,7 +46,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
                 poseStack.pushPose();
                 poseStack.translate(0, 1.5, 0);
                 poseStack.scale(-1, -1, 1);
-                ammoEntityModel.render(poseStack, ItemTransforms.TransformType.GROUND, RenderType.entityTranslucentCull(textureLocation), packedLight, OverlayTexture.NO_OVERLAY);
+                ammoEntityModel.render(poseStack, ItemDisplayContext.GROUND, RenderType.entityTranslucentCull(textureLocation), packedLight, OverlayTexture.NO_OVERLAY);
                 poseStack.popPose();
             }
 
@@ -88,7 +86,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
                 double bulletDistance = bulletPosition.distanceTo(shooter.getEyePosition());
                 if (bullet.tickCount >= 5 || bulletDistance > 2) {
                     RenderType type = RenderType.energySwirl(InternalAssetLoader.DEFAULT_BULLET_TEXTURE, 15, 15);
-                    model.render(poseStack, ItemTransforms.TransformType.NONE, type, packedLight, OverlayTexture.NO_OVERLAY,
+                    model.render(poseStack, ItemDisplayContext.NONE, type, packedLight, OverlayTexture.NO_OVERLAY,
                             tracerColor[0], tracerColor[1], tracerColor[2], 1);
                 }
             }

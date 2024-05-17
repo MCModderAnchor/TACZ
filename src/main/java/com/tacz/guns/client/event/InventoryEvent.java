@@ -73,6 +73,6 @@ public class InventoryEvent {
         if (i.isEmpty() || j.isEmpty()) {
             return i.isEmpty() && j.isEmpty();
         }
-        return i.sameItem(j);
+        return ItemStack.matches(i, j);
     }
 }

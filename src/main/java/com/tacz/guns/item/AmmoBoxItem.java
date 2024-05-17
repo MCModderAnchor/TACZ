@@ -12,7 +12,6 @@ import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -191,19 +190,16 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
         return Mth.hsvToRgb(1 / 3f, 1.0F, 1.0F);
     }
 
-//    @Override
-//    public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
-//        if (this.allowdedIn(category)) {
-//            // 添加普通版本的弹药盒
-//            items.add(new ItemStack(this));
-//
-//            // 添加创造模式弹药盒
-//            ItemStack creativeItemstack = new ItemStack(this);
-//            CompoundTag tag = creativeItemstack.getOrCreateTag();
-//            tag.putBoolean(CREATIVE_TAG, true);
-//            items.add(creativeItemstack);
-//        }
-//    }
+    public static void fillItemCategory(CreativeModeTab.Output output) {
+        // 添加普通版本的弹药盒
+        output.accept(new ItemStack(ModItems.AMMO_BOX.get()));
+
+        // 添加创造模式弹药盒
+        ItemStack creativeItemstack = new ItemStack(ModItems.AMMO_BOX.get());
+        CompoundTag tag = creativeItemstack.getOrCreateTag();
+        tag.putBoolean(CREATIVE_TAG, true);
+        output.accept(creativeItemstack);
+    }
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {

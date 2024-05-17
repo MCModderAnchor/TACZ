@@ -394,7 +394,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     protected void onHitEntity(TacHitResult result, Vec3 startVec, Vec3 endVec) {
         if (result.getEntity() instanceof ITargetEntity targetEntity) {
-            DamageSource source = level().damageSources().thrown(this, this.getOwner());
+            DamageSource source = this.damageSources().thrown(this, this.getOwner());
             targetEntity.onProjectileHit(this, result, source, this.getDamage(result.getLocation()));
             // 打靶直接返回
             return;
@@ -423,13 +423,13 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(livingEntity);
             modifier.setKnockBackStrength(this.knockback);
             // 创建伤害
-            DamageSource source = level().damageSources().thrown(this, this.getOwner());
+            DamageSource source = this.damageSources().thrown(this, this.getOwner());
             tacAttackEntity(source, entity, damage);
             // 恢复原位
             modifier.resetKnockBackStrength();
         } else {
             // 创建伤害
-            DamageSource source = level().damageSources().thrown(this, this.getOwner());
+            DamageSource source = this.damageSources().thrown(this, this.getOwner());
             tacAttackEntity(source, entity, damage);
         }
         // 爆炸逻辑
@@ -525,7 +525,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         // 给末影人造成伤害
         if (entity instanceof EnderMan) {
-            source.bypassInvul();
+            source = this.damageSources().indirectMagic(this, getOwner());
         }
         // 穿甲伤害和普通伤害的比例计算
         float armorDamagePercent = Mth.clamp(armorIgnore, 0.0F, 1.0F);
@@ -535,8 +535,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         // 普通伤害
         entity.hurt(source, damage * normalDamagePercent);
         // 穿甲伤害
-        source.bypassArmor();
-        source.bypassMagic();
+        source = this.damageSources().indirectMagic(this, getOwner());
         // 取消无敌时间
         entity.invulnerableTime = 0;
         entity.hurt(source, damage * armorDamagePercent);

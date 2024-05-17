@@ -50,16 +50,16 @@ public class ServerMessageLevelUp {
                 /*
                 if (GunLevelManager.DAMAGE_UP_LEVELS.contains(level)) {
                     Minecraft.getInstance().getToasts().addToast(new GunLevelUpToast(gun,
-                            new TranslatableComponent("toast.tacz.level_up"),
-                            new TranslatableComponent("toast.tacz.sub.damage_up")));
+                            Component.translatable("toast.tacz.level_up"),
+                            Component.translatable("toast.tacz.sub.damage_up")));
                 } else if (level >= GunLevelManager.MAX_LEVEL) {
                     Minecraft.getInstance().getToasts().addToast(new GunLevelUpToast(gun,
-                            new TranslatableComponent("toast.tacz.level_up"),
-                            new TranslatableComponent("toast.tacz.sub.final_level")));
+                            Component.translatable("toast.tacz.level_up"),
+                            Component.translatable("toast.tacz.sub.final_level")));
                 } else {
                     Minecraft.getInstance().getToasts().addToast(new GunLevelUpToast(gun,
-                            new TranslatableComponent("toast.tacz.level_up"),
-                            new TranslatableComponent("toast.tacz.sub.level_up")));
+                            Component.translatable("toast.tacz.level_up"),
+                            Component.translatable("toast.tacz.sub.level_up")));
                 }*/
     }
 

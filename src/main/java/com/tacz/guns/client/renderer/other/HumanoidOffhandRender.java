@@ -4,9 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.resource.pojo.display.gun.LayerGunShow;
+import com.tacz.guns.util.math.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class HumanoidOffhandRender {
@@ -83,7 +84,9 @@ public class HumanoidOffhandRender {
         matrixStack.pushPose();
         matrixStack.translate(pos.x() / 16f, 1.5 - pos.y() / 16f, pos.z() / 16f);
         matrixStack.scale(-scale.x(), -scale.y(), scale.z());
-        matrixStack.mulPose(Quaternion.fromXYZDegrees(rotate));
+        Quaternionf rotation = new Quaternionf();
+        MathUtil.toQuaternion(rotate.x, rotate.y, rotate.z, rotation);
+        matrixStack.mulPose(rotation);
         renderer.renderStatic(itemStack, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, matrixStack, buffer, entity.level(), entity.getId());
         matrixStack.popPose();
     }

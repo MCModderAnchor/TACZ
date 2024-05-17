@@ -8,7 +8,6 @@ import com.tacz.guns.client.renderer.item.AmmoItemRenderer;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.client.resource.pojo.PackInfo;
-import com.tacz.guns.init.ModItems;
 import com.tacz.guns.resource.index.CommonAmmoIndex;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -17,7 +16,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -37,14 +35,14 @@ public class AmmoItem extends Item implements AmmoItemDataAccessor {
         super(new Properties().stacksTo(1));
     }
 
-//    @Override
-//    public int getItemStackLimit(ItemStack stack) {
-//        if (stack.getItem() instanceof IAmmo iAmmo) {
-//            return TimelessAPI.getCommonAmmoIndex(iAmmo.getAmmoId(stack))
-//                    .map(CommonAmmoIndex::getStackSize).orElse(1);
-//        }
-//        return 1;
-//    }
+    @Override
+    public int getMaxStackSize(ItemStack stack) {
+        if (stack.getItem() instanceof IAmmo iAmmo) {
+            return TimelessAPI.getCommonAmmoIndex(iAmmo.getAmmoId(stack))
+                    .map(CommonAmmoIndex::getStackSize).orElse(1);
+        }
+        return 1;
+    }
 
     @Override
     @Nonnull
@@ -58,15 +56,13 @@ public class AmmoItem extends Item implements AmmoItemDataAccessor {
         return super.getName(stack);
     }
 
-
-    @OnlyIn(Dist.CLIENT)
-    public void fillItemCategory(@Nonnull CreativeModeTab modeTab) {
+    public static NonNullList<ItemStack> fillItemCategory() {
         NonNullList<ItemStack> stacks = NonNullList.create();
-        TimelessAPI.getAllClientAmmoIndex().forEach(entry -> {
+        TimelessAPI.getAllCommonAmmoIndex().forEach(entry -> {
             ItemStack itemStack = AmmoItemBuilder.create().setId(entry.getKey()).build();
             stacks.add(itemStack);
         });
-
+        return stacks;
     }
 
     @Override

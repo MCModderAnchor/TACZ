@@ -4,13 +4,12 @@ import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * 单纯的占位符类
  */
-public class GunSmithTableSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<GunSmithTableRecipe> {
+public class GunSmithTableSerializer implements RecipeSerializer<GunSmithTableRecipe> {
     @Override
     @Nullable
     public GunSmithTableRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {

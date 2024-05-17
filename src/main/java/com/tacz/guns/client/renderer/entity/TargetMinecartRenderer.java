@@ -12,13 +12,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
@@ -66,7 +65,7 @@ public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
                 if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
                     skin = minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
                 } else {
-                    skin = DefaultPlayerSkin.getDefaultSkin(Player.createPlayerUUID(gameProfile));
+                    skin = DefaultPlayerSkin.getDefaultSkin(UUIDUtil.getOrCreatePlayerUUID(gameProfile));
                 }
                 headModel.visible = true;
                 RenderType skullRenderType = RenderType.entityTranslucentCull(skin);

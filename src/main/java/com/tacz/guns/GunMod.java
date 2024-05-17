@@ -25,6 +25,7 @@ public class GunMod {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ModBlocks.BLOCKS.register(bus);
         ModBlocks.TILE_ENTITIES.register(bus);
+        ModCreativeTabs.TABS.register(bus);
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
         ModRecipe.RECIPE_SERIALIZERS.register(bus);
