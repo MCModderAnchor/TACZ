@@ -12,12 +12,11 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessageRefitGun;
 import com.tacz.guns.network.message.ClientMessageUnloadAttachment;
 import com.tacz.guns.sound.SoundManager;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +24,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class GunRefitScreen extends Screen {
     private int currentPage = 0;
 
     public GunRefitScreen() {
-        super(new TextComponent("Gun Refit Screen"));
+        super(Component.literal("Gun Refit Screen"));
         refitScreenTransformProgress = 1;
         refitScreenTransformTimestamp = System.currentTimeMillis();
         oldTransformType = AttachmentType.NONE;
@@ -179,10 +179,10 @@ public class GunRefitScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float pPartialTick) {
-        super.render(poseStack, mouseX, mouseY, pPartialTick);
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
+        super.render(graphics, mouseX, mouseY, pPartialTick);
         this.renderables.stream().filter(w -> w instanceof IComponentTooltip).forEach(w -> ((IComponentTooltip) w)
-                .renderTooltip(component -> this.renderComponentTooltip(poseStack, component, mouseX, mouseY)));
+                .renderTooltip(component -> graphics.renderComponentTooltip(font ,component, mouseX, mouseY)));
     }
 
     @Override
@@ -296,7 +296,7 @@ public class GunRefitScreen extends Screen {
                             ClientMessageUnloadAttachment message = new ClientMessageUnloadAttachment(inventory.selected, currentTransformType);
                             NetworkHandler.CHANNEL.sendToServer(message);
                         } else {
-                            player.sendMessage(new TranslatableComponent("gui.tacz.gun_refit.unload.no_space"), Util.NIL_UUID);
+                            player.sendSystemMessage(Component.translatable("gui.tacz.gun_refit.unload.no_space"));
                         }
                     }
                 });

@@ -29,7 +29,7 @@ public class ClientReloadManager {
         // 合成表
         CommonGunPackLoader.reloadRecipes();
         // 创造模式标签页
-        CustomTabManager.initAndReload();
+//        CustomTabManager.initAndReload();
         // 联机 / 非联机情况判断
         Minecraft mc = Minecraft.getInstance();
         // 局域网联机（自己是主机），需要给其他玩家发送自己的同步数据

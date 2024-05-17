@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 
 public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
     public AttachmentItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.ATTACHMENT_TAB));
+        super(new Properties().stacksTo(1));
     }
 
     @Override
@@ -43,16 +43,15 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
         return super.getName(stack);
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
-    public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
-        if (this.allowdedIn(modeTab)) {
-            TimelessAPI.getAllClientAttachmentIndex().forEach(entry -> {
-                ItemStack itemStack = this.getDefaultInstance();
-                this.setAttachmentId(itemStack, entry.getKey());
-                stacks.add(itemStack);
-            });
-        }
+    public @Nonnull NonNullList<ItemStack> fillItemCategory() {
+        NonNullList<ItemStack> stacks = NonNullList.create();
+        TimelessAPI.getAllClientAttachmentIndex().forEach(entry -> {
+            ItemStack itemStack = this.getDefaultInstance();
+            this.setAttachmentId(itemStack, entry.getKey());
+            stacks.add(itemStack);
+        });
+        return stacks;
     }
 
     @Override

@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -21,16 +22,19 @@ public class ModRecipe {
     public static RecipeType<GunSmithTableRecipe> GUN_SMITH_TABLE_CRAFTING;
 
     @SubscribeEvent
-    public static void register(RegistryEvent.Register<RecipeSerializer<?>> event) {
-        GUN_SMITH_TABLE_CRAFTING = register(GunMod.MOD_ID + ":gun_smith_table_crafting");
+    public static void register(RegisterEvent event) {
+        // todo 需要检查实现
+//        if(event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_TYPES)) {
+//            GUN_SMITH_TABLE_CRAFTING = register(GunMod.MOD_ID + ":gun_smith_table_crafting");
+//        }
     }
 
-    private static <T extends Recipe<?>> RecipeType<T> register(final String key) {
-        return Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(key), new RecipeType<T>() {
-            @Override
-            public String toString() {
-                return key;
-            }
-        });
-    }
+//    private static <T extends Recipe<?>> RecipeType<T> register(final String key) {
+//        return Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(key), new RecipeType<T>() {
+//            @Override
+//            public String toString() {
+//                return key;
+//            }
+//        });
+//    }
 }

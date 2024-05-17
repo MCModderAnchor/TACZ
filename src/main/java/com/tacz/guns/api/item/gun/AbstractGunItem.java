@@ -7,7 +7,6 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.client.renderer.item.GunItemRenderer;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
-import com.tacz.guns.client.tab.CustomTab;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.AttachmentPass;
@@ -72,7 +71,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
      * @param tab   CustomTab
      * @param stack 待添加的物品
      */
-    public abstract boolean canAddInTab(CustomTab tab, ItemStack stack);
+//    public abstract boolean canAddInTab(CustomTab tab, ItemStack stack);
 
     /**
      * 该方法具有通用的实现，放在此处
@@ -137,27 +136,26 @@ public abstract class AbstractGunItem extends Item implements IGun {
     /**
      * 该方法具有通用的实现，放在此处
      */
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
-        if (modeTab instanceof CustomTab tab) {
-            String key = tab.getKey();
-            TimelessAPI.getAllClientGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
-                ClientGunIndex index = entry.getValue();
-                if (key.equals(index.getType())) {
-                    GunData gunData = index.getGunData();
-                    ItemStack itemStack = GunItemBuilder.create()
-                            .setId(entry.getKey())
-                            .setFireMode(gunData.getFireModeSet().get(0))
-                            .setAmmoCount(gunData.getAmmoAmount())
-                            .setAmmoInBarrel(true)
-                            .build();
-                    if (canAddInTab(tab, itemStack)) {
-                        stacks.add(itemStack);
-                    }
-                }
-            });
-        }
+//        if (modeTab instanceof CustomTab tab) {
+//            String key = tab.getKey();
+//            TimelessAPI.getAllClientGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
+//                ClientGunIndex index = entry.getValue();
+//                if (key.equals(index.getType())) {
+//                    GunData gunData = index.getGunData();
+//                    ItemStack itemStack = GunItemBuilder.create()
+//                            .setId(entry.getKey())
+//                            .setFireMode(gunData.getFireModeSet().get(0))
+//                            .setAmmoCount(gunData.getAmmoAmount())
+//                            .setAmmoInBarrel(true)
+//                            .build();
+//                    if (canAddInTab(tab, itemStack)) {
+//                        stacks.add(itemStack);
+//                    }
+//                }
+//            });
+//        }
     }
 
     /**

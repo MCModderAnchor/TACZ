@@ -7,11 +7,13 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -27,7 +29,7 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     private ItemStack attachmentItem = ItemStack.EMPTY;
 
     public GunAttachmentSlot(int pX, int pY, AttachmentType type, int gunItemIndex, Inventory inventory, Button.OnPress onPress) {
-        super(pX, pY, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE, Component.empty(), onPress);
+        super(pX, pY, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE, Component.empty(), onPress, Button.DEFAULT_NARRATION);
         this.type = type;
         this.inventory = inventory;
         this.gunItemIndex = gunItemIndex;
@@ -46,31 +48,32 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     }
 
     @Override
-    public void renderButton(@Nonnull PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void render(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
         ItemStack gunItem = inventory.getItem(gunItemIndex);
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {
             return;
         }
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, GunRefitScreen.SLOT_TEXTURE);
+
         RenderSystem.disableDepthTest();
         RenderSystem.enableBlend();
         // 渲染外框
+        int x = this.getX();
+        int y = this.getY();
         if (isHoveredOrFocused() || selected) {
-            blit(poseStack, x, y, 0, 0, width, height, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
+            gui.blit(GunRefitScreen.SLOT_TEXTURE, x, y, 0, 0, width, height, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
         } else {
-            blit(poseStack, x + 1, y + 1, 1, 1, width - 2, height - 2, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
+            gui.blit(GunRefitScreen.SLOT_TEXTURE, x + 1, y + 1, 1, 1, width - 2, height - 2, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
         }
         // 渲染内部物品，或者空置时的icon
         this.attachmentItem = iGun.getAttachment(gunItem, type);
         if (!attachmentItem.isEmpty()) {
-            Minecraft.getInstance().getItemRenderer().renderGuiItem(attachmentItem, x + 1, y + 1);
+            gui.renderItem(attachmentItem, x + 1, y + 1);
         } else {
-            RenderSystem.setShaderTexture(0, GunRefitScreen.ICONS_TEXTURE);
             int xOffset = GunRefitScreen.getSlotTextureXOffset(gunItem, type);
-            blit(poseStack, x + 2, y + 2, width - 4, height - 4, xOffset, 0, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.getSlotsTextureWidth(), GunRefitScreen.ICON_UV_SIZE);
+            gui.blit(GunRefitScreen.ICONS_TEXTURE, x + 2, y + 2, width - 4, height - 4, xOffset, 0, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.getSlotsTextureWidth(), GunRefitScreen.ICON_UV_SIZE);
         }
+
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
     }

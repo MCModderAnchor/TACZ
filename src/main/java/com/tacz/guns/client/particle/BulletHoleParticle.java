@@ -137,7 +137,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
 
         for (int i = 0; i < 4; ++i) {
             Vector3f vector3f = points[i];
-            vector3f.transform(quaternion);
+            vector3f.rotate(quaternion);
             vector3f.mul(scale);
             vector3f.add(particleX, particleY, particleZ);
         }

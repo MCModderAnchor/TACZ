@@ -19,10 +19,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+
+import static net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.CROSSHAIR;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class ClientSetupEvent {
@@ -49,14 +52,16 @@ public class ClientSetupEvent {
     }
 
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
+    public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event){
         // 注册 HUD
-        event.enqueueWork(() -> {
-            OverlayRegistry.registerOverlayTop("TAC Gun HUD Overlay", GunHudOverlay::render);
-            OverlayRegistry.registerOverlayTop("TAC Kill Amount Overlay", KillAmountOverlay::render);
-            OverlayRegistry.registerOverlayAbove(ForgeIngameGui.CROSSHAIR_ELEMENT, "TAC Interact Key Overlay", InteractKeyTextOverlay::render);
-        });
+        event.registerAboveAll("TAC Gun HUD Overlay", new GunHudOverlay());
+        event.registerAboveAll("TAC Kill Amount Overlay", new KillAmountOverlay());
+        event.registerAbove(CROSSHAIR.id(), "TAC Interact Key Overlay", new InteractKeyTextOverlay());
 
+    }
+
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event) {
         // 注册自己的的硬编码第三人称动画
         event.enqueueWork(ThirdPersonManager::registerDefault);
 

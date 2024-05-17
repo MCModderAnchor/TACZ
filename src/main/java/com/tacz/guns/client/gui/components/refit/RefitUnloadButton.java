@@ -3,6 +3,7 @@ package com.tacz.guns.client.gui.components.refit;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.client.gui.GunRefitScreen;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -14,20 +15,21 @@ import java.util.function.Consumer;
 
 public class RefitUnloadButton extends Button implements IComponentTooltip {
     public RefitUnloadButton(int pX, int pY, Button.OnPress pOnPress) {
-        super(pX, pY, 8, 8, Component.EMPTY, pOnPress);
+        super(pX, pY, 8, 8, Component.empty(), pOnPress, DEFAULT_NARRATION);
     }
 
     @Override
-    public void renderButton(@Nonnull PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, GunRefitScreen.UNLOAD_TEXTURE);
+    public void renderWidget(@Nonnull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         RenderSystem.disableDepthTest();
         RenderSystem.enableBlend();
+
+        int x = getX(), y = getY();
         if (isHoveredOrFocused()) {
-            blit(poseStack, x, y, width, height, 0, 0, 80, 80, 160, 80);
+            graphics.blit(GunRefitScreen.UNLOAD_TEXTURE, x, y, width, height, 0, 0, 80, 80, 160, 80);
         } else {
-            blit(poseStack, x, y, width, height, 80, 0, 80, 80, 160, 80);
+            graphics.blit(GunRefitScreen.UNLOAD_TEXTURE, x, y, width, height, 80, 0, 80, 80, 160, 80);
         }
+
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
     }

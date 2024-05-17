@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,17 +91,25 @@ public class ClientGunPackDownloader {
             this.currentDownload = downloadFuture.thenCompose(target -> {
                 // 文件 hash 不匹配，抛出错误
                 if (this.notMatchHash(hash, gunPack)) {
-                    return Util.failedFuture(new RuntimeException("Hash check failure for file " + gunPack + ", see log"));
+                    return failedFuture(new RuntimeException("Hash check failure for file " + gunPack + ", see log"));
                 } else {
                     // 否则，加载枪械包客户端部分
                     return this.loadClientGunPack(gunPack);
                 }
             }).whenComplete((target, throwable) -> this.afterFail(throwable, gunPack));
             resultFuture = this.currentDownload;
+        }catch (MalformedURLException e) {
+            throw new RuntimeException(e);
         } finally {
             this.downloadLock.unlock();
         }
         return resultFuture;
+    }
+
+    public static <T> CompletableFuture<T> failedFuture(Throwable pTerminationException) {
+        CompletableFuture<T> completablefuture = new CompletableFuture<>();
+        completablefuture.completeExceptionally(pTerminationException);
+        return completablefuture;
     }
 
     private void afterFail(Throwable throwable, File gunPack) {

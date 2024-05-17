@@ -4,7 +4,6 @@ import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.inventory.GunSmithTableMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -41,7 +40,7 @@ public class GunSmithTableBlockEntity extends BlockEntity implements MenuProvide
 
     @Override
     public Component getDisplayName() {
-        return new TextComponent("Gun Smith Table");
+        return Component.literal("Gun Smith Table");
     }
 
     @Nullable

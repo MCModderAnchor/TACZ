@@ -16,6 +16,7 @@ import com.tacz.guns.client.renderer.crosshair.CrosshairType;
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -23,8 +24,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -45,8 +46,8 @@ public class RenderCrosshairEvent {
      * 当玩家手上拿着枪时，播放特定动画、或瞄准时需要隐藏准心
      */
     @SubscribeEvent(receiveCanceled = true)
-    public static void onRenderOverlay(RenderGameOverlayEvent.PreLayer event) {
-        if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT) {
+    public static void onRenderOverlay(RenderGuiOverlayEvent.Pre event) {
+        if (event.getOverlay().id().equals(VanillaGuiOverlay.CROSSHAIR.id())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
                 return;
@@ -57,9 +58,9 @@ public class RenderCrosshairEvent {
             // 全面替换成自己的
             event.setCanceled(true);
             // 击中显示
-            renderHitMarker(event.getMatrixStack(), event.getWindow());
+            renderHitMarker(event.getGuiGraphics(), event.getWindow());
             // 瞄准快要完成时，取消准心渲染
-            if (IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(event.getPartialTicks()) > 0.9) {
+            if (IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(event.getPartialTick()) > 0.9) {
                 return;
             }
             // 换弹进行时取消准心渲染
@@ -80,7 +81,7 @@ public class RenderCrosshairEvent {
             TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (!animationStateMachine.shouldHideCrossHair()) {
-                    renderCrosshair(event.getMatrixStack(), event.getWindow());
+                    renderCrosshair(event.getGuiGraphics(), event.getWindow());
                 }
             });
         }
@@ -92,7 +93,7 @@ public class RenderCrosshairEvent {
         isRefitScreen = Minecraft.getInstance().screen instanceof GunRefitScreen;
     }
 
-    private static void renderCrosshair(PoseStack poseStack, Window window) {
+    private static void renderCrosshair(GuiGraphics graphics, Window window) {
         Options options = Minecraft.getInstance().options;
         if (!options.getCameraType().isFirstPerson()) {
             return;
@@ -109,18 +110,18 @@ public class RenderCrosshairEvent {
         }
         int width = window.getGuiScaledWidth();
         int height = window.getGuiScaledHeight();
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+
         ResourceLocation location = CrosshairType.getTextureLocation(RenderConfig.CROSSHAIR_TYPE.get());
-        RenderSystem.setShaderTexture(0, location);
+
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.setShaderColor(1F, 1F, 1F, 0.9f);
         float x = width / 2f - 8;
         float y = height / 2f - 8;
-        blit(poseStack, x, y, 0, 0, 16, 16, 16, 16);
+        graphics.blit(location, (int) x, (int) y, 0, 0, 16, 16, 16, 16);
     }
 
-    private static void renderHitMarker(PoseStack poseStack, Window window) {
+    private static void renderHitMarker(GuiGraphics graphics, Window window) {
         long remainHitTime = System.currentTimeMillis() - hitTimestamp;
         long remainKillTime = System.currentTimeMillis() - killTimestamp;
         long remainHeadShotTime = System.currentTimeMillis() - headShotTimestamp;
@@ -141,9 +142,6 @@ public class RenderCrosshairEvent {
 
         int width = window.getGuiScaledWidth();
         int height = window.getGuiScaledHeight();
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, HIT_ICON);
-
         float x = width / 2f - 8;
         float y = height / 2f - 8;
 
@@ -155,10 +153,10 @@ public class RenderCrosshairEvent {
             RenderSystem.setShaderColor(1F, 0, 0, 1 - fadeTime / KEEP_TIME);
         }
 
-        blit(poseStack, x - offset, y - offset, 0, 0, 8, 8, 16, 16);
-        blit(poseStack, x + 8 + offset, y - offset, 8, 0, 8, 8, 16, 16);
-        blit(poseStack, x - offset, y + 8 + offset, 0, 8, 8, 8, 16, 16);
-        blit(poseStack, x + 8 + offset, y + 8 + offset, 8, 8, 8, 8, 16, 16);
+        graphics.blit(HIT_ICON, (int) (x - offset), (int) (y - offset), 0, 0, 8, 8, 16, 16);
+        graphics.blit(HIT_ICON, (int) (x + 8 + offset), (int) (y - offset), 8, 0, 8, 8, 16, 16);
+        graphics.blit(HIT_ICON, (int) (x - offset), (int) (y + 8 + offset), 0, 8, 8, 8, 16, 16);
+        graphics.blit(HIT_ICON, (int) (x + 8 + offset), (int) (y + 8 + offset), 8, 8, 8, 8, 16, 16);
     }
 
     public static void markHitTimestamp() {

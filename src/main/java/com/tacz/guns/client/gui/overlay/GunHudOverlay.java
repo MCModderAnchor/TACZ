@@ -16,19 +16,21 @@ import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 
-public class GunHudOverlay {
+public class GunHudOverlay implements IGuiOverlay {
     private static final ResourceLocation SEMI = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_semi.png");
     private static final ResourceLocation AUTO = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_auto.png");
     private static final ResourceLocation BURST = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_burst.png");
@@ -38,7 +40,8 @@ public class GunHudOverlay {
     private static int cacheMaxAmmoCount = 0;
     private static int cacheInventoryAmmoCount = 0;
 
-    public static void render(ForgeIngameGui gui, PoseStack poseStack, float partialTick, int width, int height) {
+    @Override
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
         if (!RenderConfig.GUN_HUD_ENABLE.get()) {
             return;
         }
@@ -72,18 +75,22 @@ public class GunHudOverlay {
         handleCacheCount(player, stack, gunIndex);
 
         // 竖线
-        GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 25, 0xFFFFFFFF);
+        graphics.fill(width - 75, height - 43, width - 74, height - 25, 0xFFFFFFFF);
+
+        PoseStack poseStack = graphics.pose();
+
+        Font font = mc.font;
 
         // 数字
         poseStack.pushPose();
         poseStack.scale(1.5f, 1.5f, 1);
-        mc.font.drawShadow(poseStack, currentAmmoCountText, (width - 70) / 1.5f, (height - 43) / 1.5f, ammoCountColor);
+        graphics.drawString(font, currentAmmoCountText, (width - 70) / 1.5f, (height - 43) / 1.5f, ammoCountColor, false);
         poseStack.popPose();
 
         poseStack.pushPose();
         poseStack.scale(0.8f, 0.8f, 1);
         String inventoryAmmoCountText = INVENTORY_AMMO_FORMAT.format(cacheInventoryAmmoCount);
-        mc.font.drawShadow(poseStack, inventoryAmmoCountText, (width - 68 + mc.font.width(currentAmmoCountText) * 1.5f) / 0.8f, (height - 43) / 0.8f, 0xAAAAAA);
+        graphics.drawString(font, inventoryAmmoCountText, (width - 68 + mc.font.width(currentAmmoCountText) * 1.5f) / 0.8f, (height - 43) / 0.8f, 0xAAAAAA, false);
         poseStack.popPose();
 
         // 模组版本信息
@@ -93,7 +100,7 @@ public class GunHudOverlay {
         // 文本
         poseStack.pushPose();
         poseStack.scale(0.5f, 0.5f, 1);
-        mc.font.draw(poseStack, debugInfo, (width - 70) / 0.5f, (height - 29f) / 0.5f, 0xffaaaaaa);
+        graphics.drawString(font, debugInfo, (int) ((width - 70) / 0.5f), (int) ((height - 29f) / 0.5f), 0xffaaaaaa);
         poseStack.popPose();
 
         // 图标渲染
@@ -114,18 +121,18 @@ public class GunHudOverlay {
             }
         }
         // 渲染枪械图标
-        RenderSystem.setShaderTexture(0, hudTexture);
-        GuiComponent.blit(poseStack, width - 117, height - 44, 0, 0, 39, 13, 39, 13);
+        graphics.blit(hudTexture, width - 117, height - 44, 0, 0, 39, 13, 39, 13);
 
         // 渲染开火模式图标
         FireMode fireMode = IGun.getMainhandFireMode(player);
-        switch (fireMode) {
-            case SEMI -> RenderSystem.setShaderTexture(0, SEMI);
-            case AUTO -> RenderSystem.setShaderTexture(0, AUTO);
-            case BURST -> RenderSystem.setShaderTexture(0, BURST);
-        }
+        ResourceLocation fireModeTexture = switch (fireMode) {
+            case SEMI -> SEMI;
+            case AUTO -> AUTO;
+            case BURST -> BURST;
+            default -> throw new IllegalStateException("Unexpected value: " + fireMode);
+        };
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        GuiComponent.blit(poseStack, (int) (width - 68.5 + mc.font.width(currentAmmoCountText) * 1.5), height - 38, 0, 0, 10, 10, 10, 10);
+        graphics.blit(fireModeTexture, (int) (width - 68.5 + mc.font.width(currentAmmoCountText) * 1.5), height - 38, 0, 0, 10, 10, 10, 10);
     }
 
     private static void handleCacheCount(LocalPlayer player, ItemStack stack, ClientGunIndex gunIndex) {

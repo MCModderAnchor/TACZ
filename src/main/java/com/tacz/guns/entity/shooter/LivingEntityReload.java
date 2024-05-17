@@ -18,8 +18,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Optional;
@@ -167,7 +167,7 @@ public class LivingEntityReload {
         if (currentAmmoCount >= maxAmmoCount) {
             return false;
         }
-        return shooter.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map(cap -> {
+        return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null).map(cap -> {
             // 背包检查
             for (int i = 0; i < cap.getSlots(); i++) {
                 ItemStack checkAmmoStack = cap.getStackInSlot(i);
@@ -189,7 +189,7 @@ public class LivingEntityReload {
         ItemStack currentGunItem = data.currentGunItem.get();
         int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
         if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo()) {
-            return shooter.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
+            return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
                     .map(cap -> getAndExtractInventoryAmmoCount(cap, maxAmmoCount, currentAmmoCount, currentGunItem))
                     .orElse(currentAmmoCount);
         }

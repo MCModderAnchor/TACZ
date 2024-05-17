@@ -3,6 +3,7 @@ package com.tacz.guns.client.tooltip;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -115,22 +116,24 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics pGuiGraphics) {
+    public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics gui) {
         if (!Screen.hasShiftDown()) {
             return;
         }
         int minY = components.size() * 10 + 3;
         int maxX = getWidth(font);
-        Screen.fill(poseStack, mouseX, mouseY + minY, mouseX + maxX, mouseY + minY + 11, 0x8F00b0ff);
+        PoseStack poseStack = gui.pose();
+        gui.fill(mouseX, mouseY + minY, mouseX + maxX, mouseY + minY + 11, 0x8F00b0ff);
         poseStack.pushPose();
-        poseStack.translate(0, 0, blitOffset);
-        font.draw(poseStack, support, mouseX + 2, mouseY + minY + 2, 0xe3f2fd);
+//        poseStack.translate(0, 0, blitOffset);
+        gui.drawString(font, support, mouseX + 2, mouseY + minY + 2, 0xe3f2fd);
         poseStack.popPose();
+
         for (int i = 0; i < showGuns.size(); i++) {
             ItemStack stack = showGuns.get(i);
             int x = i % 16 * 16 + 2;
             int y = i / 16 * 18 + minY + 15;
-            itemRenderer.renderGuiItem(stack, mouseX + x, mouseY + y);
+            gui.renderItem(stack, mouseX + x, mouseY + y);
         }
     }
 

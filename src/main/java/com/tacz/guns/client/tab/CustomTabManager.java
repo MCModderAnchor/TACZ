@@ -10,27 +10,28 @@ import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class CustomTabManager {
+    //todo 这边需要重新考虑实现
     public static void initAndReload() {
-        clear();
+//        clear();
         addCustomTab();
     }
 
     private static void clear() {
-        int size = 0;
-        for (CreativeModeTab tab : CreativeModeTab.TABS) {
-            if (!(tab instanceof CustomTab)) {
-                size++;
-            }
-        }
-        CreativeModeTab[] tmp = new CreativeModeTab[size];
-        int i = 0;
-        for (CreativeModeTab tab : CreativeModeTab.TABS) {
-            if (!(tab instanceof CustomTab)) {
-                tmp[i] = tab;
-                i++;
-            }
-        }
-        CreativeModeTab.TABS = tmp;
+//        int size = 0;
+//        for (CreativeModeTab tab : CreativeModeTab.TABS) {
+//            if (!(tab instanceof CustomTab)) {
+//                size++;
+//            }
+//        }
+//        CreativeModeTab[] tmp = new CreativeModeTab[size];
+//        int i = 0;
+//        for (CreativeModeTab tab : CreativeModeTab.TABS) {
+//            if (!(tab instanceof CustomTab)) {
+//                tmp[i] = tab;
+//                i++;
+//            }
+//        }
+//        CreativeModeTab.TABS = tmp;
     }
 
     private static void addCustomTab() {
@@ -38,7 +39,7 @@ public class CustomTabManager {
         for (String key : customTabs.keySet()) {
             CustomTabPOJO data = customTabs.get(key);
             // 连我都觉得奇葩
-            new CustomTab(key, data.getNameKey(), data.getIconStack());
+//            new CustomTab(key, data.getNameKey(), data.getIconStack());
         }
     }
 }

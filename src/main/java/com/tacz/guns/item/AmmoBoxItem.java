@@ -41,7 +41,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
     private static final int CLOSE = 1;
 
     public AmmoBoxItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.OTHER_TAB));
+        super(new Properties().stacksTo(1));
     }
 
     @OnlyIn(Dist.CLIENT)

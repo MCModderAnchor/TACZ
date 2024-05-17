@@ -394,7 +394,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     protected void onHitEntity(TacHitResult result, Vec3 startVec, Vec3 endVec) {
         if (result.getEntity() instanceof ITargetEntity targetEntity) {
-            targetEntity.onProjectileHit(this, result, DamageSource.thrown(this, this.getOwner()), this.getDamage(result.getLocation()));
+            DamageSource source = level().damageSources().thrown(this, this.getOwner());
+            targetEntity.onProjectileHit(this, result, source, this.getDamage(result.getLocation()));
             // 打靶直接返回
             return;
         }
@@ -422,12 +423,14 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(livingEntity);
             modifier.setKnockBackStrength(this.knockback);
             // 创建伤害
-            tacAttackEntity(DamageSource.thrown(this, owner), entity, damage);
+            DamageSource source = level().damageSources().thrown(this, this.getOwner());
+            tacAttackEntity(source, entity, damage);
             // 恢复原位
             modifier.resetKnockBackStrength();
         } else {
             // 创建伤害
-            tacAttackEntity(DamageSource.thrown(this, owner), entity, damage);
+            DamageSource source = level().damageSources().thrown(this, this.getOwner());
+            tacAttackEntity(source, entity, damage);
         }
         // 爆炸逻辑
         if (this.hasExplosion) {

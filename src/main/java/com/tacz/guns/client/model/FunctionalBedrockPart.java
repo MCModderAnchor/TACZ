@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.world.item.ItemDisplayContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,7 +45,7 @@ public class FunctionalBedrockPart extends BedrockPart {
     }
 
     @Override
-    public void render(PoseStack poseStack, ItemTransforms.TransformType transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
+    public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
         int cubePackedLight = light;
         if (illuminated) {
             // 最大亮度

@@ -49,7 +49,7 @@ public class ConfigKey {
                 HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("gui.tacz.cloth_config_warning.download"));
                 MutableComponent component = Component.translatable("gui.tacz.cloth_config_warning.tips").withStyle(style ->
                         style.applyFormat(ChatFormatting.BLUE).applyFormat(ChatFormatting.UNDERLINE).withClickEvent(clickEvent).withHoverEvent(hoverEvent));
-                player.sendMessage(component, Util.NIL_UUID);
+                player.sendSystemMessage(component);
             } else {
                 CompatRegistry.checkModLoad(CompatRegistry.CLOTH_CONFIG, () -> Minecraft.getInstance().setScreen(MenuIntegration.getConfigScreen(null)));
             }

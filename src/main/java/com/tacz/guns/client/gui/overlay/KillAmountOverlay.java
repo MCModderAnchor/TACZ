@@ -6,16 +6,19 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
-public class KillAmountOverlay {
+public class KillAmountOverlay implements IGuiOverlay {
     private static long killTimestamp = -1L;
     private static int killAmount = 0;
 
-    public static void render(ForgeIngameGui gui, PoseStack poseStack, float partialTick, int width, int height) {
+    @Override
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
         if (!RenderConfig.KILL_AMOUNT_ENABLE.get()) {
             return;
         }
@@ -53,9 +56,14 @@ public class KillAmountOverlay {
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
+
+        PoseStack poseStack = graphics.pose();
+
         poseStack.pushPose();
-        poseStack.scale(0.5f, 0.5f, 1);
-        mc.font.draw(poseStack, text, width - fontWith / 2.0f, (height - 45) * 2 - 1, color);
+        {
+            poseStack.scale(0.5f, 0.5f, 1);
+            graphics.drawString(mc.font, text, (int) (width - fontWith / 2.0f), (height - 45) * 2 - 1, color);
+        }
         poseStack.popPose();
         RenderSystem.disableBlend();
     }

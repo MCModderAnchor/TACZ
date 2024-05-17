@@ -74,9 +74,9 @@ public class CommonTransformObject {
 
     public CommonTransformObject lerp(CommonTransformObject target, float alpha) {
         CommonTransformObject object = new CommonTransformObject();
-        object.translation = this.translation == null ? new Vector3f(0, 0, 0) : this.translation.copy();
-        object.rotation = this.rotation == null ? new Vector3f(0, 0, 0) : this.rotation.copy();
-        object.scale = this.scale == null ? new Vector3f(1, 1, 1) : this.scale.copy();
+        object.translation = this.translation == null ? new Vector3f(0, 0, 0) : new Vector3f(this.translation);
+        object.rotation = this.rotation == null ? new Vector3f(0, 0, 0) :new Vector3f( this.rotation);
+        object.scale = this.scale == null ? new Vector3f(1, 1, 1) : new Vector3f(this.scale);
         object.translation.lerp(target.getTranslation(), alpha);
         object.rotation.lerp(target.getRotation(), alpha);
         object.scale.lerp(target.getScale(), alpha);

@@ -31,6 +31,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -45,9 +46,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -85,9 +88,9 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         this.getPlayerIngredientCount(this.selectedRecipe);
     }
 
-    public static void drawModCenteredString(PoseStack poseStack, Font font, Component component, int pX, int pY, int color) {
+    public static void drawModCenteredString(GuiGraphics gui, Font font, Component component, int pX, int pY, int color) {
         FormattedCharSequence text = component.getVisualOrderText();
-        font.draw(poseStack, text, (float) (pX - font.width(text) / 2), (float) pY, color);
+        gui.drawString(font, text, pX - font.width(text) / 2, pY, color);
     }
 
     private void classifyRecipes() {
@@ -309,24 +312,25 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-        super.render(poseStack, mouseX, mouseY, partialTick);
-        drawModCenteredString(poseStack, font, Component.translatable("gui.tacz.gun_smith_table.preview"), leftPos + 108, topPos + 5, 0x555555);
-        font.draw(poseStack, Component.translatable(String.format("tacz.type.%s.name", selectedType)), leftPos + 150, topPos + 32, 0x555555);
-        font.draw(poseStack, Component.translatable("gui.tacz.gun_smith_table.ingredient"), leftPos + 254, topPos + 50, 0x555555);
-        drawModCenteredString(poseStack, font, Component.translatable("gui.tacz.gun_smith_table.craft"), leftPos + 312, topPos + 167, 0xFFFFFF);
+    public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+        super.render(gui, mouseX, mouseY, partialTick);
+        drawModCenteredString(gui, font, Component.translatable("gui.tacz.gun_smith_table.preview"), leftPos + 108, topPos + 5, 0x555555);
+        gui.drawString(font, Component.translatable(String.format("tacz.type.%s.name", selectedType)), leftPos + 150, topPos + 32, 0x555555);
+        gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.ingredient"), leftPos + 254, topPos + 50, 0x555555);
+        drawModCenteredString(gui, font, Component.translatable("gui.tacz.gun_smith_table.craft"), leftPos + 312, topPos + 167, 0xFFFFFF);
         if (this.selectedRecipe != null) {
             this.renderLeftModel(this.selectedRecipe);
-            this.renderPackInfo(poseStack, this.selectedRecipe);
+            this.renderPackInfo(gui, this.selectedRecipe);
         }
         if (selectedRecipeList != null && !selectedRecipeList.isEmpty()) {
-            renderIngredient(poseStack);
+            renderIngredient(gui);
         }
+        // todo 检查行为
         this.renderables.stream().filter(w -> w instanceof ResultButton)
-                .forEach(w -> ((ResultButton) w).renderTooltips(stack -> this.renderTooltip(poseStack, stack, mouseX, mouseY)));
+                .forEach(w -> ((ResultButton) w).renderTooltips(stack -> this.renderTooltip(gui, mouseX, mouseY)));
     }
 
-    private void renderPackInfo(PoseStack poseStack, GunSmithTableRecipe recipe) {
+    private void renderPackInfo(GuiGraphics gui, GunSmithTableRecipe recipe) {
         ItemStack output = recipe.getOutput();
         Item item = output.getItem();
         ResourceLocation id;
@@ -341,11 +345,12 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         }
 
         PackInfo packInfo = ClientAssetManager.INSTANCE.getPackInfo(id);
+        PoseStack poseStack = gui.pose();
         if (packInfo != null) {
             poseStack.pushPose();
             poseStack.scale(0.75f, 0.75f, 1);
-            TranslatableComponent nameText = Component.translatable(packInfo.getName());
-            font.draw(poseStack, nameText, (leftPos + 6) / 0.75f, (topPos + 122) / 0.75f, ChatFormatting.DARK_GRAY.getColor());
+            Component nameText = Component.translatable(packInfo.getName());
+            gui.drawString(font, nameText, (int) ((leftPos + 6) / 0.75f), (int) ((topPos + 122) / 0.75f), ChatFormatting.DARK_GRAY.getColor());
             poseStack.popPose();
 
             poseStack.pushPose();
@@ -354,34 +359,35 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             int offsetX = (leftPos + 6) * 2;
             int offsetY = (topPos + 123) * 2;
             int nameWidth = font.width(nameText);
-            font.draw(poseStack, Component.literal("v" + packInfo.getVersion()).withStyle(ChatFormatting.UNDERLINE), offsetX + nameWidth * 0.75f / 0.5f + 5, offsetY, ChatFormatting.DARK_GRAY.getColor());
+            gui.drawString(font, Component.literal("v" + packInfo.getVersion()).withStyle(ChatFormatting.UNDERLINE),
+                    (int) (offsetX + nameWidth * 0.75f / 0.5f + 5), offsetY, ChatFormatting.DARK_GRAY.getColor());
             offsetY += 14;
 
             String descKey = packInfo.getDescription();
             if (StringUtils.isNoneBlank(descKey)) {
-                TranslatableComponent desc = Component.translatable(descKey);
+                Component desc = Component.translatable(descKey);
                 List<FormattedCharSequence> split = font.split(desc, 245);
                 for (FormattedCharSequence charSequence : split) {
-                    font.draw(poseStack, charSequence, offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
+                    gui.drawString(font, charSequence, offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
                     offsetY += font.lineHeight;
                 }
                 offsetY += 3;
             }
 
-            font.draw(poseStack, Component.translatable("gui.tacz.gun_smith_table.license")
+            gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.license")
                             .append(Component.literal(packInfo.getLicense()).withStyle(ChatFormatting.DARK_GRAY)),
                     offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
             offsetY += 12;
 
             List<String> authors = packInfo.getAuthors();
             if (!authors.isEmpty()) {
-                font.draw(poseStack, Component.translatable("gui.tacz.gun_smith_table.authors")
+                gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.authors")
                                 .append(Component.literal(StringUtils.join(authors, ", ")).withStyle(ChatFormatting.DARK_GRAY)),
                         offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
                 offsetY += 12;
             }
 
-            font.draw(poseStack, Component.translatable("gui.tacz.gun_smith_table.date")
+            gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.date")
                             .append(Component.literal(packInfo.getDate()).withStyle(ChatFormatting.DARK_GRAY)),
                     offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
 
@@ -389,7 +395,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         }
     }
 
-    private void renderIngredient(PoseStack poseStack) {
+    private void renderIngredient(GuiGraphics gui) {
         if (this.selectedRecipe == null) {
             return;
         }
@@ -409,7 +415,10 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 ItemStack[] items = ingredient.getItems();
                 int itemIndex = ((int) (System.currentTimeMillis() / 1_000)) % items.length;
                 ItemStack item = items[itemIndex];
-                this.itemRenderer.renderAndDecorateFakeItem(item, offsetX, offsetY);
+                // todo 检查行为
+                gui.renderFakeItem(item, offsetX, offsetY);
+
+                PoseStack poseStack = gui.pose();
 
                 poseStack.pushPose();
                 poseStack.translate(0, 0, 200);
@@ -421,7 +430,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                     hasCount = playerIngredientCount.get(index);
                 }
                 int color = count <= hasCount ? 0xFFFFFF : 0xFF0000;
-                font.draw(poseStack, String.format("%d/%d", count, hasCount), (offsetX + 17) * 2, (offsetY + 10) * 2, color);
+                gui.drawString(font, String.format("%d/%d", count, hasCount), (offsetX + 17) * 2, (offsetY + 10) * 2, color);
                 poseStack.popPose();
             }
         }
@@ -464,7 +473,9 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         PoseStack tmpPose = new PoseStack();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         Lighting.setupForFlatItems();
-        Minecraft.getInstance().getItemRenderer().renderStatic(recipe.getOutput(), ItemTransforms.TransformType.FIXED, 0xf000f0, OverlayTexture.NO_OVERLAY, tmpPose, bufferSource, 0);
+
+        Minecraft.getInstance().getItemRenderer().renderStatic(recipe.getOutput(), ItemDisplayContext.FIXED, 0xf000f0, OverlayTexture.NO_OVERLAY, tmpPose, bufferSource, null, 0);
+
         bufferSource.endBatch();
         RenderSystem.enableDepthTest();
         Lighting.setupFor3DItems();
@@ -475,17 +486,14 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+    protected void renderLabels(@NotNull GuiGraphics gui, int mouseX, int mouseY) {
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
-        this.renderBackground(poseStack);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, SIDE);
-        blit(poseStack, leftPos, topPos, 0, 0, 134, 187);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        blit(poseStack, leftPos + 136, topPos + 27, 0, 0, 208, 160);
+    protected void renderBg(@NotNull GuiGraphics gui, float partialTick, int mouseX, int mouseY) {
+        this.renderBackground(gui);
+        gui.blit(SIDE, leftPos, topPos, 0, 0, 134, 187);
+        gui.blit(TEXTURE, leftPos + 136, topPos + 27, 0, 0, 208, 160);
     }
 
     @Override

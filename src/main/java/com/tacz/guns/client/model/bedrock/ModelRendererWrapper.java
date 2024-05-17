@@ -3,6 +3,7 @@ package com.tacz.guns.client.model.bedrock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.world.item.ItemDisplayContext;
 import org.joml.Quaternionf;
 
 public class ModelRendererWrapper {
@@ -140,7 +141,7 @@ public class ModelRendererWrapper {
         modelRenderer.zScale = scaleZ;
     }
 
-    public void render(PoseStack poseStack, ItemTransforms.TransformType transformType, VertexConsumer consumer, int light, int overlay) {
+    public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay) {
         modelRenderer.render(poseStack, transformType, consumer, light, overlay);
     }
 }

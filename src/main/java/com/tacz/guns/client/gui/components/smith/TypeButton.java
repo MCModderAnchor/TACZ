@@ -1,13 +1,13 @@
 package com.tacz.guns.client.gui.components.smith;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class TypeButton extends Button {
     private static final ResourceLocation TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/gun_smith_table.png");
@@ -15,24 +15,22 @@ public class TypeButton extends Button {
     private boolean isSelected = false;
 
     public TypeButton(int pX, int pY, ItemStack stack, Button.OnPress onPress) {
-        super(pX, pY, 24, 25, TextComponent.EMPTY, onPress);
+        super(pX, pY, 24, 25, Component.empty(), onPress, DEFAULT_NARRATION);
         this.stack = stack;
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, TEXTURE);
+    protected void renderWidget(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
         RenderSystem.enableDepthTest();
+
+        int vOffset = isHoveredOrFocused() ? 204 + this.height : 204;
         if (isSelected) {
-            int vOffset = isHoveredOrFocused() ? 204 + this.height : 204;
-            blit(poseStack, this.x, this.y, 0, vOffset, this.width, this.height, 256, 256);
+            gui.blit(TEXTURE, this.getX(), this.getY(), 0, vOffset, this.width, this.height, 256, 256);
         } else {
-            int vOffset = isHoveredOrFocused() ? 204 + this.height : 204;
-            blit(poseStack, this.x, this.y, 26, vOffset, this.width, this.height, 256, 256);
+            gui.blit(TEXTURE, this.getX(), this.getY(), 26, vOffset, this.width, this.height, 256, 256);
         }
-        Minecraft mc = Minecraft.getInstance();
-        mc.getItemRenderer().renderGuiItem(this.stack, this.x + 4, this.y + 5);
+
+        gui.renderItem(this.stack, this.getX() + 4, this.getY() + 5);
     }
 
     @Override
