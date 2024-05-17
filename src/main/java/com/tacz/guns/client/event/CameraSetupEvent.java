@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.event.BeforeRenderHandEvent;
-import com.tacz.guns.api.client.event.FieldOfView;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.client.other.KeepingItemRenderer;
 import com.tacz.guns.api.entity.IGunOperator;
@@ -54,7 +53,7 @@ public class CameraSetupEvent {
         if (player == null) {
             return;
         }
-        ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
+        ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
@@ -92,7 +91,7 @@ public class CameraSetupEvent {
         if (player == null) {
             return;
         }
-        ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
+        ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
@@ -113,13 +112,13 @@ public class CameraSetupEvent {
     }
 
     @SubscribeEvent
-    public static void applyScopeMagnification(FieldOfView event) {
-        if (event.isItemWithHand()) {
-            return;
+    public static void applyScopeMagnification(ViewportEvent.ComputeFov event) {
+        if (!event.usedConfiguredFov()) {
+            return; // 只修改世界渲染的 fov，因此如果是手部渲染 fov 事件，则返回
         }
         Entity entity = event.getCamera().getEntity();
         if (entity instanceof LivingEntity livingEntity) {
-            ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
+            ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
             if (!(stack.getItem() instanceof IGun iGun)) {
                 float fov = FOV_DYNAMICS.update((float) event.getFOV());
                 event.setFOV(fov);

@@ -89,7 +89,7 @@ public class LocalPlayerDraw {
             if (animationStateMachine != null) {
                 animationStateMachine.onGunPutAway(putAwayTime / 1000F);
                 // 保持枪械的渲染直到收枪动作完成
-                ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).keep(lastItem, putAwayTime);
+                KeepingItemRenderer.getRenderer().keep(lastItem, putAwayTime);
             }
         });
     }

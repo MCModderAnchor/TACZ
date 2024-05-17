@@ -3,7 +3,6 @@ package com.tacz.guns.mixin.client;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.ClientLanguage;
-import net.minecraft.client.resources.language.LanguageInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,10 +12,9 @@ import java.util.Map;
 
 @Mixin(ClientLanguage.class)
 public class LanguageMixin {
-    @Inject(method = "getOrDefault(Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "HEAD"), cancellable = true)
-    public void getCustomLanguage(String key, CallbackInfoReturnable<String> call) {
-        LanguageInfo language = Minecraft.getInstance().getLanguageManager().getSelected();
-        String code = language.getCode();
+    @Inject(method = "getOrDefault(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "HEAD"), cancellable = true)
+    public void getCustomLanguage(String key, String defaultValue, CallbackInfoReturnable<String> call) {
+        String code = Minecraft.getInstance().getLanguageManager().getSelected();
         Map<String, String> languages = ClientAssetManager.INSTANCE.getLanguages(code);
         Map<String, String> alternative = ClientAssetManager.INSTANCE.getLanguages("en_us");
         if (languages != null && languages.containsKey(key)) {
@@ -28,8 +26,7 @@ public class LanguageMixin {
 
     @Inject(method = "has(Ljava/lang/String;)Z", at = @At(value = "HEAD"), cancellable = true)
     public void hasCustomLanguage(String key, CallbackInfoReturnable<Boolean> call) {
-        LanguageInfo language = Minecraft.getInstance().getLanguageManager().getSelected();
-        String code = language.getCode();
+        String code = Minecraft.getInstance().getLanguageManager().getSelected();
         Map<String, String> languages = ClientAssetManager.INSTANCE.getLanguages(code);
         Map<String, String> alternative = ClientAssetManager.INSTANCE.getLanguages("en_us");
         if (languages != null && languages.containsKey(key)) {

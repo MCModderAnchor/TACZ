@@ -38,7 +38,7 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
 
         // 用于清除默认的手臂旋转
         // 当第一人称渲染是，ageInTicks 正好是 0
-        ItemStack currentItem = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
+        ItemStack currentItem = KeepingItemRenderer.getRenderer().getCurrentItem();
         if (ageInTicks == 0F && IGun.getIGunOrNull(currentItem) != null) {
             tacz$resetAll(this.rightArm);
             tacz$resetAll(this.leftArm);
