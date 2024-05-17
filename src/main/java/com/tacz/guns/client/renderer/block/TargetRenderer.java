@@ -2,7 +2,7 @@ package com.tacz.guns.client.renderer.block;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.tacz.guns.block.TargetBlock;
 import com.tacz.guns.block.entity.TargetBlockEntity;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
@@ -21,6 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Optional;
@@ -49,14 +50,14 @@ public class TargetRenderer implements BlockEntityRenderer<TargetBlockEntity> {
 
             poseStack.pushPose();
             poseStack.translate(0.5, 0.225, 0.5);
-            poseStack.mulPose(Vector3f.YN.rotationDegrees(facing.get2DDataValue() * 90));
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            poseStack.mulPose(Axis.YN.rotationDegrees(facing.get2DDataValue() * 90));
+            poseStack.mulPose(Axis.ZN.rotationDegrees(180));
             poseStack.translate(0, -1.275, 0.0125);
             RenderType renderType = RenderType.entityTranslucent(InternalAssetLoader.TARGET_TEXTURE_LOCATION);
-            model.render(poseStack, ItemTransforms.TransformType.NONE, renderType, combinedLightIn, combinedOverlayIn);
+            model.render(poseStack, ItemDisplayContext.NONE, renderType, combinedLightIn, combinedOverlayIn);
             if (blockEntity.getOwner() != null) {
                 poseStack.translate(0, 1.25, 0);
-                poseStack.mulPose(Vector3f.XP.rotationDegrees(deg));
+                poseStack.mulPose(Axis.XP.rotationDegrees(deg));
                 Minecraft minecraft = Minecraft.getInstance();
                 var map = minecraft.getSkinManager().getInsecureSkinInformation(blockEntity.getOwner());
                 ResourceLocation skin;
@@ -67,7 +68,7 @@ public class TargetRenderer implements BlockEntityRenderer<TargetBlockEntity> {
                 }
                 headModel.visible = true;
                 RenderType skullRenderType = RenderType.entityTranslucentCull(skin);
-                headModel.render(poseStack, ItemTransforms.TransformType.NONE, bufferIn.getBuffer(skullRenderType), combinedLightIn, OverlayTexture.NO_OVERLAY);
+                headModel.render(poseStack, ItemDisplayContext.NONE, bufferIn.getBuffer(skullRenderType), combinedLightIn, OverlayTexture.NO_OVERLAY);
             }
             poseStack.popPose();
         });

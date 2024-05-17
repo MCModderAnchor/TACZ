@@ -1,7 +1,7 @@
 package com.tacz.guns.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.tacz.guns.block.GunSmithTableBlock;
 import com.tacz.guns.block.entity.GunSmithTableBlockEntity;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
@@ -40,8 +40,8 @@ public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableB
             Direction facing = blockState.getValue(GunSmithTableBlock.FACING);
             poseStack.pushPose();
             poseStack.translate(0.5, 1.5, 0.5);
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
-            poseStack.mulPose(Vector3f.YN.rotationDegrees(90 - facing.get2DDataValue() * 90));
+            poseStack.mulPose(Axis.ZN.rotationDegrees(180));
+            poseStack.mulPose(Axis.YN.rotationDegrees(90 - facing.get2DDataValue() * 90));
             RenderType renderType = RenderType.entityTranslucent(InternalAssetLoader.SMITH_TABLE_TEXTURE_LOCATION);
             model.render(poseStack, ItemTransforms.TransformType.NONE, renderType, combinedLightIn, combinedOverlayIn);
             poseStack.popPose();

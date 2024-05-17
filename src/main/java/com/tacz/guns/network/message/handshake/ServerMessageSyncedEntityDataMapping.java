@@ -7,7 +7,7 @@ import com.tacz.guns.network.IMessage;
 import com.tacz.guns.network.LoginIndexHolder;
 import com.tacz.guns.network.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -60,7 +60,7 @@ public class ServerMessageSyncedEntityDataMapping extends LoginIndexHolder imple
         CountDownLatch block = new CountDownLatch(1);
         supplier.get().enqueueWork(() -> {
             if (!SyncedEntityData.instance().updateMappings(message)) {
-                supplier.get().getNetworkManager().disconnect(new TextComponent("Connection closed - [TacZ] Received unknown synced data keys."));
+                supplier.get().getNetworkManager().disconnect(Component.literal("Connection closed - [TacZ] Received unknown synced data keys."));
             }
             block.countDown();
         });

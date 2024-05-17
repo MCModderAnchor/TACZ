@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
@@ -47,7 +47,7 @@ public class InteractKeyTextOverlay {
 
     private static void renderBlockText(PoseStack poseStack, int width, int height, BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc) {
         BlockPos blockPos = blockHitResult.getBlockPos();
-        Block block = player.level.getBlockState(blockPos).getBlock();
+        Block block = player.level().getBlockState(blockPos).getBlock();
         if (InteractKeyConfigRead.canInteractBlock(block)) {
             renderText(poseStack, width, height, mc.font);
         }
@@ -62,7 +62,7 @@ public class InteractKeyTextOverlay {
 
     private static void renderText(PoseStack poseStack, int width, int height, Font font) {
         String keyName = InteractKey.INTERACT_KEY.getTranslatedKeyMessage().getString();
-        TranslatableComponent title = new TranslatableComponent("gui.tacz.interact_key.text.desc", StringUtils.capitalize(keyName));
+        Component title = Component.translatable("gui.tacz.interact_key.text.desc", StringUtils.capitalize(keyName));
         font.drawShadow(poseStack, title, (width - font.width(title)) / 2.0f, height / 2.0f - 25, ChatFormatting.YELLOW.getColor());
     }
 }

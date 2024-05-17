@@ -1,7 +1,7 @@
 package com.tacz.guns.client.renderer.other;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 
@@ -21,14 +21,14 @@ public class GunHurtBobTweak {
         }
         zRot /= (float) player.hurtDuration;
         zRot = Mth.sin(zRot * zRot * zRot * zRot * (float) Math.PI);
-        float yRot = player.hurtDir;
+        float yRot = player.getHurtDir();
 
         yRot = yRot * lastTweakMultiplier;
         zRot = zRot * lastTweakMultiplier;
 
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(-yRot));
-        matrixStack.mulPose(Vector3f.XP.rotationDegrees(-zRot * 14.0F));
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(yRot));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(-yRot));
+        matrixStack.mulPose(Axis.XP.rotationDegrees(-zRot * 14.0F));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(yRot));
         return true;
     }
 

@@ -7,7 +7,7 @@ import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.init.ModSounds;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
@@ -44,7 +44,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
 
     @Override
     public void onProjectileHit(Entity entity, EntityHitResult result, DamageSource source, float damage) {
-        if (this.level.isClientSide() || this.isRemoved()) {
+        if (this.level().isClientSide() || this.isRemoved()) {
             return;
         }
         if (!(source instanceof IndirectEntityDamageSource)) {
@@ -57,12 +57,12 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
             this.markHurt();
             this.setDamage(10);
             double dis = this.position().distanceTo(sourceEntity.position());
-            player.displayClientMessage(new TranslatableComponent("message.tacz.target_minecart.hit", String.format("%.1f", damage), String.format("%.2f", dis)), true);
+            player.displayClientMessage(Component.translatable("message.tacz.target_minecart.hit", String.format("%.1f", damage), String.format("%.2f", dis)), true);
             // 原版的声音传播距离由 volume 决定
             // 当声音大于 1 时，距离为 = 16 * volume
             float volume = OtherConfig.TARGET_SOUND_DISTANCE.get() / 16.0f;
             volume = Math.max(volume, 0);
-            level.playSound(null, this, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, volume, this.level.random.nextFloat() * 0.1F + 0.9F);
+            level().playSound(null, this, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, volume, this.level().random.nextFloat() * 0.1F + 0.9F);
         }
     }
 
@@ -89,7 +89,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
     @Override
     public void destroy(DamageSource source) {
         this.remove(Entity.RemovalReason.KILLED);
-        if (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             ItemStack itemStack = new ItemStack(ModItems.TARGET_MINECART.get());
             if (this.hasCustomName()) {
                 itemStack.setHoverName(this.getCustomName());

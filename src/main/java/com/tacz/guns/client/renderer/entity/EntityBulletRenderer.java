@@ -1,7 +1,8 @@
 package com.tacz.guns.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+
+import com.mojang.math.Axis;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 import java.util.Optional;
 
@@ -41,8 +43,8 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
             BedrockAmmoModel ammoEntityModel = index.getAmmoEntityModel();
             ResourceLocation textureLocation = index.getAmmoEntityTextureLocation();
             if (ammoEntityModel != null && textureLocation != null) {
-                poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
-                poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
+                poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
+                poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
                 poseStack.pushPose();
                 poseStack.translate(0, 1.5, 0);
                 poseStack.scale(-1, -1, 1);
@@ -77,8 +79,8 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
                     return;
                 } else {
                     width *= (float) Math.max(1.0, disToEye / 3.5);
-                    poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
-                    poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
+                    poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
+                    poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
                     poseStack.translate(0, 0, trailLength / 2.0);
                     poseStack.scale(width, width, (float) trailLength);
                 }

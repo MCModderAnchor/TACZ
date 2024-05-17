@@ -6,7 +6,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.ProgressListener;
 
 import javax.annotation.Nullable;
@@ -24,7 +23,7 @@ public class ClientGunPackDownloadProgressScreen extends Screen implements Progr
     @Override
     protected void init() {
         this.addRenderableWidget(new Button((width - 200) / 2, 120, 200, 20,
-                new TranslatableComponent("gui.tacz.client_gun_pack_downloader.background_download"), b -> this.stop()));
+                Component.translatable("gui.tacz.client_gun_pack_downloader.background_download"), b -> this.stop()));
     }
 
     @Override
@@ -51,7 +50,7 @@ public class ClientGunPackDownloadProgressScreen extends Screen implements Progr
 
     @Override
     public void progressStart(Component header) {
-        this.header = new TranslatableComponent("gui.tacz.client_gun_pack_downloader.downloading");
+        this.header = Component.translatable("gui.tacz.client_gun_pack_downloader.downloading");
     }
 
     @Override

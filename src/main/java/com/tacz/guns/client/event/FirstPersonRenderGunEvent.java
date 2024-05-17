@@ -1,6 +1,7 @@
 package com.tacz.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tacz.guns.GunMod;
@@ -50,6 +51,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -114,33 +117,33 @@ public class FirstPersonRenderGunEvent {
             }
             // 在渲染之前，先更新动画，让动画数据写入模型
             if (animationStateMachine != null) {
-                animationStateMachine.update(event.getPartialTicks(), player);
+                animationStateMachine.update(event.getPartialTick(), player);
             }
 
             PoseStack poseStack = event.getPoseStack();
             poseStack.pushPose();
             // 逆转原版施加在手上的延滞效果，改为写入模型动画数据中
-            float xRotOffset = Mth.lerp(event.getPartialTicks(), player.xBobO, player.xBob);
-            float yRotOffset = Mth.lerp(event.getPartialTicks(), player.yBobO, player.yBob);
-            float xRot = player.getViewXRot(event.getPartialTicks()) - xRotOffset;
-            float yRot = player.getViewYRot(event.getPartialTicks()) - yRotOffset;
-            poseStack.mulPose(Vector3f.XP.rotationDegrees(xRot * -0.1F));
-            poseStack.mulPose(Vector3f.YP.rotationDegrees(yRot * -0.1F));
+            float xRotOffset = Mth.lerp(event.getPartialTick(), player.xBobO, player.xBob);
+            float yRotOffset = Mth.lerp(event.getPartialTick(), player.yBobO, player.yBob);
+            float xRot = player.getViewXRot(event.getPartialTick()) - xRotOffset;
+            float yRot = player.getViewYRot(event.getPartialTick()) - yRotOffset;
+            poseStack.mulPose(Axis.XP.rotationDegrees(xRot * -0.1F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(yRot * -0.1F));
             BedrockPart rootNode = gunModel.getRootNode();
             if (rootNode != null) {
                 xRot = (float) Math.tanh(xRot / 25) * 25;
                 yRot = (float) Math.tanh(yRot / 25) * 25;
                 rootNode.offsetX += yRot * 0.1F / 16F / 3F;
                 rootNode.offsetY += -xRot * 0.1F / 16F / 3F;
-                rootNode.additionalQuaternion.mul(Vector3f.XP.rotationDegrees(xRot * 0.05F));
-                rootNode.additionalQuaternion.mul(Vector3f.YP.rotationDegrees(yRot * 0.05F));
+                rootNode.additionalQuaternion.mul(Axis.XP.rotationDegrees(xRot * 0.05F));
+                rootNode.additionalQuaternion.mul(Axis.YP.rotationDegrees(yRot * 0.05F));
             }
             // 从渲染原点 (0, 24, 0) 移动到模型原点 (0, 0, 0)
             poseStack.translate(0, 1.5f, 0);
             // 基岩版模型是上下颠倒的，需要翻转过来。
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(180f));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
             // 应用持枪姿态变换，如第一人称摄像机定位
-            applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTicks());
+            applyFirstPersonGunTransform(player, stack, gunIndex, poseStack, gunModel, event.getPartialTick());
 
             // 开启第一人称弹壳和火焰渲染
             MuzzleFlashRender.isSelf = true;
@@ -155,7 +158,7 @@ public class FirstPersonRenderGunEvent {
                 RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
                 gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
                 // 调用曳光弹渲染
-                renderBulletTracer(player, poseStack, gunModel, event.getPartialTicks());
+                renderBulletTracer(player, poseStack, gunModel, event.getPartialTick());
                 // 恢复手臂渲染
                 gunModel.setRenderHand(renderHand);
                 // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
@@ -168,7 +171,7 @@ public class FirstPersonRenderGunEvent {
 
             // 放这里，只有渲染了枪械，才取消后续（虽然一般来说也没有什么后续了）
             event.setCanceled(true);
-        }, () -> renderBulletTracer(player, event.getPoseStack(), null, event.getPartialTicks()));
+        }, () -> renderBulletTracer(player, event.getPoseStack(), null, event.getPartialTick()));
     }
 
     private static void renderBulletTracer(LocalPlayer player, PoseStack poseStack, BedrockGunModel gunModel, float partialTicks) {
@@ -180,7 +183,7 @@ public class FirstPersonRenderGunEvent {
             return;
         }
         BedrockModel model = modelOptional.get();
-        Level level = player.getLevel();
+        Level level = player.level();
         AABB renderArea = player.getBoundingBox().inflate(256, 256, 256);
         for (Entity entity : level.getEntities(player, renderArea, FirstPersonRenderGunEvent::bulletFromPlayer)) {
             EntityKineticBullet entityBullet = (EntityKineticBullet) entity;
@@ -204,7 +207,7 @@ public class FirstPersonRenderGunEvent {
                     Matrix4f pose = poseStack.last().pose();
                     originCameraPosition = new Vec3(cameraPosition.x, cameraPosition.y, cameraPosition.z);
                     entityBullet.setOriginCameraPosition(originCameraPosition);
-                    entityBullet.setOriginRenderOffset(new Vec3(pose.m03, pose.m13, pose.m23));
+                    entityBullet.setOriginRenderOffset(new Vec3(pose.m03(), pose.m13(), pose.m23()));
                     poseStack.popPose();
                 } else {
                     continue;
@@ -226,12 +229,12 @@ public class FirstPersonRenderGunEvent {
             yRot *= bulletDirection.x > 0 ? 1 : -1;
             PoseStack poseStack1 = new PoseStack();
             // 逆转摄像机的旋转，回到起始坐标
-            poseStack1.mulPose(Vector3f.XP.rotationDegrees(camera.getXRot()));
-            poseStack1.mulPose(Vector3f.YP.rotationDegrees(camera.getYRot() + 180f));
+            poseStack1.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
+            poseStack1.mulPose(Axis.YP.rotationDegrees(camera.getYRot() + 180f));
             poseStack1.translate(alphaCameraTranslation.x, alphaCameraTranslation.y, alphaCameraTranslation.z);
             // 恢复旋转角度，应用枪口定位偏移
-            poseStack1.mulPose(Vector3f.YN.rotation((float) yRot));
-            poseStack1.mulPose(Vector3f.XN.rotation((float) xRot));
+            poseStack1.mulPose(Axis.YN.rotation((float) yRot));
+            poseStack1.mulPose(Axis.XN.rotation((float) xRot));
             poseStack1.translate(originRenderOffset.x, originRenderOffset.y, originRenderOffset.z - distance);
             float trailLength = 0.5f * (float) entityBullet.getDeltaMovement().length();
             poseStack1.translate(0, 0, -trailLength / 2);
@@ -373,9 +376,9 @@ public class FirstPersonRenderGunEvent {
             for (int i = nodePath.size() - 1; i >= 0; i--) {
                 BedrockPart part = nodePath.get(i);
                 // 计算反向的旋转
-                matrix4f.multiply(Vector3f.XN.rotation(part.xRot));
-                matrix4f.multiply(Vector3f.YN.rotation(part.yRot));
-                matrix4f.multiply(Vector3f.ZN.rotation(part.zRot));
+                matrix4f.multiply(Axis.XN.rotation(part.xRot));
+                matrix4f.multiply(Axis.YN.rotation(part.yRot));
+                matrix4f.multiply(Axis.ZN.rotation(part.zRot));
                 // 计算反向的位移
                 if (part.getParent() != null) {
                     matrix4f.multiplyWithTranslation(-part.x / 16.0F, -part.y / 16.0F, -part.z / 16.0F);
@@ -410,7 +413,7 @@ public class FirstPersonRenderGunEvent {
         if (player != null) {
             double posY = Mth.lerp(partialTicks, Minecraft.getInstance().player.yOld, Minecraft.getInstance().player.getY());
             float velocityY = (float) (posY - Minecraft.getInstance().player.yOld) / partialTicks;
-            if (player.isOnGround()) {
+            if (player.onGround()) {
                 if (!lastOnGround) {
                     jumpingSwayProgress = velocityY / -0.1f;
                     if (jumpingSwayProgress > 1) {
@@ -482,9 +485,9 @@ public class FirstPersonRenderGunEvent {
                 animeMatrix.multiply(part.additionalQuaternion);
             }
             // 乘组旋转
-            animeMatrix.multiply(Vector3f.ZP.rotation(part.zRot));
-            animeMatrix.multiply(Vector3f.YP.rotation(part.yRot));
-            animeMatrix.multiply(Vector3f.XP.rotation(part.xRot));
+            animeMatrix.multiply(Axis.ZP.rotation(part.zRot));
+            animeMatrix.multiply(Axis.YP.rotation(part.yRot));
+            animeMatrix.multiply(Axis.XP.rotation(part.xRot));
 
             // 乘组位移
             if (part.getParent() != null) {
@@ -493,14 +496,14 @@ public class FirstPersonRenderGunEvent {
                 originMatrix.multiplyWithTranslation(part.x / 16.0F, (part.y / 16.0F - 1.5F), part.z / 16.0F);
             }
             // 乘组旋转
-            originMatrix.multiply(Vector3f.ZP.rotation(part.zRot));
-            originMatrix.multiply(Vector3f.YP.rotation(part.yRot));
-            originMatrix.multiply(Vector3f.XP.rotation(part.xRot));
+            originMatrix.multiply(Axis.ZP.rotation(part.zRot));
+            originMatrix.multiply(Axis.YP.rotation(part.yRot));
+            originMatrix.multiply(Axis.XP.rotation(part.xRot));
 
         }
         // 把变换数据写入输出
-        animatedTranslation.set(animeMatrix.m03, animeMatrix.m13, animeMatrix.m23);
-        originTranslation.set(originMatrix.m03, originMatrix.m13, originMatrix.m23);
+        animatedTranslation.set(animeMatrix.m03(), animeMatrix.m13(), animeMatrix.m23());
+        originTranslation.set(originMatrix.m03(), originMatrix.m13(), originMatrix.m23());
         Vector3f animatedRotation = MathUtil.getEulerAngles(animeMatrix);
         Vector3f originRotation = MathUtil.getEulerAngles(originMatrix);
         animatedRotation.sub(originRotation);
@@ -528,17 +531,17 @@ public class FirstPersonRenderGunEvent {
         Vector3f rotationICA = gunModel.getConstraintObject().rotationConstraint;
         getAnimationConstraintTransform(nodePath, originTranslation, animatedTranslation, rotation);
         // 配合约束系数，计算约束位移需要的反向位移
-        Vector3f inverseTranslation = originTranslation.copy();
+        Vector3f inverseTranslation = new Vector3f(originTranslation);
         inverseTranslation.sub(animatedTranslation);
         inverseTranslation.mul(1 - translationICA.x(), 1 - translationICA.y(), 1 - translationICA.z());
         // 计算约束旋转需要的反向旋转。因需要插值，获取的是欧拉角
-        Vector3f inverseRotation = rotation.copy();
+        Vector3f inverseRotation = new Vector3f(rotation);
         inverseRotation.mul(rotationICA.x() - 1, rotationICA.y() - 1, rotationICA.z() - 1);
         // 约束旋转
         poseStack.translate(animatedTranslation.x(), animatedTranslation.y() + 1.5f, animatedTranslation.z());
-        poseStack.mulPose(Vector3f.XP.rotation(inverseRotation.x() * weight));
-        poseStack.mulPose(Vector3f.YP.rotation(inverseRotation.y() * weight));
-        poseStack.mulPose(Vector3f.ZP.rotation(inverseRotation.z() * weight));
+        poseStack.mulPose(Axis.XP.rotation(inverseRotation.x() * weight));
+        poseStack.mulPose(Axis.YP.rotation(inverseRotation.y() * weight));
+        poseStack.mulPose(Axis.ZP.rotation(inverseRotation.z() * weight));
         poseStack.translate(-animatedTranslation.x(), -animatedTranslation.y() - 1.5f, -animatedTranslation.z());
         // 约束位移
         poseStack.last().pose().translate(new Vector3f(-inverseTranslation.x() * weight, -inverseTranslation.y() * weight, inverseTranslation.z() * weight));

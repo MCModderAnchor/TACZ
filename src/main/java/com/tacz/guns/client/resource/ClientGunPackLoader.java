@@ -3,7 +3,6 @@ package com.tacz.guns.client.resource;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.math.Vector3f;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
@@ -27,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Vector3f;
 
 import java.io.File;
 import java.io.IOException;

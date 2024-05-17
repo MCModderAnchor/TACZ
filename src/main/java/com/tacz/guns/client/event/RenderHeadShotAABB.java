@@ -27,7 +27,7 @@ public class RenderHeadShotAABB {
             return;
         }
         LivingEntity entity = event.getEntity();
-        ResourceLocation entityId = ForgeRegistries.ENTITIES.getKey(entity.getType());
+        ResourceLocation entityId = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
         if (entityId == null) {
             return;
         }

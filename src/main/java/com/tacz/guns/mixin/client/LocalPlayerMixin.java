@@ -80,7 +80,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Inject(method = "tick", at = @At("HEAD"))
     public void onTickClientSide(CallbackInfo ci) {
         LocalPlayer player = (LocalPlayer) (Object) this;
-        if (player.getLevel().isClientSide()) {
+        if (player.level().isClientSide()) {
             tac$aim.tickAimingProgress();
             tac$data.tickStateLock();
             tac$bolt.tickAutoBolt();

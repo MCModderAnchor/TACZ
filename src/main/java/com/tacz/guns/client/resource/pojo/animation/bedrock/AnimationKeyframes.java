@@ -1,7 +1,8 @@
 package com.tacz.guns.client.resource.pojo.animation.bedrock;
 
-import com.mojang.math.Vector3f;
+
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 

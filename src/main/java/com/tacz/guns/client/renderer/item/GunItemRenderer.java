@@ -2,8 +2,7 @@ package com.tacz.guns.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.model.BedrockGunModel;
@@ -19,13 +18,16 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.*;
+import static net.minecraft.world.item.ItemDisplayContext.*;
 
 /**
  * 负责第一人称以外的枪械模型渲染。第一人称渲染参见 {@link com.tacz.guns.client.event.FirstPersonRenderGunEvent}
@@ -48,9 +50,9 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
         poseStack.translate(0, 1.5, 0);
         for (int i = nodePath.size() - 1; i >= 0; i--) {
             BedrockPart t = nodePath.get(i);
-            poseStack.mulPose(Vector3f.XN.rotation(t.xRot));
-            poseStack.mulPose(Vector3f.YN.rotation(t.yRot));
-            poseStack.mulPose(Vector3f.ZN.rotation(t.zRot));
+            poseStack.mulPose(Axis.XN.rotation(t.xRot));
+            poseStack.mulPose(Axis.YN.rotation(t.yRot));
+            poseStack.mulPose(Axis.ZN.rotation(t.zRot));
             if (t.getParent() != null) {
                 poseStack.translate(-t.x * scale.x() / 16.0F, -t.y * scale.y() / 16.0F, -t.z * scale.z() / 16.0F);
             } else {
@@ -61,7 +63,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+    public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemDisplayContext transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
@@ -79,7 +81,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             // GUI 特殊渲染
             if (transformType == GUI) {
                 poseStack.translate(0.5, 1.5, 0.5);
-                poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+                poseStack.mulPose(Axis.ZN.rotationDegrees(180));
                 VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(gunIndex.getSlotTexture()));
                 SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
                 return;
@@ -109,7 +111,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
         }, () -> {
             // 没有这个 gunID，渲染个错误材质提醒别人
             poseStack.translate(0.5, 1.5, 0.5);
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            poseStack.mulPose(Axis.ZN.rotationDegrees(180));
             VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
             SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
         });
@@ -122,12 +124,12 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             return false;
         }
         Matrix4f matrix4f = poseStack.last().pose();
-        float viewDistance = matrix4f.m03 * matrix4f.m03 + matrix4f.m13 * matrix4f.m13 + matrix4f.m23 * matrix4f.m23;
+        float viewDistance = matrix4f.m03() * matrix4f.m03() + matrix4f.m13() * matrix4f.m13() + matrix4f.m23() * matrix4f.m23();
         return viewDistance < distance * distance;
     }
 
 
-    private void applyPositioningTransform(ItemTransforms.TransformType transformType, TransformScale scale, BedrockGunModel model, PoseStack poseStack) {
+    private void applyPositioningTransform(ItemDisplayContext transformType, TransformScale scale, BedrockGunModel model, PoseStack poseStack) {
         switch (transformType) {
             case FIXED -> applyPositioningNodeTransform(model.getFixedOriginPath(), poseStack, scale.getFixed());
             case GROUND -> applyPositioningNodeTransform(model.getGroundOriginPath(), poseStack, scale.getGround());
@@ -135,7 +137,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
         }
     }
 
-    private void applyScaleTransform(ItemTransforms.TransformType transformType, TransformScale scale, PoseStack poseStack) {
+    private void applyScaleTransform(ItemDisplayContext transformType, TransformScale scale, PoseStack poseStack) {
         if (scale == null) {
             return;
         }

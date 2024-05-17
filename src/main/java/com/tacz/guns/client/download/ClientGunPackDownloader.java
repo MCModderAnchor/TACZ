@@ -13,7 +13,6 @@ import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.HttpUtil;
 import net.minecraftforge.fml.ModList;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -23,6 +22,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -58,7 +58,7 @@ public class ClientGunPackDownloader {
         return map;
     }
 
-    public CompletableFuture<?> downloadAndLoadGunPack(String url, String hash) {
+    public CompletableFuture<?> downloadAndLoadGunPack(String plainUrl, String hash) {
         // 加锁
         this.downloadLock.lock();
         // 最终返回的结果
@@ -82,6 +82,7 @@ public class ClientGunPackDownloader {
                 ClientGunPackDownloadProgressScreen progressScreen = new ClientGunPackDownloadProgressScreen();
                 Minecraft minecraft = Minecraft.getInstance();
                 minecraft.executeBlocking(() -> minecraft.setScreen(progressScreen));
+                URL url = new URL(plainUrl);
                 downloadFuture = HttpUtil.downloadTo(gunPack, url, getDownloadHeaders(), MAX_FILE_SIZE, progressScreen, minecraft.getProxy());
             }
 
@@ -116,17 +117,17 @@ public class ClientGunPackDownloader {
     }
 
     private void displayFailScreen(Minecraft mc) {
-        TranslatableComponent title = new TranslatableComponent("gui.tacz.client_gun_pack_downloader.fail.title");
-        TranslatableComponent subTitle = new TranslatableComponent("gui.tacz.client_gun_pack_downloader.fail.subtitle");
+        Component title = Component.translatable("gui.tacz.client_gun_pack_downloader.fail.title");
+        Component subTitle = Component.translatable("gui.tacz.client_gun_pack_downloader.fail.subtitle");
         Component yesButton = CommonComponents.GUI_PROCEED;
-        TranslatableComponent noButton = new TranslatableComponent("menu.disconnect");
+        Component noButton = Component.translatable("menu.disconnect");
         mc.setScreen(new ConfirmScreen(button -> {
             if (button) {
                 mc.setScreen(null);
             } else {
                 ClientPacketListener clientpacketlistener = mc.getConnection();
                 if (clientpacketlistener != null) {
-                    clientpacketlistener.getConnection().disconnect(new TranslatableComponent("connect.aborted"));
+                    clientpacketlistener.getConnection().disconnect(Component.translatable("connect.aborted"));
                 }
             }
         }, title, subTitle, yesButton, noButton));

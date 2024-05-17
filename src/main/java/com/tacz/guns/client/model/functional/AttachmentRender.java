@@ -2,8 +2,6 @@ package com.tacz.guns.client.model.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -18,7 +16,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 import java.util.EnumMap;
 
@@ -31,7 +32,7 @@ public class AttachmentRender implements IFunctionalRenderer {
         this.type = type;
     }
 
-    public static void renderAttachment(ItemStack attachmentItem, PoseStack poseStack, ItemTransforms.TransformType transformType, int light, int overlay) {
+    public static void renderAttachment(ItemStack attachmentItem, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
         poseStack.translate(0, -1.5, 0);
         if (attachmentItem.getItem() instanceof IAttachment iAttachment) {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
@@ -61,17 +62,17 @@ public class AttachmentRender implements IFunctionalRenderer {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemTransforms.TransformType transformType, int light, int overlay) {
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
         EnumMap<AttachmentType, ItemStack> currentAttachmentItem = bedrockGunModel.getCurrentAttachmentItem();
         ItemStack attachmentItem = currentAttachmentItem.get(type);
         if (attachmentItem != null && !attachmentItem.isEmpty()) {
-            Matrix3f normal = poseStack.last().normal().copy();
-            Matrix4f pose = poseStack.last().pose().copy();
+            Matrix3f normal = new Matrix3f(poseStack.last().normal());
+            Matrix4f pose = new Matrix4f(poseStack.last().pose());
             //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染
             bedrockGunModel.delegateRender((poseStack1, vertexBuffer1, transformType1, light1, overlay1) -> {
                 PoseStack poseStack2 = new PoseStack();
                 poseStack2.last().normal().mul(normal);
-                poseStack2.last().pose().multiply(pose);
+                poseStack2.last().pose().mul(pose);
                 // 渲染配件
                 renderAttachment(attachmentItem, poseStack2, transformType, light, overlay);
             });

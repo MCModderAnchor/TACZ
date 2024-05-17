@@ -99,7 +99,7 @@ public class SyncedEntityData {
         }
         DataHolder holder = this.getDataHolder(entity);
         if (holder != null && holder.set(entity, key, value)) {
-            if (!entity.level.isClientSide()) {
+            if (!entity.level().isClientSide()) {
                 this.dirty = true;
                 this.dirtyEntities.add(entity);
             }

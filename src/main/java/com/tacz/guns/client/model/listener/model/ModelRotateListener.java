@@ -1,10 +1,10 @@
 package com.tacz.guns.client.model.listener.model;
 
-import com.mojang.math.Quaternion;
 import com.tacz.guns.client.animation.AnimationListener;
 import com.tacz.guns.client.animation.ObjectAnimationChannel;
 import com.tacz.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tacz.guns.util.math.MathUtil;
+import org.joml.Quaternionf;
 
 public class ModelRotateListener implements AnimationListener {
     private final ModelRendererWrapper rendererWrapper;
@@ -28,7 +28,7 @@ public class ModelRotateListener implements AnimationListener {
                     -yRot - rendererWrapper.getRotateAngleY(),
                     zRot - rendererWrapper.getRotateAngleZ()
             );
-            Quaternion quaternion = MathUtil.toQuaternion(q);
+            Quaternionf quaternion = MathUtil.toQuaternion(q);
             MathUtil.blendQuaternion(rendererWrapper.getAdditionalQuaternion(), quaternion);
         } else {
             MathUtil.toQuaternion(

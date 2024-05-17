@@ -16,7 +16,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,7 +25,7 @@ import java.util.List;
 
 public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecipe> {
     public static final RecipeType<GunSmithTableRecipe> GUN_SMITH_TABLE = RecipeType.create(GunMod.MOD_ID, "gun_smith_table", GunSmithTableRecipe.class);
-    private static final Component TITLE = new TranslatableComponent("block.tacz.gun_smith_table");
+    private static final Component TITLE = Component.translatable("block.tacz.gun_smith_table");
     private final IDrawableStatic bgDraw;
     private final IDrawable slotDraw;
     private final IDrawable iconDraw;

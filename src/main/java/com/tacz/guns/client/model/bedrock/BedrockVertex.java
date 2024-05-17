@@ -1,6 +1,6 @@
 package com.tacz.guns.client.model.bedrock;
 
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
 public class BedrockVertex {
     public final Vector3f pos;

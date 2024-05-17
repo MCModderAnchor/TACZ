@@ -1,7 +1,6 @@
 package com.tacz.guns.client.tab;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
@@ -13,7 +12,7 @@ public class CustomTab extends CreativeModeTab {
     public CustomTab(String key, String nameKey, ItemStack icon) {
         super(key);
         this.key = key;
-        this.displayName = new TranslatableComponent(nameKey);
+        this.displayName = Component.translatable(nameKey);
         this.icon = icon;
     }
 

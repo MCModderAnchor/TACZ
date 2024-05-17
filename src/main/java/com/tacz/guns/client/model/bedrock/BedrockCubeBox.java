@@ -2,11 +2,11 @@ package com.tacz.guns.client.model.bedrock;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import net.minecraft.core.Direction;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public class BedrockCubeBox implements BedrockCube {
     public final float minX;
@@ -79,7 +79,7 @@ public class BedrockCubeBox implements BedrockCube {
         Matrix3f matrix3f = pose.normal();
 
         for (BedrockPolygon polygon : this.polygons) {
-            Vector3f vector3f = polygon.normal.copy();
+            Vector3f vector3f = new Vector3f(polygon.normal);
             vector3f.transform(matrix3f);
             float nx = vector3f.x();
             float ny = vector3f.y();

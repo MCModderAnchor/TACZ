@@ -2,7 +2,8 @@ package com.tacz.guns.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+
+import com.mojang.math.Axis;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -28,15 +30,15 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+    public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemDisplayContext transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         if (stack.getItem() instanceof IAttachment iAttachment) {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(stack);
             poseStack.pushPose();
             TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresentOrElse(attachmentIndex -> {
                 // GUI 特殊渲染
-                if (transformType == ItemTransforms.TransformType.GUI) {
+                if (transformType == ItemDisplayContext.GUI) {
                     poseStack.translate(0.5, 1.5, 0.5);
-                    poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+                    poseStack.mulPose(Axis.ZN.rotationDegrees(180));
                     VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
                     SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
                     return;
@@ -44,8 +46,8 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.translate(0.5, 2, 0.5);
                 // 反转模型
                 poseStack.scale(-1, -1, 1);
-                if (transformType == ItemTransforms.TransformType.FIXED) {
-                    poseStack.mulPose(Vector3f.YN.rotationDegrees(90f));
+                if (transformType == ItemDisplayContext.FIXED) {
+                    poseStack.mulPose(Axis.YN.rotationDegrees(90f));
                 }
                 ResourceLocation skinId = iAttachment.getSkinId(stack);
                 ClientAttachmentSkinIndex skinIndex = attachmentIndex.getSkinIndex(skinId);
@@ -64,7 +66,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
             }, () -> {
                 // 没有这个 attachmentId，渲染黑紫材质以提醒
                 poseStack.translate(0.5, 1.5, 0.5);
-                poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+                poseStack.mulPose(Axis.ZN.rotationDegrees(180));
                 VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
                 SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
             });

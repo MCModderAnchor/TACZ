@@ -58,7 +58,7 @@ public class InventoryEvent {
     }
 
     @SubscribeEvent
-    public static void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+    public static void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggingOut event) {
         // 离开游戏时重置客户端 draw 状态
         oldHotbarSelected = -1;
         oldHotbarSelectItem = ItemStack.EMPTY;

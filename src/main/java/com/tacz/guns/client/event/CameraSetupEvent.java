@@ -1,7 +1,6 @@
 package com.tacz.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.event.BeforeRenderHandEvent;
@@ -25,10 +24,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.joml.Quaternionf;
 
 import java.util.Optional;
 
@@ -46,8 +46,8 @@ public class CameraSetupEvent {
     private static BedrockGunModel lastModel = null;
 
     @SubscribeEvent
-    public static void applyLevelCameraAnimation(EntityViewRenderEvent.CameraSetup event) {
-        if (!Minecraft.getInstance().options.bobView) {
+    public static void applyLevelCameraAnimation(ViewportEvent.ComputeCameraAngles event) {
+        if (!Minecraft.getInstance().options.bobView().get()) {
             return;
         }
         LocalPlayer player = Minecraft.getInstance().player;
@@ -70,10 +70,10 @@ public class CameraSetupEvent {
             float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
             float zoom = iGun.getAimingZoom(stack);
             float multiplier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
-            Quaternion q = MathUtil.multiplyQuaternion(gunModel.getCameraAnimationObject().rotationQuaternion, multiplier);
-            double yaw = Math.asin(2 * (q.r() * q.j() - q.i() * q.k()));
-            double pitch = Math.atan2(2 * (q.r() * q.i() + q.j() * q.k()), 1 - 2 * (q.i() * q.i() + q.j() * q.j()));
-            double roll = Math.atan2(2 * (q.r() * q.k() + q.i() * q.j()), 1 - 2 * (q.j() * q.j() + q.k() * q.k()));
+            Quaternionf q = MathUtil.multiplyQuaternion(gunModel.getCameraAnimationObject().rotationQuaternion, multiplier);
+            double yaw = Math.asin(2 * (q.w() * q.y() - q.x() * q.z()));
+            double pitch = Math.atan2(2 * (q.w() * q.x() + q.y() * q.z()), 1 - 2 * (q.x() * q.x() + q.y() * q.y()));
+            double roll = Math.atan2(2 * (q.w() * q.z() + q.x() * q.y()), 1 - 2 * (q.y() * q.y() + q.z() * q.z()));
             yaw = Math.toDegrees(yaw);
             pitch = Math.toDegrees(pitch);
             roll = Math.toDegrees(roll);
@@ -85,7 +85,7 @@ public class CameraSetupEvent {
 
     @SubscribeEvent
     public static void applyItemInHandCameraAnimation(BeforeRenderHandEvent event) {
-        if (!Minecraft.getInstance().options.bobView) {
+        if (!Minecraft.getInstance().options.bobView().get()) {
             return;
         }
         LocalPlayer player = Minecraft.getInstance().player;
@@ -104,7 +104,7 @@ public class CameraSetupEvent {
             float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
             float zoom = iGun.getAimingZoom(stack);
             float multiplier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
-            Quaternion quaternion = MathUtil.multiplyQuaternion(gunModel.getCameraAnimationObject().rotationQuaternion, multiplier);
+            Quaternionf quaternion = MathUtil.multiplyQuaternion(gunModel.getCameraAnimationObject().rotationQuaternion, multiplier);
             poseStack.mulPose(quaternion);
             // 截至目前，摄像机动画数据已消费完毕。是否有更好的清理动画数据的方法？
             gunModel.cleanCameraAnimationTransform();
@@ -128,7 +128,7 @@ public class CameraSetupEvent {
             float zoom = iGun.getAimingZoom(stack);
             if (livingEntity instanceof LocalPlayer localPlayer) {
                 IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
-                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTicks());
+                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
                 float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
                 event.setFOV(fov);
             } else {
@@ -181,7 +181,7 @@ public class CameraSetupEvent {
     }
 
     @SubscribeEvent
-    public static void applyCameraRecoil(EntityViewRenderEvent.CameraSetup event) {
+    public static void applyCameraRecoil(ViewportEvent.ComputeCameraAngles event) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             return;

@@ -1,6 +1,5 @@
 package com.tacz.guns.client.model;
 
-import com.mojang.math.Quaternion;
 import com.tacz.guns.client.animation.AnimationListener;
 import com.tacz.guns.client.animation.AnimationListenerSupplier;
 import com.tacz.guns.client.animation.ObjectAnimationChannel;
@@ -15,6 +14,7 @@ import com.tacz.guns.client.model.listener.model.ModelTranslateListener;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.client.resource.pojo.model.BonesItem;
+import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -73,7 +73,7 @@ public class BedrockAnimatedModel extends BedrockModel implements AnimationListe
     }
 
     public void cleanCameraAnimationTransform() {
-        cameraAnimationObject.rotationQuaternion = Quaternion.ONE.copy();
+        cameraAnimationObject.rotationQuaternion = new Quaternionf(0.0F, 0.0F, 0.0F, 1.0F);
     }
 
     /**

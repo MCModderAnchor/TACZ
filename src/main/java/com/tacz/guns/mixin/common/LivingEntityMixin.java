@@ -141,7 +141,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Inject(method = "tick", at = @At(value = "RETURN"))
     private void onTickServerSide(CallbackInfo ci) {
         // 仅在服务端调用
-        if (!level.isClientSide()) {
+        if (!level().isClientSide()) {
             // 完成各种 tick 任务
             ReloadState reloadState = this.tacz$reload.tickReloadState();
             this.tacz$aim.tickAimingProgress();

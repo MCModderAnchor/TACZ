@@ -42,9 +42,9 @@ public class TickAnimationEvent {
                 animationStateMachine.onShooterIdle();
             } else if (!player.isMovingSlowly() && player.isSprinting()) {
                 // 如果玩家正在移动，播放移动动画，否则播放 idle 动画
-                animationStateMachine.setOnGround(player.isOnGround()).onShooterRun(player.walkDist);
+                animationStateMachine.setOnGround(player.onGround()).onShooterRun(player.walkDist);
             } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
-                animationStateMachine.setOnGround(player.isOnGround()).onShooterWalk(player.input, player.walkDist);
+                animationStateMachine.setOnGround(player.onGround()).onShooterWalk(player.input, player.walkDist);
             } else {
                 animationStateMachine.onShooterIdle();
             }

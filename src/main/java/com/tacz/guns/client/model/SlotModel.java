@@ -8,6 +8,7 @@ import com.tacz.guns.client.resource.pojo.model.FaceUVsItem;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemDisplayContext;
 
 
 public class SlotModel extends EntityModel<Entity> {
@@ -30,6 +31,6 @@ public class SlotModel extends EntityModel<Entity> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        bone.render(poseStack, ItemTransforms.TransformType.GUI, buffer, packedLight, packedOverlay);
+        bone.render(poseStack, ItemDisplayContext.GUI, buffer, packedLight, packedOverlay);
     }
 }

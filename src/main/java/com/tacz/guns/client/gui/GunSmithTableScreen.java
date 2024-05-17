@@ -7,7 +7,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAmmo;
@@ -41,8 +41,6 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
@@ -313,10 +311,10 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         super.render(poseStack, mouseX, mouseY, partialTick);
-        drawModCenteredString(poseStack, font, new TranslatableComponent("gui.tacz.gun_smith_table.preview"), leftPos + 108, topPos + 5, 0x555555);
-        font.draw(poseStack, new TranslatableComponent(String.format("tacz.type.%s.name", selectedType)), leftPos + 150, topPos + 32, 0x555555);
-        font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_smith_table.ingredient"), leftPos + 254, topPos + 50, 0x555555);
-        drawModCenteredString(poseStack, font, new TranslatableComponent("gui.tacz.gun_smith_table.craft"), leftPos + 312, topPos + 167, 0xFFFFFF);
+        drawModCenteredString(poseStack, font, Component.translatable("gui.tacz.gun_smith_table.preview"), leftPos + 108, topPos + 5, 0x555555);
+        font.draw(poseStack, Component.translatable(String.format("tacz.type.%s.name", selectedType)), leftPos + 150, topPos + 32, 0x555555);
+        font.draw(poseStack, Component.translatable("gui.tacz.gun_smith_table.ingredient"), leftPos + 254, topPos + 50, 0x555555);
+        drawModCenteredString(poseStack, font, Component.translatable("gui.tacz.gun_smith_table.craft"), leftPos + 312, topPos + 167, 0xFFFFFF);
         if (this.selectedRecipe != null) {
             this.renderLeftModel(this.selectedRecipe);
             this.renderPackInfo(poseStack, this.selectedRecipe);
@@ -346,7 +344,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         if (packInfo != null) {
             poseStack.pushPose();
             poseStack.scale(0.75f, 0.75f, 1);
-            TranslatableComponent nameText = new TranslatableComponent(packInfo.getName());
+            TranslatableComponent nameText = Component.translatable(packInfo.getName());
             font.draw(poseStack, nameText, (leftPos + 6) / 0.75f, (topPos + 122) / 0.75f, ChatFormatting.DARK_GRAY.getColor());
             poseStack.popPose();
 
@@ -356,12 +354,12 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             int offsetX = (leftPos + 6) * 2;
             int offsetY = (topPos + 123) * 2;
             int nameWidth = font.width(nameText);
-            font.draw(poseStack, new TextComponent("v" + packInfo.getVersion()).withStyle(ChatFormatting.UNDERLINE), offsetX + nameWidth * 0.75f / 0.5f + 5, offsetY, ChatFormatting.DARK_GRAY.getColor());
+            font.draw(poseStack, Component.literal("v" + packInfo.getVersion()).withStyle(ChatFormatting.UNDERLINE), offsetX + nameWidth * 0.75f / 0.5f + 5, offsetY, ChatFormatting.DARK_GRAY.getColor());
             offsetY += 14;
 
             String descKey = packInfo.getDescription();
             if (StringUtils.isNoneBlank(descKey)) {
-                TranslatableComponent desc = new TranslatableComponent(descKey);
+                TranslatableComponent desc = Component.translatable(descKey);
                 List<FormattedCharSequence> split = font.split(desc, 245);
                 for (FormattedCharSequence charSequence : split) {
                     font.draw(poseStack, charSequence, offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
@@ -370,21 +368,21 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 offsetY += 3;
             }
 
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_smith_table.license")
-                            .append(new TextComponent(packInfo.getLicense()).withStyle(ChatFormatting.DARK_GRAY)),
+            font.draw(poseStack, Component.translatable("gui.tacz.gun_smith_table.license")
+                            .append(Component.literal(packInfo.getLicense()).withStyle(ChatFormatting.DARK_GRAY)),
                     offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
             offsetY += 12;
 
             List<String> authors = packInfo.getAuthors();
             if (!authors.isEmpty()) {
-                font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_smith_table.authors")
-                                .append(new TextComponent(StringUtils.join(authors, ", ")).withStyle(ChatFormatting.DARK_GRAY)),
+                font.draw(poseStack, Component.translatable("gui.tacz.gun_smith_table.authors")
+                                .append(Component.literal(StringUtils.join(authors, ", ")).withStyle(ChatFormatting.DARK_GRAY)),
                         offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
                 offsetY += 12;
             }
 
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_smith_table.date")
-                            .append(new TextComponent(packInfo.getDate()).withStyle(ChatFormatting.DARK_GRAY)),
+            font.draw(poseStack, Component.translatable("gui.tacz.gun_smith_table.date")
+                            .append(Component.literal(packInfo.getDate()).withStyle(ChatFormatting.DARK_GRAY)),
                     offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
 
             poseStack.popPose();
@@ -460,8 +458,8 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         posestack.scale(1.0F, -1.0F, 1.0F);
         posestack.scale(scale, scale, scale);
         float rot = (System.currentTimeMillis() % (int) (rotationPeriod * 1000)) * (360f / (rotationPeriod * 1000));
-        posestack.mulPose(Vector3f.XP.rotationDegrees(rotPitch));
-        posestack.mulPose(Vector3f.YP.rotationDegrees(rot));
+        posestack.mulPose(Axis.XP.rotationDegrees(rotPitch));
+        posestack.mulPose(Axis.YP.rotationDegrees(rot));
         RenderSystem.applyModelViewMatrix();
         PoseStack tmpPose = new PoseStack();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();

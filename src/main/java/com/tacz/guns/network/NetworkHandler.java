@@ -128,7 +128,7 @@ public class NetworkHandler {
     }
 
     public static void sendToNearby(Entity entity, Object toSend, int distance) {
-        if (entity.level instanceof ServerLevel ws) {
+        if (entity.level() instanceof ServerLevel ws) {
             BlockPos pos = entity.blockPosition();
             ws.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
                     .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < distance * distance)
@@ -137,7 +137,7 @@ public class NetworkHandler {
     }
 
     public static void sendToNearby(Entity entity, Object toSend) {
-        if (entity.level instanceof ServerLevel ws) {
+        if (entity.level() instanceof ServerLevel ws) {
             BlockPos pos = entity.blockPosition();
             ws.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
                     .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 192 * 192)

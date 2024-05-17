@@ -3,7 +3,7 @@ package com.tacz.guns.client.renderer.entity;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.InternalAssetLoader;
@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -52,10 +53,10 @@ public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
             stack.pushPose();
             stack.translate(0.5, 1.875, 0.5);
             stack.scale(1.5f, 1.5f, 1.5f);
-            stack.mulPose(Vector3f.ZN.rotationDegrees(180));
-            stack.mulPose(Vector3f.YN.rotationDegrees(90));
+            stack.mulPose(Axis.ZN.rotationDegrees(180));
+            stack.mulPose(Axis.YN.rotationDegrees(90));
             RenderType renderType = RenderType.entityTranslucent(InternalAssetLoader.TARGET_MINECART_TEXTURE_LOCATION);
-            model.render(stack, ItemTransforms.TransformType.NONE, renderType, pPackedLight, OverlayTexture.NO_OVERLAY);
+            model.render(stack, ItemDisplayContext.NONE, renderType, pPackedLight, OverlayTexture.NO_OVERLAY);
             if (targetMinecart.getGameProfile() != null) {
                 stack.translate(0, 1, -4.5 / 16d);
                 Minecraft minecraft = Minecraft.getInstance();
@@ -69,7 +70,7 @@ public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
                 }
                 headModel.visible = true;
                 RenderType skullRenderType = RenderType.entityTranslucentCull(skin);
-                headModel.render(stack, ItemTransforms.TransformType.NONE, buffer.getBuffer(skullRenderType), pPackedLight, OverlayTexture.NO_OVERLAY);
+                headModel.render(stack, ItemDisplayContext.NONE, buffer.getBuffer(skullRenderType), pPackedLight, OverlayTexture.NO_OVERLAY);
             }
             stack.popPose();
         });

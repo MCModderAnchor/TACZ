@@ -22,6 +22,6 @@ public class HitboxHelperEvent {
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        HitboxHelper.onPlayerLoggedOut(event.getPlayer());
+        HitboxHelper.onPlayerLoggedOut(event.getEntity());
     }
 }

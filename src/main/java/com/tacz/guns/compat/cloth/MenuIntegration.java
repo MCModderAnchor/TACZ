@@ -9,15 +9,14 @@ import com.tacz.guns.compat.cloth.common.OtherClothConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.ModLoadingContext;
 
 import javax.annotation.Nullable;
 
 public class MenuIntegration {
     public static ConfigBuilder getConfigBuilder() {
-        ConfigBuilder root = ConfigBuilder.create().setTitle(new TextComponent("Timeless and Classics Guns"));
+        ConfigBuilder root = ConfigBuilder.create().setTitle(Component.literal("Timeless and Classics Guns"));
         root.setGlobalized(true);
         root.setGlobalizedExpanded(false);
         ConfigEntryBuilder entryBuilder = root.entryBuilder();

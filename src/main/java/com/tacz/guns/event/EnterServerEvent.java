@@ -14,7 +14,7 @@ public final class EnterServerEvent {
      */
     @SubscribeEvent
     public static void onLoggedInServer(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getPlayer() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             CommonGunPackNetwork.syncClient(serverPlayer);
         }
     }

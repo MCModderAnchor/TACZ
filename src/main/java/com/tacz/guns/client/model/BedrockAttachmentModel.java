@@ -2,7 +2,7 @@ package com.tacz.guns.client.model;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Vector3f;
+
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
@@ -15,6 +15,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
@@ -82,7 +84,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     @Override
-    public void render(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
+    public void render(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
         if (transformType.firstPerson()) {
             if (isScope) {
                 renderScope(matrixStack, transformType, renderType, light, overlay);
@@ -100,7 +102,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         super.render(matrixStack, transformType, renderType, light, overlay);
     }
 
-    private void renderSight(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
+    private void renderSight(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
         RenderHelper.enableItemEntityStencilTest();
         if (ocularNodePath != null) {
             RenderSystem.colorMask(false, false, false, false);
@@ -139,12 +141,12 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         for (BedrockPart part : path) {
             part.translateAndRotateAndScale(poseStack);
         }
-        Vector3f result = new Vector3f(poseStack.last().pose().m03, poseStack.last().pose().m13, poseStack.last().pose().m23);
+        Vector3f result = new Vector3f(poseStack.last().pose().m03(), poseStack.last().pose().m13(), poseStack.last().pose().m23());
         poseStack.popPose();
         return result;
     }
 
-    private void renderTempPart(PoseStack poseStack, ItemTransforms.TransformType transformType, RenderType renderType,
+    private void renderTempPart(PoseStack poseStack, ItemDisplayContext transformType, RenderType renderType,
                                 int light, int overlay, @Nonnull List<BedrockPart> path) {
         poseStack.pushPose();
         for (int i = 0; i < path.size() - 1; ++i) {
@@ -162,7 +164,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         poseStack.popPose();
     }
 
-    private void renderScope(PoseStack matrixStack, ItemTransforms.TransformType transformType, RenderType renderType, int light, int overlay) {
+    private void renderScope(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
         RenderHelper.enableItemEntityStencilTest();
         // 清空模板缓冲区、准备绘制模板缓冲
         RenderSystem.clearStencil(0);
@@ -213,8 +215,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             float cos = Mth.cos(angle);
             builder.vertex(centerX + cos * rad, centerY + sin * rad, -90.0D).color(255, 255, 255, 255).endVertex();
         }
-        builder.end();
-        BufferUploader.end(builder);
+        BufferUploader.draw(builder.end());
         RenderSystem.depthMask(true);
         RenderSystem.colorMask(true, true, true, true);
         // 渲染目镜黑色遮罩

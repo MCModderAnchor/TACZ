@@ -1,8 +1,8 @@
 package com.tacz.guns.client.resource.serialize;
 
 import com.google.gson.*;
-import com.mojang.math.Vector3f;
 import net.minecraft.util.GsonHelper;
+import org.joml.Vector3f;
 
 import java.lang.reflect.Type;
 

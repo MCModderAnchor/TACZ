@@ -3,7 +3,6 @@ package com.tacz.guns.util;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -14,6 +13,7 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -39,8 +39,7 @@ public final class RenderHelper {
         bufferbuilder.vertex(matrix, x2, y2, blitOffset).uv(maxU, maxV).endVertex();
         bufferbuilder.vertex(matrix, x2, y1, blitOffset).uv(maxU, minV).endVertex();
         bufferbuilder.vertex(matrix, x1, y1, blitOffset).uv(minU, minV).endVertex();
-        bufferbuilder.end();
-        BufferUploader.end(bufferbuilder);
+        BufferUploader.draw(bufferbuilder.end());
     }
 
     public static void enableItemEntityStencilTest() {

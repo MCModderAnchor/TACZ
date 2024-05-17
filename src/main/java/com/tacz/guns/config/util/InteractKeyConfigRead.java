@@ -50,7 +50,7 @@ public class InteractKeyConfigRead {
     }
 
     public static boolean canInteractEntity(Entity entity) {
-        ResourceLocation entityId = ForgeRegistries.ENTITIES.getKey(entity.getType());
+        ResourceLocation entityId = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
         if (entityId == null) {
             return false;
         }
