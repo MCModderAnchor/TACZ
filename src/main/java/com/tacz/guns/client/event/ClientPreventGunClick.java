@@ -2,6 +2,7 @@ package com.tacz.guns.client.event;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.client.input.InteractKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
@@ -20,6 +21,10 @@ public class ClientPreventGunClick {
     public static void onClickInput(InputEvent.ClickInputEvent event) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
+            return;
+        }
+        // 当交互键按下时，允许交互
+        if (InteractKey.INTERACT_KEY.isDown()) {
             return;
         }
         // 只要主手有枪，那么禁止交互

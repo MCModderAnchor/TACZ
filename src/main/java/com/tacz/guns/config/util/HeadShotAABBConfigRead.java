@@ -1,7 +1,7 @@
 package com.tacz.guns.config.util;
 
 import com.google.common.collect.Maps;
-import com.tacz.guns.config.common.OtherConfig;
+import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 
@@ -18,7 +18,7 @@ public class HeadShotAABBConfigRead {
 
     public static void init() {
         AABB_CHECK.clear();
-        List<String> configData = OtherConfig.HEAD_SHOT_AABB.get();
+        List<String> configData = SyncConfig.HEAD_SHOT_AABB.get();
         for (String text : configData) {
             addCheck(text);
         }

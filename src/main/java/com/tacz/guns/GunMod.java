@@ -2,6 +2,7 @@ package com.tacz.guns;
 
 import com.tacz.guns.config.ClientConfig;
 import com.tacz.guns.config.CommonConfig;
+import com.tacz.guns.config.ServerConfig;
 import com.tacz.guns.init.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -18,6 +19,7 @@ public class GunMod {
 
     public GunMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.init());
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.init());
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.init());
 
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

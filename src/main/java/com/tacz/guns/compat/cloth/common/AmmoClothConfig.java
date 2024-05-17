@@ -2,6 +2,7 @@ package com.tacz.guns.compat.cloth.common;
 
 import com.google.common.collect.Lists;
 import com.tacz.guns.config.common.AmmoConfig;
+import com.tacz.guns.config.sync.SyncConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -31,17 +32,17 @@ public class AmmoClothConfig {
                 .setDefaultValue(Lists.newArrayList()).setTooltip(new TranslatableComponent("config.tacz.common.ammo.pass_through_blocks.desc"))
                 .setSaveConsumer(AmmoConfig.PASS_THROUGH_BLOCKS::set).build());
 
-        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tacz.common.ammo.damage_base_multiplier"), AmmoConfig.DAMAGE_BASE_MULTIPLIER.get())
+        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tacz.common.ammo.damage_base_multiplier"), SyncConfig.DAMAGE_BASE_MULTIPLIER.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tacz.common.ammo.damage_base_multiplier.desc"))
-                .setSaveConsumer(AmmoConfig.DAMAGE_BASE_MULTIPLIER::set).build());
+                .setSaveConsumer(SyncConfig.DAMAGE_BASE_MULTIPLIER::set).build());
 
-        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tacz.common.ammo.armor_ignore_base_multiplier"), AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get())
+        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tacz.common.ammo.armor_ignore_base_multiplier"), SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tacz.common.ammo.armor_ignore_base_multiplier.desc"))
-                .setSaveConsumer(AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER::set).build());
+                .setSaveConsumer(SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER::set).build());
 
-        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tacz.common.ammo.head_shot_base_multiplier"), AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get())
+        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tacz.common.ammo.head_shot_base_multiplier"), SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tacz.common.ammo.head_shot_base_multiplier.desc"))
-                .setSaveConsumer(AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER::set).build());
+                .setSaveConsumer(SyncConfig.HEAD_SHOT_BASE_MULTIPLIER::set).build());
 
         ammo.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.common.ammo.destroy_glass"), AmmoConfig.DESTROY_GLASS.get())
                 .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.common.ammo.destroy_glass.desc"))
@@ -50,5 +51,9 @@ public class AmmoClothConfig {
         ammo.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.common.ammo.ignite_block"), AmmoConfig.IGNITE_BLOCK.get())
                 .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.common.ammo.ignite_block.desc"))
                 .setSaveConsumer(AmmoConfig.IGNITE_BLOCK::set).build());
+
+        ammo.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.common.ammo.ignite_entity"), AmmoConfig.IGNITE_ENTITY.get())
+                .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.common.ammo.ignite_entity.desc"))
+                .setSaveConsumer(AmmoConfig.IGNITE_ENTITY::set).build());
     }
 }

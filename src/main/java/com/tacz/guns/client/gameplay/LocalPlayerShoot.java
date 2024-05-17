@@ -40,6 +40,11 @@ public class LocalPlayerShoot {
     }
 
     public ShootResult shoot() {
+        // 按钮冷却时间未到，防止点击按钮后误触开火
+        // 默认设置为 50 ms
+        if (System.currentTimeMillis() - LocalPlayerDataHolder.clientClickButtonTimestamp < 50) {
+            return ShootResult.COOL_DOWN;
+        }
         // 如果上一次异步开火的效果还未执行，则直接返回，等待异步开火效果执行
         if (!data.isShootRecorded) {
             return ShootResult.COOL_DOWN;

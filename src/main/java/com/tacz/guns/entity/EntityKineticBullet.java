@@ -9,6 +9,7 @@ import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
 import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.config.common.OtherConfig;
+import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageGunHurt;
@@ -79,8 +80,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private float knockback = 0;
     private boolean hasExplosion = false;
     private boolean hasIgnite = false;
+    private int igniteEntityTime = 2;
     private float explosionDamage = 3;
     private float explosionRadius = 3;
+    private boolean explosionKnockback = false;
     private ExtraDamage extraDamage = null;
     private float damageModifier = 1;
     // 穿透数
@@ -114,7 +117,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.gravity = Mth.clamp(data.getGravity(), 0, Float.MAX_VALUE);
         this.friction = Mth.clamp(data.getFriction(), 0, Float.MAX_VALUE);
         this.hasIgnite = data.isHasIgnite();
-        this.damageAmount = (float) Mth.clamp(data.getDamageAmount() * AmmoConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
+        this.igniteEntityTime = Math.max(data.getIgniteEntityTime(), 0);
+        this.damageAmount = (float) Mth.clamp(data.getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
         // 霰弹情况，每个伤害要扣去
         if (data.getBulletAmount() > 1) {
             this.damageModifier = 1f / data.getBulletAmount();
@@ -126,6 +130,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             this.hasExplosion = true;
             this.explosionDamage = Mth.clamp(data.getExplosionData().getDamage(), 0, Float.MAX_VALUE);
             this.explosionRadius = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
+            this.explosionKnockback = data.getExplosionData().isKnockback();
         }
         // 子弹初始位置重置
         double posX = throwerIn.xOld + (throwerIn.getX() - throwerIn.xOld) / 2.0;
@@ -137,7 +142,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.gunId = gunId;
     }
 
-    public static void createExplosion(Entity exploder, float damage, float radius, Vec3 hitPos) {
+    public static void createExplosion(Entity exploder, float damage, float radius, boolean knockback, Vec3 hitPos) {
         // 客户端不执行
         if (!(exploder.level instanceof ServerLevel level)) {
             return;
@@ -148,7 +153,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             mode = Explosion.BlockInteraction.BREAK;
         }
         // 创建爆炸
-        ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null, hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, mode);
+        ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null, hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, knockback, mode);
         // 监听 forge 事件
         if (ForgeEventFactory.onExplosionStart(level, explosion)) {
             return;
@@ -394,8 +399,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         Entity entity = result.getEntity();
         // 点燃
-        if (this.hasIgnite && AmmoConfig.IGNITE_BLOCK.get()) {
-            entity.setSecondsOnFire(2);
+        if (this.hasIgnite && AmmoConfig.IGNITE_ENTITY.get()) {
+            entity.setSecondsOnFire(this.igniteEntityTime);
         }
         // 获取伤害
         float damage = this.getDamage(result.getLocation());
@@ -405,7 +410,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             // 默认爆头伤害是 1x
             float headShotMultiplier = 1f;
             if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
-                headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * AmmoConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+                headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
             }
             damage *= headShotMultiplier;
         }
@@ -427,7 +432,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         if (this.hasExplosion) {
             // 取消无敌时间
             entity.invulnerableTime = 0;
-            createExplosion(this, this.explosionDamage, this.explosionRadius, result.getLocation());
+            createExplosion(this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, result.getLocation());
         }
         LivingEntity livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
         if (entity instanceof PartEntity<?> partEntity) {
@@ -462,7 +467,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         MinecraftForge.EVENT_BUS.post(new AmmoHitBlockEvent(level, result, this.level.getBlockState(pos), this));
         // 爆炸
         if (this.hasExplosion) {
-            createExplosion(this, this.explosionDamage, this.explosionRadius, hitVec);
+            createExplosion(this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, hitVec);
             // 爆炸直接结束不留弹孔，不处理之后的逻辑
             this.discard();
             return;
@@ -512,7 +517,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private void tacAttackEntity(DamageSource source, Entity entity, float damage) {
         float armorIgnore = 0;
         if (this.extraDamage != null && this.extraDamage.getArmorIgnore() > 0) {
-            armorIgnore = (float) (this.extraDamage.getArmorIgnore() * AmmoConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
+            armorIgnore = (float) (this.extraDamage.getArmorIgnore() * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
         }
         // 给末影人造成伤害
         if (entity instanceof EnderMan) {
