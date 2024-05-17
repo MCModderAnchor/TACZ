@@ -400,7 +400,7 @@ public class FirstPersonRenderGunEvent {
             rootNode.offsetX += SHOOT_X_SWAY_NOISE.getValue() / 16 * progress * (1 - aimingProgress);
             // 基岩版模型 y 轴上下颠倒，sway 值取相反数
             rootNode.offsetY += -SHOOT_Y_SWAY / 16 * progress * (1 - aimingProgress);
-            rootNode.additionalQuaternion.mul(new Quaternionf(new AxisAngle4f(SHOOT_Y_ROTATION_NOISE.getValue() * progress, 0, 1, 0)));
+            rootNode.additionalQuaternion.mul(Axis.YP.rotation(SHOOT_Y_ROTATION_NOISE.getValue() * progress));
         }
     }
 
