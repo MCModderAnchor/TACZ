@@ -2,8 +2,6 @@ package com.tacz.guns.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.event.RenderItemInHandBobEvent;
@@ -36,13 +34,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -51,7 +48,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -59,7 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static net.minecraft.client.renderer.block.model.ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
+import static net.minecraft.world.item.ItemDisplayContext.*;
 
 /**
  * 负责第一人称的枪械模型渲染。其他人称参见 {@link GunItemRenderer}
@@ -101,11 +100,11 @@ public class FirstPersonRenderGunEvent {
         }
 
         // 获取 TransformType
-        TransformType transformType;
+        ItemDisplayContext transformType;
         if (event.getHand() == InteractionHand.MAIN_HAND) {
             transformType = FIRST_PERSON_RIGHT_HAND;
         } else {
-            transformType = TransformType.FIRST_PERSON_LEFT_HAND;
+            transformType = FIRST_PERSON_LEFT_HAND;
         }
 
         ResourceLocation gunId = iGun.getGunId(stack);
@@ -207,7 +206,7 @@ public class FirstPersonRenderGunEvent {
                     Matrix4f pose = poseStack.last().pose();
                     originCameraPosition = new Vec3(cameraPosition.x, cameraPosition.y, cameraPosition.z);
                     entityBullet.setOriginCameraPosition(originCameraPosition);
-                    entityBullet.setOriginRenderOffset(new Vec3(pose.m03(), pose.m13(), pose.m23()));
+                    entityBullet.setOriginRenderOffset(new Vec3(pose.m30(), pose.m31(), pose.m32()));
                     poseStack.popPose();
                 } else {
                     continue;
@@ -243,7 +242,7 @@ public class FirstPersonRenderGunEvent {
             TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(index -> {
                 float[] tracerColor = index.getTracerColor();
                 RenderType type = RenderType.energySwirl(InternalAssetLoader.DEFAULT_BULLET_TEXTURE, 15, 15);
-                model.render(poseStack1, ItemTransforms.TransformType.NONE, type, LightTexture.pack(15, 15),
+                model.render(poseStack1, ItemDisplayContext.NONE, type, LightTexture.pack(15, 15),
                         OverlayTexture.NO_OVERLAY, tracerColor[0], tracerColor[1], tracerColor[2], 1);
             });
         }
@@ -323,7 +322,7 @@ public class FirstPersonRenderGunEvent {
             return;
         }
         Matrix4f transformMatrix = new Matrix4f();
-        transformMatrix.setIdentity();
+        transformMatrix.identity();
         // 应用瞄准定位
         List<BedrockPart> idleNodePath = model.getIdleSightPath();
         List<BedrockPart> aimingNodePath = null;
@@ -371,19 +370,19 @@ public class FirstPersonRenderGunEvent {
     @Nonnull
     private static Matrix4f getPositioningNodeInverse(List<BedrockPart> nodePath) {
         Matrix4f matrix4f = new Matrix4f();
-        matrix4f.setIdentity();
+        matrix4f.identity();
         if (nodePath != null) {
             for (int i = nodePath.size() - 1; i >= 0; i--) {
                 BedrockPart part = nodePath.get(i);
                 // 计算反向的旋转
-                matrix4f.multiply(Axis.XN.rotation(part.xRot));
-                matrix4f.multiply(Axis.YN.rotation(part.yRot));
-                matrix4f.multiply(Axis.ZN.rotation(part.zRot));
+                matrix4f.rotate(Axis.XN.rotation(part.xRot));
+                matrix4f.rotate(Axis.YN.rotation(part.yRot));
+                matrix4f.rotate(Axis.ZN.rotation(part.zRot));
                 // 计算反向的位移
                 if (part.getParent() != null) {
-                    matrix4f.multiplyWithTranslation(-part.x / 16.0F, -part.y / 16.0F, -part.z / 16.0F);
+                    matrix4f.translate(-part.x / 16.0F, -part.y / 16.0F, -part.z / 16.0F);
                 } else {
-                    matrix4f.multiplyWithTranslation(-part.x / 16.0F, (1.5F - part.y / 16.0F), -part.z / 16.0F);
+                    matrix4f.translate(-part.x / 16.0F, (1.5F - part.y / 16.0F), -part.z / 16.0F);
                 }
             }
         }
@@ -401,7 +400,7 @@ public class FirstPersonRenderGunEvent {
             rootNode.offsetX += SHOOT_X_SWAY_NOISE.getValue() / 16 * progress * (1 - aimingProgress);
             // 基岩版模型 y 轴上下颠倒，sway 值取相反数
             rootNode.offsetY += -SHOOT_Y_SWAY / 16 * progress * (1 - aimingProgress);
-            rootNode.additionalQuaternion.mul(Vector3f.YP.rotation(SHOOT_Y_ROTATION_NOISE.getValue() * progress));
+            rootNode.additionalQuaternion.mul(new Quaternionf(new AxisAngle4f(SHOOT_Y_ROTATION_NOISE.getValue() * progress, 0, 1, 0)));
         }
     }
 
@@ -466,44 +465,44 @@ public class FirstPersonRenderGunEvent {
         Matrix4f animeMatrix = new Matrix4f();
         // 约束点初始变换矩阵
         Matrix4f originMatrix = new Matrix4f();
-        animeMatrix.setIdentity();
-        originMatrix.setIdentity();
+        animeMatrix.identity();
+        originMatrix.identity();
         BedrockPart constrainNode = nodePath.get(nodePath.size() - 1);
         for (BedrockPart part : nodePath) {
             // 乘动画位移
             if (part != constrainNode) {
-                animeMatrix.multiplyWithTranslation(part.offsetX, part.offsetY, part.offsetZ);
+                animeMatrix.translate(part.offsetX, part.offsetY, part.offsetZ);
             }
             // 乘组位移
             if (part.getParent() != null) {
-                animeMatrix.multiplyWithTranslation(part.x / 16.0F, part.y / 16.0F, part.z / 16.0F);
+                animeMatrix.translate(part.x / 16.0F, part.y / 16.0F, part.z / 16.0F);
             } else {
-                animeMatrix.multiplyWithTranslation(part.x / 16.0F, (part.y / 16.0F - 1.5F), part.z / 16.0F);
+                animeMatrix.translate(part.x / 16.0F, (part.y / 16.0F - 1.5F), part.z / 16.0F);
             }
             // 乘动画旋转
             if (part != constrainNode) {
-                animeMatrix.multiply(part.additionalQuaternion);
+                animeMatrix.rotate(part.additionalQuaternion);
             }
             // 乘组旋转
-            animeMatrix.multiply(Axis.ZP.rotation(part.zRot));
-            animeMatrix.multiply(Axis.YP.rotation(part.yRot));
-            animeMatrix.multiply(Axis.XP.rotation(part.xRot));
+            animeMatrix.rotate(Axis.ZP.rotation(part.zRot));
+            animeMatrix.rotate(Axis.YP.rotation(part.yRot));
+            animeMatrix.rotate(Axis.XP.rotation(part.xRot));
 
             // 乘组位移
             if (part.getParent() != null) {
-                originMatrix.multiplyWithTranslation(part.x / 16.0F, part.y / 16.0F, part.z / 16.0F);
+                originMatrix.translate(part.x / 16.0F, part.y / 16.0F, part.z / 16.0F);
             } else {
-                originMatrix.multiplyWithTranslation(part.x / 16.0F, (part.y / 16.0F - 1.5F), part.z / 16.0F);
+                originMatrix.translate(part.x / 16.0F, (part.y / 16.0F - 1.5F), part.z / 16.0F);
             }
             // 乘组旋转
-            originMatrix.multiply(Axis.ZP.rotation(part.zRot));
-            originMatrix.multiply(Axis.YP.rotation(part.yRot));
-            originMatrix.multiply(Axis.XP.rotation(part.xRot));
+            originMatrix.rotate(Axis.ZP.rotation(part.zRot));
+            originMatrix.rotate(Axis.YP.rotation(part.yRot));
+            originMatrix.rotate(Axis.XP.rotation(part.xRot));
 
         }
         // 把变换数据写入输出
-        animatedTranslation.set(animeMatrix.m03(), animeMatrix.m13(), animeMatrix.m23());
-        originTranslation.set(originMatrix.m03(), originMatrix.m13(), originMatrix.m23());
+        animatedTranslation.set(animeMatrix.m30(), animeMatrix.m31(), animeMatrix.m32());
+        originTranslation.set(originMatrix.m30(), originMatrix.m31(), originMatrix.m32());
         Vector3f animatedRotation = MathUtil.getEulerAngles(animeMatrix);
         Vector3f originRotation = MathUtil.getEulerAngles(originMatrix);
         animatedRotation.sub(originRotation);
@@ -544,6 +543,9 @@ public class FirstPersonRenderGunEvent {
         poseStack.mulPose(Axis.ZP.rotation(inverseRotation.z() * weight));
         poseStack.translate(-animatedTranslation.x(), -animatedTranslation.y() - 1.5f, -animatedTranslation.z());
         // 约束位移
-        poseStack.last().pose().translate(new Vector3f(-inverseTranslation.x() * weight, -inverseTranslation.y() * weight, inverseTranslation.z() * weight));
+        Matrix4f poseMatrix = poseStack.last().pose();
+        poseMatrix.m30(poseMatrix.m30() - inverseTranslation.x() * weight);
+        poseMatrix.m31(poseMatrix.m31() - inverseTranslation.y() * weight);
+        poseMatrix.m32(poseMatrix.m32() - inverseTranslation.z() * weight);
     }
 }

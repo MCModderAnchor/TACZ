@@ -5,8 +5,8 @@ import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractGlassBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -18,7 +18,7 @@ public class DestroyGlassBlock {
         BlockState state = event.getState();
         BlockPos pos = event.getHitResult().getBlockPos();
         EntityKineticBullet ammo = event.getAmmo();
-        if (AmmoConfig.DESTROY_GLASS.get() && state.getMaterial() == Material.GLASS) {
+        if (AmmoConfig.DESTROY_GLASS.get() && state.getBlock() instanceof AbstractGlassBlock) {
             level.destroyBlock(pos, false, ammo.getOwner());
         }
     }

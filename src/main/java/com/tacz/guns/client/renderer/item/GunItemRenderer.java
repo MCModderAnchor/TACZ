@@ -124,7 +124,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             return false;
         }
         Matrix4f matrix4f = poseStack.last().pose();
-        float viewDistance = matrix4f.m03() * matrix4f.m03() + matrix4f.m13() * matrix4f.m13() + matrix4f.m23() * matrix4f.m23();
+        float viewDistance = matrix4f.m30() * matrix4f.m30() + matrix4f.m31() * matrix4f.m31() + matrix4f.m32() * matrix4f.m32();
         return viewDistance < distance * distance;
     }
 

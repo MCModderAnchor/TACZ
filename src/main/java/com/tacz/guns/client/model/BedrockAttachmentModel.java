@@ -141,7 +141,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         for (BedrockPart part : path) {
             part.translateAndRotateAndScale(poseStack);
         }
-        Vector3f result = new Vector3f(poseStack.last().pose().m03(), poseStack.last().pose().m13(), poseStack.last().pose().m23());
+        Vector3f result = new Vector3f(poseStack.last().pose().m30(), poseStack.last().pose().m31(), poseStack.last().pose().m32());
         poseStack.popPose();
         return result;
     }

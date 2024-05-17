@@ -12,7 +12,6 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -76,7 +75,7 @@ public final class SyncedEntityDataEvent {
             return;
         }
         original.invalidateCaps();
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         DataHolder newHolder = SyncedEntityData.instance().getDataHolder(player);
         if (newHolder == null) {
             return;

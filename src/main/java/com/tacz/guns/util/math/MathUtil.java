@@ -298,19 +298,9 @@ public class MathUtil {
     }
 
     public static Vector3f getEulerAngles(Matrix4f matrix) {
-        double sy = Math.sqrt(matrix.m00() * matrix.m00() + matrix.m10() * matrix.m10());
-        boolean singular = sy < 1e-6;
-        double x, y, z;
-        if (!singular) {
-            x = Math.atan2(matrix.m21(), matrix.m22());
-            y = Math.atan2(-matrix.m20(), sy);
-            z = Math.atan2(matrix.m10(), matrix.m00());
-        } else {
-            x = Math.atan2(-matrix.m12(), matrix.m11());
-            y = Math.atan2(-matrix.m20(), sy);
-            z = 0;
-        }
-        return new Vector3f((float) x, (float) y, (float) z);
+        Vector3f dest = new Vector3f();
+        matrix.getEulerAnglesXYZ(dest);
+        return dest;
     }
 
     public static float[] solveEquations(float[][] coefficients, float[] constants) {
@@ -383,7 +373,7 @@ public class MathUtil {
      */
     public static void applyMatrixLerp(Matrix4f fromMatrix, Matrix4f toMatrix, Matrix4f resultMatrix, float alpha) {
         // 计算位移的插值
-        Vector3f translation = new Vector3f(toMatrix.m03() - fromMatrix.m03(), toMatrix.m13() - fromMatrix.m13(), toMatrix.m23() - fromMatrix.m23());
+        Vector3f translation = new Vector3f(toMatrix.m30() - fromMatrix.m30(), toMatrix.m31() - fromMatrix.m31(), toMatrix.m32() - fromMatrix.m32());
         translation.mul(alpha);
         // 计算旋转的插值
         Vector3f fromRotation = MathUtil.getEulerAngles(fromMatrix);
@@ -393,7 +383,9 @@ public class MathUtil {
         float[] qRelative = getRelativeQuaternion(qFrom, qTo);
         Quaternionf qLerped = MathUtil.toQuaternion(MathUtil.slerp(QUATERNION_ONE, qRelative, alpha));
         // 应用位移和旋转
-        resultMatrix.translate(new Vector3f(translation.x(), translation.y(), translation.z()));
+        resultMatrix.m30(resultMatrix.m30() + translation.x);
+        resultMatrix.m31(resultMatrix.m31() + translation.y);
+        resultMatrix.m32(resultMatrix.m32() + translation.z);
         resultMatrix.rotate(qLerped);
     }
 

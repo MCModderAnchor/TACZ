@@ -76,7 +76,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
             // 推送到指定位置
             PoseStack poseStack2 = new PoseStack();
             poseStack2.last().normal().mul(muzzleFlashNormal);
-            poseStack2.last().pose().multiply(muzzleFlashPose);
+            poseStack2.last().pose().mul(muzzleFlashPose);
 
             // 先渲染一遍半透明背景
             poseStack2.pushPose();
