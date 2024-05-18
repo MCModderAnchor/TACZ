@@ -501,8 +501,8 @@ public class FirstPersonRenderGunEvent {
 
         }
         // 把变换数据写入输出
-        animatedTranslation.set(animeMatrix.m30(), animeMatrix.m31(), animeMatrix.m32());
-        originTranslation.set(originMatrix.m30(), originMatrix.m31(), originMatrix.m32());
+        animeMatrix.getTranslation(animatedTranslation);
+        originMatrix.getTranslation(originTranslation);
         Vector3f animatedRotation = MathUtil.getEulerAngles(animeMatrix);
         Vector3f originRotation = MathUtil.getEulerAngles(originMatrix);
         animatedRotation.sub(originRotation);
@@ -546,6 +546,6 @@ public class FirstPersonRenderGunEvent {
         Matrix4f poseMatrix = poseStack.last().pose();
         poseMatrix.m30(poseMatrix.m30() - inverseTranslation.x() * weight);
         poseMatrix.m31(poseMatrix.m31() - inverseTranslation.y() * weight);
-        poseMatrix.m32(poseMatrix.m32() - inverseTranslation.z() * weight);
+        poseMatrix.m32(poseMatrix.m32() + inverseTranslation.z() * weight);
     }
 }

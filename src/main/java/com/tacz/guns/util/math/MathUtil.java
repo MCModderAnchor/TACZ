@@ -299,7 +299,7 @@ public class MathUtil {
 
     public static Vector3f getEulerAngles(Matrix4f matrix) {
         Vector3f dest = new Vector3f();
-        matrix.getEulerAnglesXYZ(dest);
+        matrix.getEulerAnglesZYX(dest);
         return dest;
     }
 
