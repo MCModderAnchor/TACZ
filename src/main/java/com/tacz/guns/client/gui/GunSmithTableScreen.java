@@ -36,9 +36,7 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.Component;
@@ -90,7 +88,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
     public static void drawModCenteredString(GuiGraphics gui, Font font, Component component, int pX, int pY, int color) {
         FormattedCharSequence text = component.getVisualOrderText();
-        gui.drawString(font, text, pX - font.width(text) / 2, pY, color);
+        gui.drawString(font, text, pX - font.width(text) / 2, pY, color, false);
     }
 
     private void classifyRecipes() {
@@ -315,8 +313,8 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         super.render(gui, mouseX, mouseY, partialTick);
         drawModCenteredString(gui, font, Component.translatable("gui.tacz.gun_smith_table.preview"), leftPos + 108, topPos + 5, 0x555555);
-        gui.drawString(font, Component.translatable(String.format("tacz.type.%s.name", selectedType)), leftPos + 150, topPos + 32, 0x555555);
-        gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.ingredient"), leftPos + 254, topPos + 50, 0x555555);
+        gui.drawString(font, Component.translatable(String.format("tacz.type.%s.name", selectedType)), leftPos + 150, topPos + 32, 0x555555, false);
+        gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.ingredient"), leftPos + 254, topPos + 50, 0x555555, false);
         drawModCenteredString(gui, font, Component.translatable("gui.tacz.gun_smith_table.craft"), leftPos + 312, topPos + 167, 0xFFFFFF);
         if (this.selectedRecipe != null) {
             this.renderLeftModel(this.selectedRecipe);
@@ -325,7 +323,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         if (selectedRecipeList != null && !selectedRecipeList.isEmpty()) {
             renderIngredient(gui);
         }
-        // todo 检查行为
+
         this.renderables.stream().filter(w -> w instanceof ResultButton)
                 .forEach(w -> ((ResultButton) w).renderTooltips(stack -> this.renderTooltip(gui, mouseX, mouseY)));
     }
@@ -350,7 +348,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             poseStack.pushPose();
             poseStack.scale(0.75f, 0.75f, 1);
             Component nameText = Component.translatable(packInfo.getName());
-            gui.drawString(font, nameText, (int) ((leftPos + 6) / 0.75f), (int) ((topPos + 122) / 0.75f), ChatFormatting.DARK_GRAY.getColor());
+            gui.drawString(font, nameText, (int) ((leftPos + 6) / 0.75f), (int) ((topPos + 122) / 0.75f), ChatFormatting.DARK_GRAY.getColor(), false);
             poseStack.popPose();
 
             poseStack.pushPose();
@@ -359,8 +357,8 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             int offsetX = (leftPos + 6) * 2;
             int offsetY = (topPos + 123) * 2;
             int nameWidth = font.width(nameText);
-            gui.drawString(font, Component.literal("v" + packInfo.getVersion()).withStyle(ChatFormatting.UNDERLINE),
-                    (int) (offsetX + nameWidth * 0.75f / 0.5f + 5), offsetY, ChatFormatting.DARK_GRAY.getColor());
+            Component ver = Component.literal("v" + packInfo.getVersion()).withStyle(ChatFormatting.UNDERLINE);
+            gui.drawString(font, ver, (int) (offsetX + nameWidth * 0.75f / 0.5f + 5), offsetY, ChatFormatting.DARK_GRAY.getColor(), false);
             offsetY += 14;
 
             String descKey = packInfo.getDescription();
@@ -368,7 +366,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 Component desc = Component.translatable(descKey);
                 List<FormattedCharSequence> split = font.split(desc, 245);
                 for (FormattedCharSequence charSequence : split) {
-                    gui.drawString(font, charSequence, offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
+                    gui.drawString(font, charSequence, offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor(), false);
                     offsetY += font.lineHeight;
                 }
                 offsetY += 3;
@@ -376,20 +374,20 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
             gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.license")
                             .append(Component.literal(packInfo.getLicense()).withStyle(ChatFormatting.DARK_GRAY)),
-                    offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
+                    offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor(), false);
             offsetY += 12;
 
             List<String> authors = packInfo.getAuthors();
             if (!authors.isEmpty()) {
                 gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.authors")
                                 .append(Component.literal(StringUtils.join(authors, ", ")).withStyle(ChatFormatting.DARK_GRAY)),
-                        offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
+                        offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor(), false);
                 offsetY += 12;
             }
 
             gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.date")
                             .append(Component.literal(packInfo.getDate()).withStyle(ChatFormatting.DARK_GRAY)),
-                    offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
+                    offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor(), false);
 
             poseStack.popPose();
         }
@@ -415,22 +413,22 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 ItemStack[] items = ingredient.getItems();
                 int itemIndex = ((int) (System.currentTimeMillis() / 1_000)) % items.length;
                 ItemStack item = items[itemIndex];
-                // todo 检查行为
+
                 gui.renderFakeItem(item, offsetX, offsetY);
 
                 PoseStack poseStack = gui.pose();
-
                 poseStack.pushPose();
+
                 poseStack.translate(0, 0, 200);
                 poseStack.scale(0.5f, 0.5f, 1);
-
                 int count = smithTableIngredient.getCount();
                 int hasCount = 0;
                 if (playerIngredientCount != null && index < playerIngredientCount.size()) {
                     hasCount = playerIngredientCount.get(index);
                 }
                 int color = count <= hasCount ? 0xFFFFFF : 0xFF0000;
-                gui.drawString(font, String.format("%d/%d", count, hasCount), (offsetX + 17) * 2, (offsetY + 10) * 2, color);
+                gui.drawString(font, String.format("%d/%d", count, hasCount), (offsetX + 17) * 2, (offsetY + 10) * 2, color, false);
+
                 poseStack.popPose();
             }
         }
@@ -462,7 +460,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         PoseStack posestack = RenderSystem.getModelViewStack();
         posestack.pushPose();
-        posestack.translate(xPos, yPos, -50);
+        posestack.translate(xPos, yPos, 200);
         posestack.translate(8.0D, 8.0D, 0.0D);
         posestack.scale(1.0F, -1.0F, 1.0F);
         posestack.scale(scale, scale, scale);

@@ -1,6 +1,5 @@
 package com.tacz.guns.client.gui.overlay;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.input.InteractKey;
 import com.tacz.guns.config.client.RenderConfig;

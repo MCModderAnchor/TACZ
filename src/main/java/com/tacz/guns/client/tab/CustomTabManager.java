@@ -2,7 +2,6 @@ package com.tacz.guns.client.tab;
 
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

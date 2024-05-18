@@ -15,8 +15,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector3f;
 
-import java.util.Random;
-
 @OnlyIn(Dist.CLIENT)
 public class AmmoParticleSpawner {
     public static void addParticle(Level level, EntityKineticBullet bullet) {

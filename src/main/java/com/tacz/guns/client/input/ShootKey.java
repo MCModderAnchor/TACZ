@@ -6,7 +6,6 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.sound.SoundPlayManager;
-import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

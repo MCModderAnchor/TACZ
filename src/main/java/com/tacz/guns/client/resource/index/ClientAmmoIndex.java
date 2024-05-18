@@ -9,11 +9,11 @@ import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.display.ammo.*;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
-import com.tacz.guns.init.ModParticles;
 import com.tacz.guns.resource.pojo.AmmoIndexPOJO;
 import com.tacz.guns.util.ColorHex;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.commands.arguments.ParticleArgument;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -142,19 +142,18 @@ public class ClientAmmoIndex {
 
     private static void checkParticle(AmmoDisplay display, ClientAmmoIndex index) {
         if (display.getParticle() != null) {
-            //todo 没搞懂
-//            try {
-//                AmmoParticle particle = display.getParticle();
-//                String name = particle.getName();
-//                if (StringUtils.isNoneBlank()) {
-//                    particle.setParticleOptions(ParticleArgument.readParticle(new StringReader(name)));
-//                    Preconditions.checkArgument(particle.getCount() > 0, "particle count must be greater than 0");
-//                    Preconditions.checkArgument(particle.getLifeTime() > 0, "particle life time must be greater than 0");
-//                    index.particle = particle;
-//                }
-//            } catch (CommandSyntaxException e) {
-//                e.fillInStackTrace();
-//            }
+            try {
+                AmmoParticle particle = display.getParticle();
+                String name = particle.getName();
+                if (StringUtils.isNoneBlank()) {
+                    particle.setParticleOptions(ParticleArgument.readParticle(new StringReader(name), BuiltInRegistries.PARTICLE_TYPE.asLookup()));
+                    Preconditions.checkArgument(particle.getCount() > 0, "particle count must be greater than 0");
+                    Preconditions.checkArgument(particle.getLifeTime() > 0, "particle life time must be greater than 0");
+                    index.particle = particle;
+                }
+            } catch (CommandSyntaxException e) {
+                e.fillInStackTrace();
+            }
         }
     }
 

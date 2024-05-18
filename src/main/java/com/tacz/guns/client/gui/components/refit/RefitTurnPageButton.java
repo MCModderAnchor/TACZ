@@ -1,11 +1,9 @@
 package com.tacz.guns.client.gui.components.refit;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;

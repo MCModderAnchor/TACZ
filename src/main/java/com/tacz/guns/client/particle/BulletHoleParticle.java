@@ -3,11 +3,11 @@ package com.tacz.guns.client.particle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.init.ModBlocks;
+import com.tacz.guns.particles.BulletHoleOption;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -19,6 +19,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -161,5 +164,15 @@ public class BulletHoleParticle extends TextureSheetParticle {
     @Override
     public ParticleRenderType getRenderType() {
         return ParticleRenderType.TERRAIN_SHEET;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static class Provider implements ParticleProvider<BulletHoleOption> {
+        public Provider() {}
+
+        public BulletHoleParticle createParticle(@NotNull BulletHoleOption option, @NotNull ClientLevel world, double x, double y, double z, double pXSpeed, double pYSpeed, double pZSpeed) {
+            BulletHoleParticle particle = new BulletHoleParticle(world, x, y, z, option.getDirection(), option.getPos());
+            return particle;
+        }
     }
 }

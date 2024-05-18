@@ -1,7 +1,5 @@
 package com.tacz.guns.compat.cloth.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.client.renderer.crosshair.CrosshairType;
 import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
 import net.minecraft.client.Minecraft;

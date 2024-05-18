@@ -1,7 +1,6 @@
 package com.tacz.guns.item;
 
 import com.tacz.guns.entity.TargetMinecart;
-import com.tacz.guns.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;

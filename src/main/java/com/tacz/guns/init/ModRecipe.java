@@ -3,7 +3,6 @@ package com.tacz.guns.init;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.crafting.GunSmithTableSerializer;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -24,17 +23,18 @@ public class ModRecipe {
     @SubscribeEvent
     public static void register(RegisterEvent event) {
         // todo 需要检查实现
-//        if(event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_TYPES)) {
-//            GUN_SMITH_TABLE_CRAFTING = register(GunMod.MOD_ID + ":gun_smith_table_crafting");
-//        }
+        if(event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_TYPES)) {
+            GUN_SMITH_TABLE_CRAFTING = register(event, GunMod.MOD_ID + ":gun_smith_table_crafting");
+        }
     }
 
-//    private static <T extends Recipe<?>> RecipeType<T> register(final String key) {
-//        return Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(key), new RecipeType<T>() {
-//            @Override
-//            public String toString() {
-//                return key;
-//            }
-//        });
-//    }
+    private static <T extends Recipe<?>> RecipeType<T> register(RegisterEvent event, final String key) {
+        event.register(ForgeRegistries.Keys.RECIPE_TYPES, new ResourceLocation(key), () -> new RecipeType<T>(){
+            @Override
+            public String toString() {
+                return key;
+            }
+        });
+        return (RecipeType<T>) ForgeRegistries.RECIPE_TYPES.getValue(new ResourceLocation(key));
+    }
 }

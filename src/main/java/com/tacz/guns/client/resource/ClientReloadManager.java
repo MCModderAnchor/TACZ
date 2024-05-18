@@ -1,7 +1,6 @@
 package com.tacz.guns.client.resource;
 
 import com.tacz.guns.client.download.ClientGunPackDownloadManager;
-import com.tacz.guns.client.tab.CustomTabManager;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.network.message.ServerMessageSyncGunPack;
 import com.tacz.guns.resource.CommonGunPackLoader;
@@ -9,7 +8,6 @@ import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.network.DataType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.io.File;
 import java.util.EnumMap;

@@ -6,7 +6,6 @@ import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientReloadManager;
 import com.tacz.guns.resource.DedicatedServerReloadManager;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;

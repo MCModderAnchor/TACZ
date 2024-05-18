@@ -5,7 +5,6 @@ import com.tacz.guns.client.gui.compat.ClothConfigScreen;
 import com.tacz.guns.compat.cloth.MenuIntegration;
 import com.tacz.guns.init.CompatRegistry;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

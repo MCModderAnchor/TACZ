@@ -6,7 +6,6 @@ import com.tacz.guns.client.model.bedrock.BedrockCubePerFace;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.pojo.model.FaceUVsItem;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemDisplayContext;
 

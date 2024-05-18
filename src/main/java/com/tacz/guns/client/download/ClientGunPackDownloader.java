@@ -5,7 +5,6 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.client.gui.ClientGunPackDownloadProgressScreen;
 import com.tacz.guns.client.resource.ClientReloadManager;
 import net.minecraft.SharedConstants;
-import net.minecraft.Util;
 import net.minecraft.WorldVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;

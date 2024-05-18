@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.item.ItemDisplayContext;
 
 import javax.annotation.Nonnull;

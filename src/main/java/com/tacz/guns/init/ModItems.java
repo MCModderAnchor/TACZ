@@ -1,14 +1,9 @@
 package com.tacz.guns.init;
 
 import com.tacz.guns.GunMod;
-import com.tacz.guns.api.item.builder.AmmoItemBuilder;
-import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.api.item.gun.GunItemManager;
 import com.tacz.guns.item.*;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

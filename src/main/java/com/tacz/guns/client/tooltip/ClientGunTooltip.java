@@ -1,6 +1,5 @@
 package com.tacz.guns.client.tooltip;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.client.input.RefitKey;
@@ -18,7 +17,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;

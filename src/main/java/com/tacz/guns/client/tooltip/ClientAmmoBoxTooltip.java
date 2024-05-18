@@ -1,13 +1,11 @@
 package com.tacz.guns.client.tooltip;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
