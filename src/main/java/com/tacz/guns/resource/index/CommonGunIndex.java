@@ -8,6 +8,7 @@ import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.pojo.GunIndexPOJO;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -17,6 +18,7 @@ public class CommonGunIndex {
     private GunData gunData;
     private String type;
     private GunIndexPOJO pojo;
+    private int sort;
 
     private CommonGunIndex() {
     }
@@ -33,6 +35,7 @@ public class CommonGunIndex {
         Preconditions.checkArgument(gunIndexPOJO != null, "index object file is empty");
         Preconditions.checkArgument(StringUtils.isNoneBlank(gunIndexPOJO.getType()), "index object missing type field");
         index.type = gunIndexPOJO.getType();
+        index.sort = Mth.clamp(gunIndexPOJO.getSort(), 0, 65536);
     }
 
     private static void checkData(GunIndexPOJO gunIndexPOJO, CommonGunIndex index) {
@@ -104,5 +107,9 @@ public class CommonGunIndex {
 
     public GunIndexPOJO getPojo() {
         return pojo;
+    }
+
+    public int getSort() {
+        return sort;
     }
 }

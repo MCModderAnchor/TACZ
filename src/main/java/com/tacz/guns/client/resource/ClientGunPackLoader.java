@@ -139,7 +139,6 @@ public class ClientGunPackLoader {
             TextureLoader.load(root);
             SoundLoader.load(root);
             LanguageLoader.load(root);
-            CustomTabLoader.load(root);
             PackInfoLoader.load(root);
         }
     }
@@ -183,8 +182,6 @@ public class ClientGunPackLoader {
                 if (LanguageLoader.load(zipFile, path)) {
                     continue;
                 }
-                // 加载创造模式标签页
-                CustomTabLoader.load(zipFile, path);
                 // 加载信息文件
                 PackInfoLoader.load(zipFile, path);
             }

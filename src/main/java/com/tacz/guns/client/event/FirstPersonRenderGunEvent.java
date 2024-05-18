@@ -56,7 +56,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static net.minecraft.world.item.ItemDisplayContext.*;
+import static net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+import static net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 
 /**
  * 负责第一人称的枪械模型渲染。其他人称参见 {@link GunItemRenderer}

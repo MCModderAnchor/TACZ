@@ -5,7 +5,6 @@ import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tacz.guns.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.model.BedrockGunModel;
-import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
@@ -31,10 +30,6 @@ public enum ClientAssetManager {
      * 枪包信息
      */
     private final Map<String, PackInfo> customInfos = Maps.newHashMap();
-    /**
-     * 创造模式标签页
-     */
-    private final Map<String, CustomTabPOJO> customTabs = Maps.newHashMap();
     /**
      * 储存 display 数据
      */
@@ -86,10 +81,6 @@ public enum ClientAssetManager {
 
     public void putPackInfo(String namespace, PackInfo info) {
         customInfos.put(namespace, info);
-    }
-
-    public void putAllCustomTab(Map<String, CustomTabPOJO> tabs) {
-        customTabs.putAll(tabs);
     }
 
     public void putGunDisplay(ResourceLocation registryName, GunDisplay display) {
@@ -173,10 +164,6 @@ public enum ClientAssetManager {
         return languages.get(region);
     }
 
-    public Map<String, CustomTabPOJO> getAllCustomTabs() {
-        return customTabs;
-    }
-
     @Nullable
     public PackInfo getPackInfo(ResourceLocation id) {
         return customInfos.get(id.getNamespace());
@@ -208,7 +195,6 @@ public enum ClientAssetManager {
      */
     public void clearAll() {
         this.customInfos.clear();
-        this.customTabs.clear();
         this.gunDisplays.clear();
         this.ammoDisplays.clear();
         this.attachmentDisplays.clear();

@@ -18,7 +18,6 @@ import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.client.gui.components.smith.ResultButton;
 import com.tacz.guns.client.gui.components.smith.TypeButton;
 import com.tacz.guns.client.resource.ClientAssetManager;
-import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
@@ -39,10 +38,12 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -239,10 +240,10 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             if (recipeIdGroups.isEmpty()) {
                 continue;
             }
-            CustomTabPOJO tabPOJO = ClientAssetManager.INSTANCE.getAllCustomTabs().get(type);
             ItemStack icon = ItemStack.EMPTY;
-            if (tabPOJO != null) {
-                icon = tabPOJO.getIconStack();
+            CreativeModeTab gunTab = BuiltInRegistries.CREATIVE_MODE_TAB.get(new ResourceLocation(GunMod.MOD_ID, type));
+            if (gunTab != null) {
+                icon = gunTab.getIconItem();
             } else if (GunSmithTableResult.AMMO.equals(type)) {
                 icon = AmmoItemBuilder.create().build();
             } else if (GunSmithTableResult.ATTACHMENT.equals(type)) {

@@ -1,6 +1,7 @@
 package com.tacz.guns.api.item.gun;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.item.GunTabType;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -26,6 +27,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -36,7 +38,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
         super(pProperties);
     }
 
-    private static Comparator<Map.Entry<ResourceLocation, ClientGunIndex>> idNameSort() {
+    private static Comparator<Map.Entry<ResourceLocation, CommonGunIndex>> idNameSort() {
         return Comparator.comparingInt(m -> m.getValue().getSort());
     }
 
@@ -63,14 +65,6 @@ public abstract class AbstractGunItem extends Item implements IGun {
      * @param loadBarrel 是否需要往枪管里填子弹
      */
     public abstract void reloadAmmo(ItemStack gunItem, int ammoCount, boolean loadBarrel);
-
-    /**
-     * 能否添加到此 CustomTab 中
-     *
-     * @param tab   CustomTab
-     * @param stack 待添加的物品
-     */
-//    public abstract boolean canAddInTab(CustomTab tab, ItemStack stack);
 
     /**
      * 该方法具有通用的实现，放在此处
@@ -135,18 +129,21 @@ public abstract class AbstractGunItem extends Item implements IGun {
     /**
      * 该方法具有通用的实现，放在此处
      */
-    public static NonNullList<ItemStack> fillItemCategory() {
+    public static NonNullList<ItemStack> fillItemCategory(GunTabType type) {
         NonNullList<ItemStack> stacks = NonNullList.create();
-        TimelessAPI.getAllClientGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
-            ClientGunIndex index = entry.getValue();
+        TimelessAPI.getAllCommonGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
+            CommonGunIndex index = entry.getValue();
             GunData gunData = index.getGunData();
-            ItemStack itemStack = GunItemBuilder.create()
-                    .setId(entry.getKey())
-                    .setFireMode(gunData.getFireModeSet().get(0))
-                    .setAmmoCount(gunData.getAmmoAmount())
-                    .setAmmoInBarrel(true)
-                    .build();
-            stacks.add(itemStack);
+            String key = type.name().toLowerCase(Locale.US);
+            if (key.equals(index.getType())) {
+                ItemStack itemStack = GunItemBuilder.create()
+                        .setId(entry.getKey())
+                        .setFireMode(gunData.getFireModeSet().get(0))
+                        .setAmmoCount(gunData.getAmmoAmount())
+                        .setAmmoInBarrel(true)
+                        .build();
+                stacks.add(itemStack);
+            }
         });
         return stacks;
     }

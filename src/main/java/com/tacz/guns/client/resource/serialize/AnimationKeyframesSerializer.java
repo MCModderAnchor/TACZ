@@ -1,7 +1,6 @@
 package com.tacz.guns.client.resource.serialize;
 
 import com.google.gson.*;
-
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;

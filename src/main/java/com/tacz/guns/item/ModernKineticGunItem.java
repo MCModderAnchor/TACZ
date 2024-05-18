@@ -150,11 +150,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         world.addFreshEntity(bullet);
     }
 
-//    @Override
-//    public boolean canAddInTab(CustomTab tab, ItemStack stack) {
-//        return true;
-//    }
-
     @Override
     public int getLevel(int exp) {
         return 0;

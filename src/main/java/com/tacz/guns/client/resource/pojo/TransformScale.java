@@ -3,7 +3,6 @@ package com.tacz.guns.client.resource.pojo;
 import com.google.gson.annotations.SerializedName;
 import org.joml.Vector3f;
 
-
 import javax.annotation.Nullable;
 
 public class TransformScale {

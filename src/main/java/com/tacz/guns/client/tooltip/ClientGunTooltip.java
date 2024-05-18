@@ -4,7 +4,6 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.client.input.RefitKey;
 import com.tacz.guns.client.resource.ClientAssetManager;
-import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
@@ -17,7 +16,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -72,11 +72,9 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         this.ammoCountText = Component.literal("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
         this.maxWidth = Math.max(font.width(this.ammoCountText) + 22, this.maxWidth);
 
-        CustomTabPOJO tab = ClientAssetManager.INSTANCE.getAllCustomTabs().get(gunIndex.getType());
-        if (tab != null) {
-            this.gunType = Component.translatable("tooltip.tacz.gun.type").append(Component.translatable(tab.getNameKey()).withStyle(ChatFormatting.AQUA));
-            this.maxWidth = Math.max(font.width(this.gunType), this.maxWidth);
-        }
+        String tabKey = "tacz.type." + gunIndex.getType() + ".name";
+        this.gunType = Component.translatable("tooltip.tacz.gun.type").append(Component.translatable(tabKey).withStyle(ChatFormatting.AQUA));
+        this.maxWidth = Math.max(font.width(this.gunType), this.maxWidth);
 
         MutableComponent value = Component.literal(String.valueOf(gunIndex.getBulletData().getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
         this.damage = Component.translatable("tooltip.tacz.gun.damage").append(value);
