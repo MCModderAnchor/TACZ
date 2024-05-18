@@ -2,9 +2,9 @@ package com.tacz.guns.compat.oculus;
 
 import com.tacz.guns.compat.oculus.pbr.PBRRegister;
 import com.tacz.guns.init.CompatRegistry;
-import net.coderbot.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
-import net.coderbot.iris.shadows.ShadowRenderingState;
+import net.irisshaders.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
 import net.irisshaders.iris.api.v0.IrisApi;
+import net.irisshaders.iris.shadows.ShadowRenderingState;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraftforge.fml.ModList;
 
