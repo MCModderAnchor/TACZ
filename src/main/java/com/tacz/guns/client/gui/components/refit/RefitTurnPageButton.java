@@ -38,7 +38,7 @@ public class RefitTurnPageButton extends Button implements IComponentTooltip {
 
     @Override
     public void renderTooltip(Consumer<List<Component>> consumer) {
-        if (this.isHovered) {
+        if (this.isHoveredOrFocused()) {
             String key = isUpPage ? "tooltip.tacz.page.previous" : "tooltip.tacz.page.next";
             consumer.accept(Collections.singletonList(Component.translatable(key)));
         }

@@ -34,7 +34,7 @@ public class RefitUnloadButton extends Button implements IComponentTooltip {
 
     @Override
     public void renderTooltip(Consumer<List<Component>> consumer) {
-        if (this.isHovered) {
+        if (this.isHoveredOrFocused()) {
             consumer.accept(Collections.singletonList(Component.translatable("tooltip.tacz.refit.unload")));
         }
     }

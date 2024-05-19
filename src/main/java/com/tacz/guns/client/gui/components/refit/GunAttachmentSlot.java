@@ -34,7 +34,7 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
 
     @Override
     public void renderTooltip(Consumer<List<Component>> consumer) {
-        if (this.isHovered) {
+        if (this.isHoveredOrFocused()) {
             List<Component> tips = Lists.newArrayList(Component.translatable(nameKey));
             if (!attachmentItem.isEmpty()) {
                 tips.addAll(IComponentTooltip.getTooltipFromItem(attachmentItem));
@@ -44,7 +44,7 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderWidget(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
         ItemStack gunItem = inventory.getItem(gunItemIndex);
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {

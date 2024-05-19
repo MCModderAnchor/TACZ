@@ -16,8 +16,7 @@ public class ModDamageTypes {
     public static final ResourceKey<DamageType> BULLET_IGNORE_ARMOR = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(GunMod.MOD_ID, "bullet_ignore_armor"));
 
     public static class Sources {
-        private static Holder.Reference<DamageType> getHolder(RegistryAccess access, ResourceKey<DamageType> damageTypeKey)
-        {
+        private static Holder.Reference<DamageType> getHolder(RegistryAccess access, ResourceKey<DamageType> damageTypeKey) {
             return access.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(damageTypeKey);
         }
 
