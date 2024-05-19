@@ -140,5 +140,7 @@
   "tooltip.tacz.gun.type": "枪种: ",
   "tooltip.tacz.page.next": "下一页",
   "tooltip.tacz.page.previous": "上一页",
-  "tooltip.tacz.refit.unload": "卸载"
+  "tooltip.tacz.refit.unload": "卸载",
+  "death.attack.tacz.bullet": "%1$s被%2$s击倒了",
+  "death.attack.tacz.bullet.item": "%2$s使用%3$s击倒了%1$s"
 }

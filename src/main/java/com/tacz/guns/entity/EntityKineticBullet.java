@@ -11,6 +11,7 @@ import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
+import com.tacz.guns.init.ModDamageTypes;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageGunHurt;
 import com.tacz.guns.network.message.ServerMessageGunKill;
@@ -423,14 +424,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(livingEntity);
             modifier.setKnockBackStrength(this.knockback);
             // 创建伤害
-            DamageSource source = this.damageSources().thrown(this, this.getOwner());
-            tacAttackEntity(source, entity, damage);
+            tacAttackEntity(entity, damage);
             // 恢复原位
             modifier.resetKnockBackStrength();
         } else {
             // 创建伤害
-            DamageSource source = this.damageSources().thrown(this, this.getOwner());
-            tacAttackEntity(source, entity, damage);
+            tacAttackEntity(entity, damage);
         }
         // 爆炸逻辑
         if (this.hasExplosion) {
@@ -518,7 +517,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         return 0;
     }
 
-    private void tacAttackEntity(DamageSource source, Entity entity, float damage) {
+    private void tacAttackEntity(Entity entity, float damage) {
+        DamageSource source = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), false);
         float armorIgnore = 0;
         if (this.extraDamage != null && this.extraDamage.getArmorIgnore() > 0) {
             armorIgnore = (float) (this.extraDamage.getArmorIgnore() * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
@@ -535,7 +535,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         // 普通伤害
         entity.hurt(source, damage * normalDamagePercent);
         // 穿甲伤害
-        source = this.damageSources().indirectMagic(this, getOwner());
+        source = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), true);
         // 取消无敌时间
         entity.invulnerableTime = 0;
         entity.hurt(source, damage * armorDamagePercent);
