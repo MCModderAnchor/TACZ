@@ -37,16 +37,7 @@ public class InteractKeyConfigRead {
             return false;
         }
         // 再检查白名单
-        if (WHITELIST.containsKey(Type.BLOCK) && WHITELIST.get(Type.BLOCK).contains(blockId)) {
-            return true;
-        }
-        // 再检查默认情况
-        if (block instanceof StairBlockAccessor stair) {
-            // 楼梯的情况比较特殊，所以需要单独判断
-            return InheritanceChecker.BLOCK_INHERITANCE_CHECKER.isInherited(stair.invokeGetModelBlock().getClass());
-        } else {
-            return InheritanceChecker.BLOCK_INHERITANCE_CHECKER.isInherited(block.getClass());
-        }
+        return WHITELIST.containsKey(Type.BLOCK) && WHITELIST.get(Type.BLOCK).contains(blockId);
     }
 
     public static boolean canInteractEntity(Entity entity) {
@@ -59,15 +50,7 @@ public class InteractKeyConfigRead {
             return false;
         }
         // 再检查白名单
-        if (WHITELIST.containsKey(Type.ENTITY) && WHITELIST.get(Type.ENTITY).contains(entityId)) {
-            return true;
-        }
-        // 再检查默认情况
-        if (entity instanceof Mob mob) {
-            return InheritanceChecker.MOB_INHERITANCE_CHECKER.isInherited(mob.getClass());
-        } else {
-            return InheritanceChecker.ENTITY_INHERITANCE_CHECKER.isInherited(entity.getClass());
-        }
+        return WHITELIST.containsKey(Type.ENTITY) && WHITELIST.get(Type.ENTITY).contains(entityId);
     }
 
     private static void handleConfigData(List<String> configData, EnumMap<Type, List<ResourceLocation>> storeList, Type type) {
