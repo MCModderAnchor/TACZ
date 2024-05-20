@@ -213,7 +213,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             float cos = Mth.cos(angle);
             builder.vertex(centerX + cos * rad, centerY + sin * rad, -90.0D).color(255, 255, 255, 255).endVertex();
         }
-        BufferUploader.draw(builder.end());
+        BufferUploader.drawWithShader(builder.end());
         RenderSystem.depthMask(true);
         RenderSystem.colorMask(true, true, true, true);
         // 渲染目镜黑色遮罩
