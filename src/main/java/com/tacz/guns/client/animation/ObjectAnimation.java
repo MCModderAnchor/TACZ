@@ -1,6 +1,9 @@
 package com.tacz.guns.client.animation;
 
+import net.minecraft.client.Minecraft;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -15,14 +18,11 @@ public class ObjectAnimation {
      * 此 map 的 key 是节点名称
      */
     private final Map<String, List<ObjectAnimationChannel>> channels = new HashMap<>();
+    private @Nullable ObjectAnimationSoundChannel soundChannel;
     /**
      * 播放类型
      */
     public @Nonnull PlayType playType = PlayType.PLAY_ONCE_HOLD;
-    /**
-     * 当前播放进度时间，以纳秒为单位
-     */
-    public long timeNs = 0;
     /**
      * 所有轨道的最大结束时间 {@link ObjectAnimationChannel#getEndTimeS()}
      */
@@ -41,7 +41,6 @@ public class ObjectAnimation {
         this.name = source.name;
         this.playType = source.playType;
         this.maxEndTimeS = source.maxEndTimeS;
-        this.timeNs = source.timeNs;
         for (Map.Entry<String, List<ObjectAnimationChannel>> entry : source.channels.entrySet()) {
             List<ObjectAnimationChannel> newList = new ArrayList<>();
             for (ObjectAnimationChannel channel : entry.getValue()) {
@@ -51,6 +50,9 @@ public class ObjectAnimation {
                 newList.add(newChannel);
             }
             this.channels.put(entry.getKey(), newList);
+        }
+        if (source.soundChannel != null) {
+            this.soundChannel = new ObjectAnimationSoundChannel(source.soundChannel.content);
         }
     }
 
@@ -67,8 +69,20 @@ public class ObjectAnimation {
         }
     }
 
+    protected void setSoundChannel(@Nonnull ObjectAnimationSoundChannel soundChannel) {
+        if (soundChannel.getEndTimeS() > maxEndTimeS) {
+            maxEndTimeS = (float) soundChannel.getEndTimeS();
+        }
+        this.soundChannel = soundChannel;
+    }
+
     public Map<String, List<ObjectAnimationChannel>> getChannels() {
         return channels;
+    }
+
+    @Nullable
+    public ObjectAnimationSoundChannel getSoundChannel() {
+        return this.soundChannel;
     }
 
     public void applyAnimationListeners(AnimationListenerSupplier supplier) {
@@ -85,11 +99,15 @@ public class ObjectAnimation {
     /**
      * 触发所有监听器，通知它们更新相关数值
      */
-    public void update(boolean blend) {
+    public void update(boolean blend, float fromTimeNs, float toTimeNs) {
         for (List<ObjectAnimationChannel> channels : channels.values()) {
             for (ObjectAnimationChannel channel : channels) {
-                channel.update(timeNs / 1e9f, blend);
+                channel.update(fromTimeNs / 1e9f, blend);
             }
+        }
+        if (Minecraft.getInstance().player != null && soundChannel != null) {
+            // 现在动画仅第一人称使用，暂时这么填，应急。
+            soundChannel.playSound(fromTimeNs / 1e9, toTimeNs / 1e9, Minecraft.getInstance().player, 16, 1, 1);
         }
     }
 

@@ -13,14 +13,12 @@ import com.tacz.guns.client.animation.interpolator.InterpolatorUtil;
 import com.tacz.guns.client.model.BedrockAnimatedModel;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
-import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationBone;
-import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
-import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimation;
-import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
+import com.tacz.guns.client.resource.pojo.animation.bedrock.*;
 import com.tacz.guns.client.resource.pojo.model.BonesItem;
 import com.tacz.guns.util.math.MathUtil;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -149,6 +147,22 @@ public class Animations {
                     scaleChannel.interpolator.compile(scaleChannel.content);
                     animation.addChannel(scaleChannel);
                 }
+            }
+            // 将声音数据转移到 ObjectAnimation 中
+            SoundEffectKeyframes soundEffectKeyframes = bedrockAnimation.getSoundEffects();
+            if (soundEffectKeyframes != null) {
+                ObjectAnimationSoundChannel soundChannel = new ObjectAnimationSoundChannel();
+                soundChannel.content = new AnimationSoundChannelContent();
+                int keyframeNum = soundEffectKeyframes.getKeyframes().size();
+                soundChannel.content.keyframeTimeS = new double[keyframeNum];
+                soundChannel.content.keyframeSoundName = new ResourceLocation[keyframeNum];
+                int i = 0;
+                for (Map.Entry<Double, ResourceLocation> entry : soundEffectKeyframes.getKeyframes().double2ObjectEntrySet()) {
+                    soundChannel.content.keyframeTimeS[i] = entry.getKey();
+                    soundChannel.content.keyframeSoundName[i] = entry.getValue();
+                    i++;
+                }
+                animation.setSoundChannel(soundChannel);
             }
             result.add(animation);
         }

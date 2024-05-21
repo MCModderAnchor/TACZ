@@ -7,9 +7,7 @@ import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
-import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimation;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
-import com.tacz.guns.client.resource.pojo.animation.bedrock.SoundEffectKeyframes;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tacz.guns.client.resource.pojo.display.gun.GunDisplay;
@@ -19,7 +17,6 @@ import com.tacz.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -64,10 +61,6 @@ public enum ClientAssetManager {
      * 储存声音
      */
     private final Map<ResourceLocation, SoundBuffer> soundBuffers = Maps.newHashMap();
-    /**
-     * 储存基岩版动画的音轨，键: 动画文件注册名 和 动画名，值: 音效关键帧
-     */
-    private final Map<Pair<ResourceLocation, String>, SoundEffectKeyframes> bedrockAnimationSounds = Maps.newHashMap();
     /**
      * 存储语言
      */
@@ -128,14 +121,6 @@ public enum ClientAssetManager {
     public void putBedrockAnimation(ResourceLocation registryName, BedrockAnimationFile bedrockAnimationFile) {
         // 缓存动画数据
         bedrockAnimations.put(registryName, bedrockAnimationFile);
-        // 缓存动画音效
-        for (Map.Entry<String, BedrockAnimation> entry : bedrockAnimationFile.getAnimations().entrySet()) {
-            BedrockAnimation animation = entry.getValue();
-            if (animation.getSoundEffects() != null) {
-                Pair<ResourceLocation, String> key = Pair.of(registryName, entry.getKey());
-                bedrockAnimationSounds.put(key, animation.getSoundEffects());
-            }
-        }
     }
 
     public void putModel(ResourceLocation registryName, BedrockModelPOJO model) {

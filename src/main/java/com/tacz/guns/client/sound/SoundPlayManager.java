@@ -1,6 +1,7 @@
 package com.tacz.guns.client.sound;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.SoundEffectKeyframes;
 import com.tacz.guns.config.common.GunConfig;
@@ -11,9 +12,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.lang3.tuple.Pair;
 
 @OnlyIn(Dist.CLIENT)
 public class SoundPlayManager {
@@ -27,16 +30,9 @@ public class SoundPlayManager {
      */
     private static GunSoundInstance tmpSoundInstance = null;
 
-    public static GunSoundInstance playClientSound(LivingEntity entity, ResourceLocation name, float volume, float pitch, int distance) {
+    public static GunSoundInstance playClientSound(Entity entity, ResourceLocation name, float volume, float pitch, int distance) {
         Minecraft minecraft = Minecraft.getInstance();
         GunSoundInstance instance = new GunSoundInstance(ModSounds.GUN.get(), SoundSource.PLAYERS, volume, pitch, entity, distance, name);
-        minecraft.getSoundManager().play(instance);
-        return instance;
-    }
-
-    public static BedrockGunSoundInstance playClientSound(LivingEntity entity, SoundEffectKeyframes keyframes, float volume, float pitch, int distance) {
-        Minecraft minecraft = Minecraft.getInstance();
-        BedrockGunSoundInstance instance = new BedrockGunSoundInstance(ModSounds.GUN.get(), SoundSource.PLAYERS, volume, pitch, entity, distance, keyframes);
         minecraft.getSoundManager().play(instance);
         return instance;
     }
