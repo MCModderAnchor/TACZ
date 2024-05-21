@@ -206,6 +206,7 @@ public class ObjectAnimationRunner {
 
     public void update(boolean blend) {
         long currentNs = System.nanoTime();
+        long fromTimeNs = progressNs;
 
         if (running) {
             progressNs += currentNs - lastUpdateNs;
@@ -231,7 +232,6 @@ public class ObjectAnimationRunner {
                 }
             }
         }
-        animation.timeNs = progressNs;
 
         if (isTransitioning) {
             transitionProgressNs += currentNs - lastUpdateNs;
@@ -242,7 +242,7 @@ public class ObjectAnimationRunner {
                 updateTransition(easeOutCubic(transitionProgress), blend);
             }
         } else {
-            animation.update(blend);
+            animation.update(blend, fromTimeNs, progressNs);
         }
 
         lastUpdateNs = currentNs;
