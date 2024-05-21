@@ -6,6 +6,7 @@ import com.mojang.math.Vector3f;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.resource.pojo.display.gun.LayerGunShow;
+import com.tacz.guns.util.math.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -83,7 +84,9 @@ public class HumanoidOffhandRender {
         matrixStack.pushPose();
         matrixStack.translate(pos.x() / 16f, 1.5 - pos.y() / 16f, pos.z() / 16f);
         matrixStack.scale(-scale.x(), -scale.y(), scale.z());
-        matrixStack.mulPose(Quaternion.fromXYZDegrees(rotate));
+        Quaternion quaternion = Quaternion.ONE.copy();
+        MathUtil.toQuaternion(rotate.x(), rotate.y(), rotate.z(), quaternion);
+        matrixStack.mulPose(quaternion);
         renderer.renderStatic(itemStack, ItemTransforms.TransformType.FIXED, packedLight, OverlayTexture.NO_OVERLAY, matrixStack, buffer, entity.getId());
         matrixStack.popPose();
     }
