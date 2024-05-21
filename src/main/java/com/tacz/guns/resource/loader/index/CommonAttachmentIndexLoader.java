@@ -28,7 +28,7 @@ import static com.tacz.guns.resource.CommonGunPackLoader.ATTACHMENT_INDEX;
 import static com.tacz.guns.resource.CommonGunPackLoader.GSON;
 
 public final class CommonAttachmentIndexLoader {
-    private static final Pattern ATTACHMENT_INDEX_PATTERN = Pattern.compile("^(\\w+)/attachment/index/(\\w+)\\.json$");
+    private static final Pattern ATTACHMENT_INDEX_PATTERN = Pattern.compile("^(\\w+)/attachments/index/(\\w+)\\.json$");
     private static final Marker MARKER = MarkerManager.getMarker("CommonAttachmentIndexLoader");
 
     public static void loadAttachmentIndex(String path, ZipFile zipFile) throws IOException {
