@@ -5,7 +5,7 @@
 			"animation_length": 0.06667,
 			"bones": {
 				"righthand": {
-					"rotation": [7.95, 0, 0],
+					"rotation": [96.07, 8.95, -179.05],
 					"position": [-6.5, -14.3, -1.7],
 					"scale": [1, 1.5, 1]
 				},

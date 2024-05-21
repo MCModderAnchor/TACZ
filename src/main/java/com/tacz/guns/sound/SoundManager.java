@@ -86,7 +86,7 @@ public class SoundManager {
     public static void sendSoundToNearby(LivingEntity sourceEntity, int distance, ResourceLocation gunId, String soundName, float volume, float pitch) {
         if (sourceEntity.level() instanceof ServerLevel serverLevel) {
             BlockPos pos = sourceEntity.blockPosition();
-            ServerMessageSound soundMessage = new ServerMessageSound(sourceEntity.getId(), gunId, soundName, volume, pitch);
+            ServerMessageSound soundMessage = new ServerMessageSound(sourceEntity.getId(), gunId, soundName, volume, pitch, distance);
             serverLevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
                     .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < distance * distance)
                     .filter(p -> p.getId() != sourceEntity.getId())

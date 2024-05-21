@@ -63,6 +63,8 @@
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "玩家处于创造模式时，是否会消耗枪械内弹药",
   "config.tacz.common.gun.default_gun_fire_sound_distance": "默认枪声范围",
   "config.tacz.common.gun.default_gun_fire_sound_distance.desc": "默认枪声会传播的范围（格）",
+  "config.tacz.common.gun.default_gun_other_sound_distance": "其他枪声范围",
+  "config.tacz.common.gun.default_gun_other_sound_distance.desc": "默认其他枪声（如换弹）传播的范围（格）",
   "config.tacz.common.other": "其他",
   "config.tacz.common.other.ammo_box_stack_size": "子弹盒储存上限",
   "config.tacz.common.other.ammo_box_stack_size.desc": "子弹盒可以储存的物品组的上限",
