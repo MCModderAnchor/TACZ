@@ -2,7 +2,7 @@
   "ammo": "tacz:12g",
   "rpm": 200,
   "bullet": {
-    "life": 0.3,
+    "life": 0.4,
     "bullet_amount": 10,
     "damage": 25,
     "tracer_count_interval": 0,
@@ -12,7 +12,7 @@
       "damage_adjust": [
         {"distance": 1, "damage": 30},
         {"distance": 12.5, "damage": 25},
-        {"distance": 25, "damage": 25},
+        {"distance": 25, "damage": 20},
         {"distance": 35, "damage": 15},
         {"distance": "infinite", "damage": 12}
       ]

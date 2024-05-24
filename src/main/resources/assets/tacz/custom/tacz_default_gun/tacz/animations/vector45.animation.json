@@ -2,7 +2,7 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"static_idle": {
-			"animation_length": 0.0333,
+			"animation_length": 0.03333,
 			"bones": {
 				"lefthand": {
 					"rotation": [104.41741, -8.06723, -198.01172],
@@ -77,7 +77,7 @@
 			}
 		},
 		"switch_semi": {
-			"animation_length": 0.7333,
+			"animation_length": 0.73333,
 			"bones": {
 				"lefthand": {
 					"rotation": [104.41741, -8.06723, -198.01172],
@@ -195,7 +195,7 @@
 			}
 		},
 		"switch_brust": {
-			"animation_length": 0.7333,
+			"animation_length": 0.73333,
 			"bones": {
 				"lefthand": {
 					"rotation": {
@@ -309,7 +309,7 @@
 			}
 		},
 		"switch_auto": {
-			"animation_length": 0.7333,
+			"animation_length": 0.73333,
 			"bones": {
 				"lefthand": {
 					"rotation": {
@@ -557,7 +557,7 @@
 			}
 		},
 		"put_away": {
-			"animation_length": 0.2667,
+			"animation_length": 0.26667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -647,7 +647,7 @@
 			}
 		},
 		"reload_tactical": {
-			"animation_length": 2.5333,
+			"animation_length": 2.53333,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -1050,7 +1050,7 @@
 			}
 		},
 		"reload_norm_xmag2": {
-			"animation_length": 2.7333,
+			"animation_length": 2.73333,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -1889,7 +1889,7 @@
 			}
 		},
 		"reload_empty": {
-			"animation_length": 2.7667,
+			"animation_length": 2.76667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -2359,7 +2359,7 @@
 			}
 		},
 		"reload_empty_xmag2": {
-			"animation_length": 3.2667,
+			"animation_length": 3.26667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -2868,7 +2868,7 @@
 			}
 		},
 		"reload_empty_xmag3": {
-			"animation_length": 3.6333,
+			"animation_length": 3.63333,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -3334,7 +3334,7 @@
 			}
 		},
 		"inspect": {
-			"animation_length": 8.0667,
+			"animation_length": 8.06667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -3907,9 +3907,6 @@
 				"bullet": {
 					"scale": 0
 				},
-				"mag_extended_2": {
-					"scale": 0
-				},
 				"righthand": {
 					"rotation": [97.52832, -355.04288, -179.34574],
 					"position": [-6.8, -10, 3],
@@ -4132,7 +4129,7 @@
 			}
 		},
 		"inspect_xmag2": {
-			"animation_length": 8.0667,
+			"animation_length": 8.06667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -4950,7 +4947,7 @@
 			}
 		},
 		"inspect_xmag3": {
-			"animation_length": 8.1667,
+			"animation_length": 8.16667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -5749,7 +5746,7 @@
 			}
 		},
 		"inspect_empty": {
-			"animation_length": 8.0667,
+			"animation_length": 8.06667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -6478,7 +6475,7 @@
 			}
 		},
 		"inspect_empty_xmag2": {
-			"animation_length": 8.0667,
+			"animation_length": 8.06667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -7207,7 +7204,7 @@
 			}
 		},
 		"inspect_empty_xmag3": {
-			"animation_length": 8.0667,
+			"animation_length": 8.06667,
 			"bones": {
 				"root": {
 					"rotation": {
