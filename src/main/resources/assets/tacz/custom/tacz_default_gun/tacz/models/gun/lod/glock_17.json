@@ -312,18 +312,18 @@
 				{
 					"name": "ground",
 					"parent": "positioning",
-					"pivot": [-2.25, -2.825, 0.05]
+					"pivot": [0, 0, 0]
 				},
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0.1, 2.425, -0.325],
-					"rotation": [0, -90, 0]
+					"pivot": [1, 4.425, -0.325],
+					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0.025, 3.225, -0.35]
+					"pivot": [0.025, 4.225, -0.35]
 				},
 				{
 					"name": "shell",
