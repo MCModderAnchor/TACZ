@@ -4,17 +4,23 @@
       "item": {
         "tag": "forge:ingots/iron"
       },
+      "count": 50
+    },
+    {
+      "item": {
+        "tag": "forge:gems/lapis"
+      },
       "count": 8
     },
     {
       "item": {
-        "tag": "minecraft:logs"
+        "tag": "forge:gems/diamond"
       },
-      "count": 6
+      "count": 10
     }
   ],
   "result": {
     "type": "gun",
-    "id": "tacz:db_short"
+    "id": "tacz:hk_mp5a5"
   }
 }
