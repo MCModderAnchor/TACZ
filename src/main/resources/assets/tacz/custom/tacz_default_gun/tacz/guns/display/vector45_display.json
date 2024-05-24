@@ -41,8 +41,10 @@
         "living_time": 1.0
     },
     "sounds": {
-        "shoot": "tacz:uzi/uzi_shoot",
-        "shoot_3p": "tacz:uzi/uzi_shoot_3p"
+        "shoot": "tacz:victor45/vector_shoot",
+        "shoot_3p": "tacz:victor45/vector_shoot_3p",
+        "silence": "tacz:victor45/vector_silence",
+        "silence_3p": "tacz:victor45/vector_silence_3p"
     },
     "offhand_show": {
         "pos": [0, 18, 1.5],
