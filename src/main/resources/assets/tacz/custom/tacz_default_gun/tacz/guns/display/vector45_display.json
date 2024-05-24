@@ -41,16 +41,8 @@
         "living_time": 1.0
     },
     "sounds": {
-        "shoot": "tacz:vector45/vector45_shoot",
-        "shoot_3p": "tacz:vector45/vector45_shoot_3p",
-        "reload_empty": "tacz:vector45/vector45_reload_empty",
-        "reload_tactical": "tacz:vector45/vector45_reload_tactical",
-        "inspect": "tacz:vector45/vector45_inspect",
-        "inspect_empty": "tacz:vector45/vector45_inspect_empty",
-        "draw": "tacz:vector45/vector45_draw",
-        "put_away": "tacz:vector45/vector45_put_away",
-        "silence": "tacz:vector45/vector45_silence",
-        "silence_3p": "tacz:vector45/vector45_silence_3p"
+        "shoot": "tacz:uzi/uzi_shoot",
+        "shoot_3p": "tacz:uzi/uzi_shoot_3p"
     },
     "offhand_show": {
         "pos": [0, 18, 1.5],
