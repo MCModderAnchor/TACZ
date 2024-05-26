@@ -10,12 +10,12 @@
       "item": {
         "tag": "forge:gunpowder"
       },
-      "count": 16
+      "count": 12
     }
   ],
   "result": {
     "type": "ammo",
     "id": "tacz:rpg_rocket",
-    "count": 2
+    "count": 3
   }
 }

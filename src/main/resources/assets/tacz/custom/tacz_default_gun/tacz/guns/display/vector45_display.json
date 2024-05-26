@@ -2,8 +2,8 @@
     "model": "tacz:gun/vector45_geo",
     "texture": "tacz:gun/uv/vector45",
     "lod": {
-        "model": "tacz:gun/lod/vector45_lod",
-        "texture": "tacz:gun/lod/vector45_lod"
+        "model": "tacz:gun/lod/vector45",
+        "texture": "tacz:gun/lod/vector45"
     },
     "hud": "tacz:gun/hud/vector45_hud",
     "slot": "tacz:gun/slot/vector45",
