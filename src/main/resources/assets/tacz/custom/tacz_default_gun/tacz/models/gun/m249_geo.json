@@ -89,24 +89,24 @@
 					"pivot": [0, 10.6875, 4]
 				},
 				{
-					"name": "muzzle_flash",
-					"parent": "attachment_positioning",
-					"pivot": [0, 8.4313, -23.0062]
-				},
-				{
 					"name": "muzzle_pos",
 					"parent": "attachment_positioning",
 					"pivot": [0, 8.4312, -21.00625]
 				},
 				{
-					"name": "grip_pos",
+					"name": "muzzle_flash",
 					"parent": "attachment_positioning",
-					"pivot": [0, 5.38125, -4.3625]
+					"pivot": [0, 8.43125, -23.0062]
 				},
 				{
 					"name": "shell",
 					"parent": "attachment_positioning",
 					"pivot": [-1.05, 9.23125, 2.4625]
+				},
+				{
+					"name": "grip_pos",
+					"parent": "attachment_positioning",
+					"pivot": [0, 5.38125, -4.3625]
 				},
 				{
 					"name": "grip2",

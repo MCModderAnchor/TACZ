@@ -1,22 +1,17 @@
 {
   "materials": [
+
     {
       "item": {
-        "tag": "forge:gems/diamond"
+        "tag": "forge:ingots/iron"
       },
-      "count": 2
-    },
-    {
-      "item": {
-        "tag": "forge:ingots/gold"
-      },
-      "count": 2
+      "count": 16
     },
     {
       "item": {
         "tag": "forge:ingots/copper"
       },
-      "count": 110
+      "count": 72
     },
     {
       "item": {
@@ -27,7 +22,7 @@
       "item": {
         "tag": "forge:gunpowder"
       },
-      "count": 20
+      "count": 24
     }
   ],
   "result": {

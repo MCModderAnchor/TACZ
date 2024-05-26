@@ -628,8 +628,13 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1.05, 10.675, 3.45],
+					"pivot": [1.5, 10.675, 3.45],
 					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "muzzle_flash",
+					"parent": "positioning",
+					"pivot": [0, 10.875, -10.5]
 				}
 			]
 		}

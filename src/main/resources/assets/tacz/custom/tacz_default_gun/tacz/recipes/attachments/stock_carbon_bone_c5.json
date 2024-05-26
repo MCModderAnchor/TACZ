@@ -4,7 +4,13 @@
       "item": {
         "tag": "forge:ingots/iron"
       },
-      "count": 18
+      "count": 12
+    },
+    {
+      "item": {
+        "tag": "forge:leather"
+      },
+      "count": 3
     }
   ],
   "result": {
