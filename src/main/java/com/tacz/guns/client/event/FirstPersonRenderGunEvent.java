@@ -86,11 +86,15 @@ public class FirstPersonRenderGunEvent {
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
-        if (event.getHand() == InteractionHand.OFF_HAND) {
-            return;
-        }
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
+            return;
+        }
+        if (event.getHand() == InteractionHand.OFF_HAND) {
+            ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
+            if (stack.getItem() instanceof IGun) {
+                event.setCanceled(true);
+            }
             return;
         }
         ItemStack stack = event.getItemStack();
