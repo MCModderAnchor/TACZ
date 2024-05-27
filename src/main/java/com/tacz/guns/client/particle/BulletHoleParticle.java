@@ -1,6 +1,7 @@
 package com.tacz.guns.client.particle;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.particles.BulletHoleOption;
@@ -15,10 +16,10 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -37,7 +38,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
     private int vOffset;
     private float textureDensity;
 
-    public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos) {
+    public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos, String ammoId) {
         super(world, x, y, z);
         this.setSprite(this.getSprite(pos));
         this.direction = direction;
@@ -52,12 +53,12 @@ public class BulletHoleParticle extends TextureSheetParticle {
         if (world.getBlockState(pos).isAir() || state.is(ModBlocks.TARGET.get())) {
             this.remove();
         }
-
-        // 依据方块颜色决定粒子颜色
-        int color = this.getBlockColor(state, world, pos, direction);
-        this.rCol = ((float) (color >> 16 & 255) / 255.0F) / 3.0F;
-        this.gCol = ((float) (color >> 8 & 255) / 255.0F) / 3.0F;
-        this.bCol = ((float) (color & 255) / 255.0F) / 3.0F;
+        TimelessAPI.getClientAmmoIndex(new ResourceLocation(ammoId)).ifPresent(index -> {
+            float[] tracerColor = index.getTracerColor();
+            this.rCol = tracerColor[0];
+            this.gCol = tracerColor[1];
+            this.bCol = tracerColor[2];
+        });
         this.alpha = 0.9F;
     }
 
@@ -67,14 +68,6 @@ public class BulletHoleParticle extends TextureSheetParticle {
             return configLife;
         }
         return configLife + world.random.nextInt(configLife / 2);
-    }
-
-    private int getBlockColor(BlockState state, Level world, BlockPos pos, Direction direction) {
-        // 草方块是个例外（草方块是代码着色的）
-        if (state.is(Blocks.GRASS_BLOCK)) {
-            return Integer.MAX_VALUE;
-        }
-        return Minecraft.getInstance().getBlockColors().getColor(state, world, pos, 0);
     }
 
     @Override
@@ -170,10 +163,12 @@ public class BulletHoleParticle extends TextureSheetParticle {
 
     @OnlyIn(Dist.CLIENT)
     public static class Provider implements ParticleProvider<BulletHoleOption> {
-        public Provider() {}
+        public Provider() {
+        }
 
+        @Override
         public BulletHoleParticle createParticle(@NotNull BulletHoleOption option, @NotNull ClientLevel world, double x, double y, double z, double pXSpeed, double pYSpeed, double pZSpeed) {
-            BulletHoleParticle particle = new BulletHoleParticle(world, x, y, z, option.getDirection(), option.getPos());
+            BulletHoleParticle particle = new BulletHoleParticle(world, x, y, z, option.getDirection(), option.getPos(), option.getAmmoId());
             return particle;
         }
     }
