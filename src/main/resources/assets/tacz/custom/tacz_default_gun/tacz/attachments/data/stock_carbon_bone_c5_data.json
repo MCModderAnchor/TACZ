@@ -4,5 +4,6 @@
   "recoil_modifier": {
     "pitch": -0.01,
     "yaw": -0.05
-  }
+  },
+  "tags": ["#stock"]
 }

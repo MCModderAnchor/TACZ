@@ -9,7 +9,9 @@ import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.client.renderer.item.GunItemRenderer;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
+import com.tacz.guns.resource.index.CommonAttachmentIndex;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.gun.AttachmentPass;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.client.Minecraft;
@@ -74,19 +76,24 @@ public abstract class AbstractGunItem extends Item implements IGun {
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
         IGun iGun = IGun.getIGunOrNull(gun);
         if (iGun != null && iAttachment != null) {
-            AttachmentType type = iAttachment.getType(attachmentItem);
+            ResourceLocation gunId = iGun.getGunId(gun);
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
-            return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
-                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
-                if (map == null) {
-                    return false;
-                }
-                AttachmentPass pass = map.get(type);
-                if (pass == null) {
-                    return false;
-                }
-                return pass.isAllow(attachmentId);
-            }).orElse(false);
+            Optional<CommonGunIndex> optionalCommonGunIndex = TimelessAPI.getCommonGunIndex(gunId);
+            Optional<CommonAttachmentIndex> optionalCommonAttachmentIndex = TimelessAPI.getCommonAttachmentIndex(attachmentId);
+            if (optionalCommonGunIndex.isEmpty() || optionalCommonAttachmentIndex.isEmpty()) {
+                return false;
+            }
+            GunData gunData = optionalCommonGunIndex.get().getGunData();
+            Map<AttachmentType, AttachmentPass> map = gunData.getAllowAttachments();
+            if (map == null || map.isEmpty()) {
+                return false;
+            }
+            AttachmentPass pass = map.get(iAttachment.getType(attachmentItem));
+            if (pass == null) {
+                return false;
+            }
+            AttachmentData attachmentData = optionalCommonAttachmentIndex.get().getData();
+            return pass.isAllow(attachmentData.getTags());
         } else {
             return false;
         }

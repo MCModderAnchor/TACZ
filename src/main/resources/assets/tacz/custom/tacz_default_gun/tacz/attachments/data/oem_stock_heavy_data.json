@@ -1,9 +1,10 @@
 {
-    "weight": 0.34,
-    "ads_addend": 0.1,
-    "inaccuracy_addend": 0.5,
-    "recoil_modifier": {
-      "pitch": -0.35,
-      "yaw": -0.25
-    }
-  }
+  "weight": 0.34,
+  "ads_addend": 0.1,
+  "inaccuracy_addend": 0.5,
+  "recoil_modifier": {
+    "pitch": -0.35,
+    "yaw": -0.25
+  },
+  "tags": ["#stock"]
+}

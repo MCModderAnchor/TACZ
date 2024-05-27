@@ -10,11 +10,26 @@
       "armor_ignore": 0.0,
       "head_shot_multiplier": 1.1,
       "damage_adjust": [
-        {"distance": 1, "damage": 48},
-        {"distance": 3, "damage": 48},
-        {"distance": 10, "damage": 36},
-        {"distance": 20, "damage": 24},
-        {"distance": "infinite", "damage": 12}
+        {
+          "distance": 1,
+          "damage": 48
+        },
+        {
+          "distance": 3,
+          "damage": 48
+        },
+        {
+          "distance": 10,
+          "damage": 36
+        },
+        {
+          "distance": 20,
+          "damage": 24
+        },
+        {
+          "distance": "infinite",
+          "damage": 12
+        }
       ]
     },
     "speed": 120,
@@ -46,9 +61,7 @@
   ],
   "allow_attachments": {
     "stock": {
-      "white_list": [
-        "tacz:oem_stock_tactical"
-      ]
+      "tags": ["tacz:oem_stock_tactical"]
     }
   },
   "recoil": {

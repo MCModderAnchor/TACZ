@@ -1,24 +1,16 @@
 package com.tacz.guns.resource.pojo.data.gun;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
+import org.apache.commons.compress.utils.Sets;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 
 public class AttachmentPass {
-    @Nullable
-    @SerializedName("white_list")
-    private List<ResourceLocation> whiteList;
+    @SerializedName("tags")
+    private Set<String> tags = Sets.newHashSet();
 
-    @Nullable
-    @SerializedName("black_list")
-    private List<ResourceLocation> blackList;
-
-    public boolean isAllow(ResourceLocation attachmentId) {
-        if (whiteList != null && !whiteList.contains(attachmentId)) {
-            return false;
-        }
-        return blackList == null || !blackList.contains(attachmentId);
+    public boolean isAllow(Set<String> attachmentTags) {
+        return !Collections.disjoint(attachmentTags, this.tags);
     }
 }

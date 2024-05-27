@@ -10,11 +10,26 @@
       "armor_ignore": 0.15,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
-        {"distance": 0.5, "damage": 7},
-        {"distance": 4, "damage": 5},
-        {"distance": 9.5, "damage": 4.5},
-        {"distance": 17.5, "damage": 4},
-        {"distance": "infinite", "damage": 3.7}
+        {
+          "distance": 0.5,
+          "damage": 7
+        },
+        {
+          "distance": 4,
+          "damage": 5
+        },
+        {
+          "distance": 9.5,
+          "damage": 4.5
+        },
+        {
+          "distance": 17.5,
+          "damage": 4
+        },
+        {
+          "distance": "infinite",
+          "damage": 3.7
+        }
       ]
     },
     "speed": 180,
@@ -59,31 +74,53 @@
   },
   "allow_attachments": {
     "scope": {
-      "black_list": [
-        "tacz:sight_sro_dot",
-        "tacz:scope_standard_8x"
-      ]
+      "tags": ["#scope"]
     },
-    "extended_mag": {},
-    "grip": {},
+    "extended_mag": {
+      "tags": ["#extended_mag"]
+    },
+    "grip": {
+      "tags": ["#grip"]
+    },
     "muzzle": {
-      "black_list": [
-        "tacz:muzzle_silence_phantom_s1"
-      ]
+      "tags": ["#muzzle"]
     },
-    "stock": {}
+    "stock": {
+      "tags": ["#stock"]
+    }
   },
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.55, 0.55]},
-      {"time": 0.3, "value": [0.55, 0.55]},
-      {"time": 0.5, "value": [-0.125, -0.125]},
-      {"time": 0.65, "value": [0, 0]}
+      {
+        "time": 0,
+        "value": [0.55, 0.55]
+      },
+      {
+        "time": 0.3,
+        "value": [0.55, 0.55]
+      },
+      {
+        "time": 0.5,
+        "value": [-0.125, -0.125]
+      },
+      {
+        "time": 0.65,
+        "value": [0, 0]
+      }
     ],
     "yaw": [
-      {"time": 0, "value": [0.15, 0.25]},
-      {"time": 0.3, "value": [0.15, 0.25]},
-      {"time": 0.5, "value": [0, 0]}
+      {
+        "time": 0,
+        "value": [0.15, 0.25]
+      },
+      {
+        "time": 0.3,
+        "value": [0.15, 0.25]
+      },
+      {
+        "time": 0.5,
+        "value": [0, 0]
+      }
     ]
   },
   "inaccuracy": {

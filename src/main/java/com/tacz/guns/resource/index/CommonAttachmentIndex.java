@@ -15,11 +15,11 @@ public class CommonAttachmentIndex {
     private CommonAttachmentIndex() {
     }
 
-    public static CommonAttachmentIndex getInstance(AttachmentIndexPOJO attachmentIndexPOJO) throws IllegalArgumentException {
+    public static CommonAttachmentIndex getInstance(ResourceLocation id, AttachmentIndexPOJO attachmentIndexPOJO) throws IllegalArgumentException {
         CommonAttachmentIndex index = new CommonAttachmentIndex();
         index.pojo = attachmentIndexPOJO;
         checkIndex(attachmentIndexPOJO, index);
-        checkData(attachmentIndexPOJO, index);
+        checkData(id, attachmentIndexPOJO, index);
         return index;
     }
 
@@ -29,12 +29,15 @@ public class CommonAttachmentIndex {
         index.type = attachmentIndexPOJO.getType();
     }
 
-    private static void checkData(AttachmentIndexPOJO attachmentIndexPOJO, CommonAttachmentIndex index) {
+    private static void checkData(ResourceLocation id, AttachmentIndexPOJO attachmentIndexPOJO, CommonAttachmentIndex index) {
         ResourceLocation pojoData = attachmentIndexPOJO.getData();
         Preconditions.checkArgument(pojoData != null, "index object missing pojoData field");
         AttachmentData data = CommonAssetManager.INSTANCE.getAttachmentData(pojoData);
         Preconditions.checkArgument(data != null, "there is no corresponding data file");
         index.data = data;
+
+        // 将 id 添加为默认 tag
+        index.data.getTags().add(id.toString());
     }
 
     public AttachmentData getData() {

@@ -10,12 +10,27 @@
       "armor_ignore": 0,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 0.5, "damage": 7},
-        {"distance": 5, "damage": 6},
-        {"distance": 9.5, "damage": 5},
-        {"distance": 17.5, "damage": 4.5},
+        {
+          "distance": 0.5,
+          "damage": 7
+        },
+        {
+          "distance": 5,
+          "damage": 6
+        },
+        {
+          "distance": 9.5,
+          "damage": 5
+        },
+        {
+          "distance": 17.5,
+          "damage": 4.5
+        },
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 3}
+        {
+          "distance": "infinite",
+          "damage": 3
+        }
       ]
     },
     "speed": 150,
@@ -52,15 +67,11 @@
   ],
   "allow_attachments": {
     "scope": {
-      "white_list": [
-        "tacz:sight_sro_dot"
-      ]
+      "tags": ["tacz:sight_sro_dot"]
     },
     "extended_mag": {},
     "muzzle": {
-      "white_list": [
-        "tacz:muzzle_silence_mirage"
-      ]
+      "tags": ["tacz:muzzle_silence_mirage"]
     }
   },
   "recoil": {

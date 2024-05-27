@@ -72,6 +72,6 @@ public final class CommonAttachmentIndexLoader {
 
     public static void loadAttachmentFromJsonString(ResourceLocation id, String json) {
         AttachmentIndexPOJO indexPOJO = GSON.fromJson(json, AttachmentIndexPOJO.class);
-        ATTACHMENT_INDEX.put(id, CommonAttachmentIndex.getInstance(indexPOJO));
+        ATTACHMENT_INDEX.put(id, CommonAttachmentIndex.getInstance(id, indexPOJO));
     }
 }

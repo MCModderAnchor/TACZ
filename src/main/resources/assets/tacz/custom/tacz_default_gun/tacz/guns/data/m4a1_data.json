@@ -79,25 +79,20 @@
   },
   "allow_attachments": {
     "scope": {
-      "black_list": [
-        "tacz:sight_sro_dot"
-      ]
+      "tags": ["#scope"]
     },
     "stock": {
-      "white_list": [
-        "tacz:stock_tactical_ar",
-        "tacz:stock_carbon_bone_c5",
-        "tacz:stock_militech_b5"
-      ]
+      "tags": ["#stock"]
     },
-    "grip": {},
+    "grip": {
+      "tags": ["#grip"]
+    },
     "muzzle": {
-      "black_list": [
-        "tacz:muzzle_silence_mirage"
-      ]
+      "tags": ["#muzzle"]
     },
-//    "laser": {},
-    "extended_mag": {}
+    "extended_mag": {
+      "tags": ["#extended_mag"]
+    }
   },
   "exclusive_attachments": {
   }

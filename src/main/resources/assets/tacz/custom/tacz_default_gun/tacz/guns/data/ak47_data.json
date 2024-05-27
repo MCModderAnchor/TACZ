@@ -143,22 +143,17 @@
   // scope, stock, muzzle, grip, laser, extended_mag
   "allow_attachments": {
     "scope": {
-      // 允许安装的配件的名单，没有则默认全部允许安装
-      //"white_list": [
-      //
-      //],
-      // 不允许安装的配件的名单，没有则默认全部允许安装
-      "black_list": [
-        "tacz:sight_sro_dot"
-      ]
+      "tags": ["#scope"]
     },
-    "stock": {},
+    "stock": {
+      "tags": ["#stock"]
+    },
     "muzzle": {
-      "black_list": [
-        "tacz:muzzle_silence_mirage"
-      ]
+      "tags": ["#muzzle"]
     },
-    "extended_mag": {}
+    "extended_mag": {
+      "tags": ["#extended_mag"]
+    }
   },
   // 专属的配件属性
   "exclusive_attachments": {

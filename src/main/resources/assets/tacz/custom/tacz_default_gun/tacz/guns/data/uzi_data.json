@@ -51,16 +51,13 @@
   ],
   "allow_attachments": {
     "scope": {
-      "black_list": [
-        "tacz:sight_sro_dot",
-        "tacz:scope_standard_8x"
-      ]
+      "tags": ["#scope"]
     },
-    "extended_mag": {},
     "muzzle": {
-      "black_list": [
-        "tacz:muzzle_silence_phantom_s1"
-      ]
+      "tags": ["#muzzle"]
+    },
+    "extended_mag": {
+      "tags": ["#extended_mag"]
     }
   },
   "recoil": {

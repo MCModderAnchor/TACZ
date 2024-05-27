@@ -53,7 +53,7 @@
   "allow_attachments": {
     "extended_mag": {},
     "muzzle": {
-      "white_list": [
+      "tags": [
         "tacz:muzzle_silence_phantom_s1"
       ]
     }
