@@ -5,6 +5,9 @@ import com.google.common.collect.Maps;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
+import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentLod;
+import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
+import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
@@ -12,6 +15,7 @@ import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -23,6 +27,7 @@ public class ClientAttachmentIndex {
     private String name;
     private @Nullable BedrockAttachmentModel attachmentModel;
     private @Nullable ResourceLocation modelTexture;
+    private @Nullable Pair<BedrockAttachmentModel, ResourceLocation> lodModel;
     private ResourceLocation slotTexture;
     private AttachmentData data;
     private float fov = 70.0f;
@@ -43,6 +48,7 @@ public class ClientAttachmentIndex {
         checkName(indexPOJO, index);
         checkSlotTexture(display, index);
         checkTextureAndModel(display, index);
+        checkLod(display, index);
         checkSkins(registryName, index);
         checkSounds(display, index);
         return index;
@@ -104,6 +110,33 @@ public class ClientAttachmentIndex {
         index.modelTexture = display.getTexture();
     }
 
+    private static void checkLod(AttachmentDisplay display, ClientAttachmentIndex index) {
+        AttachmentLod gunLod = display.getAttachmentLod();
+        if (gunLod != null) {
+            ResourceLocation texture = gunLod.getModelTexture();
+            if (gunLod.getModelLocation() == null) {
+                return;
+            }
+            if (texture == null) {
+                return;
+            }
+            BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(gunLod.getModelLocation());
+            if (modelPOJO == null) {
+                return;
+            }
+            // 先判断是不是 1.10.0 版本基岩版模型文件
+            if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
+                BedrockAttachmentModel model = new BedrockAttachmentModel(modelPOJO, BedrockVersion.LEGACY);
+                index.lodModel = Pair.of(model, texture);
+            }
+            // 判定是不是 1.12.0 版本基岩版模型文件
+            if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
+                BedrockAttachmentModel model = new BedrockAttachmentModel(modelPOJO, BedrockVersion.NEW);
+                index.lodModel = Pair.of(model, texture);
+            }
+        }
+    }
+
     private static void checkSkins(ResourceLocation registryName, ClientAttachmentIndex index) {
         Map<ResourceLocation, AttachmentSkin> skins = ClientAssetManager.INSTANCE.getAttachmentSkins(registryName);
         if (skins != null) {
@@ -135,6 +168,11 @@ public class ClientAttachmentIndex {
     @Nullable
     public ResourceLocation getModelTexture() {
         return modelTexture;
+    }
+
+    @Nullable
+    public Pair<BedrockAttachmentModel, ResourceLocation> getLodModel() {
+        return lodModel;
     }
 
     public ResourceLocation getSlotTexture() {

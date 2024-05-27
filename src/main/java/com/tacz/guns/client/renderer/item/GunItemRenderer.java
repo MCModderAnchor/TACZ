@@ -9,7 +9,7 @@ import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.SlotModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.pojo.TransformScale;
-import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.util.RenderDistance;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,7 +20,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -89,7 +88,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             BedrockGunModel gunModel;
             ResourceLocation gunTexture;
             Pair<BedrockGunModel, ResourceLocation> lodModel = gunIndex.getLodModel();
-            if (lodModel == null || inRenderDistance(poseStack)) {
+            if (lodModel == null || RenderDistance.inRenderDistance(poseStack)) {
                 gunModel = gunIndex.getGunModel();
                 gunTexture = gunIndex.getModelTexture();
             } else {
@@ -115,16 +114,6 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
         });
         poseStack.popPose();
-    }
-
-    private boolean inRenderDistance(PoseStack poseStack) {
-        int distance = RenderConfig.GUN_LOD_RENDER_DISTANCE.get();
-        if (distance <= 0) {
-            return false;
-        }
-        Matrix4f matrix4f = poseStack.last().pose();
-        float viewDistance = matrix4f.m30() * matrix4f.m30() + matrix4f.m31() * matrix4f.m31() + matrix4f.m32() * matrix4f.m32();
-        return viewDistance < distance * distance;
     }
 
 
