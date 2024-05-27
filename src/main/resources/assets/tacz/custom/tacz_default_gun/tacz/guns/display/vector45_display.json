@@ -33,5 +33,17 @@
     "shoot_3p": "tacz:victor45/vector_shoot_3p",
     "silence": "tacz:victor45/vector_silence",
     "silence_3p": "tacz:victor45/vector_silence_3p"
+  },
+  "offhand_show": {
+    "pos": [1, 19, 4],
+    "rotate": [0, 0, 30],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [1, 16, -2],
+    "rotate": [0, 0, 20],
+    "scale": [0.5, 0.5, 0.5]
+    }
   }
 }

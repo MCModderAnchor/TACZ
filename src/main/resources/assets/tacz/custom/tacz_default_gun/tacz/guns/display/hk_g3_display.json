@@ -45,5 +45,17 @@
     "head_hit": "tacz:head_hit",
     "flesh_hit": "tacz:flesh_hit",
     "kill": "tacz:kill"
+  },
+  "offhand_show": {
+    "pos": [0, 19, 4],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [0, 19, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
   }
 }

@@ -39,5 +39,17 @@
     "put_away": "tacz:uzi/uzi_put_away",
     "silence": "tacz:uzi/uzi_silence",
     "silence_3p": "tacz:uzi/uzi_silence_3p"
+  },
+  "offhand_show": {
+    "pos": [1, 20, 4],
+    "rotate": [0, 0, 45],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [1, 16, -2],
+    "rotate": [0, 0, 20],
+    "scale": [0.5, 0.5, 0.5]
+    }
   }
 }
