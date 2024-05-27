@@ -34,10 +34,10 @@ public class SyncConfig {
         builder.push("interact_key");
 
         builder.comment("These whitelist blocks can be interacted with when the interact key is pressed");
-        INTERACT_KEY_WHITELIST_BLOCKS = builder.define("InteractKeyWhitelistBlocks", Lists.newArrayList("minecraft:chest", "minecraft:trapped_chest", "minecraft:ender_chest"));
+        INTERACT_KEY_WHITELIST_BLOCKS = builder.define("InteractKeyWhitelistBlocks", Lists.newArrayList());
 
         builder.comment("These whitelist entities can be interacted with when the interact key is pressed");
-        INTERACT_KEY_WHITELIST_ENTITIES = builder.define("InteractKeyWhitelistEntities", Lists.newArrayList("minecraft:minecart", "minecraft:boat", "minecraft:horse"));
+        INTERACT_KEY_WHITELIST_ENTITIES = builder.define("InteractKeyWhitelistEntities", Lists.newArrayList());
 
         builder.comment("These blacklist blocks can be interacted with when the interact key is pressed");
         INTERACT_KEY_BLACKLIST_BLOCKS = builder.define("InteractKeyBlacklistBlocks", Lists.newArrayList());

@@ -12,7 +12,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -50,7 +50,7 @@ public class InteractKeyTextOverlay implements IGuiOverlay {
 
     private static void renderBlockText(GuiGraphics graphics, int width, int height, BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc) {
         BlockPos blockPos = blockHitResult.getBlockPos();
-        Block block = player.level().getBlockState(blockPos).getBlock();
+        BlockState block = player.level().getBlockState(blockPos);
         if (InteractKeyConfigRead.canInteractBlock(block)) {
             renderText(graphics, width, height, mc.font);
         }
