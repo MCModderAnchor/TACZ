@@ -49,17 +49,11 @@
   "fire_mode": [
     "auto"
   ],
-  "allow_attachments": {
-    "scope": {
-      "tags": ["#scope"]
-    },
-    "muzzle": {
-      "tags": ["#muzzle"]
-    },
-    "extended_mag": {
-      "tags": ["#extended_mag"]
-    }
-  },
+  "allow_attachment_types": [
+    "scope",
+    "muzzle",
+    "extended_mag"
+  ],
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.65, 0.65]},

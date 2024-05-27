@@ -19,7 +19,6 @@
       "damage_adjust": [
         {"distance": 50, "damage": 70},
         {"distance": 100, "damage": 65},
-        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 50}
       ]
     },
@@ -71,12 +70,8 @@
     "lie": 3,
     "aim": 0.05
   },
-  "allow_attachments": {
-    "scope": {
-      "tags": ["#scope"]
-    },
-    "extended_mag": {
-      "tags": ["#extended_mag"]
-    }
-  }
+  "allow_attachment_types": [
+    "scope",
+    "extended_mag"
+  ]
 }

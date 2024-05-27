@@ -7,6 +7,5 @@
     "distance_addend": -24,
     // 是否使用专门的消音后的音源
     "use_silence_sound": true
-  },
-  "tags": ["#muzzle"]
+  }
 }

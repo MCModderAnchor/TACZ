@@ -72,23 +72,13 @@
     "bpm": 900,
     "min_interval": 0.3
   },
-  "allow_attachments": {
-    "scope": {
-      "tags": ["#scope"]
-    },
-    "extended_mag": {
-      "tags": ["#extended_mag"]
-    },
-    "grip": {
-      "tags": ["#grip"]
-    },
-    "muzzle": {
-      "tags": ["#muzzle"]
-    },
-    "stock": {
-      "tags": ["#stock"]
-    }
-  },
+  "allow_attachment_types": [
+    "scope",
+    "stock",
+    "grip",
+    "muzzle",
+    "extended_mag"
+  ],
   "recoil": {
     "pitch": [
       {

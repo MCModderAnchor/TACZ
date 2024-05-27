@@ -9,11 +9,9 @@ import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.client.renderer.item.GunItemRenderer;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
-import com.tacz.guns.resource.index.CommonAttachmentIndex;
 import com.tacz.guns.resource.index.CommonGunIndex;
-import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
-import com.tacz.guns.resource.pojo.data.gun.AttachmentPass;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.util.AllowAttachmentTagMatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
@@ -28,10 +26,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -78,25 +73,9 @@ public abstract class AbstractGunItem extends Item implements IGun {
         if (iGun != null && iAttachment != null) {
             ResourceLocation gunId = iGun.getGunId(gun);
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
-            Optional<CommonGunIndex> optionalCommonGunIndex = TimelessAPI.getCommonGunIndex(gunId);
-            Optional<CommonAttachmentIndex> optionalCommonAttachmentIndex = TimelessAPI.getCommonAttachmentIndex(attachmentId);
-            if (optionalCommonGunIndex.isEmpty() || optionalCommonAttachmentIndex.isEmpty()) {
-                return false;
-            }
-            GunData gunData = optionalCommonGunIndex.get().getGunData();
-            Map<AttachmentType, AttachmentPass> map = gunData.getAllowAttachments();
-            if (map == null || map.isEmpty()) {
-                return false;
-            }
-            AttachmentPass pass = map.get(iAttachment.getType(attachmentItem));
-            if (pass == null) {
-                return false;
-            }
-            AttachmentData attachmentData = optionalCommonAttachmentIndex.get().getData();
-            return pass.isAllow(attachmentData.getTags());
-        } else {
-            return false;
+            return AllowAttachmentTagMatcher.match(gunId, attachmentId);
         }
+        return false;
     }
 
     /**
@@ -107,11 +86,11 @@ public abstract class AbstractGunItem extends Item implements IGun {
         IGun iGun = IGun.getIGunOrNull(gun);
         if (iGun != null) {
             return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
-                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
-                if (map == null) {
+                List<AttachmentType> allowAttachments = gunIndex.getGunData().getAllowAttachments();
+                if (allowAttachments == null) {
                     return false;
                 }
-                return map.containsKey(type);
+                return allowAttachments.contains(type);
             }).orElse(false);
         } else {
             return false;

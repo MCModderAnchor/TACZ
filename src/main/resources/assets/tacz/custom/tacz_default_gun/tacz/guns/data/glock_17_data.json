@@ -26,7 +26,6 @@
           "distance": 17.5,
           "damage": 4.5
         },
-        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {
           "distance": "infinite",
           "damage": 3
@@ -65,15 +64,11 @@
   "fire_mode": [
     "semi"
   ],
-  "allow_attachments": {
-    "scope": {
-      "tags": ["tacz:sight_sro_dot"]
-    },
-    "extended_mag": {},
-    "muzzle": {
-      "tags": ["tacz:muzzle_silence_mirage"]
-    }
-  },
+  "allow_attachment_types": [
+    "scope",
+    "muzzle",
+    "extended_mag"
+  ],
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.55, 0.55]},

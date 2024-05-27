@@ -10,9 +10,7 @@ import com.tacz.guns.crafting.GunSmithTableResult;
 import com.tacz.guns.resource.index.CommonAmmoIndex;
 import com.tacz.guns.resource.index.CommonAttachmentIndex;
 import com.tacz.guns.resource.index.CommonGunIndex;
-import com.tacz.guns.resource.loader.asset.AttachmentDataLoader;
-import com.tacz.guns.resource.loader.asset.GunDataLoader;
-import com.tacz.guns.resource.loader.asset.RecipeLoader;
+import com.tacz.guns.resource.loader.asset.*;
 import com.tacz.guns.resource.loader.index.CommonAmmoIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonAttachmentIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonGunIndexLoader;
@@ -149,6 +147,10 @@ public class CommonGunPackLoader {
                 GunDataLoader.load(zipFile, path);
                 // 加载配件 data 文件
                 AttachmentDataLoader.load(zipFile, path);
+                // 配件 tag
+                AttachmentTagsLoader.load(zipFile, path);
+                // 枪械允许的 tag
+                AllowAttachmentTagsLoader.load(zipFile, path);
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
@@ -159,6 +161,8 @@ public class CommonGunPackLoader {
         if (root.isDirectory()) {
             GunDataLoader.load(root);
             AttachmentDataLoader.load(root);
+            AttachmentTagsLoader.load(root);
+            AllowAttachmentTagsLoader.load(root);
         }
     }
 

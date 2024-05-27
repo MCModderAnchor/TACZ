@@ -1,13 +1,16 @@
 package com.tacz.guns.resource;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public enum CommonAssetManager {
     INSTANCE;
@@ -20,6 +23,10 @@ public enum CommonAssetManager {
     private final Map<ResourceLocation, AttachmentData> attachmentData = Maps.newHashMap();
 
     private final Map<ResourceLocation, GunSmithTableRecipe> gunSmithTableRecipes = Maps.newHashMap();
+
+    private final Map<ResourceLocation, Set<String>> attachmentTags = Maps.newHashMap();
+
+    private final Map<ResourceLocation, Set<String>> allowAttachmentTags = Maps.newHashMap();
 
     public void putGunData(ResourceLocation registryName, GunData data) {
         gunData.put(registryName, data);
@@ -49,9 +56,27 @@ public enum CommonAssetManager {
         return gunSmithTableRecipes;
     }
 
+    public void putAttachmentTags(ResourceLocation registryName, List<String> tags) {
+        this.attachmentTags.computeIfAbsent(registryName, (id) -> Sets.newHashSet()).addAll(tags);
+    }
+
+    public Set<String> getAttachmentTags(ResourceLocation registryName) {
+        return attachmentTags.get(registryName);
+    }
+
+    public void putAllowAttachmentTags(ResourceLocation registryName, List<String> tags) {
+        this.allowAttachmentTags.computeIfAbsent(registryName, (id) -> Sets.newHashSet()).addAll(tags);
+    }
+
+    public Set<String> getAllowAttachmentTags(ResourceLocation registryName) {
+        return allowAttachmentTags.get(registryName);
+    }
+
     public void clearAll() {
         this.gunData.clear();
         this.attachmentData.clear();
+        this.attachmentTags.clear();
+        this.allowAttachmentTags.clear();
     }
 
     public void clearRecipes() {

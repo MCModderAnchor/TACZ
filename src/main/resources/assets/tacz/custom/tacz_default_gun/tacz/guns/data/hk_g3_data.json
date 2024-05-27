@@ -106,23 +106,13 @@
     "lie": 1.5,
     "aim": 0.15
   },
-  "allow_attachments": {
-    "scope": {
-      "tags": ["#scope"]
-    },
-    "stock": {
-      "tags": ["#stock"]
-    },
-    "grip": {
-      "tags": ["#grip"]
-    },
-    "muzzle": {
-      "tags": ["#muzzle"]
-    },
-    "extended_mag": {
-      "tags": ["#extended_mag"]
-    }
-  },
+  "allow_attachment_types": [
+    "scope",
+    "stock",
+    "grip",
+    "muzzle",
+    "extended_mag"
+  ],
   "exclusive_attachments": {
     "tacz:scope_standard_8x": {
       "weight": 2.0,

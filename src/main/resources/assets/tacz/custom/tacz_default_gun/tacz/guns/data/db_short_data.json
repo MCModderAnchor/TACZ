@@ -59,11 +59,9 @@
   "fire_mode": [
     "semi"
   ],
-  "allow_attachments": {
-    "stock": {
-      "tags": ["tacz:oem_stock_tactical"]
-    }
-  },
+  "allow_attachment_types": [
+    "stock"
+  ],
   "recoil": {
     "pitch": [
       {"time": 0, "value": [9.5, 9.5]},

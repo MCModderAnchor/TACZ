@@ -19,7 +19,6 @@
       "damage_adjust": [
         {"distance": 17, "damage": 42},
         {"distance": 35, "damage": 32},
-        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 22}
       ]
     },
@@ -71,15 +70,9 @@
     "lie": 3,
     "aim": 0.05
   },
-  "allow_attachments": {
-    "extended_mag": {
-      "tags": ["#extended_mag"]
-    },
-    "scope": {
-      "tags": ["#scope", "#sniper_scope"]
-    },
-    "muzzle": {
-      "tags": ["#muzzle"]
-    }
-  }
+  "allow_attachment_types": [
+    "extended_mag",
+    "scope",
+    "muzzle"
+  ]
 }

@@ -14,7 +14,6 @@
         {"distance": 9.5, "damage": 18},
         {"distance": 19.5, "damage": 14},
         {"distance": 29.5, "damage": 12},
-        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 9}
       ]
     },

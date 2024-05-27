@@ -1,5 +1,6 @@
 package com.tacz.guns.resource.pojo.data.gun;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -67,8 +68,8 @@ public class GunData {
     @SerializedName("move_speed")
     private MoveSpeed moveSpeed = new MoveSpeed();
 
-    @SerializedName("allow_attachments")
-    private Map<AttachmentType, AttachmentPass> allowAttachments = Maps.newEnumMap(AttachmentType.class);
+    @SerializedName("allow_attachment_types")
+    private List<AttachmentType> allowAttachments = Lists.newArrayList();
 
     @SerializedName("exclusive_attachments")
     private Map<ResourceLocation, AttachmentData> exclusiveAttachments = Maps.newHashMap();
@@ -154,12 +155,8 @@ public class GunData {
     }
 
     @Nullable
-    public Map<AttachmentType, AttachmentPass> getAllowAttachments() {
+    public List<AttachmentType> getAllowAttachments() {
         return allowAttachments;
-    }
-
-    public boolean allowAttachmentType(AttachmentType type) {
-        return allowAttachments.containsKey(type);
     }
 
     public Map<ResourceLocation, AttachmentData> getExclusiveAttachments() {

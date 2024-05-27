@@ -35,9 +35,6 @@ public class CommonAttachmentIndex {
         AttachmentData data = CommonAssetManager.INSTANCE.getAttachmentData(pojoData);
         Preconditions.checkArgument(data != null, "there is no corresponding data file");
         index.data = data;
-
-        // 将 id 添加为默认 tag
-        index.data.getTags().add(id.toString());
     }
 
     public AttachmentData getData() {

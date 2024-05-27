@@ -44,8 +44,7 @@
   "fire_mode": [
     "semi"
   ],
-  "allow_attachments": {
-  },
+  "allow_attachment_types": [],
   "recoil": {
     "pitch": [
       {"time": 0, "value": [2.75, 2.75]},

@@ -141,20 +141,12 @@
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser, extended_mag
-  "allow_attachments": {
-    "scope": {
-      "tags": ["#scope"]
-    },
-    "stock": {
-      "tags": ["#stock"]
-    },
-    "muzzle": {
-      "tags": ["#muzzle"]
-    },
-    "extended_mag": {
-      "tags": ["#extended_mag"]
-    }
-  },
+  "allow_attachment_types": [
+    "scope",
+    "stock",
+    "muzzle",
+    "extended_mag"
+  ],
   // 专属的配件属性
   "exclusive_attachments": {
     // 配件 ID，后面的数据和配件的 data 部分结构完全一致

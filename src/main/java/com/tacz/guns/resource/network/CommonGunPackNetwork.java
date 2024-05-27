@@ -4,9 +4,7 @@ import com.google.common.collect.Maps;
 import com.tacz.guns.client.resource.ClientGunPackLoader;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageSyncGunPack;
-import com.tacz.guns.resource.loader.asset.AttachmentDataLoader;
-import com.tacz.guns.resource.loader.asset.GunDataLoader;
-import com.tacz.guns.resource.loader.asset.RecipeLoader;
+import com.tacz.guns.resource.loader.asset.*;
 import com.tacz.guns.resource.loader.index.CommonAmmoIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonAttachmentIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonGunIndexLoader;
@@ -99,6 +97,8 @@ public class CommonGunPackNetwork {
                 case GUN_INDEX -> CommonGunIndexLoader.loadGunFromJsonString(id, json);
                 case ATTACHMENT_INDEX -> CommonAttachmentIndexLoader.loadAttachmentFromJsonString(id, json);
                 case RECIPES -> RecipeLoader.loadFromJsonString(id, json);
+                case ATTACHMENT_TAGS -> AttachmentTagsLoader.loadFromJsonString(id, json);
+                case ALLOW_ATTACHMENT_TAGS -> AllowAttachmentTagsLoader.loadFromJsonString(id, json);
             }
         }));
         ClientGunPackLoader.reloadIndex();

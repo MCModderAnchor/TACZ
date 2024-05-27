@@ -1,10 +1,8 @@
 package com.tacz.guns.resource.pojo.data.attachment;
 
-import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nullable;
-import java.util.Set;
 
 public class AttachmentData {
     @SerializedName("silence")
@@ -26,9 +24,6 @@ public class AttachmentData {
     @SerializedName("recoil_modifier")
     @Nullable
     private RecoilModifier recoilModifier = null;
-
-    @SerializedName("tags")
-    private Set<String> tags = Sets.newHashSet();
 
     @Nullable
     public Silence getSilence() {
@@ -54,9 +49,5 @@ public class AttachmentData {
     @Nullable
     public RecoilModifier getRecoilModifier() {
         return recoilModifier;
-    }
-
-    public Set<String> getTags() {
-        return tags;
     }
 }
