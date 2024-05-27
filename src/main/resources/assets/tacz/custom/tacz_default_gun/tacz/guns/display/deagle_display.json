@@ -2,30 +2,18 @@
   "model": "tacz:gun/deagle_geo",
   "texture": "tacz:gun/uv/deagle",
   "lod": {
-  "model": "tacz:gun/lod/deagle",
-  "texture": "tacz:gun/lod/deagle"
-},
+    "model": "tacz:gun/lod/deagle",
+    "texture": "tacz:gun/lod/deagle"
+  },
   "hud": "tacz:gun/hud/deagle",
   "slot": "tacz:gun/slot/deagle",
   "animation": "tacz:deagle",
   "use_default_animation": "pistol",
   "transform": {
     "scale": {
-      "thirdperson": [
-        0.6,
-        0.6,
-        0.6
-      ],
-      "ground": [
-        0.6,
-        0.6,
-        0.6
-      ],
-      "fixed": [
-        1.2,
-        1.2,
-        1.2
-      ]
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
     }
   },
   "shell": {
@@ -51,13 +39,13 @@
     "silence_3p": "tacz:deagle/deagle_silence_3p"
   },
   "offhand_show": {
-    "pos": [-4.5, 12, 0],
-    "rotate": [0, 90, -45]
+    "pos": [-5, 12, -1],
+    "rotate": [-90, -45, 90]
   },
   "hotbar_show": {
     "0": {
-      "pos": [4.5, 12, 0],
-      "rotate": [0, 90, -45]
+      "pos": [3.5, 12, -1],
+      "rotate": [-90, -35, 90]
     }
   }
 }

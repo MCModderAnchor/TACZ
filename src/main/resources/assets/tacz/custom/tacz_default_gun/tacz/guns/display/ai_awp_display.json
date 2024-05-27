@@ -11,11 +11,8 @@
   "use_default_animation": "rifle",
   "transform": {
     "scale": {
-      // 第三人称手部
       "thirdperson": [0.6, 0.6, 0.6],
-      // 地面实体
       "ground": [0.6, 0.6, 0.6],
-      // 展示框
       "fixed": [1.2, 1.2, 1.2]
     }
   },
@@ -37,8 +34,8 @@
     "put_away": "tacz:ai_awp/awp_put_away"
   },
   "offhand_show": {
-    "pos": [0, 18, 1.5],
-    "rotate": [0, 180, -50],
-    "scale": [1, 1, 1]
+    "pos": [-3, 21, 5],
+    "rotate": [0, 0, -35],
+    "scale": [0.6, 0.6, 0.6]
   }
 }

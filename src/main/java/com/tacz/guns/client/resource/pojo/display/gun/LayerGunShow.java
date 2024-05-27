@@ -5,10 +5,10 @@ import org.joml.Vector3f;
 
 public class LayerGunShow {
     @SerializedName("pos")
-    private Vector3f pos = new Vector3f(0, 18, 3);
+    private Vector3f pos = new Vector3f(-2, 20, 4);
 
     @SerializedName("rotate")
-    private Vector3f rotate = new Vector3f(0, 0, 30);
+    private Vector3f rotate = new Vector3f(0, 0, -30);
 
     @SerializedName("scale")
     private Vector3f scale = new Vector3f(0.6f, 0.6f, 0.6f);
