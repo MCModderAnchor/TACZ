@@ -49,7 +49,8 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                 }
                 ResourceLocation skinId = iAttachment.getSkinId(stack);
                 ClientAttachmentSkinIndex skinIndex = attachmentIndex.getSkinIndex(skinId);
-                if (skinIndex != null) { // 有皮肤则渲染皮肤
+                if (skinIndex != null) {
+                    // 有皮肤则渲染皮肤
                     BedrockAttachmentModel model = skinIndex.getModel();
                     ResourceLocation texture = skinIndex.getTexture();
                     RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
@@ -58,8 +59,18 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                     // 没有皮肤，渲染默认模型
                     BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
                     ResourceLocation texture = attachmentIndex.getModelTexture();
-                    RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
-                    model.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay);
+                    if (model != null && texture != null) {
+                        RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
+                        model.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay);
+                    } else {
+                        poseStack.translate(0, 0.5, 0);
+                        // 展示框里显示正常
+                        if (transformType == ItemDisplayContext.FIXED) {
+                            poseStack.mulPose(Axis.YP.rotationDegrees(90));
+                        }
+                        VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
+                        SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    }
                 }
             }, () -> {
                 // 没有这个 attachmentId，渲染黑紫材质以提醒

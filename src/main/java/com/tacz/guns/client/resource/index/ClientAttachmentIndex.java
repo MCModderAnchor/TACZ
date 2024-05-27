@@ -21,8 +21,8 @@ import java.util.Objects;
 public class ClientAttachmentIndex {
     private final Map<ResourceLocation, ClientAttachmentSkinIndex> skinIndexMap = Maps.newHashMap();
     private String name;
-    private BedrockAttachmentModel attachmentModel;
-    private ResourceLocation modelTexture;
+    private @Nullable BedrockAttachmentModel attachmentModel;
+    private @Nullable ResourceLocation modelTexture;
     private ResourceLocation slotTexture;
     private AttachmentData data;
     private float fov = 70.0f;
@@ -95,17 +95,13 @@ public class ClientAttachmentIndex {
     }
 
     private static void checkTextureAndModel(AttachmentDisplay display, ClientAttachmentIndex index) {
-        // 检查模型
-        ResourceLocation modelLocation = display.getModel();
-        Preconditions.checkArgument(modelLocation != null, "display object missing model field");
-        index.attachmentModel = ClientAssetManager.INSTANCE.getOrLoadAttachmentModel(modelLocation);
-        Preconditions.checkArgument(index.attachmentModel != null, "there is no model data in the model file");
-        index.attachmentModel.setIsScope(display.isScope());
-        index.attachmentModel.setIsSight(display.isSight());
-        // 检查默认材质
-        ResourceLocation textureLocation = display.getTexture();
-        Preconditions.checkArgument(textureLocation != null, "missing default texture");
-        index.modelTexture = textureLocation;
+        // 不检查模型/材质是否为 null，模型/材质可以为 null
+        index.attachmentModel = ClientAssetManager.INSTANCE.getOrLoadAttachmentModel(display.getModel());
+        if (index.attachmentModel != null) {
+            index.attachmentModel.setIsScope(display.isScope());
+            index.attachmentModel.setIsSight(display.isSight());
+        }
+        index.modelTexture = display.getTexture();
     }
 
     private static void checkSkins(ResourceLocation registryName, ClientAttachmentIndex index) {
@@ -131,10 +127,12 @@ public class ClientAttachmentIndex {
         return name;
     }
 
+    @Nullable
     public BedrockAttachmentModel getAttachmentModel() {
         return attachmentModel;
     }
 
+    @Nullable
     public ResourceLocation getModelTexture() {
         return modelTexture;
     }

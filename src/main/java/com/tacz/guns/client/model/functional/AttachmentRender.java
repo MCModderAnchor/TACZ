@@ -48,8 +48,11 @@ public class AttachmentRender implements IFunctionalRenderer {
                     // 没有皮肤，渲染默认模型
                     BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
                     ResourceLocation texture = attachmentIndex.getModelTexture();
-                    RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
-                    model.render(poseStack, transformType, renderType, light, overlay);
+                    // 这里是枪械里的配件渲染，没有模型材质就不渲染
+                    if (model != null && texture != null) {
+                        RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
+                        model.render(poseStack, transformType, renderType, light, overlay);
+                    }
                 }
             }, () -> {
                 // 没有对应的 attachmentIndex，渲染黑紫材质以提醒

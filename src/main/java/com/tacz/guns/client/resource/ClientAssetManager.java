@@ -173,7 +173,10 @@ public enum ClientAssetManager {
      * @return 如果模型缓存中没有对应模型、模型 POJO 缓存也没有对应的 POJO，则返回 null。
      */
     @Nullable
-    public BedrockAttachmentModel getOrLoadAttachmentModel(ResourceLocation modelLocation) {
+    public BedrockAttachmentModel getOrLoadAttachmentModel(@Nullable ResourceLocation modelLocation) {
+        if (modelLocation == null) {
+            return null;
+        }
         BedrockAttachmentModel model = tempAttachmentModelMap.get(modelLocation);
         if (model != null) {
             return model;

@@ -1,9 +1,5 @@
 {
   "slot": "tacz:attachment/slot/extended_mag_1",
-  // 配件的默认模型，不可为空
-  "model": "tacz:attachment/dummy",
-  // 配件默认模型使用的材质，不可为空
-  "texture": "tacz:attachment/slot/extended_mag_1",
   "sounds": {
     "install": "tacz:attachments/extended_mag_install",
     "uninstall": "tacz:attachments/extended_mag_uninstall"

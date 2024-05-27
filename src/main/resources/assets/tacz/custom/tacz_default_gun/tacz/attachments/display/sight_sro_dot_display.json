@@ -1,8 +1,8 @@
 {
   "slot": "tacz:attachment/slot/sight_sro_dot",
-  // 配件的默认模型，不可为空
+  // 配件的默认模型，可以为空，为空则直接把 GUI 模型当做渲染
   "model": "tacz:attachment/sight_sro_dot_geo",
-  // 配件默认模型使用的材质，不可为空
+  // 配件默认模型使用的材质，可以为空，为空则直接把 GUI 模型当做渲染
   "texture": "tacz:attachment/uv/sight_sro_dot",
   // 只有 瞄具 配件需要设置这个属性，表示瞄具的放大倍率。
   // 玩家可以在数组设置的几个倍率之间切换

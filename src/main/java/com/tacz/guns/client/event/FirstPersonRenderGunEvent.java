@@ -344,7 +344,7 @@ public class FirstPersonRenderGunEvent {
                     Optional<ClientAttachmentIndex> indexOptional = TimelessAPI.getClientAttachmentIndex(scopeId);
                     if (indexOptional.isPresent()) {
                         BedrockAttachmentModel attachmentModel = indexOptional.get().getAttachmentModel();
-                        if (attachmentModel.getScopeViewPath() != null) {
+                        if (attachmentModel != null && attachmentModel.getScopeViewPath() != null) {
                             aimingNodePath.addAll(attachmentModel.getScopeViewPath());
                         }
                     }
