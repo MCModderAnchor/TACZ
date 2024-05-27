@@ -71,6 +71,8 @@
   "tooltip.tacz.refit.unload": "Unload",
   "subtitle.tacz.gun": "Gun Sound",
   "subtitle.tacz.target_block_hit": "Target Block: Hit",
+  "jei.tacz.attachment_query.title": "Attachment Query",
+  "jei.tacz.attachment_query.more": "More...",
   "config.tacz.client.key": "Key",
   "config.tacz.client.key.hold_to_aim": "Hold To Aim",
   "config.tacz.client.key.hold_to_aim.desc": "True if you want to hold the right mouse button to aim",
