@@ -30,5 +30,17 @@
     "put_away": "tacz:db_short/db_short_put_away",
     "shoot": "tacz:db_short/db_shoot",
     "shoot_3p": "tacz:db_short/db_shoot_3p"
+  },
+  "offhand_show": {
+    "pos": [0, 20, 4],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [0, 20, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
   }
 }

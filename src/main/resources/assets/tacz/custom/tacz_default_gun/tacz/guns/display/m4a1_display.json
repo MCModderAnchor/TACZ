@@ -39,5 +39,17 @@
     "put_away": "tacz:m4a1/m4a1_put_away",
     "silence": "tacz:m4a1/m4a1_silence",
     "silence_3p": "tacz:m4a1/m4a1_silence_3p"
+  },
+  "offhand_show": {
+    "pos": [1, 19, 4],
+    "rotate": [0, 0, 50],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-1, 19, 3],
+      "rotate": [-180, 0, 130],
+      "scale": [0.5, 0.5, 0.5]
+    }
   }
 }

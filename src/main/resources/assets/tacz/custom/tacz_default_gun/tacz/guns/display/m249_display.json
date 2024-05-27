@@ -39,5 +39,17 @@
     "put_away": "tacz:m249/m249_put_away",
     "silence": "tacz:m249/m249_silence",
     "silence_3p": "tacz:m249/m249_silence_3p"
+  },
+  "offhand_show": {
+    "pos": [0, 18, 5],
+    "rotate": [-20, 0, 30],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-4, 24, 4],
+      "rotate": [-90, -5, -90],
+      "scale": [0.5, 0.5, 0.5]
+    }
   }
 }

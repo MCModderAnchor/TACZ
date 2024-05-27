@@ -39,13 +39,15 @@
     "silence_3p": "tacz:glock_17/glock17_silence_3p"
   },
   "offhand_show": {
-    "pos": [-5, 12, -1],
-    "rotate": [-90, -45, 90]
+    "pos": [4, 13, -1],
+    "rotate": [-90, -35, 90],
+    "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [3.5, 12, -1],
-      "rotate": [-90, -35, 90]
+      "pos": [-5, 13, -1],
+      "rotate": [-90, -35, 90],
+      "scale": [0.5, 0.5, 0.5]
     }
   }
 }

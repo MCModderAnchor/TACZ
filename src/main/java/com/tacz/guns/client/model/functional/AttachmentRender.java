@@ -10,6 +10,7 @@ import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.renderer.item.AttachmentItemRenderer;
 import com.tacz.guns.client.resource.index.ClientAttachmentSkinIndex;
+import com.tacz.guns.util.RenderDistance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
@@ -50,6 +52,13 @@ public class AttachmentRender implements IFunctionalRenderer {
                     ResourceLocation texture = attachmentIndex.getModelTexture();
                     // 这里是枪械里的配件渲染，没有模型材质就不渲染
                     if (model != null && texture != null) {
+                        // 调用低模
+                        Pair<BedrockAttachmentModel, ResourceLocation> lodModel = attachmentIndex.getLodModel();
+                        // 有低模、在高模渲染范围外、不是第一人称
+                        if (lodModel != null && !RenderDistance.inRenderDistance(poseStack) && !transformType.firstPerson()) {
+                            model = lodModel.getLeft();
+                            texture = lodModel.getRight();
+                        }
                         RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
                         model.render(poseStack, transformType, renderType, light, overlay);
                     }
