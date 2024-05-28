@@ -55,7 +55,7 @@ public class AttachmentRender implements IFunctionalRenderer {
                         // 调用低模
                         Pair<BedrockAttachmentModel, ResourceLocation> lodModel = attachmentIndex.getLodModel();
                         // 有低模、在高模渲染范围外、不是第一人称
-                        if (lodModel != null && !RenderDistance.inRenderDistance(poseStack) && !transformType.firstPerson()) {
+                        if (lodModel != null && !RenderDistance.inRenderHighPolyModelDistance(poseStack) && !transformType.firstPerson()) {
                             model = lodModel.getLeft();
                             texture = lodModel.getRight();
                         }
