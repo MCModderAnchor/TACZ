@@ -22,12 +22,12 @@
           "damage": 13.5
         },
         {
-          "distance": 15.5,
+          "distance": 35.5,
           "damage": 12
         },
         {
           "distance": 50,
-          "damage": 10
+          "damage": 11
         },
         {
           "distance": "infinite",
