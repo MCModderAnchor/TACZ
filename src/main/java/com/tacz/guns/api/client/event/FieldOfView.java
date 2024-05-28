@@ -8,22 +8,12 @@ import net.minecraftforge.client.event.EntityViewRenderEvent;
  * 在调用 GameRenderer#getFov 方法时触发该事件
  * 用于瞄准镜瞄准时 FOV 相关变化时调用
  */
-public class FieldOfView extends EntityViewRenderEvent {
+public class FieldOfView extends EntityViewRenderEvent.FieldOfView {
     private final boolean isItemWithHand;
-    private double fov;
 
     public FieldOfView(GameRenderer renderer, Camera camera, double partialTicks, double fov, boolean isItemWithHand) {
-        super(renderer, camera, partialTicks);
-        this.fov = fov;
+        super(renderer, camera, partialTicks, fov);
         this.isItemWithHand = isItemWithHand;
-    }
-
-    public double getFOV() {
-        return fov;
-    }
-
-    public void setFOV(double fov) {
-        this.fov = fov;
     }
 
     public boolean isItemWithHand() {

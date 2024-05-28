@@ -9,6 +9,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,6 +32,8 @@ public abstract class GameRendererMixin {
 
     @Shadow
     public abstract void render(float pPartialTicks, long pNanoTime, boolean pRenderLevel);
+
+    @Shadow private float fov;
 
     @Inject(method = "bobHurt", at = @At("HEAD"), cancellable = true)
     public void onBobHurt(PoseStack pMatrixStack, float pPartialTicks, CallbackInfo ci) {
@@ -75,9 +79,13 @@ public abstract class GameRendererMixin {
         this.tacz$useFovSetting = pUseFOVSetting;
     }
 
-    @Inject(method = "getFov", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;getFluidInCamera()Lnet/minecraft/world/level/material/FogType;"),
+    @Inject(method = "getFov", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;getFluidInCamera()Lnet/minecraft/world/level/material/FogType;", shift = At.Shift.BEFORE),
             cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
     public void postMyFovModifyEvent(Camera camera, float partialTick, boolean pUseFOVSetting, CallbackInfoReturnable<Double> cir, double fov) {
+        FogType fogtype = camera.getFluidInCamera();
+        if (fogtype == FogType.LAVA || fogtype == FogType.WATER) {
+            fov *= Mth.lerp(Minecraft.getInstance().options.fovEffectScale, 1.0F, 0.85714287F);
+        }
         double f = ForgeHooksClient.getFieldOfView((GameRenderer) (Object) this, camera, partialTick, fov);
         FieldOfView event = new FieldOfView((GameRenderer) (Object) this, camera, partialTick, f, !pUseFOVSetting);
         MinecraftForge.EVENT_BUS.post(event);
