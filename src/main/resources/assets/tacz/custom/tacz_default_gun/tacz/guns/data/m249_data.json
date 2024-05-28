@@ -66,7 +66,7 @@
     "move": 5.5,
     "sneak": 3,
     "lie": 1.5,
-    "aim": 0.45
+    "aim": 0.35
   },
   "allow_attachment_types": [
     "scope",
