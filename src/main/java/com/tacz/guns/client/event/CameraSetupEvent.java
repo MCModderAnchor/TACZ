@@ -8,8 +8,11 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.client.other.KeepingItemRenderer;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
+import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.model.BedrockGunModel;
+import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
@@ -19,6 +22,7 @@ import com.tacz.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +40,8 @@ public class CameraSetupEvent {
     /**
      * 用于平滑 FOV 变化
      */
-    private static final SecondOrderDynamics FOV_DYNAMICS = new SecondOrderDynamics(0.5f, 1.2f, 0.5f, 0);
+    private static final SecondOrderDynamics WORLD_FOV_DYNAMICS = new SecondOrderDynamics(0.5f, 1.2f, 0.5f, 0);
+    private static final SecondOrderDynamics ITEM_MODEL_FOV_DYNAMICS = new SecondOrderDynamics(0.5f, 1.2f, 0.5f, 0);
     private static PolynomialSplineFunction pitchSplineFunction;
     private static PolynomialSplineFunction yawSplineFunction;
     private static long shootTimeStamp = -1L;
@@ -120,7 +125,7 @@ public class CameraSetupEvent {
         if (entity instanceof LivingEntity livingEntity) {
             ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
             if (!(stack.getItem() instanceof IGun iGun)) {
-                float fov = FOV_DYNAMICS.update((float) event.getFOV());
+                float fov = WORLD_FOV_DYNAMICS.update((float) event.getFOV());
                 event.setFOV(fov);
                 return;
             }
@@ -128,12 +133,46 @@ public class CameraSetupEvent {
             if (livingEntity instanceof LocalPlayer localPlayer) {
                 IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
                 float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
-                float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
+                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
                 event.setFOV(fov);
             } else {
                 IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
                 float aimingProgress = gunOperator.getSynAimingProgress();
-                float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
+                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
+                event.setFOV(fov);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void applyScopeModelFovModifying(ViewportEvent.ComputeFov event) {
+        if (event.usedConfiguredFov()) {
+            return; // 只修改手部物品的 fov，因此如果是世界渲染 fov 事件，则返回
+        }
+        Entity entity = event.getCamera().getEntity();
+        if (entity instanceof LivingEntity livingEntity) {
+            ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
+            if (!(stack.getItem() instanceof IGun iGun)) {
+                float fov = ITEM_MODEL_FOV_DYNAMICS.update((float) event.getFOV());
+                event.setFOV(fov);
+                return;
+            }
+            ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
+            if (!(scopeItem.getItem() instanceof IAttachment iAttachment)) {
+                float fov = ITEM_MODEL_FOV_DYNAMICS.update((float) event.getFOV());
+                event.setFOV(fov);
+                return;
+            }
+            float modifiedFov = TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(scopeItem)).map(ClientAttachmentIndex::getFov).orElse((float) event.getFOV());
+            if (livingEntity instanceof LocalPlayer localPlayer) {
+                IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
+                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
+                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, (float) event.getFOV(), modifiedFov));
+                event.setFOV(fov);
+            } else {
+                IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
+                float aimingProgress = gunOperator.getSynAimingProgress();
+                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, (float) event.getFOV(), modifiedFov));
                 event.setFOV(fov);
             }
         }

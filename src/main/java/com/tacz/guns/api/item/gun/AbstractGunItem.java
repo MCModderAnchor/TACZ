@@ -121,7 +121,9 @@ public abstract class AbstractGunItem extends Item implements IGun {
             CommonGunIndex index = entry.getValue();
             GunData gunData = index.getGunData();
             String key = type.name().toLowerCase(Locale.US);
-            if (key.equals(index.getType())) {
+            String indexType = index.getType();
+            // 正常情况的添加
+            if (key.equals(indexType)) {
                 ItemStack itemStack = GunItemBuilder.create()
                         .setId(entry.getKey())
                         .setFireMode(gunData.getFireModeSet().get(0))
@@ -129,6 +131,20 @@ public abstract class AbstractGunItem extends Item implements IGun {
                         .setAmmoInBarrel(true)
                         .build();
                 stacks.add(itemStack);
+                return;
+            }
+            // 如果不在默认 tab 内，那么全部加入 unknown 里
+            if (type == GunTabType.UNKNOWN) {
+                boolean noneMatch = Arrays.stream(GunTabType.values()).noneMatch(typeIn -> typeIn.name().toLowerCase(Locale.US).equals(indexType));
+                if (noneMatch) {
+                    ItemStack itemStack = GunItemBuilder.create()
+                            .setId(entry.getKey())
+                            .setFireMode(gunData.getFireModeSet().get(0))
+                            .setAmmoCount(gunData.getAmmoAmount())
+                            .setAmmoInBarrel(true)
+                            .build();
+                    stacks.add(itemStack);
+                }
             }
         });
         return stacks;
