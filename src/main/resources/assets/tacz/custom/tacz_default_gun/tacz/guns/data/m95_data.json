@@ -17,8 +17,9 @@
       "armor_ignore": 1.00,
       "head_shot_multiplier": 2,
       "damage_adjust": [
-        {"distance": 80, "damage": 70},
-        {"distance": 120, "damage": 60},
+        {"distance": 50, "damage": 70},
+        {"distance": 100, "damage": 65},
+        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 50}
       ]
     },
@@ -33,14 +34,14 @@
     "type": "magazine",
     "feed": {
       "empty": 4.93,
-      "tactical": 4.07
+      "tactical": 2.8
     },
     "cooldown": {
-      "empty": 5.5,
-      "tactical": 5.13
+      "empty": 5.23,
+      "tactical": 4.07
     }
   },
-  "draw_time": 1.05,
+  "draw_time": 1.03,
   "put_away_time": 0.87,
   "aim_time": 0.27,
   "sprint_time": 0.2,
@@ -70,8 +71,12 @@
     "lie": 3,
     "aim": 0.05
   },
-  "allow_attachment_types": [
-    "scope",
-    "extended_mag"
-  ]
+  "allow_attachments": {
+    "extended_mag": {},
+    "scope": {
+      "black_list": [
+        "tacz:sight_sro_dot"
+      ]
+    }
+  }
 }
