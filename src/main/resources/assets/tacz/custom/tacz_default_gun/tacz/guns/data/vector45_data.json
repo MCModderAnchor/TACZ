@@ -57,22 +57,13 @@
     "bpm": 900,
     "min_interval": 0.3
   },
-  "allow_attachments": {
-    "scope": {
-      "black_list": [
-        "tacz:sight_sro_dot",
-        "tacz:scope_standard_8x"
-      ]
-    },
-    "extended_mag": {},
-    "grip": {},
-    "muzzle": {
-      "black_list": [
-        "tacz:muzzle_silence_phantom_s1"
-      ]
-    },
-    "stock": {}
-  },
+  "allow_attachment_types": [
+    "scope",
+    "stock",
+    "grip",
+    "muzzle",
+    "extended_mag"
+  ],
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.45, 0.45]},

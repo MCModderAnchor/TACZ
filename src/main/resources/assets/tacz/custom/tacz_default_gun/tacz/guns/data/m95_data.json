@@ -71,12 +71,8 @@
     "lie": 3,
     "aim": 0.05
   },
-  "allow_attachments": {
-    "extended_mag": {},
-    "scope": {
-      "black_list": [
-        "tacz:sight_sro_dot"
-      ]
-    }
-  }
+  "allow_attachment_types": [
+    "scope",
+    "extended_mag"
+  ]
 }
