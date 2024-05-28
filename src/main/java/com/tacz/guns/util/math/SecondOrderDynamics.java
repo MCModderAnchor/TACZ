@@ -46,6 +46,11 @@ public class SecondOrderDynamics {
      * @return processed y value
      */
     public float update(float x) {
+        target = x;
+        return get();
+    }
+
+    public float get(){
         // 修正罕见的 NAN 错误
         if (Float.isNaN(py)) {
             py = 0;
@@ -53,7 +58,6 @@ public class SecondOrderDynamics {
         if (Float.isNaN(pyd)) {
             pyd = 0;
         }
-        target = x;
         return py + 0.05f * pyd;
     }
 
