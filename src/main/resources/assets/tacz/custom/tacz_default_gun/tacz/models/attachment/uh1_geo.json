@@ -6,7 +6,7 @@
 				"identifier": "geometry.sight_coyote - Converted",
 				"texture_width": 256,
 				"texture_height": 256,
-				"visible_bounds_width": 7,
+				"visible_bounds_width": 9,
 				"visible_bounds_height": 3,
 				"visible_bounds_offset": [0, 0.5, 0]
 			},
@@ -1851,15 +1851,15 @@
 				},
 				{
 					"name": "division",
-					"pivot": [0.05, 0.95, -55]
+					"pivot": [0.05, 0.95, -80]
 				},
 				{
 					"name": "division_illuminated",
 					"parent": "division",
-					"pivot": [-0.03125, 2.4075, -26.7375],
+					"pivot": [-0.03125, 2.4075, -51.7375],
 					"cubes": [
 						{
-							"origin": [-0.875, 1.5325, -35],
+							"origin": [-0.875, 1.5325, -80],
 							"size": [1.75, 1.75, 0.3],
 							"uv": {
 								"south": {"uv": [210.75, 113.25], "uv_size": [26.75, 26.75]}
@@ -1882,7 +1882,7 @@
 				},
 				{
 					"name": "scope_view",
-					"pivot": [0, 2.41875, 7]
+					"pivot": [0, 2.41875, 16]
 				}
 			]
 		}
