@@ -430,6 +430,16 @@
 					]
 				},
 				{
+					"name": "positioning2",
+					"parent": "root",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "scope_pos",
+					"parent": "positioning2",
+					"pivot": [0, 9.975, 4.275]
+				},
+				{
 					"name": "positioning",
 					"pivot": [0, 0, 0]
 				},

@@ -374,7 +374,7 @@
 					]
 				},
 				{
-					"name": "ld_rearsight",
+					"name": "sight",
 					"parent": "ld_gunbody",
 					"pivot": [0.0625, -0.79028, -8.00065],
 					"cubes": [
@@ -1133,6 +1133,16 @@
 							}
 						}
 					]
+				},
+				{
+					"name": "positioning2",
+					"parent": "lod_m4",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "scope_pos",
+					"parent": "positioning2",
+					"pivot": [0, 11.1625, -3.725]
 				},
 				{
 					"name": "positioning",

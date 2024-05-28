@@ -1507,19 +1507,14 @@
 					]
 				},
 				{
-					"name": "bone9",
+					"name": "positioning2",
 					"parent": "bone4",
-					"pivot": [0, 3.84123, -3.26367]
+					"pivot": [0, 0, 0]
 				},
 				{
-					"name": "bone21",
-					"parent": "bone4",
-					"pivot": [0, 3.84123, -3.00642]
-				},
-				{
-					"name": "bone22",
-					"parent": "bone4",
-					"pivot": [0, 3.84123, -2.74917]
+					"name": "scope_pos",
+					"parent": "positioning2",
+					"pivot": [0, 10.475, 5.025]
 				},
 				{
 					"name": "positioning",

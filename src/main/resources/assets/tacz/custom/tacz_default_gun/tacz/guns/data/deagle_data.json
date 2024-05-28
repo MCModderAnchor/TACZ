@@ -49,14 +49,10 @@
   "fire_mode": [
     "semi"
   ],
-  "allow_attachments": {
-    "extended_mag": {},
-    "muzzle": {
-      "tags": [
-        "tacz:muzzle_silence_phantom_s1"
-      ]
-    }
-  },
+  "allow_attachment_types": [
+    "scope",
+    "extended_mag"
+  ],
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.95, 0.95]},
@@ -72,8 +68,8 @@
     ]
   },
   "inaccuracy": {
-    "stand": 3,
-    "move": 4,
+    "stand": 2.75,
+    "move": 3.25,
     "sneak": 2,
     "lie": 1.2,
     "aim": 0.1

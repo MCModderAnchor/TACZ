@@ -1299,11 +1299,6 @@
 					"pivot": [0, 5.875, -2.96875]
 				},
 				{
-					"name": "scope_pos",
-					"parent": "Deagle",
-					"pivot": [0, 6.425, 0.55625]
-				},
-				{
 					"name": "additional_magazine",
 					"parent": "Deagle",
 					"pivot": [0, 2.5, 6.5]
@@ -3225,6 +3220,11 @@
 							}
 						}
 					]
+				},
+				{
+					"name": "scope_pos",
+					"parent": "slide2",
+					"pivot": [0, 6.425, 7.225]
 				},
 				{
 					"name": "lower2",
