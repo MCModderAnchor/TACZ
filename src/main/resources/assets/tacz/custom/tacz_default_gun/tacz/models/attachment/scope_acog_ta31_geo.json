@@ -2257,11 +2257,11 @@
 				{
 					"name": "division_illuminated",
 					"parent": "division",
-					"pivot": [0.45, 6.55, -13],
+					"pivot": [0.3875, 6.55, -13],
 					"cubes": [
 						{
-							"origin": [-3.25, -9, -101],
-							"size": [6.5, 13, 0.25],
+							"origin": [-2.5, -6, -101],
+							"size": [5, 10, 0.25],
 							"uv": {
 								"south": {"uv": [76, 3.5], "uv_size": [32, 64]}
 							}
