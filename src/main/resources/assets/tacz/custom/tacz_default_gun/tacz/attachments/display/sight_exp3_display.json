@@ -17,7 +17,7 @@
   "sight": true,
   // 只有 瞄具 配件需要设置这个属性，表示开镜后，枪身和瞄具渲染的fov。
   // 默认情况下，mc 渲染手部模型的 fov 为 70。
-  "fov": 70.0,
+  "fov": 40.0,
   "sounds": {
     "install": "tacz:attachments/scope_general_c",
     "uninstall": "tacz:attachments/scope_general_c"
