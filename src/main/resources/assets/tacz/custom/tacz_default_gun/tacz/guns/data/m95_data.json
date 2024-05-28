@@ -34,14 +34,14 @@
     "type": "magazine",
     "feed": {
       "empty": 4.93,
-      "tactical": 4.07
+      "tactical": 2.8
     },
     "cooldown": {
-      "empty": 5.5,
-      "tactical": 5.13
+      "empty": 5.23,
+      "tactical": 4.07
     }
   },
-  "draw_time": 1.05,
+  "draw_time": 1.03,
   "put_away_time": 0.87,
   "aim_time": 0.27,
   "sprint_time": 0.2,

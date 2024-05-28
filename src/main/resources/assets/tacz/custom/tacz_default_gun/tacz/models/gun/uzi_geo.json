@@ -3725,6 +3725,16 @@
 					"pivot": [0, 8.375, -10.25]
 				},
 				{
+					"name": "muzzle_flash",
+					"parent": "positioning2",
+					"pivot": [0, 8.375, -12.25]
+				},
+				{
+					"name": "shell",
+					"parent": "positioning2",
+					"pivot": [-0.25, 8.6, 2.475]
+				},
+				{
 					"name": "muzzle_pos",
 					"parent": "positioning2",
 					"pivot": [0, 8.375, -10.25]
@@ -3733,16 +3743,6 @@
 					"name": "scope_pos",
 					"parent": "positioning2",
 					"pivot": [0, 10.3125, 6.95]
-				},
-				{
-					"name": "shell",
-					"parent": "positioning2",
-					"pivot": [-0.25, 8.6, 2.475]
-				},
-				{
-					"name": "muzzle_flash",
-					"parent": "positioning2",
-					"pivot": [0, 8.375, -12.25]
 				},
 				{
 					"name": "pull",
