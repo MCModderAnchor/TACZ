@@ -25,6 +25,7 @@ import com.tacz.guns.crafting.GunSmithTableResult;
 import com.tacz.guns.inventory.GunSmithTableMenu;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessageCraft;
+import com.tacz.guns.util.RenderDistance;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -437,6 +438,9 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
     @SuppressWarnings("deprecation")
     private void renderLeftModel(GunSmithTableRecipe recipe) {
+        // 先标记一下，渲染高模
+        RenderDistance.markGuiRenderTimestamp();
+
         float rotationPeriod = 8f;
         int xPos = leftPos + 60;
         int yPos = topPos + 50;

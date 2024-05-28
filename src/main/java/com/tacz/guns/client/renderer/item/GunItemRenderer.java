@@ -88,7 +88,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             BedrockGunModel gunModel;
             ResourceLocation gunTexture;
             Pair<BedrockGunModel, ResourceLocation> lodModel = gunIndex.getLodModel();
-            if (lodModel == null || RenderDistance.inRenderDistance(poseStack)) {
+            if (lodModel == null || RenderDistance.inRenderHighPolyModelDistance(poseStack)) {
                 gunModel = gunIndex.getGunModel();
                 gunTexture = gunIndex.getModelTexture();
             } else {

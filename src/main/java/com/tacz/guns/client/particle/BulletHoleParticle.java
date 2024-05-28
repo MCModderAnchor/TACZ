@@ -140,6 +140,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
             vector3f.add(particleX, particleY, particleZ);
         }
 
+        // UV 坐标
         float u0 = this.getU0();
         float u1 = this.getU1();
         float v0 = this.getV0();
@@ -148,12 +149,22 @@ public class BulletHoleParticle extends TextureSheetParticle {
         // 0 - 30 tick 内，从 15 亮度到 0 亮度
         int light = Math.max(15 - this.age / 2, 0);
         int lightColor = LightTexture.pack(light, light);
+
+        // 颜色，逐渐渐变到 0 0 0，也就是黑色
+        float colorPercent = light / 15.0f;
+        float red = this.rCol * colorPercent;
+        float green = this.gCol * colorPercent;
+        float blue = this.bCol * colorPercent;
+
+        // 透明度，逐渐变成 0，也就是透明
         double threshold = RenderConfig.BULLET_HOLE_PARTICLE_FADE_THRESHOLD.get() * this.lifetime;
         float fade = 1.0f - (float) (Math.max(this.age - threshold, 0) / (this.lifetime - threshold));
-        buffer.vertex(points[0].x(), points[0].y(), points[0].z()).uv(u1, v1).color(this.rCol, this.gCol, this.bCol, this.alpha * fade).uv2(lightColor).endVertex();
-        buffer.vertex(points[1].x(), points[1].y(), points[1].z()).uv(u1, v0).color(this.rCol, this.gCol, this.bCol, this.alpha * fade).uv2(lightColor).endVertex();
-        buffer.vertex(points[2].x(), points[2].y(), points[2].z()).uv(u0, v0).color(this.rCol, this.gCol, this.bCol, this.alpha * fade).uv2(lightColor).endVertex();
-        buffer.vertex(points[3].x(), points[3].y(), points[3].z()).uv(u0, v1).color(this.rCol, this.gCol, this.bCol, this.alpha * fade).uv2(lightColor).endVertex();
+        float alphaFade = this.alpha * fade;
+
+        buffer.vertex(points[0].x(), points[0].y(), points[0].z()).uv(u1, v1).color(red, green, blue, alphaFade).uv2(lightColor).endVertex();
+        buffer.vertex(points[1].x(), points[1].y(), points[1].z()).uv(u1, v0).color(red, green, blue, alphaFade).uv2(lightColor).endVertex();
+        buffer.vertex(points[2].x(), points[2].y(), points[2].z()).uv(u0, v0).color(red, green, blue, alphaFade).uv2(lightColor).endVertex();
+        buffer.vertex(points[3].x(), points[3].y(), points[3].z()).uv(u0, v1).color(red, green, blue, alphaFade).uv2(lightColor).endVertex();
     }
 
     @Override
