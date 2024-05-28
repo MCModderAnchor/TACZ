@@ -17,9 +17,9 @@
       "armor_ignore": 0.25,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 0.5, "damage": 7.2},
-        {"distance": 10.5, "damage": 6},
-        {"distance": 18.5, "damage": 5},
+        {"distance": 0.5, "damage": 7.5},
+        {"distance": 30, "damage": 6},
+        {"distance": 60, "damage": 5},
         {"distance": "infinite", "damage": 4}
       ]
     },
@@ -74,7 +74,7 @@
     "move": 6.5,
     "sneak": 1.5,
     "lie": 1.1,
-    "aim": 0.1
+    "aim": 0.125
   },
   "allow_attachment_types": [
     "scope",

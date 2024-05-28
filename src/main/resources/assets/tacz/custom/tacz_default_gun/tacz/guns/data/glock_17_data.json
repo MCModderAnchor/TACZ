@@ -15,20 +15,20 @@
           "damage": 7
         },
         {
-          "distance": 5,
+          "distance": 15.5,
           "damage": 6
         },
         {
-          "distance": 9.5,
+          "distance": 24.5,
           "damage": 5
         },
         {
-          "distance": 17.5,
-          "damage": 4.5
+          "distance": 44.5,
+          "damage": 4
         },
         {
           "distance": "infinite",
-          "damage": 3
+          "damage": 3.5
         }
       ]
     },

@@ -4,7 +4,7 @@
   "bullet": {
     "life": 0.6,
     "bullet_amount": 1,
-    "damage": 5,
+    "damage": 6,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.15,
@@ -15,20 +15,16 @@
           "damage": 7
         },
         {
-          "distance": 4,
-          "damage": 5
+          "distance": 19.5,
+          "damage": 6
         },
         {
-          "distance": 9.5,
+          "distance": 49.5,
           "damage": 4.5
         },
         {
-          "distance": 17.5,
-          "damage": 4
-        },
-        {
           "distance": "infinite",
-          "damage": 3.7
+          "damage": 3.5
         }
       ]
     },
@@ -118,6 +114,6 @@
     "move": 4.5,
     "sneak": 1.5,
     "lie": 0.8,
-    "aim": 0.5
+    "aim": 0.35
   }
 }

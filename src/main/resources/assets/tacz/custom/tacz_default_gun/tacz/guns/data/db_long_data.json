@@ -10,14 +10,13 @@
       "armor_ignore": 0.0,
       "head_shot_multiplier": 1.1,
       "damage_adjust": [
-        {"distance": 1, "damage": 30},
-        {"distance": 12.5, "damage": 25},
-        {"distance": 25, "damage": 20},
-        {"distance": 35, "damage": 15},
-        {"distance": "infinite", "damage": 12}
+        {"distance": 1.5, "damage": 30},
+        {"distance": 20, "damage": 25},
+        {"distance": 35, "damage": 20},
+        {"distance": "infinite", "damage": 15}
       ]
     },
-    "speed": 150,
+    "speed": 120,
     "gravity": 0.0245,
     "knockback": 0.35,
     "friction": 0.012,

@@ -20,7 +20,7 @@
     // 用于霰弹，默认为 1，每发的伤害 / bullet_amount，每次射击扣除一发子弹
     "bullet_amount": 1,
     // 伤害
-    "damage": 8.5,
+    "damage": 9,
     // 曳光弹间隔数量，没有此字段则不发射曳光弹
     // 设置为 0 则是每发都是曳光弹
     "tracer_count_interval": 0,
@@ -29,14 +29,15 @@
       // 护甲穿透率，默认为 0，也就是没有穿甲伤害
       "armor_ignore": 0.3,
       // 爆头伤害 x1.5
-      "head_shot_multiplier": 1.75,
+      "head_shot_multiplier": 1.5,
       // 距离-伤害分段常函数
       "damage_adjust": [
         // 这样就能写抵近伤害了
         {"distance": 0.5, "damage": 10},
-        {"distance": 9.5, "damage": 8.5},
-        {"distance": 15, "damage": 7.5},
-        {"distance": 22, "damage": 6.5},
+        {"distance": 25, "damage": 9},
+        {"distance": 50, "damage": 8.5},
+        {"distance": 80, "damage": 7.5},
+        {"distance": 120, "damage": 6.5},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 5.5}
       ]
@@ -137,7 +138,7 @@
     // 趴下射击散布
     "lie": 1.25,
     // 瞄准射击时散布
-    "aim": 0.125
+    "aim": 0.25
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser, extended_mag
