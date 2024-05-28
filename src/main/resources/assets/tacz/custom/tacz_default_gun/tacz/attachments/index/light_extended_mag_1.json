@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.light_extended_mag_1.name",
+  "tooltip": "tacz.attachment.extended_mag_1.tooltip",
+  "display": "tacz:light_extended_mag_1_display",
+  "data": "tacz:light_extended_mag_1_data",
+  "type": "extended_mag"
+}

@@ -4,13 +4,7 @@
       "item": {
         "tag": "forge:ingots/iron"
       },
-      "count": 20
-    },
-    {
-      "item": {
-        "tag": "forge:ingots/gold"
-      },
-      "count": 8
+      "count": 12
     },
     {
       "item": {
@@ -21,6 +15,6 @@
   ],
   "result": {
     "type": "attachment",
-    "id": "tacz:extended_mag_2"
+    "id": "tacz:light_extended_mag_2"
   }
 }

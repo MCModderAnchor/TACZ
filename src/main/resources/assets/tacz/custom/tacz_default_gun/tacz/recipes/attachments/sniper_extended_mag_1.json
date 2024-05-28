@@ -4,23 +4,17 @@
       "item": {
         "tag": "forge:ingots/iron"
       },
-      "count": 20
+      "count": 18
     },
     {
       "item": {
         "tag": "forge:ingots/gold"
       },
-      "count": 8
-    },
-    {
-      "item": {
-        "tag": "forge:gems/lapis"
-      },
-      "count": 8
+      "count": 6
     }
   ],
   "result": {
     "type": "attachment",
-    "id": "tacz:extended_mag_2"
+    "id": "tacz:sniper_extended_mag_1"
   }
 }
