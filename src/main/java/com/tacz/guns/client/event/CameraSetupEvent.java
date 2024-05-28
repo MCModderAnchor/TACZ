@@ -145,7 +145,7 @@ public class CameraSetupEvent {
     }
 
     @SubscribeEvent
-    public static void applyItemInHandFovModifying(ViewportEvent.ComputeFov event) {
+    public static void applyScopeModelFovModifying(ViewportEvent.ComputeFov event) {
         if (event.usedConfiguredFov()) {
             return; // 只修改手部物品的 fov，因此如果是世界渲染 fov 事件，则返回
         }
