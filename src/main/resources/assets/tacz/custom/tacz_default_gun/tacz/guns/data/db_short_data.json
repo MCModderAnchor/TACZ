@@ -11,11 +11,11 @@
       "head_shot_multiplier": 1.1,
       "damage_adjust": [
         {
-          "distance": 1,
+          "distance": 2,
           "damage": 48
         },
         {
-          "distance": 3,
+          "distance": 5,
           "damage": 48
         },
         {

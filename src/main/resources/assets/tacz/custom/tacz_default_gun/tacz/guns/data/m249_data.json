@@ -1,6 +1,6 @@
 {
   "ammo": "tacz:556x45",
-  "ammo_amount": 75,
+  "ammo_amount": 80,
   "extended_mag_ammo_amount": [
     100,
     150,
@@ -18,8 +18,8 @@
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
         {"distance": 0.5, "damage": 9},
-        {"distance": 15.5, "damage": 7.5},
-        {"distance": 28.5, "damage": 6.5},
+        {"distance": 40, "damage": 7.5},
+        {"distance": 70, "damage": 6},
         {"distance": "infinite", "damage": 5}
       ]
     },
@@ -50,13 +50,13 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.6, 0.6]},
-      {"time": 0.3, "value": [0.6, 0.6]},
+      {"time": 0, "value": [0.4, 0.4]},
+      {"time": 0.3, "value": [0.4, 0.4]},
       {"time": 0.5, "value": [-0.15, -0.15]},
       {"time": 0.65, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [0.2, 0.3]},
+      {"time": 0, "value": [-0.1, 0.2]},
       {"time": 0.3, "value": [0.2, 0.3]},
       {"time": 0.5, "value": [0, 0]}
     ]

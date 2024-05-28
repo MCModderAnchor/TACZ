@@ -11,7 +11,7 @@
   "bullet": {
     "life": 0.8,
     "bullet_amount": 1,
-    "damage": 11,
+    "damage": 12,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.4,
@@ -22,16 +22,16 @@
           "damage": 13.5
         },
         {
-          "distance": 15.5,
+          "distance": 35.5,
+          "damage": 12
+        },
+        {
+          "distance": 50,
           "damage": 11
         },
         {
-          "distance": 32.5,
-          "damage": 9.5
-        },
-        {
           "distance": "infinite",
-          "damage": 7.5
+          "damage": 9
         }
       ]
     },
@@ -87,11 +87,11 @@
     "yaw": [
       {
         "time": 0,
-        "value": [-0.55, -0.3]
+        "value": [-0.35, -0.2]
       },
       {
         "time": 0.45,
-        "value": [-0.55, -0.3]
+        "value": [-0.35, -0.2]
       },
       {
         "time": 0.7,
@@ -104,7 +104,7 @@
     "move": 5.5,
     "sneak": 3.25,
     "lie": 1.5,
-    "aim": 0.15
+    "aim": 0.1
   },
   "allow_attachment_types": [
     "scope",
