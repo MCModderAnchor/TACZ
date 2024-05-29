@@ -61,7 +61,7 @@ public class ResultButton extends Button {
     }
 
     public void renderTooltips(Consumer<ItemStack> consumer) {
-        if (this.isHovered && !this.stack.isEmpty()) {
+        if (this.isHoveredOrFocused() && !this.stack.isEmpty()) {
             consumer.accept(this.stack);
         }
     }
