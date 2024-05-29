@@ -32,7 +32,7 @@ public class AttachmentQueryCategory implements IRecipeCategory<AttachmentQueryE
     public AttachmentQueryCategory(IGuiHelper guiHelper) {
         this.bgDraw = guiHelper.createBlankDrawable(160, 145);
         this.slotDraw = guiHelper.getSlotDrawable();
-        this.iconDraw = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, ModCreativeTabs.ATTACHMENT_TAB.get().getIconItem());
+        this.iconDraw = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, ModCreativeTabs.ATTACHMENT_SCOPE_TAB.get().getIconItem());
     }
 
     @Override

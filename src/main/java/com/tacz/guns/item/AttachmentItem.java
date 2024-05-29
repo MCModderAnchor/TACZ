@@ -42,11 +42,13 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
         return super.getName(stack);
     }
 
-    public static NonNullList<ItemStack> fillItemCategory() {
+    public static NonNullList<ItemStack> fillItemCategory(AttachmentType type) {
         NonNullList<ItemStack> stacks = NonNullList.create();
         TimelessAPI.getAllCommonAttachmentIndex().forEach(entry -> {
-            ItemStack itemStack = AttachmentItemBuilder.create().setId(entry.getKey()).build();
-            stacks.add(itemStack);
+            if (type.equals(entry.getValue().getType())) {
+                ItemStack itemStack = AttachmentItemBuilder.create().setId(entry.getKey()).build();
+                stacks.add(itemStack);
+            }
         });
         return stacks;
     }
