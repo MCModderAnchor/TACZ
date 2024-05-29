@@ -13,8 +13,6 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.api.item.builder.AmmoItemBuilder;
-import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.client.gui.components.smith.ResultButton;
 import com.tacz.guns.client.gui.components.smith.TypeButton;
 import com.tacz.guns.client.resource.ClientAssetManager;
@@ -100,8 +98,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             if (!recipeKeys.contains(group)) {
                 recipeKeys.add(group);
             }
-            recipes.putIfAbsent(group, Lists.newArrayList());
-            recipes.get(group).add(id);
+            recipes.computeIfAbsent(group, g -> Lists.newArrayList()).add(id);
         });
     }
 
@@ -242,13 +239,10 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 continue;
             }
             ItemStack icon = ItemStack.EMPTY;
-            CreativeModeTab gunTab = BuiltInRegistries.CREATIVE_MODE_TAB.get(new ResourceLocation(GunMod.MOD_ID, type));
-            if (gunTab != null) {
-                icon = gunTab.getIconItem();
-            } else if (GunSmithTableResult.AMMO.equals(type)) {
-                icon = AmmoItemBuilder.create().build();
-            } else if (GunSmithTableResult.ATTACHMENT.equals(type)) {
-                icon = AttachmentItemBuilder.create().build();
+            ResourceLocation tabId = new ResourceLocation(GunMod.MOD_ID, type);
+            CreativeModeTab modTab = BuiltInRegistries.CREATIVE_MODE_TAB.get(tabId);
+            if (modTab != null) {
+                icon = modTab.getIconItem();
             }
             TypeButton typeButton = new TypeButton(xOffset, topPos + 2, icon, b -> {
                 this.selectedType = type;
