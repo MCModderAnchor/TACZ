@@ -9,6 +9,7 @@ import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -19,13 +20,17 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
+import java.text.DecimalFormat;
 import java.util.Locale;
 
 public class ClientGunTooltip implements ClientTooltipComponent {
+    private static final DecimalFormat FORMAT = new DecimalFormat("0.00%");
+
     private final ItemStack gun;
     private final IGun iGun;
     private final CommonGunIndex gunIndex;
@@ -34,6 +39,8 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     private MutableComponent ammoCountText;
     private @Nullable MutableComponent gunType;
     private MutableComponent damage;
+    private MutableComponent armorIgnore;
+    private MutableComponent headShotMultiplier;
     private MutableComponent tips;
     private MutableComponent levelInfo;
     private @Nullable MutableComponent packInfo;
@@ -52,7 +59,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return 86;
+        return 112;
     }
 
     @Override
@@ -79,6 +86,20 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         MutableComponent value = Component.literal(String.valueOf(gunIndex.getBulletData().getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
         this.damage = Component.translatable("tooltip.tacz.gun.damage").append(value);
         this.maxWidth = Math.max(font.width(this.damage), this.maxWidth);
+
+        @Nullable ExtraDamage extraDamage = gunIndex.getBulletData().getExtraDamage();
+        if (extraDamage != null) {
+            float armorDamagePercent = (float) (extraDamage.getArmorIgnore() * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
+            float headShotMultiplierPercent = (float) (extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+            armorDamagePercent = Mth.clamp(armorDamagePercent, 0.0F, 1.0F);
+            this.armorIgnore = Component.translatable("tooltip.tacz.gun.armor_ignore", FORMAT.format(armorDamagePercent));
+            this.headShotMultiplier = Component.translatable("tooltip.tacz.gun.head_shot_multiplier", FORMAT.format(headShotMultiplierPercent));
+        } else {
+            this.armorIgnore = Component.translatable("tooltip.tacz.gun.armor_ignore", FORMAT.format(0));
+            this.headShotMultiplier = Component.translatable("tooltip.tacz.gun.head_shot_multiplier", FORMAT.format(1));
+        }
+        this.maxWidth = Math.max(font.width(this.armorIgnore), this.maxWidth);
+        this.maxWidth = Math.max(font.width(this.headShotMultiplier), this.maxWidth);
 
         String keyName = Component.keybind(RefitKey.REFIT_KEY.getName()).getString().toUpperCase(Locale.ENGLISH);
         this.tips = Component.translatable("tooltip.tacz.gun.tips", keyName).withStyle(ChatFormatting.YELLOW).withStyle(ChatFormatting.ITALIC);
@@ -126,6 +147,14 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
         // 伤害
         font.drawInBatch(this.damage, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        yOffset += 15;
+
+        // 穿甲伤害
+        font.drawInBatch(this.armorIgnore, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        yOffset += 11;
+
+        // 爆头伤害
+        font.drawInBatch(this.headShotMultiplier, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
         yOffset += 11;
 
         // Z 键说明
