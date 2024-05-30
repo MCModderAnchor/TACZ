@@ -13,8 +13,6 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.api.item.builder.AmmoItemBuilder;
-import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.client.gui.components.smith.ResultButton;
 import com.tacz.guns.client.gui.components.smith.TypeButton;
 import com.tacz.guns.client.resource.ClientAssetManager;
@@ -100,8 +98,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             if (!recipeKeys.contains(group)) {
                 recipeKeys.add(group);
             }
-            recipes.putIfAbsent(group, Lists.newArrayList());
-            recipes.get(group).add(id);
+            recipes.computeIfAbsent(group, g -> Lists.newArrayList()).add(id);
         });
     }
 
@@ -242,13 +239,10 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 continue;
             }
             ItemStack icon = ItemStack.EMPTY;
-            CreativeModeTab gunTab = BuiltInRegistries.CREATIVE_MODE_TAB.get(new ResourceLocation(GunMod.MOD_ID, type));
-            if (gunTab != null) {
-                icon = gunTab.getIconItem();
-            } else if (GunSmithTableResult.AMMO.equals(type)) {
-                icon = AmmoItemBuilder.create().build();
-            } else if (GunSmithTableResult.ATTACHMENT.equals(type)) {
-                icon = AttachmentItemBuilder.create().build();
+            ResourceLocation tabId = new ResourceLocation(GunMod.MOD_ID, type);
+            CreativeModeTab modTab = BuiltInRegistries.CREATIVE_MODE_TAB.get(tabId);
+            if (modTab != null) {
+                icon = modTab.getIconItem();
             }
             TypeButton typeButton = new TypeButton(xOffset, topPos + 2, icon, b -> {
                 this.selectedType = type;
@@ -312,22 +306,22 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     }
 
     @Override
-    public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        super.render(gui, mouseX, mouseY, partialTick);
-        drawModCenteredString(gui, font, Component.translatable("gui.tacz.gun_smith_table.preview"), leftPos + 108, topPos + 5, 0x555555);
-        gui.drawString(font, Component.translatable(String.format("tacz.type.%s.name", selectedType)), leftPos + 150, topPos + 32, 0x555555, false);
-        gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.ingredient"), leftPos + 254, topPos + 50, 0x555555, false);
-        drawModCenteredString(gui, font, Component.translatable("gui.tacz.gun_smith_table.craft"), leftPos + 312, topPos + 167, 0xFFFFFF);
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.render(graphics, mouseX, mouseY, partialTick);
+        drawModCenteredString(graphics, font, Component.translatable("gui.tacz.gun_smith_table.preview"), leftPos + 108, topPos + 5, 0x555555);
+        graphics.drawString(font, Component.translatable(String.format("tacz.type.%s.name", selectedType)), leftPos + 150, topPos + 32, 0x555555, false);
+        graphics.drawString(font, Component.translatable("gui.tacz.gun_smith_table.ingredient"), leftPos + 254, topPos + 50, 0x555555, false);
+        drawModCenteredString(graphics, font, Component.translatable("gui.tacz.gun_smith_table.craft"), leftPos + 312, topPos + 167, 0xFFFFFF);
         if (this.selectedRecipe != null) {
             this.renderLeftModel(this.selectedRecipe);
-            this.renderPackInfo(gui, this.selectedRecipe);
+            this.renderPackInfo(graphics, this.selectedRecipe);
         }
         if (selectedRecipeList != null && !selectedRecipeList.isEmpty()) {
-            renderIngredient(gui);
+            renderIngredient(graphics);
         }
 
         this.renderables.stream().filter(w -> w instanceof ResultButton)
-                .forEach(w -> ((ResultButton) w).renderTooltips(stack -> this.renderTooltip(gui, mouseX, mouseY)));
+                .forEach(w -> ((ResultButton) w).renderTooltips(stack -> graphics.renderTooltip(font, stack, mouseX, mouseY)));
     }
 
     private void renderPackInfo(GuiGraphics gui, GunSmithTableRecipe recipe) {

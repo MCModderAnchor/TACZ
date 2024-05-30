@@ -182,7 +182,9 @@ public class GunRefitScreen extends Screen {
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         super.render(graphics, mouseX, mouseY, pPartialTick);
         this.renderables.stream().filter(w -> w instanceof IComponentTooltip).forEach(w -> ((IComponentTooltip) w)
-                .renderTooltip(component -> graphics.renderComponentTooltip(font ,component, mouseX, mouseY)));
+                .renderTooltip(component -> graphics.renderComponentTooltip(font, component, mouseX, mouseY)));
+        this.renderables.stream().filter(w -> w instanceof IStackTooltip).forEach(w -> ((IStackTooltip) w)
+                .renderTooltip(stack -> graphics.renderTooltip(font, stack, mouseX, mouseY)));
     }
 
     @Override

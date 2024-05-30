@@ -1,10 +1,12 @@
 package com.tacz.guns.client.gui.components.refit;
 
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.gui.GunRefitScreen;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -12,11 +14,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class GunAttachmentSlot extends Button implements IComponentTooltip {
+public class GunAttachmentSlot extends Button implements IStackTooltip {
     private final AttachmentType type;
     private final Inventory inventory;
     private final int gunItemIndex;
@@ -33,18 +34,22 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     }
 
     @Override
-    public void renderTooltip(Consumer<List<Component>> consumer) {
-        if (this.isHoveredOrFocused()) {
-            List<Component> tips = Lists.newArrayList(Component.translatable(nameKey));
-            if (!attachmentItem.isEmpty()) {
-                tips.addAll(IComponentTooltip.getTooltipFromItem(attachmentItem));
-            }
-            consumer.accept(tips);
+    public void renderTooltip(Consumer<ItemStack> consumer) {
+        if (this.isHoveredOrFocused() && !attachmentItem.isEmpty()) {
+            consumer.accept(attachmentItem);
         }
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderWidget(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        if (this.isHoveredOrFocused()) {
+            Font font = Minecraft.getInstance().font;
+            int yOffset = this.getY() + 20;
+            if (this.selected && !attachmentItem.isEmpty()) {
+                yOffset = this.getY() + 30;
+            }
+            graphics.drawCenteredString(font, Component.translatable(nameKey), this.getX() + this.getWidth() / 2, yOffset, ChatFormatting.GRAY.getColor());
+        }
         ItemStack gunItem = inventory.getItem(gunItemIndex);
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {
@@ -57,17 +62,17 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
         int x = this.getX();
         int y = this.getY();
         if (isHoveredOrFocused() || selected) {
-            gui.blit(GunRefitScreen.SLOT_TEXTURE, x, y, 0, 0, width, height, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
+            graphics.blit(GunRefitScreen.SLOT_TEXTURE, x, y, 0, 0, width, height, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
         } else {
-            gui.blit(GunRefitScreen.SLOT_TEXTURE, x + 1, y + 1, 1, 1, width - 2, height - 2, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
+            graphics.blit(GunRefitScreen.SLOT_TEXTURE, x + 1, y + 1, 1, 1, width - 2, height - 2, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
         }
         // 渲染内部物品，或者空置时的icon
         this.attachmentItem = iGun.getAttachment(gunItem, type);
         if (!attachmentItem.isEmpty()) {
-            gui.renderItem(attachmentItem, x + 1, y + 1);
+            graphics.renderItem(attachmentItem, x + 1, y + 1);
         } else {
             int xOffset = GunRefitScreen.getSlotTextureXOffset(gunItem, type);
-            gui.blit(GunRefitScreen.ICONS_TEXTURE, x + 2, y + 2, width - 4, height - 4, xOffset, 0, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.getSlotsTextureWidth(), GunRefitScreen.ICON_UV_SIZE);
+            graphics.blit(GunRefitScreen.ICONS_TEXTURE, x + 2, y + 2, width - 4, height - 4, xOffset, 0, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.ICON_UV_SIZE, GunRefitScreen.getSlotsTextureWidth(), GunRefitScreen.ICON_UV_SIZE);
         }
 
         RenderSystem.enableDepthTest();

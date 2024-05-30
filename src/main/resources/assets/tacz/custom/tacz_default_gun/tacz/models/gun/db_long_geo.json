@@ -13,7 +13,7 @@
 			"bones": [
 				{
 					"name": "root",
-					"pivot": [0, 7, 1.875]
+					"pivot": [0, 7, 6.5]
 				},
 				{
 					"name": "Db",

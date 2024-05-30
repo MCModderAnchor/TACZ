@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.resource.ResourceManager;
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
 import com.tacz.guns.crafting.GunSmithTableResult;
@@ -37,20 +38,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class CommonGunPackLoader {
-    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-            .registerTypeAdapter(Pair.class, new PairSerializer())
-            .registerTypeAdapter(GunSmithTableIngredient.class, new GunSmithTableIngredientSerializer())
-            .registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResultSerializer())
-            .registerTypeAdapter(ExtraDamage.DistanceDamagePair.class, new DistanceDamagePairSerializer())
-            .create();
+    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).registerTypeAdapter(Pair.class, new PairSerializer()).registerTypeAdapter(GunSmithTableIngredient.class, new GunSmithTableIngredientSerializer()).registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResultSerializer()).registerTypeAdapter(ExtraDamage.DistanceDamagePair.class, new DistanceDamagePairSerializer()).create();
     /**
      * 放置自定义枪械模型的目录
      */
     public static final Path FOLDER = Paths.get("config", GunMod.MOD_ID, "custom");
-    /**
-     * 默认模型包文件夹
-     */
-    public static final String DEFAULT_GUN_PACK_NAME = "tacz_default_gun";
     /**
      * 各种 INDEX 缓存
      */
@@ -105,8 +97,9 @@ public class CommonGunPackLoader {
 
     private static void checkDefaultPack() {
         if (!OtherConfig.DEFAULT_PACK_DEBUG.get()) {
-            String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
-            GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
+            for (ResourceManager.ExtraEntry entry : ResourceManager.EXTRA_ENTRIES) {
+                GetJarResources.copyModDirectory(entry.modMainClass(), entry.srcPath(), FOLDER, entry.extraDirName());
+            }
         }
     }
 
