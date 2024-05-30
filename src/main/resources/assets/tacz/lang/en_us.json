@@ -44,6 +44,8 @@
   "tooltip.tacz.ammo_box.count": "Count: %d",
   "tooltip.tacz.gun.type": "Type: ",
   "tooltip.tacz.gun.damage": "Damage: ",
+  "tooltip.tacz.gun.armor_ignore": "%s Minecraft Armor Piercing",
+  "tooltip.tacz.gun.head_shot_multiplier": "%s Headshot Damage",
   "tooltip.tacz.gun.tips": "<<< Press %s in-game for Attachments >>>",
   "tooltip.tacz.attachment.scope": "Scope",
   "tooltip.tacz.attachment.muzzle": "Muzzle",
