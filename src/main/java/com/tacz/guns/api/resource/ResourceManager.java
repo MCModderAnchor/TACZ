@@ -1,6 +1,7 @@
 package com.tacz.guns.api.resource;
 
-import org.apache.commons.compress.utils.Lists;
+
+import com.google.common.collect.Lists;
 
 import java.nio.file.Paths;
 import java.util.List;
