@@ -12,8 +12,13 @@
   "tacz.type.shotgun.name": "Shotgun",
   "tacz.type.smg.name": "SMG",
   "tacz.type.unknown.name": "Unknown",
-  "tacz.type.attachment.name": "Attachment",
-  
+  "tacz.type.scope.name": "Scope",
+  "tacz.type.muzzle.name": "Muzzle",
+  "tacz.type.stock.name": "Stock",
+  "tacz.type.grip.name": "Grip",
+  "tacz.type.extended_mag.name": "Extended Mag",
+  "tacz.type.laser.name": "Laser",
+
   
   "tacz.gun.ak47.name": "AK-47",
   "tacz.gun.deagle.name": "Deagle 50",

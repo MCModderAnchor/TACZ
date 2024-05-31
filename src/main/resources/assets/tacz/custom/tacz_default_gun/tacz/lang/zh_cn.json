@@ -1,6 +1,6 @@
 {
   "pack.tacz.tacz_default_gun.name": "TAC Zero 默认枪械包",
-  "pack.tacz.tacz_default_gun.desc": "TaCZ 默认枪械包；最具盛名，最经典，最独特，最为人所熟知的枪械。",
+  "pack.tacz.tacz_default_gun.desc": "TaCZ默认枪械包；最具盛名，最经典，最独特，最为人所熟知的枪械。",
   "tacz.type.ammo.name": "子弹",
   "tacz.type.pistol.name": "手枪",
   "tacz.type.rifle.name": "步枪",
@@ -9,7 +9,12 @@
   "tacz.type.sniper.name": "狙击枪",
   "tacz.type.shotgun.name": "霰弹枪",
   "tacz.type.smg.name": "冲锋枪",
-  "tacz.type.attachment.name": "配件",
+  "tacz.type.scope.name": "瞄具",
+  "tacz.type.muzzle.name": "枪口组件",
+  "tacz.type.stock.name": "枪托",
+  "tacz.type.grip.name": "握把",
+  "tacz.type.extended_mag.name": "扩容弹匣",
+  "tacz.type.laser.name": "激光指示器",
 
 
   "tacz.gun.ak47.name": "AK-47 突击步枪",
@@ -92,5 +97,4 @@
   "tacz.attachment.oem_stock_heavy.name": "原厂重型枪托",
   "tacz.attachment.oem_stock_light.name": "原厂轻型枪托",
   "tacz.attachment.oem_stock_tactical.name": "原厂战术枪托"
-
 }

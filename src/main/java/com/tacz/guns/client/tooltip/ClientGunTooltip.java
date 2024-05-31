@@ -29,7 +29,7 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 
 public class ClientGunTooltip implements ClientTooltipComponent {
-    private static final DecimalFormat FORMAT = new DecimalFormat("0.00%");
+    private static final DecimalFormat FORMAT = new DecimalFormat("#.##%");
 
     private final ItemStack gun;
     private final IGun iGun;
