@@ -28,8 +28,8 @@
     "inspect_empty": "tacz:db_short/db_short_inspect_empty",
     "draw": "tacz:db_short/db_short_draw",
     "put_away": "tacz:db_short/db_short_put_away",
-    "shoot": "tacz:db_short/db_shoot",
-    "shoot_3p": "tacz:db_short/db_shoot_3p"
+    "shoot": "tacz:db_long/dbl_shoot",
+    "shoot_3p": "tacz:db_long/dbl_shoot_3p"
   },
   "offhand_show": {
     "pos": [0, 20, 4],
