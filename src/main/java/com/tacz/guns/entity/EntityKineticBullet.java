@@ -3,8 +3,8 @@ package com.tacz.guns.entity;
 import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.entity.ITargetEntity;
 import com.tacz.guns.api.entity.KnockBackModifier;
-import com.tacz.guns.api.event.common.LivingHurtByGunEvent;
-import com.tacz.guns.api.event.common.LivingKillByGunEvent;
+import com.tacz.guns.api.event.common.EntityHurtByGunEvent;
+import com.tacz.guns.api.event.common.EntityKillByGunEvent;
 import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
 import com.tacz.guns.config.common.AmmoConfig;
@@ -449,10 +449,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 int attackerId = attacker == null ? 0 : attacker.getId();
                 // 如果生物死了
                 if (livingEntity.isDeadOrDying()) {
-                    MinecraftForge.EVENT_BUS.post(new LivingKillByGunEvent(livingEntity, attacker, this.gunId, headshot, LogicalSide.SERVER));
+                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingEntity, attacker, this.gunId, headshot, LogicalSide.SERVER));
                     NetworkHandler.sendToNearby(entity, new ServerMessageGunKill(entity.getId(), attackerId, this.gunId, headshot));
                 } else {
-                    MinecraftForge.EVENT_BUS.post(new LivingHurtByGunEvent(livingEntity, attacker, this.gunId, damage, headshot, LogicalSide.SERVER));
+                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent(livingEntity, attacker, this.gunId, damage, headshot, LogicalSide.SERVER));
                     NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(entity.getId(), attackerId, this.gunId, damage, headshot));
                 }
             }
@@ -594,6 +594,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     public ResourceLocation getAmmoId() {
         return ammoId;
+    }
+
+    public ResourceLocation getGunId() {
+        return gunId;
     }
 
     public boolean isTracerAmmo() {
