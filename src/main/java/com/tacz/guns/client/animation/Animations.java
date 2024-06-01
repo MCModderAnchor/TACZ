@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class Animations {
@@ -41,7 +42,7 @@ public class Animations {
             // 初始化动画轨道
             List<AnimationModel.Channel> channelModels = animationModel.getChannels();
             for (AnimationModel.Channel channelModel : channelModels) {
-                ObjectAnimationChannel channel = new ObjectAnimationChannel(ObjectAnimationChannel.ChannelType.valueOf(channelModel.path().toUpperCase()));
+                ObjectAnimationChannel channel = new ObjectAnimationChannel(ObjectAnimationChannel.ChannelType.valueOf(channelModel.path().toUpperCase(Locale.ENGLISH)));
                 AnimationModel.Sampler sampler = channelModel.sampler();
 
                 // 初始化轨道的节点名称和插值器
@@ -229,7 +230,7 @@ public class Animations {
             String lerpModeName = keyframe.lerpMode();
             if (lerpModeName != null) {
                 try {
-                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.valueOf(lerpModeName.toUpperCase());
+                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.valueOf(lerpModeName.toUpperCase(Locale.ENGLISH));
                 } catch (IllegalArgumentException e) {
                     animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.LINEAR;
                 }
@@ -345,7 +346,7 @@ public class Animations {
             String lerpModeName = keyframe.lerpMode();
             if (lerpModeName != null) {
                 try {
-                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.valueOf(lerpModeName.toUpperCase());
+                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.valueOf(lerpModeName.toUpperCase(Locale.ENGLISH));
                 } catch (IllegalArgumentException e) {
                     animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.LINEAR;
                 }
