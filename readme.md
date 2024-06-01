@@ -50,6 +50,9 @@ repositories {
 }
 
 dependencies {
+    // Apache Commons Math, Need by TACZ
+    minecraftLibrary 'org.apache.commons:commons-math3:3.6.1'
+  
     // Add implementation
     // tacz_version: copy from https://jitpack.io/#MCModderAnchor/TACZ
     implementation 'com.github.MCModderAnchor:TACZ:${tacz_version}'
