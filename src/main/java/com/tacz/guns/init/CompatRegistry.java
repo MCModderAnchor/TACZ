@@ -24,7 +24,7 @@ public class CompatRegistry {
                 ClothConfigScreen.registerNoClothConfigPage();
             }
         });
-        event.enqueueWork(() -> checkModLoad(OCULUS, OculusCompat::registerPBRLoader));
+        event.enqueueWork(() -> checkModLoad(OCULUS, OculusCompat::initCompat));
     }
 
     public static void checkModLoad(String modId, Runnable runnable) {

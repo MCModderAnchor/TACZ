@@ -28,9 +28,9 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
-// version = "1.0.0"
+version = "1.0.0-hotfix2"
 // 版本号，正式发布需要修改这一行
-version = FORMAT.format(new Date())
+//version = FORMAT.format(new Date())
 group = "com.tacz"
 archivesBaseName = "tacz-1.20.1"
 
@@ -134,6 +134,9 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    flatDir {
+        dir 'libs'
+    }
 }
 
 dependencies {
@@ -151,7 +154,9 @@ dependencies {
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
 
     compileOnly fg.deobf("org.embeddedt:embeddium-1.20.1:${embeddedt_id}")
-    compileOnly fg.deobf("curse.maven:oculus-581495:${oculus_id}")
+    // 同时兼容两个版本
+    compileOnly fg.deobf('libs:oculus_legacy:mc1.20.1-1.6.13')
+    compileOnly fg.deobf('libs:oculus:mc1.20.1-1.7.0')
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }

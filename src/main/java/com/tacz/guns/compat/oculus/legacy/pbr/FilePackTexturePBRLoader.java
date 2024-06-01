@@ -1,8 +1,8 @@
-package com.tacz.guns.compat.oculus.pbr;
+package com.tacz.guns.compat.oculus.legacy.pbr;
 
 import com.tacz.guns.client.resource.texture.FilePackTexture;
-import net.irisshaders.iris.texture.pbr.PBRType;
-import net.irisshaders.iris.texture.pbr.loader.PBRTextureLoader;
+import net.coderbot.iris.texture.pbr.PBRType;
+import net.coderbot.iris.texture.pbr.loader.PBRTextureLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
