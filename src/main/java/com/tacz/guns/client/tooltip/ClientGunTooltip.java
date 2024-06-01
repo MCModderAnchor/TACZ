@@ -30,6 +30,7 @@ import java.util.Locale;
 
 public class ClientGunTooltip implements ClientTooltipComponent {
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##%");
+    private static final DecimalFormat DAMAGE_FORMAT = new DecimalFormat("#.##");
 
     private final ItemStack gun;
     private final IGun iGun;
@@ -83,7 +84,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         this.gunType = Component.translatable("tooltip.tacz.gun.type").append(Component.translatable(tabKey).withStyle(ChatFormatting.AQUA));
         this.maxWidth = Math.max(font.width(this.gunType), this.maxWidth);
 
-        MutableComponent value = Component.literal(String.valueOf(gunIndex.getBulletData().getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
+        MutableComponent value = Component.literal(DAMAGE_FORMAT.format(gunIndex.getBulletData().getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
         this.damage = Component.translatable("tooltip.tacz.gun.damage").append(value);
         this.maxWidth = Math.max(font.width(this.damage), this.maxWidth);
 

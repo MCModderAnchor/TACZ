@@ -4,42 +4,26 @@
 <hr>
 <p align="center">Timeless and Classics Guns Zero</p>
 <p align="center">
-    <a href="https://www.curseforge.com/minecraft/mc-mods/timeless-and-classic-guns-tac">
-        <img src="http://cf.way2muchnoise.eu/full_timeless-and-classic-guns-tacz.svg" alt="CurseForge Download">
+    <a href="https://www.curseforge.com/minecraft/mc-mods/timeless-and-classics-zero">
+        <img src="http://cf.way2muchnoise.eu/full_timeless-and-classics-zero.svg" alt="CurseForge Download">
     </a>
-    <a href="https://discord.gg/FdDTDWgU">
-        <img src="https://img.shields.io/discord/851263928721866752?logo=discord" alt="chat on Discord">
-    </a>
-    <img src="https://img.shields.io/badge/license-GNU GPL 3.0 | CC%20BY--NC--SA%204.0-green" alt="License">
-    <br>
-    <a href="https://jitpack.io/#MCModderAnchor/TimelessAndClassicsZero">
-        <img src="https://jitpack.io/v/MCModderAnchor/TimelessAndClassicsZero.svg" alt="jitpack build">
-    </a>
-    <a href="https://github.com/MCModderAnchor/TimelessAndClassicsZero/actions/workflows/gradle-publish.yml">
-        <img src="https://github.com/MCModderAnchor/TimelessAndClassicsZero/actions/workflows/gradle-publish.yml/badge.svg" alt="Github Action build">
+    <img src="https://img.shields.io/badge/license-GNU GPL 3.0 | CC%20BY--NC--ND%204.0-green" alt="License">
+    <a href="https://jitpack.io/#MCModderAnchor/TACZ">
+        <img src="https://jitpack.io/v/MCModderAnchor/TACZ.svg" alt="jitpack build">
     </a>
 </p>
 <p align="center">
-    <a href="https://github.com/MCModderAnchor/TimelessAndClassicsZero/issues">Report Bug</a>    ·
-    <a href="https://github.com/MCModderAnchor/TimelessAndClassicsZero/releases">View Release</a>    ·
+    <a href="https://github.com/MCModderAnchor/TACZ/issues">Report Bug</a>    ·
+    <a href="https://github.com/MCModderAnchor/TACZ/releases">View Release</a>    ·
     <a href="https://tacwiki.mcma.club/zh/">Wiki</a>
 </p>
-<p align="center">
-    <a href="#">English</a> | 
-    <a href="#">简体中文</a> | 
-    <a href="#">日本語</a>
-</p>
 
-Timeless and Classics Guns is a gun mod for Minecraft (1.16.5 and 1.18.2) created by Timeless Squad and creator
-NekoCrane.
+Timeless and Classics Guns Zero is a gun mod for Minecraft Forge 1.20.1.
 
 ## Notice
 
-- If you have any comments or suggestions, you can visit [Discord](https://discord.gg/FdDTDWgU) to give us feedback.
-- If you have any bugs, you can visit [Issues](https://github.com/MCModderAnchor/TimelessAndClassicsZero/issues) to
+- If you have any bugs, you can visit [Issues](https://github.com/MCModderAnchor/TACZ/issues) to
   submit issues.
-- You can visit [Releases](https://github.com/MCModderAnchor/TimelessAndClassicsZero/releases) to download the snapshot
-  version mod, but please note that **the snapshot version mod will be very unstable**.
 
 ## Authors
 
@@ -53,7 +37,7 @@ NekoCrane.
 ## License
 
 - Code: [GNU GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.txt)
-- Assets: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- Assets: [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 ## Maven
 
@@ -66,8 +50,11 @@ repositories {
 }
 
 dependencies {
+    // Apache Commons Math, Need by TACZ
+    minecraftLibrary 'org.apache.commons:commons-math3:3.6.1'
+  
     // Add implementation
-    // tacz_version: copy from https://jitpack.io/#MCModderAnchor/TimelessAndClassicsZero
-    implementation 'com.github.MCModderAnchor:TimelessAndClassicsZero:${tacz_version}'
+    // tacz_version: copy from https://jitpack.io/#MCModderAnchor/TACZ
+    implementation 'com.github.MCModderAnchor:TACZ:${tacz_version}'
 }
 ```
