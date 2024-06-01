@@ -189,7 +189,9 @@ publishing {
             // 删除所有依赖，不需要
             pom.withXml {
                 asNode().dependencies.dependency.each { dep ->
-                    assert dep.parent().remove(dep)
+                    if (dep.artifactId.get(0).value().get(0) != 'commons-math3') {
+                        assert dep.parent().remove(dep)
+                    }
                 }
             }
         }
