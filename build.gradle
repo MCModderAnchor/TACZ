@@ -191,6 +191,8 @@ publishing {
                 asNode().dependencies.dependency.each { dep ->
                     if (dep.artifactId.get(0).value().get(0) != 'commons-math3') {
                         assert dep.parent().remove(dep)
+                    } else {
+                        dep.scope.get(0).setValue("minecraftLibrary")
                     }
                 }
             }
