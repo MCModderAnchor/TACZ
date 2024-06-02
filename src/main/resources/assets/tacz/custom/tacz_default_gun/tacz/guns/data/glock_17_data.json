@@ -10,26 +10,11 @@
       "armor_ignore": 0,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {
-          "distance": 0.5,
-          "damage": 7
-        },
-        {
-          "distance": 15.5,
-          "damage": 6
-        },
-        {
-          "distance": 24.5,
-          "damage": 5
-        },
-        {
-          "distance": 44.5,
-          "damage": 4
-        },
-        {
-          "distance": "infinite",
-          "damage": 3.5
-        }
+        {"distance": 0.5, "damage": 7},
+        {"distance": 15.5, "damage": 6},
+        {"distance": 24.5, "damage": 5},
+        {"distance": 44.5, "damage": 4},
+        {"distance": "infinite", "damage": 3.5}
       ]
     },
     "speed": 150,
@@ -85,8 +70,8 @@
   "inaccuracy": {
     "stand": 2,
     "move": 2.5,
-    "sneak": 1,
+    "sneak": 1.5,
     "lie": 0.7,
-    "aim": 0.15
+    "aim": 0.2
   }
 }

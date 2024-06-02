@@ -64,10 +64,10 @@
     ]
   },
   "inaccuracy": {
-    "stand": 8,
+    "stand": 8.5,
     "move": 11,
-    "sneak": 4.5,
-    "lie": 3,
+    "sneak": 6.5,
+    "lie": 4.5,
     "aim": 0.05
   },
   "allow_attachment_types": [

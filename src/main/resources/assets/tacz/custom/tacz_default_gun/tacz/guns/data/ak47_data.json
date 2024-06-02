@@ -130,15 +130,15 @@
   // 不准确度
   "inaccuracy": {
     // 站立射击散布
-    "stand": 4,
+    "stand": 5,
     // 移动射击散布
-    "move": 4.75,
+    "move": 5.75,
     // 潜行射击散布
-    "sneak": 2,
+    "sneak": 3.5,
     // 趴下射击散布
-    "lie": 1.25,
+    "lie": 2.5,
     // 瞄准射击时散布
-    "aim": 0.25
+    "aim": 0.15
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser, extended_mag
