@@ -1,6 +1,7 @@
 package com.tacz.guns.api.event.common;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -8,26 +9,28 @@ import net.minecraftforge.fml.LogicalSide;
 import javax.annotation.Nullable;
 
 /**
- * 生物被枪械子弹击杀时触发的事件
+ * 生物被枪械子弹伤害时触发的事件
  */
-public class LivingKillByGunEvent extends Event {
-    private final @Nullable LivingEntity killedEntity;
+public class EntityHurtByGunEvent extends Event {
+    private final @Nullable Entity hurtEntity;
     private final @Nullable LivingEntity attacker;
     private final ResourceLocation gunId;
+    private final float amount;
     private final boolean isHeadShot;
     private final LogicalSide logicalSide;
 
-    public LivingKillByGunEvent(@Nullable LivingEntity hurtEntity, @Nullable LivingEntity attacker, ResourceLocation gunId, boolean isHeadShot, LogicalSide logicalSide) {
-        this.killedEntity = hurtEntity;
+    public EntityHurtByGunEvent(@Nullable Entity hurtEntity, @Nullable LivingEntity attacker, ResourceLocation gunId, float amount, boolean isHeadShot, LogicalSide logicalSide) {
+        this.hurtEntity = hurtEntity;
         this.attacker = attacker;
         this.gunId = gunId;
+        this.amount = amount;
         this.isHeadShot = isHeadShot;
         this.logicalSide = logicalSide;
     }
 
     @Nullable
-    public LivingEntity getKilledEntity() {
-        return killedEntity;
+    public Entity getHurtEntity() {
+        return hurtEntity;
     }
 
     @Nullable
@@ -37,6 +40,10 @@ public class LivingKillByGunEvent extends Event {
 
     public ResourceLocation getGunId() {
         return gunId;
+    }
+
+    public float getAmount() {
+        return amount;
     }
 
     public boolean isHeadShot() {
