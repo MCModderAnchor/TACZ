@@ -44,14 +44,14 @@ public class LocalPlayerAim {
         return data.clientIsAiming;
     }
 
-    public void cancelSprint(LocalPlayer player, boolean pSprinting) {
+    public boolean cancelSprint(LocalPlayer player, boolean pSprinting) {
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
         boolean isAiming = gunOperator.getSynIsAiming();
         ReloadState.StateType reloadStateType = gunOperator.getSynReloadState().getStateType();
         if (isAiming || (reloadStateType.isReloading() && !reloadStateType.isReloadFinishing())) {
-            player.setSprinting(false);
+            return false;
         } else {
-            player.setSprinting(pSprinting);
+            return pSprinting;
         }
     }
 
