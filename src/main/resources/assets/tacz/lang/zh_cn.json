@@ -30,6 +30,8 @@
   "config.tacz.client.render.kill_amount_enable.desc": "是否显示连杀计数",
   "config.tacz.client.render.target_render_distance": "标靶显示距离",
   "config.tacz.client.render.target_render_distance.desc": "标靶最远显示距离，包括标靶车",
+  "config.tacz.client.render.damage_counter_reset_time": "标靶车伤害计数冷却",
+  "config.tacz.client.render.damage_counter_reset_time.desc": "标靶车伤害计数器的重置时间间隔，单位为毫秒",
   "config.tacz.client.zoom": "缩放",
   "config.tacz.client.zoom.screen_distance_coefficient": "荧幕距离系数",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "缩放时的荧幕距离系数，使用 MDV 标准，默认为 MDV133",

@@ -46,22 +46,23 @@
   "allow_attachment_types": [],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [2.75, 2.75]},
-      {"time": 0.125, "value": [2.75, 2.75]},
-      {"time": 0.5, "value": [-0.25, -0.25]},
-      {"time": 0.65, "value": [0, 0]}
+      {"time": 0, "value": [3.25, 3.25]},
+      {"time": 0.125, "value": [3.25, 3.25]},
+      {"time": 0.4, "value": [-0.25, -0.25]},
+      {"time": 0.55, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-3, -2.5]},
-      {"time": 0.3, "value": [0.15, 0.25]},
-      {"time": 0.5, "value": [0, 0]}
+      {"time": 0, "value": [-1.5, -1.5]},
+      {"time": 0.1, "value": [-1.5, -1.5]},
+      {"time": 0.2, "value": [0.15, 0.15]},
+      {"time": 0.4, "value": [0, 0]}
     ]
   },
   "inaccuracy": {
-    "stand": 2.75,
-    "move": 3,
-    "sneak": 2.5,
-    "lie": 2.25,
-    "aim": 2.125
+    "stand": 3.75,
+    "move": 4.5,
+    "sneak": 3.5,
+    "lie": 2.5,
+    "aim": 2.5
   }
 }

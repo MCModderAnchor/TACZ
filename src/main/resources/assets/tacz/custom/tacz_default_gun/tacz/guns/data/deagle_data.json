@@ -50,7 +50,6 @@
     "semi"
   ],
   "allow_attachment_types": [
-    "scope",
     "extended_mag"
   ],
   "recoil": {
@@ -68,10 +67,10 @@
     ]
   },
   "inaccuracy": {
-    "stand": 2.75,
-    "move": 3.25,
-    "sneak": 2,
-    "lie": 1.2,
+    "stand": 4.25,
+    "move": 5,
+    "sneak": 3.5,
+    "lie": 2.5,
     "aim": 0.1
   }
 }

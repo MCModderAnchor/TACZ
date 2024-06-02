@@ -62,11 +62,11 @@
     ]
   },
   "inaccuracy": {
-    "stand": 4.5,
-    "move": 5.5,
-    "sneak": 3,
-    "lie": 1.5,
-    "aim": 0.35
+    "stand": 7,
+    "move": 8.5,
+    "sneak": 6,
+    "lie": 5,
+    "aim": 0.175
   },
   "allow_attachment_types": [
     "scope",

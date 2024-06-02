@@ -82,6 +82,8 @@
   "config.tacz.client.render.gun_lod_render_distance.desc": "How far to display the lod model, 0 means always display",
   "config.tacz.client.render.bullet_hole_particle_life": "Bullet Hole Particle Life",
   "config.tacz.client.render.bullet_hole_particle_life.desc": "The existence time of bullet hole particles, in tick",
+  "config.tacz.client.render.damage_counter_reset_time": "Target Minecart Damage Reset Time",
+  "config.tacz.client.render.damage_counter_reset_time.desc": "Damage counter reset time of target minecart, in millisecond",
   "config.tacz.client.render.bullet_hole_particle_fade_threshold": "Bullet Hole Particle Fade Threshold",
   "config.tacz.client.render.bullet_hole_particle_fade_threshold.desc": "The threshold for fading out when rendering bullet hole particles",
   "config.tacz.client.render.hit_market_start_position": "Hit Market Start Position",

@@ -16,6 +16,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.IntValue TARGET_RENDER_DISTANCE;
     public static ForgeConfigSpec.BooleanValue FIRST_PERSON_BULLET_TRACER_ENABLE;
     public static ForgeConfigSpec.BooleanValue DISABLE_INTERACT_HUD_TEXT;
+    public static ForgeConfigSpec.IntValue DAMAGE_COUNTER_RESET_TIME;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -55,6 +56,9 @@ public class RenderConfig {
 
         builder.comment("Disable the interact hud text in center of the screen");
         DISABLE_INTERACT_HUD_TEXT = builder.define("DisableInteractHudText", false);
+
+        builder.comment("Max time the damage counter will reset");
+        DAMAGE_COUNTER_RESET_TIME = builder.defineInRange("DamageCounterResetTime", 2000, 10, Integer.MAX_VALUE);
 
         builder.pop();
     }
