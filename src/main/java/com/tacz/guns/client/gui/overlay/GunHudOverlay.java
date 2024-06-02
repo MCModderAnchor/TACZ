@@ -126,10 +126,9 @@ public class GunHudOverlay implements IGuiOverlay {
         // 渲染开火模式图标
         FireMode fireMode = IGun.getMainhandFireMode(player);
         ResourceLocation fireModeTexture = switch (fireMode) {
-            case SEMI -> SEMI;
             case AUTO -> AUTO;
             case BURST -> BURST;
-            default -> throw new IllegalStateException("Unexpected value: " + fireMode);
+            default -> SEMI;
         };
         RenderSystem.setShaderColor(1, 1, 1, 1);
         graphics.blit(fireModeTexture, (int) (width - 68.5 + mc.font.width(currentAmmoCountText) * 1.5), height - 38, 0, 0, 10, 10, 10, 10);
