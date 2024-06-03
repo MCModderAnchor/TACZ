@@ -158,6 +158,8 @@ dependencies {
     compileOnly fg.deobf('libs:oculus_legacy:mc1.20.1-1.6.13')
     compileOnly fg.deobf('libs:oculus:mc1.20.1-1.7.0')
 
+    runtimeOnly fg.deobf("curse.maven:carry-on-274259:${carry_on_id}")
+
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
