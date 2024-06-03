@@ -1442,7 +1442,7 @@
 				{
 					"name": "scope_pos",
 					"parent": "positioning2",
-					"pivot": [0, 8.25, 6.8]
+					"pivot": [0, 8.25, 6]
 				},
 				{
 					"name": "muzzle_pos",
@@ -1452,7 +1452,7 @@
 				{
 					"name": "grip_pos",
 					"parent": "positioning2",
-					"pivot": [0, 4.39375, -5.075]
+					"pivot": [0, 4.5, -5.075]
 				},
 				{
 					"name": "laser_pos",
@@ -3581,7 +3581,7 @@
 					]
 				},
 				{
-					"name": "sight_illuminate",
+					"name": "sight_illuminated",
 					"parent": "sks_tac",
 					"pivot": [0, 8.1875, -23.0625],
 					"cubes": [
@@ -3602,7 +3602,7 @@
 					]
 				},
 				{
-					"name": "sight_hide_illuminate",
+					"name": "sight_hide_illuminated",
 					"parent": "sks_tac",
 					"pivot": [0.13729, 8.13239, -0.67443],
 					"cubes": [
@@ -7972,7 +7972,7 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 8.21875, 12.5875]
+					"pivot": [0, 8.21875, 12.5]
 				},
 				{
 					"name": "idle_view",
@@ -7982,7 +7982,7 @@
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [22.325, 6.575, 0.325],
+					"pivot": [30.325, 6.575, -2],
 					"rotation": [0, 90, 0]
 				},
 				{

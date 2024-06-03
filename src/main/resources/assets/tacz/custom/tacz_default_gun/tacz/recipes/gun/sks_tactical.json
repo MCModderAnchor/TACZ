@@ -2,25 +2,25 @@
   "materials": [
     {
       "item": {
-        "tag": "forge:ingots/copper"
+        "tag": "forge:ingots/iron"
       },
-      "count": 24
+      "count": 40
     },
     {
       "item": {
         "tag": "forge:gems/lapis"
-      }
+      },
+      "count": 8
     },
     {
       "item": {
-        "tag": "forge:gunpowder"
+        "tag": "minecraft:logs"
       },
-      "count": 9
+      "count": 12
     }
   ],
   "result": {
-    "type": "ammo",
-    "id": "tacz:308",
-    "count": 48
+    "type": "gun",
+    "id": "tacz:sks_tactical"
   }
 }
