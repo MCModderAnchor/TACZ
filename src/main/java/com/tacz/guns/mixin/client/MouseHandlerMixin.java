@@ -26,6 +26,7 @@ public class MouseHandlerMixin {
     public double yawSensitivity(double yaw) {
         return tacz$reduceSensitivity(yaw);
     }
+
     @ModifyArg(method = "turnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"), index = 1)
     public double pitchSensitivity(double pitch) {
         return tacz$reduceSensitivity(pitch);
