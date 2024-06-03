@@ -50,6 +50,7 @@
     "semi"
   ],
   "allow_attachment_types": [
+    "muzzle",
     "extended_mag"
   ],
   "recoil": {

@@ -17,26 +17,11 @@
       "armor_ignore": 0.25,
       "head_shot_multiplier": 2,
       "damage_adjust": [
-        {
-          "distance": 0.5,
-          "damage": 12
-        },
-        {
-          "distance": 44.5,
-          "damage": 11
-        },
-        {
-          "distance": 60,
-          "damage": 9
-        },
-        {
-          "distance": 75,
-          "damage": 8
-        },
-        {
-          "distance": "infinite",
-          "damage": 7.5
-        }
+        {"distance": 0.5, "damage": 12},
+        {"distance": 44.5, "damage": 11},
+        {"distance": 60, "damage": 9},
+        {"distance": 75, "damage": 8},
+        {"distance": "infinite", "damage": 7.5}
       ]
     },
     "speed": 250,
@@ -66,48 +51,24 @@
   ],
   "recoil": {
     "pitch": [
-      {
-        "time": 0,
-        "value": [1.1, 1.1]
-      },
-      {
-        "time": 0.25,
-        "value": [1.1, 1.1]
-      },
-      {
-        "time": 0.5,
-        "value": [-0.225, -0.225]
-      },
-      {
-        "time": 0.6,
-        "value": [0, 0]
-      },
-      {
-        "time": 0.8,
-        "value": [0, 0]
-      }
+      {"time": 0, "value": [1.25, 1.25]},
+      {"time": 0.25, "value": [1.25, 1.25]},
+      {"time": 0.5, "value": [-0.225, -0.225]},
+      {"time": 0.6, "value": [0, 0]},
+      {"time": 0.8, "value": [0, 0]}
     ],
     "yaw": [
-      {
-        "time": 0,
-        "value": [-0.35, 0.2]
-      },
-      {
-        "time": 0.5,
-        "value": [-0.35, 0.2]
-      },
-      {
-        "time": 0.7,
-        "value": [0, 0]
-      }
+      {"time": 0, "value": [-0.35, 0.15]},
+      {"time": 0.5, "value": [-0.35, 0.15]},
+      {"time": 0.7, "value": [0, 0]}
     ]
   },
   "inaccuracy": {
-    "stand": 5,
-    "move": 5.5,
-    "sneak": 3.25,
-    "lie": 1.5,
-    "aim": 0.125
+    "stand": 7,
+    "move": 8.5,
+    "sneak": 6.5,
+    "lie": 6,
+    "aim": 0.075
   },
   "allow_attachment_types": [
     "scope",
