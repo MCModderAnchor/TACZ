@@ -1,7 +1,7 @@
 {
-  "slot": "tacz:attachment/slot/exp3",
+  "slot": "tacz:attachment/slot/sight_exp3",
   // 配件的默认模型，不可为空
-  "model": "tacz:attachment/exp3_geo",
+  "model": "tacz:attachment/sight_exp3_geo",
   // 配件默认模型使用的材质，不可为空
   "texture": "tacz:attachment/uv/sight_exp3",
   "lod": {
