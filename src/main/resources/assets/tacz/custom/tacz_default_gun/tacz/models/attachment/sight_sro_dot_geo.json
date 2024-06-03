@@ -644,7 +644,7 @@
 				},
 				{
 					"name": "scope_view",
-					"pivot": [0, 1, 8]
+					"pivot": [0, 1, 10]
 				}
 			]
 		}
