@@ -41,6 +41,7 @@
   "gui.tacz.client_gun_pack_downloader.downloading": "Downloading Gun Pack",
   "gui.tacz.client_gun_pack_downloader.background_download": "Background Download",
   "tooltip.tacz.ammo_box.count": "Count: %d",
+  "tooltip.tacz.gun.explosion": " (Explosion)",
   "tooltip.tacz.gun.type": "Type: ",
   "tooltip.tacz.gun.damage": "Damage: ",
   "tooltip.tacz.gun.armor_ignore": "%s Minecraft Armor Piercing",
