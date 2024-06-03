@@ -1,6 +1,6 @@
 {
   "pack.tacz.tacz_default_gun.name": "Pacote Padrão TAC Zero",
-  "pack.tacz.tacz_default_gun.desc": "Que esta nação, sob Deus, terá um novo nascimento de liberdade, e aquele governo do povo, pelo povo, para o povo, não morrerá da Terra.",
+  "pack.tacz.tacz_default_gun.desc": "Que esta nação, sob Deus, terá um novo nascimento de liberdade, e aquele governo do povo, pelo povo, para o povo, jamais desapareça da face da Terra.",
   "tacz.type.ammo.name": "Munição",
   "tacz.type.pistol.name": "Pistola",
   "tacz.type.rifle.name": "Fuzil",
@@ -47,7 +47,7 @@
   "tacz.ammo.762x39.name": "Bala de 7.62x39mm",
   "tacz.ammo.762x54.name": "Bala de 7.62x39mm",
   "tacz.ammo.magnum_r.name": "Bala .357 Magnum",
-  "tacz.ammo.rpg_rocket.name": "Foguete de RPG-7",
+  "tacz.ammo.rpg_rocket.name": "Foguete RPG-7",
   "tacz.attachment.sight_sro_dot.name": "Trijicon SRO Mini Ponto Vermelho",
   "tacz.attachment.scope_standard_8x.name": "§6Mira Padrão 5-10x",
   "tacz.attachment.scope_lpvo_1_6.name": "§5Mira 1-6x LVPO ",
