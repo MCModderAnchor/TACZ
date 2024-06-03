@@ -130,7 +130,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.extraDamage = data.getExtraDamage();
         if (data.getExplosionData() != null) {
             this.hasExplosion = true;
-            this.explosionDamage = Mth.clamp(data.getExplosionData().getDamage(), 0, Float.MAX_VALUE);
+            this.explosionDamage = (float) Mth.clamp(data.getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Float.MAX_VALUE);
             this.explosionRadius = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
             this.explosionKnockback = data.getExplosionData().isKnockback();
         }
