@@ -5,6 +5,17 @@
   "slot": "tacz:gun/slot/rpg7",
   "animation": "tacz:rpg7",
   "use_default_animation": "rifle",
+  "lod": {
+    "model": "tacz:gun/lod/rpg7",
+    "texture": "tacz:gun/lod/rpg7"
+  },
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
   "sounds": {
     "reload_empty": "tacz:rpg7/rpg7_reload",
     "inspect": "tacz:rpg7/rpg7_inspect",
