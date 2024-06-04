@@ -81,7 +81,7 @@
   "tacz.attachment.stock_carbon_bone_c5.name": "Carbon Bone C5 ストック",
   "tacz.attachment.stock_tactical_ar.name": "Magpul CTR ストック",
   "tacz.attachment.stock_militech_b5.name": "Militech B5 ストック",
-  "tacz.attachment.oem_stock_heavy.name": "箱出しの重量ストック",
-  "tacz.attachment.oem_stock_light.name": "箱出しの軽量ストック",
-  "tacz.attachment.oem_stock_tactical.name": "箱出しのタクティカルストック"
+  "tacz.attachment.oem_stock_heavy.name": "純正の重量ストック",
+  "tacz.attachment.oem_stock_light.name": "純正の軽量ストック",
+  "tacz.attachment.oem_stock_tactical.name": "純正のタクティカルストック"
 }
