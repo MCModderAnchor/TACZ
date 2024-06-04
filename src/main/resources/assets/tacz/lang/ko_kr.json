@@ -32,7 +32,7 @@
   "gui.tacz.gun_smith_table.license": "§n라이센스§r: ",
   "gui.tacz.gun_smith_table.authors": "§n제작자§r: ",
   "gui.tacz.gun_smith_table.date": "§n날짜:§r ",
-  "gui.tacz.interact_key.text.desc": "[%s]을(를) 눌러서 둘러보기",
+  "gui.tacz.interact_key.text.desc": "[%s] 을(를) 눌러서 상호작용",
   "gui.tacz.gun_refit.unload.no_space": "인벤토리에 해제할 부착물을 넣을 공간이 없습니다.",
   "gui.tacz.cloth_config_warning.tips": "인게임 설정 기능을 사용하려면 Cloth Config API 모드가 설치되어 있어야 합니다",
   "gui.tacz.cloth_config_warning.download": "Cloth Config API 다운로드",
