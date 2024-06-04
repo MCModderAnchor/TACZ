@@ -8,7 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -125,10 +124,5 @@ public final class SyncedEntityDataEvent {
         }
         dirtyEntities.clear();
         instance.setDirty(false);
-    }
-
-    @SubscribeEvent
-    public static void registerCapability(RegisterCapabilitiesEvent event) {
-        event.register(DataHolder.class);
     }
 }
