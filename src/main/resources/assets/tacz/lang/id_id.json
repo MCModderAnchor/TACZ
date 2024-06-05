@@ -146,9 +146,9 @@
   "config.tacz.common.other.default_pack_debug": "Debug Paket Bawaan",
   "config.tacz.common.other.default_pack_debug.desc": "Jika aktif, perintah muat ulang tidak akan menimpa file model bawaan di bawah konfig",
   "config.tacz.common.other.head_shot_aabb": "Tembakan Kepala AABB",
-  "config.tacz.common.other.head_shot_aabb.desc": "The entity's head hitbox during the headshot\nFormat: touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]",
-  "config.tacz.common.other.target_sound_distance": "Target Sound Distance",
-  "config.tacz.common.other.target_sound_distance.desc": "The farthest sound distance of the target, including minecarts type",
-  "death.attack.tacz.bullet": "%1$s was shot by %2$s",
-  "death.attack.tacz.bullet.item": "%1$s was shot by %2$s using %3$s"
+  "config.tacz.common.other.head_shot_aabb.desc": "Hitbox kepala entitas selama headshot\nFormat: touhou_little_maid:maid [-0.5, 1.0, -0.5, 0.5, 1.5, 0.5]",
+  "config.tacz.common.other.target_sound_distance": "Jarak Suara Sasaran",
+  "config.tacz.common.other.target_sound_distance.desc": "Jarak suara terjauh dari sasaran, termasuk jenis kereta tambang",
+  "death.attack.tacz.bullet": "%1$s di tembak oleh %2$s",
+  "death.attack.tacz.bullet.item": "%1$s di tembak oleh %2$s menggunakan %3$s"
 }
