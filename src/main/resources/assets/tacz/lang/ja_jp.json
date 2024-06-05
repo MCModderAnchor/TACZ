@@ -2,7 +2,7 @@
   "toast.tacz.level_up": "レベルアップ！",
   "toast.tacz.sub.level_up": "武器の扱いが上達した。",
   "toast.tacz.sub.damage_up": "武器がより致命的になった。",
-  "toast.tacz.sub.final_level": "あなたと銃が一心同体となった。",
+  "toast.tacz.sub.final_level": "あなたと銃が一心同体となった！",
   "tooltip.tacz.gun.level": "レベル: ",
   "custom.tacz.error.no_name": "エラー: 名前なし",
   "commands.tacz.reload.success": "全てのパックのリロードが完了しました。 時間: %.3f ms",
