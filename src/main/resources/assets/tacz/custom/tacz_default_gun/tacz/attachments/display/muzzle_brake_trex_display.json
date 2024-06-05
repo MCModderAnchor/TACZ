@@ -1,5 +1,5 @@
 {
-  "slot": "tacz:attachment/slot/muzzle_brake_trex_slot",
+  "slot": "tacz:attachment/slot/muzzle_brake_trex",
   "model": "tacz:attachment/muzzle_brake_trex_geo",
   "texture": "tacz:attachment/uv/muzzle_brake_trex",
   "sounds": {

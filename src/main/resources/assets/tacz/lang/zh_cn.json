@@ -147,6 +147,7 @@
   "tooltip.tacz.gun.level": "经验等级：",
   "tooltip.tacz.gun.tips": "<<< 在游戏内按下 %s 打开改装界面 >>>",
   "tooltip.tacz.gun.type": "枪种: ",
+  "tooltip.tacz.gun.explosion": " (爆炸)",
   "tooltip.tacz.page.next": "下一页",
   "tooltip.tacz.page.previous": "上一页",
   "tooltip.tacz.refit.unload": "卸载"

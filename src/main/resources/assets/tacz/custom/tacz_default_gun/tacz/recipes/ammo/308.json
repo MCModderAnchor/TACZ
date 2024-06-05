@@ -4,7 +4,7 @@
       "item": {
         "tag": "forge:ingots/copper"
       },
-      "count": 30
+      "count": 24
     },
     {
       "item": {
@@ -15,12 +15,12 @@
       "item": {
         "tag": "forge:gunpowder"
       },
-      "count": 12
+      "count": 9
     }
   ],
   "result": {
     "type": "ammo",
     "id": "tacz:308",
-    "count": 60
+    "count": 48
   }
 }

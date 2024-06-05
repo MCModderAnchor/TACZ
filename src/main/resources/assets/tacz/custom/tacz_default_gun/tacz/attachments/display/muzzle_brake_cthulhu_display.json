@@ -1,5 +1,5 @@
 {
-  "slot": "tacz:attachment/slot/muzzle_brake_cthulhu_slot",
+  "slot": "tacz:attachment/slot/muzzle_brake_cthulhu",
   "model": "tacz:attachment/muzzle_brake_cthulhu_geo",
   "texture": "tacz:attachment/uv/muzzle_brake_cthulhu",
   "sounds": {

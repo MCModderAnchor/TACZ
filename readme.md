@@ -8,8 +8,12 @@
         <img src="http://cf.way2muchnoise.eu/full_timeless-and-classics-zero.svg" alt="CurseForge Download">
     </a>
     <img src="https://img.shields.io/badge/license-GNU GPL 3.0 | CC%20BY--NC--ND%204.0-green" alt="License">
+    <br>
     <a href="https://jitpack.io/#MCModderAnchor/TACZ">
         <img src="https://jitpack.io/v/MCModderAnchor/TACZ.svg" alt="jitpack build">
+    </a>
+    <a href="https://crowdin.com/project/tacz">
+        <img src="https://badges.crowdin.net/tacz/localized.svg" alt="crowdin">
     </a>
 </p>
 <p align="center">
