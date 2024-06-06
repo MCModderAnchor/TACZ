@@ -21,5 +21,9 @@ public class GunClothConfig {
         gun.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.gun.creative_player_consume_ammo"), GunConfig.CREATIVE_PLAYER_CONSUME_AMMO.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.common.gun.creative_player_consume_ammo.desc"))
                 .setSaveConsumer(GunConfig.CREATIVE_PLAYER_CONSUME_AMMO::set).build());
+
+        gun.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.gun.auto_reload_when_respawn"), GunConfig.AUTO_RELOAD_WHEN_RESPAWN.get())
+                .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.common.gun.auto_reload_when_respawn.desc"))
+                .setSaveConsumer(GunConfig.AUTO_RELOAD_WHEN_RESPAWN::set).build());
     }
 }
