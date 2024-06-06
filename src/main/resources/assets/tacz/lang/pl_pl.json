@@ -117,6 +117,8 @@
   "config.tacz.common.gun.default_gun_other_sound_distance.desc": "Odległość (w blokach) innych dzwięków broni, dźwięk przeładowania itp.",
   "config.tacz.common.gun.creative_player_consume_ammo": "Kreatywny Gracz Zużywa Amunicję",
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "Czy gracz w trybie kreatywnym zużyje amunicję",
+  "config.tacz.common.gun.auto_reload_when_respawn": "Auto Reload When Respawn",
+  "config.tacz.common.gun.auto_reload_when_respawn.desc": "Auto reload all the guns in player inventory, useful for pvp servers",
   "config.tacz.common.ammo": "Amunicja",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks": "Wybuchowa Amunicja Niszczy Bloki",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks.desc": "Uwaga: Amunicja z właściwościami niszczącymi może niszczyć bloki",
