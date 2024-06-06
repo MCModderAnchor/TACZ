@@ -117,6 +117,8 @@
   "config.tacz.common.gun.default_gun_other_sound_distance.desc": "Khoảng cách của các tiếng súng khác, tiếng thay đạn, v.v",
   "config.tacz.common.gun.creative_player_consume_ammo": "Tiêu hao đạn ở chế độ sáng tạo",
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "Liệu súng có tiêu hao đạn khi người chơi ở chế độ sáng tạo",
+  "config.tacz.common.gun.auto_reload_when_respawn": "Auto Reload When Respawn",
+  "config.tacz.common.gun.auto_reload_when_respawn.desc": "Auto reload all the guns in player inventory, useful for pvp servers",
   "config.tacz.common.ammo": "Đạn",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks": "Đạn nổ phá hủy khối",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks.desc": "Cảnh báo: Đạn nổ có thể phá được các khối",
