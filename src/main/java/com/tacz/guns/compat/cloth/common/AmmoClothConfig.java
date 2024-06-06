@@ -32,18 +32,6 @@ public class AmmoClothConfig {
                 .setDefaultValue(Lists.newArrayList()).setTooltip(Component.translatable("config.tacz.common.ammo.pass_through_blocks.desc"))
                 .setSaveConsumer(AmmoConfig.PASS_THROUGH_BLOCKS::set).build());
 
-        ammo.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.common.ammo.damage_base_multiplier"), SyncConfig.DAMAGE_BASE_MULTIPLIER.get())
-                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(Component.translatable("config.tacz.common.ammo.damage_base_multiplier.desc"))
-                .setSaveConsumer(SyncConfig.DAMAGE_BASE_MULTIPLIER::set).build());
-
-        ammo.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.common.ammo.armor_ignore_base_multiplier"), SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get())
-                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(Component.translatable("config.tacz.common.ammo.armor_ignore_base_multiplier.desc"))
-                .setSaveConsumer(SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER::set).build());
-
-        ammo.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.common.ammo.head_shot_base_multiplier"), SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get())
-                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(Component.translatable("config.tacz.common.ammo.head_shot_base_multiplier.desc"))
-                .setSaveConsumer(SyncConfig.HEAD_SHOT_BASE_MULTIPLIER::set).build());
-
         ammo.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.ammo.destroy_glass"), AmmoConfig.DESTROY_GLASS.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.common.ammo.destroy_glass.desc"))
                 .setSaveConsumer(AmmoConfig.DESTROY_GLASS::set).build());

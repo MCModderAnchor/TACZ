@@ -15,28 +15,12 @@ public class OtherClothConfig {
     public static void init(ConfigBuilder root, ConfigEntryBuilder entryBuilder) {
         ConfigCategory other = root.getOrCreateCategory(Component.translatable("config.tacz.common.other"));
 
-        other.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.common.other.ammo_box_stack_size"), SyncConfig.AMMO_BOX_STACK_SIZE.get())
-                .setMin(1).setMax(Integer.MAX_VALUE).setDefaultValue(5).setTooltip(Component.translatable("config.tacz.common.other.ammo_box_stack_size.desc"))
-                .setSaveConsumer(SyncConfig.AMMO_BOX_STACK_SIZE::set).build());
-
         other.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.other.default_pack_debug"), OtherConfig.DEFAULT_PACK_DEBUG.get())
                 .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.common.other.default_pack_debug.desc"))
                 .setSaveConsumer(OtherConfig.DEFAULT_PACK_DEBUG::set).build());
 
-        other.addEntry(entryBuilder.startStrList(Component.translatable("config.tacz.common.other.head_shot_aabb"), SyncConfig.HEAD_SHOT_AABB.get())
-                .setDefaultValue(Lists.newArrayList()).setTooltip(Component.translatable("config.tacz.common.other.head_shot_aabb.desc"))
-                .setSaveConsumer(OtherClothConfig::setAABBData).build());
-
         other.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.common.other.target_sound_distance"), OtherConfig.TARGET_SOUND_DISTANCE.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(128).setTooltip(Component.translatable("config.tacz.common.other.target_sound_distance.desc"))
                 .setSaveConsumer(OtherConfig.TARGET_SOUND_DISTANCE::set).build());
-    }
-
-    private static void setAABBData(List<String> data) {
-        HeadShotAABBConfigRead.clearAABB();
-        for (String text : data) {
-            HeadShotAABBConfigRead.addCheck(text);
-        }
-        SyncConfig.HEAD_SHOT_AABB.set(data);
     }
 }
