@@ -117,6 +117,8 @@
   "config.tacz.common.gun.default_gun_other_sound_distance.desc": "The range (block) of other gun sound, reloading sound etc.",
   "config.tacz.common.gun.creative_player_consume_ammo": "Creative Player Consume Ammo",
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "Whether or not the player will consume ammo in creative mode",
+  "config.tacz.common.gun.auto_reload_when_respawn": "Auto Reload When Respawn",
+  "config.tacz.common.gun.auto_reload_when_respawn.desc": "Auto reload all the guns in player inventory, useful for pvp servers",
   "config.tacz.common.ammo": "Ammo",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks": "Explosive Ammo Destroys Blocks",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks.desc": "Warning: Ammo with explosive properties can break blocks",
