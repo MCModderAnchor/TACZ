@@ -50,7 +50,7 @@
   "tacz.ammo.rpg_rocket.name": "Roket RPG-7",
   "tacz.attachment.sight_sro_dot.name": "SRO Dot Merah Kecil",
   "tacz.attachment.scope_standard_8x.name": "§6Bidik 5-10x Standar",
-  "tacz.attachment.scope_lpvo_1_6.name": "§5Bidik LPVO 1-6x ",
+  "tacz.attachment.scope_lpvo_1_6.name": "§5Bidikan Lpvo 1-6x ",
   "tacz.attachment.sight_t2.name": "Dot merah T2",
   "tacz.attachment.sight_t1.name": "Dot merah T1",
   "tacz.attachment.sight_exp3.name": "§9EXP3 HCOG",
@@ -77,11 +77,11 @@
   "tacz.attachment.muzzle_silence_phantom_s1.name": "Peredam Phantom S1",
   "tacz.attachment.muzzle_brake_pioneer.name": "Pioneer A3 Brake",
   "tacz.attachment.muzzle_brake_cthulhu.name": "Cthulhu K7 Brake",
-  "tacz.attachment.muzzle_brake_trex.name": "Rem Berat T-Rex",
-  "tacz.attachment.stock_carbon_bone_c5.name": "Stok Tulang karbon C5",
-  "tacz.attachment.stock_tactical_ar.name": "Stok Magpul CTR",
-  "tacz.attachment.stock_militech_b5.name": "Stok Militech B5",
-  "tacz.attachment.oem_stock_heavy.name": "Stok Berat Keluaran Pabrik",
-  "tacz.attachment.oem_stock_light.name": "Stok Ringan Keluaran Pabrik",
-  "tacz.attachment.oem_stock_tactical.name": "Stok Taktis Keluaran Pabrik"
+  "tacz.attachment.muzzle_brake_trex.name": "T-Rex Heavy Brake",
+  "tacz.attachment.stock_carbon_bone_c5.name": "Popor Carbon bone c5",
+  "tacz.attachment.stock_tactical_ar.name": "Popor Magpul CTR",
+  "tacz.attachment.stock_militech_b5.name": "Popor Militech B5",
+  "tacz.attachment.oem_stock_heavy.name": "Popor Berat Keluaran Pabrik",
+  "tacz.attachment.oem_stock_light.name": "Popor Ringan Keluaran Pabrik",
+  "tacz.attachment.oem_stock_tactical.name": "Popor Taktis Keluaran Pabrik"
 }
