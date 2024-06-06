@@ -117,6 +117,8 @@
   "config.tacz.common.gun.default_gun_other_sound_distance.desc": "Diğer silah seslerinin (yeniden doldurma vb.) maksimum duyulabilecek uzaklığı (blok).",
   "config.tacz.common.gun.creative_player_consume_ammo": "Yaratıcı Oyuncu Mermi Tüketir",
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "Yaratıcı moddaki oyuncunun envanterden mermi tüketip tüketmeyeceği",
+  "config.tacz.common.gun.auto_reload_when_respawn": "Yeniden Doğduğunda Otomatik Yeniden Yükleme",
+  "config.tacz.common.gun.auto_reload_when_respawn.desc": "Oyuncu envanterindeki tüm silahları otomatik olarak yeniden yükleyin; pvp sunucuları için kullanışlıdır",
   "config.tacz.common.ammo": "Mühimmat",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks": "Patlayıcı Mühimmat Blokları Kırar",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks.desc": "Uyarı: Bu seçenek aktif ise patlayıcı özelliğe sahip mühimmatlar blokları kırabilir",

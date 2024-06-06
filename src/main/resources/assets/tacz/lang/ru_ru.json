@@ -117,6 +117,8 @@
   "config.tacz.common.gun.default_gun_other_sound_distance.desc": "Дистанция (в блоках) других звуков оружия, (звук перезарядки и т. д.)",
   "config.tacz.common.gun.creative_player_consume_ammo": "Использование патронов в творческом режиме",
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "Будут ли использовать патроны игроки в творческом режиме?",
+  "config.tacz.common.gun.auto_reload_when_respawn": "Автоматическая перезарядка при возрождении",
+  "config.tacz.common.gun.auto_reload_when_respawn.desc": "Автоматическая перезарядка всего оружия в инвентаре игрока. Может быть полезно для PvP-серверов",
   "config.tacz.common.ammo": "Патроны",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks": "Взрывные патроны разрушают блоки",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks.desc": "Предупреждение: взрывные патроны могут разрушать блоки",
