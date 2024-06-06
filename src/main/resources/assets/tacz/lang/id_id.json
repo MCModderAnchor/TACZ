@@ -117,6 +117,8 @@
   "config.tacz.common.gun.default_gun_other_sound_distance.desc": "Jangkauan (blok) dari suara senjata lain, suara memuat ulang dll.",
   "config.tacz.common.gun.creative_player_consume_ammo": "Pengguna Kreatif Menggunakan Amunisi",
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "Apakah pemain menggunakan amunisi dalam mode kreatif atau tidak",
+  "config.tacz.common.gun.auto_reload_when_respawn": "Auto Reload When Respawn",
+  "config.tacz.common.gun.auto_reload_when_respawn.desc": "Auto reload all the guns in player inventory, useful for pvp servers",
   "config.tacz.common.ammo": "Amunisi",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks": "Amunisi Explosif Menghancurkan Blok",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks.desc": "Peringatan: Amunisi dengan properti explosif dapat menghancurkan blok",
