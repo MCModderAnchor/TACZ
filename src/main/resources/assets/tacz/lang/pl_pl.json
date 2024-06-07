@@ -7,7 +7,7 @@
   "custom.tacz.error.no_name": "Błąd: Brak Nazwy",
   "commands.tacz.reload.success": "§a§l[TACZ]§r Wszystkie paczki danych zostały przeładowane, czas: %.3f ms",
   "commands.tacz.reload.overwrite_on": "§a§l●§r Teraz, skoro nadpisywanie konfiguracji jest włączone, §6 wszystkie zmiany w bazowej paczce broni tacz zostaną §lreset!",
-  "commands.tacz.reload.overwrite_off": "§a§l●§r Now that the overwrite config is turned off, §6You are §lfree to modify§6 the tacz default gun pack!",
+  "commands.tacz.reload.overwrite_off": "§a§l●§r Teraz, skoro nadpisywanie konfiguracji jest wyłączone §6Możesz §lmodyfikować§6 podstawową paczkę broni TaCZ!",
   "commands.tacz.reload.overwrite_command.on": "§a§l●§r You can use command §c§n/tacz overwrite false§r to disable overwrite feature.",
   "commands.tacz.reload.overwrite_command.off": "§a§l●§r You can use command §c§n/tacz overwrite true§r to enable overwrite feature.",
   "message.tacz.fire_select.fail": "Nieznany tryb ognia, nie można strzelić",
