@@ -5,7 +5,7 @@
   "toast.tacz.sub.final_level": "Это моя винтовка. Таких винтовок много, но эта моя...",
   "tooltip.tacz.gun.level": "Уровень: ",
   "custom.tacz.error.no_name": "Ошибка: нет имени",
-  "commands.tacz.reload.success": "§a§l[TACZ]§r All pack is reload, time: %.3f ms",
+  "commands.tacz.reload.success": "§a§l[TACZ]§rВсе паки перезагружены за %.3f мс",
   "commands.tacz.reload.overwrite_on": "§a§l●§r Now that the overwrite config is turned on, §6any changes in the tacz default gun pack will be §lreset!",
   "commands.tacz.reload.overwrite_off": "§a§l●§r Now that the overwrite config is turned off, §6You are §lfree to modify§6 the tacz default gun pack!",
   "commands.tacz.reload.overwrite_command.on": "§a§l●§r You can use command §c§n/tacz overwrite false§r to disable overwrite feature.",
