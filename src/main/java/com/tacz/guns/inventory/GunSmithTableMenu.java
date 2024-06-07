@@ -78,7 +78,7 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
                 level.addFreshEntity(itemEntity);
             }
             // 更新，否则客户端显示不正确
-            player.inventoryMenu.broadcastChanges();
+            player.inventoryMenu.broadcastFullState();
             NetworkHandler.sendToClientPlayer(new ServerMessageCraft(this.containerId), player);
         }));
     }
