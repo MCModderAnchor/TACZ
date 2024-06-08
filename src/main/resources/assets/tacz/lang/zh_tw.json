@@ -36,6 +36,8 @@
   "gui.tacz.gun_smith_table.license": "§授權§r: ",
   "gui.tacz.gun_smith_table.authors": "§作者§r: ",
   "gui.tacz.gun_smith_table.date": "§日期:§r ",
+  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "按 [%s] 進行互動",
   "gui.tacz.gun_refit.unload.no_space": "背包中沒有空間可以存放卸下的配件。",
   "gui.tacz.cloth_config_warning.tips": "您需要安裝 Cloth Config API mod 才能使用遊戲內設定功能",
