@@ -36,7 +36,7 @@
   "gui.tacz.gun_smith_table.license": "§nLicencja§r:",
   "gui.tacz.gun_smith_table.authors": "§nAutorzy§r:",
   "gui.tacz.gun_smith_table.date": "§nData:§r",
-  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error": "Błąd",
   "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "Naciśnij [%s] aby reagować",
   "gui.tacz.gun_refit.unload.no_space": "Nie ma już wolnego miejsca w twoim ekwipunku, aby zdjąć akcesoria.",
