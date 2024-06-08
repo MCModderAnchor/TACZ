@@ -36,6 +36,8 @@
   "gui.tacz.gun_smith_table.license": "§nLicense§r: ",
   "gui.tacz.gun_smith_table.authors": "§nAuthors§r: ",
   "gui.tacz.gun_smith_table.date": "§nDate:§r ",
+  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "Press [%s] to interact",
   "gui.tacz.gun_refit.unload.no_space": "There is no free space in inventory for you to unload attachment.",
   "gui.tacz.cloth_config_warning.tips": "You'll need to install the Cloth Config API mod to use the ingame configuration feature",

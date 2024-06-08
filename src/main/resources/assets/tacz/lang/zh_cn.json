@@ -86,6 +86,8 @@
   "gui.tacz.gun_smith_table.authors": "§n作者§r：",
   "gui.tacz.gun_smith_table.craft": "制造",
   "gui.tacz.gun_smith_table.date": "§n日期§r：",
+  "gui.tacz.gun_smith_table.error": "错误",
+  "gui.tacz.gun_smith_table.error.id": "ID：%s",
   "gui.tacz.gun_smith_table.ingredient": "材料: ",
   "gui.tacz.gun_smith_table.license": "§n许可证§r：",
   "gui.tacz.gun_smith_table.preview": "预览",
