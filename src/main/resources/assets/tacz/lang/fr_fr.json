@@ -36,7 +36,7 @@
   "gui.tacz.gun_smith_table.license": "§nLicence§r: ",
   "gui.tacz.gun_smith_table.authors": "§nAuteurs§r: ",
   "gui.tacz.gun_smith_table.date": "§nDate:§r ",
-  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error": "Erreur",
   "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "Appuyer sur [%s] pour interagir",
   "gui.tacz.gun_refit.unload.no_space": "Il n'y a pas d'espace libre dans l'inventaire pour enlever l'accessoire.",
