@@ -36,6 +36,8 @@
   "gui.tacz.gun_smith_table.license": "§nLizenz§r: ",
   "gui.tacz.gun_smith_table.authors": "§nAutoren§r: ",
   "gui.tacz.gun_smith_table.date": "§nDatum:§r ",
+  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "Drücke [%s] zum Interagieren",
   "gui.tacz.gun_refit.unload.no_space": "Es gibt keinen Platz im Inventar zum Abnehmen des Aufsatzes.",
   "gui.tacz.cloth_config_warning.tips": "Du musst den Cloth Config API Mod installieren, um konfigurieren zu können",
