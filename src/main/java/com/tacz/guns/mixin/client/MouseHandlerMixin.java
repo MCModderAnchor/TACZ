@@ -59,6 +59,7 @@ public class MouseHandlerMixin {
                 float progress = IGunOperator.fromLivingEntity(player).getSynAimingProgress();
                 // 开镜灵敏度系数
                 double sensitivityMultiplier = ZoomConfig.ZOOM_SENSITIVITY_BASE_MULTIPLIER.get();
+                sensitivityMultiplier = 1 + (sensitivityMultiplier - 1) * progress;
                 // 两种状态下的 fov 计算
                 double originalFov = minecraft.options.fov().get();
                 double currentFov = MathUtil.magnificationToFov(1 + (zoomLevel - 1) * progress, originalFov);
