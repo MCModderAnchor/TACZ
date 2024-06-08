@@ -36,7 +36,7 @@
   "gui.tacz.gun_smith_table.license": "§nGiấy phép§r: ",
   "gui.tacz.gun_smith_table.authors": "§nTác giả§r: ",
   "gui.tacz.gun_smith_table.date": "§nNgày:§r ",
-  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error": "Lỗi",
   "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "Bấm [%s] để tương tác",
   "gui.tacz.gun_refit.unload.no_space": "Không còn không gian trong túi để tháo phụ kiện.",
