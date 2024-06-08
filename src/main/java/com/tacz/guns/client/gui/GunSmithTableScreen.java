@@ -386,6 +386,14 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                     offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor(), false);
 
             poseStack.popPose();
+        } else {
+            ResourceLocation recipeId = recipe.getId();
+            gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.error").withStyle(ChatFormatting.DARK_RED), leftPos + 6, topPos + 122, 0xAF0000, false);
+            gui.drawString(font, Component.translatable("gui.tacz.gun_smith_table.error.id", recipeId.toString()).withStyle(ChatFormatting.DARK_RED), leftPos + 6, topPos + 134, 0xFFFFFF, false);
+            PackInfo errorPackInfo = ClientAssetManager.INSTANCE.getPackInfo(recipeId);
+            if (errorPackInfo != null) {
+                gui.drawString(font, Component.translatable(errorPackInfo.getName()).withStyle(ChatFormatting.DARK_RED), leftPos + 6, topPos + 146, 0xAF0000, false);
+            }
         }
     }
 

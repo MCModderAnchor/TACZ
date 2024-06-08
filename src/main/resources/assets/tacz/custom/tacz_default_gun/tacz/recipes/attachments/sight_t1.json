@@ -4,7 +4,7 @@
       "item": {
         "tag": "forge:ingots/iron"
       },
-      "count": 6
+      "count": 4
     },
     {
       "item": {
@@ -21,6 +21,6 @@
   ],
   "result": {
     "type": "attachment",
-    "id": "tacz:t2"
+    "id": "tacz:sight_t1"
   }
 }

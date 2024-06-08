@@ -1,8 +1,6 @@
 package com.tacz.guns.resource.index;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.pojo.GunIndexPOJO;
@@ -58,8 +56,7 @@ public class CommonGunIndex {
     }
 
     private static void checkInaccuracy(GunData data) {
-        GunData defaultData = CommonAssetManager.INSTANCE.getGunData(DefaultAssets.DEFAULT_GUN_DATA);
-        Map<InaccuracyType, Float> defaultInaccuracy = Maps.newHashMap(defaultData.getInaccuracy());
+        Map<InaccuracyType, Float> defaultInaccuracy = InaccuracyType.getDefaultInaccuracy();
         Map<InaccuracyType, Float> readInaccuracy = data.getInaccuracy();
         if (readInaccuracy == null || readInaccuracy.isEmpty()) {
             data.setInaccuracy(defaultInaccuracy);

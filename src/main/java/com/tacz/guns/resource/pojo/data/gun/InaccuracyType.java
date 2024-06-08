@@ -1,9 +1,12 @@
 package com.tacz.guns.resource.pojo.data.gun;
 
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.entity.IGunOperator;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+
+import java.util.Map;
 
 public enum InaccuracyType {
     /**
@@ -55,6 +58,16 @@ public enum InaccuracyType {
             return InaccuracyType.MOVE;
         }
         return InaccuracyType.STAND;
+    }
+
+    public static Map<InaccuracyType, Float> getDefaultInaccuracy() {
+        Map<InaccuracyType, Float> inaccuracy = Maps.newHashMap();
+        inaccuracy.put(InaccuracyType.STAND, 5f);
+        inaccuracy.put(InaccuracyType.MOVE, 5.75f);
+        inaccuracy.put(InaccuracyType.SNEAK, 3.5f);
+        inaccuracy.put(InaccuracyType.LIE, 2.5f);
+        inaccuracy.put(InaccuracyType.AIM, 0.15f);
+        return inaccuracy;
     }
 
     private static boolean isMove(LivingEntity livingEntity) {
