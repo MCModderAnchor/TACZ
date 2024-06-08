@@ -36,6 +36,8 @@
   "gui.tacz.gun_smith_table.license": "§nLicença§r: ",
   "gui.tacz.gun_smith_table.authors": "§nAutores§r: ",
   "gui.tacz.gun_smith_table.date": "§nData:§r ",
+  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "Pressione [%s] para interagir",
   "gui.tacz.gun_refit.unload.no_space": "Não há espaço livre no inventário para tirar o acessório.",
   "gui.tacz.cloth_config_warning.tips": "Você precisa de instalar o mod Cloth Config API para usar as configurações",
