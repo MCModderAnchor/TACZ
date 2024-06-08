@@ -36,7 +36,7 @@
   "gui.tacz.gun_smith_table.license": "§nЛіцензія§r: ",
   "gui.tacz.gun_smith_table.authors": "§nАвтори§r: ",
   "gui.tacz.gun_smith_table.date": "§nДата:§r ",
-  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error": "Помилка",
   "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "Натисніть [%s], щоб взаємодіяти",
   "gui.tacz.gun_refit.unload.no_space": "У вашому інвентарі недостатньо місця, щоб зняти аксесуар.",
