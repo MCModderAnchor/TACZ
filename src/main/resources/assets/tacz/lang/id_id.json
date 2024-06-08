@@ -1,6 +1,6 @@
 {
   "toast.tacz.level_up": "Peningkatan!",
-  "toast.tacz.sub.level_up": "Senjata ini lebih sempurna",
+  "toast.tacz.sub.level_up": "Senjata ini bekerja lebih baik",
   "toast.tacz.sub.damage_up": "Senjata menjadi lebih mematikan",
   "toast.tacz.sub.final_level": "Pengguna dan senjata menjadi satu",
   "tooltip.tacz.gun.level": "Tingkatan: ",
@@ -41,7 +41,7 @@
   "gui.tacz.cloth_config_warning.tips": "Kamu membutuhkan mod Cloth Config API untuk menggunakan konfigurasi di permainan",
   "gui.tacz.cloth_config_warning.download": "Unduh Cloth Config API",
   "gui.tacz.client_gun_pack_downloader.fail.title": "Unduhan Paket Senjata Gagal",
-  "gui.tacz.client_gun_pack_downloader.fail.subtitle": "Cek koneksi internet kamu, atau keluar dan masuk lagi ke permainan",
+  "gui.tacz.client_gun_pack_downloader.fail.subtitle": "Cek koneksi internet, atau keluar dan masuk lagi ke permainan",
   "gui.tacz.client_gun_pack_downloader.downloading": "Mengunduh Paket Senjata",
   "gui.tacz.client_gun_pack_downloader.background_download": "Unduhan Latar Belakang",
   "tooltip.tacz.ammo_box.count": "Menghitung: %d",
