@@ -36,6 +36,8 @@
   "gui.tacz.gun_smith_table.license": "§nLisans:§r ",
   "gui.tacz.gun_smith_table.authors": "§nTasarımcılar:§r ",
   "gui.tacz.gun_smith_table.date": "§nTarih:§r ",
+  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "[%s] basarak etkileşime geç",
   "gui.tacz.gun_refit.unload.no_space": "Bu eklentiyi çıkarmak için envanterinde yer yok.",
   "gui.tacz.cloth_config_warning.tips": "Oyun içi mod ayarlarına erişebilmek için Cloth Config API moduna ihtiyacın var",
