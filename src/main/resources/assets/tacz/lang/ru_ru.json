@@ -36,7 +36,7 @@
   "gui.tacz.gun_smith_table.license": "§nЛицензия§r: ",
   "gui.tacz.gun_smith_table.authors": "§nАвторы§r: ",
   "gui.tacz.gun_smith_table.date": "§nДата:§r ",
-  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error": "Ошибка",
   "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "Нажмите [%s] для взаимодействия",
   "gui.tacz.gun_refit.unload.no_space": "В инвентаре нет свободного места для снятия обвеса.",
