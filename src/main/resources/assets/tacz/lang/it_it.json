@@ -36,6 +36,8 @@
   "gui.tacz.gun_smith_table.license": "§nLicenza§r: ",
   "gui.tacz.gun_smith_table.authors": "§nAutore§r: ",
   "gui.tacz.gun_smith_table.date": "§nData:§r ",
+  "gui.tacz.gun_smith_table.error": "Error",
+  "gui.tacz.gun_smith_table.error.id": "ID: %s",
   "gui.tacz.interact_key.text.desc": "Premi [%s] per interagire",
   "gui.tacz.gun_refit.unload.no_space": "Non hai spazio nell'inventario, non puoi rimuovere l'accessorio",
   "gui.tacz.cloth_config_warning.tips": "Devi installare Cloth Config API per utilizzare la funzione di configurazione ingame",
