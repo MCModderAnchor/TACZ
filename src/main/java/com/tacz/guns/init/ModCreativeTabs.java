@@ -102,8 +102,4 @@ public class ModCreativeTabs {
             .title(Component.translatable("tacz.type.mg.name")).withTabsBefore(GUN_RPG_TAB.getId())
             .icon(() -> GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "m249")).build())
             .displayItems((parameters, output) -> output.acceptAll(AbstractGunItem.fillItemCategory(GunTabType.MG))).build());
-
-    public static RegistryObject<CreativeModeTab> GUN_OTHER_TAB = TABS.register("unknown", () -> CreativeModeTab.builder()
-            .title(Component.translatable("tacz.type.unknown.name")).withTabsBefore(GUN_MG_TAB.getId())
-            .icon(() -> ItemStack.EMPTY).displayItems((parameters, output) -> output.acceptAll(AbstractGunItem.fillItemCategory(GunTabType.UNKNOWN))).build());
 }

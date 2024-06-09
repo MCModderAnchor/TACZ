@@ -22,8 +22,5 @@ public enum GunTabType {
     RPG,
 
     @SerializedName("mg")
-    MG,
-
-    @SerializedName("unknown")
-    UNKNOWN
+    MG
 }
