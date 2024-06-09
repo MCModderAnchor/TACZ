@@ -28,7 +28,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
-version = "1.0.0-hotfix5"
+version = "1.0.1"
 // 版本号，正式发布需要修改这一行
 //version = FORMAT.format(new Date())
 group = "com.tacz"
