@@ -482,7 +482,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         double playerDistance = hitVec.distanceTo(this.startPos);
         for (ExtraDamage.DistanceDamagePair pair : damageDecay) {
             if (playerDistance < pair.getDistance()) {
-                return Math.max(0F, pair.getDamage()) * this.damageModifier;
+                return (float) (Math.max(0F, pair.getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get()) * this.damageModifier);
             }
         }
         // 如果忘记写最大值，那我就直接认为你伤害为 0
