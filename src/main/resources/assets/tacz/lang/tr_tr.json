@@ -48,7 +48,7 @@
   "gui.tacz.client_gun_pack_downloader.background_download": "Arkaplan İndirmesi",
   "tooltip.tacz.ammo_box.count": "Miktar: %d",
   "tooltip.tacz.gun.explosion": " (Patlama)",
-  "tooltip.tacz.gun.type": "Tip: ",
+  "tooltip.tacz.gun.type": "Tür: ",
   "tooltip.tacz.gun.damage": "Hasar: ",
   "tooltip.tacz.gun.armor_ignore": "%s Minecraft Zırhı Delme Çarpanı",
   "tooltip.tacz.gun.head_shot_multiplier": "%s Kafadan Vuruş Hasar Çarpanı",
