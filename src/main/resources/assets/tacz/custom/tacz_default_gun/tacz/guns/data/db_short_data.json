@@ -3,7 +3,7 @@
   "rpm": 200,
   "bullet": {
     "life": 0.3,
-    "bullet_amount": 12,
+    "bullet_amount": 8,
     "damage": 24,
     "tracer_count_interval": 0,
     "extra_damage": {
@@ -55,9 +55,9 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [3.5, 3.5]},
-      {"time": 0.3, "value": [3.5, 3.5]},
-      {"time": 0.5, "value": [-1.25, -1.25]},
+      {"time": 0, "value": [3.15, 3.15]},
+      {"time": 0.3, "value": [3.15, 3.15]},
+      {"time": 0.5, "value": [-1.15, -1.15]},
       {"time": 0.65, "value": [0, 0]},
       {"time": 0.7, "value": [0, 0]}
     ],
@@ -69,10 +69,10 @@
     ]
   },
   "inaccuracy": {
-    "stand": 6.5,
-    "move": 6.75,
-    "sneak": 6.25,
-    "lie": 6,
-    "aim": 6
+    "stand": 6,
+    "move": 6.5,
+    "sneak": 5.75,
+    "lie": 5.75,
+    "aim": 5.75
   }
 }
