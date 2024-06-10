@@ -1,0 +1,25 @@
+{
+  "slot": "tacz:attachment/slot/sight_exp3",
+  // 配件的默认模型，不可为空
+  "model": "tacz:attachment/sight_exp3_geo",
+  // 配件默认模型使用的材质，不可为空
+  "texture": "tacz:attachment/uv/sight_exp3",
+  "lod": {
+    "model": "tacz:attachment/lod/sight_exp3_lod",
+    "texture": "tacz:attachment/lod/sight_exp3_lod"
+  },
+  "zoom": [
+    1.66
+  ],
+  // 如果配件是瞄具，且为筒状放大瞄具，此选项应为true
+  "scope": false,
+  // 如果配件是瞄具，且为红点或全息瞄具，此选项应为true
+  "sight": true,
+  // 只有 瞄具 配件需要设置这个属性，表示开镜后，枪身和瞄具渲染的fov。
+  // 默认情况下，mc 渲染手部模型的 fov 为 70。
+  "fov": 50.0,
+  "sounds": {
+    "install": "tacz:attachments/scope_general_c",
+    "uninstall": "tacz:attachments/scope_general_c"
+  }
+}

@@ -899,6 +899,16 @@
 					]
 				},
 				{
+					"name": "positioning2",
+					"parent": "Ak74m_base",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "scope_pos",
+					"parent": "positioning2",
+					"pivot": [0, 6.475, 5.275]
+				},
+				{
 					"name": "positioning",
 					"pivot": [-3.025, -8.95, -11.225]
 				},

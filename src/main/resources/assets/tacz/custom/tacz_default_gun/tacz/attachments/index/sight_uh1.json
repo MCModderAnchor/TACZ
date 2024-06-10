@@ -1,0 +1,12 @@
+{
+  // 配件的的显示名称和工具提示，支持本地化
+  "name": "tacz.attachment.sight_uh1.name",
+  "tooltip": "tacz.attachment.sight_uh1.tooltip",
+  // 配件的客户端数据
+  "display": "tacz:sight_uh1_display",
+  // 配件的属性
+  "data": "tacz:sight_uh1_data",
+  // 配件的类型。scope、grip、muzzle、stock、laser、extended_mag
+  // 枪械配件槽位能从中选择可以安装的类型
+  "type": "scope"
+}

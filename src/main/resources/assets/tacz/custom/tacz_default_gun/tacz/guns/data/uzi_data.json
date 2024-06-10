@@ -4,16 +4,16 @@
   "bullet": {
     "life": 0.55,
     "bullet_amount": 1,
-    "damage": 5,
+    "damage": 6.5,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.05,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
         {"distance": 0.5, "damage": 7},
-        {"distance": 3, "damage": 5},
-        {"distance": 7.5, "damage": 4.5},
-        {"distance": 14.5, "damage": 4},
+        {"distance": 19.5, "damage": 6.5},
+        {"distance": 39.5, "damage": 5},
+        {"distance": 59.5, "damage": 4},
         {"distance": "infinite", "damage": 3.5}
       ]
     },
@@ -49,20 +49,11 @@
   "fire_mode": [
     "auto"
   ],
-  "allow_attachments": {
-    "scope": {
-      "black_list": [
-        "tacz:sight_sro_dot",
-        "tacz:scope_standard_8x"
-      ]
-    },
-    "extended_mag": {},
-    "muzzle": {
-      "black_list": [
-        "tacz:muzzle_silence_phantom_s1"
-      ]
-    }
-  },
+  "allow_attachment_types": [
+    "scope",
+    "muzzle",
+    "extended_mag"
+  ],
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.65, 0.65]},
@@ -77,10 +68,10 @@
     ]
   },
   "inaccuracy": {
-    "stand": 3.2,
-    "move": 4.5,
-    "sneak": 1.5,
-    "lie": 0.8,
-    "aim": 0.5
+    "stand": 3.5,
+    "move": 4.2,
+    "sneak": 2.8,
+    "lie": 2.2,
+    "aim": 0.2
   }
 }

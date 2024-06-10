@@ -146,7 +146,7 @@ public class CameraSetupEvent {
     }
 
     @SubscribeEvent
-    public static void applyScopeModelFovModifying(FieldOfView event) {
+    public static void applyGunModelFovModifying(FieldOfView event) {
         if (event.isItemWithHand()) {
             return; // 只修改手部物品的 fov，因此如果是世界渲染 fov 事件，则返回
         }

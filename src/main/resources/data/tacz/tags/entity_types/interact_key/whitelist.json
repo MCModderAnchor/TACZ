@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:camel",
+    "minecraft:minecart",
+    "minecraft:chest_minecart",
+    "minecraft:item_frame",
+    "minecraft:glow_item_frame",
+    "minecraft:interaction",
+    "minecraft:boat",
+    "minecraft:chest_boat",
+    "minecraft:mule",
+    "minecraft:villager",
+    "minecraft:wandering_trader",
+    "minecraft:horse"
+  ]
+}

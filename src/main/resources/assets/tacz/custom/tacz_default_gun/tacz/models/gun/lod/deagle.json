@@ -476,6 +476,16 @@
 					]
 				},
 				{
+					"name": "positioning2",
+					"parent": "lod_deagle",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "scope_pos",
+					"parent": "positioning2",
+					"pivot": [0, 6.475, 2.8125]
+				},
+				{
 					"name": "positioning",
 					"pivot": [0, 0, -8]
 				},

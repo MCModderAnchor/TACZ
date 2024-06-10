@@ -472,6 +472,16 @@
 					]
 				},
 				{
+					"name": "positioning2",
+					"parent": "ai_awp",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "scope_pos",
+					"parent": "positioning2",
+					"pivot": [0, 8.975, 2.275]
+				},
+				{
 					"name": "positioning",
 					"pivot": [-3.025, -8.95, -11.225]
 				},

@@ -3,18 +3,18 @@
   "rpm": 200,
   "bullet": {
     "life": 0.3,
-    "bullet_amount": 24,
-    "damage": 48,
+    "bullet_amount": 12,
+    "damage": 24,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.0,
       "head_shot_multiplier": 1.1,
       "damage_adjust": [
-        {"distance": 1, "damage": 48},
-        {"distance": 3, "damage": 48},
-        {"distance": 10, "damage": 36},
-        {"distance": 20, "damage": 24},
-        {"distance": "infinite", "damage": 12}
+        {"distance": 2, "damage": 24},
+        {"distance": 5, "damage": 24},
+        {"distance": 10, "damage": 18},
+        {"distance": 20, "damage": 12},
+        {"distance": "infinite", "damage": 6}
       ]
     },
     "speed": 120,
@@ -24,7 +24,7 @@
     "ignite": false,
     "pierce": 1
   },
-  "ammo_amount": 1,
+  "ammo_amount": 2,
   "bolt": "open_bolt",
   "reload": {
     "type": "magazine",
@@ -42,26 +42,30 @@
   "aim_time": 0.2,
   "sprint_time": 0.2,
   "fire_mode": [
-    "semi"
+    "burst"
   ],
-  "allow_attachments": {
-    "stock": {
-      "white_list": [
-        "tacz:oem_stock_tactical"
-      ]
-    }
+  "burst_data": {
+    "continuous_shoot": false,
+    "count": 2,
+    "bpm": 600,
+    "min_interval": 0.5
   },
+  "allow_attachment_types": [
+    "stock"
+  ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [9.5, 9.5]},
-      {"time": 0.125, "value": [9.5, 9.5]},
-      {"time": 0.5, "value": [-0.25, -0.25]},
-      {"time": 0.65, "value": [0, 0]}
+      {"time": 0, "value": [3.5, 3.5]},
+      {"time": 0.3, "value": [3.5, 3.5]},
+      {"time": 0.5, "value": [-1.25, -1.25]},
+      {"time": 0.65, "value": [0, 0]},
+      {"time": 0.7, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-3, -2.5]},
-      {"time": 0.3, "value": [0.15, 0.25]},
-      {"time": 0.5, "value": [0, 0]}
+      {"time": 0, "value": [-1.5, -1.5]},
+      {"time": 0.3, "value": [-1.5, -1.5]},
+      {"time": 0.5, "value": [0.2, 0.2]},
+      {"time": 0.7, "value": [0, 0]}
     ]
   },
   "inaccuracy": {

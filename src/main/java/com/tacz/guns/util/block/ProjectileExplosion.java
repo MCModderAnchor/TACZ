@@ -2,6 +2,7 @@ package com.tacz.guns.util.block;
 
 import com.google.common.collect.Sets;
 import com.tacz.guns.config.common.AmmoConfig;
+import com.tacz.guns.util.HitboxHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -35,10 +36,11 @@ public class ProjectileExplosion extends Explosion {
     private final float power;
     private final float radius;
     private final boolean knockback;
+    private final Entity owner;
     private final Entity exploder;
     private final ExplosionDamageCalculator damageCalculator;
 
-    public ProjectileExplosion(Level level, Entity exploder, @Nullable DamageSource source, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float power, float radius, boolean knockback, Explosion.BlockInteraction mode) {
+    public ProjectileExplosion(Level level, Entity owner, Entity exploder, @Nullable DamageSource source, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float power, float radius, boolean knockback, Explosion.BlockInteraction mode) {
         super(level, exploder, source, damageCalculator, x, y, z, radius, AmmoConfig.EXPLOSIVE_AMMO_FIRE.get(), mode);
         this.level = level;
         this.x = x;
@@ -46,6 +48,7 @@ public class ProjectileExplosion extends Explosion {
         this.z = z;
         this.power = power;
         this.radius = radius;
+        this.owner = owner;
         this.exploder = exploder;
         this.damageCalculator = damageCalculator == null ? DEFAULT_CONTEXT : damageCalculator;
         this.knockback = knockback;
@@ -117,7 +120,7 @@ public class ProjectileExplosion extends Explosion {
                 continue;
             }
 
-            AABB boundingBox = entity.getBoundingBox();
+            AABB boundingBox = HitboxHelper.getFixedBoundingBox(entity, this.owner);
             BlockHitResult result;
             double strength;
             double deltaX;

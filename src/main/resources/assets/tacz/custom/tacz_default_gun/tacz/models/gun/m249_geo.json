@@ -91,7 +91,7 @@
 				{
 					"name": "muzzle_pos",
 					"parent": "attachment_positioning",
-					"pivot": [0, 8.4312, -21.00625]
+					"pivot": [0, 8.4312, -22.19375]
 				},
 				{
 					"name": "muzzle_flash",

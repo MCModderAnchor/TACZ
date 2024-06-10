@@ -11,16 +11,15 @@
   "bullet": {
     "life": 0.9,
     "bullet_amount": 1,
-    "damage": 40.5,
+    "damage": 42,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.75,
       "head_shot_multiplier": 2,
       "damage_adjust": [
-        {"distance": 17, "damage": 42},
-        {"distance": 35, "damage": 32},
-        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 22}
+        {"distance": 80, "damage": 42},
+        {"distance": 150, "damage": 35},
+        {"distance": "infinite", "damage": 25}
       ]
     },
     "speed": 450,
@@ -42,7 +41,7 @@
     }
   },
   "draw_time": 0.35,
-  "put_away_time": 0.6,
+  "put_away_time": 0.75,
   "aim_time": 0.25,
   "sprint_time": 0.2,
   "bolt_action_time": 0.9,
@@ -65,23 +64,15 @@
     ]
   },
   "inaccuracy": {
-    "stand": 8,
+    "stand": 8.5,
     "move": 11,
-    "sneak": 4.5,
-    "lie": 3,
+    "sneak": 6.5,
+    "lie": 4.5,
     "aim": 0.05
   },
-  "allow_attachments": {
-    "extended_mag": {},
-    "scope": {
-      "black_list": [
-        "tacz:sight_sro_dot"
-      ]
-    },
-    "muzzle": {
-      "white_list": [
-        "tacz:muzzle_silence_phantom_s1"
-      ]
-    }
-  }
+  "allow_attachment_types": [
+    "extended_mag",
+    "scope",
+    "muzzle"
+  ]
 }

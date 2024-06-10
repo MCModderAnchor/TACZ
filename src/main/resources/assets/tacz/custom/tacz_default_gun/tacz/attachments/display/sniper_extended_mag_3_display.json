@@ -1,0 +1,7 @@
+{
+  "slot": "tacz:attachment/slot/sniper_extended_mag_3",
+  "sounds": {
+    "install": "tacz:attachments/extended_mag_install",
+    "uninstall": "tacz:attachments/extended_mag_uninstall"
+  }
+}

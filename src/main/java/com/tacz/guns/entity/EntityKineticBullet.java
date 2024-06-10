@@ -8,7 +8,6 @@ import com.tacz.guns.api.event.common.LivingKillByGunEvent;
 import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
 import com.tacz.guns.config.common.AmmoConfig;
-import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import com.tacz.guns.network.NetworkHandler;
@@ -28,7 +27,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -36,7 +34,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Explosion;
@@ -128,7 +125,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.extraDamage = data.getExtraDamage();
         if (data.getExplosionData() != null) {
             this.hasExplosion = true;
-            this.explosionDamage = Mth.clamp(data.getExplosionData().getDamage(), 0, Float.MAX_VALUE);
+            this.explosionDamage = (float) Mth.clamp(data.getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Float.MAX_VALUE);
             this.explosionRadius = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
             this.explosionKnockback = data.getExplosionData().isKnockback();
         }
@@ -142,7 +139,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.gunId = gunId;
     }
 
-    public static void createExplosion(Entity exploder, float damage, float radius, boolean knockback, Vec3 hitPos) {
+    public static void createExplosion(Entity owner, Entity exploder, float damage, float radius, boolean knockback, Vec3 hitPos) {
         // 客户端不执行
         if (!(exploder.level instanceof ServerLevel level)) {
             return;
@@ -153,7 +150,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             mode = Explosion.BlockInteraction.BREAK;
         }
         // 创建爆炸
-        ProjectileExplosion explosion = new ProjectileExplosion(level, exploder, null, null, hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, knockback, mode);
+        ProjectileExplosion explosion = new ProjectileExplosion(level, owner, exploder, null, null, hitPos.x(), hitPos.y(), hitPos.z(), damage, radius, knockback, mode);
         // 监听 forge 事件
         if (ForgeEventFactory.onExplosionStart(level, explosion)) {
             return;
@@ -341,32 +338,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     @Nullable
     protected EntityResult getHitResult(Entity entity, Vec3 startVec, Vec3 endVec) {
-        double expandHeight = entity instanceof Player && !entity.isCrouching() ? 0.0625 : 0.0;
-        AABB boundingBox = entity.getBoundingBox();
-        Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
-        // hitbox 延迟补偿。只有射击者是玩家（且被击中者也是玩家）才进行此类延迟补偿计算
-        if (OtherConfig.SERVER_HITBOX_LATENCY_FIX.get() && entity instanceof ServerPlayer player && this.getOwner() instanceof ServerPlayer serverPlayerOwner) {
-            int ping = Mth.floor((serverPlayerOwner.latency / 1000.0) * 20.0 + 0.5);
-            boundingBox = HitboxHelper.getBoundingBox(player, ping);
-            velocity = HitboxHelper.getVelocity(player, ping);
-        }
-        // 应用蹲伏导致的 hitbox 变形
-        boundingBox = boundingBox.expandTowards(0, expandHeight, 0);
-        // 根据速度一定程度地扩展 hitbox
-        boundingBox = boundingBox.expandTowards(velocity.x, velocity.y, velocity.z);
-        // 玩家 hitbox 修正，可以通过 Config 调整
-        double playerHitboxOffset = OtherConfig.SERVER_HITBOX_OFFSET.get();
-        if (entity instanceof ServerPlayer) {
-            if (entity.getVehicle() != null) {
-                boundingBox = boundingBox.move(velocity.multiply(playerHitboxOffset / 2, playerHitboxOffset / 2, playerHitboxOffset / 2));
-            }
-            boundingBox = boundingBox.move(velocity.multiply(playerHitboxOffset, playerHitboxOffset, playerHitboxOffset));
-        }
-        // 给所有实体统一应用的 Hitbox 偏移，其数值为实验得出的定值。
-        if (entity.getVehicle() != null || entity instanceof ITargetEntity) {
-            boundingBox = boundingBox.move(velocity.multiply(-2.5, -2.5, -2.5));
-        }
-        boundingBox = boundingBox.move(velocity.multiply(-5, -5, -5));
+        AABB boundingBox = HitboxHelper.getFixedBoundingBox(entity, this.getOwner());
         // 计算射线与实体 boundingBox 的交点
         Vec3 hitPos = boundingBox.clip(startVec, endVec).orElse(null);
         // 爆头判定
@@ -432,7 +404,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         if (this.hasExplosion) {
             // 取消无敌时间
             entity.invulnerableTime = 0;
-            createExplosion(this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, result.getLocation());
+            createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, result.getLocation());
         }
         LivingEntity livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
         if (entity instanceof PartEntity<?> partEntity) {
@@ -467,7 +439,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         MinecraftForge.EVENT_BUS.post(new AmmoHitBlockEvent(level, result, this.level.getBlockState(pos), this));
         // 爆炸
         if (this.hasExplosion) {
-            createExplosion(this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, hitVec);
+            createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, hitVec);
             // 爆炸直接结束不留弹孔，不处理之后的逻辑
             this.discard();
             return;
@@ -507,7 +479,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         double playerDistance = hitVec.distanceTo(this.startPos);
         for (ExtraDamage.DistanceDamagePair pair : damageDecay) {
             if (playerDistance < pair.getDistance()) {
-                return Math.max(0F, pair.getDamage()) * this.damageModifier;
+                return (float) (Math.max(0F, pair.getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get()) * this.damageModifier);
             }
         }
         // 如果忘记写最大值，那我就直接认为你伤害为 0

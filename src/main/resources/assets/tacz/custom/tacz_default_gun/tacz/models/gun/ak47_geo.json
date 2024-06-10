@@ -5603,7 +5603,7 @@
 					]
 				},
 				{
-					"name": "muzzle2",
+					"name": "muzzle_default",
 					"parent": "akm_default",
 					"pivot": [0, 8, 0],
 					"cubes": [

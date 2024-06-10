@@ -526,7 +526,7 @@
 				{
 					"name": "scope_pos",
 					"parent": "positioning2",
-					"pivot": [0, 13.8125, 0.725]
+					"pivot": [0, 13.8125, -1.275]
 				},
 				{
 					"name": "muzzle_flash",

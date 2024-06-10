@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_brake_cthulhu",
+  "model": "tacz:attachment/muzzle_brake_cthulhu_geo",
+  "texture": "tacz:attachment/uv/muzzle_brake_cthulhu",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

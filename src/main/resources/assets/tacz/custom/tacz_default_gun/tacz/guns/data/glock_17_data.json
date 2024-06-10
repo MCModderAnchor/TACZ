@@ -11,11 +11,10 @@
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
         {"distance": 0.5, "damage": 7},
-        {"distance": 5, "damage": 6},
-        {"distance": 9.5, "damage": 5},
-        {"distance": 17.5, "damage": 4.5},
-        // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 3}
+        {"distance": 15.5, "damage": 6},
+        {"distance": 24.5, "damage": 5},
+        {"distance": 44.5, "damage": 4},
+        {"distance": "infinite", "damage": 3.5}
       ]
     },
     "speed": 150,
@@ -50,19 +49,11 @@
   "fire_mode": [
     "semi"
   ],
-  "allow_attachments": {
-    "scope": {
-      "white_list": [
-        "tacz:sight_sro_dot"
-      ]
-    },
-    "extended_mag": {},
-    "muzzle": {
-      "white_list": [
-        "tacz:muzzle_silence_mirage"
-      ]
-    }
-  },
+  "allow_attachment_types": [
+    "scope",
+    "muzzle",
+    "extended_mag"
+  ],
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.55, 0.55]},
@@ -79,8 +70,8 @@
   "inaccuracy": {
     "stand": 2,
     "move": 2.5,
-    "sneak": 1,
+    "sneak": 1.5,
     "lie": 0.7,
-    "aim": 0.15
+    "aim": 0.2
   }
 }

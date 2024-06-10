@@ -8,15 +8,15 @@
     "bullet_amount": 1,
     "damage": 20,
     "extra_damage": {
-      "armor_ignore": 0,
+      "armor_ignore": 0.0,
       "head_shot_multiplier": 1
     },
     "speed": 80,
-    "gravity": 0.0245,
+    "gravity": 0.01,
     "knockback": 0,
     "friction": 0.005,
     "ignite": false,
-    "pierce": 1,
+    "pierce": 0,
     "explosion": {
       "damage": 100,
       "radius": 3
@@ -55,10 +55,10 @@
     ]
   },
   "inaccuracy": {
-    "stand": 4,
+    "stand": 3,
     "move": 8,
     "sneak": 2,
-    "lie": 1.2,
-    "aim": 0.2
+    "lie": 1.5,
+    "aim": 0.25
   }
 }

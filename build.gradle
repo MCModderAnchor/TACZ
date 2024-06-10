@@ -28,9 +28,9 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
-// version = "1.0.0"
+version = "1.0.2-beta"
 // 版本号，正式发布需要修改这一行
-version = FORMAT.format(new Date())
+// version = FORMAT.format(new Date())
 group = "com.tacz"
 archivesBaseName = "tacz-1.18.2"
 
@@ -132,6 +132,9 @@ repositories {
         content {
             includeGroup "curse.maven"
         }
+    }
+    flatDir {
+        dir 'libs'
     }
 }
 

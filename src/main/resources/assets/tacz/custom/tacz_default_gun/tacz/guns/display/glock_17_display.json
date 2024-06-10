@@ -2,30 +2,18 @@
   "model": "tacz:gun/glock_17_geo",
   "texture": "tacz:gun/uv/glock_17",
   "lod": {
-  "model": "tacz:gun/lod/glock_17",
-  "texture": "tacz:gun/lod/glock_17"
-},
+    "model": "tacz:gun/lod/glock_17",
+    "texture": "tacz:gun/lod/glock_17"
+  },
   "hud": "tacz:gun/hud/glock_17",
   "slot": "tacz:gun/slot/glock_17",
   "animation": "tacz:glock_17",
   "use_default_animation": "pistol",
   "transform": {
     "scale": {
-      "thirdperson": [
-        0.6,
-        0.6,
-        0.6
-      ],
-      "ground": [
-        0.6,
-        0.6,
-        0.6
-      ],
-      "fixed": [
-        1.2,
-        1.2,
-        1.2
-      ]
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
     }
   },
   "shell": {
@@ -51,13 +39,15 @@
     "silence_3p": "tacz:glock_17/glock17_silence_3p"
   },
   "offhand_show": {
-    "pos": [-4.5, 12, 0],
-    "rotate": [0, 90, -45]
+    "pos": [4, 13, -1],
+    "rotate": [-90, -35, 90],
+    "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [4.5, 12, 0],
-      "rotate": [0, 90, -45]
+      "pos": [-5, 13, -1],
+      "rotate": [-90, -35, 90],
+      "scale": [0.5, 0.5, 0.5]
     }
   }
 }

@@ -1,7 +1,5 @@
 {
   "slot": "tacz:attachment/slot/oem_stock_heavy",
-  "model": "tacz:attachment/dummy",
-  "texture": "tacz:attachment/slot/oem_stock_heavy",
   "adapter": "oem_stock_heavy",
   "sounds": {
     "install": "tacz:attachments/attachment_general_a",

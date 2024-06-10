@@ -1301,7 +1301,7 @@
 				{
 					"name": "scope_pos",
 					"parent": "Deagle",
-					"pivot": [0, 6.425, 0.55625]
+					"pivot": [0, 6.425, 2.6]
 				},
 				{
 					"name": "additional_magazine",
@@ -1776,7 +1776,7 @@
 				},
 				{
 					"name": "rear_sight_illuminated",
-					"parent": "slide2",
+					"parent": "rear_sight",
 					"pivot": [-0.74201, 8.52206, 4.75],
 					"cubes": [
 						{
@@ -5696,13 +5696,13 @@
 					]
 				},
 				{
-					"name": "sight",
+					"name": "fore_sight",
 					"parent": "front2",
 					"pivot": [0, 8.64456, -5.15214]
 				},
 				{
 					"name": "base",
-					"parent": "sight",
+					"parent": "fore_sight",
 					"pivot": [0, 6.31422, -1.89062],
 					"cubes": [
 						{
@@ -5772,7 +5772,7 @@
 				},
 				{
 					"name": "fore_sight_illuminated",
-					"parent": "sight",
+					"parent": "fore_sight",
 					"pivot": [0, 8.64456, -5.15214],
 					"cubes": [
 						{

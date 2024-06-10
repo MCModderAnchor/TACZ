@@ -1,109 +1,61 @@
 {
-    // 默认的模型，在包目录下的 models 文件夹中寻找，不可为空
-    "model": "tacz:gun/hk_g3_geo",
-    // 默认材质，不可为空
-    "texture": "tacz:gun/uv/hk_g3",
-    // 低模
-    "lod": {
-        "model": "tacz:gun/lod/hk_g3",
-        "texture": "tacz:gun/lod/hk_g3"
-    },
-    // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
-    "hud": "tacz:gun/hud/hk_g3_hud",
-    // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空
-    // 若为空，则对应位置渲染改为：上述 hud + 代码着成红色
-    //"hud_empty": "tacz:gun/hud/hk_g3_empty",
-    // 背包/快捷栏等容器中槽位显示的 2D 材质，在包目录下的 textures 文件夹中寻找，不建议为空
-    "slot": "tacz:gun/slot/hk_g3_slot",
-    // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空
-    "animation": "tacz:hk_g3",
-    // 指定使用缺省动画，可为空。如果上文指定的动画文件里缺少某个动画，如 draw 动画，则会从缺省动画拷贝。
-    // 值可为 rifle、pistol
-    "use_default_animation": "rifle",
-    // 第三人称动画，硬编码，只能选择已有类型，默认只有 default
-    "third_person_animation": "default",
-    // 调整各个视角下模型的变换参数，可为空
-    "transform": {
-        // 暂时只有缩放需要在这里指定，旋转和位移使用模型内定位组。
-        // 可以为空，若为空，则不缩放模型。
-        "scale": {
-            // 第三人称手部
-            "thirdperson": [
-                0.6,
-                0.6,
-                0.6
-            ],
-            // 地面实体
-            "ground": [
-                0.6,
-                0.6,
-                0.6
-            ],
-            // 展示框
-            "fixed": [
-                1.2,
-                1.2,
-                1.2
-            ]
-        }
-    },
-    "muzzle_flash": {
-      "texture": "tacz:flash/common_muzzle_flash",
-      "scale": 1.0
-    },
-    // 机瞄的放大倍数，默认 1.2
-    "iron_zoom": 1.2,
-    // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
-    "shell": {
-        // 抛壳的初速度
-        "initial_velocity": [5, 2, 1],
-        // 抛壳随机变化的运动速度
-        "random_velocity": [1, 1, 0.25],
-        // 抛壳的加速度
-        "acceleration": [0.0, -10, 0.0],
-        // 抛壳的三轴角速度
-        "angular_velocity": [360, -1200, 90],
-        // 抛壳渲染存活时间，单位为秒
-        "living_time": 1.0
-    },
-    // 枪械音效，在包目录下 sounds 文件夹内寻找，不建议为空
-    "sounds": {
-        "shoot": "tacz:hk_g3/hk_g3_shoot",
-        "shoot_3p": "tacz:hk_g3/hk_g3_shoot_3p",
-        "reload_empty": "tacz:hk_g3/hk_g3_reload_empty",
-        "reload_tactical": "tacz:hk_g3/hk_g3_reload_tactical",
-        "inspect": "tacz:hk_g3/hk_g3_inspect",
-        "inspect_empty": "tacz:hk_g3/hk_g3_inspect_empty",
-        "draw": "tacz:hk_g3/hk_g3_draw",
-        "put_away": "tacz:hk_g3/hk_g3_put_away",
-        "silence": "tacz:hk_g3/hk_g3_silence",
-        "silence_3p": "tacz:hk_g3/hk_g3_silence_3p",
-        // 下面四个音效可以不写，模组会自动添加默认音效
-        "dry_fire": "tacz:dry_fire",
-        "fire_select": "tacz:fire_select",
-        "head_hit": "tacz:head_hit",
-        "flesh_hit": "tacz:flesh_hit",
-        "kill": "tacz:kill"
-    },
-    // 副手枪械显示
-    "offhand_show": {
-        // 位置，和基岩版的数值显示一致
-        // 默认是 [0, 18, 3]
-        "pos": [0, 18, 1.5],
-        // 旋转，单位为角度，默认就是 [0, 0, 30]
-        "rotate": [0, 180, -30],
-        // 缩放，默认就是 [0.6, 0.6, 0.6]
-        "scale": [0.6, 0.6, 0.6]
-    },
-    // 快捷栏枪械显示
-    // 没有此字段，不显示快捷栏枪械
-    "hotbar_show": {
-        // 快捷栏索引，默认是 0-8，共九个，但是实际上除去主手，只能显示八个
-        // 没有的，则不会显示
-        //"0": {
-        //    "pos": [0, 20, 4],
-        //    "rotate": [0, 0, -15],
-        //    "scale": [0.6, 0.6, 0.6]
-        //}
+  "model": "tacz:gun/hk_g3_geo",
+  "texture": "tacz:gun/uv/hk_g3",
+  "lod": {
+    "model": "tacz:gun/lod/hk_g3",
+    "texture": "tacz:gun/lod/hk_g3"
+  },
+  "hud": "tacz:gun/hud/hk_g3_hud",
+  "slot": "tacz:gun/slot/hk_g3_slot",
+  "animation": "tacz:hk_g3",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
     }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1.0
+  },
+  "iron_zoom": 1.2,
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:hk_g3/hk_g3_shoot",
+    "shoot_3p": "tacz:hk_g3/hk_g3_shoot_3p",
+    "reload_empty": "tacz:hk_g3/hk_g3_reload_empty",
+    "reload_tactical": "tacz:hk_g3/hk_g3_reload_tactical",
+    "inspect": "tacz:hk_g3/hk_g3_inspect",
+    "inspect_empty": "tacz:hk_g3/hk_g3_inspect_empty",
+    "draw": "tacz:hk_g3/hk_g3_draw",
+    "put_away": "tacz:hk_g3/hk_g3_put_away",
+    "silence": "tacz:hk_g3/hk_g3_silence",
+    "silence_3p": "tacz:hk_g3/hk_g3_silence_3p",
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill"
+  },
+  "offhand_show": {
+    "pos": [0, 19, 4],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [0, 19, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
 }
