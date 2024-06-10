@@ -3,6 +3,7 @@ package com.tacz.guns.client.particle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.init.ModBlocks;
 import net.minecraft.client.Camera;
@@ -15,10 +16,10 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -32,7 +33,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
     private int vOffset;
     private float textureDensity;
 
-    public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos) {
+    public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos, String ammoId) {
         super(world, x, y, z);
         this.setSprite(this.getSprite(pos));
         this.direction = direction;
@@ -48,11 +49,12 @@ public class BulletHoleParticle extends TextureSheetParticle {
             this.remove();
         }
 
-        // 依据方块颜色决定粒子颜色
-        int color = this.getBlockColor(state, world, pos, direction);
-        this.rCol = ((float) (color >> 16 & 255) / 255.0F) / 3.0F;
-        this.gCol = ((float) (color >> 8 & 255) / 255.0F) / 3.0F;
-        this.bCol = ((float) (color & 255) / 255.0F) / 3.0F;
+        TimelessAPI.getClientAmmoIndex(new ResourceLocation(ammoId)).ifPresent(index -> {
+            float[] tracerColor = index.getTracerColor();
+            this.rCol = tracerColor[0];
+            this.gCol = tracerColor[1];
+            this.bCol = tracerColor[2];
+        });
         this.alpha = 0.9F;
     }
 
@@ -62,14 +64,6 @@ public class BulletHoleParticle extends TextureSheetParticle {
             return configLife;
         }
         return configLife + world.random.nextInt(configLife / 2);
-    }
-
-    private int getBlockColor(BlockState state, Level world, BlockPos pos, Direction direction) {
-        // 草方块是个例外（草方块是代码着色的）
-        if (state.is(Blocks.GRASS_BLOCK)) {
-            return Integer.MAX_VALUE;
-        }
-        return Minecraft.getInstance().getBlockColors().getColor(state, world, pos, 0);
     }
 
     @Override
@@ -142,20 +136,30 @@ public class BulletHoleParticle extends TextureSheetParticle {
             vector3f.add(particleX, particleY, particleZ);
         }
 
+        // UV 坐标
         float u0 = this.getU0();
         float u1 = this.getU1();
         float v0 = this.getV0();
         float v1 = this.getV1();
-
         // 0 - 30 tick 内，从 15 亮度到 0 亮度
         int light = Math.max(15 - this.age / 2, 0);
         int lightColor = LightTexture.pack(light, light);
+
+        // 颜色，逐渐渐变到 0 0 0，也就是黑色
+        float colorPercent = light / 15.0f;
+        float red = this.rCol * colorPercent;
+        float green = this.gCol * colorPercent;
+        float blue = this.bCol * colorPercent;
+
+        // 透明度，逐渐变成 0，也就是透明
         double threshold = RenderConfig.BULLET_HOLE_PARTICLE_FADE_THRESHOLD.get() * this.lifetime;
         float fade = 1.0f - (float) (Math.max(this.age - threshold, 0) / (this.lifetime - threshold));
-        buffer.vertex(points[0].x(), points[0].y(), points[0].z()).uv(u1, v1).color(this.rCol, this.gCol, this.bCol, this.alpha * fade).uv2(lightColor).endVertex();
-        buffer.vertex(points[1].x(), points[1].y(), points[1].z()).uv(u1, v0).color(this.rCol, this.gCol, this.bCol, this.alpha * fade).uv2(lightColor).endVertex();
-        buffer.vertex(points[2].x(), points[2].y(), points[2].z()).uv(u0, v0).color(this.rCol, this.gCol, this.bCol, this.alpha * fade).uv2(lightColor).endVertex();
-        buffer.vertex(points[3].x(), points[3].y(), points[3].z()).uv(u0, v1).color(this.rCol, this.gCol, this.bCol, this.alpha * fade).uv2(lightColor).endVertex();
+        float alphaFade = this.alpha * fade;
+
+        buffer.vertex(points[0].x(), points[0].y(), points[0].z()).uv(u1, v1).color(red, green, blue, alphaFade).uv2(lightColor).endVertex();
+        buffer.vertex(points[1].x(), points[1].y(), points[1].z()).uv(u1, v0).color(red, green, blue, alphaFade).uv2(lightColor).endVertex();
+        buffer.vertex(points[2].x(), points[2].y(), points[2].z()).uv(u0, v0).color(red, green, blue, alphaFade).uv2(lightColor).endVertex();
+        buffer.vertex(points[3].x(), points[3].y(), points[3].z()).uv(u0, v1).color(red, green, blue, alphaFade).uv2(lightColor).endVertex();
     }
 
     @Override

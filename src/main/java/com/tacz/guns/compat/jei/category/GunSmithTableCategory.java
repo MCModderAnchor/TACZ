@@ -1,6 +1,5 @@
-package com.tacz.guns.compat.jei;
+package com.tacz.guns.compat.jei.category;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
@@ -9,7 +8,6 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
@@ -35,11 +33,6 @@ public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecip
         this.bgDraw = guiHelper.createBlankDrawable(160, 40);
         this.slotDraw = guiHelper.getSlotDrawable();
         this.iconDraw = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, ModItems.GUN_SMITH_TABLE.get().getDefaultInstance());
-    }
-
-    @Override
-    public void draw(GunSmithTableRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack stack, double mouseX, double mouseY) {
-        IRecipeCategory.super.draw(recipe, recipeSlotsView, stack, mouseX, mouseY);
     }
 
     @Override

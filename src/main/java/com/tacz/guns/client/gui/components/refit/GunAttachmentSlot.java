@@ -1,26 +1,25 @@
 package com.tacz.guns.client.gui.components.refit;
 
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.gui.GunRefitScreen;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class GunAttachmentSlot extends Button implements IComponentTooltip {
+public class GunAttachmentSlot extends Button implements IStackTooltip {
     private final AttachmentType type;
     private final Inventory inventory;
     private final int gunItemIndex;
@@ -37,18 +36,22 @@ public class GunAttachmentSlot extends Button implements IComponentTooltip {
     }
 
     @Override
-    public void renderTooltip(Consumer<List<Component>> consumer) {
-        if (this.isHovered) {
-            List<Component> tips = Lists.newArrayList(new TranslatableComponent(nameKey));
-            if (!attachmentItem.isEmpty()) {
-                tips.addAll(IComponentTooltip.getTooltipFromItem(attachmentItem));
-            }
-            consumer.accept(tips);
+    public void renderTooltip(Consumer<ItemStack> consumer) {
+        if (this.isHoveredOrFocused() && !attachmentItem.isEmpty()) {
+            consumer.accept(attachmentItem);
         }
     }
 
     @Override
     public void renderButton(@Nonnull PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+        if (this.isHoveredOrFocused()) {
+            Font font = Minecraft.getInstance().font;
+            int yOffset = this.y + 20;
+            if (this.selected && !attachmentItem.isEmpty()) {
+                yOffset = this.y + 30;
+            }
+            drawCenteredString(poseStack, font, new TranslatableComponent(nameKey), this.x + this.getWidth() / 2, yOffset, ChatFormatting.WHITE.getColor());
+        }
         ItemStack gunItem = inventory.getItem(gunItemIndex);
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {

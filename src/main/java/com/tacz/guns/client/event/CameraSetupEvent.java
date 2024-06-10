@@ -41,7 +41,7 @@ public class CameraSetupEvent {
     /**
      * 用于平滑 FOV 变化
      */
-    private static final SecondOrderDynamics FOV_DYNAMICS = new SecondOrderDynamics(0.5f, 1.2f, 0.5f, 0);
+    private static final SecondOrderDynamics WORLD_FOV_DYNAMICS = new SecondOrderDynamics(0.5f, 1.2f, 0.5f, 0);
     private static final SecondOrderDynamics ITEM_MODEL_FOV_DYNAMICS = new SecondOrderDynamics(0.5f, 1.2f, 0.5f, 0);
     private static PolynomialSplineFunction pitchSplineFunction;
     private static PolynomialSplineFunction yawSplineFunction;
@@ -59,7 +59,7 @@ public class CameraSetupEvent {
         if (player == null) {
             return;
         }
-        ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
+        ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
@@ -97,7 +97,7 @@ public class CameraSetupEvent {
         if (player == null) {
             return;
         }
-        ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
+        ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
@@ -124,9 +124,9 @@ public class CameraSetupEvent {
         }
         Entity entity = event.getCamera().getEntity();
         if (entity instanceof LivingEntity livingEntity) {
-            ItemStack stack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
+            ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
             if (!(stack.getItem() instanceof IGun iGun)) {
-                float fov = FOV_DYNAMICS.update((float) event.getFOV());
+                float fov = WORLD_FOV_DYNAMICS.update((float) event.getFOV());
                 event.setFOV(fov);
                 return;
             }
@@ -134,12 +134,12 @@ public class CameraSetupEvent {
             if (livingEntity instanceof LocalPlayer localPlayer) {
                 IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
                 float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTicks());
-                float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
+                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
                 event.setFOV(fov);
             } else {
                 IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
                 float aimingProgress = gunOperator.getSynAimingProgress();
-                float fov = FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
+                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
                 event.setFOV(fov);
             }
         }

@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
+import java.util.Locale;
 
 public class GunSmithTableResultSerializer implements JsonDeserializer<GunSmithTableResult> {
     @Override
@@ -57,6 +58,10 @@ public class GunSmithTableResultSerializer implements JsonDeserializer<GunSmithT
     }
 
     private GunSmithTableResult getAttachmentStack(ResourceLocation id, int count) {
-        return new GunSmithTableResult(AttachmentItemBuilder.create().setCount(count).setId(id).build(), GunSmithTableResult.ATTACHMENT);
+        return TimelessAPI.getCommonAttachmentIndex(id).map(attachmentIndex -> {
+            ItemStack itemStack = AttachmentItemBuilder.create().setCount(count).setId(id).build();
+            String group = attachmentIndex.getType().name().toLowerCase(Locale.US);
+            return new GunSmithTableResult(itemStack, group);
+        }).orElse(new GunSmithTableResult(ItemStack.EMPTY, StringUtils.EMPTY));
     }
 }

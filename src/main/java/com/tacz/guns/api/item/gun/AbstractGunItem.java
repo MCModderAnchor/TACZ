@@ -1,17 +1,17 @@
 package com.tacz.guns.api.item.gun;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.item.GunTabType;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.client.renderer.item.GunItemRenderer;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
-import com.tacz.guns.client.tab.CustomTab;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.resource.index.CommonGunIndex;
-import com.tacz.guns.resource.pojo.data.gun.AttachmentPass;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.util.AllowAttachmentTagMatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
@@ -20,7 +20,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,9 +27,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -39,7 +36,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
         super(pProperties);
     }
 
-    private static Comparator<Map.Entry<ResourceLocation, ClientGunIndex>> idNameSort() {
+    private static Comparator<Map.Entry<ResourceLocation, CommonGunIndex>> idNameSort() {
         return Comparator.comparingInt(m -> m.getValue().getSort());
     }
 
@@ -68,14 +65,6 @@ public abstract class AbstractGunItem extends Item implements IGun {
     public abstract void reloadAmmo(ItemStack gunItem, int ammoCount, boolean loadBarrel);
 
     /**
-     * 能否添加到此 CustomTab 中
-     *
-     * @param tab   CustomTab
-     * @param stack 待添加的物品
-     */
-    public abstract boolean canAddInTab(CustomTab tab, ItemStack stack);
-
-    /**
      * 该方法具有通用的实现，放在此处
      */
     @Override
@@ -83,22 +72,11 @@ public abstract class AbstractGunItem extends Item implements IGun {
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
         IGun iGun = IGun.getIGunOrNull(gun);
         if (iGun != null && iAttachment != null) {
-            AttachmentType type = iAttachment.getType(attachmentItem);
+            ResourceLocation gunId = iGun.getGunId(gun);
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
-            return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
-                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
-                if (map == null) {
-                    return false;
-                }
-                AttachmentPass pass = map.get(type);
-                if (pass == null) {
-                    return false;
-                }
-                return pass.isAllow(attachmentId);
-            }).orElse(false);
-        } else {
-            return false;
+            return AllowAttachmentTagMatcher.match(gunId, attachmentId);
         }
+        return false;
     }
 
     /**
@@ -109,11 +87,11 @@ public abstract class AbstractGunItem extends Item implements IGun {
         IGun iGun = IGun.getIGunOrNull(gun);
         if (iGun != null) {
             return TimelessAPI.getCommonGunIndex(iGun.getGunId(gun)).map(gunIndex -> {
-                Map<AttachmentType, AttachmentPass> map = gunIndex.getGunData().getAllowAttachments();
-                if (map == null) {
+                List<AttachmentType> allowAttachments = gunIndex.getGunData().getAllowAttachments();
+                if (allowAttachments == null) {
                     return false;
                 }
-                return map.containsKey(type);
+                return allowAttachments.contains(type);
             }).orElse(false);
         } else {
             return false;
@@ -138,27 +116,24 @@ public abstract class AbstractGunItem extends Item implements IGun {
     /**
      * 该方法具有通用的实现，放在此处
      */
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
-        if (modeTab instanceof CustomTab tab) {
-            String key = tab.getKey();
-            TimelessAPI.getAllClientGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
-                ClientGunIndex index = entry.getValue();
-                if (key.equals(index.getType())) {
-                    GunData gunData = index.getGunData();
-                    ItemStack itemStack = GunItemBuilder.create()
-                            .setId(entry.getKey())
-                            .setFireMode(gunData.getFireModeSet().get(0))
-                            .setAmmoCount(gunData.getAmmoAmount())
-                            .setAmmoInBarrel(true)
-                            .build();
-                    if (canAddInTab(tab, itemStack)) {
-                        stacks.add(itemStack);
-                    }
-                }
-            });
-        }
+    public static NonNullList<ItemStack> fillItemCategory(GunTabType type) {
+        NonNullList<ItemStack> stacks = NonNullList.create();
+        TimelessAPI.getAllCommonGunIndex().stream().sorted(idNameSort()).forEach(entry -> {
+            CommonGunIndex index = entry.getValue();
+            GunData gunData = index.getGunData();
+            String key = type.name().toLowerCase(Locale.US);
+            String indexType = index.getType();
+            if (key.equals(indexType)) {
+                ItemStack itemStack = GunItemBuilder.create()
+                        .setId(entry.getKey())
+                        .setFireMode(gunData.getFireModeSet().get(0))
+                        .setAmmoCount(gunData.getAmmoAmount())
+                        .setAmmoInBarrel(true)
+                        .build();
+                stacks.add(itemStack);
+            }
+        });
+        return stacks;
     }
 
     /**

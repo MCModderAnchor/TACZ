@@ -26,7 +26,6 @@ import com.tacz.guns.util.math.MathUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +58,6 @@ public class ClientGunIndex {
     private LayerGunShow offhandShow;
     private @Nullable Int2ObjectArrayMap<LayerGunShow> hotbarShow;
     private float ironZoom;
-    private int sort;
 
     private ClientGunIndex() {
     }
@@ -90,7 +88,6 @@ public class ClientGunIndex {
         Preconditions.checkArgument(StringUtils.isNoneBlank(gunIndexPOJO.getType()), "index object missing type field");
         index.type = gunIndexPOJO.getType();
         index.itemType = gunIndexPOJO.getItemType();
-        index.sort = Mth.clamp(gunIndexPOJO.getSort(), 0, 65536);
     }
 
     private static void checkName(GunIndexPOJO gunIndexPOJO, ClientGunIndex index) {
@@ -351,10 +348,6 @@ public class ClientGunIndex {
 
     public String getItemType() {
         return itemType;
-    }
-
-    public int getSort() {
-        return sort;
     }
 
     public String getName() {

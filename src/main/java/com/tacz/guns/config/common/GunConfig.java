@@ -6,6 +6,7 @@ public class GunConfig {
     public static ForgeConfigSpec.IntValue DEFAULT_GUN_FIRE_SOUND_DISTANCE;
     public static ForgeConfigSpec.IntValue DEFAULT_GUN_OTHER_SOUND_DISTANCE;
     public static ForgeConfigSpec.BooleanValue CREATIVE_PLAYER_CONSUME_AMMO;
+    public static ForgeConfigSpec.BooleanValue AUTO_RELOAD_WHEN_RESPAWN;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("gun");
@@ -18,6 +19,9 @@ public class GunConfig {
 
         builder.comment("Whether or not the player will consume ammo in creative mode");
         CREATIVE_PLAYER_CONSUME_AMMO = builder.define("CreativePlayerConsumeAmmo", true);
+
+        builder.comment("Auto reload all the guns in player inventory, useful for pvp servers");
+        AUTO_RELOAD_WHEN_RESPAWN = builder.define("AutoReloadWhenRespawn", false);
 
         builder.pop();
     }

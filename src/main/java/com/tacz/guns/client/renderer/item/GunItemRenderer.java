@@ -2,7 +2,6 @@ package com.tacz.guns.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
@@ -10,7 +9,7 @@ import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.SlotModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.pojo.TransformScale;
-import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.util.RenderDistance;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -88,7 +87,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             BedrockGunModel gunModel;
             ResourceLocation gunTexture;
             Pair<BedrockGunModel, ResourceLocation> lodModel = gunIndex.getLodModel();
-            if (lodModel == null || inRenderDistance(poseStack)) {
+            if (lodModel == null || RenderDistance.inRenderHighPolyModelDistance(poseStack)) {
                 gunModel = gunIndex.getGunModel();
                 gunTexture = gunIndex.getModelTexture();
             } else {
@@ -116,22 +115,12 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
         poseStack.popPose();
     }
 
-    private boolean inRenderDistance(PoseStack poseStack) {
-        int distance = RenderConfig.GUN_LOD_RENDER_DISTANCE.get();
-        if (distance <= 0) {
-            return false;
-        }
-        Matrix4f matrix4f = poseStack.last().pose();
-        float viewDistance = matrix4f.m03 * matrix4f.m03 + matrix4f.m13 * matrix4f.m13 + matrix4f.m23 * matrix4f.m23;
-        return viewDistance < distance * distance;
-    }
-
-
     private void applyPositioningTransform(ItemTransforms.TransformType transformType, TransformScale scale, BedrockGunModel model, PoseStack poseStack) {
         switch (transformType) {
             case FIXED -> applyPositioningNodeTransform(model.getFixedOriginPath(), poseStack, scale.getFixed());
             case GROUND -> applyPositioningNodeTransform(model.getGroundOriginPath(), poseStack, scale.getGround());
-            case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> applyPositioningNodeTransform(model.getThirdPersonHandOriginPath(), poseStack, scale.getThirdPerson());
+            case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND ->
+                    applyPositioningNodeTransform(model.getThirdPersonHandOriginPath(), poseStack, scale.getThirdPerson());
         }
     }
 

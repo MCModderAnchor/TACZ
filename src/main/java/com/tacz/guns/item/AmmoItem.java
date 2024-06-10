@@ -8,7 +8,6 @@ import com.tacz.guns.client.renderer.item.AmmoItemRenderer;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.client.resource.pojo.PackInfo;
-import com.tacz.guns.init.ModItems;
 import com.tacz.guns.resource.index.CommonAmmoIndex;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -18,7 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -35,7 +33,7 @@ import java.util.function.Consumer;
 
 public class AmmoItem extends Item implements AmmoItemDataAccessor {
     public AmmoItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.AMMO_TAB));
+        super(new Properties().stacksTo(1));
     }
 
     @Override
@@ -59,15 +57,14 @@ public class AmmoItem extends Item implements AmmoItemDataAccessor {
         return super.getName(stack);
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
-    public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
-        if (this.allowdedIn(modeTab)) {
-            TimelessAPI.getAllClientAmmoIndex().forEach(entry -> {
-                ItemStack itemStack = AmmoItemBuilder.create().setId(entry.getKey()).build();
-                stacks.add(itemStack);
-            });
-        }
+    public static NonNullList<ItemStack> fillItemCategory() {
+        NonNullList<ItemStack> stacks = NonNullList.create();
+        TimelessAPI.getAllCommonAmmoIndex().forEach(entry -> {
+            ItemStack itemStack = AmmoItemBuilder.create().setId(entry.getKey()).build();
+            stacks.add(itemStack);
+        });
+        return stacks;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.tacz.guns.network.message;
 
-import com.tacz.guns.api.event.common.LivingKillByGunEvent;
+import com.tacz.guns.api.event.common.EntityKillByGunEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
@@ -59,6 +59,6 @@ public class ServerMessageGunKill {
         }
         @Nullable LivingEntity killedEntity = level.getEntity(message.killEntityId) instanceof LivingEntity livingEntity ? livingEntity : null;
         @Nullable LivingEntity attacker = level.getEntity(message.attackerId) instanceof LivingEntity livingEntity ? livingEntity : null;
-        MinecraftForge.EVENT_BUS.post(new LivingKillByGunEvent(killedEntity, attacker, message.gunId, message.isHeadShot, LogicalSide.CLIENT));
+        MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(killedEntity, attacker, message.gunId, message.isHeadShot, LogicalSide.CLIENT));
     }
 }

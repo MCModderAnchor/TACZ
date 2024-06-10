@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -47,7 +48,7 @@ public class InteractKeyTextOverlay {
 
     private static void renderBlockText(PoseStack poseStack, int width, int height, BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc) {
         BlockPos blockPos = blockHitResult.getBlockPos();
-        Block block = player.level.getBlockState(blockPos).getBlock();
+        BlockState block = player.level.getBlockState(blockPos);
         if (InteractKeyConfigRead.canInteractBlock(block)) {
             renderText(poseStack, width, height, mc.font);
         }

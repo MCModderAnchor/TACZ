@@ -2,7 +2,6 @@ package com.tacz.guns.compat.cloth.common;
 
 import com.google.common.collect.Lists;
 import com.tacz.guns.config.common.AmmoConfig;
-import com.tacz.guns.config.sync.SyncConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -31,18 +30,6 @@ public class AmmoClothConfig {
         ammo.addEntry(entryBuilder.startStrList(new TranslatableComponent("config.tacz.common.ammo.pass_through_blocks"), AmmoConfig.PASS_THROUGH_BLOCKS.get())
                 .setDefaultValue(Lists.newArrayList()).setTooltip(new TranslatableComponent("config.tacz.common.ammo.pass_through_blocks.desc"))
                 .setSaveConsumer(AmmoConfig.PASS_THROUGH_BLOCKS::set).build());
-
-        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tacz.common.ammo.damage_base_multiplier"), SyncConfig.DAMAGE_BASE_MULTIPLIER.get())
-                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tacz.common.ammo.damage_base_multiplier.desc"))
-                .setSaveConsumer(SyncConfig.DAMAGE_BASE_MULTIPLIER::set).build());
-
-        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tacz.common.ammo.armor_ignore_base_multiplier"), SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get())
-                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tacz.common.ammo.armor_ignore_base_multiplier.desc"))
-                .setSaveConsumer(SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER::set).build());
-
-        ammo.addEntry(entryBuilder.startDoubleField(new TranslatableComponent("config.tacz.common.ammo.head_shot_base_multiplier"), SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get())
-                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(1).setTooltip(new TranslatableComponent("config.tacz.common.ammo.head_shot_base_multiplier.desc"))
-                .setSaveConsumer(SyncConfig.HEAD_SHOT_BASE_MULTIPLIER::set).build());
 
         ammo.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.common.ammo.destroy_glass"), AmmoConfig.DESTROY_GLASS.get())
                 .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.common.ammo.destroy_glass.desc"))

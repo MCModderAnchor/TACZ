@@ -1,7 +1,6 @@
 package com.tacz.guns.item;
 
 import com.tacz.guns.entity.TargetMinecart;
-import com.tacz.guns.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TargetMinecartItem extends Item {
     public TargetMinecartItem() {
-        super((new Item.Properties()).stacksTo(1).tab(ModItems.OTHER_TAB));
+        super((new Item.Properties()).stacksTo(1));
     }
 
     @NotNull

@@ -120,9 +120,9 @@ public class GunHudOverlay {
         // 渲染开火模式图标
         FireMode fireMode = IGun.getMainhandFireMode(player);
         switch (fireMode) {
-            case SEMI -> RenderSystem.setShaderTexture(0, SEMI);
             case AUTO -> RenderSystem.setShaderTexture(0, AUTO);
             case BURST -> RenderSystem.setShaderTexture(0, BURST);
+            default -> RenderSystem.setShaderTexture(0, SEMI);
         }
         RenderSystem.setShaderColor(1, 1, 1, 1);
         GuiComponent.blit(poseStack, (int) (width - 68.5 + mc.font.width(currentAmmoCountText) * 1.5), height - 38, 0, 0, 10, 10, 10, 10);

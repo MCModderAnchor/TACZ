@@ -1,6 +1,6 @@
 package com.tacz.guns.network.message;
 
-import com.tacz.guns.api.event.common.LivingHurtByGunEvent;
+import com.tacz.guns.api.event.common.EntityHurtByGunEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
@@ -63,6 +63,6 @@ public class ServerMessageGunHurt {
         }
         @Nullable LivingEntity hurtEntity = level.getEntity(message.hurtEntityId) instanceof LivingEntity livingEntity ? livingEntity : null;
         @Nullable LivingEntity attacker = level.getEntity(message.attackerId) instanceof LivingEntity livingEntity ? livingEntity : null;
-        MinecraftForge.EVENT_BUS.post(new LivingHurtByGunEvent(hurtEntity, attacker, message.gunId, message.amount, message.isHeadShot, LogicalSide.CLIENT));
+        MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent(hurtEntity, attacker, message.gunId, message.amount, message.isHeadShot, LogicalSide.CLIENT));
     }
 }

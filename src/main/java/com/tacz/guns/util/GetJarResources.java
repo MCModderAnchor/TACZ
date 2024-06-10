@@ -42,8 +42,8 @@ public final class GetJarResources {
      * @param root    想要复制到的根目录
      * @param path    复制后的路径
      */
-    public static void copyModDirectory(String srcPath, Path root, String path) {
-        URL url = GunMod.class.getResource(srcPath);
+    public static void copyModDirectory(Class<?> resourceClass, String srcPath, Path root, String path) {
+        URL url = resourceClass.getResource(srcPath);
         try {
             if (url != null) {
                 copyFolder(url.toURI(), root.resolve(path));
@@ -53,6 +53,17 @@ public final class GetJarResources {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 复制本模组的文件夹到指定文件夹。将强行覆盖原文件夹。
+     *
+     * @param srcPath jar 中的源文件地址
+     * @param root    想要复制到的根目录
+     * @param path    复制后的路径
+     */
+    public static void copyModDirectory(String srcPath, Path root, String path) {
+        copyModDirectory(GunMod.class, srcPath, root, path);
     }
 
     @Nullable

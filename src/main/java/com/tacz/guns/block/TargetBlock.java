@@ -2,9 +2,11 @@ package com.tacz.guns.block;
 
 import com.mojang.authlib.GameProfile;
 import com.tacz.guns.block.entity.TargetBlockEntity;
+import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.init.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -122,6 +124,15 @@ public class TargetBlock extends BaseEntityBlock {
                 world.getBlockEntity(hit.getBlockPos(), TargetBlockEntity.TYPE).ifPresent(e -> e.hit(world, state, hit, false));
             } else if (state.getValue(HALF).equals(DoubleBlockHalf.UPPER)) {
                 world.getBlockEntity(hit.getBlockPos().below(), TargetBlockEntity.TYPE).ifPresent(e -> e.hit(world, state, hit, true));
+            }
+
+            if (!world.isClientSide() && projectile.getOwner() instanceof Player player && state.getValue(STAND)) {
+                if (projectile instanceof EntityKineticBullet bullet) {
+                    String formattedDamage = String.format("%.1f", bullet.getDamage(hit.getLocation()));
+                    String formattedDistance = String.format("%.2f", hit.getLocation().distanceTo(player.position()));
+                    player.displayClientMessage(new TranslatableComponent("message.tacz.target_minecart.hit", formattedDamage, formattedDistance), true);
+                }
+
             }
         }
     }

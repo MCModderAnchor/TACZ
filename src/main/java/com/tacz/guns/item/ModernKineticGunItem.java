@@ -6,10 +6,8 @@ import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
-import com.tacz.guns.client.tab.CustomTab;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
-import com.tacz.guns.init.ModItems;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.attachment.Silence;
@@ -38,7 +36,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     public static final String TYPE_NAME = "modern_kinetic";
 
     public ModernKineticGunItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.OTHER_TAB));
+        super(new Properties().stacksTo(1));
     }
 
     @Override
@@ -150,11 +148,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, ammoId, gunId, tracer, bulletData);
         bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
         world.addFreshEntity(bullet);
-    }
-
-    @Override
-    public boolean canAddInTab(CustomTab tab, ItemStack stack) {
-        return true;
     }
 
     @Override

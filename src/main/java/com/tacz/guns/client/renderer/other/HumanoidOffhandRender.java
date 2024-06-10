@@ -82,11 +82,11 @@ public class HumanoidOffhandRender {
         Vector3f rotate = offhandShow.getRotate();
         Vector3f scale = offhandShow.getScale();
         matrixStack.pushPose();
-        matrixStack.translate(pos.x() / 16f, 1.5 - pos.y() / 16f, pos.z() / 16f);
+        matrixStack.translate(-pos.x() / 16f, 1.5 - pos.y() / 16f, pos.z() / 16f);
         matrixStack.scale(-scale.x(), -scale.y(), scale.z());
-        Quaternion quaternion = Quaternion.ONE.copy();
-        MathUtil.toQuaternion(rotate.x(), rotate.y(), rotate.z(), quaternion);
-        matrixStack.mulPose(quaternion);
+        Quaternion rotation = Quaternion.ONE.copy();
+        MathUtil.toQuaternion((float) Math.toRadians(rotate.x()), (float) Math.toRadians(rotate.y()), (float) Math.toRadians(rotate.z()), rotation);
+        matrixStack.mulPose(rotation);
         renderer.renderStatic(itemStack, ItemTransforms.TransformType.FIXED, packedLight, OverlayTexture.NO_OVERLAY, matrixStack, buffer, entity.getId());
         matrixStack.popPose();
     }

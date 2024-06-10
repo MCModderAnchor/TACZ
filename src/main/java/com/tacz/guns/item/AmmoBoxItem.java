@@ -26,7 +26,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +41,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
     private static final int CLOSE = 1;
 
     public AmmoBoxItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.OTHER_TAB));
+        super(new Properties().stacksTo(1));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -192,18 +191,15 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
         return Mth.hsvToRgb(1 / 3f, 1.0F, 1.0F);
     }
 
-    @Override
-    public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(category)) {
-            // 添加普通版本的弹药盒
-            items.add(new ItemStack(this));
+    public static void fillItemCategory(NonNullList<ItemStack> output) {
+        // 添加普通版本的弹药盒
+        output.add(new ItemStack(ModItems.AMMO_BOX.get()));
 
-            // 添加创造模式弹药盒
-            ItemStack creativeItemstack = new ItemStack(this);
-            CompoundTag tag = creativeItemstack.getOrCreateTag();
-            tag.putBoolean(CREATIVE_TAG, true);
-            items.add(creativeItemstack);
-        }
+        // 添加创造模式弹药盒
+        ItemStack creativeItemstack = new ItemStack(ModItems.AMMO_BOX.get());
+        CompoundTag tag = creativeItemstack.getOrCreateTag();
+        tag.putBoolean(CREATIVE_TAG, true);
+        output.add(creativeItemstack);
     }
 
     @Override

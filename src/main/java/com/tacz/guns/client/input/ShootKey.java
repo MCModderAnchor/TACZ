@@ -67,7 +67,7 @@ public class ShootKey {
             }
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
-            if (player == null) {
+            if (player == null || player.isSpectator()) {
                 return;
             }
             ItemStack mainHandItem = player.getMainHandItem();

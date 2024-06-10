@@ -6,7 +6,6 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.client.input.RefitKey;
 import com.tacz.guns.client.resource.ClientAssetManager;
-import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.inventory.tooltip.GunTooltip;

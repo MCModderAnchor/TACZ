@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientReloadManager;
+import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.resource.DedicatedServerReloadManager;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
@@ -36,6 +37,13 @@ public class ReloadCommand {
         double time = watch.getTime(TimeUnit.MICROSECONDS) / 1000.0;
         if (context.getSource().getEntity() instanceof ServerPlayer serverPlayer) {
             serverPlayer.sendMessage(new TranslatableComponent("commands.tacz.reload.success", time), Util.NIL_UUID);
+            if (OtherConfig.DEFAULT_PACK_DEBUG.get()) {
+                serverPlayer.sendMessage(new TranslatableComponent("commands.tacz.reload.overwrite_off"), Util.NIL_UUID);
+                serverPlayer.sendMessage(new TranslatableComponent("commands.tacz.reload.overwrite_command.off"), Util.NIL_UUID);
+            } else {
+                serverPlayer.sendMessage(new TranslatableComponent("commands.tacz.reload.overwrite_on"), Util.NIL_UUID);
+                serverPlayer.sendMessage(new TranslatableComponent("commands.tacz.reload.overwrite_command.on"), Util.NIL_UUID);
+            }
         }
         GunMod.LOGGER.info("Model loading time: {} ms", time);
         return Command.SINGLE_SUCCESS;

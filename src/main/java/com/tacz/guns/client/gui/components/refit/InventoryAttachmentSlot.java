@@ -6,16 +6,14 @@ import com.tacz.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.function.Consumer;
 
-public class InventoryAttachmentSlot extends Button implements IComponentTooltip {
+public class InventoryAttachmentSlot extends Button implements IStackTooltip {
     private final int slotIndex;
     private final Inventory inventory;
 
@@ -26,10 +24,10 @@ public class InventoryAttachmentSlot extends Button implements IComponentTooltip
     }
 
     @Override
-    public void renderTooltip(Consumer<List<Component>> consumer) {
-        if (this.isHovered && 0 <= this.slotIndex && this.slotIndex < this.inventory.getContainerSize()) {
+    public void renderTooltip(Consumer<ItemStack> consumer) {
+        if (this.isHoveredOrFocused() && 0 <= this.slotIndex && this.slotIndex < this.inventory.getContainerSize()) {
             ItemStack item = this.inventory.getItem(slotIndex);
-            consumer.accept(IComponentTooltip.getTooltipFromItem(item));
+            consumer.accept(item);
         }
     }
 

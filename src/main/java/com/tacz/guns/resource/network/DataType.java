@@ -9,5 +9,7 @@ public enum DataType {
     AMMO_INDEX,
     GUN_INDEX,
     ATTACHMENT_INDEX,
-    RECIPES
+    RECIPES,
+    ATTACHMENT_TAGS,
+    ALLOW_ATTACHMENT_TAGS
 }

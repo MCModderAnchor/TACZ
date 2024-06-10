@@ -15,6 +15,6 @@ public class ParticleFactoryRegistry {
     @SubscribeEvent
     public static void onRegisterParticleFactory(ParticleFactoryRegisterEvent event) {
         ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
-        particleEngine.register(ModParticles.BULLET_HOLE.get(), (typeIn, worldIn, x, y, z, xSpeed, ySpeed, zSpeed) -> new BulletHoleParticle(worldIn, x, y, z, typeIn.getDirection(), typeIn.getPos()));
+        particleEngine.register(ModParticles.BULLET_HOLE.get(), (typeIn, worldIn, x, y, z, xSpeed, ySpeed, zSpeed) -> new BulletHoleParticle(worldIn, x, y, z, typeIn.getDirection(), typeIn.getPos(), typeIn.getAmmoId()));
     }
 }

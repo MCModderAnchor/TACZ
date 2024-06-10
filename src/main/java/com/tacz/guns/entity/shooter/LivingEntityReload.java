@@ -66,7 +66,7 @@ public class LivingEntityReload {
             int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
             int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunIndex.getGunData());
             // 检查弹药
-            if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !inventoryHasAmmo(currentAmmoCount, maxAmmoCount, currentGunItem)) {
+            if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !inventoryHasAmmo(shooter, currentAmmoCount, maxAmmoCount, currentGunItem)) {
                 return;
             }
             // 触发装弹事件
@@ -142,15 +142,15 @@ public class LivingEntityReload {
         int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunData);
         if (data.reloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
-                if (iGun instanceof AbstractGunItem abstractGunItem) {
-                    abstractGunItem.reloadAmmo(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount), true);
+                if (iGun instanceof AbstractGunItem abstractGunItem && data.currentGunItem != null) {
+                    abstractGunItem.reloadAmmo(currentGunItem, getAndExtractNeedAmmoCount(shooter, data.currentGunItem.get(), iGun, maxAmmoCount), true);
                 }
             }
         }
         if (data.reloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
-                if (iGun instanceof AbstractGunItem abstractGunItem) {
-                    abstractGunItem.reloadAmmo(currentGunItem, getAndExtractNeedAmmoCount(iGun, maxAmmoCount), false);
+                if (iGun instanceof AbstractGunItem abstractGunItem && data.currentGunItem != null) {
+                    abstractGunItem.reloadAmmo(currentGunItem, getAndExtractNeedAmmoCount(shooter, data.currentGunItem.get(), iGun, maxAmmoCount), false);
                 }
             }
         }
@@ -162,7 +162,7 @@ public class LivingEntityReload {
         return reloadState;
     }
 
-    private boolean inventoryHasAmmo(int currentAmmoCount, int maxAmmoCount, ItemStack currentGunItem) {
+    public static boolean inventoryHasAmmo(LivingEntity shooter, int currentAmmoCount, int maxAmmoCount, ItemStack currentGunItem) {
         // 超出或达到上限，不换弹
         if (currentAmmoCount >= maxAmmoCount) {
             return false;
@@ -182,11 +182,7 @@ public class LivingEntityReload {
         }).orElse(false);
     }
 
-    private int getAndExtractNeedAmmoCount(IGun iGun, int maxAmmoCount) {
-        if (data.currentGunItem == null) {
-            return -1;
-        }
-        ItemStack currentGunItem = data.currentGunItem.get();
+    public static int getAndExtractNeedAmmoCount(LivingEntity shooter, ItemStack currentGunItem, IGun iGun, int maxAmmoCount) {
         int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
         if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo()) {
             return shooter.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
@@ -196,7 +192,7 @@ public class LivingEntityReload {
         return maxAmmoCount;
     }
 
-    private int getAndExtractInventoryAmmoCount(IItemHandler itemHandler, int maxAmmoCount, int currentAmmoCount, ItemStack currentGunItem) {
+    private static int getAndExtractInventoryAmmoCount(IItemHandler itemHandler, int maxAmmoCount, int currentAmmoCount, ItemStack currentGunItem) {
         // 子弹数量检查
         int needAmmoCount = maxAmmoCount - currentAmmoCount;
         // 背包检查

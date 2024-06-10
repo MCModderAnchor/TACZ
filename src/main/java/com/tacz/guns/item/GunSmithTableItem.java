@@ -2,7 +2,6 @@ package com.tacz.guns.item;
 
 import com.tacz.guns.client.renderer.item.GunSmithTableItemRenderer;
 import com.tacz.guns.init.ModBlocks;
-import com.tacz.guns.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
@@ -13,7 +12,7 @@ import java.util.function.Consumer;
 
 public class GunSmithTableItem extends BlockItem {
     public GunSmithTableItem() {
-        super(ModBlocks.GUN_SMITH_TABLE.get(), (new Item.Properties()).stacksTo(1).tab(ModItems.OTHER_TAB));
+        super(ModBlocks.GUN_SMITH_TABLE.get(), (new Item.Properties()).stacksTo(1));
     }
 
     @Override

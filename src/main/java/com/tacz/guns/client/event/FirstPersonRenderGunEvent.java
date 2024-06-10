@@ -85,11 +85,15 @@ public class FirstPersonRenderGunEvent {
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
-        if (event.getHand() == InteractionHand.OFF_HAND) {
-            return;
-        }
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
+            return;
+        }
+        if (event.getHand() == InteractionHand.OFF_HAND) {
+            ItemStack stack = KeepingItemRenderer.getRenderer().getCurrentItem();
+            if (stack.getItem() instanceof IGun) {
+                event.setCanceled(true);
+            }
             return;
         }
         ItemStack stack = event.getItemStack();
@@ -255,7 +259,7 @@ public class FirstPersonRenderGunEvent {
         if (mc.player == null) {
             return;
         }
-        ItemStack itemStack = ((KeepingItemRenderer) Minecraft.getInstance().getItemInHandRenderer()).getCurrentItem();
+        ItemStack itemStack = KeepingItemRenderer.getRenderer().getCurrentItem();
         if (IGun.getIGunOrNull(itemStack) != null) {
             event.setCanceled(true);
         }
@@ -339,7 +343,7 @@ public class FirstPersonRenderGunEvent {
                     Optional<ClientAttachmentIndex> indexOptional = TimelessAPI.getClientAttachmentIndex(scopeId);
                     if (indexOptional.isPresent()) {
                         BedrockAttachmentModel attachmentModel = indexOptional.get().getAttachmentModel();
-                        if (attachmentModel.getScopeViewPath() != null) {
+                        if (attachmentModel != null && attachmentModel.getScopeViewPath() != null) {
                             aimingNodePath.addAll(attachmentModel.getScopeViewPath());
                         }
                     }

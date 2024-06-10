@@ -5,6 +5,9 @@ import com.google.common.collect.Maps;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
+import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentLod;
+import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
+import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
@@ -12,6 +15,7 @@ import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -21,8 +25,9 @@ import java.util.Objects;
 public class ClientAttachmentIndex {
     private final Map<ResourceLocation, ClientAttachmentSkinIndex> skinIndexMap = Maps.newHashMap();
     private String name;
-    private BedrockAttachmentModel attachmentModel;
-    private ResourceLocation modelTexture;
+    private @Nullable BedrockAttachmentModel attachmentModel;
+    private @Nullable ResourceLocation modelTexture;
+    private @Nullable Pair<BedrockAttachmentModel, ResourceLocation> lodModel;
     private ResourceLocation slotTexture;
     private AttachmentData data;
     private float fov = 70.0f;
@@ -43,6 +48,7 @@ public class ClientAttachmentIndex {
         checkName(indexPOJO, index);
         checkSlotTexture(display, index);
         checkTextureAndModel(display, index);
+        checkLod(display, index);
         checkSkins(registryName, index);
         checkSounds(display, index);
         return index;
@@ -95,17 +101,40 @@ public class ClientAttachmentIndex {
     }
 
     private static void checkTextureAndModel(AttachmentDisplay display, ClientAttachmentIndex index) {
-        // 检查模型
-        ResourceLocation modelLocation = display.getModel();
-        Preconditions.checkArgument(modelLocation != null, "display object missing model field");
-        index.attachmentModel = ClientAssetManager.INSTANCE.getOrLoadAttachmentModel(modelLocation);
-        Preconditions.checkArgument(index.attachmentModel != null, "there is no model data in the model file");
-        index.attachmentModel.setIsScope(display.isScope());
-        index.attachmentModel.setIsSight(display.isSight());
-        // 检查默认材质
-        ResourceLocation textureLocation = display.getTexture();
-        Preconditions.checkArgument(textureLocation != null, "missing default texture");
-        index.modelTexture = textureLocation;
+        // 不检查模型/材质是否为 null，模型/材质可以为 null
+        index.attachmentModel = ClientAssetManager.INSTANCE.getOrLoadAttachmentModel(display.getModel());
+        if (index.attachmentModel != null) {
+            index.attachmentModel.setIsScope(display.isScope());
+            index.attachmentModel.setIsSight(display.isSight());
+        }
+        index.modelTexture = display.getTexture();
+    }
+
+    private static void checkLod(AttachmentDisplay display, ClientAttachmentIndex index) {
+        AttachmentLod gunLod = display.getAttachmentLod();
+        if (gunLod != null) {
+            ResourceLocation texture = gunLod.getModelTexture();
+            if (gunLod.getModelLocation() == null) {
+                return;
+            }
+            if (texture == null) {
+                return;
+            }
+            BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(gunLod.getModelLocation());
+            if (modelPOJO == null) {
+                return;
+            }
+            // 先判断是不是 1.10.0 版本基岩版模型文件
+            if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
+                BedrockAttachmentModel model = new BedrockAttachmentModel(modelPOJO, BedrockVersion.LEGACY);
+                index.lodModel = Pair.of(model, texture);
+            }
+            // 判定是不是 1.12.0 版本基岩版模型文件
+            if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
+                BedrockAttachmentModel model = new BedrockAttachmentModel(modelPOJO, BedrockVersion.NEW);
+                index.lodModel = Pair.of(model, texture);
+            }
+        }
     }
 
     private static void checkSkins(ResourceLocation registryName, ClientAttachmentIndex index) {
@@ -131,12 +160,19 @@ public class ClientAttachmentIndex {
         return name;
     }
 
+    @Nullable
     public BedrockAttachmentModel getAttachmentModel() {
         return attachmentModel;
     }
 
+    @Nullable
     public ResourceLocation getModelTexture() {
         return modelTexture;
+    }
+
+    @Nullable
+    public Pair<BedrockAttachmentModel, ResourceLocation> getLodModel() {
+        return lodModel;
     }
 
     public ResourceLocation getSlotTexture() {

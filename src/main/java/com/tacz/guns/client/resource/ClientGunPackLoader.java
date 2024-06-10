@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.math.Vector3f;
-import com.tacz.guns.GunMod;
+import com.tacz.guns.api.resource.ResourceManager;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
@@ -38,7 +38,6 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.tacz.guns.resource.CommonGunPackLoader.DEFAULT_GUN_PACK_NAME;
 import static com.tacz.guns.resource.CommonGunPackLoader.FOLDER;
 
 @OnlyIn(Dist.CLIENT)
@@ -106,8 +105,9 @@ public class ClientGunPackLoader {
 
     private static void checkDefaultPack() {
         if (!OtherConfig.DEFAULT_PACK_DEBUG.get()) {
-            String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
-            GetJarResources.copyModDirectory(jarDefaultPackPath, FOLDER, DEFAULT_GUN_PACK_NAME);
+            for (ResourceManager.ExtraEntry entry : ResourceManager.EXTRA_ENTRIES) {
+                GetJarResources.copyModDirectory(entry.modMainClass(), entry.srcPath(), FOLDER, entry.extraDirName());
+            }
         }
     }
 
@@ -139,7 +139,6 @@ public class ClientGunPackLoader {
             TextureLoader.load(root);
             SoundLoader.load(root);
             LanguageLoader.load(root);
-            CustomTabLoader.load(root);
             PackInfoLoader.load(root);
         }
     }
@@ -183,8 +182,6 @@ public class ClientGunPackLoader {
                 if (LanguageLoader.load(zipFile, path)) {
                     continue;
                 }
-                // 加载创造模式标签页
-                CustomTabLoader.load(zipFile, path);
                 // 加载信息文件
                 PackInfoLoader.load(zipFile, path);
             }

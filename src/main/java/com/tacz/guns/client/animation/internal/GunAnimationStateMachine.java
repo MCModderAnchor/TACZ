@@ -396,7 +396,7 @@ public class GunAnimationStateMachine {
 
     private boolean isNamedWalkAnimation(String animationName) {
         return WALK_SIDEWAY_ANIMATION.equals(animationName) || WALK_FORWARD_ANIMATION.equals(animationName) || WALK_BACKWARD_ANIMATION.equals(animationName)
-                || WALK_AIMING_ANIMATION.equals(animationName);
+               || WALK_AIMING_ANIMATION.equals(animationName);
     }
 
     private boolean tryRunShootAnimation(int track) {
@@ -407,7 +407,7 @@ public class GunAnimationStateMachine {
         if (runner != null && runner.getTransitionTo() != null && SHOOT_ANIMATION.equals(runner.getTransitionTo().getAnimation().name)) {
             return false;
         }
-        controller.runAnimation(track, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0);
+        controller.runAnimation(track, SHOOT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0);
         return true;
     }
 }

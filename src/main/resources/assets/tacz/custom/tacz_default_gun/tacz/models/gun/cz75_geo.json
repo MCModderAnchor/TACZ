@@ -1822,7 +1822,7 @@
 				{
 					"name": "constraint",
 					"parent": "CZ75",
-					"pivot": [0, 6.875, -5.45]
+					"pivot": [0, 6.875, -7.45]
 				},
 				{
 					"name": "default_gun",

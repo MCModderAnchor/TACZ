@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -60,7 +60,7 @@ public class InteractKey {
 
     private static void interactBlock(BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc) {
         BlockPos blockPos = blockHitResult.getBlockPos();
-        Block block = player.level.getBlockState(blockPos).getBlock();
+        BlockState block = player.level.getBlockState(blockPos);
         if (InteractKeyConfigRead.canInteractBlock(block)) {
             mc.startUseItem();
         }

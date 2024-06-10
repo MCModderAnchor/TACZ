@@ -13,19 +13,18 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.api.item.builder.AmmoItemBuilder;
-import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.client.gui.components.smith.ResultButton;
 import com.tacz.guns.client.gui.components.smith.TypeButton;
 import com.tacz.guns.client.resource.ClientAssetManager;
-import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.crafting.GunSmithTableResult;
+import com.tacz.guns.init.ModCreativeTabs;
 import com.tacz.guns.inventory.GunSmithTableMenu;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessageCraft;
+import com.tacz.guns.util.RenderDistance;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -46,6 +45,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -99,8 +99,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             if (!recipeKeys.contains(group)) {
                 recipeKeys.add(group);
             }
-            recipes.putIfAbsent(group, Lists.newArrayList());
-            recipes.get(group).add(id);
+            recipes.computeIfAbsent(group, g -> Lists.newArrayList()).add(id);
         });
     }
 
@@ -240,14 +239,11 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             if (recipeIdGroups.isEmpty()) {
                 continue;
             }
-            CustomTabPOJO tabPOJO = ClientAssetManager.INSTANCE.getAllCustomTabs().get(type);
             ItemStack icon = ItemStack.EMPTY;
-            if (tabPOJO != null) {
-                icon = tabPOJO.getIconStack();
-            } else if (GunSmithTableResult.AMMO.equals(type)) {
-                icon = AmmoItemBuilder.create().build();
-            } else if (GunSmithTableResult.ATTACHMENT.equals(type)) {
-                icon = AttachmentItemBuilder.create().build();
+            ResourceLocation tabId = new ResourceLocation(GunMod.MOD_ID, type);
+            CreativeModeTab modTab = ModCreativeTabs.getModTabs(tabId);
+            if (modTab != null) {
+                icon = modTab.getIconItem();
             }
             TypeButton typeButton = new TypeButton(xOffset, topPos + 2, icon, b -> {
                 this.selectedType = type;
@@ -388,6 +384,14 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                     offsetX, offsetY, ChatFormatting.DARK_GRAY.getColor());
 
             poseStack.popPose();
+        } else {
+            ResourceLocation recipeId = recipe.getId();
+            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_smith_table.error").withStyle(ChatFormatting.DARK_RED), leftPos + 6, topPos + 122, 0xAF0000);
+            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_smith_table.error.id", recipeId.toString()).withStyle(ChatFormatting.DARK_RED), leftPos + 6, topPos + 134, 0xFFFFFF);
+            PackInfo errorPackInfo = ClientAssetManager.INSTANCE.getPackInfo(recipeId);
+            if (errorPackInfo != null) {
+                font.draw(poseStack, new TranslatableComponent(errorPackInfo.getName()).withStyle(ChatFormatting.DARK_RED), leftPos + 6, topPos + 146, 0xAF0000);
+            }
         }
     }
 
@@ -431,6 +435,9 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
     @SuppressWarnings("deprecation")
     private void renderLeftModel(GunSmithTableRecipe recipe) {
+        // 先标记一下，渲染高模
+        RenderDistance.markGuiRenderTimestamp();
+
         float rotationPeriod = 8f;
         int xPos = leftPos + 60;
         int yPos = topPos + 50;

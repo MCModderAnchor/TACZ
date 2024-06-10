@@ -17,6 +17,10 @@ public class AttachmentDisplay {
     @SerializedName("texture")
     private ResourceLocation texture;
 
+    @SerializedName("lod")
+    @Nullable
+    private AttachmentLod attachmentLod;
+
     @SerializedName("adapter")
     @Nullable
     private String adapterNodeName;
@@ -47,6 +51,11 @@ public class AttachmentDisplay {
 
     public ResourceLocation getTexture() {
         return texture;
+    }
+
+    @Nullable
+    public AttachmentLod getAttachmentLod() {
+        return attachmentLod;
     }
 
     @Nullable

@@ -1,9 +1,7 @@
 package com.tacz.guns.client.sound;
 
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
-import com.tacz.guns.client.resource.pojo.animation.bedrock.SoundEffectKeyframes;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.init.ModSounds;
 import com.tacz.guns.network.message.ServerMessageSound;
@@ -16,7 +14,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.lang3.tuple.Pair;
 
 @OnlyIn(Dist.CLIENT)
 public class SoundPlayManager {

@@ -68,8 +68,8 @@ public class LocalPlayerShoot {
         ClientGunIndex gunIndex = gunIndexOptional.get();
         GunData gunData = gunIndex.getGunData();
         long coolDown = this.getCoolDown(iGun, mainhandItem, gunData);
-        // 如果射击冷却大于 1 tick (即 50 ms)，则不允许开火
-        if (coolDown > 50) {
+        // 如果射击冷却大于等于 1 tick (即 50 ms)，则不允许开火
+        if (coolDown >= 50) {
             return ShootResult.COOL_DOWN;
         }
         // 因为开火冷却检测用了特别定制的方法，所以不检查状态锁，而是手动检查是否换弹、切枪

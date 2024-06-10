@@ -184,6 +184,8 @@ public class GunRefitScreen extends Screen {
         super.render(poseStack, mouseX, mouseY, pPartialTick);
         this.renderables.stream().filter(w -> w instanceof IComponentTooltip).forEach(w -> ((IComponentTooltip) w)
                 .renderTooltip(component -> this.renderComponentTooltip(poseStack, component, mouseX, mouseY)));
+        this.renderables.stream().filter(w -> w instanceof IStackTooltip).forEach(w -> ((IStackTooltip) w)
+                .renderTooltip(stack -> this.renderTooltip(poseStack, stack, mouseX, mouseY)));
     }
 
     @Override

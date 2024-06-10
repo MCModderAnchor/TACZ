@@ -3,10 +3,10 @@ package com.tacz.guns.item;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
 import com.tacz.guns.client.renderer.item.AttachmentItemRenderer;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
-import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
 import com.tacz.guns.resource.index.CommonAttachmentIndex;
 import net.minecraft.client.Minecraft;
@@ -16,7 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,7 +28,7 @@ import java.util.function.Consumer;
 
 public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
     public AttachmentItem() {
-        super(new Properties().stacksTo(1).tab(ModItems.ATTACHMENT_TAB));
+        super(new Properties().stacksTo(1));
     }
 
     @Override
@@ -44,16 +43,16 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
         return super.getName(stack);
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
-    public void fillItemCategory(@Nonnull CreativeModeTab modeTab, @Nonnull NonNullList<ItemStack> stacks) {
-        if (this.allowdedIn(modeTab)) {
-            TimelessAPI.getAllClientAttachmentIndex().forEach(entry -> {
-                ItemStack itemStack = this.getDefaultInstance();
-                this.setAttachmentId(itemStack, entry.getKey());
+    public static NonNullList<ItemStack> fillItemCategory(AttachmentType type) {
+        NonNullList<ItemStack> stacks = NonNullList.create();
+        TimelessAPI.getAllCommonAttachmentIndex().forEach(entry -> {
+            if (type.equals(entry.getValue().getType())) {
+                ItemStack itemStack = AttachmentItemBuilder.create().setId(entry.getKey()).build();
                 stacks.add(itemStack);
-            });
-        }
+            }
+        });
+        return stacks;
     }
 
     @Override

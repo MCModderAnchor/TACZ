@@ -1,5 +1,6 @@
 package com.tacz.guns;
 
+import com.tacz.guns.api.resource.ResourceManager;
 import com.tacz.guns.config.ClientConfig;
 import com.tacz.guns.config.CommonConfig;
 import com.tacz.guns.config.ServerConfig;
@@ -16,6 +17,10 @@ import org.apache.logging.log4j.Logger;
 public class GunMod {
     public static final String MOD_ID = "tacz";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+    /**
+     * 默认模型包文件夹
+     */
+    public static final String DEFAULT_GUN_PACK_NAME = "tacz_default_gun";
 
     public GunMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.init());
@@ -31,5 +36,12 @@ public class GunMod {
         ModContainer.CONTAINER_TYPE.register(bus);
         ModSounds.SOUNDS.register(bus);
         ModParticles.PARTICLE_TYPES.register(bus);
+
+        registerDefaultExtraGunPack();
+    }
+
+    private static void registerDefaultExtraGunPack() {
+        String jarDefaultPackPath = String.format("/assets/%s/custom/%s", GunMod.MOD_ID, DEFAULT_GUN_PACK_NAME);
+        ResourceManager.registerExtraGunPack(GunMod.class, jarDefaultPackPath);
     }
 }

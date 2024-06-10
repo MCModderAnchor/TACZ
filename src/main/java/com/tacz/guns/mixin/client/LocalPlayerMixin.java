@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -87,9 +88,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
     }
 
-    @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setSprinting(Z)V"))
-    public void cancelSprint(LocalPlayer player, boolean sprinting) {
-        tac$aim.cancelSprint(player, sprinting);
+    @ModifyArg(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setSprinting(Z)V"))
+    public boolean swapSprintStatus(boolean sprinting) {
+        return this.tac$aim.cancelSprint(this.tac$player, sprinting);
     }
 
     @Inject(method = "respawn", at = @At("RETURN"))

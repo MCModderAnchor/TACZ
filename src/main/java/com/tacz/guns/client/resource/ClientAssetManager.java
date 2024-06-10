@@ -5,7 +5,6 @@ import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tacz.guns.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.model.BedrockGunModel;
-import com.tacz.guns.client.resource.pojo.CustomTabPOJO;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
@@ -31,10 +30,6 @@ public enum ClientAssetManager {
      * 枪包信息
      */
     private final Map<String, PackInfo> customInfos = Maps.newHashMap();
-    /**
-     * 创造模式标签页
-     */
-    private final Map<String, CustomTabPOJO> customTabs = Maps.newHashMap();
     /**
      * 储存 display 数据
      */
@@ -88,10 +83,6 @@ public enum ClientAssetManager {
         customInfos.put(namespace, info);
     }
 
-    public void putAllCustomTab(Map<String, CustomTabPOJO> tabs) {
-        customTabs.putAll(tabs);
-    }
-
     public void putGunDisplay(ResourceLocation registryName, GunDisplay display) {
         gunDisplays.put(registryName, display);
     }
@@ -119,7 +110,6 @@ public enum ClientAssetManager {
     }
 
     public void putBedrockAnimation(ResourceLocation registryName, BedrockAnimationFile bedrockAnimationFile) {
-        // 缓存动画数据
         bedrockAnimations.put(registryName, bedrockAnimationFile);
     }
 
@@ -174,10 +164,6 @@ public enum ClientAssetManager {
         return languages.get(region);
     }
 
-    public Map<String, CustomTabPOJO> getAllCustomTabs() {
-        return customTabs;
-    }
-
     @Nullable
     public PackInfo getPackInfo(ResourceLocation id) {
         return customInfos.get(id.getNamespace());
@@ -187,7 +173,10 @@ public enum ClientAssetManager {
      * @return 如果模型缓存中没有对应模型、模型 POJO 缓存也没有对应的 POJO，则返回 null。
      */
     @Nullable
-    public BedrockAttachmentModel getOrLoadAttachmentModel(ResourceLocation modelLocation) {
+    public BedrockAttachmentModel getOrLoadAttachmentModel(@Nullable ResourceLocation modelLocation) {
+        if (modelLocation == null) {
+            return null;
+        }
         BedrockAttachmentModel model = tempAttachmentModelMap.get(modelLocation);
         if (model != null) {
             return model;
@@ -209,7 +198,6 @@ public enum ClientAssetManager {
      */
     public void clearAll() {
         this.customInfos.clear();
-        this.customTabs.clear();
         this.gunDisplays.clear();
         this.ammoDisplays.clear();
         this.attachmentDisplays.clear();
