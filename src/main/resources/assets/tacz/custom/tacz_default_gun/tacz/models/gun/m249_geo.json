@@ -101,7 +101,7 @@
 				{
 					"name": "shell",
 					"parent": "attachment_positioning",
-					"pivot": [-1.05, 9.23125, 2.4625]
+					"pivot": [-1.05, 7.23125, 1.6875]
 				},
 				{
 					"name": "grip_pos",
