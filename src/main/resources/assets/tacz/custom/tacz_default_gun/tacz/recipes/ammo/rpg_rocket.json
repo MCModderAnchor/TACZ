@@ -1,0 +1,21 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "forge:ingots/iron"
+      },
+      "count": 6
+    },
+    {
+      "item": {
+        "tag": "forge:gunpowder"
+      },
+      "count": 12
+    }
+  ],
+  "result": {
+    "type": "ammo",
+    "id": "tacz:rpg_rocket",
+    "count": 3
+  }
+}

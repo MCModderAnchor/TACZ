@@ -1,0 +1,6 @@
+{
+  "weight": 0.8,
+  "ads_addend": 0.05,
+  // 扩容弹夹（匣）等级
+  "extended_mag_level": 2
+}

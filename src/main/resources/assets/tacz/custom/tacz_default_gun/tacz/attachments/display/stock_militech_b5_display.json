@@ -1,0 +1,10 @@
+{
+  "slot": "tacz:attachment/slot/stock_militech_b5",
+  "model": "tacz:attachment/stock_militech_b5_geo",
+  "texture": "tacz:attachment/uv/stock_militech_b5",
+  "adapter": "ar_stock_adapter",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

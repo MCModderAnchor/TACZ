@@ -1,0 +1,68 @@
+{
+  "ammo": "tacz:12g",
+  "rpm": 200,
+  "bullet": {
+    "life": 0.4,
+    "bullet_amount": 10,
+    "damage": 25,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.0,
+      "head_shot_multiplier": 1.1,
+      "damage_adjust": [
+        {"distance": 1.5, "damage": 30},
+        {"distance": 20, "damage": 25},
+        {"distance": 35, "damage": 20},
+        {"distance": "infinite", "damage": 15}
+      ]
+    },
+    "speed": 120,
+    "gravity": 0.0245,
+    "knockback": 0.35,
+    "friction": 0.012,
+    "ignite": false,
+    "pierce": 1
+  },
+  "ammo_amount": 2,
+  "bolt": "open_bolt",
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 1.83,
+      "tactical": 1.23
+    },
+    "cooldown": {
+      "empty": 2.3,
+      "tactical": 1.6
+    }
+  },
+  "draw_time": 0.27,
+  "put_away_time": 0.23,
+  "aim_time": 0.2,
+  "sprint_time": 0.2,
+  "fire_mode": [
+    "semi"
+  ],
+  "allow_attachment_types": [],
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [3.25, 3.25]},
+      {"time": 0.125, "value": [3.25, 3.25]},
+      {"time": 0.4, "value": [-0.25, -0.25]},
+      {"time": 0.55, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-1.5, -1.5]},
+      {"time": 0.1, "value": [-1.5, -1.5]},
+      {"time": 0.2, "value": [0.15, 0.15]},
+      {"time": 0.4, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 3.75,
+    "move": 4.5,
+    "sneak": 3.5,
+    "lie": 2.5,
+    "aim": 2.5
+  }
+}

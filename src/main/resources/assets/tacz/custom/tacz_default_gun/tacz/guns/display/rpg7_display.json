@@ -1,0 +1,40 @@
+{
+  "model": "tacz:gun/rpg7_geo",
+  "texture": "tacz:gun/uv/rpg7",
+  "hud": "tacz:gun/hud/rpg7",
+  "slot": "tacz:gun/slot/rpg7",
+  "animation": "tacz:rpg7",
+  "use_default_animation": "rifle",
+  "lod": {
+    "model": "tacz:gun/lod/rpg7",
+    "texture": "tacz:gun/lod/rpg7"
+  },
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "sounds": {
+    "reload_empty": "tacz:rpg7/rpg7_reload",
+    "inspect": "tacz:rpg7/rpg7_inspect",
+    "inspect_empty": "tacz:rpg7/rpg7_inspect_empty",
+    "draw": "tacz:rpg7/rpg7_draw",
+    "put_away": "tacz:rpg7/rpg7_put_away",
+    "shoot": "tacz:rpg7/rpg7_shoot",
+    "shoot_3p": "tacz:rpg7/rpg7_shoot"
+  },
+  "offhand_show": {
+    "pos": [0, 20, 5],
+    "rotate": [-20, 0, 30],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-4, 24, 4],
+      "rotate": [-90, -5, -90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

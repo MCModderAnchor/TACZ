@@ -1,0 +1,8 @@
+{
+  "slot": "tacz:attachment/slot/oem_stock_tactical",
+  "adapter": "oem_stock_tactical",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

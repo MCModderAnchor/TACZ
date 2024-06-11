@@ -1,0 +1,225 @@
+import java.text.SimpleDateFormat
+
+// 设置日期格式，用于填充快照版版本号
+SimpleDateFormat FORMAT = new SimpleDateFormat("MMdd-HHmmss")
+FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"))
+
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.parchmentmc:librarian:1.+'
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        // shadow 插件，用来打包 Apache Commons Math 库
+        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'eclipse'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+version = "1.0.0"
+// 版本号，正式发布需要修改这一行
+// version = FORMAT.format(new Date())
+group = "com.tacz"
+archivesBaseName = "tacz-1.19.2"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+mixin {
+    add sourceSets.main, "tacz.refmap.json"
+    config "tacz.mixins.json"
+}
+
+minecraft {
+    // 使用 parchment 来反混淆变量名
+    mappings channel: 'parchment', version: '2022.11.27-1.19.2'
+    // 使用 access transformer 来修改原版的一些方法访问修饰符
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    // 运行参数
+    runs {
+        client {
+            // 使用 JetBrainsRuntime 时需要的参数，否则无法热重载
+            // 如果你使用别的 JDK，那么可以删除这一行
+            jvmArgs "-XX:+AllowEnhancedClassRedefinition"
+            // 每个启动单独区分文件夹
+            workingDirectory project.file('run/client_a')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+            mods {
+                tacz {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client2 {
+            parent minecraft.runs.client
+            workingDirectory project.file('run/client_b')
+            // 设定用户名
+            args '--username', 'mayday_memory'
+            mods {
+                tacz {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run/server')
+            property 'mixin.env.disableRefMap', 'true'
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods {
+                tacz {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run/data')
+            property 'mixin.env.disableRefMap', 'true'
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'tacz', '--all', '--output', file('src/generated/resources/')
+            mods {
+                tacz {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    maven {
+        // 阿里云镜像，方便国内开发
+        url = uri("https://maven.aliyun.com/repository/public/")
+    }
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 Maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "Mod Maven"
+        url = "https://modmaven.k-4u.nl"
+    }
+    maven {
+        // cloth config api
+        url "https://maven.shedaniel.me/"
+    }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    flatDir {
+        dir 'libs'
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${forge_version}"
+
+    // Apache Commons Math 库，用于进行一些插值运算
+    minecraftLibrary 'org.apache.commons:commons-math3:3.6.1'
+
+    // compile against the JEI API but do not include it at runtime
+    compileOnly(fg.deobf("mezz.jei:jei-1.19.2-common-api:${jei_version}"))
+    compileOnly(fg.deobf("mezz.jei:jei-1.19.2-forge-api:${jei_version}"))
+    // at runtime, use the full JEI jar for Forge
+    runtimeOnly(fg.deobf("mezz.jei:jei-1.19.2-forge:${jei_version}"))
+
+    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
+    compileOnly fg.deobf("org.embeddedt:embeddium-1.19.2:${embeddedt_id}")
+    compileOnly fg.deobf("curse.maven:oculus-581495:${oculus_id}")
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+jar {
+    // 打包时，给 manifest 文件写入一些有用信息
+    // 这些信息会被游戏调用，从而显示成模组的名称和版本信息
+    manifest {
+        attributes([
+                "Implementation-Title"  : project.name,
+                "Implementation-Version": project.version
+        ])
+    }
+}
+
+java {
+    // 编译源码文件，方便发布 maven
+    withSourcesJar()
+}
+
+publishing {
+    // 发布到 jitpack maven，方便其他模组开发者
+    publications.create('mavenJava', MavenPublication) {
+        from components.java
+        groupId = project.group
+        version = project.version
+        artifactId = project.archivesBaseName
+        pom {
+            name = project.archivesBaseName
+            // 删除所有依赖，不需要
+            pom.withXml {
+                asNode().dependencies.dependency.each { dep ->
+                    assert dep.parent().remove(dep)
+                }
+            }
+        }
+    }
+}
+
+// 禁用元数据生成，它生成的 maven 项目有问题
+tasks.withType(GenerateModuleMetadata).configureEach {
+    enabled = false
+}
+
+shadowJar {
+    dependencies {
+        // 打包 Apache Commons Math 库
+        include(dependency("org.apache.commons:commons-math3:3.6.1"))
+        // 排除 Apache Commons Math 库中不需要的说明文件
+        exclude('META-INF/LICENSE.txt')
+        exclude('META-INF/NOTICE.txt')
+        exclude('META-INF/maven/')
+    }
+    // 防止与其他模组导致的同名路径冲突
+    relocate 'org.apache.commons.math3', 'com.tacz.guns.libs.org.apache.commons.math3'
+    // 最小化
+    minimize()
+}
+
+reobf {
+    // 与名称的混淆有关的，反正需要 shadowJar 一下
+    shadowJar {}
+}
+
+// 保证编译时的 assemble 在 shadowJar 之后执行
+assemble.dependsOn shadowJar
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

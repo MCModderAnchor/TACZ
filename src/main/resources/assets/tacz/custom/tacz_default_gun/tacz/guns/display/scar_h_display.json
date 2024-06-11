@@ -1,0 +1,55 @@
+{
+  "model": "tacz:gun/scar_h_geo",
+  "texture": "tacz:gun/uv/scar_h",
+  "lod": {
+    "model": "tacz:gun/lod/scar_h",
+    "texture": "tacz:gun/lod/scar_h"
+  },
+  "hud": "tacz:gun/hud/scar_h_hud",
+  "slot": "tacz:gun/slot/scar_h_slot",
+  "animation": "tacz:scar_h",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1.125
+  },
+  "iron_zoom": 1.2,
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:scar_h/scar_h_shoot",
+    "shoot_3p": "tacz:scar_h/scar_h_shoot_3p",
+    "silence": "tacz:scar_h/scar_h_silence",
+    "silence_3p": "tacz:scar_h/scar_h_silence_3p",
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill"
+  },
+  "offhand_show": {
+    "pos": [0, 19, 4],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [0, 19, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

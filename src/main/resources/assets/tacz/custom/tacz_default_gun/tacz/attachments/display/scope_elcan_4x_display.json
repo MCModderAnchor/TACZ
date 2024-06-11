@@ -1,0 +1,19 @@
+{
+  "slot": "tacz:attachment/slot/scope_elcan_4x",
+  "model": "tacz:attachment/scope_elcan_4x_geo",
+  "texture": "tacz:attachment/uv/scope_elcan_4x",
+  "lod": {
+    "model": "tacz:attachment/lod/scope_elcan_4x_lod",
+    "texture": "tacz:attachment/lod/scope_elcan_4x_lod"
+  },
+  "zoom": [
+    1.3,
+    4.0
+  ],
+  "scope": true,
+  "fov": 70.0,
+  "sounds": {
+    "install": "tacz:attachments/scope_general_d",
+    "uninstall": "tacz:attachments/scope_general_d"
+  }
+}

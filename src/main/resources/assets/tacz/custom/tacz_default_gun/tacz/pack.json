@@ -1,0 +1,18 @@
+{
+  // 版本
+  "version": "1.0.0",
+  // 名称，支持本地化
+  "name": "pack.tacz.tacz_default_gun.name",
+  // 描述文本，支持本地化
+  "desc": "pack.tacz.tacz_default_gun.desc",
+  // 许可证
+  "license": "CC BY-NC-ND 4.0",
+  // 作者
+  "authors": [
+    "TACZ Dev Team"
+  ],
+  // 日期：ISO 8601 标准，即 YYYY-MM-DD
+  "date": "2024-06-01",
+  // URL 链接，可以在枪械合成台看到，点击按钮可以访问网络链接
+  "url": "https://tacwiki.mcma.club/zh/"
+}

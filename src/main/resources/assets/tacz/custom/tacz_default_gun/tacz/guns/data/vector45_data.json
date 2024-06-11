@@ -1,0 +1,87 @@
+{
+  "ammo": "tacz:45acp",
+  "rpm": 1100,
+  "bullet": {
+    "life": 0.6,
+    "bullet_amount": 1,
+    "damage": 7,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.15,
+      "head_shot_multiplier": 1.25,
+      "damage_adjust": [
+        {"distance": 0.5, "damage": 8},
+        {"distance": 10, "damage": 7},
+        {"distance": 15.5, "damage": 6},
+        {"distance": 20.5, "damage": 5},
+        {"distance": "infinite", "damage": 3.5}
+      ]
+    },
+    "speed": 180,
+    "gravity": 0.0245,
+    "knockback": 0,
+    "friction": 0.012,
+    "ignite": false,
+    "pierce": 1
+  },
+  "ammo_amount": 17,
+  "extended_mag_ammo_amount": [
+    24,
+    31,
+    40
+  ],
+  "bolt": "closed_bolt",
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 2.03,
+      "tactical": 1.67
+    },
+    "cooldown": {
+      "empty": 2.47,
+      "tactical": 2.2
+    }
+  },
+  "draw_time": 0.37,
+  "put_away_time": 0.27,
+  "sprint_time": 0.2,
+  "aim_time": 0.1,
+  "fire_mode": [
+    "auto",
+    "burst",
+    "semi"
+  ],
+  "burst_data": {
+    "continuous_shoot": false,
+    "count": 2,
+    "bpm": 900,
+    "min_interval": 0.3
+  },
+  "allow_attachment_types": [
+    "scope",
+    "stock",
+    "grip",
+    "muzzle",
+    "extended_mag"
+  ],
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [0.95, 0.95]},
+      {"time": 0.12, "value": [0.95, 0.95]},
+      {"time": 0.3, "value": [-0.2, -0.2]},
+      {"time": 0.45, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [0.3, 0.35]},
+      {"time": 0.12, "value": [0.3, 0.35]},
+      {"time": 0.3, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 3.5,
+    "move": 4.5,
+    "sneak": 2.5,
+    "lie": 2,
+    "aim": 0.175
+  }
+}

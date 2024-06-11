@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:minecart",
+    "minecraft:chest_minecart",
+    "minecraft:item_frame",
+    "minecraft:glow_item_frame",
+    "minecraft:boat",
+    "minecraft:mule",
+    "minecraft:villager",
+    "minecraft:wandering_trader",
+    "minecraft:horse"
+  ]
+}

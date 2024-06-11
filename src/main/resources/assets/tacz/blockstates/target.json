@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "tacz:block/target"
+    }
+  }
+}

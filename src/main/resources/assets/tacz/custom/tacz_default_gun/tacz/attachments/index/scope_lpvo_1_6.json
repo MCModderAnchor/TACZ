@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.scope_lpvo_1_6.name",
+  "tooltip": "tacz.attachment.scope_lpvo_1_6.tooltip",
+  "display": "tacz:scope_lpvo_1_6_display",
+  "data": "tacz:scope_lpvo_1_6_data",
+  "type": "scope"
+}

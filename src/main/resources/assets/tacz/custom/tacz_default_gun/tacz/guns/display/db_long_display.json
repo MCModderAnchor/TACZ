@@ -1,0 +1,46 @@
+{
+  "model": "tacz:gun/db_long_geo",
+  "texture": "tacz:gun/uv/db_long",
+  "lod": {
+    "model": "tacz:gun/lod/db_long",
+    "texture": "tacz:gun/lod/db_long"
+  },
+  "hud": "tacz:gun/hud/db_long",
+  "slot": "tacz:gun/slot/db_long",
+  "animation": "tacz:db_long",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.75
+  },
+  "sounds": {
+    "reload_empty": "tacz:db_short/db_short_reload_empty",
+    "reload_tactical": "tacz:db_short/db_short_reload_tactical",
+    "inspect": "tacz:db_short/db_short_inspect",
+    "inspect_empty": "tacz:db_short/db_short_inspect_empty",
+    "draw": "tacz:db_short/db_short_draw",
+    "put_away": "tacz:db_short/db_short_put_away",
+    "shoot": "tacz:db_long/dbl_shoot",
+    "shoot_3p": "tacz:db_long/dbl_shoot_3p"
+  },
+  "offhand_show": {
+    "pos": [0, 20, 4],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [0, 20, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

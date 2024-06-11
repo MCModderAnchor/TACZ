@@ -1,0 +1,33 @@
+{
+  "materials": [
+
+    {
+      "item": {
+        "tag": "forge:ingots/iron"
+      },
+      "count": 16
+    },
+    {
+      "item": {
+        "tag": "forge:ingots/copper"
+      },
+      "count": 72
+    },
+    {
+      "item": {
+        "tag": "forge:rods/blaze"
+      }
+    },
+    {
+      "item": {
+        "tag": "forge:gunpowder"
+      },
+      "count": 24
+    }
+  ],
+  "result": {
+    "type": "ammo",
+    "id": "tacz:50bmg",
+    "count": 24
+  }
+}

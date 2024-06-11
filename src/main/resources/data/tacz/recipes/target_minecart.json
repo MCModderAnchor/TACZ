@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "item": "tacz:target_minecart"
+  },
+  "pattern": [
+    "A",
+    "B"
+  ],
+  "key": {
+    "A": {
+      "item": "tacz:target"
+    },
+    "B": {
+      "item": "minecraft:minecart"
+    }
+  }
+}

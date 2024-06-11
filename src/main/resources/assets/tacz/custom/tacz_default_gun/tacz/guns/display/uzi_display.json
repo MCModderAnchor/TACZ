@@ -1,0 +1,55 @@
+{
+  "model": "tacz:gun/uzi_geo",
+  "texture": "tacz:gun/uv/uzi",
+  "hud": "tacz:gun/hud/uzi",
+  "lod": {
+    "model": "tacz:gun/lod/uzi",
+    "texture": "tacz:gun/lod/uzi"
+  },
+  "slot": "tacz:gun/slot/uzi",
+  "animation": "tacz:uzi",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.6
+  },
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:uzi/uzi_shoot",
+    "shoot_3p": "tacz:uzi/uzi_shoot_3p",
+    "reload_empty": "tacz:uzi/uzi_reload_empty",
+    "reload_tactical": "tacz:uzi/uzi_reload_tactical",
+    "inspect": "tacz:uzi/uzi_inspect",
+    "inspect_empty": "tacz:uzi/uzi_inspect_empty",
+    "draw": "tacz:uzi/uzi_draw",
+    "put_away": "tacz:uzi/uzi_put_away",
+    "silence": "tacz:uzi/uzi_silence",
+    "silence_3p": "tacz:uzi/uzi_silence_3p"
+  },
+  "offhand_show": {
+    "pos": [1, 20, 4],
+    "rotate": [0, 0, 45],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [1, 16, -2],
+    "rotate": [0, 0, 20],
+    "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "model": "tacz:gun/ai_awp_geo",
+  "texture": "tacz:gun/uv/ai_awp",
+  "lod": {
+    "model": "tacz:gun/lod/ai_awp",
+    "texture": "tacz:gun/lod/ai_awp"
+  },
+  "hud": "tacz:gun/hud/ai_awp",
+  "slot": "tacz:gun/slot/ai_awp",
+  "animation": "tacz:ai_awp",
+  "use_default_animation": "rifle",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1
+  },
+  "sounds": {
+    "reload_empty": "tacz:ai_awp/awp_reload_empty",
+    "reload_tactical": "tacz:ai_awp/awp_reload_tactical",
+    "inspect": "tacz:ai_awp/awp_inspect",
+    "inspect_empty": "tacz:ai_awp/awp_inspect_empty",
+    "draw": "tacz:ai_awp/awp_draw",
+    "shoot": "tacz:ai_awp/awp_shoot",
+    "shoot_3p": "tacz:ai_awp/awp_shoot_3p",
+    "silence": "tacz:ai_awp/awp_silence",
+    "silence_3p": "tacz:ai_awp/awp_silence_3p",
+    "bolt": "tacz:ai_awp/awp_bolt",
+    "put_away": "tacz:ai_awp/awp_put_away"
+  },
+  "offhand_show": {
+    "pos": [-2, 20, 4],
+    "rotate": [0, 0, 45],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-4, 26, 3],
+      "rotate": [-90, -5, -90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "ammo": "tacz:rpg_rocket",
+  "rpm": 150,
+  "ammo_amount": 1,
+  "bolt": "open_bolt",
+  "bullet": {
+    "life": 3,
+    "bullet_amount": 1,
+    "damage": 20,
+    "extra_damage": {
+      "armor_ignore": 0.0,
+      "head_shot_multiplier": 1
+    },
+    "speed": 80,
+    "gravity": 0.01,
+    "knockback": 0,
+    "friction": 0.005,
+    "ignite": false,
+    "pierce": 0,
+    "explosion": {
+      "damage": 100,
+      "radius": 3
+    }
+  },
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 2.63,
+      "tactical": 2.63
+    },
+    "cooldown": {
+      "empty": 3.2,
+      "tactical": 3.2
+    }
+  },
+  "draw_time": 0.75,
+  "put_away_time": 0.73,
+  "aim_time": 0.2,
+  "sprint_time": 0.2,
+  "fire_mode": [
+    "semi"
+  ],
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [2.5, 2.5]},
+      {"time": 0.3, "value": [2.5, 2.5]},
+      {"time": 0.55, "value": [-0.75, -0.75]},
+      {"time": 0.8, "value": [0.25, 0.25]},
+      {"time": 1.2, "value": [0, 0]},
+      {"time": 1.4, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-0.4, 0.4]},
+      {"time": 0.55, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 3,
+    "move": 8,
+    "sneak": 2,
+    "lie": 1.5,
+    "aim": 0.25
+  }
+}
