@@ -3,6 +3,7 @@ package com.tacz.guns.client.animation.interpolator;
 import com.tacz.guns.client.animation.AnimationChannelContent;
 import com.tacz.guns.client.animation.AnimationChannelContent.LerpMode;
 import com.tacz.guns.util.math.MathUtil;
+import org.joml.Quaternionf;
 
 public class CustomInterpolator implements Interpolator {
     private AnimationChannelContent content;
@@ -139,11 +140,68 @@ public class CustomInterpolator implements Interpolator {
         float[] q0 = new float[]{prevValue[prevOffset], prevValue[1 + prevOffset], prevValue[2 + prevOffset], prevValue[3 + prevOffset]};
         // 这里用的是三次样条插值，主要是为了和 BlockBench 中的表现贴合。
         // BlockBench 中调用的是 THREE.SplineCurve，其实现是三次样条插值。如果用 Catmull-Rom 插值，区别会比较大。
-        float[] r = MathUtil.quaternionSplineCurve(new float[][]{q0, content.values[indexFrom], content.values[indexTo], content.values[next]}, 0.5f, alpha);
+        //float[] r = MathUtil.quaternionSplineCurve(new float[][]{q0, content.values[indexFrom], content.values[indexTo], content.values[next]}, 0.5f, alpha);
+        float[] r = squad(q0, content.values[indexFrom], content.values[indexTo], content.values[next], alpha);
         result[0] = r[0];
         result[1] = r[1];
         result[2] = r[2];
         result[3] = r[3];
+    }
+
+    public static float[] squad(float[] q0, float[] q1, float[] q2, float[] q3, float t) {
+        float[] s1 = intermediate(MathUtil.toQuaternion(q0), MathUtil.toQuaternion(q1), MathUtil.toQuaternion(q2));
+        float[] s2 = intermediate(MathUtil.toQuaternion(q1), MathUtil.toQuaternion(q2), MathUtil.toQuaternion(q3));
+
+        float[] slerp1 = MathUtil.slerp(q1, q2, t);
+        float[] slerp2 = MathUtil.slerp(s1, s2, t);
+        return MathUtil.slerp(slerp1, slerp2, 2 * t * (1 - t));
+    }
+
+    private static float[] intermediate(Quaternionf q0, Quaternionf q1, Quaternionf q2) {
+        if (q1.dot(q0) < 0) {
+            q0 = reverse(q0);
+        }
+        if (q1.dot(q2) < 0) {
+            q2 = reverse(q2);
+        }
+        Quaternionf q0Conj = q0.conjugate(new Quaternionf());
+        Quaternionf q1Conj = q1.conjugate(new Quaternionf());
+        Quaternionf m0 = q0Conj.mul(q1);
+        Quaternionf m1 = q1Conj.mul(q2);
+        Quaternionf m0Log = log(m0);
+        Quaternionf m1Log = log(m1);
+        Quaternionf mLogSum = m0Log.add(m1Log.mul(-1f));
+        Quaternionf exp = exp(mLogSum.mul(0.25f));
+        Quaternionf result = q1.mul(exp);
+        return new float[]{result.x, result.y, result.z ,result.w};
+    }
+
+    private static Quaternionf log(Quaternionf q) {
+        double sin = Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z);
+        double theta = Math.atan2(sin, q.w);
+        Quaternionf result = new Quaternionf(q);
+        if (sin > 0.0005f) {
+            result.mul((float) (theta / sin));
+        }
+        result.w = 0;
+        return result;
+    }
+
+    private static Quaternionf exp(Quaternionf q) {
+        double theta = Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z);
+        double cos = Math.cos(theta);
+        Quaternionf result = new Quaternionf(q);
+        if (cos < 0.9995){
+            result.mul((float) (Math.sin(theta) / theta));
+        }
+        result.w = (float) cos;
+        return result;
+    }
+
+    private static Quaternionf reverse(Quaternionf q) {
+        Quaternionf result = new Quaternionf(q);
+        q.mul(-1f);
+        return result;
     }
 
     @Override

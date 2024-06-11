@@ -347,7 +347,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         if (hitPos == null) {
             return null;
         }
-        Vec3 hitBoxPos = hitPos.subtract(entity.position());
+        Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
+        Vec3 hitBoxPos = hitPos.subtract(Mth.lerp(0.5, boundingBox.minX, boundingBox.maxX), boundingBox.minY, Mth.lerp(0.5, boundingBox.minZ, boundingBox.maxZ));
         ResourceLocation entityId = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
         // 有配置的调用配置
         if (entityId != null) {
