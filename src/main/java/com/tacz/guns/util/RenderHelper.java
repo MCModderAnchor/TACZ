@@ -39,7 +39,7 @@ public final class RenderHelper {
         bufferbuilder.vertex(matrix, x2, y2, blitOffset).uv(maxU, maxV).endVertex();
         bufferbuilder.vertex(matrix, x2, y1, blitOffset).uv(maxU, minV).endVertex();
         bufferbuilder.vertex(matrix, x1, y1, blitOffset).uv(minU, minV).endVertex();
-        BufferUploader.draw(bufferbuilder.end());
+        BufferUploader.drawWithShader(bufferbuilder.end());
     }
 
     public static void enableItemEntityStencilTest() {
