@@ -461,7 +461,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         PoseStack posestack = RenderSystem.getModelViewStack();
         posestack.pushPose();
-        posestack.translate(xPos, yPos, -50);
+        posestack.translate(xPos, yPos, 200);
         posestack.translate(8.0D, 8.0D, 0.0D);
         posestack.scale(1.0F, -1.0F, 1.0F);
         posestack.scale(scale, scale, scale);
