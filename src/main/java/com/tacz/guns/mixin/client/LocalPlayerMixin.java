@@ -4,11 +4,8 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.client.gameplay.*;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,14 +15,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @SuppressWarnings("ALL")
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
-    @Shadow public abstract void playNotifySound(SoundEvent pSound, SoundSource pSource, float pVolume, float pPitch);
-
     private final @Unique LocalPlayer tac$player = (LocalPlayer) (Object) this;
     private final @Unique LocalPlayerDataHolder tac$data = new LocalPlayerDataHolder(tac$player);
     private final @Unique LocalPlayerAim tac$aim = new LocalPlayerAim(tac$data, tac$player);
     private final @Unique LocalPlayerBolt tac$bolt = new LocalPlayerBolt(tac$data, tac$player);
     private final @Unique LocalPlayerDraw tac$draw = new LocalPlayerDraw(tac$data, tac$player);
     private final @Unique LocalPlayerFireSelect tac$fireSelect = new LocalPlayerFireSelect(tac$data, tac$player);
+    private final @Unique LocalPlayerMelee tac$melee = new LocalPlayerMelee(tac$data, tac$player);
     private final @Unique LocalPlayerInspect tac$inspect = new LocalPlayerInspect(tac$data, tac$player);
     private final @Unique LocalPlayerReload tac$reload = new LocalPlayerReload(tac$data, tac$player);
     private final @Unique LocalPlayerShoot tac$shoot = new LocalPlayerShoot(tac$data, tac$player);
@@ -63,6 +59,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void fireSelect() {
         tac$fireSelect.fireSelect();
+    }
+
+    @Override
+    public void melee() {
+        tac$melee.melee();
     }
 
     @Override

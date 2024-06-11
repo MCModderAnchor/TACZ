@@ -76,6 +76,7 @@
     "lie": 4,
     "aim": 0.125
   },
+  "bayonet_melee_distance": 5,
   "allow_attachment_types": [
     "scope",
     "stock",

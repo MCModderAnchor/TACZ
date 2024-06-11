@@ -17,11 +17,14 @@ import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.CycleTaskHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 
@@ -113,6 +116,23 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             }
             return true;
         }, period, cycles);
+    }
+
+    @Override
+    public void melee(LivingEntity user, ItemStack gunItem) {
+        AABB aabb = user.getBoundingBox().expandTowards(user.getEyePosition());
+        List<LivingEntity> entityList = user.level().getEntitiesOfClass(LivingEntity.class, aabb);
+        for (LivingEntity living : entityList) {
+            if (!living.equals(user)) {
+                living.knockback(0.4f, (float) Math.sin(Math.toRadians(user.getYRot())), (float) -Math.cos(Math.toRadians(user.getYRot())));
+                if (user instanceof Player player) {
+                    living.hurt(user.damageSources().playerAttack(player), 5);
+                } else {
+                    living.hurt(user.damageSources().mobAttack(user), 5);
+                }
+            }
+        }
+        user.sendSystemMessage(Component.literal("咸鱼突刺！"));
     }
 
     @Override

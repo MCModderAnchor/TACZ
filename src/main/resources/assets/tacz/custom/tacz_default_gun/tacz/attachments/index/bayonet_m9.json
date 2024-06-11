@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.bayonet_m9.name",
+  "tooltip": "tacz.attachment.bayonet_m9.tooltip",
+  "display": "tacz:bayonet_m9_display",
+  "data": "tacz:bayonet_m9_data",
+  "type": "muzzle"
+}
