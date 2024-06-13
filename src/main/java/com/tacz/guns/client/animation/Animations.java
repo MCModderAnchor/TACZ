@@ -1,7 +1,6 @@
 package com.tacz.guns.client.animation;
 
 import com.mojang.math.Vector3f;
-import com.tacz.guns.GunMod;
 import com.tacz.guns.client.animation.gltf.AccessorModel;
 import com.tacz.guns.client.animation.gltf.AnimationModel;
 import com.tacz.guns.client.animation.gltf.AnimationStructure;
@@ -10,18 +9,13 @@ import com.tacz.guns.client.animation.gltf.accessor.AccessorData;
 import com.tacz.guns.client.animation.gltf.accessor.AccessorFloatData;
 import com.tacz.guns.client.animation.interpolator.CustomInterpolator;
 import com.tacz.guns.client.animation.interpolator.InterpolatorUtil;
-import com.tacz.guns.client.model.BedrockAnimatedModel;
-import com.tacz.guns.client.model.bedrock.BedrockModel;
-import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.*;
-import com.tacz.guns.client.resource.pojo.model.BonesItem;
 import com.tacz.guns.util.math.MathUtil;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -29,11 +23,7 @@ import java.util.Map;
 
 public class Animations {
     public static AnimationController createControllerFromGltf(@Nonnull AnimationStructure structure, @Nonnull AnimationListenerSupplier supplier) {
-        return new AnimationController(createAnimationFromGltf(structure, (AnimationListenerSupplier[]) null), supplier);
-    }
-
-    public static @Nonnull List<ObjectAnimation> createAnimationFromGltf(@Nonnull AnimationStructure structure, @Nullable AnimationListenerSupplier... suppliers) {
-        List<ObjectAnimation> result = new ArrayList<>();
+        List<ObjectAnimation> prototypes = new ArrayList<>();
 
         List<AnimationModel> animationModels = structure.getAnimationModels();
         for (AnimationModel animationModel : animationModels) {
@@ -56,20 +46,35 @@ public class Animations {
                 }
                 channel.node = nodeModel.getName();
 
+                // 计算出各个初始值的逆
+                AnimationListener animationListener = supplier.supplyListeners(channel.node, channel.type);
+                if (animationListener == null) {
+                    continue;
+                }
+                float[] inverseValue = animationListener.initialValue();
+                if (channel.type == ObjectAnimationChannel.ChannelType.ROTATION) {
+                    if (inverseValue.length == 3) {
+                        inverseValue = MathUtil.toQuaternion(inverseValue[0], inverseValue[1], inverseValue[2]);
+                    }
+                    inverseValue = MathUtil.inverseQuaternion(inverseValue);
+                } else if (channel.type == ObjectAnimationChannel.ChannelType.TRANSLATION) {
+                    inverseValue[0] = -inverseValue[0];
+                    inverseValue[1] = -inverseValue[1];
+                    inverseValue[2] = -inverseValue[2];
+                }
+
                 // 初始化轨道的关键帧时间和关键帧数值
                 // 关键帧时间的访问器
                 AccessorModel input = sampler.input();
                 AccessorData inputData = input.getAccessorData();
                 if (!(inputData instanceof AccessorFloatData inputFloatData)) {
-                    GunMod.LOGGER.warn("Input data is not an AccessorFloatData, but {}", inputData.getClass());
-                    return result;
+                    throw new IllegalArgumentException("Input data is not an AccessorFloatData, but " + inputData.getClass());
                 }
                 // 关键帧时间的访问器
                 AccessorModel output = sampler.output();
                 AccessorData outputData = output.getAccessorData();
                 if (!(outputData instanceof AccessorFloatData outputFloatData)) {
-                    GunMod.LOGGER.warn("Output data is not an AccessorFloatData, but {}", inputData.getClass());
-                    return result;
+                    throw new IllegalArgumentException("Output data is not an AccessorFloatData, but " + inputData.getClass());
                 }
                 int numKeyElements = inputFloatData.getNumElements();
                 int numValuesElements = outputFloatData.getTotalNumComponents() / numKeyElements;
@@ -80,6 +85,15 @@ public class Animations {
                     for (int j = 0; j < numValuesElements; j++) {
                         values[i][j] = outputFloatData.get(i * numValuesElements + j);
                     }
+                    if (channel.type == ObjectAnimationChannel.ChannelType.ROTATION) {
+                        values[i] = MathUtil.toEulerAngles(values[i]);
+                        values[i] = MathUtil.toQuaternion(-values[i][0], -values[i][1], values[i][2]);
+                        values[i] = MathUtil.mulQuaternion(inverseValue, values[i]);
+                    } else if (channel.type == ObjectAnimationChannel.ChannelType.TRANSLATION) {
+                        values[i][0] = -values[i][0] + inverseValue[0];
+                        values[i][1] = -(-values[i][1] + inverseValue[1]);
+                        values[i][2] = values[i][2] + inverseValue[2];
+                    }
                 }
                 channel.content.keyframeTimeS = keyframeTimeS;
                 channel.content.values = values;
@@ -89,29 +103,19 @@ public class Animations {
 
                 // 将轨道添加到动画
                 animation.addChannel(channel);
-
-                // 将动画监听器添加到动画中
-                if (suppliers != null) {
-                    for (AnimationListenerSupplier supplier : suppliers) {
-                        AnimationListener listener = supplier.supplyListeners(channel.node, channel.type);
-                        if (listener != null) {
-                            channel.addListener(listener);
-                        }
-                    }
-                }
             }
 
-            // 将动画添加到结果列表
-            result.add(animation);
+            // 将动画添加到原型列表中
+            prototypes.add(animation);
         }
-        return result;
+        return new AnimationController(prototypes, supplier);
     }
 
-    public static AnimationController createControllerFromBedrock(BedrockAnimationFile animationFile, BedrockAnimatedModel animatedModel) {
-        return new AnimationController(createAnimationFromBedrock(animationFile, animatedModel), animatedModel);
+    public static AnimationController createControllerFromBedrock(BedrockAnimationFile animationFile, AnimationListenerSupplier supplier) {
+        return new AnimationController(createAnimationFromBedrock(animationFile), supplier);
     }
 
-    public static @Nonnull List<ObjectAnimation> createAnimationFromBedrock(BedrockAnimationFile animationFile, BedrockModel model) {
+    public static @Nonnull List<ObjectAnimation> createAnimationFromBedrock(BedrockAnimationFile animationFile) {
         List<ObjectAnimation> result = new ArrayList<>();
         for (Map.Entry<String, BedrockAnimation> animationEntry : animationFile.getAnimations().entrySet()) {
             ObjectAnimation animation = new ObjectAnimation(animationEntry.getKey());
@@ -126,7 +130,7 @@ public class Animations {
                     translationChannel.node = boneEntry.getKey();
                     translationChannel.interpolator = new CustomInterpolator();
                     // 将位移数据转移进 AnimationChannel
-                    writeBedrockTranslation(translationChannel, bone.getPosition(), model);
+                    writeBedrockTranslation(translationChannel, bone.getPosition());
                     translationChannel.interpolator.compile(translationChannel.content);
                     animation.addChannel(translationChannel);
                 }
@@ -135,7 +139,7 @@ public class Animations {
                     rotationChannel.node = boneEntry.getKey();
                     rotationChannel.interpolator = new CustomInterpolator();
                     // 将旋转数据转移进 AnimationChannel
-                    writeBedrockRotation(rotationChannel, bone.getRotation(), model);
+                    writeBedrockRotation(rotationChannel, bone.getRotation());
                     rotationChannel.interpolator.compile(rotationChannel.content);
                     animation.addChannel(rotationChannel);
                 }
@@ -170,21 +174,9 @@ public class Animations {
         return result;
     }
 
-    private static void writeBedrockTranslation(ObjectAnimationChannel animationChannel, AnimationKeyframes keyframes, BedrockModel model) {
+    private static void writeBedrockTranslation(ObjectAnimationChannel animationChannel, AnimationKeyframes keyframes) {
         // 基岩版动画中储存的动画数据为相对值，而 tac 的动画系统使用的是绝对值，所以需要叠加初始值。
         // 此处就是在获取动画数据的初始值。
-        Vector3f base;
-        BedrockPart node = model.getNode(animationChannel.node);
-        if (node != null) {
-            if (node.getParent() != null) {
-                base = new Vector3f(node.x, -node.y, node.z);
-            } else {
-                BonesItem bone = model.getBone(animationChannel.node);
-                base = new Vector3f(-bone.getPivot().get(0), bone.getPivot().get(1), bone.getPivot().get(2));
-            }
-        } else {
-            base = new Vector3f(0, 0, 0);
-        }
         Double2ObjectRBTreeMap<AnimationKeyframes.Keyframe> keyframesMap = keyframes.getKeyframes();
         animationChannel.content.keyframeTimeS = new float[keyframesMap.size()];
         animationChannel.content.values = new float[keyframesMap.size()][];
@@ -200,30 +192,25 @@ public class Animations {
                     animationChannel.content.values[index] = new float[6];
                     Vector3f pre = keyframe.pre().copy();
                     Vector3f post = keyframe.post().copy();
-                    pre.add(base);
-                    post.add(base);
-                    pre.mul(-1 / 16f, 1 / 16f, 1 / 16f);
-                    post.mul(-1 / 16f, 1 / 16f, 1 / 16f);
+                    pre.mul(1 / 16f, 1 / 16f, 1 / 16f);
+                    post.mul(1 / 16f, 1 / 16f, 1 / 16f);
                     readVector3fToArray(animationChannel.content.values[index], pre, 0);
                     readVector3fToArray(animationChannel.content.values[index], post, 3);
                 } else if (keyframe.pre() != null) {
                     animationChannel.content.values[index] = new float[3];
                     Vector3f pre = keyframe.pre().copy();
-                    pre.add(base);
-                    pre.mul(-1 / 16f, 1 / 16f, 1 / 16f);
+                    pre.mul(1 / 16f, 1 / 16f, 1 / 16f);
                     readVector3fToArray(animationChannel.content.values[index], pre, 0);
                 } else {
                     animationChannel.content.values[index] = new float[3];
                     Vector3f post = keyframe.post().copy();
-                    post.add(base);
-                    post.mul(-1 / 16f, 1 / 16f, 1 / 16f);
+                    post.mul(1 / 16f, 1 / 16f, 1 / 16f);
                     readVector3fToArray(animationChannel.content.values[index], post, 0);
                 }
             } else if (keyframe.data() != null) {
                 animationChannel.content.values[index] = new float[3];
                 Vector3f data = keyframe.data().copy();
-                data.add(base);
-                data.mul(-1 / 16f, 1 / 16f, 1 / 16f);
+                data.mul(1 / 16f, 1 / 16f, 1 / 16f);
                 readVector3fToArray(animationChannel.content.values[index], data, 0);
             }
             // 写入关键帧插值类型
@@ -241,15 +228,7 @@ public class Animations {
         }
     }
 
-    private static void writeBedrockRotation(ObjectAnimationChannel animationChannel, AnimationKeyframes keyframes, BedrockModel model) {
-        Vector3f base;
-        BedrockPart node = model.getNode(animationChannel.node);
-        if (node != null) {
-            // 基岩版模型上下颠倒，x、y轴运动需要反向。
-            base = new Vector3f(-node.xRot, -node.yRot, node.zRot);
-        } else {
-            base = new Vector3f(0, 0, 0);
-        }
+    private static void writeBedrockRotation(ObjectAnimationChannel animationChannel, AnimationKeyframes keyframes) {
         Double2ObjectRBTreeMap<AnimationKeyframes.Keyframe> keyframesMap = keyframes.getKeyframes();
         animationChannel.content.keyframeTimeS = new float[keyframesMap.size()];
         animationChannel.content.values = new float[keyframesMap.size()][];
@@ -262,49 +241,49 @@ public class Animations {
             AnimationKeyframes.Keyframe keyframe = entry.getValue();
             if (keyframe.pre() != null || keyframe.post() != null) {
                 if (keyframe.pre() != null && keyframe.post() != null) {
-                    animationChannel.content.values[index] = new float[8];
+                    animationChannel.content.values[index] = new float[6];
                     Vector3f pre = keyframe.pre().copy();
                     Vector3f post = keyframe.post().copy();
                     toAngle(pre);
                     toAngle(post);
-                    pre.mul(-1, -1, 1);
-                    post.mul(-1, -1, 1);
-                    float[] q1 = MathUtil.toQuaternion(pre.x() + base.x(), pre.y() + base.y(), pre.z() + base.z());
-                    float[] q2 = MathUtil.toQuaternion(post.x() + base.x(), post.y() + base.y(), post.z() + base.z());
-                    System.arraycopy(q1, 0, animationChannel.content.values[index], 0, 4);
-                    System.arraycopy(q2, 0, animationChannel.content.values[index], 4, 4);
+                    animationChannel.content.values[index][0] = pre.x();
+                    animationChannel.content.values[index][1] = pre.y();
+                    animationChannel.content.values[index][2] = pre.z();
+                    animationChannel.content.values[index][3] = post.x();
+                    animationChannel.content.values[index][4] = post.y();
+                    animationChannel.content.values[index][5] = post.z();
                 } else if (keyframe.pre() != null) {
-                    animationChannel.content.values[index] = new float[4];
-                    Vector3f pre = keyframe.pre().copy();
+                    animationChannel.content.values[index] = new float[3];
+                    Vector3f pre = keyframe.pre().copy();;
                     toAngle(pre);
-                    pre.mul(-1, -1, 1);
-                    float[] q = MathUtil.toQuaternion(pre.x() + base.x(), pre.y() + base.y(), pre.z() + base.z());
-                    System.arraycopy(q, 0, animationChannel.content.values[index], 0, 4);
+                    animationChannel.content.values[index][0] = pre.x();
+                    animationChannel.content.values[index][1] = pre.y();
+                    animationChannel.content.values[index][2] = pre.z();
                 } else {
-                    animationChannel.content.values[index] = new float[4];
-                    Vector3f post = keyframe.post().copy();
+                    animationChannel.content.values[index] = new float[3];
+                    Vector3f post =  keyframe.post().copy();
                     toAngle(post);
-                    post.mul(-1, -1, 1);
-                    float[] q = MathUtil.toQuaternion(post.x() + base.x(), post.y() + base.y(), post.z() + base.z());
-                    System.arraycopy(q, 0, animationChannel.content.values[index], 0, 4);
+                    animationChannel.content.values[index][0] = post.x();
+                    animationChannel.content.values[index][1] = post.y();
+                    animationChannel.content.values[index][2] = post.z();
                 }
             } else if (keyframe.data() != null) {
-                animationChannel.content.values[index] = new float[4];
+                animationChannel.content.values[index] = new float[3];
                 Vector3f data = keyframe.data().copy();
                 toAngle(data);
-                data.mul(-1, -1, 1);
-                float[] q = MathUtil.toQuaternion(data.x() + base.x(), data.y() + base.y(), data.z() + base.z());
-                System.arraycopy(q, 0, animationChannel.content.values[index], 0, 4);
+                animationChannel.content.values[index][0] = data.x();
+                animationChannel.content.values[index][1] = data.y();
+                animationChannel.content.values[index][2] = data.z();
             }
             String lerpModeName = keyframe.lerpMode();
             if (lerpModeName != null) {
                 if (lerpModeName.equals(AnimationChannelContent.LerpMode.CATMULLROM.name().toLowerCase())) {
-                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.SPHERICAL_CATMULLROM;
+                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.CATMULLROM;
                 } else {
-                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.SPHERICAL_LINEAR;
+                    animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.LINEAR;
                 }
             } else {
-                animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.SPHERICAL_LINEAR;
+                animationChannel.content.lerpModes[index] = AnimationChannelContent.LerpMode.LINEAR;
             }
             index++;
         }

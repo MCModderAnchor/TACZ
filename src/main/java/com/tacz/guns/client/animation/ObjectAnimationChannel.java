@@ -76,10 +76,7 @@ public class ObjectAnimationChannel {
         int indexFrom = computeIndex(timeS);
         int indexTo = Math.min(content.keyframeTimeS.length - 1, indexFrom + 1);
         float alpha = computeAlpha(timeS, indexFrom);
-        int resultLength = type == ChannelType.ROTATION ? 4 : 3;
-        float[] result = new float[resultLength];
-        interpolator.interpolate(indexFrom, indexTo, alpha, result);
-        return result;
+        return interpolator.interpolate(indexFrom, indexTo, alpha);
     }
 
     private int computeIndex(float timeS) {

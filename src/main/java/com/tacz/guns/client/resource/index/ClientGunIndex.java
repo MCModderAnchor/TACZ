@@ -5,12 +5,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.DefaultAssets;
-import com.tacz.guns.client.animation.*;
+import com.tacz.guns.client.animation.AnimationController;
+import com.tacz.guns.client.animation.Animations;
+import com.tacz.guns.client.animation.ObjectAnimation;
 import com.tacz.guns.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tacz.guns.client.model.BedrockGunModel;
-import com.tacz.guns.client.model.bedrock.BedrockModel;
-import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.InternalAssetLoader;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
@@ -22,7 +22,6 @@ import com.tacz.guns.resource.pojo.GunIndexPOJO;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.ColorHex;
-import com.tacz.guns.util.math.MathUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +32,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -188,13 +186,13 @@ public class ClientGunIndex {
         if (location == null) {
             controller = new AnimationController(Lists.newArrayList(), index.gunModel);
         } else {
-            // 目前支持的动画为 gltf 动画。此处从缓存取出 gltf 的动画资源。
             AnimationStructure gltfAnimations = ClientAssetManager.INSTANCE.getGltfAnimations(location);
             BedrockAnimationFile bedrockAnimationFile = ClientAssetManager.INSTANCE.getBedrockAnimations(location);
             if (bedrockAnimationFile != null) {
-                // 用 gltf 动画资源创建动画控制器
+                // 用 bedrock 动画资源创建动画控制器
                 controller = Animations.createControllerFromBedrock(bedrockAnimationFile, index.gunModel);
             } else if (gltfAnimations != null) {
+                // 用 gltf 动画资源创建动画控制器
                 controller = Animations.createControllerFromGltf(gltfAnimations, index.gunModel);
             } else {
                 throw new IllegalArgumentException("animation not found: " + location);
@@ -205,12 +203,12 @@ public class ClientGunIndex {
                 switch (defaultAnimation) {
                     case RIFLE -> {
                         for (ObjectAnimation animation : InternalAssetLoader.getDefaultRifleAnimations()) {
-                            controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
+                            controller.providePrototypeIfAbsent(animation.name, () -> new ObjectAnimation(animation));
                         }
                     }
                     case PISTOL -> {
                         for (ObjectAnimation animation : InternalAssetLoader.getDefaultPistolAnimations()) {
-                            controller.providePrototypeIfAbsent(animation.name, () -> createAnimationCopy(animation, index.gunModel));
+                            controller.providePrototypeIfAbsent(animation.name, () -> new ObjectAnimation(animation));
                         }
                     }
                 }
@@ -287,59 +285,6 @@ public class ClientGunIndex {
                 throw new IllegalArgumentException("index number is error: " + key);
             }
         }
-    }
-
-    private static ObjectAnimation createAnimationCopy(ObjectAnimation prototype, BedrockModel model) {
-        ObjectAnimation animation = new ObjectAnimation(prototype);
-        for (Map.Entry<String, List<ObjectAnimationChannel>> entry : animation.getChannels().entrySet()) {
-            BedrockPart node = model.getNode(entry.getKey());
-            float offsetX = 0, offsetY = 0, offsetZ = 0;
-            float rotationX = 0, rotationY = 0, rotationZ = 0;
-            if (node != null) {
-                if (node.getParent() != null) {
-                    // 因为模型是上下颠倒的，因此x轴和y轴的偏移也进行取反
-                    offsetX = -node.x / 16f;
-                    offsetY = -node.y / 16f;
-                    offsetZ = node.z / 16f;
-                } else {
-                    // 节点为根时，x轴和y轴取反，并且y轴坐标需要加上 24 。
-                    offsetX = -node.x / 16f;
-                    offsetY = (24 - node.y) / 16f;
-                    offsetZ = node.z / 16f;
-                }
-                rotationX = node.xRot;
-                rotationY = node.yRot;
-                rotationZ = node.zRot;
-            }
-            for (ObjectAnimationChannel channel : entry.getValue()) {
-                if (channel.type == ObjectAnimationChannel.ChannelType.TRANSLATION) {
-                    channel.content = new AnimationChannelContent(channel.content);
-                    for (int i = 0; i < channel.content.values.length; i++) {
-                        float[] value = channel.content.values[i];
-                        value[0] += offsetX;
-                        value[1] += offsetY;
-                        value[2] += offsetZ;
-                    }
-                    channel.interpolator = channel.interpolator.clone();
-                    channel.interpolator.compile(channel.content);
-                    continue;
-                }
-                if (channel.type == ObjectAnimationChannel.ChannelType.ROTATION) {
-                    channel.content = new AnimationChannelContent(channel.content);
-                    for (int i = 0; i < channel.content.values.length; i++) {
-                        float[] value = channel.content.values[i];
-                        float[] angles = MathUtil.toEulerAngles(value);
-                        angles[0] += rotationX;
-                        angles[1] += rotationY;
-                        angles[2] += rotationZ;
-                        channel.content.values[i] = MathUtil.toQuaternion(angles[0], angles[1], angles[2]);
-                    }
-                    channel.interpolator = channel.interpolator.clone();
-                    channel.interpolator.compile(channel.content);
-                }
-            }
-        }
-        return animation;
     }
 
     public String getType() {

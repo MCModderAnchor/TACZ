@@ -170,6 +170,23 @@ public class MathUtil {
         return result;
     }
 
+    public static float[] mulQuaternion(float[] q1, float[] q2) {
+        return new float[]{
+                Math.fma(q1[3], q2[0], Math.fma(q1[0], q2[3], Math.fma(q1[1], q2[2], -q1[2] * q2[1]))),
+                Math.fma(q1[3], q2[1], Math.fma(-q1[0], q2[2], Math.fma(q1[1], q2[3], q1[2] * q2[0]))),
+                Math.fma(q1[3], q2[2], Math.fma(q1[0], q2[1], Math.fma(-q1[1], q2[0], q1[2] * q2[3]))),
+                Math.fma(q1[3], q2[3], Math.fma(-q1[0], q2[0], Math.fma(-q1[1], q2[1], -q1[2] * q2[2])))
+        };
+    }
+
+    public static Quaternion conjugateQuaternion(Quaternion q){
+        return new Quaternion(-q.i(), -q.j(), -q.k(), q.r());
+    }
+
+    public static float dotQuaternion(Quaternion q1, Quaternion q2) {
+        return q1.i() * q2.i() + q1.j() * q2.j() + q1.k() * q2.k() + q1.r() * q2.r();
+    }
+
     public static void blendQuaternion(Quaternion to, Quaternion from) {
         Quaternion q1 = new Quaternion(to);
         Quaternion q2 = new Quaternion(from);

@@ -13,24 +13,26 @@ public class ConstraintRotateListener implements AnimationListener {
 
     @Override
     public void update(float[] values, boolean blend) {
-        float[] angles = MathUtil.toEulerAngles(values);
+        if (values.length == 4) {
+            values = MathUtil.toEulerAngles(values);
+        }
         if (blend) {
             constraint.rotationConstraint.set(
-                    (float) Math.max(constraint.rotationConstraint.x(), MathUtil.toDegreePositive(-angles[0])),
-                    (float) Math.max(constraint.rotationConstraint.y(), MathUtil.toDegreePositive(-angles[1])),
-                    (float) Math.max(constraint.rotationConstraint.z(), MathUtil.toDegreePositive(angles[2]))
+                    (float) Math.max(constraint.rotationConstraint.x(), MathUtil.toDegreePositive(values[0])),
+                    (float) Math.max(constraint.rotationConstraint.y(), MathUtil.toDegreePositive(values[1])),
+                    (float) Math.max(constraint.rotationConstraint.z(), MathUtil.toDegreePositive(values[2]))
             );
         } else {
             constraint.rotationConstraint.set(
-                    (float) MathUtil.toDegreePositive(-angles[0]),
-                    (float) MathUtil.toDegreePositive(-angles[1]),
-                    (float) MathUtil.toDegreePositive(angles[2]));
+                    (float) MathUtil.toDegreePositive(values[0]),
+                    (float) MathUtil.toDegreePositive(values[1]),
+                    (float) MathUtil.toDegreePositive(values[2]));
         }
     }
 
     @Override
-    public float[] recover() {
-        return new float[]{0, 0, 0, 1};
+    public float[] initialValue() {
+        return MathUtil.toQuaternion(constraint.node.xRot, constraint.node.yRot, constraint.node.zRot);
     }
 
     @Override

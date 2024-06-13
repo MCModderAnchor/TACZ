@@ -11,16 +11,18 @@ public class Linear implements Interpolator {
     }
 
     @Override
-    public void interpolate(int indexFrom, int indexTo, float alpha, float[] result) {
+    public float[] interpolate(int indexFrom, int indexTo, float alpha) {
         // 如果动画值有 6 个，后三个为 Post 数值，用于插值起点
         int offset = content.values[indexFrom].length == 6 ? 3 : 0;
-        for (int i = 0; i < result.length; i++) {
+        float[] result = new float[3];
+        for (int i = 0; i < 3; i++) {
             if (indexFrom == indexTo) {
                 result[i] = content.values[indexFrom][i + offset];
             } else {
                 result[i] = content.values[indexFrom][i + offset] * (1 - alpha) + content.values[indexTo][i] * alpha;
             }
         }
+        return result;
     }
 
     @Override

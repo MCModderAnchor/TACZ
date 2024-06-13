@@ -1,5 +1,7 @@
 package com.tacz.guns.client.animation;
 
+import com.tacz.guns.util.math.MathUtil;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
@@ -104,21 +106,29 @@ public class ObjectAnimationRunner {
                     for (ObjectAnimationChannel channel : entry.getValue()) {
                         Optional<ObjectAnimationChannel> toChannel =
                                 toChannels.stream().filter(c -> c.type.equals(channel.type)).findAny();
+                        float[] value = channel.getResult(progressNs / 1e9f);
+                        if (channel.type == ObjectAnimationChannel.ChannelType.ROTATION && value.length == 3) {
+                            value = MathUtil.toQuaternion(value[0], value[1], value[2]);
+                        }
                         if (toChannel.isPresent()) {
-                            valueFrom.add(channel.getResult(progressNs / 1e9f));
+                            valueFrom.add(value);
                             transitionFromChannels.add(channel);
                             transitionToChannels.add(toChannel.get());
                             // 取消过渡目标的channel对模型的更新，统一在起点channel进行更新。
                             toChannel.get().transitioning = true;
                         } else {
-                            valueRecover.add(channel.getResult(progressNs / 1e9f));
+                            valueRecover.add(value);
                             recoverChannels.add(channel);
                         }
                     }
                 } else {
                     // 如果过渡终点的动画中 同一个 node 不包含动画数据，那么将过渡到原位。
                     for (ObjectAnimationChannel channel : entry.getValue()) {
-                        valueRecover.add(channel.getResult(progressNs / 1e9f));
+                        float[] value = channel.getResult(progressNs / 1e9f);
+                        if (channel.type == ObjectAnimationChannel.ChannelType.ROTATION && value.length == 3) {
+                            value = MathUtil.toQuaternion(value[0], value[1], value[2]);
+                        }
+                        valueRecover.add(value);
                         recoverChannels.add(channel);
                     }
                 }
@@ -136,13 +146,19 @@ public class ObjectAnimationRunner {
                 ObjectAnimationChannel toChannel = transitionToChannels.get(i);
                 float[] from = valueFrom.get(i);
                 float[] to = toChannel.getResult(this.transitionTo.progressNs / 1e9f);
-                float[] result = new float[from.length];
+                float[] result;
                 float progress = easeOutCubic((float) transitionProgressNs / transitionTimeNs);
                 if (fromChannel.type.equals(ObjectAnimationChannel.ChannelType.TRANSLATION)) {
+                    result = new float[3];
                     lerp(from, to, progress, result);
                 } else if (fromChannel.type.equals(ObjectAnimationChannel.ChannelType.ROTATION)) {
+                    result = new float[4];
+                    if (to.length == 3) {
+                        to = MathUtil.toQuaternion(to[0], to[1], to[2]);
+                    }
                     slerp(from, to, progress, result);
-                } else if (fromChannel.type.equals(ObjectAnimationChannel.ChannelType.SCALE)) {
+                } else { // Scale
+                    result = new float[3];
                     lerp(from, to, progress, result);
                 }
 
@@ -207,6 +223,7 @@ public class ObjectAnimationRunner {
     public void update(boolean blend) {
         long currentNs = System.nanoTime();
         long fromTimeNs = progressNs;
+
         if (running) {
             progressNs += currentNs - lastUpdateNs;
         }
@@ -271,13 +288,19 @@ public class ObjectAnimationRunner {
 
             float[] from = valueFrom.get(i);
             float[] to = toChannel.getResult(transitionTo.progressNs / 1e9f);
-            float[] result = new float[from.length];
+            float[] result;
 
             if (fromChannel.type.equals(ObjectAnimationChannel.ChannelType.TRANSLATION)) {
+                result = new float[3];
                 lerp(from, to, progress, result);
             } else if (fromChannel.type.equals(ObjectAnimationChannel.ChannelType.ROTATION)) {
+                result = new float[4];
+                if (to.length == 3) {
+                    to = MathUtil.toQuaternion(to[0], to[1], to[2]);
+                }
                 slerp(from, to, progress, result);
-            } else if (fromChannel.type.equals(ObjectAnimationChannel.ChannelType.SCALE)) {
+            } else { // Scale
+                result = new float[3];
                 lerp(from, to, progress, result);
             }
             for (AnimationListener listener : fromChannel.getListeners()) {
@@ -285,27 +308,29 @@ public class ObjectAnimationRunner {
             }
 
         }
-        if (animation.playType != ObjectAnimation.PlayType.PLAY_ONCE_STOP) {
-            // 如果是 PLAY_ONCE_STOP，动画结束后不应该 update 其本身的关键帧，因此不进行恢复过渡
+        if (animation.playType != ObjectAnimation.PlayType.PLAY_ONCE_STOP) { // 如果是 PLAY_ONCE_STOP，动画结束后不应该 update 其本身的关键帧，因此不进行恢复过渡
             for (int i = 0; i < recoverChannels.size(); i++) {
                 ObjectAnimationChannel channel = recoverChannels.get(i);
                 float[] from = valueRecover.get(i);
-                float[] result = new float[from.length];
+                float[] result;
                 if (channel.type.equals(ObjectAnimationChannel.ChannelType.TRANSLATION)) {
+                    result = new float[3];
+                    float[] to = new float[]{0, 0, 0};
                     for (AnimationListener listener : channel.getListeners()) {
-                        float[] to = listener.recover();
                         lerp(from, to, progress, result);
                         listener.update(result, blend);
                     }
                 } else if (channel.type.equals(ObjectAnimationChannel.ChannelType.ROTATION)) {
+                    result = new float[4];
+                    float[] to = new float[]{0, 0, 0, 1};
                     for (AnimationListener listener : channel.getListeners()) {
-                        float[] to = listener.recover();
                         slerp(from, to, progress, result);
                         listener.update(result, blend);
                     }
                 } else if (channel.type.equals(ObjectAnimationChannel.ChannelType.SCALE)) {
+                    result = new float[3];
+                    float[] to = new float[]{1, 1, 1};
                     for (AnimationListener listener : channel.getListeners()) {
-                        float[] to = listener.recover();
                         lerp(from, to, progress, result);
                         listener.update(result, blend);
                     }
