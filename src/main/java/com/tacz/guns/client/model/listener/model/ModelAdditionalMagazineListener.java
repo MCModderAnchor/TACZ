@@ -22,8 +22,8 @@ public class ModelAdditionalMagazineListener implements AnimationListener {
     }
 
     @Override
-    public float[] recover() {
-        return listener.recover();
+    public float[] initialValue() {
+        return listener.initialValue();
     }
 
     @Override

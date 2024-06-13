@@ -25,7 +25,7 @@ public class ModelScaleListener implements AnimationListener {
     }
 
     @Override
-    public float[] recover() {
+    public float[] initialValue() {
         return new float[]{1f, 1f, 1f};
     }
 

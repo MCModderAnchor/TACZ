@@ -3,6 +3,9 @@ package com.tacz.guns.client.animation.interpolator;
 import com.tacz.guns.client.animation.AnimationChannelContent;
 import com.tacz.guns.client.animation.AnimationChannelContent.LerpMode;
 import com.tacz.guns.util.math.MathUtil;
+import org.joml.Quaternionf;
+
+import java.util.Arrays;
 
 public class CustomInterpolator implements Interpolator {
     private AnimationChannelContent content;
@@ -13,137 +16,182 @@ public class CustomInterpolator implements Interpolator {
     }
 
     @Override
-    public void interpolate(int indexFrom, int indexTo, float alpha, float[] result) {
+    public float[] interpolate(int indexFrom, int indexTo, float alpha) {
         LerpMode fromLerpMode = content.lerpModes[indexFrom];
         LerpMode toLerpMode = content.lerpModes[indexTo];
         if (fromLerpMode == LerpMode.SPHERICAL_LINEAR && toLerpMode == LerpMode.SPHERICAL_LINEAR) {
             // 球面线性插值
-            this.doSphericalLinearLerp(indexFrom, indexTo, alpha, result);
+            return doSphericalLinear(indexFrom, indexTo, alpha);
         }
-        if (fromLerpMode == LerpMode.SPHERICAL_CATMULLROM || toLerpMode == LerpMode.SPHERICAL_CATMULLROM) {
-            // 球面 Catmull-Rom 插值
-            this.doSphericalCatmullRomLerp(indexFrom, indexTo, alpha, result);
+        if (fromLerpMode == LerpMode.SPHERICAL_SQUAD || toLerpMode == LerpMode.SPHERICAL_SQUAD) {
+            // 球面 Squad 插值
+            return this.doSphericalSquad(indexFrom, indexTo, alpha);
         } else if (fromLerpMode == LerpMode.CATMULLROM || toLerpMode == LerpMode.CATMULLROM) {
             // Catmull-Rom 插值
-            this.doCatmullromLerp(indexFrom, indexTo, alpha, result);
+            return doCatmullromLerp(indexFrom, indexTo, alpha);
         } else {
             // 其他情况的插值计算
-            this.doOtherLerp(indexFrom, indexTo, alpha, result);
+            return doOtherLerp(indexFrom, indexTo, alpha);
         }
     }
 
-    private void doOtherLerp(int indexFrom, int indexTo, float alpha, float[] result) {
-        // 如果动画值有 6 个，后三个为 Post 数值，用于插值起点
-        int offset = content.values[indexFrom].length == 6 ? 3 : 0;
+    private float[] getAsQuaternion(int index, boolean needOffset) {
+        float[] result = getValue(index, needOffset);
+        if (result.length == 3) {
+            result = MathUtil.toQuaternion(result[0], result[1], result[2]);
+        }
+        return result;
+    }
+
+    private float[] getAsThreeAxis(int index, boolean needOffset) {
+        float[] result = getValue(index, needOffset);
+        if (result.length == 4) {
+            result = MathUtil.toEulerAngles(result);
+        }
+        return result;
+    }
+
+    private float[] getValue(int index, boolean needOffset) {
+        boolean isQuaternion = content.values[index].length == 4 || content.values[index].length == 8;
+        int offset = 0;
+        if (needOffset) {
+            offset = switch (content.values[index].length) {
+                case 8 -> 4;
+                case 6 -> 3;
+                default -> 0;
+            };
+        }
+        return Arrays.copyOfRange(content.values[index], offset, offset + (isQuaternion ? 4 : 3));
+    }
+
+    private float[] doOtherLerp(int indexFrom, int indexTo, float alpha) {
+        if (indexFrom == indexTo) {
+            return getValue(indexTo, alpha > 0);
+        }
+        float[] valueFrom = getAsThreeAxis(indexFrom, true);
+        float[] valueTo = getAsThreeAxis(indexTo, false);
+        float[] result = new float[3];
         for (int i = 0; i < 3; i++) {
-            if (indexFrom == indexTo) {
-                result[i] = content.values[indexFrom][i + offset];
-            } else {
-                result[i] = content.values[indexFrom][i + offset] * (1 - alpha) + content.values[indexTo][i] * alpha;
-            }
+            result[i] = valueFrom[i] * (1 - alpha) + valueTo[i] * alpha;
         }
+        return result;
     }
 
-    private void doCatmullromLerp(int indexFrom, int indexTo, float alpha, float[] result) {
+    private float[] doCatmullromLerp(int indexFrom, int indexTo, float alpha) {
         if (content.values.length == 1) {
-            result[0] = content.values[0][0];
-            result[1] = content.values[0][1];
-            result[2] = content.values[0][2];
-            return;
+            return getValue(0, alpha > 0);
         }
         float[] vx = new float[4];
         float[] vy = new float[4];
         float[] vz = new float[4];
         int prev = indexFrom == 0 ? 0 : indexFrom - 1;
         int next = indexTo == (content.values.length - 1) ? (content.values.length - 1) : indexTo + 1;
-        int prevOffset = content.values[prev].length == 6 ? 3 : 0;
-        vx[0] = content.values[prev][prevOffset];
-        vy[0] = content.values[prev][1 + prevOffset];
-        vz[0] = content.values[prev][2 + prevOffset];
-        vx[1] = content.values[indexFrom][0];
-        vy[1] = content.values[indexFrom][1];
-        vz[1] = content.values[indexFrom][2];
-        vx[2] = content.values[indexTo][0];
-        vy[2] = content.values[indexTo][1];
-        vz[2] = content.values[indexTo][2];
-        vx[3] = content.values[next][0];
-        vy[3] = content.values[next][1];
-        vz[3] = content.values[next][2];
+        float[] valuePrev = getAsThreeAxis(prev, true);
+        float[] valueFrom = getAsThreeAxis(indexFrom, false);
+        float[] valueTo = getAsThreeAxis(indexTo, false);
+        float[] valueNext = getAsThreeAxis(next, false);
+        vx[0] = valuePrev[0];
+        vy[0] = valuePrev[1];
+        vz[0] = valuePrev[2];
+        vx[1] = valueFrom[0];
+        vy[1] = valueFrom[1];
+        vz[1] = valueFrom[2];
+        vx[2] = valueTo[0];
+        vy[2] = valueTo[1];
+        vz[2] = valueTo[2];
+        vx[3] = valueNext[0];
+        vy[3] = valueNext[1];
+        vz[3] = valueNext[2];
         // 这里用的是三次样条插值，主要是为了和 BlockBench 中的表现贴合。
         // BlockBench 中调用的是 THREE.SplineCurve，其实现是三次样条插值。如果用 Catmull-Rom 插值，区别会比较大。
-        result[0] = MathUtil.splineCurve(vx, 0.5f, alpha);
-        result[1] = MathUtil.splineCurve(vy, 0.5f, alpha);
-        result[2] = MathUtil.splineCurve(vz, 0.5f, alpha);
+        return new float[]{
+                MathUtil.splineCurve(vx, 0.5f, alpha),
+                MathUtil.splineCurve(vy, 0.5f, alpha),
+                MathUtil.splineCurve(vz, 0.5f, alpha)
+        };
     }
 
-    private void doSphericalLinearLerp(int indexFrom, int indexTo, float alpha, float[] result) {
+    private float[] doSphericalLinear(int indexFrom, int indexTo, float alpha) {
         if (content.values.length == 1) {
-            result[0] = content.values[0][0];
-            result[1] = content.values[0][1];
-            result[2] = content.values[0][2];
-            result[3] = content.values[0][3];
-            return;
+            return getAsQuaternion(0, alpha > 0);
         }
         // 如果旋转值有 8 个，后四个为 Post 数值，用于插值起点
-        int offset = content.values[indexFrom].length == 8 ? 4 : 0;
-        float ax = content.values[indexFrom][offset];
-        float ay = content.values[indexFrom][1 + offset];
-        float az = content.values[indexFrom][2 + offset];
-        float aw = content.values[indexFrom][3 + offset];
-        float bx = content.values[indexTo][0];
-        float by = content.values[indexTo][1];
-        float bz = content.values[indexTo][2];
-        float bw = content.values[indexTo][3];
-
-        float dot = ax * bx + ay * by + az * bz + aw * bw;
-        if (dot < 0) {
-            bx = -bx;
-            by = -by;
-            bz = -bz;
-            bw = -bw;
-            dot = -dot;
-        }
-        float epsilon = 1e-6f;
-        float s0, s1;
-        if ((1.0 - dot) > epsilon) {
-            float omega = (float) Math.acos(dot);
-            float invSinOmega = 1.0f / (float) Math.sin(omega);
-            s0 = (float) Math.sin((1.0 - alpha) * omega) * invSinOmega;
-            s1 = (float) Math.sin(alpha * omega) * invSinOmega;
-        } else {
-            s0 = 1.0f - alpha;
-            s1 = alpha;
-        }
-        float rx = s0 * ax + s1 * bx;
-        float ry = s0 * ay + s1 * by;
-        float rz = s0 * az + s1 * bz;
-        float rw = s0 * aw + s1 * bw;
-        result[0] = rx;
-        result[1] = ry;
-        result[2] = rz;
-        result[3] = rw;
+        float[] q0 = getAsQuaternion(indexFrom, true);
+        float[] q1 = getAsQuaternion(indexTo, false);
+        return MathUtil.slerp(q0, q1, alpha);
     }
 
-    private void doSphericalCatmullRomLerp(int indexFrom, int indexTo, float alpha, float[] result) {
+    private float[] doSphericalSquad(int indexFrom, int indexTo, float alpha) {
         if (content.values.length == 1) {
-            result[0] = content.values[0][0];
-            result[1] = content.values[0][1];
-            result[2] = content.values[0][2];
-            result[3] = content.values[0][3];
-            return;
+            return getAsQuaternion(0, alpha > 0);
         }
         int prev = indexFrom == 0 ? 0 : indexFrom - 1;
         int next = indexTo == (content.values.length - 1) ? (content.values.length - 1) : indexTo + 1;
-        int prevOffset = content.values[prev].length == 8 ? 4 : 0;
-        float[] prevValue = content.values[prev];
-        float[] q0 = new float[]{prevValue[prevOffset], prevValue[1 + prevOffset], prevValue[2 + prevOffset], prevValue[3 + prevOffset]};
+        float[] q0 = getAsQuaternion(prev, true);
+        float[] q1 = getAsQuaternion(indexFrom, false);
+        float[] q2 = getAsQuaternion(indexTo, false);
+        float[] q3 = getAsQuaternion(next, false);
+
         // 这里用的是三次样条插值，主要是为了和 BlockBench 中的表现贴合。
         // BlockBench 中调用的是 THREE.SplineCurve，其实现是三次样条插值。如果用 Catmull-Rom 插值，区别会比较大。
-        float[] r = MathUtil.quaternionSplineCurve(new float[][]{q0, content.values[indexFrom], content.values[indexTo], content.values[next]}, 0.5f, alpha);
-        result[0] = r[0];
-        result[1] = r[1];
-        result[2] = r[2];
-        result[3] = r[3];
+        //float[] r = MathUtil.quaternionSplineCurve(new float[][]{q0, content.values[indexFrom], content.values[indexTo], content.values[next]}, 0.5f, alpha);
+        return squad(q0, q1, q2, q3, alpha);
+    }
+
+    public static float[] squad(float[] q0, float[] q1, float[] q2, float[] q3, float t) {
+        float[] s1 = intermediate(MathUtil.toQuaternion(q0), MathUtil.toQuaternion(q1), MathUtil.toQuaternion(q2));
+        float[] s2 = intermediate(MathUtil.toQuaternion(q1), MathUtil.toQuaternion(q2), MathUtil.toQuaternion(q3));
+
+        float[] slerp1 = MathUtil.slerp(q1, q2, t);
+        float[] slerp2 = MathUtil.slerp(s1, s2, t);
+        return MathUtil.slerp(slerp1, slerp2, 2 * t * (1 - t));
+    }
+
+    private static float[] intermediate(Quaternionf q0, Quaternionf q1, Quaternionf q2) {
+        if (q1.dot(q0) < 0) {
+            q0 = reverse(q0);
+        }
+        if (q1.dot(q2) < 0) {
+            q2 = reverse(q2);
+        }
+        Quaternionf q0Conj = q0.conjugate(new Quaternionf());
+        Quaternionf q1Conj = q1.conjugate(new Quaternionf());
+        Quaternionf m0 = q0Conj.mul(q1);
+        Quaternionf m1 = q1Conj.mul(q2);
+        Quaternionf m0Log = log(m0);
+        Quaternionf m1Log = log(m1);
+        Quaternionf mLogSum = m0Log.add(m1Log.mul(-1f));
+        Quaternionf exp = exp(mLogSum.mul(0.25f));
+        Quaternionf result = q1.mul(exp);
+        return new float[]{result.x, result.y, result.z ,result.w};
+    }
+
+    private static Quaternionf log(Quaternionf q) {
+        double sin = Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z);
+        double theta = Math.atan2(sin, q.w);
+        Quaternionf result = new Quaternionf(q);
+        if (sin > 0.0005f) {
+            result.mul((float) (theta / sin));
+        }
+        result.w = 0;
+        return result;
+    }
+
+    private static Quaternionf exp(Quaternionf q) {
+        double theta = Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z);
+        double cos = Math.cos(theta);
+        Quaternionf result = new Quaternionf(q);
+        if (cos < 0.9995){
+            result.mul((float) (Math.sin(theta) / theta));
+        }
+        result.w = (float) cos;
+        return result;
+    }
+
+    private static Quaternionf reverse(Quaternionf q) {
+        Quaternionf result = new Quaternionf(q);
+        q.mul(-1f);
+        return result;
     }
 
     @Override

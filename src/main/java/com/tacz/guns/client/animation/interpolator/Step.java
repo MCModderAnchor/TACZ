@@ -2,6 +2,8 @@ package com.tacz.guns.client.animation.interpolator;
 
 import com.tacz.guns.client.animation.AnimationChannelContent;
 
+import java.util.Arrays;
+
 public class Step implements Interpolator {
     private AnimationChannelContent content;
 
@@ -11,16 +13,25 @@ public class Step implements Interpolator {
     }
 
     @Override
-    public void interpolate(int indexFrom, int indexTo, float alpha, float[] result) {
-        // 如果动画值有 6 个，后三个为 Post 数值，用于插值起点
-        int offset = content.values[indexFrom].length == 6 ? 3 : 0;
-        for (int i = 0; i < result.length; i++) {
-            if (alpha < 1 || indexFrom == indexTo) {
-                result[i] = content.values[indexFrom][i + offset];
-            } else {
-                result[i] = content.values[indexTo][i];
-            }
+    public float[] interpolate(int indexFrom, int indexTo, float alpha) {
+        float[] result;
+        int offset = switch (content.values[indexFrom].length) {
+            case 8 -> 4;
+            case 6 -> 3;
+            default -> 0;
+        };
+        if (alpha < 1 || indexFrom == indexTo) {
+            result = Arrays.copyOfRange(content.values[indexFrom], offset, content.values[indexFrom].length);
+        } else {
+            int length = content.values[indexTo].length;
+            length = switch (length) {
+                case 8 -> 4;
+                case 6 -> 3;
+                default -> length;
+            };
+            result = Arrays.copyOfRange(content.values[indexTo], 0, length);
         }
+        return result;
     }
 
     @Override
