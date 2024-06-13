@@ -148,7 +148,7 @@ public class AccessorSparseUtils {
                     sparseValuesAccessorFloatData);
         } else {
             logger.warning("Invalid component type for accessor: "
-                    + componentType);
+                           + componentType);
         }
     }
 

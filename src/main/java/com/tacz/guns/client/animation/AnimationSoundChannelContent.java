@@ -8,7 +8,7 @@ public class AnimationSoundChannelContent {
     public double[] keyframeTimeS;
     public ResourceLocation[] keyframeSoundName;
 
-    public AnimationSoundChannelContent(){
+    public AnimationSoundChannelContent() {
     }
 
     public AnimationSoundChannelContent(AnimationSoundChannelContent source) {

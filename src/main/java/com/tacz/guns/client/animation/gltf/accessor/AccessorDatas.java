@@ -140,7 +140,7 @@ public class AccessorDatas {
     public static boolean isByteType(int type) {
         return
                 type == GltfConstants.GL_BYTE ||
-                        type == GltfConstants.GL_UNSIGNED_BYTE;
+                type == GltfConstants.GL_UNSIGNED_BYTE;
     }
 
     /**
@@ -153,7 +153,7 @@ public class AccessorDatas {
     public static boolean isShortType(int type) {
         return
                 type == GltfConstants.GL_SHORT ||
-                        type == GltfConstants.GL_UNSIGNED_SHORT;
+                type == GltfConstants.GL_UNSIGNED_SHORT;
     }
 
     /**
@@ -166,7 +166,7 @@ public class AccessorDatas {
     public static boolean isIntType(int type) {
         return
                 type == GltfConstants.GL_INT ||
-                        type == GltfConstants.GL_UNSIGNED_INT;
+                type == GltfConstants.GL_UNSIGNED_INT;
     }
 
     /**
@@ -189,8 +189,8 @@ public class AccessorDatas {
     static boolean isUnsignedType(int type) {
         return
                 type == GltfConstants.GL_UNSIGNED_BYTE ||
-                        type == GltfConstants.GL_UNSIGNED_SHORT ||
-                        type == GltfConstants.GL_UNSIGNED_INT;
+                type == GltfConstants.GL_UNSIGNED_SHORT ||
+                type == GltfConstants.GL_UNSIGNED_INT;
     }
 
     /**
@@ -206,7 +206,7 @@ public class AccessorDatas {
         if (!isByteType(type)) {
             throw new IllegalArgumentException(
                     "The type is not GL_BYTE or GL_UNSIGNED_BYTE, but " +
-                            GltfConstants.stringFor(type));
+                    GltfConstants.stringFor(type));
         }
     }
 
@@ -223,7 +223,7 @@ public class AccessorDatas {
         if (!isShortType(type)) {
             throw new IllegalArgumentException(
                     "The type is not GL_SHORT or GL_UNSIGNED_SHORT, but " +
-                            GltfConstants.stringFor(type));
+                    GltfConstants.stringFor(type));
         }
     }
 
@@ -240,7 +240,7 @@ public class AccessorDatas {
         if (!isIntType(type)) {
             throw new IllegalArgumentException(
                     "The type is not GL_INT or GL_UNSIGNED_INT, but " +
-                            GltfConstants.stringFor(type));
+                    GltfConstants.stringFor(type));
         }
     }
 
@@ -256,7 +256,7 @@ public class AccessorDatas {
         if (!isFloatType(type)) {
             throw new IllegalArgumentException(
                     "The type is not GL_FLOAT, but " +
-                            GltfConstants.stringFor(type));
+                    GltfConstants.stringFor(type));
         }
     }
 
@@ -422,10 +422,10 @@ public class AccessorDatas {
         if (expectedCapacity > bufferCapacity) {
             throw new IllegalArgumentException(
                     "The accessorModel has an offset of " + byteOffset + " and " +
-                            numElements + " elements with a byte stride of " +
-                            byteStridePerElement + ", requiring " + expectedCapacity +
-                            " bytes, but the buffer view has only " +
-                            bufferCapacity + " bytes");
+                    numElements + " elements with a byte stride of " +
+                    byteStridePerElement + ", requiring " + expectedCapacity +
+                    " bytes, but the buffer view has only " +
+                    bufferCapacity + " bytes");
         }
     }
 

@@ -20,7 +20,7 @@ public class NodeModel {
         }
         if (array.length != expectedLength) {
             throw new IllegalArgumentException("Expected " + expectedLength
-                    + " array elements, but found " + array.length);
+                                               + " array elements, but found " + array.length);
         }
         return array;
     }

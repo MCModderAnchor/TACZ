@@ -81,7 +81,7 @@ public class Buffers {
             if (newLimit > byteBuffer.capacity()) {
                 throw new IllegalArgumentException(
                         "The new limit is " + newLimit + ", but the capacity is "
-                                + byteBuffer.capacity());
+                        + byteBuffer.capacity());
             }
             byteBuffer.limit(newLimit);
             byteBuffer.position(position);

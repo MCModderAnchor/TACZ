@@ -14,7 +14,7 @@ public class SLerp implements Interpolator {
     }
 
     @Override
-    public void interpolate(int indexFrom, int indexTo, float alpha, float[] result) {
+    public float[] interpolate(int indexFrom, int indexTo, float alpha) {
         // 如果旋转值有 8 个，后四个为 Post 数值，用于插值起点
         int offset = content.values[indexFrom].length == 8 ? 4 : 0;
         float ax = content.values[indexFrom][offset];
@@ -25,6 +25,8 @@ public class SLerp implements Interpolator {
         float by = indexFrom == indexTo ? content.values[indexFrom][1 + offset] : content.values[indexTo][1];
         float bz = indexFrom == indexTo ? content.values[indexFrom][2 + offset] : content.values[indexTo][2];
         float bw = indexFrom == indexTo ? content.values[indexFrom][3 + offset] : content.values[indexTo][3];
+
+        float[] result = new float[4];
 
         float dot = ax * bx + ay * by + az * bz + aw * bw;
         if (dot < 0) {
@@ -53,6 +55,7 @@ public class SLerp implements Interpolator {
         result[1] = ry;
         result[2] = rz;
         result[3] = rw;
+        return result;
     }
 
     @Override

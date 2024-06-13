@@ -95,7 +95,7 @@ public class AnimationStructure {
         if (encodingIndex < 0) {
             throw new IllegalArgumentException(
                     "The given URI string is not a base64 encoded "
-                            + "data URI string: " + uriString);
+                    + "data URI string: " + uriString);
         }
         int contentStartIndex = encodingIndex + encoding.length();
         return Base64.getDecoder().decode(

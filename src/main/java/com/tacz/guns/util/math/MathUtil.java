@@ -28,7 +28,7 @@ public class MathUtil {
 
     public static double zoomSensitivityRatio(double currentFov, double originFov, double coefficient) {
         return Math.atan(Math.tan(Math.toRadians(currentFov / 2)) * coefficient) /
-                Math.atan(Math.tan(Math.toRadians(originFov / 2)) * coefficient);
+               Math.atan(Math.tan(Math.toRadians(originFov / 2)) * coefficient);
     }
 
     public static double copySign(double magnitude, double sign) {
@@ -37,9 +37,10 @@ public class MathUtil {
 
     /**
      * 按照 z(roll) -> y(yaw) -> x(pitch) 的旋转顺序，求四元数。
+     *
      * @param pitch 绕 x 轴旋转的弧度
-     * @param yaw 绕 y 轴旋转的弧度
-     * @param roll 绕 z 轴旋转的弧度
+     * @param yaw   绕 y 轴旋转的弧度
+     * @param roll  绕 z 轴旋转的弧度
      * @return 四元数，前三个数是虚部，最后一个数是实部。
      */
     public static float[] toQuaternion(float pitch, float yaw, float roll) {
@@ -59,9 +60,10 @@ public class MathUtil {
 
     /**
      * 按照 z(roll) -> y(yaw) -> x(pitch) 的旋转顺序，求四元数。
-     * @param pitch 绕 x 轴旋转的弧度
-     * @param yaw 绕 y 轴旋转的弧度
-     * @param roll 绕 z 轴旋转的弧度
+     *
+     * @param pitch      绕 x 轴旋转的弧度
+     * @param yaw        绕 y 轴旋转的弧度
+     * @param roll       绕 z 轴旋转的弧度
      * @param quaternion 求解的结果将写入这个四元数中。
      */
     public static void toQuaternion(float pitch, float yaw, float roll, @Nonnull Quaternion quaternion) {
@@ -82,6 +84,7 @@ public class MathUtil {
 
     /**
      * 将四元数转换为欧拉角，
+     *
      * @param q 四元数
      * @return 按照 x(pitch) -> y(yaw) -> z(roll) 的顺序的三轴角数组。
      */
@@ -108,6 +111,7 @@ public class MathUtil {
 
     /**
      * 将四元数转换为欧拉角，
+     *
      * @param q 四元数，前三个数是虚部，最后一个数是实部。
      * @return 按照 x(pitch) -> y(yaw) -> z(roll) 的顺序的三轴角数组。
      */
@@ -133,6 +137,7 @@ public class MathUtil {
 
     /**
      * 将负旋转角(弧度)转换为等效的正角(角度)
+     *
      * @param angle 弧度
      * @return 等效正角(角度)
      */
@@ -145,6 +150,7 @@ public class MathUtil {
 
     /**
      * 求四元数的逆
+     *
      * @param quaternion 四元数，前三个数是虚部，最后一个数是实部。
      * @return 四元数的逆
      */
@@ -162,6 +168,23 @@ public class MathUtil {
         result[2] = result[2] / m2;
         result[3] = result[3] / m2;
         return result;
+    }
+
+    public static float[] mulQuaternion(float[] q1, float[] q2) {
+        return new float[]{
+                Math.fma(q1[3], q2[0], Math.fma(q1[0], q2[3], Math.fma(q1[1], q2[2], -q1[2] * q2[1]))),
+                Math.fma(q1[3], q2[1], Math.fma(-q1[0], q2[2], Math.fma(q1[1], q2[3], q1[2] * q2[0]))),
+                Math.fma(q1[3], q2[2], Math.fma(q1[0], q2[1], Math.fma(-q1[1], q2[0], q1[2] * q2[3]))),
+                Math.fma(q1[3], q2[3], Math.fma(-q1[0], q2[0], Math.fma(-q1[1], q2[1], -q1[2] * q2[2])))
+        };
+    }
+
+    public static Quaternion conjugateQuaternion(Quaternion q){
+        return new Quaternion(-q.i(), -q.j(), -q.k(), q.r());
+    }
+
+    public static float dotQuaternion(Quaternion q1, Quaternion q2) {
+        return q1.i() * q2.i() + q1.j() * q2.j() + q1.k() * q2.k() + q1.r() * q2.r();
     }
 
     public static void blendQuaternion(Quaternion to, Quaternion from) {
