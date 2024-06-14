@@ -164,6 +164,15 @@ public class MathUtil {
         return result;
     }
 
+    public static float[] mulQuaternion(float[] q1, float[] q2) {
+        return new float[]{
+                Math.fma(q1[3], q2[0], Math.fma(q1[0], q2[3], Math.fma(q1[1], q2[2], -q1[2] * q2[1]))),
+                Math.fma(q1[3], q2[1], Math.fma(-q1[0], q2[2], Math.fma(q1[1], q2[3], q1[2] * q2[0]))),
+                Math.fma(q1[3], q2[2], Math.fma(q1[0], q2[1], Math.fma(-q1[1], q2[0], q1[2] * q2[3]))),
+                Math.fma(q1[3], q2[3], Math.fma(-q1[0], q2[0], Math.fma(-q1[1], q2[1], -q1[2] * q2[2])))
+        };
+    }
+
     public static void blendQuaternion(Quaternionf to, Quaternionf from) {
         Quaternionf q1 = new Quaternionf(to);
         Quaternionf q2 = new Quaternionf(from);

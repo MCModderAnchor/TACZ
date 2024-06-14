@@ -54,6 +54,8 @@ public abstract class AbstractGunItem extends Item implements IGun {
      */
     public abstract void fireSelect(ItemStack gunItem);
 
+    public abstract void melee(LivingEntity user, ItemStack gunItem);
+
     /**
      * 换弹时触发枪械子弹更新时调用
      *

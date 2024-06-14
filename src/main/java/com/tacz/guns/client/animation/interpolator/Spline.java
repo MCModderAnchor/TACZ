@@ -9,8 +9,9 @@ public class Spline implements Interpolator {
     }
 
     @Override
-    public void interpolate(int indexFrom, int indexTo, float alpha, float[] result) {
+    public float[] interpolate(int indexFrom, int indexTo, float alpha) {
         // TODO
+        return new float[]{0, 0, 0, 1};
     }
 
     @Override

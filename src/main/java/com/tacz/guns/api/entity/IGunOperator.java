@@ -82,6 +82,11 @@ public interface IGunOperator {
     void zoom();
 
     /**
+     * 服务端近战的逻辑（刺刀）
+     */
+    void melee();
+
+    /**
      * 从实体的位置，向指定的方向开枪
      *
      * @param pitch 开火方向的俯仰角(即 xRot )

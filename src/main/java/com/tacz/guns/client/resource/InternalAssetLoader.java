@@ -6,12 +6,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
-import com.tacz.guns.client.animation.AnimationListenerSupplier;
 import com.tacz.guns.client.animation.Animations;
 import com.tacz.guns.client.animation.ObjectAnimation;
-import com.tacz.guns.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
-import com.tacz.guns.client.resource.pojo.animation.gltf.RawAnimationStructure;
+import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import net.minecraft.client.Minecraft;
@@ -41,8 +39,8 @@ public class InternalAssetLoader {
     public static final ResourceLocation SMITH_TABLE_MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/gun_smith_table.json");
     public static final ResourceLocation SMITH_TABLE_TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/block/gun_smith_table.png");
     // 默认动画
-    private static final ResourceLocation DEFAULT_PISTOL_ANIMATIONS_LOC = new ResourceLocation("tacz", "animations/pistol_default.gltf");
-    private static final ResourceLocation DEFAULT_RIFLE_ANIMATIONS_LOC = new ResourceLocation("tacz", "animations/rifle_default.gltf");
+    private static final ResourceLocation DEFAULT_PISTOL_ANIMATIONS_LOC = new ResourceLocation("tacz", "animations/pistol_default.animation.json");
+    private static final ResourceLocation DEFAULT_RIFLE_ANIMATIONS_LOC = new ResourceLocation("tacz", "animations/rifle_default.animation.json");
     // 内部资源缓存
     private static final Map<ResourceLocation, BedrockModel> BEDROCK_MODELS = Maps.newHashMap();
     private static List<ObjectAnimation> defaultPistolAnimations;
@@ -50,10 +48,10 @@ public class InternalAssetLoader {
 
     public static void onResourceReload() {
         // 加载默认动画文件
-        AnimationStructure pistolAnimationStructure = loadAnimations(DEFAULT_PISTOL_ANIMATIONS_LOC);
-        AnimationStructure rifleAnimationStructure = loadAnimations(DEFAULT_RIFLE_ANIMATIONS_LOC);
-        defaultPistolAnimations = Animations.createAnimationFromGltf(pistolAnimationStructure, (AnimationListenerSupplier[]) null);
-        defaultRifleAnimations = Animations.createAnimationFromGltf(rifleAnimationStructure, (AnimationListenerSupplier[]) null);
+        BedrockAnimationFile pistolAnimationFile = loadAnimations(DEFAULT_PISTOL_ANIMATIONS_LOC);
+        BedrockAnimationFile rifleAnimationFile = loadAnimations(DEFAULT_RIFLE_ANIMATIONS_LOC);
+        defaultPistolAnimations = Animations.createAnimationFromBedrock(pistolAnimationFile);
+        defaultRifleAnimations = Animations.createAnimationFromBedrock(rifleAnimationFile);
 
         // 加载代码直接调用的基岩版模型
         BEDROCK_MODELS.clear();
@@ -63,12 +61,11 @@ public class InternalAssetLoader {
         loadBedrockModels(InternalAssetLoader.DEFAULT_BULLET_MODEL);
     }
 
-    private static AnimationStructure loadAnimations(ResourceLocation resourceLocation) {
+    private static BedrockAnimationFile loadAnimations(ResourceLocation resourceLocation) {
         try (InputStream inputStream = Minecraft.getInstance().getResourceManager().open(resourceLocation)) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             JsonObject json = JsonParser.parseReader(bufferedReader).getAsJsonObject();
-            RawAnimationStructure rawAnimationStructure = ClientGunPackLoader.GSON.fromJson(json, RawAnimationStructure.class);
-            return new AnimationStructure(rawAnimationStructure);
+            return ClientGunPackLoader.GSON.fromJson(json, BedrockAnimationFile.class);
         } catch (IOException | JsonSyntaxException | JsonIOException e) {
             throw new RuntimeException(e);
         }

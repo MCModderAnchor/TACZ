@@ -140,6 +140,8 @@
     // 瞄准射击时散布
     "aim": 0.15
   },
+  // 刺刀攻击距离参数，用来延升刺刀攻击范围
+  "bayonet_melee_distance": 5,
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser, extended_mag
   "allow_attachment_types": [

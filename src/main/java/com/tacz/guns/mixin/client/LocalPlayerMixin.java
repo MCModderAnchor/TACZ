@@ -22,6 +22,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     private final @Unique LocalPlayerBolt tac$bolt = new LocalPlayerBolt(tac$data, tac$player);
     private final @Unique LocalPlayerDraw tac$draw = new LocalPlayerDraw(tac$data, tac$player);
     private final @Unique LocalPlayerFireSelect tac$fireSelect = new LocalPlayerFireSelect(tac$data, tac$player);
+    private final @Unique LocalPlayerMelee tac$melee = new LocalPlayerMelee(tac$data, tac$player);
     private final @Unique LocalPlayerInspect tac$inspect = new LocalPlayerInspect(tac$data, tac$player);
     private final @Unique LocalPlayerReload tac$reload = new LocalPlayerReload(tac$data, tac$player);
     private final @Unique LocalPlayerShoot tac$shoot = new LocalPlayerShoot(tac$data, tac$player);
@@ -59,6 +60,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Override
     public void fireSelect() {
         tac$fireSelect.fireSelect();
+    }
+
+    @Override
+    public void melee() {
+        tac$melee.melee();
     }
 
     @Override

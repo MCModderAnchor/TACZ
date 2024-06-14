@@ -1,6 +1,7 @@
 package com.tacz.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerZoom;
 import net.minecraft.client.KeyMapping;
@@ -34,7 +35,12 @@ public class ZoomKey {
             if (player == null || player.isSpectator()) {
                 return;
             }
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerZoom());
+            IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
+            if (operator.isAim()) {
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerZoom());
+            } else {
+                operator.melee();
+            }
         }
     }
 }

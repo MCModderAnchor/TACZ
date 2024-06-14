@@ -57,6 +57,11 @@ public interface IClientPlayerGunOperator {
     void aim(boolean isAim);
 
     /**
+     * 客户端近战（刺刀）
+     */
+    void melee();
+
+    /**
      * 客户端是否处于瞄准状态
      */
     boolean isAim();
