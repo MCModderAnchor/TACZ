@@ -112,6 +112,9 @@ repositories {
     maven {
         // 阿里云镜像，方便国内开发
         url = uri("https://maven.aliyun.com/repository/public/")
+        content {
+            includeGroup 'org.apache.commons'
+        }
     }
     maven {
         // location of the maven that hosts JEI files since January 2023
@@ -134,6 +137,7 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    mavenCentral() // MixinExtras is there
     flatDir {
         dir 'libs'
     }
@@ -159,6 +163,13 @@ dependencies {
     compileOnly fg.deobf('libs:oculus:mc1.20.1-1.7.0')
 
     runtimeOnly fg.deobf("curse.maven:carry-on-274259:${carry_on_id}")
+
+    // 引入 MixinExtras 以解决一些棘手的 Mixin 冲突问题（比如 @Redirect 不能嵌套）
+    // 如果未来有迁移到 Fabric / NeoForge 的计划，请注意这两个框架都已自带 MixinExtras，无需自行打包。
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.6"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.3.6")) {
+        jarJar.ranged(it, "[0.3.6,)")
+    }
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
