@@ -1,6 +1,6 @@
 {
   "ammo": "tacz:12g",
-  "rpm": 200,
+  "rpm": 100,
   "bullet": {
     "life": 0.4,
     "bullet_amount": 10,
@@ -59,8 +59,8 @@
     ]
   },
   "inaccuracy": {
-    "stand": 3.75,
-    "move": 4.5,
+    "stand": 3.5,
+    "move": 4,
     "sneak": 3.5,
     "lie": 2.5,
     "aim": 2.5
