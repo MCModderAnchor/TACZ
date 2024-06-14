@@ -1,25 +1,21 @@
 package com.tacz.guns.mixin.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.client.gameplay.*;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SuppressWarnings("ALL")
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
-    @Shadow public abstract void playNotifySound(SoundEvent pSound, SoundSource pSource, float pVolume, float pPitch);
-
     private final @Unique LocalPlayer tac$player = (LocalPlayer) (Object) this;
     private final @Unique LocalPlayerDataHolder tac$data = new LocalPlayerDataHolder(tac$player);
     private final @Unique LocalPlayerAim tac$aim = new LocalPlayerAim(tac$data, tac$player);
@@ -92,9 +88,9 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         }
     }
 
-    @ModifyArg(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setSprinting(Z)V"))
-    public boolean swapSprintStatus(boolean sprinting) {
-        return this.tac$aim.cancelSprint(this.tac$player, sprinting);
+    @WrapOperation(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setSprinting(Z)V"))
+    public void swapSprintStatus(LocalPlayer player, boolean sprinting, Operation<Void> original) {
+        original.call(player, this.tac$aim.cancelSprint(player, sprinting));
     }
 
     @Inject(method = "respawn", at = @At("RETURN"))
