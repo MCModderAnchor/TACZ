@@ -144,6 +144,11 @@
 						}
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0667": {
+					"effect": "tacz:melee_bayonet/melee_bayonet_hit_1"
+				}
 			}
 		},
 		"melee_bayonet_2": {
@@ -270,6 +275,11 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				}
+			},
+			"sound_effects": {
+				"0.1": {
+					"effect": "tacz:melee_bayonet/melee_bayonet_hit_2"
 				}
 			}
 		},
@@ -416,6 +426,11 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				}
+			},
+			"sound_effects": {
+				"0.1": {
+					"effect": "tacz:melee_bayonet/melee_bayonet_hit_2"
 				}
 			}
 		},
