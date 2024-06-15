@@ -68,8 +68,8 @@ public class GunData {
     @SerializedName("move_speed")
     private MoveSpeed moveSpeed = new MoveSpeed();
 
-    @SerializedName("bayonet_melee_distance")
-    private double bayonetMeleeDistance = 0d;
+    @SerializedName("melee")
+    private GunMeleeData gunMeleeData = new GunMeleeData();
 
     @SerializedName("allow_attachment_types")
     private List<AttachmentType> allowAttachments = Lists.newArrayList();
@@ -157,8 +157,8 @@ public class GunData {
         return moveSpeed;
     }
 
-    public double getBayonetMeleeDistance() {
-        return bayonetMeleeDistance;
+    public GunMeleeData getMeleeData() {
+        return gunMeleeData;
     }
 
     @Nullable

@@ -14,6 +14,11 @@ public class ShooterDataHolder {
      */
     public long shootTimestamp = -1L;
     /**
+     * 近战时间戳，按下刺刀按键时更新，单位 ms
+     * 用于计算射击的冷却时间
+     */
+    public long meleeTimestamp = -1L;
+    /**
      * 切枪时间戳，在切枪开始时更新，单位 ms。
      * 用于计算切枪进度。切枪进度完成后，才能进行各种操作。
      */
@@ -74,6 +79,7 @@ public class ShooterDataHolder {
     public void initialData() {
         // 重置各个状态
         shootTimestamp = -1;
+        meleeTimestamp = -1;
         isAiming = false;
         aimingProgress = 0;
         reloadTimestamp = -1;

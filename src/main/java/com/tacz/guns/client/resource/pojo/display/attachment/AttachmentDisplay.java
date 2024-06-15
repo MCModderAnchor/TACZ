@@ -25,6 +25,9 @@ public class AttachmentDisplay {
     @Nullable
     private String adapterNodeName;
 
+    @SerializedName("show_muzzle")
+    private boolean showMuzzle = false;
+
     @SerializedName("zoom")
     @Nullable
     private float[] zoom;
@@ -61,6 +64,10 @@ public class AttachmentDisplay {
     @Nullable
     public String getAdapterNodeName() {
         return adapterNodeName;
+    }
+
+    public boolean isShowMuzzle() {
+        return showMuzzle;
     }
 
     @Nullable

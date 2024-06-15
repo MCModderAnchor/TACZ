@@ -14,6 +14,10 @@ public final class GunAnimationConstant {
      */
     public static final String SHOOT_ANIMATION = "shoot";
     /**
+     * 刺刀
+     */
+    public static final String BAYONET_ANIMATION = "bayonet";
+    /**
      * 空仓换弹
      */
     public static final String RELOAD_EMPTY_ANIMATION = "reload_empty";

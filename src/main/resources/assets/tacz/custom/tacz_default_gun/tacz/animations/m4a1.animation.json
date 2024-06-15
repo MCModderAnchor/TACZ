@@ -31,6 +31,19 @@
 				}
 			}
 		},
+		"bayonet": {
+			"animation_length": 0.25,
+			"bones": {
+				"root": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.0833": [0, 15, 0],
+						"0.1667": [0, -30, 0],
+						"0.25": [0, 0, 0]
+					}
+				}
+			}
+		},
 		"draw": {
 			"animation_length": 0.8,
 			"bones": {

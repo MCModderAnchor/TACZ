@@ -19,6 +19,11 @@ public interface IGunOperator {
     long getSynShootCoolDown();
 
     /**
+     * 获取从服务端同步的近战的冷却（主要是刺刀）
+     */
+    long getSynMeleeCoolDown();
+
+    /**
      * 获取从服务端同步的切枪的冷却
      */
     long getSynDrawCoolDown();

@@ -41,6 +41,8 @@ public class LocalPlayerMelee {
         ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
         TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> {
             this.doClientMelee(index, gunId);
+            // 切换状态锁，不允许换弹、检视等行为进行。
+            data.lockState(operator -> operator.getSynMeleeCoolDown() > 0);
         });
     }
 
@@ -57,7 +59,7 @@ public class LocalPlayerMelee {
             // 动画状态机转移状态
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                // animationStateMachine.onGunFireSelect();
+                animationStateMachine.onBayonetAttack();
             }
         });
     }

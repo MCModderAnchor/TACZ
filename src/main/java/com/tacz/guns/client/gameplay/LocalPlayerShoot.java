@@ -29,8 +29,10 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 public class LocalPlayerShoot {
+    private static final Predicate<IGunOperator> SHOOT_LOCKED_CONDITION = operator -> operator.getSynShootCoolDown() > 0;
     private final LocalPlayerDataHolder data;
     private final LocalPlayer player;
 
@@ -50,7 +52,7 @@ public class LocalPlayerShoot {
             return ShootResult.COOL_DOWN;
         }
         // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
-        if (data.clientStateLock && data.lockedCondition != LocalPlayerDataHolder.SHOOT_LOCKED_CONDITION && data.lockedCondition != null) {
+        if (data.clientStateLock && data.lockedCondition != SHOOT_LOCKED_CONDITION && data.lockedCondition != null) {
             data.isShootRecorded = true;
             // 因为这块主要目的是防止切枪后开火动作覆盖切枪动作，返回 IS_DRAWING
             return ShootResult.IS_DRAWING;
@@ -104,7 +106,7 @@ public class LocalPlayerShoot {
             return ShootResult.FORGE_EVENT_CANCEL;
         }
         // 切换状态锁，不允许换弹、检视等行为进行。
-        data.lockState(LocalPlayerDataHolder.SHOOT_LOCKED_CONDITION);
+        data.lockState(SHOOT_LOCKED_CONDITION);
         data.isShootRecorded = false;
         // 调用开火逻辑
         this.doShoot(gunIndex, iGun, mainhandItem, gunData, coolDown);
@@ -138,7 +140,7 @@ public class LocalPlayerShoot {
             // 以下逻辑只需要执行一次
             if (count.get() == 0) {
                 // 如果状态锁正在准备锁定，且不是开火的状态锁，则不允许开火(主要用于防止切枪后开火动作覆盖切枪动作)
-                if (data.clientStateLock && data.lockedCondition != LocalPlayerDataHolder.SHOOT_LOCKED_CONDITION && data.lockedCondition != null) {
+                if (data.clientStateLock && data.lockedCondition != SHOOT_LOCKED_CONDITION && data.lockedCondition != null) {
                     return;
                 }
                 // 记录新的开火时间戳

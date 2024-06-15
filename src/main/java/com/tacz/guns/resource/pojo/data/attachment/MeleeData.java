@@ -16,9 +16,6 @@ public class MeleeData {
     @SerializedName("knockback")
     private float knockback = 0f;
 
-    @SerializedName("cooldown")
-    private float cooldown = 5f;
-
     @SerializedName("effects")
     private List<EffectData> effects = Lists.newArrayList();
 
@@ -32,10 +29,6 @@ public class MeleeData {
 
     public float getKnockback() {
         return knockback;
-    }
-
-    public float getCooldown() {
-        return cooldown;
     }
 
     public List<EffectData> getEffects() {

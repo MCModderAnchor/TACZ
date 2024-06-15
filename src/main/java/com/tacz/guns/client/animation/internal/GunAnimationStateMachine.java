@@ -102,6 +102,10 @@ public class GunAnimationStateMachine {
         controller.runAnimation(MAIN_TRACK, BOLT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
     }
 
+    public void onBayonetAttack() {
+        controller.runAnimation(MAIN_TRACK, BAYONET_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+    }
+
     public void onGunDraw() {
         controller.runAnimation(MOVEMENT_TRACK, IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0);
         lastWalkDirection = WalkDirection.NONE;
@@ -211,12 +215,9 @@ public class GunAnimationStateMachine {
                 deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f));
             }
             switch (direction) {
-                case FORWARD ->
-                        deque.add(new AnimationPlan(WALK_FORWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-                case BACKWARD ->
-                        deque.add(new AnimationPlan(WALK_BACKWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-                case SIDE_WAY ->
-                        deque.add(new AnimationPlan(WALK_SIDEWAY_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                case FORWARD -> deque.add(new AnimationPlan(WALK_FORWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                case BACKWARD -> deque.add(new AnimationPlan(WALK_BACKWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                case SIDE_WAY -> deque.add(new AnimationPlan(WALK_SIDEWAY_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
             }
             controller.queueAnimation(MOVEMENT_TRACK, deque);
             baseDistanceWalked = walkDist;
