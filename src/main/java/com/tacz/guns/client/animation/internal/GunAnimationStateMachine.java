@@ -7,6 +7,7 @@ import com.tacz.guns.client.animation.ObjectAnimationRunner;
 import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.player.Input;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -102,8 +103,9 @@ public class GunAnimationStateMachine {
         controller.runAnimation(MAIN_TRACK, BOLT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
     }
 
-    public void onBayonetAttack() {
-        controller.runAnimation(MAIN_TRACK, BAYONET_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+    public void onBayonetAttack(int count) {
+        String animationName = "melee_bayonet_" + Mth.clamp(count + 1, 1, 3);
+        controller.runAnimation(MAIN_TRACK, animationName, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
     }
 
     public void onGunDraw() {
@@ -215,9 +217,12 @@ public class GunAnimationStateMachine {
                 deque.add(new AnimationPlan(RUN_END_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_HOLD, 0.3f));
             }
             switch (direction) {
-                case FORWARD -> deque.add(new AnimationPlan(WALK_FORWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-                case BACKWARD -> deque.add(new AnimationPlan(WALK_BACKWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
-                case SIDE_WAY -> deque.add(new AnimationPlan(WALK_SIDEWAY_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                case FORWARD ->
+                        deque.add(new AnimationPlan(WALK_FORWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                case BACKWARD ->
+                        deque.add(new AnimationPlan(WALK_BACKWARD_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
+                case SIDE_WAY ->
+                        deque.add(new AnimationPlan(WALK_SIDEWAY_ANIMATION, ObjectAnimation.PlayType.LOOP, 0.4f));
             }
             controller.queueAnimation(MOVEMENT_TRACK, deque);
             baseDistanceWalked = walkDist;
@@ -397,7 +402,7 @@ public class GunAnimationStateMachine {
 
     private boolean isNamedWalkAnimation(String animationName) {
         return WALK_SIDEWAY_ANIMATION.equals(animationName) || WALK_FORWARD_ANIMATION.equals(animationName) || WALK_BACKWARD_ANIMATION.equals(animationName)
-                || WALK_AIMING_ANIMATION.equals(animationName);
+               || WALK_AIMING_ANIMATION.equals(animationName);
     }
 
     private boolean tryRunShootAnimation(int track) {

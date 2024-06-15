@@ -78,7 +78,7 @@
   },
   "melee": {
     "distance": 1,
-    "cooldown": 2
+    "cooldown": 0.9
   },
   "allow_attachment_types": [
     "scope",

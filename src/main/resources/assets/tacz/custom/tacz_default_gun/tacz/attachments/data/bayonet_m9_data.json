@@ -9,7 +9,7 @@
     // 伤害值
     "damage": 5,
     // 击退效果
-    "knockback": 1,
+    "knockback": 0.4,
     // 额外效果
     "effects": [
       // 可以添加多个效果

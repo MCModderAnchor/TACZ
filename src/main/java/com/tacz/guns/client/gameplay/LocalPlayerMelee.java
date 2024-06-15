@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 public class LocalPlayerMelee {
     private final LocalPlayerDataHolder data;
     private final LocalPlayer player;
+    private int meleeCounter = 0;
 
     public LocalPlayerMelee(LocalPlayerDataHolder data, LocalPlayer player) {
         this.data = data;
@@ -59,7 +60,8 @@ public class LocalPlayerMelee {
             // 动画状态机转移状态
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                animationStateMachine.onBayonetAttack();
+                animationStateMachine.onBayonetAttack(meleeCounter);
+                meleeCounter = (meleeCounter + 1) % 3;
             }
         });
     }

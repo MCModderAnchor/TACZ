@@ -14,9 +14,11 @@ public final class GunAnimationConstant {
      */
     public static final String SHOOT_ANIMATION = "shoot";
     /**
-     * 刺刀
+     * 刺刀攻击，会按照 1->2->3 的顺序连续播放
      */
-    public static final String BAYONET_ANIMATION = "bayonet";
+    public static final String BAYONET_ANIMATION_1 = "melee_bayonet_1";
+    public static final String BAYONET_ANIMATION_2 = "melee_bayonet_2";
+    public static final String BAYONET_ANIMATION_3 = "melee_bayonet_3";
     /**
      * 空仓换弹
      */

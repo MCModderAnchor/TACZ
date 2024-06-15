@@ -108,7 +108,7 @@
   "key.tacz.refit.desc": "改装",
   "key.tacz.reload.desc": "换弹",
   "key.tacz.shoot.desc": "射击",
-  "key.tacz.zoom.desc": "缩放",
+  "key.tacz.zoom.desc": "缩放/近战",
   "message.tacz.fire_select.fail": "未知开火模式，无法射击",
   "message.tacz.target_minecart.hit": "伤害：%s 距离：%s",
   "subtitle.tacz.gun": "枪声",

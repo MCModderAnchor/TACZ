@@ -94,7 +94,11 @@
   "tacz.attachment.muzzle_brake_pioneer.name": "Pioneer A3 Brake",
   "tacz.attachment.muzzle_brake_cthulhu.name": "Cthulhu K7 Brake",
   "tacz.attachment.muzzle_brake_trex.name": "T-Rex Heavy Brake",
-  
+
+
+  "tacz.attachment.bayonet_m9.name": "M9 Bayonet",
+
+
   "tacz.attachment.stock_carbon_bone_c5.name": "Carbon bone C5 Stock",
   "tacz.attachment.stock_tactical_ar.name": "Magpul CTR stock",
   "tacz.attachment.stock_militech_b5.name": "Militech B5 Stock",
