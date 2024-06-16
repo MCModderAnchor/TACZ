@@ -124,7 +124,7 @@
   "config.tacz.common.gun.creative_player_consume_ammo": "Гравець у режимі творчості витрачає боєприпаси",
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "Чи буде гравець використовувати набої у творчому режимі",
   "config.tacz.common.gun.auto_reload_when_respawn": "Автоперезарядження при відродженні",
-  "config.tacz.common.gun.auto_reload_when_respawn.desc": "Автоматичне перезарядження всій зброї в інвентарі гравця, корисне для PVP серверів",
+  "config.tacz.common.gun.auto_reload_when_respawn.desc": "Автоматичне перезарядження всієї зброї в інвентарі гравця, корисне для PVP серверів",
   "config.tacz.common.ammo": "Набої",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks": "Вибухові набої знищують блоки",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks.desc": "Попередження: Набої з вибуховими властивостями можуть знищувати блоки",
