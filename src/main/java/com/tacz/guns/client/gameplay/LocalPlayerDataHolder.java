@@ -107,6 +107,9 @@ public class LocalPlayerDataHolder {
         if (gunOperator.getSynBoltCoolDown() >= 0) {
             return;
         }
+        if (gunOperator.getSynMeleeCoolDown() > 0) {
+            return;
+        }
         // 释放状态锁
         clientStateLock = false;
     }

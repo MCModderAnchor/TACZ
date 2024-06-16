@@ -1,6 +1,7 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -10,6 +11,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.handshake.ClientMessagePlayerMelee;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -39,12 +41,10 @@ public class LocalPlayerMelee {
         if (iAttachment == null) {
             return;
         }
+        // 锁上状态锁
+        data.lockState(operator -> operator.getSynMeleeCoolDown() > 0);
         ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
-        TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> {
-            this.doClientMelee(index, gunId);
-            // 切换状态锁，不允许换弹、检视等行为进行。
-            data.lockState(operator -> operator.getSynMeleeCoolDown() > 0);
-        });
+        TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> this.doClientMelee(index, gunId));
     }
 
     private void doClientMelee(ClientAttachmentIndex index, ResourceLocation gunId) {
