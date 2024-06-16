@@ -1,9 +1,12 @@
 package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -38,14 +41,40 @@ public class LivingEntityMelee {
             return;
         }
         ItemStack currentGunItem = data.currentGunItem.get();
-        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
+        if (currentGunItem.getItem() instanceof AbstractGunItem logicGun) {
+            data.meleeTimestamp = System.currentTimeMillis();
+            ItemStack attachmentStack = logicGun.getAttachment(currentGunItem, AttachmentType.MUZZLE);
+            IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
+            if (iAttachment == null) {
+                return;
+            }
+            ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
+            TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> {
+                MeleeData meleeData = index.getData().getMeleeData();
+                if (meleeData == null) {
+                    return;
+                }
+                float delayDamageTime = meleeData.getDelayDamageTime();
+                data.meleeTicScheduleTickCount = (int) Math.max(0, delayDamageTime * 20);
+            });
+        }
+    }
+
+    public void scheduleTickMelee() {
+        if (this.data.meleeTicScheduleTickCount > 0) {
+            this.data.meleeTicScheduleTickCount--;
             return;
         }
-        if (!(iGun instanceof AbstractGunItem logicGun)) {
-            return;
+        if (this.data.meleeTicScheduleTickCount == 0) {
+            this.data.meleeTicScheduleTickCount = -1;
+            if (data.currentGunItem == null) {
+                return;
+            }
+            ItemStack currentGunItem = data.currentGunItem.get();
+            if (currentGunItem.getItem() instanceof AbstractGunItem logicGun) {
+                logicGun.melee(this.shooter, currentGunItem);
+            }
         }
-        logicGun.melee(this.shooter, currentGunItem);
-        data.meleeTimestamp = System.currentTimeMillis();
     }
 
     public long getMeleeCoolDown() {

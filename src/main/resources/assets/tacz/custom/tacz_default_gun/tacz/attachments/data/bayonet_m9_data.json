@@ -10,19 +10,21 @@
     "damage": 5,
     // 击退效果
     "knockback": 0.4,
+    // 延迟伤害，单位：秒
+    "delay_damage_time": 0.2
     // 额外效果
-    "effects": [
-      // 可以添加多个效果
-      {
-        // 效果 ID
-        "id": "minecraft:poison",
-        // 时长，秒
-        "time": 5,
-        // 效果等级
-        "amplifier": 1,
-        // 是否显示粒子效果
-        "hide_particles": true
-      }
-    ]
+//    "effects": [
+//      // 可以添加多个效果
+//      {
+//        // 效果 ID
+//        "id": "minecraft:poison",
+//        // 时长，秒
+//        "time": 5,
+//        // 效果等级
+//        "amplifier": 1,
+//        // 是否显示粒子效果
+//        "hide_particles": true
+//      }
+//    ]
   }
 }

@@ -158,6 +158,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             this.tacz$aim.tickAimingProgress();
             this.tacz$aim.tickSprint();
             this.tacz$bolt.tickBolt();
+            this.tacz$melee.scheduleTickMelee();
             // 从服务端同步数据
             ModSyncedEntityData.SHOOT_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$shoot.getShootCoolDown());
             ModSyncedEntityData.MELEE_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$melee.getMeleeCoolDown());

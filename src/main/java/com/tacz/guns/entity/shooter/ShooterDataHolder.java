@@ -19,6 +19,13 @@ public class ShooterDataHolder {
      */
     public long meleeTimestamp = -1L;
     /**
+     * 近战需要延迟执行，这个就是用于延迟执行的计数器
+     * > 0 时：开始倒计时计数，每 tick 减一
+     * == 0 时：执行刺刀近战
+     * < 0 时，默认情况，什么也不做
+     */
+    public int meleeTicScheduleTickCount = -1;
+    /**
      * 切枪时间戳，在切枪开始时更新，单位 ms。
      * 用于计算切枪进度。切枪进度完成后，才能进行各种操作。
      */
@@ -80,6 +87,7 @@ public class ShooterDataHolder {
         // 重置各个状态
         shootTimestamp = -1;
         meleeTimestamp = -1;
+        meleeTicScheduleTickCount = -1;
         isAiming = false;
         aimingProgress = 0;
         reloadTimestamp = -1;
