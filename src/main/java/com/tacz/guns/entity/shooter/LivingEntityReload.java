@@ -66,7 +66,7 @@ public class LivingEntityReload {
             int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
             int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunIndex.getGunData());
             // 检查弹药
-            if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !inventoryHasAmmo(shooter, currentAmmoCount, maxAmmoCount, currentGunItem)) {
+            if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !inventoryHasAmmo(shooter, currentAmmoCount, maxAmmoCount, currentGunItem, iGun)) {
                 return;
             }
             // 触发装弹事件
@@ -162,10 +162,13 @@ public class LivingEntityReload {
         return reloadState;
     }
 
-    public static boolean inventoryHasAmmo(LivingEntity shooter, int currentAmmoCount, int maxAmmoCount, ItemStack currentGunItem) {
+    public static boolean inventoryHasAmmo(LivingEntity shooter, int currentAmmoCount, int maxAmmoCount, ItemStack currentGunItem, IGun iGun) {
         // 超出或达到上限，不换弹
         if (currentAmmoCount >= maxAmmoCount) {
             return false;
+        }
+        if (iGun.useDummyAmmo(currentGunItem) && iGun.getDummyAmmoAmount(currentGunItem) > 0) {
+            return true;
         }
         return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null).map(cap -> {
             // 背包检查
@@ -185,11 +188,22 @@ public class LivingEntityReload {
     public static int getAndExtractNeedAmmoCount(LivingEntity shooter, ItemStack currentGunItem, IGun iGun, int maxAmmoCount) {
         int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
         if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo()) {
+            if (iGun.useDummyAmmo(currentGunItem)) {
+                return getAndExtractDummyAmmoCount(maxAmmoCount, currentAmmoCount, currentGunItem, iGun);
+            }
             return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
                     .map(cap -> getAndExtractInventoryAmmoCount(cap, maxAmmoCount, currentAmmoCount, currentGunItem))
                     .orElse(currentAmmoCount);
         }
         return maxAmmoCount;
+    }
+
+    private static int getAndExtractDummyAmmoCount(int maxAmmoCount, int currentAmmoCount, ItemStack currentGunItem, IGun iGun) {
+        int needAmmoCount = maxAmmoCount - currentAmmoCount;
+        int dummyAmmoCount = iGun.getDummyAmmoAmount(currentGunItem);
+        int extractCount = Math.min(dummyAmmoCount, needAmmoCount);
+        iGun.setDummyAmmoAmount(currentGunItem, dummyAmmoCount - extractCount);
+        return maxAmmoCount - (needAmmoCount - extractCount);
     }
 
     private static int getAndExtractInventoryAmmoCount(IItemHandler itemHandler, int maxAmmoCount, int currentAmmoCount, ItemStack currentGunItem) {

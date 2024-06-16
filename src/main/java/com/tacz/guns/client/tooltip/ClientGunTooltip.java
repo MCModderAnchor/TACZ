@@ -74,10 +74,18 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         this.ammoName = ammo.getHoverName();
         this.maxWidth = Math.max(font.width(this.ammoName) + 22, this.maxWidth);
 
+
         int barrelBulletAmount = (iGun.hasBulletInBarrel(gun) && gunIndex.getGunData().getBolt() != Bolt.OPEN_BOLT) ? 1 : 0;
         int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(gun, gunIndex.getGunData()) + barrelBulletAmount;
         int currentAmmoCount = iGun.getCurrentAmmoCount(this.gun) + barrelBulletAmount;
-        this.ammoCountText = Component.literal("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
+
+        if (!iGun.useDummyAmmo(gun)) {
+            this.ammoCountText = Component.literal("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
+        } else {
+            int dummyAmmoAmount = iGun.getDummyAmmoAmount(gun);
+            this.ammoCountText = Component.literal("%d/%d (%d)".formatted(currentAmmoCount, maxAmmoCount, dummyAmmoAmount));
+        }
+
         this.maxWidth = Math.max(font.width(this.ammoCountText) + 22, this.maxWidth);
 
         String tabKey = "tacz.type." + gunIndex.getType() + ".name";

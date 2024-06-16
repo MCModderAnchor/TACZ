@@ -24,6 +24,25 @@ public interface GunItemDataAccessor extends IGun {
     String GUN_CURRENT_AMMO_COUNT_TAG = "GunCurrentAmmoCount";
     String GUN_ATTACHMENT_BASE = "Attachment";
     String GUN_EXP_TAG = "GunLevelExp";
+    String GUN_DUMMY_AMMO = "DummyAmmo";
+
+    @Override
+    default boolean useDummyAmmo(ItemStack gun) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        return nbt.contains(GUN_DUMMY_AMMO, Tag.TAG_INT);
+    }
+
+    @Override
+    default int getDummyAmmoAmount(ItemStack gun) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        return Math.max(0, nbt.getInt(GUN_DUMMY_AMMO));
+    }
+
+    @Override
+    default void setDummyAmmoAmount(ItemStack gun, int amount) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        nbt.putInt(GUN_DUMMY_AMMO, Math.max(amount, 0));
+    }
 
     @Override
     @Nonnull

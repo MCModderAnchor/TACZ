@@ -55,6 +55,21 @@ public interface IGun {
     float getAimingZoom(ItemStack gunItem);
 
     /**
+     * 枪械换弹时是否使用"虚拟备弹"而不是背包里的实际弹药
+     */
+    boolean useDummyAmmo(ItemStack gun);
+
+    /**
+     * 获取枪械当前的"虚拟备弹"数量
+     */
+    int getDummyAmmoAmount(ItemStack gun);
+
+    /**
+     * 设置枪械当前的"虚拟备弹"数量
+     */
+    void setDummyAmmoAmount(ItemStack gun, int amount);
+
+    /**
      * 获取枪械 ID
      */
     @Nonnull
