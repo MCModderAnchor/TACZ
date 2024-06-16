@@ -16,6 +16,7 @@ import com.tacz.guns.network.message.ServerMessageGunHurt;
 import com.tacz.guns.network.message.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
+import com.tacz.guns.resource.pojo.data.gun.ExplosionData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.util.HitboxHelper;
 import com.tacz.guns.util.TacHitResult;
@@ -82,6 +83,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private int igniteEntityTime = 2;
     private float explosionDamage = 3;
     private float explosionRadius = 3;
+    private int explosionDelayCount = Integer.MAX_VALUE;
     private boolean explosionKnockback = false;
     private ExtraDamage extraDamage = null;
     private float damageModifier = 1;
@@ -125,11 +127,18 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.knockback = Mth.clamp(data.getKnockback(), 0, Float.MAX_VALUE);
         this.pierce = Mth.clamp(data.getPierce(), 1, Integer.MAX_VALUE);
         this.extraDamage = data.getExtraDamage();
-        if (data.getExplosionData() != null) {
+        ExplosionData explosionData = data.getExplosionData();
+        if (explosionData != null) {
             this.hasExplosion = true;
-            this.explosionDamage = (float) Mth.clamp(data.getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Float.MAX_VALUE);
-            this.explosionRadius = Mth.clamp(data.getExplosionData().getRadius(), 0, Float.MAX_VALUE);
-            this.explosionKnockback = data.getExplosionData().isKnockback();
+            this.explosionDamage = (float) Mth.clamp(explosionData.getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Float.MAX_VALUE);
+            this.explosionRadius = Mth.clamp(explosionData.getRadius(), 0, Float.MAX_VALUE);
+            this.explosionKnockback = explosionData.isKnockback();
+            // 防止越界，提前判定
+            int delayTickCount = explosionData.getDelay() * 20;
+            if (delayTickCount < 0) {
+                delayTickCount = Integer.MAX_VALUE;
+            }
+            this.explosionDelayCount = Math.max(delayTickCount, 1);
         }
         // 子弹初始位置重置
         double posX = throwerIn.xOld + (throwerIn.getX() - throwerIn.xOld) / 2.0;
@@ -228,6 +237,17 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     protected void onBulletTick() {
         // 服务器端子弹逻辑
         if (!this.level().isClientSide()) {
+            // 延迟爆炸判定
+            if (this.hasExplosion) {
+                if (this.explosionDelayCount > 0) {
+                    this.explosionDelayCount--;
+                } else {
+                    createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, this.position());
+                    // 爆炸直接结束不留弹孔，不处理之后的逻辑
+                    this.discard();
+                    return;
+                }
+            }
             // 子弹在 tick 起始的位置
             Vec3 startVec = this.position();
             // 子弹在 tick 结束的位置

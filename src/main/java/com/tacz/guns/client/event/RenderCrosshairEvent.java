@@ -27,6 +27,9 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
@@ -55,10 +58,6 @@ public class RenderCrosshairEvent {
             event.setCanceled(true);
             // 击中显示
             renderHitMarker(event.getGuiGraphics(), event.getWindow());
-            // 瞄准快要完成时，取消准心渲染
-            if (IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(event.getPartialTick()) > 0.9) {
-                return;
-            }
             // 换弹进行时取消准心渲染
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
             if (reloadState.getStateType().isReloading()) {
@@ -74,10 +73,16 @@ public class RenderCrosshairEvent {
                 return;
             }
             ResourceLocation gunId = iGun.getGunId(stack);
+            IClientPlayerGunOperator playerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+                // 瞄准快要完成时，取消准心渲染
+                if (!gunIndex.isShowCrosshair() && playerGunOperator.getClientAimingProgress(event.getPartialTick()) > 0.9) {
+                    return;
+                }
+
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (!animationStateMachine.shouldHideCrossHair()) {
-                    renderCrosshair(event.getGuiGraphics(), event.getWindow());
+                    renderCrosshair(event.getGuiGraphics(), event.getWindow(), gunIndex.getCrosshairTextureLocation());
                 }
             });
         }
@@ -89,7 +94,7 @@ public class RenderCrosshairEvent {
         isRefitScreen = Minecraft.getInstance().screen instanceof GunRefitScreen;
     }
 
-    private static void renderCrosshair(GuiGraphics graphics, Window window) {
+    private static void renderCrosshair(GuiGraphics graphics, Window window, @Nullable ResourceLocation crosshairTextureLocation) {
         Options options = Minecraft.getInstance().options;
         if (!options.getCameraType().isFirstPerson()) {
             return;
@@ -107,7 +112,7 @@ public class RenderCrosshairEvent {
         int width = window.getGuiScaledWidth();
         int height = window.getGuiScaledHeight();
 
-        ResourceLocation location = CrosshairType.getTextureLocation(RenderConfig.CROSSHAIR_TYPE.get());
+        ResourceLocation location = Objects.requireNonNullElseGet(crosshairTextureLocation, () -> CrosshairType.getTextureLocation(RenderConfig.CROSSHAIR_TYPE.get()));
 
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
