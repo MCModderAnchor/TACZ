@@ -21,7 +21,9 @@ import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.CycleTaskHelper;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -149,30 +151,43 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             List<LivingEntity> entityList = user.level().getEntitiesOfClass(LivingEntity.class, aabb);
 
             for (LivingEntity living : entityList) {
-                if (living.equals(user)) {
-                    continue;
-                }
-                living.knockback(knockback, (float) Math.sin(Math.toRadians(user.getYRot())), (float) -Math.cos(Math.toRadians(user.getYRot())));
-                if (user instanceof Player player) {
-                    living.hurt(user.damageSources().playerAttack(player), damage);
-                } else {
-                    living.hurt(user.damageSources().mobAttack(user), damage);
-                }
-                if (!living.isAlive()) {
-                    continue;
-                }
-                for (EffectData data : effects) {
-                    MobEffect mobEffect = ForgeRegistries.MOB_EFFECTS.getValue(data.getEffectId());
-                    if (mobEffect == null) {
-                        continue;
-                    }
-                    int time = Math.max(0, data.getTime() * 20);
-                    int amplifier = Math.max(0, data.getAmplifier());
-                    MobEffectInstance effectInstance = new MobEffectInstance(mobEffect, time, amplifier, false, data.isHideParticles());
-                    living.addEffect(effectInstance);
-                }
+                doPerLivingHurt(user, living, knockback, damage, effects);
+            }
+
+            // 玩家扣饱食度
+            if (user instanceof Player player) {
+                player.causeFoodExhaustion(0.1F);
             }
         });
+    }
+
+    private static void doPerLivingHurt(LivingEntity user, LivingEntity target, float knockback, float damage, List<EffectData> effects) {
+        if (target.equals(user)) {
+            return;
+        }
+        target.knockback(knockback, (float) Math.sin(Math.toRadians(user.getYRot())), (float) -Math.cos(Math.toRadians(user.getYRot())));
+        if (user instanceof Player player) {
+            target.hurt(user.damageSources().playerAttack(player), damage);
+        } else {
+            target.hurt(user.damageSources().mobAttack(user), damage);
+        }
+        if (!target.isAlive()) {
+            return;
+        }
+        for (EffectData data : effects) {
+            MobEffect mobEffect = ForgeRegistries.MOB_EFFECTS.getValue(data.getEffectId());
+            if (mobEffect == null) {
+                continue;
+            }
+            int time = Math.max(0, data.getTime() * 20);
+            int amplifier = Math.max(0, data.getAmplifier());
+            MobEffectInstance effectInstance = new MobEffectInstance(mobEffect, time, amplifier, false, data.isHideParticles());
+            target.addEffect(effectInstance);
+        }
+        if (user.level() instanceof ServerLevel serverLevel) {
+            int count = (int) (damage * 0.5);
+            serverLevel.sendParticles(ParticleTypes.DAMAGE_INDICATOR, target.getX(), target.getY(0.5), target.getZ(), count, 0.1, 0, 0.1, 0.2);
+        }
     }
 
     @Override

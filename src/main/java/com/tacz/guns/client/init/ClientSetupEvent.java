@@ -40,6 +40,7 @@ public class ClientSetupEvent {
         event.register(AimKey.AIM_KEY);
         event.register(RefitKey.REFIT_KEY);
         event.register(ZoomKey.ZOOM_KEY);
+        event.register(MeleeKey.MELEE_KEY);
         event.register(ConfigKey.OPEN_CONFIG_KEY);
     }
 

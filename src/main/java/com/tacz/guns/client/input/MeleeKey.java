@@ -2,8 +2,6 @@ package com.tacz.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
-import com.tacz.guns.network.NetworkHandler;
-import com.tacz.guns.network.message.ClientMessagePlayerZoom;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -20,8 +18,8 @@ import static com.tacz.guns.util.InputExtraCheck.isInGame;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
-public class ZoomKey {
-    public static final KeyMapping ZOOM_KEY = new KeyMapping("key.tacz.zoom.desc",
+public class MeleeKey {
+    public static final KeyMapping MELEE_KEY = new KeyMapping("key.tacz.melee.desc",
             KeyConflictContext.IN_GAME,
             KeyModifier.NONE,
             InputConstants.Type.KEYSYM,
@@ -29,15 +27,15 @@ public class ZoomKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onZoomPress(InputEvent.Key event) {
-        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && ZOOM_KEY.matches(event.getKey(), event.getScanCode())) {
+    public static void onMeleePress(InputEvent.Key event) {
+        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && MELEE_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null || player.isSpectator()) {
                 return;
             }
             IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
-            if (operator.isAim()) {
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerZoom());
+            if (!operator.isAim()) {
+                operator.melee();
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -11,7 +10,6 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.handshake.ClientMessagePlayerMelee;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -53,7 +51,7 @@ public class LocalPlayerMelee {
             return;
         }
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            // 播放音效
+            // 播放音效，FIXME：直接用基岩版音效？
             // SoundPlayManager.playFireSelectSound(player, gunIndex);
             // 发送切换开火模式的数据包，通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerMelee());
