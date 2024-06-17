@@ -16,8 +16,8 @@ public class MeleeData {
     @SerializedName("knockback")
     private float knockback = 0f;
 
-    @SerializedName("delay_damage_time")
-    private float delayDamageTime = 0.1f;
+    @SerializedName("prep")
+    private float prepTime = 0.1f;
 
     @SerializedName("effects")
     private List<EffectData> effects = Lists.newArrayList();
@@ -34,8 +34,8 @@ public class MeleeData {
         return knockback;
     }
 
-    public float getDelayDamageTime() {
-        return delayDamageTime;
+    public float getPrepTime() {
+        return prepTime;
     }
 
     public List<EffectData> getEffects() {

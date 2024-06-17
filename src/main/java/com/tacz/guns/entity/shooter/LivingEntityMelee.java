@@ -54,19 +54,19 @@ public class LivingEntityMelee {
                 if (meleeData == null) {
                     return;
                 }
-                float delayDamageTime = meleeData.getDelayDamageTime();
-                data.meleeTicScheduleTickCount = (int) Math.max(0, delayDamageTime * 20);
+                float prepTime = meleeData.getPrepTime();
+                data.meleePrepTickCount = (int) Math.max(0, prepTime * 20);
             });
         }
     }
 
     public void scheduleTickMelee() {
-        if (this.data.meleeTicScheduleTickCount > 0) {
-            this.data.meleeTicScheduleTickCount--;
+        if (this.data.meleePrepTickCount > 0) {
+            this.data.meleePrepTickCount--;
             return;
         }
-        if (this.data.meleeTicScheduleTickCount == 0) {
-            this.data.meleeTicScheduleTickCount = -1;
+        if (this.data.meleePrepTickCount == 0) {
+            this.data.meleePrepTickCount = -1;
             if (data.currentGunItem == null) {
                 return;
             }
