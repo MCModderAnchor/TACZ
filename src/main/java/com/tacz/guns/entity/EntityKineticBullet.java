@@ -392,26 +392,47 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             // 打靶直接返回
             return;
         }
+        // 获取Pre事件必要的信息
         Entity entity = result.getEntity();
+        LivingEntity livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
+        @Nullable Entity owner = this.getOwner();
+        LivingEntity attacker = (owner instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity partOwner)
+                ? partOwner
+                : (owner instanceof LivingEntity ? (LivingEntity) owner : null);
+        boolean headshot = result.isHeadshot();
+        float damage = this.getDamage(result.getLocation());
+        float headShotMultiplier = 1f;
+        if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
+            headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+        }
+        // 发布Pre事件
+        var preEvent = new EntityHurtByGunEvent.Pre(livingEntity, attacker, this.gunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
+        var cancelled = MinecraftForge.EVENT_BUS.post(preEvent);
+        if (cancelled) {
+            return;
+        }
+        // 刷新由Pre事件修改后的参数
+        entity = preEvent.getHurtEntity();
+        livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
+        attacker = preEvent.getAttacker();
+        var newGunId = preEvent.getGunId();
+        damage = preEvent.getBaseAmount();
+        headshot = preEvent.isHeadShot();
+        headShotMultiplier = preEvent.getHeadshotMultiplier();
+        if (entity == null) {
+            return;
+        }
         // 点燃
         if (this.hasIgnite && AmmoConfig.IGNITE_ENTITY.get()) {
             entity.setSecondsOnFire(this.igniteEntityTime);
         }
-        // 获取伤害
-        float damage = this.getDamage(result.getLocation());
         // TODO 暴击判定（不是爆头）暴击判定内部逻辑，需要输出一个是否暴击的 flag
-        boolean headshot = result.isHeadshot();
         if (headshot) {
             // 默认爆头伤害是 1x
-            float headShotMultiplier = 1f;
-            if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
-                headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
-            }
             damage *= headShotMultiplier;
         }
-        @Nullable Entity owner = this.getOwner();
         // 对 LivingEntity 进行击退强度的自定义
-        if (entity instanceof LivingEntity livingEntity) {
+        if (livingEntity != null) {
             // 取消击退效果，设定自己的击退强度
             KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(livingEntity);
             modifier.setKnockBackStrength(this.knockback);
@@ -429,23 +450,18 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             entity.invulnerableTime = 0;
             createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, result.getLocation());
         }
-        LivingEntity livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
-        if (entity instanceof PartEntity<?> partEntity) {
-            livingEntity = partEntity.getParent() instanceof LivingEntity ? (LivingEntity) partEntity.getParent() : null;
-        }
         // 只对 LivingEntity 执行击杀判定
         if (livingEntity != null) {
             // 事件同步，从服务端到客户端
             if (!level().isClientSide) {
-                LivingEntity attacker = owner instanceof LivingEntity ? (LivingEntity) owner : null;
                 int attackerId = attacker == null ? 0 : attacker.getId();
                 // 如果生物死了
                 if (livingEntity.isDeadOrDying()) {
-                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingEntity, attacker, this.gunId, headshot, LogicalSide.SERVER));
-                    NetworkHandler.sendToNearby(entity, new ServerMessageGunKill(entity.getId(), attackerId, this.gunId, headshot));
+                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingEntity, attacker, newGunId, headshot, LogicalSide.SERVER));
+                    NetworkHandler.sendToNearby(entity, new ServerMessageGunKill(entity.getId(), attackerId, newGunId, headshot));
                 } else {
-                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent(livingEntity, attacker, this.gunId, damage, headshot, LogicalSide.SERVER));
-                    NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(entity.getId(), attackerId, this.gunId, damage, headshot));
+                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(livingEntity, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
+                    NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(entity.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier));
                 }
             }
         }
