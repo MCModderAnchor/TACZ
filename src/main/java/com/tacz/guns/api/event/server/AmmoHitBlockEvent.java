@@ -10,7 +10,6 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * 子弹击中方块时触发的事件，目前仅在服务端触发
  */
-@Cancelable
 public class AmmoHitBlockEvent extends Event {
     private final Level level;
     private final BlockHitResult hitResult;
@@ -22,6 +21,11 @@ public class AmmoHitBlockEvent extends Event {
         this.hitResult = hitResult;
         this.state = state;
         this.ammo = ammo;
+    }
+
+    @Override
+    public boolean isCancelable() {
+        return true;
     }
 
     public Level getLevel() {
