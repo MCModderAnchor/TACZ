@@ -22,13 +22,15 @@ public class ServerMessageGunHurt {
     private final ResourceLocation gunId;
     private final float amount;
     private final boolean isHeadShot;
+    private final float headshotMultiplier;
 
-    public ServerMessageGunHurt(int hurtEntityId, int attackerId, ResourceLocation gunId, float amount, boolean isHeadShot) {
+    public ServerMessageGunHurt(int hurtEntityId, int attackerId, ResourceLocation gunId, float amount, boolean isHeadShot, float headshotMultiplier) {
         this.hurtEntityId = hurtEntityId;
         this.attackerId = attackerId;
         this.gunId = gunId;
         this.amount = amount;
         this.isHeadShot = isHeadShot;
+        this.headshotMultiplier = headshotMultiplier;
     }
 
     public static void encode(ServerMessageGunHurt message, FriendlyByteBuf buf) {
@@ -37,6 +39,7 @@ public class ServerMessageGunHurt {
         buf.writeResourceLocation(message.gunId);
         buf.writeFloat(message.amount);
         buf.writeBoolean(message.isHeadShot);
+        buf.writeFloat(message.headshotMultiplier);
     }
 
     public static ServerMessageGunHurt decode(FriendlyByteBuf buf) {
@@ -45,7 +48,8 @@ public class ServerMessageGunHurt {
         ResourceLocation gunId = buf.readResourceLocation();
         float amount = buf.readFloat();
         boolean isHeadShot = buf.readBoolean();
-        return new ServerMessageGunHurt(hurtEntityId, attackerId, gunId, amount, isHeadShot);
+        float headshotMultiplier = buf.readFloat();
+        return new ServerMessageGunHurt(hurtEntityId, attackerId, gunId, amount, isHeadShot, headshotMultiplier);
     }
 
     public static void handle(ServerMessageGunHurt message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -64,6 +68,6 @@ public class ServerMessageGunHurt {
         }
         @Nullable Entity hurtEntity = level.getEntity(message.hurtEntityId);
         @Nullable LivingEntity attacker = level.getEntity(message.attackerId) instanceof LivingEntity livingEntity ? livingEntity : null;
-        MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent(hurtEntity, attacker, message.gunId, message.amount, message.isHeadShot, LogicalSide.CLIENT));
+        MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(hurtEntity, attacker, message.gunId, message.amount, message.isHeadShot, message.headshotMultiplier, LogicalSide.CLIENT));
     }
 }
