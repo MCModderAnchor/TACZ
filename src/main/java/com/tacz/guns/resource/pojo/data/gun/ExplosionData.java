@@ -12,6 +12,9 @@ public class ExplosionData {
     @SerializedName("knockback")
     private boolean knockback = false;
 
+    @SerializedName("delay")
+    private int delay = Integer.MAX_VALUE;
+
     public float getRadius() {
         return radius;
     }
@@ -22,5 +25,9 @@ public class ExplosionData {
 
     public boolean isKnockback() {
         return knockback;
+    }
+
+    public int getDelay() {
+        return delay;
     }
 }

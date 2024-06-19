@@ -2,6 +2,7 @@ package com.tacz.guns.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.tacz.guns.command.sub.DummyAmmoCommand;
 import com.tacz.guns.command.sub.OverwriteCommand;
 import com.tacz.guns.command.sub.ReloadCommand;
 import net.minecraft.commands.CommandSourceStack;
@@ -15,6 +16,7 @@ public class RootCommand {
                 .requires((source -> source.hasPermission(2)));
         root.then(ReloadCommand.get());
         root.then(OverwriteCommand.get());
+        root.then(DummyAmmoCommand.get());
         dispatcher.register(root);
     }
 }

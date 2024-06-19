@@ -21,6 +21,7 @@ import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -162,10 +163,26 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             });
             this.setFunctionalRenderer(defaultNodeName, bedrockPart -> {
                 ItemStack attachmentItem = currentAttachmentItem.get(type);
+                if (type == AttachmentType.MUZZLE && checkShowMuzzle(bedrockPart, attachmentItem)) {
+                    return null;
+                }
                 bedrockPart.visible = attachmentItem == null || attachmentItem.isEmpty();
                 return null;
             });
         }
+    }
+
+    private static boolean checkShowMuzzle(BedrockPart bedrockPart, ItemStack attachmentItem) {
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+        if (iAttachment != null) {
+            ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
+            var attachmentIndex = TimelessAPI.getClientAttachmentIndex(attachmentId);
+            if (attachmentIndex.isPresent()) {
+                bedrockPart.visible = attachmentIndex.get().isShowMuzzle();
+                return true;
+            }
+        }
+        return false;
     }
 
     @Nullable

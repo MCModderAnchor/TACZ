@@ -12,7 +12,6 @@ import java.util.function.Predicate;
 
 public class LocalPlayerDataHolder {
     public static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(2);
-    public static final Predicate<IGunOperator> SHOOT_LOCKED_CONDITION = operator -> operator.getSynShootCoolDown() > 0;
     /**
      * 上一个 tick 的瞄准进度，用于插值，范围 0 ~ 1
      */
@@ -106,6 +105,9 @@ public class LocalPlayerDataHolder {
             return;
         }
         if (gunOperator.getSynBoltCoolDown() >= 0) {
+            return;
+        }
+        if (gunOperator.getSynMeleeCoolDown() > 0) {
             return;
         }
         // 释放状态锁

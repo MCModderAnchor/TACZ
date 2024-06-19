@@ -3,6 +3,7 @@ package com.tacz.guns.network;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.network.message.*;
 import com.tacz.guns.network.message.handshake.Acknowledge;
+import com.tacz.guns.network.message.handshake.ClientMessagePlayerMelee;
 import com.tacz.guns.network.message.handshake.ServerMessageSyncedEntityDataMapping;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -76,6 +77,8 @@ public class NetworkHandler {
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageSyncGunPack.class, ServerMessageSyncGunPack::encode, ServerMessageSyncGunPack::decode, ServerMessageSyncGunPack::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessagePlayerMelee.class, ClientMessagePlayerMelee::encode, ClientMessagePlayerMelee::decode, ClientMessagePlayerMelee::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
         registerAcknowledge();
         registerHandshakeMessage(ServerMessageSyncedEntityDataMapping.class, null);
     }

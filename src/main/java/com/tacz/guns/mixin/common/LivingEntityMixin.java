@@ -28,6 +28,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     private final @Unique LivingEntityAim tacz$aim = new LivingEntityAim(tacz$shooter, this.tacz$data);
     private final @Unique LivingEntityAmmoCheck tacz$ammoCheck = new LivingEntityAmmoCheck(tacz$shooter);
     private final @Unique LivingEntityFireSelect tacz$fireSelect = new LivingEntityFireSelect(tacz$shooter, this.tacz$data);
+    private final @Unique LivingEntityMelee tacz$melee = new LivingEntityMelee(tacz$shooter, this.tacz$data, this.tacz$draw);
     private final @Unique LivingEntityShoot tacz$shoot = new LivingEntityShoot(tacz$shooter, this.tacz$data, this.tacz$draw);
     private final @Unique LivingEntityBolt tacz$bolt = new LivingEntityBolt(this.tacz$data, this.tacz$draw, this.tacz$shoot);
     private final @Unique LivingEntityReload tacz$reload = new LivingEntityReload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot);
@@ -40,6 +41,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     public long getSynShootCoolDown() {
         return ModSyncedEntityData.SHOOT_COOL_DOWN_KEY.getValue(tacz$shooter);
+    }
+
+    @Override
+    public long getSynMeleeCoolDown() {
+        return ModSyncedEntityData.MELEE_COOL_DOWN_KEY.getValue(tacz$shooter);
     }
 
     @Override
@@ -102,6 +108,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         this.tacz$reload.reload();
     }
 
+    @Override
+    public void melee() {
+        this.tacz$melee.melee();
+    }
+
     @Unique
     @Override
     public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw) {
@@ -147,8 +158,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             this.tacz$aim.tickAimingProgress();
             this.tacz$aim.tickSprint();
             this.tacz$bolt.tickBolt();
+            this.tacz$melee.scheduleTickMelee();
             // 从服务端同步数据
             ModSyncedEntityData.SHOOT_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$shoot.getShootCoolDown());
+            ModSyncedEntityData.MELEE_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$melee.getMeleeCoolDown());
             ModSyncedEntityData.DRAW_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$draw.getDrawCoolDown());
             ModSyncedEntityData.BOLT_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$data.boltCoolDown);
             ModSyncedEntityData.RELOAD_STATE_KEY.setValue(tacz$shooter, reloadState);

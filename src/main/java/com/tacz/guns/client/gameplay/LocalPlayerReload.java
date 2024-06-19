@@ -97,6 +97,9 @@ public class LocalPlayerReload {
         if (iGun.getCurrentAmmoCount(mainhandItem) >= maxAmmoCount) {
             return false;
         }
+        if (iGun.useDummyAmmo(mainhandItem) && iGun.getDummyAmmoAmount(mainhandItem) > 0) {
+            return true;
+        }
         // 背包弹药检查
         Inventory inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {

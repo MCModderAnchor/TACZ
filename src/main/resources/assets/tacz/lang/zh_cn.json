@@ -104,6 +104,7 @@
   "key.tacz.fire_select.desc": "开火模式",
   "key.tacz.inspect.desc": "检视",
   "key.tacz.interact.desc": "持械时互动",
+  "key.tacz.melee.desc": "近战",
   "key.tacz.open_config.desc": "打开 TAC 配置文件",
   "key.tacz.refit.desc": "改装",
   "key.tacz.reload.desc": "换弹",

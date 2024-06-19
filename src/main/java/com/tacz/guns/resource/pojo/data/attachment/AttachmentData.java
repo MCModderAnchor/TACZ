@@ -25,6 +25,10 @@ public class AttachmentData {
     @Nullable
     private RecoilModifier recoilModifier = null;
 
+    @SerializedName("melee")
+    @Nullable
+    private MeleeData meleeData = null;
+
     @Nullable
     public Silence getSilence() {
         return silence;
@@ -49,5 +53,10 @@ public class AttachmentData {
     @Nullable
     public RecoilModifier getRecoilModifier() {
         return recoilModifier;
+    }
+
+    @Nullable
+    public MeleeData getMeleeData() {
+        return meleeData;
     }
 }

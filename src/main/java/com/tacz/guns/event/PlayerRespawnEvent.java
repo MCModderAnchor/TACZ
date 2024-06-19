@@ -27,7 +27,7 @@ public class PlayerRespawnEvent {
             TimelessAPI.getCommonGunIndex(iGun.getGunId(currentGunItem)).ifPresent(gunIndex -> {
                 int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
                 int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunIndex.getGunData());
-                if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && !LivingEntityReload.inventoryHasAmmo(player, currentAmmoCount, maxAmmoCount, currentGunItem)) {
+                if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && !LivingEntityReload.inventoryHasAmmo(player, currentAmmoCount, maxAmmoCount, currentGunItem, iGun)) {
                     return;
                 }
                 iGun.reloadAmmo(currentGunItem, LivingEntityReload.getAndExtractNeedAmmoCount(player, currentGunItem, iGun, maxAmmoCount), false);

@@ -22,6 +22,11 @@ public class AmmoHitBlockEvent extends Event {
         this.ammo = ammo;
     }
 
+    @Override
+    public boolean isCancelable() {
+        return true;
+    }
+
     public Level getLevel() {
         return level;
     }

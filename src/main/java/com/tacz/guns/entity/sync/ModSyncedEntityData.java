@@ -17,6 +17,12 @@ public class ModSyncedEntityData {
             .syncMode(SyncedDataKey.SyncMode.ALL)
             .build();
 
+    public static final SyncedDataKey<LivingEntity, Long> MELEE_COOL_DOWN_KEY = SyncedDataKey.builder(SyncedClassKey.LIVING_ENTITY, Serializers.LONG)
+            .id(new ResourceLocation(GunMod.MOD_ID, "melee_cool_down"))
+            .defaultValueSupplier(() -> -1L)
+            .syncMode(SyncedDataKey.SyncMode.ALL)
+            .build();
+
     public static final SyncedDataKey<LivingEntity, ReloadState> RELOAD_STATE_KEY = SyncedDataKey.builder(SyncedClassKey.LIVING_ENTITY, ModSerializers.RELOAD_STATE)
             .id(new ResourceLocation(GunMod.MOD_ID, "reload_state"))
             .defaultValueSupplier(ReloadState::new)
@@ -55,6 +61,7 @@ public class ModSyncedEntityData {
 
     public static void init() {
         registerEntityData(SHOOT_COOL_DOWN_KEY);
+        registerEntityData(MELEE_COOL_DOWN_KEY);
         registerEntityData(RELOAD_STATE_KEY);
         registerEntityData(AIMING_PROGRESS_KEY);
         registerEntityData(DRAW_COOL_DOWN_KEY);

@@ -34,6 +34,7 @@ public class ClientAttachmentIndex {
     private float @Nullable [] zoom;
     private boolean isScope;
     private boolean isSight;
+    private boolean showMuzzle;
     private @Nullable String adapterNodeName;
     private Map<String, ResourceLocation> sounds;
 
@@ -77,6 +78,7 @@ public class ClientAttachmentIndex {
         index.isScope = display.isScope();
         index.isSight = display.isSight();
         index.adapterNodeName = display.getAdapterNodeName();
+        index.showMuzzle = display.isShowMuzzle();
         return display;
     }
 
@@ -210,6 +212,10 @@ public class ClientAttachmentIndex {
     @Nullable
     public String getAdapterNodeName() {
         return adapterNodeName;
+    }
+
+    public boolean isShowMuzzle() {
+        return showMuzzle;
     }
 
     public Map<String, ResourceLocation> getSounds() {

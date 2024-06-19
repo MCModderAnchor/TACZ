@@ -53,7 +53,7 @@
   "burst_data": {
     "continuous_shoot": false,
     "count": 3,
-    "bpm": 1200,
+    "bpm": 900,
     "min_interval": 0.3
   },
   "recoil": {
@@ -75,6 +75,10 @@
     "sneak": 4.5,
     "lie": 4,
     "aim": 0.125
+  },
+  "melee": {
+    "distance": 1,
+    "cooldown": 0.6
   },
   "allow_attachment_types": [
     "scope",
