@@ -1,6 +1,7 @@
 {
   "block.tacz.gun_smith_table": "枪械工作台",
   "block.tacz.target": "人形标靶",
+  "block.tacz.statue": "石像",
   "commands.tacz.reload.overwrite_command.off": "§a§l●§r 你可以使用指令 §c§n/tacz overwrite true§r 来启用覆盖功能。",
   "commands.tacz.reload.overwrite_command.on": "§a§l●§r 你可以使用指令 §c§n/tacz overwrite false§r 来禁用覆盖功能。",
   "commands.tacz.reload.overwrite_off": "§a§l●§r 现在覆盖功能处于关闭状态，§6你可以§l自由修改§6tacz默认枪械包！",
