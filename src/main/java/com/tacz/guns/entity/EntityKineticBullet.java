@@ -394,11 +394,9 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         // 获取Pre事件必要的信息
         Entity entity = result.getEntity();
-        LivingEntity livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
         @Nullable Entity owner = this.getOwner();
-        LivingEntity attacker = (owner instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity partOwner)
-                ? partOwner
-                : (owner instanceof LivingEntity ? (LivingEntity) owner : null);
+        // 攻击者
+        LivingEntity attacker = owner instanceof LivingEntity ? (LivingEntity) owner : null;
         boolean headshot = result.isHeadshot();
         float damage = this.getDamage(result.getLocation());
         float headShotMultiplier = 1f;
@@ -406,14 +404,16 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
         }
         // 发布Pre事件
-        var preEvent = new EntityHurtByGunEvent.Pre(livingEntity, attacker, this.gunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
+        var preEvent = new EntityHurtByGunEvent.Pre(entity, attacker, this.gunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
         var cancelled = MinecraftForge.EVENT_BUS.post(preEvent);
         if (cancelled) {
             return;
         }
         // 刷新由Pre事件修改后的参数
         entity = preEvent.getHurtEntity();
-        livingEntity = entity instanceof LivingEntity ? (LivingEntity) entity : null;
+        // 受击目标
+        LivingEntity livingEntity = (entity instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity partOwner) ?
+                partOwner : (entity instanceof LivingEntity ? (LivingEntity) entity : null);
         attacker = preEvent.getAttacker();
         var newGunId = preEvent.getGunId();
         damage = preEvent.getBaseAmount();
@@ -458,10 +458,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 // 如果生物死了
                 if (livingEntity.isDeadOrDying()) {
                     MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingEntity, attacker, newGunId, headshot, LogicalSide.SERVER));
-                    NetworkHandler.sendToNearby(entity, new ServerMessageGunKill(entity.getId(), attackerId, newGunId, headshot));
+                    NetworkHandler.sendToNearby(livingEntity, new ServerMessageGunKill(livingEntity.getId(), attackerId, newGunId, headshot));
                 } else {
                     MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(livingEntity, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
-                    NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(entity.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier));
+                    NetworkHandler.sendToNearby(livingEntity, new ServerMessageGunHurt(livingEntity.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier));
                 }
             }
         }
