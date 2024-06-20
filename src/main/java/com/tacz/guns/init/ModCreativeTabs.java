@@ -37,6 +37,7 @@ public class ModCreativeTabs {
                 output -> {
                     output.add(ModItems.GUN_SMITH_TABLE.get().getDefaultInstance());
                     output.add(ModItems.TARGET.get().getDefaultInstance());
+                    output.add(ModItems.STATUE.get().getDefaultInstance());
                     output.add(ModItems.TARGET_MINECART.get().getDefaultInstance());
                     AmmoBoxItem.fillItemCategory(output);
                 });
