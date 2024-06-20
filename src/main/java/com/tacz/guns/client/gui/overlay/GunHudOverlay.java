@@ -69,7 +69,7 @@ public class GunHudOverlay {
         String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(ammoCount);
 
         // 计算弹药数
-        handleCacheCount(player, stack, gunIndex);
+        handleCacheCount(player, stack, gunIndex, iGun);
 
         // 竖线
         GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 25, 0xFFFFFFFF);
@@ -83,7 +83,13 @@ public class GunHudOverlay {
         poseStack.pushPose();
         poseStack.scale(0.8f, 0.8f, 1);
         String inventoryAmmoCountText = INVENTORY_AMMO_FORMAT.format(cacheInventoryAmmoCount);
-        mc.font.drawShadow(poseStack, inventoryAmmoCountText, (width - 68 + mc.font.width(currentAmmoCountText) * 1.5f) / 0.8f, (height - 43) / 0.8f, 0xAAAAAA);
+        int inventoryAmmoCountColor;
+        if (iGun.useDummyAmmo(stack)) {
+            inventoryAmmoCountColor = 0x55FFFF;
+        } else {
+            inventoryAmmoCountColor = 0xAAAAAA;
+        }
+        mc.font.drawShadow(poseStack, inventoryAmmoCountText, (width - 68 + mc.font.width(currentAmmoCountText) * 1.5f) / 0.8f, (height - 43) / 0.8f, inventoryAmmoCountColor);
         poseStack.popPose();
 
         // 模组版本信息
@@ -128,7 +134,7 @@ public class GunHudOverlay {
         GuiComponent.blit(poseStack, (int) (width - 68.5 + mc.font.width(currentAmmoCountText) * 1.5), height - 38, 0, 0, 10, 10, 10, 10);
     }
 
-    private static void handleCacheCount(LocalPlayer player, ItemStack stack, ClientGunIndex gunIndex) {
+    private static void handleCacheCount(LocalPlayer player, ItemStack stack, ClientGunIndex gunIndex, IGun iGun) {
         // 0.2 秒检查一次
         if ((System.currentTimeMillis() - checkAmmoTimestamp) > 200) {
             checkAmmoTimestamp = System.currentTimeMillis();
@@ -136,8 +142,13 @@ public class GunHudOverlay {
             cacheMaxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(stack, gunIndex.getGunData());
             // 玩家背包弹药数
             if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
-                // 缓存背包内的弹药数
-                handleInventoryAmmo(stack, player.getInventory());
+                if (iGun.useDummyAmmo(stack)) {
+                    // 缓存虚拟弹药数
+                    cacheInventoryAmmoCount = iGun.getDummyAmmoAmount(stack);
+                } else {
+                    // 缓存背包内的弹药数
+                    handleInventoryAmmo(stack, player.getInventory());
+                }
             } else {
                 cacheInventoryAmmoCount = 9999;
             }

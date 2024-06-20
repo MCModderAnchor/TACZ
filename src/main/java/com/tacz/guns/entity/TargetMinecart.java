@@ -70,8 +70,10 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
             level.playSound(null, this, ModSounds.TARGET_HIT.get(), SoundSource.BLOCKS, volume, this.level.random.nextFloat() * 0.1F + 0.9F);
 
             if (entity instanceof EntityKineticBullet projectile) {
-                MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent(this, player, projectile.getGunId(), damage, false, LogicalSide.SERVER));
-                NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(this.getId(), player.getId(), projectile.getGunId(), damage, false));
+                boolean isHeadshot = false;
+                float headshotMultiplier = 1;
+                MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(this, player, projectile.getGunId(), damage, isHeadshot, headshotMultiplier, LogicalSide.SERVER));
+                NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(this.getId(), player.getId(), projectile.getGunId(), damage, isHeadshot, headshotMultiplier));
             }
         }
     }

@@ -17,12 +17,10 @@ import com.tacz.guns.resource.loader.index.CommonAttachmentIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonGunIndexLoader;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
-import com.tacz.guns.resource.serialize.DistanceDamagePairSerializer;
-import com.tacz.guns.resource.serialize.GunSmithTableIngredientSerializer;
-import com.tacz.guns.resource.serialize.GunSmithTableResultSerializer;
-import com.tacz.guns.resource.serialize.PairSerializer;
+import com.tacz.guns.resource.serialize.*;
 import com.tacz.guns.util.GetJarResources;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
@@ -38,7 +36,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class CommonGunPackLoader {
-    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).registerTypeAdapter(Pair.class, new PairSerializer()).registerTypeAdapter(GunSmithTableIngredient.class, new GunSmithTableIngredientSerializer()).registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResultSerializer()).registerTypeAdapter(ExtraDamage.DistanceDamagePair.class, new DistanceDamagePairSerializer()).create();
+    public static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+            .registerTypeAdapter(Pair.class, new PairSerializer())
+            .registerTypeAdapter(GunSmithTableIngredient.class, new GunSmithTableIngredientSerializer())
+            .registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResultSerializer())
+            .registerTypeAdapter(ExtraDamage.DistanceDamagePair.class, new DistanceDamagePairSerializer())
+            .registerTypeAdapter(Vec3.class, new Vec3Serializer())
+            .create();
     /**
      * 放置自定义枪械模型的目录
      */

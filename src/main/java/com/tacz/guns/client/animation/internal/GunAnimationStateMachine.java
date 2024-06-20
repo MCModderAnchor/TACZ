@@ -7,6 +7,7 @@ import com.tacz.guns.client.animation.ObjectAnimationRunner;
 import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.player.Input;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -100,6 +101,11 @@ public class GunAnimationStateMachine {
 
     public void onGunBolt() {
         controller.runAnimation(MAIN_TRACK, BOLT_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+    }
+
+    public void onBayonetAttack(int count) {
+        String animationName = "melee_bayonet_" + Mth.clamp(count + 1, 1, 3);
+        controller.runAnimation(MAIN_TRACK, animationName, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
     }
 
     public void onGunDraw() {

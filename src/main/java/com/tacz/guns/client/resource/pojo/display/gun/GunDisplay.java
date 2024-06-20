@@ -24,6 +24,9 @@ public class GunDisplay {
     @SerializedName("hud_empty")
     private ResourceLocation hudEmptyTextureLocation;
     @Nullable
+    @SerializedName("crosshair")
+    private ResourceLocation crosshairTextureLocation;
+    @Nullable
     @SerializedName("slot")
     private ResourceLocation slotTextureLocation;
     @Nullable
@@ -54,6 +57,8 @@ public class GunDisplay {
     private Map<String, LayerGunShow> hotbarShow = null;
     @SerializedName("text_show")
     private Map<String, TextShow> textShows = Maps.newHashMap();
+    @SerializedName("show_crosshair")
+    private boolean showCrosshair = false;
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -81,6 +86,11 @@ public class GunDisplay {
     @Nullable
     public ResourceLocation getSlotTextureLocation() {
         return slotTextureLocation;
+    }
+
+    @Nullable
+    public ResourceLocation getCrosshairTextureLocation() {
+        return crosshairTextureLocation;
     }
 
     @Nullable
@@ -133,5 +143,9 @@ public class GunDisplay {
 
     public Map<String, TextShow> getTextShows() {
         return textShows;
+    }
+
+    public boolean isShowCrosshair() {
+        return showCrosshair;
     }
 }

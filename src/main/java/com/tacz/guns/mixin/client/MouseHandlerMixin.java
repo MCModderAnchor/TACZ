@@ -1,5 +1,7 @@
 package com.tacz.guns.mixin.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IAttachment;
@@ -15,34 +17,19 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import java.util.Optional;
 
 @Mixin(MouseHandler.class)
 public class MouseHandlerMixin {
-    @ModifyArg(method = "turnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"), index = 0)
-    public double yawSensitivity(double yaw) {
-        return tacz$reduceSensitivity(yaw);
-    }
-
-    @ModifyArg(method = "turnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"), index = 1)
-    public double pitchSensitivity(double pitch) {
-        return tacz$reduceSensitivity(pitch);
-    }
-
-    @Unique
-    public double tacz$reduceSensitivity(double sensitivity) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) {
-            return sensitivity;
-        }
+    @WrapOperation(method = "turnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"))
+    public void reduceSensitivity(LocalPlayer player, double yaw, double pitch, Operation<Void> original) {
         ItemStack mainHandItem = player.getMainHandItem();
         IGun iGun = IGun.getIGunOrNull(mainHandItem);
         if (iGun == null) {
-            return sensitivity;
+            original.call(player, yaw, pitch);
+            return;
         }
         ItemStack attachment = iGun.getAttachment(mainHandItem, AttachmentType.SCOPE);
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachment);
@@ -72,6 +59,6 @@ public class MouseHandlerMixin {
         // 荧幕距离系数，MC 和 COD 一样使用 MDV 标准，默认为 MDV133（系数为 1.33）
         double coefficient = ZoomConfig.SCREEN_DISTANCE_COEFFICIENT.get();
         double denominator = MathUtil.zoomSensitivityRatio(currentFov, originalFov, coefficient) * sensitivityMultiplier;
-        return sensitivity * denominator;
+        original.call(player, yaw * denominator, pitch * denominator);
     }
 }

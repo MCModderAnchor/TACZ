@@ -3,6 +3,8 @@ package com.tacz.guns.item;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
+import com.tacz.guns.api.item.IAttachment;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
@@ -10,6 +12,8 @@ import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tacz.guns.resource.pojo.data.attachment.EffectData;
+import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import com.tacz.guns.resource.pojo.data.attachment.Silence;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
@@ -17,13 +21,22 @@ import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.CycleTaskHelper;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 import java.util.Optional;
@@ -113,6 +126,69 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             }
             return true;
         }, period, cycles);
+    }
+
+    @Override
+    public void melee(LivingEntity user, ItemStack gunItem) {
+        ItemStack attachmentStack = this.getAttachment(gunItem, AttachmentType.MUZZLE);
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
+        if (iAttachment == null) {
+            return;
+        }
+        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
+        TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> {
+            MeleeData meleeData = index.getData().getMeleeData();
+            if (meleeData == null) {
+                return;
+            }
+            Vec3 range = meleeData.getRange();
+            float knockback = meleeData.getKnockback();
+            float damage = meleeData.getDamage();
+            List<EffectData> effects = meleeData.getEffects();
+            TimelessAPI.getCommonGunIndex(this.getGunId(gunItem)).ifPresent(gunIndex -> range.add(0, 0, gunIndex.getGunData().getMeleeData().getDistance()));
+            Vec3 offset = new Vec3(0, 0, range.z()).xRot((float) Math.toRadians(-user.getXRot())).yRot((float) Math.toRadians(-user.getYRot()));
+            Vec3 centrePos = user.position().add(0, user.getEyeHeight(), 0).add(offset);
+            AABB aabb = new AABB(centrePos, centrePos).inflate(range.x / 2, range.y / 2, range.z / 2);
+            List<LivingEntity> entityList = user.level.getEntitiesOfClass(LivingEntity.class, aabb);
+
+            for (LivingEntity living : entityList) {
+                doPerLivingHurt(user, living, knockback, damage, effects);
+            }
+
+            // 玩家扣饱食度
+            if (user instanceof Player player) {
+                player.causeFoodExhaustion(0.1F);
+            }
+        });
+    }
+
+    private static void doPerLivingHurt(LivingEntity user, LivingEntity target, float knockback, float damage, List<EffectData> effects) {
+        if (target.equals(user)) {
+            return;
+        }
+        target.knockback(knockback, (float) Math.sin(Math.toRadians(user.getYRot())), (float) -Math.cos(Math.toRadians(user.getYRot())));
+        if (user instanceof Player player) {
+            target.hurt(DamageSource.playerAttack(player), damage);
+        } else {
+            target.hurt(DamageSource.mobAttack(user), damage);
+        }
+        if (!target.isAlive()) {
+            return;
+        }
+        for (EffectData data : effects) {
+            MobEffect mobEffect = ForgeRegistries.MOB_EFFECTS.getValue(data.getEffectId());
+            if (mobEffect == null) {
+                continue;
+            }
+            int time = Math.max(0, data.getTime() * 20);
+            int amplifier = Math.max(0, data.getAmplifier());
+            MobEffectInstance effectInstance = new MobEffectInstance(mobEffect, time, amplifier, false, data.isHideParticles());
+            target.addEffect(effectInstance);
+        }
+        if (user.level instanceof ServerLevel serverLevel) {
+            int count = (int) (damage * 0.5);
+            serverLevel.sendParticles(ParticleTypes.DAMAGE_INDICATOR, target.getX(), target.getY(0.5), target.getZ(), count, 0.1, 0, 0.1, 0.2);
+        }
     }
 
     @Override

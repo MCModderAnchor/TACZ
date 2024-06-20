@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "#minecraft:all_hanging_signs",
     "#minecraft:anvil",
     "#minecraft:beds",
     "#minecraft:buttons",

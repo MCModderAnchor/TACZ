@@ -49,6 +49,7 @@ public class ClientGunIndex {
     private ResourceLocation slotTexture;
     private ResourceLocation hudTexture;
     private @Nullable ResourceLocation hudEmptyTexture;
+    private @Nullable ResourceLocation crosshairTextureLocation;
     private String type;
     private String itemType;
     private @Nullable ShellEjection shellEjection;
@@ -56,6 +57,7 @@ public class ClientGunIndex {
     private LayerGunShow offhandShow;
     private @Nullable Int2ObjectArrayMap<LayerGunShow> hotbarShow;
     private float ironZoom;
+    private boolean showCrosshair = false;
 
     private ClientGunIndex() {
     }
@@ -70,6 +72,7 @@ public class ClientGunIndex {
         checkLod(display, index);
         checkSlotTexture(display, index);
         checkHUDTexture(display, index);
+        checkCrosshairTexture(display, index);
         checkAnimation(display, index);
         checkSounds(display, index);
         checkTransform(display, index);
@@ -78,6 +81,7 @@ public class ClientGunIndex {
         checkLayerGunShow(display, index);
         checkIronZoom(display, index);
         checkTextShow(display, index);
+        index.showCrosshair = display.isShowCrosshair();
         return index;
     }
 
@@ -257,6 +261,10 @@ public class ClientGunIndex {
         index.hudEmptyTexture = display.getHudEmptyTextureLocation();
     }
 
+    private static void checkCrosshairTexture(GunDisplay display, ClientGunIndex index) {
+        index.crosshairTextureLocation = display.getCrosshairTextureLocation();
+    }
+
     private static void checkShellEjection(GunDisplay display, ClientGunIndex index) {
         index.shellEjection = display.getShellEjection();
     }
@@ -333,6 +341,11 @@ public class ClientGunIndex {
         return hudEmptyTexture;
     }
 
+    @Nullable
+    public ResourceLocation getCrosshairTextureLocation() {
+        return crosshairTextureLocation;
+    }
+
     public ResourceLocation getModelTexture() {
         return modelTexture;
     }
@@ -366,5 +379,9 @@ public class ClientGunIndex {
 
     public float getIronZoom() {
         return ironZoom;
+    }
+
+    public boolean isShowCrosshair() {
+        return showCrosshair;
     }
 }

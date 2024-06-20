@@ -19,6 +19,11 @@ public interface IGunOperator {
     long getSynShootCoolDown();
 
     /**
+     * 获取从服务端同步的近战的冷却（主要是刺刀）
+     */
+    long getSynMeleeCoolDown();
+
+    /**
      * 获取从服务端同步的切枪的冷却
      */
     long getSynDrawCoolDown();
@@ -80,6 +85,11 @@ public interface IGunOperator {
      * 服务端调整倍镜的逻辑
      */
     void zoom();
+
+    /**
+     * 服务端近战的逻辑（刺刀）
+     */
+    void melee();
 
     /**
      * 从实体的位置，向指定的方向开枪

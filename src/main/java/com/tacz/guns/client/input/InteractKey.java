@@ -34,7 +34,7 @@ public class InteractKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onReloadPress(InputEvent.KeyInputEvent event) {
+    public static void onInteractPress(InputEvent.KeyInputEvent event) {
         if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && INTERACT_KEY.matches(event.getKey(), event.getScanCode())) {
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
