@@ -34,27 +34,38 @@ public class InteractKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onInteractPress(InputEvent.KeyInputEvent event) {
+    public static void onInteractKeyPress(InputEvent.KeyInputEvent event) {
         if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && INTERACT_KEY.matches(event.getKey(), event.getScanCode())) {
-            Minecraft mc = Minecraft.getInstance();
-            LocalPlayer player = mc.player;
-            if (player == null || player.isSpectator()) {
-                return;
-            }
-            if (!IGun.mainhandHoldGun(player)) {
-                return;
-            }
-            HitResult hitResult = mc.hitResult;
-            if (hitResult == null) {
-                return;
-            }
-            if (hitResult instanceof BlockHitResult blockHitResult) {
-                interactBlock(blockHitResult, player, mc);
-                return;
-            }
-            if (hitResult instanceof EntityHitResult entityHitResult) {
-                interactEntity(entityHitResult, mc);
-            }
+            doInteractLogic();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onInteractMousePress(InputEvent.MouseInputEvent event) {
+        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && INTERACT_KEY.matchesMouse(event.getButton())) {
+            doInteractLogic();
+        }
+    }
+
+    private static void doInteractLogic() {
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
+        if (player == null || player.isSpectator()) {
+            return;
+        }
+        if (!IGun.mainhandHoldGun(player)) {
+            return;
+        }
+        HitResult hitResult = mc.hitResult;
+        if (hitResult == null) {
+            return;
+        }
+        if (hitResult instanceof BlockHitResult blockHitResult) {
+            interactBlock(blockHitResult, player, mc);
+            return;
+        }
+        if (hitResult instanceof EntityHitResult entityHitResult) {
+            interactEntity(entityHitResult, mc);
         }
     }
 

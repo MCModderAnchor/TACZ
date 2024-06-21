@@ -29,16 +29,27 @@ public class ZoomKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onZoomPress(InputEvent.KeyInputEvent event) {
+    public static void onZoomKeyPress(InputEvent.KeyInputEvent event) {
         if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && ZOOM_KEY.matches(event.getKey(), event.getScanCode())) {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null || player.isSpectator()) {
-                return;
-            }
-            IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
-            if (operator.isAim()) {
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerZoom());
-            }
+            doZoomLogic();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onZoomMousePress(InputEvent.MouseInputEvent event) {
+        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && ZOOM_KEY.matchesMouse(event.getButton())) {
+            doZoomLogic();
+        }
+    }
+
+    private static void doZoomLogic() {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || player.isSpectator()) {
+            return;
+        }
+        IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
+        if (operator.isAim()) {
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerZoom());
         }
     }
 }

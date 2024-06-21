@@ -27,16 +27,27 @@ public class MeleeKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onMeleePress(InputEvent.KeyInputEvent event) {
+    public static void onMeleeKeyPress(InputEvent.KeyInputEvent event) {
         if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && MELEE_KEY.matches(event.getKey(), event.getScanCode())) {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null || player.isSpectator()) {
-                return;
-            }
-            IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
-            if (!operator.isAim()) {
-                operator.melee();
-            }
+            doMeleeLogic();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMeleeMousePress(InputEvent.MouseInputEvent event) {
+        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && MELEE_KEY.matchesMouse(event.getButton())) {
+            doMeleeLogic();
+        }
+    }
+
+    private static void doMeleeLogic() {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || player.isSpectator()) {
+            return;
+        }
+        IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
+        if (!operator.isAim()) {
+            operator.melee();
         }
     }
 }
