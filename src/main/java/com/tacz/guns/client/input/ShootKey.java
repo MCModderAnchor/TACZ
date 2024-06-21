@@ -57,7 +57,7 @@ public class ShootKey {
     }
 
     @SubscribeEvent
-    public static void semiShoot(InputEvent.MouseButton event) {
+    public static void semiShoot(InputEvent.MouseButton.Post event) {
         if (isInGame() && SHOOT_KEY.matchesMouse(event.getButton())) {
             // 松开鼠标，重置 DryFire 状态
             if (event.getAction() == GLFW.GLFW_RELEASE) {
