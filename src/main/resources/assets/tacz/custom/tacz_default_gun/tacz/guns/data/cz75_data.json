@@ -1,6 +1,6 @@
 {
   "ammo": "tacz:9mm",
-  "rpm": 1000,
+  "rpm": 900,
   "bullet": {
     "life": 0.6,
     "bullet_amount": 1,
