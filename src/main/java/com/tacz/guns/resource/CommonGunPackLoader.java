@@ -43,6 +43,7 @@ public class CommonGunPackLoader {
             .registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResultSerializer())
             .registerTypeAdapter(ExtraDamage.DistanceDamagePair.class, new DistanceDamagePairSerializer())
             .registerTypeAdapter(Vec3.class, new Vec3Serializer())
+            .registerTypeAdapter(EnumMapInstanceCreator.getType(), EnumMapInstanceCreator.getInstance())
             .create();
     /**
      * 放置自定义枪械模型的目录
