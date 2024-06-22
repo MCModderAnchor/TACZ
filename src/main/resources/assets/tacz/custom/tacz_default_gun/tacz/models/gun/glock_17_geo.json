@@ -3551,7 +3551,7 @@
 					]
 				},
 				{
-					"name": "sight_glow",
+					"name": "sight_illuminated",
 					"parent": "slide",
 					"pivot": [0.85625, 12, 8.688],
 					"cubes": [
