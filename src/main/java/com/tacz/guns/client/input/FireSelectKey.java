@@ -28,15 +28,26 @@ public class FireSelectKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onFireSelectPress(InputEvent.Key event) {
+    public static void onFireSelectKeyPress(InputEvent.Key event) {
         if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && FIRE_SELECT_KEY.matches(event.getKey(), event.getScanCode())) {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null || player.isSpectator()) {
-                return;
-            }
-            if (IGun.mainhandHoldGun(player)) {
-                IClientPlayerGunOperator.fromLocalPlayer(player).fireSelect();
-            }
+            doFireSelectLogic();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onFireSelectMousePress(InputEvent.MouseButton.Post event) {
+        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && FIRE_SELECT_KEY.matchesMouse(event.getButton())) {
+            doFireSelectLogic();
+        }
+    }
+
+    private static void doFireSelectLogic() {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || player.isSpectator()) {
+            return;
+        }
+        if (IGun.mainhandHoldGun(player)) {
+            IClientPlayerGunOperator.fromLocalPlayer(player).fireSelect();
         }
     }
 }

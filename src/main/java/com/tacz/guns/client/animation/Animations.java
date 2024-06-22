@@ -120,37 +120,39 @@ public class Animations {
         for (Map.Entry<String, BedrockAnimation> animationEntry : animationFile.getAnimations().entrySet()) {
             ObjectAnimation animation = new ObjectAnimation(animationEntry.getKey());
             BedrockAnimation bedrockAnimation = animationEntry.getValue();
-            for (Map.Entry<String, AnimationBone> boneEntry : bedrockAnimation.getBones().entrySet()) {
-                AnimationBone bone = boneEntry.getValue();
-                AnimationKeyframes translationKeyframes = bone.getPosition();
-                AnimationKeyframes rotationKeyframes = bone.getRotation();
-                AnimationKeyframes scaleKeyframes = bone.getScale();
-                if (translationKeyframes != null) {
-                    ObjectAnimationChannel translationChannel = new ObjectAnimationChannel(ObjectAnimationChannel.ChannelType.TRANSLATION);
-                    translationChannel.node = boneEntry.getKey();
-                    translationChannel.interpolator = new CustomInterpolator();
-                    // 将位移数据转移进 AnimationChannel
-                    writeBedrockTranslation(translationChannel, bone.getPosition());
-                    translationChannel.interpolator.compile(translationChannel.content);
-                    animation.addChannel(translationChannel);
-                }
-                if (rotationKeyframes != null) {
-                    ObjectAnimationChannel rotationChannel = new ObjectAnimationChannel(ObjectAnimationChannel.ChannelType.ROTATION);
-                    rotationChannel.node = boneEntry.getKey();
-                    rotationChannel.interpolator = new CustomInterpolator();
-                    // 将旋转数据转移进 AnimationChannel
-                    writeBedrockRotation(rotationChannel, bone.getRotation());
-                    rotationChannel.interpolator.compile(rotationChannel.content);
-                    animation.addChannel(rotationChannel);
-                }
-                if (scaleKeyframes != null) {
-                    ObjectAnimationChannel scaleChannel = new ObjectAnimationChannel(ObjectAnimationChannel.ChannelType.SCALE);
-                    scaleChannel.node = boneEntry.getKey();
-                    scaleChannel.interpolator = new CustomInterpolator();
-                    // 将缩放数据转移进 AnimationChannel
-                    writeBedrockScale(scaleChannel, bone.getScale());
-                    scaleChannel.interpolator.compile(scaleChannel.content);
-                    animation.addChannel(scaleChannel);
+            if (bedrockAnimation.getBones() != null) {
+                for (Map.Entry<String, AnimationBone> boneEntry : bedrockAnimation.getBones().entrySet()) {
+                    AnimationBone bone = boneEntry.getValue();
+                    AnimationKeyframes translationKeyframes = bone.getPosition();
+                    AnimationKeyframes rotationKeyframes = bone.getRotation();
+                    AnimationKeyframes scaleKeyframes = bone.getScale();
+                    if (translationKeyframes != null) {
+                        ObjectAnimationChannel translationChannel = new ObjectAnimationChannel(ObjectAnimationChannel.ChannelType.TRANSLATION);
+                        translationChannel.node = boneEntry.getKey();
+                        translationChannel.interpolator = new CustomInterpolator();
+                        // 将位移数据转移进 AnimationChannel
+                        writeBedrockTranslation(translationChannel, bone.getPosition());
+                        translationChannel.interpolator.compile(translationChannel.content);
+                        animation.addChannel(translationChannel);
+                    }
+                    if (rotationKeyframes != null) {
+                        ObjectAnimationChannel rotationChannel = new ObjectAnimationChannel(ObjectAnimationChannel.ChannelType.ROTATION);
+                        rotationChannel.node = boneEntry.getKey();
+                        rotationChannel.interpolator = new CustomInterpolator();
+                        // 将旋转数据转移进 AnimationChannel
+                        writeBedrockRotation(rotationChannel, bone.getRotation());
+                        rotationChannel.interpolator.compile(rotationChannel.content);
+                        animation.addChannel(rotationChannel);
+                    }
+                    if (scaleKeyframes != null) {
+                        ObjectAnimationChannel scaleChannel = new ObjectAnimationChannel(ObjectAnimationChannel.ChannelType.SCALE);
+                        scaleChannel.node = boneEntry.getKey();
+                        scaleChannel.interpolator = new CustomInterpolator();
+                        // 将缩放数据转移进 AnimationChannel
+                        writeBedrockScale(scaleChannel, bone.getScale());
+                        scaleChannel.interpolator.compile(scaleChannel.content);
+                        animation.addChannel(scaleChannel);
+                    }
                 }
             }
             // 将声音数据转移到 ObjectAnimation 中
