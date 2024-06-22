@@ -19,6 +19,7 @@
 
   "tacz.gun.ak47.name": "AKM 突击步枪",
   "tacz.gun.deagle.name": ".50 沙漠之鹰",
+  "tacz.gun.deagle_golden.name": ".357 黄金沙漠之鹰",
   "tacz.gun.glock_17.name": "格洛克 17 手枪",
   "tacz.gun.ai_awp.name": "精密国际 AWM 狙击步枪",
   "tacz.gun.m95.name": "M95 .50口径反器材步枪",
@@ -43,6 +44,7 @@
   "tacz.ammo.45acp.name": "§a.45 手枪弹",
   "tacz.ammo.46x30.name": "§d4.6mm 穿甲弹",
   "tacz.ammo.50ae.name": "§c.50 AE 手枪弹",
+  "tacz.ammo.357mag.name": "§c.357 马格南 手枪弹",
   "tacz.ammo.50bmg.name": "§c.50 BMG 狙击弹",
   "tacz.ammo.58x42.name": "§e5.8mm 步枪弹",
   "tacz.ammo.68x51fury.name": "§b6.8×51mm 步枪弹",
@@ -92,6 +94,8 @@
   "tacz.attachment.muzzle_brake_pioneer.name": "先锋 A3 制退器",
   "tacz.attachment.muzzle_brake_cthulhu.name": "克苏鲁 K7 制退器",
   "tacz.attachment.muzzle_brake_trex.name": "霸王龙 重型制退器",
+
+  "tacz.attachment.deagle_golden_long_barrel.name": ".357 黄金沙漠之鹰加长枪管",
 
   "tacz.attachment.bayonet_6h3.name": "6H3 刺刀",
   "tacz.attachment.bayonet_m9.name": "M9 刺刀",

@@ -22,6 +22,7 @@
   
   "tacz.gun.ak47.name": "AKM",
   "tacz.gun.deagle.name": "Deagle 50",
+  "tacz.gun.deagle_golden.name": "Golden Deagle 357",
   "tacz.gun.glock_17.name": "Glock 17",
   "tacz.gun.ai_awp.name": "Accuracy International AWM",
   "tacz.gun.m95.name": "M95 .50 Cal Antimaterial",
@@ -46,6 +47,7 @@
   "tacz.ammo.45acp.name": "§a.45 ACP Bullet",
   "tacz.ammo.46x30.name": "§d4.6mm AP Bullet",
   "tacz.ammo.50ae.name": "§c.50 AE",
+  "tacz.ammo.357mag.name": "§c.357 Magnum",
   "tacz.ammo.50bmg.name": "§c.50 BMG",
   "tacz.ammo.58x42.name": "§e5.8mm DBP87 Bullet",
   "tacz.ammo.68x51fury.name": "§b6.8×51mm Fury Bullet",
@@ -95,6 +97,8 @@
   "tacz.attachment.muzzle_brake_pioneer.name": "Pioneer A3 Brake",
   "tacz.attachment.muzzle_brake_cthulhu.name": "Cthulhu K7 Brake",
   "tacz.attachment.muzzle_brake_trex.name": "T-Rex Heavy Brake",
+
+  "tacz.attachment.deagle_golden_long_barrel.name": ".357 Golden Deagle Long Barrel",
 
   "tacz.attachment.bayonet_6h3.name": "6H3 Bayonet",
   "tacz.attachment.bayonet_m9.name": "M9 Bayonet",

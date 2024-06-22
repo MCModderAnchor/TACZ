@@ -1,0 +1,15 @@
+{
+  "weight": 0.2,
+  "ads_addend": 0.03,
+  "inaccuracy_addend": -0.25,
+  "recoil_modifier": {
+    "pitch": -0.15,
+    "yaw": -0.1
+  },
+  "silence": {
+    // 声音传播的范围，如果默认是 50 格，这里填入 -10，那么消音后传播距离为 40 格
+    "distance_addend": -12,
+    // 是否使用专门的消音后的音源
+    "use_silence_sound": true
+  }
+}
