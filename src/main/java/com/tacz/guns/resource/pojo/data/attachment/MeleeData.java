@@ -1,8 +1,8 @@
 package com.tacz.guns.resource.pojo.data.attachment;
 
+import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 
