@@ -131,8 +131,8 @@ public class LocalPlayerShoot {
                 // 转换 isRecord 状态，允许下一个tick的开火检测。
                 data.isShootRecorded = true;
             }
-            // 如果达到最大连发次数，取消任务
-            if (count.get() >= maxCount) {
+            // 如果达到最大连发次数，或者玩家已经死亡，取消任务
+            if (count.get() >= maxCount || player.isRemoved()) {
                 ScheduledFuture<?> future = (ScheduledFuture<?>) Thread.currentThread();
                 future.cancel(false); // 取消当前任务
                 return;

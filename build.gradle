@@ -135,6 +135,7 @@ repositories {
         }
     }
     mavenCentral() // MixinExtras is there
+    mavenLocal()
     flatDir {
         dir 'libs'
     }
