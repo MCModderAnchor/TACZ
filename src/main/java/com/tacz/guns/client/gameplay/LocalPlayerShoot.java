@@ -132,7 +132,7 @@ public class LocalPlayerShoot {
                 data.isShootRecorded = true;
             }
             // 如果达到最大连发次数，或者玩家已经死亡，取消任务
-            if (count.get() >= maxCount || player.isRemoved()) {
+            if (count.get() >= maxCount || player.isDeadOrDying()) {
                 ScheduledFuture<?> future = (ScheduledFuture<?>) Thread.currentThread();
                 future.cancel(false); // 取消当前任务
                 return;
