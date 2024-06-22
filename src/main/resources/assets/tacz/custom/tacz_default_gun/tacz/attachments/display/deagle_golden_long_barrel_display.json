@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/deagle_golden_long_barrel",
+  "model": "tacz:attachment/deagle_golden_long_barrel_geo",
+  "texture": "tacz:attachment/uv/deagle_golden",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}
