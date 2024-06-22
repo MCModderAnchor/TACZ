@@ -55,7 +55,7 @@
     // 点燃时间，默认为 2 秒，仅用于实体
     "ignite_entity_time": 2,
     // 穿透数
-    "pierce": 0
+    "pierce": 1
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
     //  延时爆炸，单位：秒
