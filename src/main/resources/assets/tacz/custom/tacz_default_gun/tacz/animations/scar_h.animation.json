@@ -249,7 +249,7 @@
 				}
 			},
 			"sound_effects": {
-				"0.0": {
+				"0.0333": {
 					"effect": "tacz:scar_h/p05_ar_schotel_ubgl_drop_rattle"
 				}
 			}
@@ -1874,6 +1874,9 @@
 						"4.2": [0, 0, 0]
 					}
 				},
+				"bullet": {
+					"scale": 0
+				},
 				"camera": {
 					"rotation": {
 						"0.0": {
@@ -2009,9 +2012,6 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
-				},
-				"bullet": {
-					"scale": 0
 				}
 			},
 			"sound_effects": {
@@ -3138,15 +3138,15 @@
 							"lerp_mode": "catmullrom"
 						},
 						"0.0667": {
-							"post": [-0.96137, -0.23295, -2.84362],
+							"post": [-0.96137, -0.23295, -1.21862],
 							"lerp_mode": "catmullrom"
 						},
 						"0.1": {
-							"post": [-0.99135, 0.12866, 2.02246],
+							"post": [-0.99135, 0.12866, 1.12246],
 							"lerp_mode": "catmullrom"
 						},
 						"0.1667": {
-							"post": [0.77838, 0.0674, -2.22417],
+							"post": [0.77838, 0.0674, -0.52417],
 							"lerp_mode": "catmullrom"
 						},
 						"0.2333": {
