@@ -2,25 +2,25 @@
   // 指定枪械弹药
   "ammo": "tacz:762x39",
   // 弹容
-  "ammo_amount": 30,
+  "ammo_amount": 40,
   // 扩容弹夹弹药总数
   "extended_mag_ammo_amount": [
-    34,
-    37,
-    40
+    50,
+    60,
+    75
   ],
   // 枪栓类型：开膛待机（open_bolt）、闭膛待击（closed_bolt）、手动上膛（manual_action)
   "bolt": "closed_bolt",
   // 每分钟射出弹药量，最大不应超过 1200
-  "rpm": 600,
+  "rpm": 650,
   // 子弹实体属性
   "bullet": {
     // 寿命，单位秒
-    "life": 0.8,
+    "life": 0.9,
     // 用于霰弹，默认为 1，每发的伤害 / bullet_amount，每次射击扣除一发子弹
     "bullet_amount": 1,
     // 伤害
-    "damage": 9,
+    "damage": 10,
     // 曳光弹间隔数量，没有此字段则不发射曳光弹
     // 设置为 0 则是每发都是曳光弹
     "tracer_count_interval": 0,
@@ -33,23 +33,22 @@
       // 距离-伤害分段常函数
       "damage_adjust": [
         // 这样就能写抵近伤害了
-        {"distance": 0.5, "damage": 10},
-        {"distance": 25, "damage": 9},
-        {"distance": 50, "damage": 8.5},
-        {"distance": 80, "damage": 7.5},
-        {"distance": 120, "damage": 6.5},
+        {"distance": 0.5, "damage": 12},
+        {"distance": 35, "damage": 10},
+        {"distance": 60, "damage": 8.5},
+        {"distance": 90, "damage": 7.5},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 5.5}
+        {"distance": "infinite", "damage": 6}
       ]
     },
     // 速度 m/s
-    "speed": 240,
+    "speed": 250,
     // 重力
     "gravity": 0.0245,
     // 击退效果
     "knockback": 0,
     // 阻力
-    "friction": 0.01,
+    "friction": 0.015,
     // 点燃目标
     "ignite": false,
     // 点燃时间，默认为 2 秒，仅用于实体
@@ -73,26 +72,26 @@
     // 弹匣供弹换弹时长（秒），到达此时间点，服务端就更新枪内子弹数量
     "feed": {
       // 空仓换弹
-      "empty": 2.25,
+      "empty": 2.95,
       // 战术换弹
-      "tactical": 1.55
+      "tactical": 1.95
     },
     // 弹匣供弹总时长（秒），到达此时间点，枪械才可以进行开火、检视等行为。
     "cooldown": {
       // 空仓换弹
-      "empty": 2.6,
+      "empty": 3.69,
       // 战术换弹
-      "tactical": 2.0
+      "tactical": 2.77
     }
   },
   // 枪械抬起的动作时长，单位秒。
   // 抬起动作完成后，枪械可以进行开火、检视等行为
-  "draw_time": 0.35,
+  "draw_time": 0.67,
   // 收枪的动作时长，单位秒。
-  "put_away_time": 0.4,
+  "put_away_time": 0.6,
   // 瞄准时长，单位秒。
-  "aim_time": 0.2,
-  "sprint_time": 0.2,
+  "aim_time": 0.18,
+  "sprint_time": 0.22,
   // 拉栓上膛的时间，仅当枪栓类型为 manual_action 时有效
   // "bolt_action_time": 0.9,
   // 开火模式
@@ -102,28 +101,16 @@
     // 半自动
     "semi"
   ],
-  // 多连续发数据，仅多连发会调用
-  "burst_data": {
-    // 是否连续射击
-    "continuous_shoot": true,
-    // 连发数
-    "count": 3,
-    // 组内连发的射速
-    "bpm": 900,
-    // 每组连发之间的时间间隔（上一组结束时间到下一组开始的时间间隔），单位秒
-    "min_interval": 0.3
-  },
-  // 后坐力
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.7, 0.7]},
-      {"time": 0.25, "value": [0.7, 0.7]},
-      {"time": 0.45, "value": [-0.175, -0.175]},
-      {"time": 0.6, "value": [0, 0]}
+      {"time": 0, "value": [0.6, 0.6]},
+      {"time": 0.25, "value": [0.6, 0.6]},
+      {"time": 0.65, "value": [-0.175, -0.175]},
+      {"time": 0.7, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.35, -0.15]},
-      {"time": 0.25, "value": [-0.35, -0.15]},
+      {"time": 0, "value": [-0.25, 0.15]},
+      {"time": 0.25, "value": [-0.25, 0.15]},
       {"time": 0.45, "value": [0, 0]}
     ]
   },
@@ -132,20 +119,20 @@
   // 不准确度
   "inaccuracy": {
     // 站立射击散布
-    "stand": 5,
+    "stand": 4.75,
     // 移动射击散布
-    "move": 5.75,
+    "move": 5.25,
     // 潜行射击散布
     "sneak": 3.5,
     // 趴下射击散布
-    "lie": 2.5,
+    "lie": 0.5,
     // 瞄准射击时散布
     "aim": 0.15
   },
   // 刺刀攻击距离参数，用来延升刺刀攻击范围
   "melee": {
-    "distance": 1,
-    "cooldown": 0.5
+    "distance": 2,
+    "cooldown": 0.7
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser, extended_mag
@@ -157,15 +144,5 @@
   ],
   // 专属的配件属性
   "exclusive_attachments": {
-    // 配件 ID，后面的数据和配件的 data 部分结构完全一致
-    "tacz:scope_standard_8x": {
-      "weight": 2.0,
-      "ads_addend": 0.04,
-      "inaccuracy_addend": -0.4,
-      "recoil_modifier": {
-        "pitch": -0.2,
-        "yaw": -0.1
-      }
-    }
   }
 }

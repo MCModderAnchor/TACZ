@@ -2,7 +2,6 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"static_idle": {
-			"loop": true,
 			"animation_length": 0.1,
 			"bones": {
 				"root": {
@@ -20,8 +19,8 @@
 					"scale": [1, 1.5, 1]
 				},
 				"constraint": {
-					"rotation": [0.4, 0.4, 0.4],
-					"position": [0.5, 0.5, 0.5]
+					"rotation": [0.1, 0.2, 0.4],
+					"position": [0.2, 0.2, 0.25]
 				}
 			}
 		},
@@ -459,7 +458,10 @@
 				"mag_and_bullet": {
 					"scale": {
 						"0.0": [0, 0, 0],
-						"0.1": {"pre": [0, 0, 0], "post": [1, 1, 1]}
+						"0.1": {
+							"pre": [0, 0, 0],
+							"post": [1, 1, 1]
+						}
 					}
 				},
 				"righthand": {
@@ -2425,8 +2427,7 @@
 			}
 		},
 		"shoot": {
-			"loop": true,
-			"animation_length": 0.58333,
+			"animation_length": 0.5833,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -2565,12 +2566,12 @@
 				},
 				"constraint": {
 					"rotation": {
-						"0.0833": [0.4, 0.3, 0.3],
-						"0.2167": [0, 0, 0]
+						"0.0": [0.01, 0.01, 0.05],
+						"0.3667": [0, 0, 0]
 					},
 					"position": {
-						"0.0833": [0.3, 0.4, 0.3],
-						"0.2167": [0, 0, 0]
+						"0.0": [0.01, 0.01, 0.05],
+						"0.3667": [0, 0, 0]
 					}
 				}
 			}
