@@ -97,7 +97,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         // 将连发任务委托到循环任务工具
         CycleTaskHelper.addCycleTask(() -> {
             // 如果射击者死亡，取消射击
-            if (shooter.isRemoved()) {
+            if (shooter.isDeadOrDying()) {
                 return false;
             }
             // 削减弹药数
