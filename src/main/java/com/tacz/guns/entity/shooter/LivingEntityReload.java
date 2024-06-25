@@ -167,8 +167,8 @@ public class LivingEntityReload {
         if (currentAmmoCount >= maxAmmoCount) {
             return false;
         }
-        if (iGun.useDummyAmmo(currentGunItem) && iGun.getDummyAmmoAmount(currentGunItem) > 0) {
-            return true;
+        if (iGun.useDummyAmmo(currentGunItem)) {
+            return iGun.getDummyAmmoAmount(currentGunItem) > 0;
         }
         return shooter.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).map(cap -> {
             // 背包检查
