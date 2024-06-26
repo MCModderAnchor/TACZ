@@ -13,6 +13,7 @@ import com.tacz.guns.client.resource.pojo.display.gun.GunDisplay;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
+import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -209,5 +210,6 @@ public enum ClientAssetManager {
         this.languages.clear();
         this.tempGunModelMap.clear();
         this.tempAttachmentModelMap.clear();
+        PlayerAnimatorCompat.clearAllAnimations();
     }
 }

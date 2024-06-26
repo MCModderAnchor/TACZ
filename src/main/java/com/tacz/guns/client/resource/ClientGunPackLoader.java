@@ -19,6 +19,7 @@ import com.tacz.guns.client.resource.serialize.AnimationKeyframesSerializer;
 import com.tacz.guns.client.resource.serialize.ItemStackSerializer;
 import com.tacz.guns.client.resource.serialize.SoundEffectKeyframesSerializer;
 import com.tacz.guns.client.resource.serialize.Vector3fSerializer;
+import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.util.GetJarResources;
@@ -135,6 +136,7 @@ public class ClientGunPackLoader {
             AttachmentDisplayLoader.load(root);
             AttachmentSkinLoader.load(root);
             AnimationLoader.load(root);
+            PlayerAnimatorCompat.loadAnimationFromFile(root);
             BedrockModelLoader.load(root);
             TextureLoader.load(root);
             SoundLoader.load(root);
@@ -164,6 +166,10 @@ public class ClientGunPackLoader {
                 }
                 // 加载全部的 animation 文件
                 if (AnimationLoader.load(zipFile, path)) {
+                    continue;
+                }
+                // 加载 player animator 动画
+                if (PlayerAnimatorCompat.loadAnimationFromZip(zipFile, path)) {
                     continue;
                 }
                 // 加载全部的 model 文件

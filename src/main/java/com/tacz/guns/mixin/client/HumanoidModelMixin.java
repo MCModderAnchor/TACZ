@@ -4,8 +4,10 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -39,6 +41,9 @@ public class HumanoidModelMixin<T extends LivingEntity> {
                 return;
             }
             TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItem)).ifPresent(index -> {
+                if (entityIn instanceof AbstractClientPlayer player && PlayerAnimatorCompat.onHoldOrAim(player, index)) {
+                    return;
+                }
                 String animation = index.getThirdPersonAnimation();
                 float aimingProgress = operator.getSynAimingProgress();
                 if (aimingProgress <= 0) {

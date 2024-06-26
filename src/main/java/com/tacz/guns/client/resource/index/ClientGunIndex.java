@@ -42,6 +42,7 @@ public class ClientGunIndex {
     private BedrockGunModel gunModel;
     private @Nullable Pair<BedrockGunModel, ResourceLocation> lodModel;
     private GunAnimationStateMachine animationStateMachine;
+    private @Nullable ResourceLocation playerAnimator3rd;
     private Map<String, ResourceLocation> sounds;
     private GunTransform transform;
     private GunData gunData;
@@ -224,6 +225,10 @@ public class ClientGunIndex {
         if (StringUtils.isNoneBlank(display.getThirdPersonAnimation())) {
             index.thirdPersonAnimation = display.getThirdPersonAnimation();
         }
+        // player animator 兼容动画
+        if (display.getPlayerAnimator3rd() != null) {
+            index.playerAnimator3rd = display.getPlayerAnimator3rd();
+        }
     }
 
     private static void checkSounds(GunDisplay display, ClientGunIndex index) {
@@ -383,5 +388,9 @@ public class ClientGunIndex {
 
     public boolean isShowCrosshair() {
         return showCrosshair;
+    }
+
+    public @Nullable ResourceLocation getPlayerAnimator3rd() {
+        return playerAnimator3rd;
     }
 }

@@ -1,0 +1,136 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"hold": {
+			"animation_length": 0.0417,
+			"bones": {
+				"right_arm": {
+					"rotation": {
+						"vector": [-87.5, 0, 0]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"vector": [-81.82169, -52.21677, -6.48009]
+					}
+				}
+			}
+		},
+		"aim": {
+			"animation_length": 0.0417,
+			"bones": {
+				"right_arm": {
+					"rotation": {
+						"vector": [-162.08995, -8.86829, -55.82646]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"vector": [-211.4049, -1.6131, 75.54036]
+					}
+				}
+			}
+		},
+		"normal_fire": {
+			"animation_length": 0.25,
+			"bones": {
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [-54.58995, -8.86829, -55.82646]
+						},
+						"0.2083": {
+							"vector": [-126.29645, -12.82057, -73.19449]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [-66.4049, -1.6131, 75.54036]
+						},
+						"0.2083": {
+							"vector": [-103.9, -1.61, 75.54],
+							"easing": "easeInQuart"
+						}
+					}
+				}
+			}
+		},
+		"aim_fire": {
+			"animation_length": 0.2083,
+			"bones": {
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [24.80031, 40.54326, 92.80098]
+						},
+						"0.2083": {
+							"vector": [-103.9, -1.61, 75.54],
+							"easing": "easeInQuart"
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [-133.9049, -1.6131, 75.54036]
+						},
+						"0.2083": {
+							"vector": [-103.9, -1.61, 75.54],
+							"easing": "easeInQuart"
+						}
+					}
+				}
+			}
+		},
+		"reload": {
+			"animation_length": 1,
+			"bones": {
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5833": {
+							"vector": [-87.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [-62.5, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5833": {
+							"vector": [8, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		},
+		"melee": {
+			"animation_length": 0.5,
+			"bones": {
+				"left_arm": {
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2083": {
+							"vector": [0, 14, 0]
+						},
+						"0.4167": {
+							"vector": [2, 14, 0]
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}
