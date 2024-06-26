@@ -104,7 +104,7 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
             // 应用 display 数据中的缩放
             applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
             // 渲染枪械模型
-            RenderType renderType = RenderType.itemEntityTranslucentCull(gunTexture);
+            RenderType renderType = RenderType.entityCutout(gunTexture);
             gunModel.render(poseStack, stack, transformType, renderType, pPackedLight, pPackedOverlay);
         }, () -> {
             // 没有这个 gunID，渲染个错误材质提醒别人

@@ -110,7 +110,7 @@ public class ShellRender implements IFunctionalRenderer {
         poseStack2.mulPose(Axis.ZP.rotationDegrees((float) zw));
         poseStack2.translate(0, -1.5, 0);
 
-        model.render(poseStack2, transformType1, RenderType.itemEntityTranslucentCull(location), light, overlay);
+        model.render(poseStack2, transformType1, RenderType.entityCutout(location), light, overlay);
     }
 
     private static void checkShellQueue(long lifeTime) {

@@ -44,7 +44,7 @@ public class AttachmentRender implements IFunctionalRenderer {
                     // 有皮肤则渲染皮肤
                     BedrockAttachmentModel model = skinIndex.getModel();
                     ResourceLocation texture = skinIndex.getTexture();
-                    RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
+                    RenderType renderType = RenderType.entityCutout(texture);
                     model.render(poseStack, transformType, renderType, light, overlay);
                 } else {
                     // 没有皮肤，渲染默认模型
@@ -59,7 +59,7 @@ public class AttachmentRender implements IFunctionalRenderer {
                             model = lodModel.getLeft();
                             texture = lodModel.getRight();
                         }
-                        RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
+                        RenderType renderType = RenderType.entityCutout(texture);
                         model.render(poseStack, transformType, renderType, light, overlay);
                     }
                 }

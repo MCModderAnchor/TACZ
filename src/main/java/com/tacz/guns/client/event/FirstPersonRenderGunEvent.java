@@ -157,7 +157,8 @@ public class FirstPersonRenderGunEvent {
                     gunModel.setRenderHand(false);
                 }
                 // 调用枪械模型渲染
-                RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
+                //RenderType renderType = RenderType.itemEntityTranslucentCull(gunIndex.getModelTexture());
+                RenderType renderType = RenderType.entityCutout(gunIndex.getModelTexture());
                 gunModel.render(poseStack, stack, transformType, renderType, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
                 // 调用曳光弹渲染
                 renderBulletTracer(player, poseStack, gunModel, event.getPartialTick());

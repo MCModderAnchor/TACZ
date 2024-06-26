@@ -134,6 +134,9 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        url 'https://jitpack.io'
+    }
     mavenCentral() // MixinExtras is there
     mavenLocal()
     flatDir {
@@ -149,11 +152,18 @@ dependencies {
         jarJar.ranged(it, "[3.6.1,)")
     }
 
+    // LuaJ 库，将 lua 脚本语言引入用于控制枪械的逻辑和动画状态机
+    implementation(jarJar('com.github.286799714.luaj:luaj-jse:3.0.3')) {
+        jarJar.ranged(it, "[3.0.3,)")
+    }
+
     // compile against the JEI API but do not include it at runtime
     compileOnly(fg.deobf("mezz.jei:jei-1.20.1-common-api:${jei_version}"))
     compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge-api:${jei_version}"))
     // at runtime, use the full JEI jar for Forge
     runtimeOnly(fg.deobf("mezz.jei:jei-1.20.1-forge:${jei_version}"))
+    // 性能分析工具模组
+    runtimeOnly fg.deobf("curse.maven:spark-361579:4738952")
 
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
 
