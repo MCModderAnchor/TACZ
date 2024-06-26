@@ -57,7 +57,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                     // 有皮肤则渲染皮肤
                     BedrockAttachmentModel model = skinIndex.getModel();
                     ResourceLocation texture = skinIndex.getTexture();
-                    RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
+                    RenderType renderType = RenderType.entityCutout(texture);
                     model.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay);
                 } else {
                     // 没有皮肤，渲染默认模型
@@ -86,7 +86,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                 model = lodModel.getLeft();
                 texture = lodModel.getRight();
             }
-            RenderType renderType = RenderType.itemEntityTranslucentCull(texture);
+            RenderType renderType = RenderType.entityCutout(texture);
             model.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay);
         }
         // 否则，以 GUI 形式渲染

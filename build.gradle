@@ -25,7 +25,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
-// version = "1.0.0"
+// version = "1.0.2-beta"
 // 版本号，正式发布需要修改这一行
 version = FORMAT.format(new Date())
 group = "com.tacz"
@@ -133,6 +133,9 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        url 'https://jitpack.io'
+    }
     mavenCentral() // MixinExtras is there
     mavenLocal()
     flatDir {
@@ -146,6 +149,11 @@ dependencies {
     // Apache Commons Math 库，用于进行一些插值运算
     minecraftLibrary(jarJar('org.apache.commons:commons-math3:3.6.1')) {
         jarJar.ranged(it, "[3.6.1,)")
+    }
+
+    // LuaJ 库，将 lua 脚本语言引入用于控制枪械的逻辑和动画状态机
+    implementation(jarJar('com.github.286799714.luaj:luaj-jse:3.0.3')) {
+        jarJar.ranged(it, "[3.0.3,)")
     }
 
     // compile against the JEI API but do not include it at runtime
