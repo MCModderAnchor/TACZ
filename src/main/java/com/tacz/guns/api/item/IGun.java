@@ -48,9 +48,7 @@ public interface IGun {
     }
 
     /**
-     * 获取瞄准进度
-     *
-     * @return 0-1，1 代表 100% 进度
+     * 获取瞄准放大倍率
      */
     float getAimingZoom(ItemStack gunItem);
 
