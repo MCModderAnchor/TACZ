@@ -67,7 +67,7 @@ public class AnimationManager {
                 }
                 return;
             }
-            if (limbSwingAmount < 0.05) {
+            if (limbSwingAmount > 0.05) {
                 playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.WALK_UPPER);
                 return;
             }
