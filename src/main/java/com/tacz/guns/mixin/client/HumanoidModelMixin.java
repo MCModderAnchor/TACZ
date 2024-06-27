@@ -7,7 +7,6 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -38,25 +37,20 @@ public class HumanoidModelMixin<T extends LivingEntity> {
             ItemStack mainHandItem = entityIn.getMainHandItem();
             IGun iGun = IGun.getIGunOrNull(mainHandItem);
             if (iGun == null) {
-                if (entityIn instanceof AbstractClientPlayer player) {
-                    PlayerAnimatorCompat.stopBaseAnimation(player);
-                }
+                PlayerAnimatorCompat.stopAllAnimation(entityIn);
                 return;
             }
             TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItem)).ifPresent(index -> {
-                if (entityIn instanceof AbstractClientPlayer player) {
-                    if (PlayerAnimatorCompat.onHoldOrAim(player, index, limbSwingAmount)) {
-                        return;
-                    } else {
-                        PlayerAnimatorCompat.stopBaseAnimation(player);
-                    }
-                }
-                String animation = index.getThirdPersonAnimation();
-                float aimingProgress = operator.getSynAimingProgress();
-                if (aimingProgress <= 0) {
-                    ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, body, head);
+                if (PlayerAnimatorCompat.hasPlayerAnimator3rd(entityIn, index)) {
+                    PlayerAnimatorCompat.playAnimation(entityIn, index, limbSwingAmount);
                 } else {
-                    ThirdPersonManager.getAnimation(animation).animateGunAim(entityIn, rightArm, leftArm, body, head, aimingProgress);
+                    String animation = index.getThirdPersonAnimation();
+                    float aimingProgress = operator.getSynAimingProgress();
+                    if (aimingProgress <= 0) {
+                        ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, body, head);
+                    } else {
+                        ThirdPersonManager.getAnimation(animation).animateGunAim(entityIn, rightArm, leftArm, body, head, aimingProgress);
+                    }
                 }
             });
         }

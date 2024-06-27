@@ -8,6 +8,7 @@ import com.tacz.guns.compat.playeranimator.animation.PlayerAnimatorAssetManager;
 import com.tacz.guns.compat.playeranimator.animation.PlayerAnimatorLoader;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 
@@ -15,8 +16,9 @@ import java.io.File;
 import java.util.zip.ZipFile;
 
 public class PlayerAnimatorCompat {
-    public static ResourceLocation BASE_ANIMATION_ID = new ResourceLocation(GunMod.MOD_ID, "base_animation");
-    public static ResourceLocation MAIN_ANIMATION_ID = new ResourceLocation(GunMod.MOD_ID, "main_animation");
+    public static ResourceLocation LOWER_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "lower_animation");
+    public static ResourceLocation LOOP_UPPER_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "loop_upper_animation");
+    public static ResourceLocation ONCE_UPPER_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "once_upper_animation");
 
     private static final String MOD_ID = "playeranimator";
     private static boolean INSTALLED = false;
@@ -42,22 +44,29 @@ public class PlayerAnimatorCompat {
         }
     }
 
-    public static void clearAllAnimations() {
+    public static void clearAllAnimationCache() {
         if (isInstalled()) {
             PlayerAnimatorAssetManager.INSTANCE.clearAll();
         }
     }
 
-    public static boolean onHoldOrAim(AbstractClientPlayer player, ClientGunIndex gunIndex, float limbSwingAmount) {
-        if (isInstalled()) {
-            return AnimationManager.onHoldOrAim(player, gunIndex, limbSwingAmount);
+    public static boolean hasPlayerAnimator3rd(LivingEntity livingEntity, ClientGunIndex gunIndex) {
+        if (isInstalled() && livingEntity instanceof AbstractClientPlayer) {
+            return AnimationManager.hasPlayerAnimator3rd(gunIndex);
         }
         return false;
     }
 
-    public static void stopBaseAnimation(AbstractClientPlayer player) {
-        if (isInstalled()) {
-            AnimationManager.stopAnimation(player, BASE_ANIMATION_ID);
+    public static void stopAllAnimation(LivingEntity livingEntity) {
+        if (isInstalled() && livingEntity instanceof AbstractClientPlayer player) {
+            AnimationManager.stopAllAnimation(player);
+        }
+    }
+
+    public static void playAnimation(LivingEntity livingEntity, ClientGunIndex gunIndex, float limbSwingAmount) {
+        if (isInstalled() && livingEntity instanceof AbstractClientPlayer player) {
+            AnimationManager.playLowerAnimation(player, gunIndex, limbSwingAmount);
+            AnimationManager.playLoopUpperAnimation(player, gunIndex, limbSwingAmount);
         }
     }
 

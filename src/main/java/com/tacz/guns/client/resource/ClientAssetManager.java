@@ -210,6 +210,6 @@ public enum ClientAssetManager {
         this.languages.clear();
         this.tempGunModelMap.clear();
         this.tempAttachmentModelMap.clear();
-        PlayerAnimatorCompat.clearAllAnimations();
+        PlayerAnimatorCompat.clearAllAnimationCache();
     }
 }

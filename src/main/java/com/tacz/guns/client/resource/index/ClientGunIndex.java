@@ -42,7 +42,7 @@ public class ClientGunIndex {
     private BedrockGunModel gunModel;
     private @Nullable Pair<BedrockGunModel, ResourceLocation> lodModel;
     private GunAnimationStateMachine animationStateMachine;
-    private @Nullable ResourceLocation playerAnimator3rd;
+    private @Nullable ResourceLocation playerAnimator3rd = new ResourceLocation(GunMod.MOD_ID, "rifle_default.player_animation");
     private Map<String, ResourceLocation> sounds;
     private GunTransform transform;
     private GunData gunData;
