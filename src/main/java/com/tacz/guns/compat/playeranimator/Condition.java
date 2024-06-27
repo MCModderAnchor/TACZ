@@ -8,6 +8,14 @@ public enum Condition {
      */
     HOLD,
     /**
+     * 行走
+     */
+    WALK,
+    /**
+     * 跑步
+     */
+    RUN,
+    /**
      * 瞄准
      */
     AIM,

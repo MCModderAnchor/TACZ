@@ -38,11 +38,18 @@ public class HumanoidModelMixin<T extends LivingEntity> {
             ItemStack mainHandItem = entityIn.getMainHandItem();
             IGun iGun = IGun.getIGunOrNull(mainHandItem);
             if (iGun == null) {
+                if (entityIn instanceof AbstractClientPlayer player) {
+                    PlayerAnimatorCompat.stopBaseAnimation(player);
+                }
                 return;
             }
             TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItem)).ifPresent(index -> {
-                if (entityIn instanceof AbstractClientPlayer player && PlayerAnimatorCompat.onHoldOrAim(player, index)) {
-                    return;
+                if (entityIn instanceof AbstractClientPlayer player) {
+                    if (PlayerAnimatorCompat.onHoldOrAim(player, index, limbSwingAmount)) {
+                        return;
+                    } else {
+                        PlayerAnimatorCompat.stopBaseAnimation(player);
+                    }
                 }
                 String animation = index.getThirdPersonAnimation();
                 float aimingProgress = operator.getSynAimingProgress();

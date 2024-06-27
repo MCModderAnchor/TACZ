@@ -15,7 +15,8 @@ import java.io.File;
 import java.util.zip.ZipFile;
 
 public class PlayerAnimatorCompat {
-    public static ResourceLocation ANIMATION_DATA_ID = new ResourceLocation(GunMod.MOD_ID, "animation");
+    public static ResourceLocation BASE_ANIMATION_ID = new ResourceLocation(GunMod.MOD_ID, "base_animation");
+    public static ResourceLocation MAIN_ANIMATION_ID = new ResourceLocation(GunMod.MOD_ID, "main_animation");
 
     private static final String MOD_ID = "playeranimator";
     private static boolean INSTALLED = false;
@@ -47,11 +48,17 @@ public class PlayerAnimatorCompat {
         }
     }
 
-    public static boolean onHoldOrAim(AbstractClientPlayer player, ClientGunIndex gunIndex) {
+    public static boolean onHoldOrAim(AbstractClientPlayer player, ClientGunIndex gunIndex, float limbSwingAmount) {
         if (isInstalled()) {
-            return AnimationManager.onHoldOrAim(player, gunIndex);
+            return AnimationManager.onHoldOrAim(player, gunIndex, limbSwingAmount);
         }
         return false;
+    }
+
+    public static void stopBaseAnimation(AbstractClientPlayer player) {
+        if (isInstalled()) {
+            AnimationManager.stopAnimation(player, BASE_ANIMATION_ID);
+        }
     }
 
     public static boolean isInstalled() {

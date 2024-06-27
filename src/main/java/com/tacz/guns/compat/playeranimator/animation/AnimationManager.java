@@ -19,53 +19,83 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.Locale;
+
 public class AnimationManager {
-    public static boolean onHoldOrAim(AbstractClientPlayer player, ClientGunIndex gunIndex) {
-        if (otherAnimationIsPlaying(player)) {
-            return true;
-        }
+    @SuppressWarnings("unchecked")
+    public static boolean onHoldOrAim(AbstractClientPlayer player, ClientGunIndex gunIndex, float limbSwingAmount) {
         IGunOperator operator = IGunOperator.fromLivingEntity(player);
         float aimingProgress = operator.getSynAimingProgress();
+        if (player.isSprinting()) {
+            return playBaseAnimation(player, gunIndex, PlayerAnimatorCompat.BASE_ANIMATION_ID, Condition.RUN);
+        }
+        if (limbSwingAmount > 0.05) {
+            return playBaseAnimation(player, gunIndex, PlayerAnimatorCompat.BASE_ANIMATION_ID, Condition.WALK);
+        }
         if (aimingProgress <= 0) {
-            return playAnimation(player, gunIndex, Condition.HOLD);
+            return playBaseAnimation(player, gunIndex, PlayerAnimatorCompat.BASE_ANIMATION_ID, Condition.HOLD);
         } else {
-            return playAnimation(player, gunIndex, Condition.AIM);
+            return playBaseAnimation(player, gunIndex, PlayerAnimatorCompat.BASE_ANIMATION_ID, Condition.AIM);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static boolean otherAnimationIsPlaying(AbstractClientPlayer player) {
-        var associatedData = PlayerAnimationAccess.getPlayerAssociatedData(player);
-        var modifierLayer = (ModifierLayer<IAnimation>) associatedData.get(PlayerAnimatorCompat.ANIMATION_DATA_ID);
-        if (modifierLayer == null) {
+    public static boolean playBaseAnimation(AbstractClientPlayer player, ClientGunIndex gunIndex, ResourceLocation dataId, Condition condition) {
+        ResourceLocation animator3rd = gunIndex.getPlayerAnimator3rd();
+        if (animator3rd == null) {
             return false;
         }
-        IAnimation animation = modifierLayer.getAnimation();
-        if (animation instanceof KeyframeAnimationPlayer keyframe && keyframe.isActive()) {
-            String name = (String) keyframe.getData().extraData.get("name");
-            return !Condition.HOLD.isType(name) && !Condition.AIM.isType(name);
-        }
-        return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static boolean playAnimation(AbstractClientPlayer player, ClientGunIndex gunIndex, Condition condition) {
-        ResourceLocation id = gunIndex.getPlayerAnimator3rd();
-        if (id == null) {
+        if (!PlayerAnimatorAssetManager.INSTANCE.containsKey(animator3rd)) {
             return false;
         }
-        if (!PlayerAnimatorAssetManager.INSTANCE.containsKey(id)) {
-            return false;
-        }
-        return PlayerAnimatorAssetManager.INSTANCE.getAnimations(id, condition).map(keyframeAnimation -> {
+        return PlayerAnimatorAssetManager.INSTANCE.getAnimations(animator3rd, condition).map(keyframeAnimation -> {
             var associatedData = PlayerAnimationAccess.getPlayerAssociatedData(player);
-            var modifierLayer = (ModifierLayer<IAnimation>) associatedData.get(PlayerAnimatorCompat.ANIMATION_DATA_ID);
+            var modifierLayer = (ModifierLayer<IAnimation>) associatedData.get(dataId);
             if (modifierLayer != null) {
+                if (modifierLayer.getAnimation() instanceof KeyframeAnimationPlayer animationPlayer && animationPlayer.isActive()) {
+                    if (animationPlayer.getData().extraData.get("name") instanceof String name && !condition.name().toLowerCase(Locale.ENGLISH).equals(name)) {
+                        modifierLayer.setAnimation(new KeyframeAnimationPlayer(keyframeAnimation));
+                    }
+                    return true;
+                }
                 modifierLayer.setAnimation(new KeyframeAnimationPlayer(keyframeAnimation));
                 return true;
             }
             return false;
         }).orElse(false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static boolean playAnimation(AbstractClientPlayer player, ClientGunIndex gunIndex, ResourceLocation dataId, Condition condition) {
+        ResourceLocation animator3rd = gunIndex.getPlayerAnimator3rd();
+        if (animator3rd == null) {
+            return false;
+        }
+        if (!PlayerAnimatorAssetManager.INSTANCE.containsKey(animator3rd)) {
+            return false;
+        }
+        return PlayerAnimatorAssetManager.INSTANCE.getAnimations(animator3rd, condition).map(keyframeAnimation -> {
+            var associatedData = PlayerAnimationAccess.getPlayerAssociatedData(player);
+            var modifierLayer = (ModifierLayer<IAnimation>) associatedData.get(dataId);
+            if (modifierLayer != null) {
+                IAnimation animation = modifierLayer.getAnimation();
+                if (animation != null && animation.isActive()) {
+                    return true;
+                }
+                modifierLayer.setAnimation(new KeyframeAnimationPlayer(keyframeAnimation));
+                return true;
+            }
+            return false;
+        }).orElse(false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void stopAnimation(AbstractClientPlayer player, ResourceLocation dataId) {
+        var associatedData = PlayerAnimationAccess.getPlayerAssociatedData(player);
+        var modifierLayer = (ModifierLayer<IAnimation>) associatedData.get(dataId);
+        if (modifierLayer != null && modifierLayer.isActive()) {
+            modifierLayer.setAnimation(null);
+        }
     }
 
     @SubscribeEvent
@@ -86,9 +116,9 @@ public class AnimationManager {
             IGunOperator operator = IGunOperator.fromLivingEntity(player);
             float aimingProgress = operator.getSynAimingProgress();
             if (aimingProgress <= 0) {
-                playAnimation(player, index, Condition.NORMAL_FIRE);
+                playAnimation(player, index, PlayerAnimatorCompat.MAIN_ANIMATION_ID, Condition.NORMAL_FIRE);
             } else {
-                playAnimation(player, index, Condition.AIM_FIRE);
+                playAnimation(player, index, PlayerAnimatorCompat.MAIN_ANIMATION_ID, Condition.AIM_FIRE);
             }
         });
     }
@@ -107,7 +137,7 @@ public class AnimationManager {
         if (iGun == null) {
             return;
         }
-        TimelessAPI.getClientGunIndex(iGun.getGunId(gunItemStack)).ifPresent(index -> playAnimation(player, index, Condition.RELOAD));
+        TimelessAPI.getClientGunIndex(iGun.getGunId(gunItemStack)).ifPresent(index -> playAnimation(player, index, PlayerAnimatorCompat.MAIN_ANIMATION_ID, Condition.RELOAD));
     }
 
     @SubscribeEvent
@@ -124,6 +154,6 @@ public class AnimationManager {
         if (iGun == null) {
             return;
         }
-        TimelessAPI.getClientGunIndex(iGun.getGunId(gunItemStack)).ifPresent(index -> playAnimation(player, index, Condition.MELEE));
+        TimelessAPI.getClientGunIndex(iGun.getGunId(gunItemStack)).ifPresent(index -> playAnimation(player, index, PlayerAnimatorCompat.MAIN_ANIMATION_ID, Condition.MELEE));
     }
 }
