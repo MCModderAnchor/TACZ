@@ -31,6 +31,14 @@ public class SoundManager {
      */
     public static String MELEE_BAYONET = "melee_bayonet";
     /**
+     * 近战推人音效
+     */
+    public static String MELEE_PUSH = "melee_push";
+    /**
+     * 近战枪拖砸人音效
+     */
+    public static String MELEE_STOCK = "melee_stock";
+    /**
      * 没有子弹时，空击的声音
      */
     public static String DRY_FIRE_SOUND = "dry_fire";

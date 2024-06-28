@@ -8,12 +8,14 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
+import com.tacz.guns.resource.pojo.data.gun.GunDefaultMeleeData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class LivingEntityMelee {
@@ -44,24 +46,36 @@ public class LivingEntityMelee {
             return;
         }
         ItemStack currentGunItem = data.currentGunItem.get();
+        // 触发近战事件
+        if (MinecraftForge.EVENT_BUS.post(new GunMeleeEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
+            return;
+        }
         if (currentGunItem.getItem() instanceof AbstractGunItem logicGun) {
             data.meleeTimestamp = System.currentTimeMillis();
-            ItemStack attachmentStack = logicGun.getAttachment(currentGunItem, AttachmentType.MUZZLE);
-            IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-            if (iAttachment == null) {
+
+            ItemStack muzzle = logicGun.getAttachment(currentGunItem, AttachmentType.MUZZLE);
+            MeleeData muzzleMeleeData = getMeleeData(muzzle);
+            if (muzzleMeleeData != null) {
+                float prepTime = muzzleMeleeData.getPrepTime();
+                data.meleePrepTickCount = (int) Math.max(0, prepTime * 20);
                 return;
             }
-            // 触发近战事件
-            if (MinecraftForge.EVENT_BUS.post(new GunMeleeEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
+
+            ItemStack stock = logicGun.getAttachment(currentGunItem, AttachmentType.STOCK);
+            MeleeData stockMeleeData = getMeleeData(stock);
+            if (stockMeleeData != null) {
+                float prepTime = stockMeleeData.getPrepTime();
+                data.meleePrepTickCount = (int) Math.max(0, prepTime * 20);
                 return;
             }
-            ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
-            TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> {
-                MeleeData meleeData = index.getData().getMeleeData();
-                if (meleeData == null) {
+
+            ResourceLocation gunId = logicGun.getGunId(currentGunItem);
+            TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
+                GunDefaultMeleeData defaultMeleeData = index.getGunData().getMeleeData().getDefaultMeleeData();
+                if (defaultMeleeData == null) {
                     return;
                 }
-                float prepTime = meleeData.getPrepTime();
+                float prepTime = defaultMeleeData.getPrepTime();
                 data.meleePrepTickCount = (int) Math.max(0, prepTime * 20);
             });
         }
@@ -103,5 +117,15 @@ public class LivingEntityMelee {
             }
             return coolDown;
         }).orElse(-1L);
+    }
+
+    @Nullable
+    private MeleeData getMeleeData(ItemStack attachmentStack) {
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
+        if (iAttachment == null) {
+            return null;
+        }
+        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
+        return TimelessAPI.getCommonAttachmentIndex(attachmentId).map(index -> index.getData().getMeleeData()).orElse(null);
     }
 }

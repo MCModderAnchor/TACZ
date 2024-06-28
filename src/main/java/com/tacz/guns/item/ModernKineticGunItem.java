@@ -17,6 +17,7 @@ import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import com.tacz.guns.resource.pojo.data.attachment.Silence;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
+import com.tacz.guns.resource.pojo.data.gun.GunDefaultMeleeData;
 import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.AttachmentDataUtils;
@@ -37,6 +38,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -76,8 +79,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         final boolean[] useSilenceSound = new boolean[]{false};
 
         // 配件属性的读取计算
-        AttachmentDataUtils.getAllAttachmentData(gunItem, gunIndex.getGunData(), attachmentData ->
-                calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
+        AttachmentDataUtils.getAllAttachmentData(gunItem, gunIndex.getGunData(), attachmentData -> calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
         inaccuracy[0] = Math.max(0, inaccuracy[0]);
 
         BulletData bulletData = gunIndex.getBulletData();
@@ -133,36 +135,46 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
 
     @Override
     public void melee(LivingEntity user, ItemStack gunItem) {
-        ItemStack attachmentStack = this.getAttachment(gunItem, AttachmentType.MUZZLE);
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-        if (iAttachment == null) {
+        ResourceLocation gunId = this.getGunId(gunItem);
+
+        ItemStack muzzle = this.getAttachment(gunItem, AttachmentType.MUZZLE);
+        MeleeData muzzleData = getMeleeData(muzzle);
+        if (muzzleData != null) {
+            doMelee(user, gunId, muzzleData.getRange(), muzzleData.getKnockback(), muzzleData.getDamage(), muzzleData.getEffects());
             return;
         }
-        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
-        TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> {
-            MeleeData meleeData = index.getData().getMeleeData();
-            if (meleeData == null) {
+
+        ItemStack stock = this.getAttachment(gunItem, AttachmentType.STOCK);
+        MeleeData stockData = getMeleeData(stock);
+        if (stockData != null) {
+            doMelee(user, gunId, stockData.getRange(), stockData.getKnockback(), stockData.getDamage(), stockData.getEffects());
+            return;
+        }
+
+        TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
+            GunDefaultMeleeData defaultData = index.getGunData().getMeleeData().getDefaultMeleeData();
+            if (defaultData == null) {
                 return;
             }
-            Vec3 range = meleeData.getRange();
-            float knockback = meleeData.getKnockback();
-            float damage = meleeData.getDamage();
-            List<EffectData> effects = meleeData.getEffects();
-            TimelessAPI.getCommonGunIndex(this.getGunId(gunItem)).ifPresent(gunIndex -> range.add(0, 0, gunIndex.getGunData().getMeleeData().getDistance()));
-            Vec3 offset = new Vec3(0, 0, range.z()).xRot((float) Math.toRadians(-user.getXRot())).yRot((float) Math.toRadians(-user.getYRot()));
-            Vec3 centrePos = user.position().add(0, user.getEyeHeight(), 0).add(offset);
-            AABB aabb = new AABB(centrePos, centrePos).inflate(range.x / 2, range.y / 2, range.z / 2);
-            List<LivingEntity> entityList = user.level().getEntitiesOfClass(LivingEntity.class, aabb);
-
-            for (LivingEntity living : entityList) {
-                doPerLivingHurt(user, living, knockback, damage, effects);
-            }
-
-            // 玩家扣饱食度
-            if (user instanceof Player player) {
-                player.causeFoodExhaustion(0.1F);
-            }
+            doMelee(user, gunId, defaultData.getRange(), defaultData.getKnockback(), defaultData.getDamage(), Collections.emptyList());
         });
+    }
+
+    private void doMelee(LivingEntity user, ResourceLocation gunId, Vec3 range, float knockback, float damage, List<EffectData> effects) {
+        TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> range.add(0, 0, gunIndex.getGunData().getMeleeData().getDistance()));
+        Vec3 offset = new Vec3(0, 0, range.z()).xRot((float) Math.toRadians(-user.getXRot())).yRot((float) Math.toRadians(-user.getYRot()));
+        Vec3 centrePos = user.position().add(0, user.getEyeHeight(), 0).add(offset);
+        AABB aabb = new AABB(centrePos, centrePos).inflate(range.x / 2, range.y / 2, range.z / 2);
+        List<LivingEntity> entityList = user.level().getEntitiesOfClass(LivingEntity.class, aabb);
+
+        for (LivingEntity living : entityList) {
+            doPerLivingHurt(user, living, knockback, damage, effects);
+        }
+
+        // 玩家扣饱食度
+        if (user instanceof Player player) {
+            player.causeFoodExhaustion(0.1F);
+        }
     }
 
     private static void doPerLivingHurt(LivingEntity user, LivingEntity target, float knockback, float damage, List<EffectData> effects) {
@@ -222,8 +234,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     /**
      * 生成子弹实体
      */
-    protected void doSpawnBulletEntity(Level world, LivingEntity shooter, float pitch, float yaw, float speed, float inaccuracy,
-                                       ResourceLocation ammoId, ResourceLocation gunId, boolean tracer, BulletData bulletData) {
+    protected void doSpawnBulletEntity(Level world, LivingEntity shooter, float pitch, float yaw, float speed, float inaccuracy, ResourceLocation ammoId, ResourceLocation gunId, boolean tracer, BulletData bulletData) {
         EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, ammoId, gunId, tracer, bulletData);
         bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
         world.addFreshEntity(bullet);
@@ -279,5 +290,15 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                 useSilenceSound[0] = true;
             }
         }
+    }
+
+    @Nullable
+    private MeleeData getMeleeData(ItemStack attachmentStack) {
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
+        if (iAttachment == null) {
+            return null;
+        }
+        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
+        return TimelessAPI.getCommonAttachmentIndex(attachmentId).map(index -> index.getData().getMeleeData()).orElse(null);
     }
 }
