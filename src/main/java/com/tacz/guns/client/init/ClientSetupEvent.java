@@ -10,6 +10,7 @@ import com.tacz.guns.client.input.*;
 import com.tacz.guns.client.tooltip.ClientAmmoBoxTooltip;
 import com.tacz.guns.client.tooltip.ClientAttachmentItemTooltip;
 import com.tacz.guns.client.tooltip.ClientGunTooltip;
+import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
@@ -75,5 +76,8 @@ public class ClientSetupEvent {
 
         // 初始化自己的枪包下载器
         event.enqueueWork(ClientGunPackDownloadManager::init);
+
+        // 与 player animator 的兼容
+        event.enqueueWork(PlayerAnimatorCompat::init);
     }
 }

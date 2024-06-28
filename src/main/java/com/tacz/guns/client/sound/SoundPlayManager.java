@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class SoundPlayManager {
@@ -27,7 +28,7 @@ public class SoundPlayManager {
      */
     private static GunSoundInstance tmpSoundInstance = null;
 
-    public static GunSoundInstance playClientSound(Entity entity, ResourceLocation name, float volume, float pitch, int distance) {
+    public static GunSoundInstance playClientSound(Entity entity, @Nullable ResourceLocation name, float volume, float pitch, int distance) {
         Minecraft minecraft = Minecraft.getInstance();
         GunSoundInstance instance = new GunSoundInstance(ModSounds.GUN.get(), SoundSource.PLAYERS, volume, pitch, entity, distance, name);
         minecraft.getSoundManager().play(instance);
@@ -100,6 +101,10 @@ public class SoundPlayManager {
 
     public static void playFireSelectSound(LivingEntity entity, ClientGunIndex gunIndex) {
         playClientSound(entity, gunIndex.getSounds(SoundManager.FIRE_SELECT), 1.0f, 1.0f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
+    }
+
+    public static void playMeleeBayonetSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.MELEE_BAYONET), 1.0f, 0.9f + entity.getRandom().nextFloat() * 0.125f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
     }
 
     public static void playHeadHitSound(LivingEntity entity, ClientGunIndex gunIndex) {

@@ -4,6 +4,7 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,15 +37,20 @@ public class HumanoidModelMixin<T extends LivingEntity> {
             ItemStack mainHandItem = entityIn.getMainHandItem();
             IGun iGun = IGun.getIGunOrNull(mainHandItem);
             if (iGun == null) {
+                PlayerAnimatorCompat.stopAllAnimation(entityIn);
                 return;
             }
             TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItem)).ifPresent(index -> {
-                String animation = index.getThirdPersonAnimation();
-                float aimingProgress = operator.getSynAimingProgress();
-                if (aimingProgress <= 0) {
-                    ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, body, head);
+                if (PlayerAnimatorCompat.hasPlayerAnimator3rd(entityIn, index)) {
+                    PlayerAnimatorCompat.playAnimation(entityIn, index, limbSwingAmount);
                 } else {
-                    ThirdPersonManager.getAnimation(animation).animateGunAim(entityIn, rightArm, leftArm, body, head, aimingProgress);
+                    String animation = index.getThirdPersonAnimation();
+                    float aimingProgress = operator.getSynAimingProgress();
+                    if (aimingProgress <= 0) {
+                        ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, body, head);
+                    } else {
+                        ThirdPersonManager.getAnimation(animation).animateGunAim(entityIn, rightArm, leftArm, body, head, aimingProgress);
+                    }
                 }
             });
         }

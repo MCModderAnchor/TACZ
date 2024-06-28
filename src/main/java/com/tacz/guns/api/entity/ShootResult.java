@@ -46,6 +46,10 @@ public enum ShootResult {
      */
     IS_BOLTING,
     /**
+     * 正处于近战状态
+     */
+    IS_MELEE,
+    /**
      * 正处于疾跑状态
      */
     IS_SPRINTING,

@@ -39,6 +39,9 @@ public class GunDisplay {
     @SerializedName("use_default_animation")
     private DefaultAnimation defaultAnimation;
     @Nullable
+    @SerializedName("player_animator_3rd")
+    private ResourceLocation playerAnimator3rd;
+    @Nullable
     @SerializedName("sounds")
     private Map<String, ResourceLocation> sounds;
     @Nullable
@@ -101,6 +104,11 @@ public class GunDisplay {
     @Nullable
     public DefaultAnimation getDefaultAnimation() {
         return defaultAnimation;
+    }
+
+    @Nullable
+    public ResourceLocation getPlayerAnimator3rd() {
+        return playerAnimator3rd;
     }
 
     @Nullable

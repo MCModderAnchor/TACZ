@@ -27,6 +27,10 @@ public class SoundManager {
      */
     public static String SILENCE_3P_SOUND = "silence_3p";
     /**
+     * 近战刺刀音效
+     */
+    public static String MELEE_BAYONET = "melee_bayonet";
+    /**
      * 没有子弹时，空击的声音
      */
     public static String DRY_FIRE_SOUND = "dry_fire";
