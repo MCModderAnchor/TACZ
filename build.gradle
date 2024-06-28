@@ -136,6 +136,10 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
+    maven {
+        name "KosmX's maven"
+        url 'https://maven.kosmx.dev/'
+    }
     mavenCentral() // MixinExtras is there
     mavenLocal()
     flatDir {
@@ -164,6 +168,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:oculus-581495:${oculus_id}")
 
     runtimeOnly fg.deobf("curse.maven:carry-on-274259:${carry_on_id}")
+
+    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animation_lib}")
 
     // 引入 MixinExtras 以解决一些棘手的 Mixin 冲突问题（比如 @Redirect 不能嵌套）
     // 如果未来有迁移到 Fabric / NeoForge 的计划，请注意这两个框架都已自带 MixinExtras，无需自行打包。

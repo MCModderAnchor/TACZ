@@ -1,6 +1,7 @@
 package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.event.common.GunMeleeEvent;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -10,6 +11,8 @@ import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.LogicalSide;
 
 import java.util.Optional;
 
@@ -46,6 +49,10 @@ public class LivingEntityMelee {
             ItemStack attachmentStack = logicGun.getAttachment(currentGunItem, AttachmentType.MUZZLE);
             IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
             if (iAttachment == null) {
+                return;
+            }
+            // 触发近战事件
+            if (MinecraftForge.EVENT_BUS.post(new GunMeleeEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
                 return;
             }
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
