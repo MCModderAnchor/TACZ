@@ -80,10 +80,10 @@
   "tacz.attachment.muzzle_brake_pioneer.name": "Boca de fre Pioneer A3",
   "tacz.attachment.muzzle_brake_cthulhu.name": "Boca de fre Cthulhu K7",
   "tacz.attachment.muzzle_brake_trex.name": "Boca de fre pesat T-Rex",
-  "tacz.attachment.stock_carbon_bone_c5.name": "Carbon bone C5 Stock",
-  "tacz.attachment.stock_tactical_ar.name": "Magpul CTR stock",
-  "tacz.attachment.stock_militech_b5.name": "Militech B5 Stock",
-  "tacz.attachment.oem_stock_heavy.name": "Factory Issued Heavy Stock",
-  "tacz.attachment.oem_stock_light.name": "Factory Issued light Stock",
-  "tacz.attachment.oem_stock_tactical.name": "Factory Issued Tactical Stock"
+  "tacz.attachment.stock_carbon_bone_c5.name": "Culata Carbon bone C5",
+  "tacz.attachment.stock_tactical_ar.name": "Culata Magpul CTR",
+  "tacz.attachment.stock_militech_b5.name": "Culata Militech B5",
+  "tacz.attachment.oem_stock_heavy.name": "Culata pesada estàndard de la fàbrica",
+  "tacz.attachment.oem_stock_light.name": "Culata lleugera estàndard de la fàbrica",
+  "tacz.attachment.oem_stock_tactical.name": "Culata tàctica estàndard de la fàbrica"
 }
