@@ -325,6 +325,7 @@ public class ClientGunIndex {
         return animationStateMachine;
     }
 
+    @Nullable
     public ResourceLocation getSounds(String name) {
         return sounds.get(name);
     }

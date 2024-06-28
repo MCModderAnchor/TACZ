@@ -72,6 +72,8 @@
     "put_away": "tacz:ak47/ak47_put_away",
     "silence": "tacz:ak47/ak47_silence",
     "silence_3p": "tacz:ak47/ak47_silence_3p",
+    // 近战刺刀音效
+    // "melee_bayonet": "tacz:melee_bayonet/melee_bash_05",
     // 下面四个音效可以不写，模组会自动添加默认音效
     "dry_fire": "tacz:dry_fire",
     "fire_select": "tacz:fire_select",

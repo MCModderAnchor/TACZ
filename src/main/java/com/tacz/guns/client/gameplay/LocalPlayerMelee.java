@@ -7,6 +7,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
+import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.handshake.ClientMessagePlayerMelee;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
@@ -58,8 +59,8 @@ public class LocalPlayerMelee {
             return;
         }
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            // 播放音效，FIXME：直接用基岩版音效？
-            // SoundPlayManager.playFireSelectSound(player, gunIndex);
+            // 播放音效
+            SoundPlayManager.playMeleeBayonetSound(player, gunIndex);
             // 发送切换开火模式的数据包，通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerMelee());
             // 动画状态机转移状态

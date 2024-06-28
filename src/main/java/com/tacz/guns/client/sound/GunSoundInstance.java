@@ -2,7 +2,6 @@ package com.tacz.guns.client.sound;
 
 import com.mojang.blaze3d.audio.SoundBuffer;
 import com.tacz.guns.client.resource.ClientAssetManager;
-import com.tacz.guns.config.common.GunConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
