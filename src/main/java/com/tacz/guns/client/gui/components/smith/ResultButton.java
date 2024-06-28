@@ -7,11 +7,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class ResultButton extends Button {
@@ -45,9 +43,7 @@ public class ResultButton extends Button {
         gui.renderItem(stack, this.getX() + 1, this.getY());
 
         Component hoverName = this.stack.getHoverName();
-        List<FormattedCharSequence> split = mc.font.split(hoverName, 70);
-
-        gui.drawString(mc.font, split.get(0), this.getX() + 22, this.getY() + 4, 0xFFFFFF);
+        renderScrollingString(gui, mc.font, hoverName, this.getX() + 20, this.getY() + 4, this.getX() + 92, this.getY() + 13, 0xFFFFFF);
     }
 
     @Override
