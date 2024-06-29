@@ -1,24 +1,15 @@
 package com.tacz.guns.api.client.animation;
 
-import net.minecraft.world.entity.Entity;
+import com.tacz.guns.client.animation.AnimationController;
 
 public class StateContext {
-    private float partialTicks;
-    private Entity entity;
+    AnimationStateMachine<?> stateMachine;
 
-    public float getPartialTicks() {
-        return partialTicks;
+    public AnimationStateMachine<?> getStateMachine() {
+        return stateMachine;
     }
 
-    public void setPartialTicks(float partialTicks) {
-        this.partialTicks = partialTicks;
-    }
-
-    public Entity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
+    public AnimationController getAnimationController() {
+        return stateMachine.getAnimationController();
     }
 }
