@@ -1,4 +1,4 @@
-package com.tacz.guns.network.message.handshake;
+package com.tacz.guns.network.message;
 
 import com.tacz.guns.api.entity.IGunOperator;
 import net.minecraft.network.FriendlyByteBuf;

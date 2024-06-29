@@ -2,6 +2,7 @@ package com.tacz.guns.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.tacz.guns.command.sub.DebugCommand;
 import com.tacz.guns.command.sub.DummyAmmoCommand;
 import com.tacz.guns.command.sub.OverwriteCommand;
 import com.tacz.guns.command.sub.ReloadCommand;
@@ -17,6 +18,7 @@ public class RootCommand {
         root.then(ReloadCommand.get());
         root.then(OverwriteCommand.get());
         root.then(DummyAmmoCommand.get());
+        root.then(DebugCommand.get());
         dispatcher.register(root);
     }
 }

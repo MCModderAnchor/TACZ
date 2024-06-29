@@ -1,14 +1,16 @@
 package com.tacz.guns.resource.pojo.data.gun;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.world.phys.Vec3;
 
 public class GunDefaultMeleeData {
     @SerializedName("animation_type")
     private String animationType = "melee_push";
 
-    @SerializedName("range")
-    private Vec3 range = new Vec3(2, 1, 1);
+    @SerializedName("distance")
+    private float distance = 1f;
+
+    @SerializedName("range_angle")
+    private float rangeAngle = 30f;
 
     @SerializedName("damage")
     private float damage = 0f;
@@ -23,8 +25,12 @@ public class GunDefaultMeleeData {
         return animationType;
     }
 
-    public Vec3 getRange() {
-        return range;
+    public float getDistance() {
+        return distance;
+    }
+
+    public float getRangeAngle() {
+        return rangeAngle;
     }
 
     public float getDamage() {
