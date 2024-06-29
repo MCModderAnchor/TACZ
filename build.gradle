@@ -160,6 +160,9 @@ dependencies {
     implementation(jarJar('com.github.286799714.luaj:luaj-jse:3.0.3')) {
         jarJar.ranged(it, "[3.0.3,)")
     }
+    implementation(jarJar('com.github.286799714.luaj:luaj-core:3.0.3')) {
+        jarJar.ranged(it, "[3.0.3,)")
+    }
 
     // compile against the JEI API but do not include it at runtime
     compileOnly(fg.deobf("mezz.jei:jei-1.20.1-common-api:${jei_version}"))
