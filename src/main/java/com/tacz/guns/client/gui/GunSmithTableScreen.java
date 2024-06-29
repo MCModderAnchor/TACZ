@@ -20,6 +20,7 @@ import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.crafting.GunSmithTableResult;
+import com.tacz.guns.init.ModCreativeTabs;
 import com.tacz.guns.inventory.GunSmithTableMenu;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessageCraft;
@@ -47,6 +48,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,12 +96,31 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     private void classifyRecipes() {
         TimelessAPI.getAllRecipes().forEach((id, recipe) -> {
             GunSmithTableResult result = recipe.getResult();
-            String group = result.getGroup();
-            if (!recipeKeys.contains(group)) {
-                recipeKeys.add(group);
-            }
-            recipes.computeIfAbsent(group, g -> Lists.newArrayList()).add(id);
+            recipes.computeIfAbsent(result.getGroup(), g -> Lists.newArrayList()).add(id);
         });
+
+        // 排序
+        // 子弹
+        putRecipeType(ModCreativeTabs.AMMO_TAB);
+        // 配件
+        putRecipeType(ModCreativeTabs.ATTACHMENT_EXTENDED_MAG_TAB);
+        putRecipeType(ModCreativeTabs.ATTACHMENT_SCOPE_TAB);
+        putRecipeType(ModCreativeTabs.ATTACHMENT_MUZZLE_TAB);
+        putRecipeType(ModCreativeTabs.ATTACHMENT_STOCK_TAB);
+        putRecipeType(ModCreativeTabs.ATTACHMENT_GRIP_TAB);
+        // 枪械
+        putRecipeType(ModCreativeTabs.GUN_PISTOL_TAB);
+        putRecipeType(ModCreativeTabs.GUN_SNIPER_TAB);
+        putRecipeType(ModCreativeTabs.GUN_RIFLE_TAB);
+        putRecipeType(ModCreativeTabs.GUN_SHOTGUN_TAB);
+        putRecipeType(ModCreativeTabs.GUN_SMG_TAB);
+        putRecipeType(ModCreativeTabs.GUN_RPG_TAB);
+        putRecipeType(ModCreativeTabs.GUN_MG_TAB);
+    }
+
+    private void putRecipeType(RegistryObject<CreativeModeTab> tab) {
+        String name = tab.getId().getPath();
+        this.recipeKeys.add(name);
     }
 
     @Nullable
