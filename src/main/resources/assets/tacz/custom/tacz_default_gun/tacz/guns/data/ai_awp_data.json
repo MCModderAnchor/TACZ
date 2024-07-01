@@ -14,11 +14,11 @@
     "damage": 42,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.75,
+      "armor_ignore": 0.60,
       "head_shot_multiplier": 2,
       "damage_adjust": [
         {"distance": 80, "damage": 42},
-        {"distance": 150, "damage": 35},
+        {"distance": 150, "damage": 36},
         {"distance": "infinite", "damage": 25}
       ]
     },
@@ -27,7 +27,7 @@
     "knockback": 0,
     "friction": 0.012,
     "ignite": false,
-    "pierce": 3
+    "pierce": 4
   },
   "reload": {
     "type": "magazine",

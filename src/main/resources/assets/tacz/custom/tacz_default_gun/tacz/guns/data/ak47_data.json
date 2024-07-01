@@ -35,11 +35,9 @@
         // 这样就能写抵近伤害了
         {"distance": 0.5, "damage": 10},
         {"distance": 25, "damage": 9},
-        {"distance": 50, "damage": 8.5},
-        {"distance": 80, "damage": 7.5},
-        {"distance": 120, "damage": 6.5},
+        {"distance": 45, "damage": 7.5},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 5.5}
+        {"distance": "infinite", "damage": 6}
       ]
     },
     // 速度 m/s
@@ -49,7 +47,7 @@
     // 击退效果
     "knockback": 0,
     // 阻力
-    "friction": 0.01,
+    "friction": 0.02,
     // 点燃目标
     "ignite": false,
     // 点燃时间，默认为 2 秒，仅用于实体

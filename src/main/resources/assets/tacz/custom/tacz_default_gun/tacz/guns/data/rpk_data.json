@@ -34,9 +34,8 @@
       "damage_adjust": [
         // 这样就能写抵近伤害了
         {"distance": 0.5, "damage": 12},
-        {"distance": 35, "damage": 10},
-        {"distance": 60, "damage": 8.5},
-        {"distance": 90, "damage": 7.5},
+        {"distance": 30, "damage": 10},
+        {"distance": 65, "damage": 7},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 6}
       ]
@@ -48,13 +47,13 @@
     // 击退效果
     "knockback": 0,
     // 阻力
-    "friction": 0.015,
+    "friction": 0.02,
     // 点燃目标
     "ignite": false,
     // 点燃时间，默认为 2 秒，仅用于实体
     "ignite_entity_time": 2,
     // 穿透数
-    "pierce": 1
+    "pierce": 2
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
     //  延时爆炸，单位：秒

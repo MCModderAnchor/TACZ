@@ -17,11 +17,10 @@
       "armor_ignore": 0.25,
       "head_shot_multiplier": 2,
       "damage_adjust": [
-        {"distance": 0.5, "damage": 12},
-        {"distance": 44.5, "damage": 11},
-        {"distance": 60, "damage": 9},
-        {"distance": 75, "damage": 8},
-        {"distance": "infinite", "damage": 7.5}
+        {"distance": 1, "damage": 13},
+        {"distance": 55, "damage": 11},
+        {"distance": 90, "damage": 9},
+        {"distance": "infinite", "damage": 7}
       ]
     },
     "speed": 250,

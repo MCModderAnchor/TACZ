@@ -1776,7 +1776,7 @@
 					]
 				},
 				{
-					"name": "sight",
+					"name": "fix_sight",
 					"parent": "m16a1_default",
 					"pivot": [0, 10.125, -15.07812],
 					"cubes": [
@@ -2210,7 +2210,7 @@
 				},
 				{
 					"name": "sight_illuminated",
-					"parent": "sight",
+					"parent": "fix_sight",
 					"pivot": [-0.06274, 7.51023, 0.00238],
 					"cubes": [
 						{
@@ -2230,7 +2230,7 @@
 				},
 				{
 					"name": "bone",
-					"parent": "sight",
+					"parent": "fix_sight",
 					"pivot": [0.29687, 12.28125, -16.07812],
 					"rotation": [0, 0, 10],
 					"cubes": [
@@ -2284,7 +2284,7 @@
 				},
 				{
 					"name": "bone2",
-					"parent": "sight",
+					"parent": "fix_sight",
 					"pivot": [-0.29687, 12.28125, -16.07812],
 					"rotation": [0, 0, -10],
 					"cubes": [
@@ -4953,7 +4953,7 @@
 					]
 				},
 				{
-					"name": "carry",
+					"name": "fix_carry",
 					"parent": "m16a1_default",
 					"pivot": [0, 10.84375, 8.75],
 					"cubes": [
@@ -5299,7 +5299,7 @@
 				},
 				{
 					"name": "group7",
-					"parent": "carry",
+					"parent": "fix_carry",
 					"pivot": [0.5, 12.10938, 6.4375],
 					"cubes": [
 						{
@@ -5361,7 +5361,7 @@
 				},
 				{
 					"name": "octagon5",
-					"parent": "carry",
+					"parent": "fix_carry",
 					"pivot": [0, 4.625, 9],
 					"cubes": [
 						{
@@ -7267,6 +7267,11 @@
 					"pivot": [-0.15, 9.7625, 4.225]
 				},
 				{
+					"name": "scope_pos",
+					"parent": "positioning2",
+					"pivot": [0, 12.4375, 5]
+				},
+				{
 					"name": "righthand",
 					"parent": "gun_and_righthand",
 					"pivot": [6, 19, 0]
@@ -7351,6 +7356,12 @@
 					"parent": "view",
 					"pivot": [10, 4, 3],
 					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "refit_scope_view",
+					"parent": "view",
+					"pivot": [8, 12.5, 4.3],
+					"rotation": [0, 50, 0]
 				}
 			]
 		}

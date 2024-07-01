@@ -17,16 +17,16 @@
       "armor_ignore": 0.5,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 0.5, "damage": 13.5},
-        {"distance": 35.5, "damage": 12},
-        {"distance": 50, "damage": 11},
-        {"distance": "infinite", "damage": 9}
+        {"distance": 1, "damage": 12.5},
+        {"distance": 35, "damage": 11},
+        {"distance": 70, "damage": 9},
+        {"distance": "infinite", "damage": 7.5}
       ]
     },
     "speed": 270,
     "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.012,
+    "friction": 0.0125,
     "ignite": false,
     "pierce": 2
   },

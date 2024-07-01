@@ -7,7 +7,7 @@
     30
   ],
   "bolt": "closed_bolt",
-  "rpm": 720,
+  "rpm": 780,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
@@ -15,7 +15,7 @@
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.25,
-      "head_shot_multiplier": 1.75,
+      "head_shot_multiplier": 1.5,
       "damage_adjust": [
         {"distance": 0.5, "damage": 8},
         {"distance": 30, "damage": 7.5},
@@ -26,7 +26,7 @@
     "speed": 265,
     "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.01,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 1
   },
@@ -81,7 +81,8 @@
   },
   "allow_attachment_types": [
     "muzzle",
-    "extended_mag"
+    "extended_mag",
+    "scope"
   ],
   "exclusive_attachments": {
   }

@@ -7,7 +7,7 @@
     200
   ],
   "bolt": "open_bolt",
-  "rpm": 660,
+  "rpm": 850,
   "bullet": {
     "life": 1.0,
     "bullet_amount": 1,
@@ -17,16 +17,16 @@
       "armor_ignore": 0.25,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 0.5, "damage": 9},
-        {"distance": 40, "damage": 7.5},
-        {"distance": 70, "damage": 6},
-        {"distance": "infinite", "damage": 5}
+        {"distance": 1, "damage": 8.5},
+        {"distance": 35, "damage": 7},
+        {"distance": 70, "damage": 5.5},
+        {"distance": "infinite", "damage": 4.5}
       ]
     },
     "speed": 285,
     "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.01,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 1
   },
