@@ -25,6 +25,8 @@ public interface GunItemDataAccessor extends IGun {
     String GUN_ATTACHMENT_BASE = "Attachment";
     String GUN_EXP_TAG = "GunLevelExp";
     String GUN_DUMMY_AMMO = "DummyAmmo";
+    String GUN_MAX_DUMMY_AMMO = "MaxDummyAmmo";
+    String GUN_ATTACHMENT_LOCK = "AttachmentLock";
 
     @Override
     default boolean useDummyAmmo(ItemStack gun) {
@@ -42,6 +44,52 @@ public interface GunItemDataAccessor extends IGun {
     default void setDummyAmmoAmount(ItemStack gun, int amount) {
         CompoundTag nbt = gun.getOrCreateTag();
         nbt.putInt(GUN_DUMMY_AMMO, Math.max(amount, 0));
+    }
+
+    @Override
+    default void addDummyAmmoAmount(ItemStack gun, int amount) {
+        if (!useDummyAmmo(gun)) {
+            return;
+        }
+        if (!hasMaxDummyAmmo(gun)) {
+            return;
+        }
+        CompoundTag nbt = gun.getOrCreateTag();
+        amount = Math.min(getDummyAmmoAmount(gun) + amount, getMaxDummyAmmoAmount(gun));
+        nbt.putInt(GUN_DUMMY_AMMO, Math.max(amount, 0));
+    }
+
+    @Override
+    default boolean hasMaxDummyAmmo(ItemStack gun) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        return nbt.contains(GUN_MAX_DUMMY_AMMO, Tag.TAG_INT);
+    }
+
+    @Override
+    default int getMaxDummyAmmoAmount(ItemStack gun) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        return Math.max(0, nbt.getInt(GUN_MAX_DUMMY_AMMO));
+    }
+
+    @Override
+    default void setMaxDummyAmmoAmount(ItemStack gun, int amount) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        nbt.putInt(GUN_MAX_DUMMY_AMMO, Math.max(amount, 0));
+    }
+
+    @Override
+    default boolean hasAttachmentLock(ItemStack gun) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (nbt.contains(GUN_ATTACHMENT_LOCK, Tag.TAG_BYTE)) {
+            return nbt.getBoolean(GUN_ATTACHMENT_LOCK);
+        }
+        return false;
+    }
+
+    @Override
+    default void setAttachmentLock(ItemStack gun, boolean lock) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        nbt.putBoolean(GUN_ATTACHMENT_LOCK, lock);
     }
 
     @Override

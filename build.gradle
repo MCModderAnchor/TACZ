@@ -159,9 +159,18 @@ dependencies {
     implementation(jarJar('com.github.286799714.luaj:luaj-jse:3.0.3')) {
         jarJar.ranged(it, "[3.0.3,)")
     }
+    implementation(jarJar('com.github.286799714.luaj:luaj-core:3.0.3')) {
+        jarJar.ranged(it, "[3.0.3,)")
+    }
 
     compileOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
+
+    // 性能分析工具模组
+    runtimeOnly fg.deobf("curse.maven:spark-361579:4505375")
+    // 假人，测试近战伤害
+    runtimeOnly fg.deobf("curse.maven:selene-499980:4747959")
+    runtimeOnly fg.deobf("curse.maven:mmmmmmmmmmmm-225738:3820503")
 
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
     compileOnly fg.deobf("org.embeddedt:embeddium-1.18.2:${embeddedt_id}")

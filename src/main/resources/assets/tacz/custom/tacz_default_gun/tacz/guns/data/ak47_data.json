@@ -35,11 +35,9 @@
         // 这样就能写抵近伤害了
         {"distance": 0.5, "damage": 10},
         {"distance": 25, "damage": 9},
-        {"distance": 50, "damage": 8.5},
-        {"distance": 80, "damage": 7.5},
-        {"distance": 120, "damage": 6.5},
+        {"distance": 55, "damage": 7.5},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
-        {"distance": "infinite", "damage": 5.5}
+        {"distance": "infinite", "damage": 6}
       ]
     },
     // 速度 m/s
@@ -49,7 +47,7 @@
     // 击退效果
     "knockback": 0,
     // 阻力
-    "friction": 0.01,
+    "friction": 0.02,
     // 点燃目标
     "ignite": false,
     // 点燃时间，默认为 2 秒，仅用于实体
@@ -142,10 +140,28 @@
     // 瞄准射击时散布
     "aim": 0.15
   },
-  // 刺刀攻击距离参数，用来延升刺刀攻击范围
+  // 近战相关
   "melee": {
+    // 枪械距离参数，用来延升近战攻击范围
+    // 会与刺刀等配件的距离做加和
     "distance": 1,
-    "cooldown": 0.5
+    // 使用时的冷却时间
+    "cooldown": 0.5,
+    // 默认近战数据，会被配件的数据替换掉
+    "default": {
+      // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
+      "animation_type": "melee_stock",
+      // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
+      "distance": 0,
+      // 刺刀范围角度
+      "range_angle": 30,
+      // 伤害值
+      "damage": 1,
+      // 击退效果
+      "knockback": 0.5,
+      // 前摇时长，单位：秒
+      "prep": 0.1
+    }
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser, extended_mag

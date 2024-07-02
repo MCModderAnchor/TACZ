@@ -107,6 +107,14 @@ public class SoundPlayManager {
         playClientSound(entity, gunIndex.getSounds(SoundManager.MELEE_BAYONET), 1.0f, 0.9f + entity.getRandom().nextFloat() * 0.125f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
     }
 
+    public static void playMeleePushSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.MELEE_PUSH), 1.0f, 0.9f + entity.getRandom().nextFloat() * 0.125f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
+    }
+
+    public static void playMeleeStockSound(LivingEntity entity, ClientGunIndex gunIndex) {
+        playClientSound(entity, gunIndex.getSounds(SoundManager.MELEE_STOCK), 1.0f, 0.9f + entity.getRandom().nextFloat() * 0.125f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
+    }
+
     public static void playHeadHitSound(LivingEntity entity, ClientGunIndex gunIndex) {
         playClientSound(entity, gunIndex.getSounds(SoundManager.HEAD_HIT_SOUND), 1.0f, 1.0f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
     }

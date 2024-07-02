@@ -1,18 +1,20 @@
 package com.tacz.guns.client.gui.components.smith;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class ResultButton extends Button {
@@ -46,8 +48,7 @@ public class ResultButton extends Button {
         Minecraft mc = Minecraft.getInstance();
         mc.getItemRenderer().renderGuiItem(this.stack, this.x + 1, this.y);
         Component hoverName = this.stack.getHoverName();
-        List<FormattedCharSequence> split = mc.font.split(hoverName, 70);
-        mc.font.draw(poseStack, split.get(0), this.x + 22, this.y + 4, 0xFFFFFF);
+        renderScrollingString(poseStack, mc.font, hoverName, this.x + 20, this.y + 4, this.x + 92, this.y + 13, 0xFFFFFF);
     }
 
     @Override
@@ -64,5 +65,39 @@ public class ResultButton extends Button {
         if (this.isHovered && !this.stack.isEmpty()) {
             consumer.accept(this.stack);
         }
+    }
+
+    protected static void renderScrollingString(PoseStack poseStack, Font font, Component component, int pMinX, int pMinY, int pMaxX, int pMaxY, int pColor) {
+        int fontWidth = font.width(component);
+        int yOffset = (pMinY + pMaxY - 9) / 2 + 1;
+        int showWidth = pMaxX - pMinX;
+        if (fontWidth > showWidth) {
+            int diff = fontWidth - showWidth;
+            double i = (double) Util.getMillis() / 1000.0D;
+            double j = Math.max((double) diff * 0.5D, 3.0D);
+            double k = Math.sin((Math.PI / 2D) * Math.cos((Math.PI * 2D) * i / j)) / 2.0D + 0.5D;
+            double xOffset = Mth.lerp(k, 0.0D, diff);
+            enableSelfScissor(pMinX, pMinY, pMaxX - pMinX, pMaxY - pMinY);
+            drawString(poseStack, font, component, pMinX - (int) xOffset, yOffset, pColor);
+            RenderSystem.disableScissor();
+        } else {
+            drawCenteredString(poseStack, font, component, (pMinX + pMaxX) / 2, yOffset, pColor);
+        }
+    }
+
+    protected void renderScrollingString(PoseStack poseStack, Font pFont, int width, int color) {
+        int minX = this.x + width;
+        int maxX = this.x + this.getWidth() - width;
+        renderScrollingString(poseStack, pFont, this.getMessage(), minX, this.y, maxX, this.y + this.getHeight(), color);
+    }
+
+    private static void enableSelfScissor(int pX, int pY, int pWidth, int pHeight) {
+        Window window = Minecraft.getInstance().getWindow();
+        double guiScale = window.getGuiScale();
+        int scissorX = (int) (pX * guiScale);
+        int scissorY = (int) (window.getHeight() - ((pY + pHeight) * guiScale));
+        int scissorW = (int) (pWidth * guiScale);
+        int scissorH = (int) (pHeight * guiScale);
+        RenderSystem.enableScissor(scissorX, scissorY, scissorW, scissorH);
     }
 }

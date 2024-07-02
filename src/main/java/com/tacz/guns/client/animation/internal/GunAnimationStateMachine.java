@@ -108,6 +108,14 @@ public class GunAnimationStateMachine {
         controller.runAnimation(MAIN_TRACK, animationName, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
     }
 
+    public void onStockAttack() {
+        controller.runAnimation(MAIN_TRACK, MELEE_STOCK_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+    }
+
+    public void onPushAttack() {
+        controller.runAnimation(MAIN_TRACK, MELEE_PUSH_ANIMATION, ObjectAnimation.PlayType.PLAY_ONCE_STOP, 0.2f);
+    }
+
     public void onGunDraw() {
         controller.runAnimation(MOVEMENT_TRACK, IDLE_ANIMATION, ObjectAnimation.PlayType.LOOP, 0);
         lastWalkDirection = WalkDirection.NONE;

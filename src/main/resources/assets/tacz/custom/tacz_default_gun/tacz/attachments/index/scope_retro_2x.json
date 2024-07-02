@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.scope_retro_2x.name",
+  "tooltip": "tacz.attachment.scope_retro_2x.tooltip",
+  "display": "tacz:scope_retro_2x_display",
+  "data": "tacz:scope_retro_2x_data",
+  "type": "scope"
+}
