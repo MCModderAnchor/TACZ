@@ -36,6 +36,10 @@ public class RefitKey {
             }
             if (isInGame()) {
                 if (IGun.mainhandHoldGun(player) && Minecraft.getInstance().screen == null) {
+                    IGun iGun = IGun.getIGunOrNull(player.getMainHandItem());
+                    if (iGun != null && iGun.hasAttachmentLock(player.getMainHandItem())) {
+                        return;
+                    }
                     Minecraft.getInstance().setScreen(new GunRefitScreen());
                 }
             } else if (Minecraft.getInstance().screen instanceof GunRefitScreen) {
