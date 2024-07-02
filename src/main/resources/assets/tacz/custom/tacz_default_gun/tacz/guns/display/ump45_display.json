@@ -1,0 +1,55 @@
+{
+  "model": "tacz:gun/ump45_geo",
+  "texture": "tacz:gun/uv/ump45",
+  "hud": "tacz:gun/hud/ump45",
+  "lod": {
+    "model": "tacz:gun/lod/ump45",
+    "texture": "tacz:gun/lod/ump45"
+  },
+  "slot": "tacz:gun/slot/ump45",
+  "animation": "tacz:ump45",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.6
+  },
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:ump45/ump45_shoot",
+    "shoot_3p": "tacz:ump45/ump45_shoot_3p",
+    "reload_empty": "tacz:ump45/ump45_reload_empty",
+    "reload_tactical": "tacz:ump45/ump45_reload_tactical",
+    "inspect": "tacz:ump45/ump45_inspect",
+    "inspect_empty": "tacz:ump45/ump45_inspect_empty",
+    "draw": "tacz:ump45/ump45_draw",
+    "put_away": "tacz:ump45/ump45_put_away",
+    "silence": "tacz:ump45/ump45_silence",
+    "silence_3p": "tacz:ump45/ump45_silence_3p"
+  },
+  "offhand_show": {
+    "pos": [1, 20, 4],
+    "rotate": [0, 0, 45],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-1, 19, 3],
+      "rotate": [-180, 0, 130],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}
