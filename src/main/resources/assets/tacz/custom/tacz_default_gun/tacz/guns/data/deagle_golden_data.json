@@ -7,21 +7,21 @@
     "damage": 12,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0,
-      "head_shot_multiplier": 1.5,
+      "armor_ignore": 0.25,
+      "head_shot_multiplier": 1.75,
       "damage_adjust": [
-        {"distance": 1, "damage": 14},
-        {"distance": 14, "damage": 12},
-        {"distance": 34, "damage": 11},
-        {"distance": 49, "damage": 9},
+        {"distance": 1.5, "damage": 14},
+        {"distance": 18, "damage": 12},
+        {"distance": 36, "damage": 11},
+        {"distance": 55, "damage": 9},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 7}
       ]
     },
-    "speed": 190,
-    "gravity": 0.025,
+    "speed": 200,
+    "gravity": 0.0245,
     "knockback": 0.05,
-    "friction": 0.0125,
+    "friction": 0.03,
     "ignite": false,
     "pierce": 1
   },

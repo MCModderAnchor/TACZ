@@ -94,12 +94,30 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     private void classifyRecipes() {
         TimelessAPI.getAllRecipes().forEach((id, recipe) -> {
             GunSmithTableResult result = recipe.getResult();
-            String group = result.getGroup();
-            if (!recipeKeys.contains(group)) {
-                recipeKeys.add(group);
-            }
-            recipes.computeIfAbsent(group, g -> Lists.newArrayList()).add(id);
+            recipes.computeIfAbsent(result.getGroup(), g -> Lists.newArrayList()).add(id);
         });
+
+        // 排序
+        // 子弹
+        putRecipeType("ammo");
+        // 配件
+        putRecipeType("extended_mag");
+        putRecipeType("scope");
+        putRecipeType("muzzle");
+        putRecipeType("stock");
+        putRecipeType("grip");
+        // 枪械
+        putRecipeType("pistol");
+        putRecipeType("sniper");
+        putRecipeType("rifle");
+        putRecipeType("shotgun");
+        putRecipeType("smg");
+        putRecipeType("rpg");
+        putRecipeType("mg");
+    }
+
+    private void putRecipeType(String tabName) {
+        this.recipeKeys.add(tabName);
     }
 
     @Nullable

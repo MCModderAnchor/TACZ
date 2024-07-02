@@ -11,15 +11,15 @@
       "head_shot_multiplier": 1.30,
       "damage_adjust": [
         {"distance": 1, "damage": 6},
-        {"distance": 24, "damage": 5},
-        {"distance": 44, "damage": 4},
-        {"distance": "infinite", "damage": 3.5}
+        {"distance": 15, "damage": 5},
+        {"distance": 35, "damage": 4},
+        {"distance": "infinite", "damage": 3}
       ]
     },
-    "speed": 160,
-    "gravity": 0.025,
+    "speed": 180,
+    "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.012,
+    "friction": 0.025,
     "ignite": false,
     "pierce": 0
   },

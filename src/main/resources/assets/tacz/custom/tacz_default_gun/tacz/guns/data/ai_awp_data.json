@@ -14,20 +14,20 @@
     "damage": 42,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.75,
+      "armor_ignore": 0.60,
       "head_shot_multiplier": 2,
       "damage_adjust": [
         {"distance": 80, "damage": 42},
-        {"distance": 150, "damage": 35},
-        {"distance": "infinite", "damage": 25}
+        {"distance": 160, "damage": 36},
+        {"distance": "infinite", "damage": 26}
       ]
     },
     "speed": 450,
     "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.012,
+    "friction": 0.015,
     "ignite": false,
-    "pierce": 3
+    "pierce": 4
   },
   "reload": {
     "type": "magazine",
@@ -69,6 +69,29 @@
     "sneak": 6.5,
     "lie": 4.5,
     "aim": 0.05
+  },
+  // 近战相关
+  "melee": {
+    // 枪械距离参数，用来延升近战攻击范围
+    // 会与刺刀等配件的距离做加和
+    "distance": 1,
+    // 使用时的冷却时间
+    "cooldown": 1.0,
+    // 默认近战数据，会被配件的数据替换掉
+    "default": {
+      // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
+      "animation_type": "melee_stock",
+      // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
+      "distance": 0,
+      // 刺刀范围角度
+      "range_angle": 30,
+      // 伤害值
+      "damage": 1,
+      // 击退效果
+      "knockback": 0.75,
+      // 前摇时长，单位：秒
+      "prep": 0.1
+    }
   },
   "allow_attachment_types": [
     "extended_mag",

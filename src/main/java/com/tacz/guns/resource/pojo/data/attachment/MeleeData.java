@@ -2,13 +2,15 @@ package com.tacz.guns.resource.pojo.data.attachment;
 
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 public class MeleeData {
-    @SerializedName("range")
-    private Vec3 range = Vec3.ZERO;
+    @SerializedName("distance")
+    private float distance = 1f;
+
+    @SerializedName("range_angle")
+    private float rangeAngle = 30f;
 
     @SerializedName("damage")
     private float damage = 0f;
@@ -22,8 +24,12 @@ public class MeleeData {
     @SerializedName("effects")
     private List<EffectData> effects = Lists.newArrayList();
 
-    public Vec3 getRange() {
-        return range;
+    public float getDistance() {
+        return distance;
+    }
+
+    public float getRangeAngle() {
+        return rangeAngle;
     }
 
     public float getDamage() {

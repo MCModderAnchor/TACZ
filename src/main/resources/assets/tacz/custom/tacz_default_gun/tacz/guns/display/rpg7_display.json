@@ -3,7 +3,6 @@
   "texture": "tacz:gun/uv/rpg7",
   "hud": "tacz:gun/hud/rpg7",
   "slot": "tacz:gun/slot/rpg7",
-  "crosshair": "tacz:crosshair/rpg7",
   "animation": "tacz:rpg7",
   "use_default_animation": "rifle",
   "lod": {

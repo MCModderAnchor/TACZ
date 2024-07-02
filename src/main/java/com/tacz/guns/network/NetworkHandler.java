@@ -3,7 +3,6 @@ package com.tacz.guns.network;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.network.message.*;
 import com.tacz.guns.network.message.handshake.Acknowledge;
-import com.tacz.guns.network.message.handshake.ClientMessagePlayerMelee;
 import com.tacz.guns.network.message.handshake.ServerMessageSyncedEntityDataMapping;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;

@@ -16,9 +16,17 @@ public final class GunAnimationConstant {
     /**
      * 刺刀攻击，会按照 1->2->3 的顺序连续播放
      */
-    public static final String BAYONET_ANIMATION_1 = "melee_bayonet_1";
-    public static final String BAYONET_ANIMATION_2 = "melee_bayonet_2";
-    public static final String BAYONET_ANIMATION_3 = "melee_bayonet_3";
+    public static final String MELEE_BAYONET_ANIMATION_1 = "melee_bayonet_1";
+    public static final String MELEE_BAYONET_ANIMATION_2 = "melee_bayonet_2";
+    public static final String MELEE_BAYONET_ANIMATION_3 = "melee_bayonet_3";
+    /**
+     * 枪托攻击
+     */
+    public static final String MELEE_STOCK_ANIMATION = "melee_stock";
+    /**
+     * 枪推攻击
+     */
+    public static final String MELEE_PUSH_ANIMATION = "melee_push";
     /**
      * 空仓换弹
      */

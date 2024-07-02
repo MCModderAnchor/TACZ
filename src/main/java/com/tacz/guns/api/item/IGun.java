@@ -68,6 +68,36 @@ public interface IGun {
     void setDummyAmmoAmount(ItemStack gun, int amount);
 
     /**
+     * 添加枪械当前的"虚拟备弹"数量
+     */
+    void addDummyAmmoAmount(ItemStack gun, int amount);
+
+    /**
+     * 检查是否有设置"虚拟备弹"最大数量
+     */
+    boolean hasMaxDummyAmmo(ItemStack gun);
+
+    /**
+     * 获取枪械当前的"虚拟备弹"最大数量
+     */
+    int getMaxDummyAmmoAmount(ItemStack gun);
+
+    /**
+     * 设置枪械当前的"虚拟备弹"最大数量
+     */
+    void setMaxDummyAmmoAmount(ItemStack gun, int amount);
+
+    /**
+     * 获取枪械的"配件锁"情况
+     */
+    boolean hasAttachmentLock(ItemStack gun);
+
+    /**
+     * 设置枪械的"配件锁"
+     */
+    void setAttachmentLock(ItemStack gun, boolean locked);
+
+    /**
      * 获取枪械 ID
      */
     @Nonnull
