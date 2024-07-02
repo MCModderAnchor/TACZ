@@ -14,19 +14,19 @@
     "damage": 6.5,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.25,
+      "armor_ignore": 0.2,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
         {"distance": 0.5, "damage": 7.5},
-        {"distance": 35, "damage": 6.5},
-        {"distance": 60, "damage": 5},
-        {"distance": "infinite", "damage": 4}
+        {"distance": 25, "damage": 6.5},
+        {"distance": 60, "damage": 5.5},
+        {"distance": "infinite", "damage": 4.5}
       ]
     },
     "speed": 265,
     "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.01,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 1
   },

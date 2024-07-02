@@ -35,7 +35,7 @@
         // 这样就能写抵近伤害了
         {"distance": 0.5, "damage": 10},
         {"distance": 25, "damage": 9},
-        {"distance": 45, "damage": 7.5},
+        {"distance": 55, "damage": 7.5},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 6}
       ]

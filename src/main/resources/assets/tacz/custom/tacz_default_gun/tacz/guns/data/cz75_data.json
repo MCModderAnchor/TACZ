@@ -13,13 +13,13 @@
         {"distance": 1, "damage": 6},
         {"distance": 15, "damage": 5},
         {"distance": 35, "damage": 4},
-        {"distance": "infinite", "damage": 3.5}
+        {"distance": "infinite", "damage": 3}
       ]
     },
     "speed": 180,
     "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.012,
+    "friction": 0.025,
     "ignite": false,
     "pierce": 0
   },

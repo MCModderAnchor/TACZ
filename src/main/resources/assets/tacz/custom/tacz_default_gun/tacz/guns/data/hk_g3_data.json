@@ -11,7 +11,7 @@
   "bullet": {
     "life": 0.8,
     "bullet_amount": 1,
-    "damage": 12,
+    "damage": 11,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.5,
@@ -19,14 +19,14 @@
       "damage_adjust": [
         {"distance": 1, "damage": 12.5},
         {"distance": 35, "damage": 11},
-        {"distance": 70, "damage": 9},
+        {"distance": 80, "damage": 9},
         {"distance": "infinite", "damage": 7.5}
       ]
     },
     "speed": 270,
     "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.0125,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 2
   },

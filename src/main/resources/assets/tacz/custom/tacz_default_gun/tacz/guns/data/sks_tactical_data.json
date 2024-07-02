@@ -19,14 +19,14 @@
       "damage_adjust": [
         {"distance": 1, "damage": 13},
         {"distance": 55, "damage": 11},
-        {"distance": 90, "damage": 9},
+        {"distance": 110, "damage": 9},
         {"distance": "infinite", "damage": 7}
       ]
     },
-    "speed": 250,
+    "speed": 300,
     "gravity": 0.025,
     "knockback": 0,
-    "friction": 0.012,
+    "friction": 0.0125,
     "ignite": false,
     "pierce": 1
   },

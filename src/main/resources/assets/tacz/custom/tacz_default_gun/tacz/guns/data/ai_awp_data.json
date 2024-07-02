@@ -18,14 +18,14 @@
       "head_shot_multiplier": 2,
       "damage_adjust": [
         {"distance": 80, "damage": 42},
-        {"distance": 150, "damage": 36},
-        {"distance": "infinite", "damage": 25}
+        {"distance": 160, "damage": 36},
+        {"distance": "infinite", "damage": 26}
       ]
     },
     "speed": 450,
     "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.012,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 4
   },

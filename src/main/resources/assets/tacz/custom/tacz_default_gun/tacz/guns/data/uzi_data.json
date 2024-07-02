@@ -2,12 +2,12 @@
   "ammo": "tacz:9mm",
   "rpm": 600,
   "bullet": {
-    "life": 0.55,
+    "life": 0.65,
     "bullet_amount": 1,
     "damage": 6.5,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.05,
+      "armor_ignore": 0.15,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
         {"distance": 0.5, "damage": 7},
@@ -19,7 +19,7 @@
     "speed": 180,
     "gravity": 0.0245,
     "knockback": 0,
-    "friction": 0.011,
+    "friction": 0.025,
     "ignite": false,
     "pierce": 1
   },

@@ -4,30 +4,30 @@
   "bullet": {
     "life": 0.55,
     "bullet_amount": 1,
-    "damage": 8,
+    "damage": 9,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.125,
-      "head_shot_multiplier": 1.25,
+      "armor_ignore": 0.2,
+      "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 1, "damage": 9},
-        {"distance": 30, "damage": 8},
-        {"distance": 55, "damage": 6},
-        {"distance": "infinite", "damage": 4}
+        {"distance": 1, "damage": 10},
+        {"distance": 30, "damage": 9},
+        {"distance": 55, "damage": 7},
+        {"distance": "infinite", "damage": 5.5}
       ]
     },
     "speed": 190,
     "gravity": 0.0245,
     "knockback": 0.1,
-    "friction": 0.03,
+    "friction": 0.02,
     "ignite": false,
     "pierce": 1
   },
-  "ammo_amount": 32,
+  "ammo_amount": 25,
   "extended_mag_ammo_amount": [
-    35,
+    32,
     40,
-    45
+    48
   ],
   "bolt": "closed_bolt",
   "reload": {
@@ -52,7 +52,8 @@
   "allow_attachment_types": [
     "scope",
     "muzzle",
-    "grip"
+    "grip",
+    "extended_mag"
   ],
   "recoil": {
     "pitch": [
