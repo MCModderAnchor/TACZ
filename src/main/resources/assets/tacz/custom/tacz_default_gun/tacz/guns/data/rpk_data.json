@@ -128,10 +128,28 @@
     // 瞄准射击时散布
     "aim": 0.15
   },
-  // 刺刀攻击距离参数，用来延升刺刀攻击范围
+  // 近战相关
   "melee": {
-    "distance": 2,
-    "cooldown": 0.7
+    // 枪械距离参数，用来延升近战攻击范围
+    // 会与刺刀等配件的距离做加和
+    "distance": 1,
+    // 使用时的冷却时间
+    "cooldown": 0.7,
+    // 默认近战数据，会被配件的数据替换掉
+    "default": {
+      // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
+      "animation_type": "melee_stock",
+      // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
+      "distance": 0,
+      // 刺刀范围角度
+      "range_angle": 30,
+      // 伤害值
+      "damage": 1,
+      // 击退效果
+      "knockback": 0.6,
+      // 前摇时长，单位：秒
+      "prep": 0.1
+    }
   },
   // 开放的配件槽。未指定的槽位默认关闭。全部配件槽类型有:
   // scope, stock, muzzle, grip, laser, extended_mag
