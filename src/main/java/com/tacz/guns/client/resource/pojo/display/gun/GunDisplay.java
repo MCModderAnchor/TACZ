@@ -24,9 +24,6 @@ public class GunDisplay {
     @SerializedName("hud_empty")
     private ResourceLocation hudEmptyTextureLocation;
     @Nullable
-    @SerializedName("crosshair")
-    private ResourceLocation crosshairTextureLocation;
-    @Nullable
     @SerializedName("slot")
     private ResourceLocation slotTextureLocation;
     @Nullable
@@ -89,11 +86,6 @@ public class GunDisplay {
     @Nullable
     public ResourceLocation getSlotTextureLocation() {
         return slotTextureLocation;
-    }
-
-    @Nullable
-    public ResourceLocation getCrosshairTextureLocation() {
-        return crosshairTextureLocation;
     }
 
     @Nullable

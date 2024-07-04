@@ -10,8 +10,6 @@
   },
   // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
   "hud": "tacz:gun/hud/ak47",
-  // 自定义准星材质，没有的话则显示默认准星
-  // "crosshair": "tacz:crosshair/rpg7",
   // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空
   // 若为空，则对应位置渲染改为：上述 hud + 代码着成红色
   // "hud_empty": "tacz:gun/hud/ak47_empty",

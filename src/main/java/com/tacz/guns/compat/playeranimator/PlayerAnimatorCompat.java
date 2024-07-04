@@ -19,6 +19,7 @@ public class PlayerAnimatorCompat {
     public static ResourceLocation LOWER_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "lower_animation");
     public static ResourceLocation LOOP_UPPER_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "loop_upper_animation");
     public static ResourceLocation ONCE_UPPER_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "once_upper_animation");
+    public static ResourceLocation ROTATION_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "rotation");
 
     private static final String MOD_ID = "playeranimator";
     private static boolean INSTALLED = false;
@@ -67,6 +68,7 @@ public class PlayerAnimatorCompat {
         if (isInstalled() && livingEntity instanceof AbstractClientPlayer player) {
             AnimationManager.playLowerAnimation(player, gunIndex, limbSwingAmount);
             AnimationManager.playLoopUpperAnimation(player, gunIndex, limbSwingAmount);
+            AnimationManager.playRotationAnimation(player, gunIndex);
         }
     }
 
