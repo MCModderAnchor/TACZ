@@ -47,8 +47,14 @@
   "sprint_time": 0.15,
   "fire_mode": [
     "auto",
-    "semi"
+    "burst"
   ],
+  "burst_data": {
+    "continuous_shoot": false,
+    "count": 2,
+    "bpm": 700,
+    "min_interval": 0.35
+  },
   "allow_attachment_types": [
     "scope",
     "muzzle",
