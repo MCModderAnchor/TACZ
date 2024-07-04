@@ -28,6 +28,7 @@ import java.util.Optional;
 @OnlyIn(Dist.CLIENT)
 public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
     private static final String HEAD_NAME = "head";
+    private static final String HEAD_2_NAME = "head2";
 
     public TargetMinecartRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, ModelLayers.TNT_MINECART);
@@ -47,7 +48,9 @@ public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
     protected void renderMinecartContents(TargetMinecart targetMinecart, float pPartialTicks, BlockState pState, PoseStack stack, MultiBufferSource buffer, int pPackedLight) {
         getModel().ifPresent(model -> {
             BedrockPart headModel = model.getNode(HEAD_NAME);
+            BedrockPart head2Model = model.getNode(HEAD_2_NAME);
             headModel.visible = false;
+            head2Model.visible = false;
 
             stack.pushPose();
             stack.translate(0.5, 1.875, 0.5);
@@ -70,6 +73,10 @@ public class TargetMinecartRenderer extends MinecartRenderer<TargetMinecart> {
                 headModel.visible = true;
                 RenderType skullRenderType = RenderType.entityTranslucentCull(skin);
                 headModel.render(stack, ItemDisplayContext.NONE, buffer.getBuffer(skullRenderType), pPackedLight, OverlayTexture.NO_OVERLAY);
+
+                head2Model.visible = true;
+                stack.translate(0, 0, 0.01);
+                head2Model.render(stack, ItemDisplayContext.NONE, buffer.getBuffer(skullRenderType), pPackedLight, OverlayTexture.NO_OVERLAY);
             }
             stack.popPose();
         });
