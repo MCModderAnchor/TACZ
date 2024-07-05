@@ -205,6 +205,24 @@ public interface GunItemDataAccessor extends IGun {
     }
 
     @Override
+    @Nonnull
+    default ResourceLocation getAttachmentId(ItemStack gun, AttachmentType type) {
+        if (!allowAttachmentType(gun, type)) {
+            return DefaultAssets.EMPTY_ATTACHMENT_ID;
+        }
+        CompoundTag nbt = gun.getOrCreateTag();
+        String key = GUN_ATTACHMENT_BASE + type.name();
+        if (nbt.contains(key, Tag.TAG_COMPOUND)) {
+            CompoundTag allItemStackTag = nbt.getCompound(key);
+            if (allItemStackTag.contains("tag", Tag.TAG_COMPOUND)) {
+                CompoundTag innerTag = allItemStackTag.getCompound("tag");
+                return AttachmentItemDataAccessor.getAttachmentIdFromTag(innerTag);
+            }
+        }
+        return DefaultAssets.EMPTY_ATTACHMENT_ID;
+    }
+
+    @Override
     default void installAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment) {
         if (!allowAttachment(gun, attachment)) {
             return;

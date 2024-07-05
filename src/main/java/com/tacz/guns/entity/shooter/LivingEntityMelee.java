@@ -1,8 +1,8 @@
 package com.tacz.guns.entity.shooter;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.event.common.GunMeleeEvent;
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
@@ -53,16 +53,16 @@ public class LivingEntityMelee {
         if (currentGunItem.getItem() instanceof AbstractGunItem logicGun) {
             data.meleeTimestamp = System.currentTimeMillis();
 
-            ItemStack muzzle = logicGun.getAttachment(currentGunItem, AttachmentType.MUZZLE);
-            MeleeData muzzleMeleeData = getMeleeData(muzzle);
+            ResourceLocation muzzleId = logicGun.getAttachmentId(currentGunItem, AttachmentType.MUZZLE);
+            MeleeData muzzleMeleeData = getMeleeData(muzzleId);
             if (muzzleMeleeData != null) {
                 float prepTime = muzzleMeleeData.getPrepTime();
                 data.meleePrepTickCount = (int) Math.max(0, prepTime * 20);
                 return;
             }
 
-            ItemStack stock = logicGun.getAttachment(currentGunItem, AttachmentType.STOCK);
-            MeleeData stockMeleeData = getMeleeData(stock);
+            ResourceLocation stockId = logicGun.getAttachmentId(currentGunItem, AttachmentType.STOCK);
+            MeleeData stockMeleeData = getMeleeData(stockId);
             if (stockMeleeData != null) {
                 float prepTime = stockMeleeData.getPrepTime();
                 data.meleePrepTickCount = (int) Math.max(0, prepTime * 20);
@@ -120,12 +120,10 @@ public class LivingEntityMelee {
     }
 
     @Nullable
-    private MeleeData getMeleeData(ItemStack attachmentStack) {
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-        if (iAttachment == null) {
+    private MeleeData getMeleeData(ResourceLocation attachmentId) {
+        if (DefaultAssets.isEmptyAttachmentId(attachmentId)) {
             return null;
         }
-        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
         return TimelessAPI.getCommonAttachmentIndex(attachmentId).map(index -> index.getData().getMeleeData()).orElse(null);
     }
 }

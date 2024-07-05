@@ -1,9 +1,9 @@
 package com.tacz.guns.item;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
@@ -138,15 +138,15 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             GunMeleeData meleeData = gunIndex.getGunData().getMeleeData();
             float distance = meleeData.getDistance();
 
-            ItemStack muzzle = this.getAttachment(gunItem, AttachmentType.MUZZLE);
-            MeleeData muzzleData = getMeleeData(muzzle);
+            ResourceLocation muzzleId = this.getAttachmentId(gunItem, AttachmentType.MUZZLE);
+            MeleeData muzzleData = getMeleeData(muzzleId);
             if (muzzleData != null) {
                 doMelee(user, distance, muzzleData.getDistance(), muzzleData.getRangeAngle(), muzzleData.getKnockback(), muzzleData.getDamage(), muzzleData.getEffects());
                 return;
             }
 
-            ItemStack stock = this.getAttachment(gunItem, AttachmentType.STOCK);
-            MeleeData stockData = getMeleeData(stock);
+            ResourceLocation stockId = this.getAttachmentId(gunItem, AttachmentType.STOCK);
+            MeleeData stockData = getMeleeData(stockId);
             if (stockData != null) {
                 doMelee(user, distance, stockData.getDistance(), stockData.getRangeAngle(), stockData.getKnockback(), stockData.getDamage(), stockData.getEffects());
                 return;
@@ -316,12 +316,10 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     }
 
     @Nullable
-    private MeleeData getMeleeData(ItemStack attachmentStack) {
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-        if (iAttachment == null) {
+    private MeleeData getMeleeData(ResourceLocation attachmentId) {
+        if (DefaultAssets.isEmptyAttachmentId(attachmentId)) {
             return null;
         }
-        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
         return TimelessAPI.getCommonAttachmentIndex(attachmentId).map(index -> index.getData().getMeleeData()).orElse(null);
     }
 }

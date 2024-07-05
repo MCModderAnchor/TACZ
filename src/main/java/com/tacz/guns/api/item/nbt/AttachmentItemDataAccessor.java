@@ -16,15 +16,20 @@ public interface AttachmentItemDataAccessor extends IAttachment {
     String SKIN_ID_TAG = "Skin";
     String ZOOM_NUMBER_TAG = "ZoomNumber";
 
-    @Override
     @Nonnull
-    default ResourceLocation getAttachmentId(ItemStack attachmentStack) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
+    static ResourceLocation getAttachmentIdFromTag(CompoundTag nbt) {
         if (nbt.contains(ATTACHMENT_ID_TAG, Tag.TAG_STRING)) {
             ResourceLocation attachmentId = ResourceLocation.tryParse(nbt.getString(ATTACHMENT_ID_TAG));
             return Objects.requireNonNullElse(attachmentId, DefaultAssets.EMPTY_ATTACHMENT_ID);
         }
         return DefaultAssets.EMPTY_ATTACHMENT_ID;
+    }
+
+    @Override
+    @Nonnull
+    default ResourceLocation getAttachmentId(ItemStack attachmentStack) {
+        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        return getAttachmentIdFromTag(nbt);
     }
 
     @Override

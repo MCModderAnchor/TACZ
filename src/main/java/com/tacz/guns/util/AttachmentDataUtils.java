@@ -1,7 +1,7 @@
 package com.tacz.guns.util;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
@@ -21,15 +21,10 @@ public final class AttachmentDataUtils {
             if (type == AttachmentType.NONE) {
                 continue;
             }
-            ItemStack attachmentStack = iGun.getAttachment(gunItem, type);
-            if (attachmentStack.isEmpty()) {
+            ResourceLocation attachmentId = iGun.getAttachmentId(gunItem, type);
+            if (DefaultAssets.isEmptyAttachmentId(attachmentId)) {
                 continue;
             }
-            IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-            if (attachment == null) {
-                continue;
-            }
-            ResourceLocation attachmentId = attachment.getAttachmentId(attachmentStack);
             AttachmentData attachmentData = gunData.getExclusiveAttachments().get(attachmentId);
             if (attachmentData != null) {
                 dataConsumer.accept(attachmentData);
@@ -48,15 +43,10 @@ public final class AttachmentDataUtils {
         if (extendedMagAmmoAmount == null) {
             return gunData.getAmmoAmount();
         }
-        ItemStack attachmentStack = iGun.getAttachment(gunItem, AttachmentType.EXTENDED_MAG);
-        if (attachmentStack.isEmpty()) {
+        ResourceLocation attachmentId = iGun.getAttachmentId(gunItem, AttachmentType.EXTENDED_MAG);
+        if (DefaultAssets.isEmptyAttachmentId(attachmentId)) {
             return gunData.getAmmoAmount();
         }
-        IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-        if (attachment == null) {
-            return gunData.getAmmoAmount();
-        }
-        ResourceLocation attachmentId = attachment.getAttachmentId(attachmentStack);
         AttachmentData attachmentData = gunData.getExclusiveAttachments().get(attachmentId);
         if (attachmentData != null) {
             int level = attachmentData.getExtendedMagLevel();

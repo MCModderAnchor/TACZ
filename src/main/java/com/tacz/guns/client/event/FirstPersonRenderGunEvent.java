@@ -3,12 +3,12 @@ package com.tacz.guns.client.event;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.client.other.KeepingItemRenderer;
 import com.tacz.guns.api.event.common.GunFireEvent;
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
@@ -330,8 +330,8 @@ public class FirstPersonRenderGunEvent {
         // 应用瞄准定位
         List<BedrockPart> idleNodePath = model.getIdleSightPath();
         List<BedrockPart> aimingNodePath = null;
-        ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
-        if (scopeItem.isEmpty()) {
+        ResourceLocation scopeId = iGun.getAttachmentId(stack, AttachmentType.SCOPE);
+        if (DefaultAssets.isEmptyAttachmentId(scopeId)) {
             // 未安装瞄具，使用机瞄定位组
             aimingNodePath = model.getIronSightPath();
         } else {
@@ -339,15 +339,11 @@ public class FirstPersonRenderGunEvent {
             List<BedrockPart> scopeNodePath = model.getScopePosPath();
             if (scopeNodePath != null) {
                 aimingNodePath = new ArrayList<>(scopeNodePath);
-                IAttachment iAttachment = IAttachment.getIAttachmentOrNull(scopeItem);
-                if (iAttachment != null) {
-                    ResourceLocation scopeId = iAttachment.getAttachmentId(scopeItem);
-                    Optional<ClientAttachmentIndex> indexOptional = TimelessAPI.getClientAttachmentIndex(scopeId);
-                    if (indexOptional.isPresent()) {
-                        BedrockAttachmentModel attachmentModel = indexOptional.get().getAttachmentModel();
-                        if (attachmentModel != null && attachmentModel.getScopeViewPath() != null) {
-                            aimingNodePath.addAll(attachmentModel.getScopeViewPath());
-                        }
+                Optional<ClientAttachmentIndex> indexOptional = TimelessAPI.getClientAttachmentIndex(scopeId);
+                if (indexOptional.isPresent()) {
+                    BedrockAttachmentModel attachmentModel = indexOptional.get().getAttachmentModel();
+                    if (attachmentModel != null && attachmentModel.getScopeViewPath() != null) {
+                        aimingNodePath.addAll(attachmentModel.getScopeViewPath());
                     }
                 }
             }

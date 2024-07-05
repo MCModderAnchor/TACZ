@@ -195,6 +195,14 @@ public interface IGun {
     ItemStack getAttachment(ItemStack gun, AttachmentType type);
 
     /**
+     * 获取枪械的配件 ID
+     * <p>
+     * 如果不存在，返回 DefaultAssets.EMPTY_ATTACHMENT_ID;
+     */
+    @Nonnull
+    ResourceLocation getAttachmentId(ItemStack gun, AttachmentType type);
+
+    /**
      * 安装配件
      */
     void installAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment);
