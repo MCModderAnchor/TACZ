@@ -12,6 +12,9 @@ public class MeleeData {
     @SerializedName("range_angle")
     private float rangeAngle = 30f;
 
+    @SerializedName("cooldown")
+    private float cooldown = 0f;
+
     @SerializedName("damage")
     private float damage = 0f;
 
@@ -30,6 +33,10 @@ public class MeleeData {
 
     public float getRangeAngle() {
         return rangeAngle;
+    }
+
+    public float getCooldown() {
+        return cooldown;
     }
 
     public float getDamage() {

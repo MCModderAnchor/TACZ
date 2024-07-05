@@ -6,10 +6,10 @@ import javax.annotation.Nullable;
 
 public class GunMeleeData {
     @SerializedName("distance")
-    public float distance = 1f;
+    private float distance = 1f;
 
     @SerializedName("cooldown")
-    public float cooldown = 1f;
+    private float cooldown = 1f;
 
     @SerializedName("default")
     @Nullable
