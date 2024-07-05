@@ -6,6 +6,8 @@ import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.crafting.GunSmithTableResult;
+import com.tacz.guns.resource.CommonGunPackLoader;
+import com.tacz.guns.resource.pojo.data.recipe.GunResult;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +29,7 @@ public class GunSmithTableResultSerializer implements JsonDeserializer<GunSmithT
             }
             switch (typeName) {
                 case GunSmithTableResult.GUN -> {
-                    return getGunStack(id, count);
+                    return getGunStack(id, count, jsonObject);
                 }
                 case GunSmithTableResult.AMMO -> {
                     return getAmmoStack(id, count);
@@ -40,13 +42,18 @@ public class GunSmithTableResultSerializer implements JsonDeserializer<GunSmithT
         return new GunSmithTableResult(ItemStack.EMPTY, StringUtils.EMPTY);
     }
 
-    private GunSmithTableResult getGunStack(ResourceLocation id, int count) {
+    private GunSmithTableResult getGunStack(ResourceLocation id, int count, JsonObject extraData) {
+        GunResult gunResult = CommonGunPackLoader.GSON.fromJson(extraData, GunResult.class);
+        int ammoCount = Math.max(0, gunResult.getAmmoCount());
+        var attachments = gunResult.getAttachments();
+
         return TimelessAPI.getCommonGunIndex(id).map(gunIndex -> {
             ItemStack itemStack = GunItemBuilder.create()
                     .setCount(count)
                     .setId(id)
-                    .setAmmoCount(0)
+                    .setAmmoCount(ammoCount)
                     .setAmmoInBarrel(false)
+                    .putAllAttachment(attachments)
                     .setFireMode(gunIndex.getGunData().getFireModeSet().get(0)).build();
             String group = gunIndex.getType();
             return new GunSmithTableResult(itemStack, group);
