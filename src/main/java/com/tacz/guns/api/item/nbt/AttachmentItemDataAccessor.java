@@ -17,12 +17,29 @@ public interface AttachmentItemDataAccessor extends IAttachment {
     String ZOOM_NUMBER_TAG = "ZoomNumber";
 
     @Nonnull
-    static ResourceLocation getAttachmentIdFromTag(CompoundTag nbt) {
+    static ResourceLocation getAttachmentIdFromTag(@Nullable CompoundTag nbt) {
+        if (nbt == null) {
+            return DefaultAssets.EMPTY_ATTACHMENT_ID;
+        }
         if (nbt.contains(ATTACHMENT_ID_TAG, Tag.TAG_STRING)) {
             ResourceLocation attachmentId = ResourceLocation.tryParse(nbt.getString(ATTACHMENT_ID_TAG));
             return Objects.requireNonNullElse(attachmentId, DefaultAssets.EMPTY_ATTACHMENT_ID);
         }
         return DefaultAssets.EMPTY_ATTACHMENT_ID;
+    }
+
+    static int getZoomNumberFromTag(@Nullable CompoundTag nbt) {
+        if (nbt == null) {
+            return 0;
+        }
+        if (nbt.contains(ZOOM_NUMBER_TAG, Tag.TAG_INT)) {
+            return nbt.getInt(ZOOM_NUMBER_TAG);
+        }
+        return 0;
+    }
+
+    static void setZoomNumberToTag(CompoundTag nbt, int zoomNumber) {
+        nbt.putInt(ZOOM_NUMBER_TAG, zoomNumber);
     }
 
     @Override
@@ -63,15 +80,12 @@ public interface AttachmentItemDataAccessor extends IAttachment {
     @Override
     default int getZoomNumber(ItemStack attachmentStack) {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
-        if (nbt.contains(ZOOM_NUMBER_TAG, Tag.TAG_INT)) {
-            return nbt.getInt(ZOOM_NUMBER_TAG);
-        }
-        return 0;
+        return getZoomNumberFromTag(nbt);
     }
 
     @Override
     default void setZoomNumber(ItemStack attachmentStack, int zoomNumber) {
         CompoundTag nbt = attachmentStack.getOrCreateTag();
-        nbt.putInt(ZOOM_NUMBER_TAG, zoomNumber);
+        setZoomNumberToTag(nbt, zoomNumber);
     }
 }

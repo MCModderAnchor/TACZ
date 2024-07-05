@@ -3,6 +3,7 @@ package com.tacz.guns.api.item;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -193,6 +194,14 @@ public interface IGun {
      */
     @Nonnull
     ItemStack getAttachment(ItemStack gun, AttachmentType type);
+
+    /**
+     * 获取当前枪械指定类型的配件的 NBT 数据
+     *
+     * @return 如果为空，那么没有配件数据
+     */
+    @Nullable
+    CompoundTag getAttachmentTag(ItemStack gun, AttachmentType type);
 
     /**
      * 获取枪械的配件 ID
