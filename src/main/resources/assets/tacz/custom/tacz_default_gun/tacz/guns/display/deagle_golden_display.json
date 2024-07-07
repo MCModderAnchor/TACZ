@@ -9,6 +9,7 @@
   },
   "animation": "tacz:deagle_golden",
   "use_default_animation": "pistol",
+  "player_animator_3rd": "tacz:pistol_default.player_animation",
   "transform": {
     "scale": {
       "thirdperson": [

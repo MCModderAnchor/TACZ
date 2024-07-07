@@ -2,6 +2,7 @@ package com.tacz.guns.compat.playeranimator.animation;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
+import com.tacz.guns.api.event.common.GunDrawEvent;
 import com.tacz.guns.api.event.common.GunMeleeEvent;
 import com.tacz.guns.api.event.common.GunReloadEvent;
 import com.tacz.guns.api.event.common.GunShootEvent;
@@ -243,5 +244,23 @@ public class AnimationManager {
             default -> AnimationName.MELEE_3_UPPER;
         };
         TimelessAPI.getClientGunIndex(iGun.getGunId(gunItemStack)).ifPresent(index -> playOnceAnimation(player, index, PlayerAnimatorCompat.ONCE_UPPER_ANIMATION, animationName));
+    }
+
+    @SubscribeEvent
+    public void onDraw(GunDrawEvent event) {
+        if (event.getLogicalSide().isServer()) {
+            return;
+        }
+        LivingEntity entity = event.getEntity();
+        if (!(entity instanceof AbstractClientPlayer player)) {
+            return;
+        }
+        ItemStack currentGunItem = event.getCurrentGunItem();
+        ItemStack previousGunItem = event.getPreviousGunItem();
+        // 在切枪时，重置上半身动画
+        if (currentGunItem.getItem() instanceof IGun && previousGunItem.getItem() instanceof IGun) {
+            stopAnimation(player, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION);
+            stopAnimation(player, PlayerAnimatorCompat.ONCE_UPPER_ANIMATION);
+        }
     }
 }

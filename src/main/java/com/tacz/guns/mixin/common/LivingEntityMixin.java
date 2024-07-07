@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 public abstract class LivingEntityMixin extends Entity implements IGunOperator, KnockBackModifier {
     private final @Unique LivingEntity tacz$shooter = (LivingEntity) (Object) this;
     private final @Unique ShooterDataHolder tacz$data = new ShooterDataHolder();
-    private final @Unique LivingEntityDrawGun tacz$draw = new LivingEntityDrawGun(tacz$data);
+    private final @Unique LivingEntityDrawGun tacz$draw = new LivingEntityDrawGun(tacz$shooter, tacz$data);
     private final @Unique LivingEntityAim tacz$aim = new LivingEntityAim(tacz$shooter, this.tacz$data);
     private final @Unique LivingEntityAmmoCheck tacz$ammoCheck = new LivingEntityAmmoCheck(tacz$shooter);
     private final @Unique LivingEntityFireSelect tacz$fireSelect = new LivingEntityFireSelect(tacz$shooter, this.tacz$data);

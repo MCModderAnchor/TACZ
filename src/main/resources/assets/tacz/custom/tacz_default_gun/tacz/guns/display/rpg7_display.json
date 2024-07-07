@@ -13,7 +13,7 @@
     "scale": {
       "thirdperson": [1, 1, 1],
       "ground": [1, 1, 1],
-      "fixed": [1.2, 1.2, 1.2]
+      "fixed": [1.5, 1.5, 1.5]
     }
   },
   "sounds": {

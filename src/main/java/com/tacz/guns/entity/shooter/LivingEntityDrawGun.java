@@ -1,18 +1,24 @@
 package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.event.common.GunDrawEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.LogicalSide;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
 public class LivingEntityDrawGun {
+    private final LivingEntity shooter;
     private final ShooterDataHolder data;
 
-    public LivingEntityDrawGun(ShooterDataHolder data) {
+    public LivingEntityDrawGun(LivingEntity shooter, ShooterDataHolder data) {
+        this.shooter = shooter;
         this.data = data;
     }
 
@@ -34,6 +40,8 @@ public class LivingEntityDrawGun {
                 data.drawTimestamp = System.currentTimeMillis() + (long) (data.currentPutAwayTimeS * 1000);
             }
         }
+        ItemStack lastItem = data.currentGunItem == null ? ItemStack.EMPTY : data.currentGunItem.get();
+        MinecraftForge.EVENT_BUS.post(new GunDrawEvent(shooter, lastItem, gunItemSupplier.get(), LogicalSide.SERVER));
         data.currentGunItem = gunItemSupplier;
         updatePutAwayTime();
     }
