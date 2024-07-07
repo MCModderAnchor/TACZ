@@ -11,13 +11,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class ClientGunPackDownloadProgressScreen extends Screen implements ProgressListener {
+public class GunPackProgressScreen extends Screen implements ProgressListener {
     private @Nullable Component header;
     private @Nullable Component stage;
     private int progress;
     private boolean stop;
 
-    public ClientGunPackDownloadProgressScreen() {
+    public GunPackProgressScreen() {
         super(GameNarrator.NO_TITLE);
     }
 

@@ -12,7 +12,7 @@ import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
-import com.tacz.guns.client.gui.GunRefitScreen;
+import com.tacz.guns.client.animation.screen.RefitTransform;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
@@ -153,7 +153,7 @@ public class FirstPersonRenderGunEvent {
             {
                 // 如果正在打开改装界面，则取消手臂渲染
                 boolean renderHand = gunModel.getRenderHand();
-                if (GunRefitScreen.getOpeningProgress() != 0) {
+                if (RefitTransform.getOpeningProgress() != 0) {
                     gunModel.setRenderHand(false);
                 }
                 // 调用枪械模型渲染
@@ -301,7 +301,7 @@ public class FirstPersonRenderGunEvent {
 
     private static void applyFirstPersonGunTransform(LocalPlayer player, ItemStack gunItemStack, ClientGunIndex gunIndex, PoseStack poseStack, BedrockGunModel model, float partialTicks) {
         // 配合运动曲线，计算改装枪口的打开进度
-        float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(GunRefitScreen.getOpeningProgress());
+        float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(RefitTransform.getOpeningProgress());
         // 配合运动曲线，计算瞄准进度
         float aimingProgress = AIMING_DYNAMICS.update(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
         // 应用枪械动态，如后坐力、持枪跳跃等
@@ -351,9 +351,9 @@ public class FirstPersonRenderGunEvent {
         MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(idleNodePath), transformMatrix, (1 - refitScreenOpeningProgress));
         MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(aimingNodePath), transformMatrix, (1 - refitScreenOpeningProgress) * aimingProgress);
         // 应用改装界面开启时的定位
-        float refitTransformProgress = (float) Easing.easeOutCubic(GunRefitScreen.getTransformProgress());
-        AttachmentType oldType = GunRefitScreen.getOldTransformType();
-        AttachmentType currentType = GunRefitScreen.getCurrentTransformType();
+        float refitTransformProgress = (float) Easing.easeOutCubic(RefitTransform.getTransformProgress());
+        AttachmentType oldType = RefitTransform.getOldTransformType();
+        AttachmentType currentType = RefitTransform.getCurrentTransformType();
         List<BedrockPart> fromNode = model.getRefitAttachmentViewPath(oldType);
         List<BedrockPart> toNode = model.getRefitAttachmentViewPath(currentType);
         MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(fromNode), transformMatrix, refitScreenOpeningProgress);
