@@ -2,7 +2,7 @@ package com.tacz.guns.client.resource;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.audio.SoundBuffer;
-import com.tacz.guns.client.animation.gltf.AnimationStructure;
+import com.tacz.guns.api.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.pojo.PackInfo;

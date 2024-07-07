@@ -1,7 +1,7 @@
 package com.tacz.guns.client.model.listener.camera;
 
-import com.tacz.guns.client.animation.AnimationListener;
-import com.tacz.guns.client.animation.ObjectAnimationChannel;
+import com.tacz.guns.api.client.animation.AnimationListener;
+import com.tacz.guns.api.client.animation.ObjectAnimationChannel;
 import com.tacz.guns.util.math.MathUtil;
 import org.joml.Quaternionf;
 
