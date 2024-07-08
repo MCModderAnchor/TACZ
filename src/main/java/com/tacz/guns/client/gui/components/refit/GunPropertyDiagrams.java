@@ -73,7 +73,7 @@ public final class GunPropertyDiagrams {
 
             // 精确度，也就是瞄准时的扩散
             float aimInaccuracy = gunData.getInaccuracy(InaccuracyType.AIM);
-            double aimInaccuracyPercent = Math.min(1 - aimInaccuracy / 5.0, 1);
+            double aimInaccuracyPercent = Mth.clamp(1 - aimInaccuracy, 0, 1);
             int aimInaccuracyLength = (int) (barStartX + barMaxWidth * aimInaccuracyPercent);
             String aimInaccuracyValueText = String.format("%.2f%%", aimInaccuracyPercent * 100);
 
