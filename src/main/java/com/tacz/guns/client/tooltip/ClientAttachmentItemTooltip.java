@@ -3,7 +3,6 @@ package com.tacz.guns.client.tooltip;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -122,12 +121,8 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
         }
         int minY = components.size() * 10 + 3;
         int maxX = getWidth(font);
-        PoseStack poseStack = gui.pose();
         gui.fill(mouseX, mouseY + minY, mouseX + maxX, mouseY + minY + 11, 0x8F00b0ff);
-        poseStack.pushPose();
-//        poseStack.translate(0, 0, blitOffset);
         gui.drawString(font, support, mouseX + 2, mouseY + minY + 2, 0xe3f2fd);
-        poseStack.popPose();
 
         for (int i = 0; i < showGuns.size(); i++) {
             ItemStack stack = showGuns.get(i);
