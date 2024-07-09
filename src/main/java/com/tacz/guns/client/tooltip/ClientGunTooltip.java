@@ -7,6 +7,7 @@ import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
+import com.tacz.guns.item.GunTooltipPart;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
@@ -60,7 +61,23 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return 112;
+        int height = 0;
+        if (shouldShow(GunTooltipPart.AMMO_INFO)) {
+            height += 22;
+        }
+        if (shouldShow(GunTooltipPart.BASE_INFO)) {
+            height += 36;
+        }
+        if (shouldShow(GunTooltipPart.EXTRA_DAMAGE_INFO)) {
+            height += 25;
+        }
+        if (shouldShow(GunTooltipPart.UPGRADES_TIP)) {
+            height += 15;
+        }
+        if (shouldShow(GunTooltipPart.PACK_INFO)) {
+            height += 15;
+        }
+        return height;
     }
 
     @Override
@@ -71,111 +88,144 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     private void getText() {
         Font font = Minecraft.getInstance().font;
 
-        this.ammoName = ammo.getHoverName();
-        this.maxWidth = Math.max(font.width(this.ammoName) + 22, this.maxWidth);
 
+        if (shouldShow(GunTooltipPart.AMMO_INFO)) {
+            this.ammoName = ammo.getHoverName();
+            this.maxWidth = Math.max(font.width(this.ammoName) + 22, this.maxWidth);
 
-        int barrelBulletAmount = (iGun.hasBulletInBarrel(gun) && gunIndex.getGunData().getBolt() != Bolt.OPEN_BOLT) ? 1 : 0;
-        int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(gun, gunIndex.getGunData()) + barrelBulletAmount;
-        int currentAmmoCount = iGun.getCurrentAmmoCount(this.gun) + barrelBulletAmount;
+            int barrelBulletAmount = (iGun.hasBulletInBarrel(gun) && gunIndex.getGunData().getBolt() != Bolt.OPEN_BOLT) ? 1 : 0;
+            int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(gun, gunIndex.getGunData()) + barrelBulletAmount;
+            int currentAmmoCount = iGun.getCurrentAmmoCount(this.gun) + barrelBulletAmount;
 
-        if (!iGun.useDummyAmmo(gun)) {
-            this.ammoCountText = Component.literal("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
-        } else {
-            int dummyAmmoAmount = iGun.getDummyAmmoAmount(gun);
-            this.ammoCountText = Component.literal("%d/%d (%d)".formatted(currentAmmoCount, maxAmmoCount, dummyAmmoAmount));
+            if (!iGun.useDummyAmmo(gun)) {
+                this.ammoCountText = Component.literal("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
+            } else {
+                int dummyAmmoAmount = iGun.getDummyAmmoAmount(gun);
+                this.ammoCountText = Component.literal("%d/%d (%d)".formatted(currentAmmoCount, maxAmmoCount, dummyAmmoAmount));
+            }
+            this.maxWidth = Math.max(font.width(this.ammoCountText) + 22, this.maxWidth);
         }
 
-        this.maxWidth = Math.max(font.width(this.ammoCountText) + 22, this.maxWidth);
 
-        String tabKey = "tacz.type." + gunIndex.getType() + ".name";
-        this.gunType = Component.translatable("tooltip.tacz.gun.type").append(Component.translatable(tabKey).withStyle(ChatFormatting.AQUA));
-        this.maxWidth = Math.max(font.width(this.gunType), this.maxWidth);
+        if (shouldShow(GunTooltipPart.BASE_INFO)) {
+            int expToNextLevel = iGun.getExpToNextLevel(gun);
+            int expCurrentLevel = iGun.getExpCurrentLevel(gun);
+            int level = iGun.getLevel(gun);
+            if (level >= iGun.getMaxLevel()) {
+                String levelText = String.format("%d (MAX)", level);
+                this.levelInfo = Component.translatable("tooltip.tacz.gun.level").append(Component.literal(levelText).withStyle(ChatFormatting.DARK_PURPLE));
+            } else {
+                String levelText = String.format("%d (%.1f%%)", level, expCurrentLevel / (expToNextLevel + expCurrentLevel) * 100f);
+                this.levelInfo = Component.translatable("tooltip.tacz.gun.level").append(Component.literal(levelText).withStyle(ChatFormatting.YELLOW));
+            }
+            this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
 
-        MutableComponent value = Component.literal(DAMAGE_FORMAT.format(gunIndex.getBulletData().getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
-        if (gunIndex.getBulletData().getExplosionData() != null) {
-            value.append(" + ").append(DAMAGE_FORMAT.format(gunIndex.getBulletData().getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).append(Component.translatable("tooltip.tacz.gun.explosion"));
+            String tabKey = "tacz.type." + gunIndex.getType() + ".name";
+            this.gunType = Component.translatable("tooltip.tacz.gun.type").append(Component.translatable(tabKey).withStyle(ChatFormatting.AQUA));
+            this.maxWidth = Math.max(font.width(this.gunType), this.maxWidth);
+
+            MutableComponent value = Component.literal(DAMAGE_FORMAT.format(gunIndex.getBulletData().getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
+            if (gunIndex.getBulletData().getExplosionData() != null) {
+                value.append(" + ").append(DAMAGE_FORMAT.format(gunIndex.getBulletData().getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).append(Component.translatable("tooltip.tacz.gun.explosion"));
+            }
+            this.damage = Component.translatable("tooltip.tacz.gun.damage").append(value);
+            this.maxWidth = Math.max(font.width(this.damage), this.maxWidth);
         }
-        this.damage = Component.translatable("tooltip.tacz.gun.damage").append(value);
-        this.maxWidth = Math.max(font.width(this.damage), this.maxWidth);
 
-        @Nullable ExtraDamage extraDamage = gunIndex.getBulletData().getExtraDamage();
-        if (extraDamage != null) {
-            float armorDamagePercent = (float) (extraDamage.getArmorIgnore() * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
-            float headShotMultiplierPercent = (float) (extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
-            armorDamagePercent = Mth.clamp(armorDamagePercent, 0.0F, 1.0F);
-            this.armorIgnore = Component.translatable("tooltip.tacz.gun.armor_ignore", FORMAT.format(armorDamagePercent));
-            this.headShotMultiplier = Component.translatable("tooltip.tacz.gun.head_shot_multiplier", FORMAT.format(headShotMultiplierPercent));
-        } else {
-            this.armorIgnore = Component.translatable("tooltip.tacz.gun.armor_ignore", FORMAT.format(0));
-            this.headShotMultiplier = Component.translatable("tooltip.tacz.gun.head_shot_multiplier", FORMAT.format(1));
+
+        if (shouldShow(GunTooltipPart.EXTRA_DAMAGE_INFO)) {
+            @Nullable ExtraDamage extraDamage = gunIndex.getBulletData().getExtraDamage();
+            if (extraDamage != null) {
+                float armorDamagePercent = (float) (extraDamage.getArmorIgnore() * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
+                float headShotMultiplierPercent = (float) (extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+                armorDamagePercent = Mth.clamp(armorDamagePercent, 0.0F, 1.0F);
+                this.armorIgnore = Component.translatable("tooltip.tacz.gun.armor_ignore", FORMAT.format(armorDamagePercent));
+                this.headShotMultiplier = Component.translatable("tooltip.tacz.gun.head_shot_multiplier", FORMAT.format(headShotMultiplierPercent));
+            } else {
+                this.armorIgnore = Component.translatable("tooltip.tacz.gun.armor_ignore", FORMAT.format(0));
+                this.headShotMultiplier = Component.translatable("tooltip.tacz.gun.head_shot_multiplier", FORMAT.format(1));
+            }
+            this.maxWidth = Math.max(font.width(this.armorIgnore), this.maxWidth);
+            this.maxWidth = Math.max(font.width(this.headShotMultiplier), this.maxWidth);
         }
-        this.maxWidth = Math.max(font.width(this.armorIgnore), this.maxWidth);
-        this.maxWidth = Math.max(font.width(this.headShotMultiplier), this.maxWidth);
 
-        String keyName = Component.keybind(RefitKey.REFIT_KEY.getName()).getString().toUpperCase(Locale.ENGLISH);
-        this.tips = Component.translatable("tooltip.tacz.gun.tips", keyName).withStyle(ChatFormatting.YELLOW).withStyle(ChatFormatting.ITALIC);
-        this.maxWidth = Math.max(font.width(this.tips), this.maxWidth);
 
-        int expToNextLevel = iGun.getExpToNextLevel(gun);
-        int expCurrentLevel = iGun.getExpCurrentLevel(gun);
-        int level = iGun.getLevel(gun);
-        if (level >= iGun.getMaxLevel()) {
-            String levelText = String.format("%d (MAX)", level);
-            this.levelInfo = Component.translatable("tooltip.tacz.gun.level").append(Component.literal(levelText).withStyle(ChatFormatting.DARK_PURPLE));
-        } else {
-            String levelText = String.format("%d (%.1f%%)", level, expCurrentLevel / (expToNextLevel + expCurrentLevel) * 100f);
-            this.levelInfo = Component.translatable("tooltip.tacz.gun.level").append(Component.literal(levelText).withStyle(ChatFormatting.YELLOW));
+        if (shouldShow(GunTooltipPart.UPGRADES_TIP)) {
+            String keyName = Component.keybind(RefitKey.REFIT_KEY.getName()).getString().toUpperCase(Locale.ENGLISH);
+            this.tips = Component.translatable("tooltip.tacz.gun.tips", keyName).withStyle(ChatFormatting.YELLOW).withStyle(ChatFormatting.ITALIC);
+            this.maxWidth = Math.max(font.width(this.tips), this.maxWidth);
         }
-        this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
 
-        ResourceLocation gunId = iGun.getGunId(gun);
-        PackInfo packInfoObject = ClientAssetManager.INSTANCE.getPackInfo(gunId);
-        if (packInfoObject != null) {
-            packInfo = Component.translatable(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
-            this.maxWidth = Math.max(font.width(this.packInfo), this.maxWidth);
+
+        if (shouldShow(GunTooltipPart.PACK_INFO)) {
+            ResourceLocation gunId = iGun.getGunId(gun);
+            PackInfo packInfoObject = ClientAssetManager.INSTANCE.getPackInfo(gunId);
+            if (packInfoObject != null) {
+                packInfo = Component.translatable(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
+                this.maxWidth = Math.max(font.width(this.packInfo), this.maxWidth);
+            }
         }
     }
 
     @Override
     public void renderText(Font font, int pX, int pY, Matrix4f matrix4f, MultiBufferSource.BufferSource bufferSource) {
-        // 弹药名
-        font.drawInBatch(this.ammoName, pX + 20, pY + 2, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+        int yOffset = pY;
 
-        // 弹药数
-        font.drawInBatch(this.ammoCountText, pX + 20, pY + 13, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
 
-        int yOffset = pY + 27;
+        if (shouldShow(GunTooltipPart.AMMO_INFO)) {
+            // 弹药名
+            font.drawInBatch(this.ammoName, pX + 20, pY + 2, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
 
-        // 等级信息
-        font.drawInBatch(this.levelInfo, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-        yOffset += 11;
+            // 弹药数
+            font.drawInBatch(this.ammoCountText, pX + 20, pY + 13, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            yOffset = pY + 22;
+        }
 
-        // 枪械类型
-        if (this.gunType != null) {
-            font.drawInBatch(this.gunType, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+
+        if (shouldShow(GunTooltipPart.BASE_INFO)) {
+            yOffset += 4;
+
+            // 等级信息
+            font.drawInBatch(this.levelInfo, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            yOffset += 11;
+
+            // 枪械类型
+            if (this.gunType != null) {
+                font.drawInBatch(this.gunType, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+                yOffset += 11;
+            }
+
+            // 伤害
+            font.drawInBatch(this.damage, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
             yOffset += 11;
         }
 
-        // 伤害
-        font.drawInBatch(this.damage, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-        yOffset += 15;
 
-        // 穿甲伤害
-        font.drawInBatch(this.armorIgnore, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-        yOffset += 11;
+        if (shouldShow(GunTooltipPart.EXTRA_DAMAGE_INFO)) {
+            yOffset += 4;
 
-        // 爆头伤害
-        font.drawInBatch(this.headShotMultiplier, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-        yOffset += 11;
+            // 穿甲伤害
+            font.drawInBatch(this.armorIgnore, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            yOffset += 11;
 
-        // Z 键说明
-        font.drawInBatch(this.tips, pX, yOffset + 4, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-        yOffset += 12;
+            // 爆头伤害
+            font.drawInBatch(this.headShotMultiplier, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            yOffset += 11;
+        }
 
-        // 枪包名
-        if (packInfo != null) {
-            font.drawInBatch(this.packInfo, pX, yOffset + 4, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+
+        if (shouldShow(GunTooltipPart.UPGRADES_TIP)) {
+            // Z 键说明
+            font.drawInBatch(this.tips, pX, yOffset + 4, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            yOffset += 12;
+        }
+
+
+        if (shouldShow(GunTooltipPart.PACK_INFO)) {
+            // 枪包名
+            if (packInfo != null) {
+                font.drawInBatch(this.packInfo, pX, yOffset + 4, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            }
         }
     }
 
@@ -185,6 +235,12 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         if (iGun == null) {
             return;
         }
-        guiGraphics.renderItem(ammo, pX, pY + 3);
+        if (shouldShow(GunTooltipPart.AMMO_INFO)) {
+            guiGraphics.renderItem(ammo, pX, pY + 3);
+        }
+    }
+
+    private boolean shouldShow(GunTooltipPart part) {
+        return (GunTooltipPart.getHideFlags(this.gun) & part.getMask()) == 0;
     }
 }
