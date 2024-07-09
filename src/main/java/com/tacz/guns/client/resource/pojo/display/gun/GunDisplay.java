@@ -48,6 +48,9 @@ public class GunDisplay {
     @SerializedName("shell")
     private ShellEjection shellEjection;
     @Nullable
+    @SerializedName("ammo")
+    private GunAmmo gunAmmo;
+    @Nullable
     @SerializedName("muzzle_flash")
     private MuzzleFlash muzzleFlash;
     @SerializedName("offhand_show")
@@ -121,6 +124,11 @@ public class GunDisplay {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
+    }
+
+    @Nullable
+    public GunAmmo getGunAmmo() {
+        return gunAmmo;
     }
 
     @Nullable

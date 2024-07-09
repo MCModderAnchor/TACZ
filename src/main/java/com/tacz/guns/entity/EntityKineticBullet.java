@@ -190,7 +190,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.onBulletTick();
         // 粒子效果
         if (this.level().isClientSide) {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(this.level(), this));
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(this, gunId));
         }
         // 子弹模型的旋转与抛物线
         Vec3 movement = this.getDeltaMovement();
@@ -487,7 +487,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         // 弹孔与点燃特效
         if (this.level() instanceof ServerLevel serverLevel) {
-            BulletHoleOption bulletHoleOption = new BulletHoleOption(result.getDirection(), result.getBlockPos(), this.ammoId.toString());
+            BulletHoleOption bulletHoleOption = new BulletHoleOption(result.getDirection(), result.getBlockPos(), this.ammoId.toString(), this.gunId.toString());
             serverLevel.sendParticles(bulletHoleOption, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);
             if (this.hasIgnite) {
                 serverLevel.sendParticles(ParticleTypes.LAVA, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);

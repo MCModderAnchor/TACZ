@@ -242,12 +242,25 @@ public class FirstPersonRenderGunEvent {
             float trailLength = 0.5f * (float) entityBullet.getDeltaMovement().length();
             poseStack1.translate(0, 0, -trailLength / 2);
             poseStack1.scale(0.03f, 0.03f, trailLength);
-            ResourceLocation ammoId = entityBullet.getAmmoId();
-            TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(index -> {
-                float[] tracerColor = index.getTracerColor();
-                RenderType type = RenderType.energySwirl(InternalAssetLoader.DEFAULT_BULLET_TEXTURE, 15, 15);
-                model.render(poseStack1, ItemDisplayContext.NONE, type, LightTexture.pack(15, 15),
-                        OverlayTexture.NO_OVERLAY, tracerColor[0], tracerColor[1], tracerColor[2], 1);
+
+            ResourceLocation gunId = entityBullet.getGunId();
+            TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+                float[] gunTracerColor = gunIndex.getTracerColor();
+                if (gunTracerColor == null) {
+                    // 如果枪械没有添加弋光弹参数，那么调用子弹的
+                    ResourceLocation ammoId = entityBullet.getAmmoId();
+                    TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(ammoIndex -> {
+                        float[] ammoTracerColor = ammoIndex.getTracerColor();
+                        RenderType type = RenderType.energySwirl(InternalAssetLoader.DEFAULT_BULLET_TEXTURE, 15, 15);
+                        model.render(poseStack1, ItemDisplayContext.NONE, type, LightTexture.pack(15, 15),
+                                OverlayTexture.NO_OVERLAY, ammoTracerColor[0], ammoTracerColor[1], ammoTracerColor[2], 1);
+                    });
+                } else {
+                    // 否则调用调用枪械的
+                    RenderType type = RenderType.energySwirl(InternalAssetLoader.DEFAULT_BULLET_TEXTURE, 15, 15);
+                    model.render(poseStack1, ItemDisplayContext.NONE, type, LightTexture.pack(15, 15),
+                            OverlayTexture.NO_OVERLAY, gunTracerColor[0], gunTracerColor[1], gunTracerColor[2], 1);
+                }
             });
         }
     }
