@@ -70,16 +70,16 @@
     "put_away": "tacz:ak47/ak47_put_away",
     "silence": "tacz:ak47/ak47_silence",
     "silence_3p": "tacz:ak47/ak47_silence_3p",
-    // 近战刺刀音效
-    // "melee_bayonet": "tacz:melee_bayonet/melee_bash_05",
-    "melee_push": "tacz:melee_bayonet/melee_bash_04",
-    "melee_stock": "tacz:melee_bayonet/melee_bash_05",
     // 下面四个音效可以不写，模组会自动添加默认音效
     "dry_fire": "tacz:dry_fire",
     "fire_select": "tacz:fire_select",
     "head_hit": "tacz:head_hit",
     "flesh_hit": "tacz:flesh_hit",
-    "kill": "tacz:kill"
+    "kill": "tacz:kill",
+    // 近战音效，默认就会添加
+    "melee_bayonet": "tacz:melee_bayonet/melee_bayonet_01",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_02"
   },
   // 副手枪械显示
   "offhand_show": {
