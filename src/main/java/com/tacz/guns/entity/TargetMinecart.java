@@ -75,7 +75,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
                 boolean isHeadshot = false;
                 float headshotMultiplier = 1;
                 MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(this, player, projectile.getGunId(), damage, isHeadshot, headshotMultiplier, LogicalSide.SERVER));
-                NetworkHandler.sendToAllPlayers(new ServerMessageGunHurt(this.getId(), player.getId(), projectile.getGunId(), damage, isHeadshot, headshotMultiplier));
+                NetworkHandler.sendToDimension(new ServerMessageGunHurt(this.getId(), player.getId(), projectile.getGunId(), damage, isHeadshot, headshotMultiplier), this);
             }
         }
     }
