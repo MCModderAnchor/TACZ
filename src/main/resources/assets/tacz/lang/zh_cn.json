@@ -129,6 +129,8 @@
   "toast.tacz.sub.final_level": "人枪合一",
   "toast.tacz.sub.level_up": "武器手感更好了",
   "tooltip.tacz.ammo_box.count": "数量: %d",
+  "tooltip.tacz.ammo_box.usage.deposit": "- 存入弹药：在物品栏内拿起弹药盒右击子弹",
+  "tooltip.tacz.ammo_box.usage.remove": "- 取出弹药：在物品栏内拿起弹药盒右击空白槽位",
   "tooltip.tacz.attachment.ads.decrease": "- 开镜时间",
   "tooltip.tacz.attachment.ads.increase": "+ 开镜时间",
   "tooltip.tacz.attachment.extended_mag": "扩容弹匣",

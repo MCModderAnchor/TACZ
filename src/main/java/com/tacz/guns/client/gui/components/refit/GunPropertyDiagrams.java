@@ -90,16 +90,16 @@ public final class GunPropertyDiagrams {
             float[] inaccuracyModifier = new float[]{0};
             AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> inaccuracyModifier[0] += attachmentData.getInaccuracyAddend());
             double attachmentInaccuracyPercent = Math.min(inaccuracyModifier[0] / 10.0, 1);
-            int inaccuracyModifierLength = (int) (barMaxWidth * attachmentInaccuracyPercent);
+            int inaccuracyModifierLength = Mth.clamp(inaccuracyLength + (int) (barMaxWidth * attachmentInaccuracyPercent), barStartX, barEndX);
 
             graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.hipfire_inaccuracy"), nameTextStartX, y + 35, fontColor, false);
             graphics.fill(barStartX, y + 37, barEndX, y + 41, barBackgroundColor);
             graphics.fill(barStartX, y + 37, inaccuracyLength, y + 41, barBaseColor);
             if (attachmentInaccuracyPercent < 0) {
-                graphics.fill(inaccuracyLength + inaccuracyModifierLength, y + 37, inaccuracyLength, y + 41, barPositivelyColor);
+                graphics.fill(inaccuracyModifierLength, y + 37, inaccuracyLength, y + 41, barPositivelyColor);
                 graphics.drawString(font, String.format("%.2f §a(%.2f)", standInaccuracy, inaccuracyModifier[0]), valueTextStartX, y + 35, fontColor, false);
             } else if (attachmentInaccuracyPercent > 0) {
-                graphics.fill(inaccuracyLength, y + 37, inaccuracyLength + inaccuracyModifierLength, y + 41, barNegativeColor);
+                graphics.fill(inaccuracyLength, y + 37, inaccuracyModifierLength, y + 41, barNegativeColor);
                 graphics.drawString(font, String.format("%.2f §c(+%.2f)", standInaccuracy, inaccuracyModifier[0]), valueTextStartX, y + 35, fontColor, false);
             } else {
                 graphics.drawString(font, String.format("%.2f", standInaccuracy), valueTextStartX, y + 35, fontColor, false);
@@ -119,7 +119,8 @@ public final class GunPropertyDiagrams {
             graphics.fill(barStartX, y + 47, barEndX, y + 51, barBackgroundColor);
             graphics.fill(barStartX, y + 47, ammoLength, y + 51, barBaseColor);
             if (addAmmoCount > 0) {
-                graphics.fill(ammoLength, y + 47, ammoLength + addAmmoCountLength, y + 51, barPositivelyColor);
+                int barRight = Math.min(ammoLength + addAmmoCountLength, barEndX);
+                graphics.fill(ammoLength, y + 47, barRight, y + 51, barPositivelyColor);
                 graphics.drawString(font, String.format("%d §a(+%d)", ammoAmount, addAmmoCount), valueTextStartX, y + 45, fontColor, false);
             } else {
                 graphics.drawString(font, String.valueOf(ammoAmount), valueTextStartX, y + 45, fontColor, false);
@@ -201,7 +202,7 @@ public final class GunPropertyDiagrams {
 
             // 跑射延迟
             float sprintTime = gunData.getSprintTime();
-            double sprintTimePercent = Math.min(aimTime, 1);
+            double sprintTimePercent = Mth.clamp(aimTime, 0, 1);
             int sprintLength = (int) (barStartX + barMaxWidth * sprintTimePercent);
             String sprintValueText = String.format("%.2fs", sprintTime);
 
