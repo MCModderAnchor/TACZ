@@ -9,10 +9,7 @@ import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.init.ModSounds;
 import com.tacz.guns.network.NetworkHandler;
-import com.tacz.guns.network.message.ServerMessageGunHurt;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
+import com.tacz.guns.network.message.event.ServerMessageGunHurt;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
@@ -78,7 +75,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
                 boolean isHeadshot = false;
                 float headshotMultiplier = 1;
                 MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(this, player, projectile.getGunId(), damage, isHeadshot, headshotMultiplier, LogicalSide.SERVER));
-                NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(this.getId(), player.getId(), projectile.getGunId(), damage, isHeadshot, headshotMultiplier));
+                NetworkHandler.sendToAllPlayers(new ServerMessageGunHurt(this.getId(), player.getId(), projectile.getGunId(), damage, isHeadshot, headshotMultiplier));
             }
         }
     }

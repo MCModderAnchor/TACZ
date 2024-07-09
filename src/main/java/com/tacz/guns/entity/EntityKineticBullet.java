@@ -12,8 +12,8 @@ import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import com.tacz.guns.init.ModDamageTypes;
 import com.tacz.guns.network.NetworkHandler;
-import com.tacz.guns.network.message.ServerMessageGunHurt;
-import com.tacz.guns.network.message.ServerMessageGunKill;
+import com.tacz.guns.network.message.event.ServerMessageGunHurt;
+import com.tacz.guns.network.message.event.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExplosionData;
@@ -458,10 +458,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 // 如果生物死了
                 if (livingEntity.isDeadOrDying()) {
                     MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingEntity, attacker, newGunId, headshot, LogicalSide.SERVER));
-                    NetworkHandler.sendToNearby(livingEntity, new ServerMessageGunKill(livingEntity.getId(), attackerId, newGunId, headshot));
+                    NetworkHandler.sendToAllPlayers(new ServerMessageGunKill(livingEntity.getId(), attackerId, newGunId, headshot));
                 } else {
                     MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(livingEntity, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
-                    NetworkHandler.sendToNearby(livingEntity, new ServerMessageGunHurt(livingEntity.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier));
+                    NetworkHandler.sendToAllPlayers(new ServerMessageGunHurt(livingEntity.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier));
                 }
             }
         }

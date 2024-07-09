@@ -1,4 +1,4 @@
-package com.tacz.guns.network.message;
+package com.tacz.guns.network.message.event;
 
 import com.tacz.guns.api.event.common.EntityHurtByGunEvent;
 import net.minecraft.client.Minecraft;

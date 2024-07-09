@@ -2,15 +2,14 @@ package com.tacz.guns.network;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.network.message.*;
+import com.tacz.guns.network.message.event.*;
 import com.tacz.guns.network.message.handshake.Acknowledge;
 import com.tacz.guns.network.message.handshake.ServerMessageSyncedEntityDataMapping;
-import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.HandshakeHandler;
 import net.minecraftforge.network.NetworkDirection;
@@ -78,6 +77,20 @@ public class NetworkHandler {
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessagePlayerMelee.class, ClientMessagePlayerMelee::encode, ClientMessagePlayerMelee::decode, ClientMessagePlayerMelee::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
+
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunDraw.class, ServerMessageGunDraw::encode, ServerMessageGunDraw::decode, ServerMessageGunDraw::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunFire.class, ServerMessageGunFire::encode, ServerMessageGunFire::decode, ServerMessageGunFire::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunFireSelect.class, ServerMessageGunFireSelect::encode, ServerMessageGunFireSelect::decode, ServerMessageGunFireSelect::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunMelee.class, ServerMessageGunMelee::encode, ServerMessageGunMelee::decode, ServerMessageGunMelee::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunReload.class, ServerMessageGunReload::encode, ServerMessageGunReload::decode, ServerMessageGunReload::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunShoot.class, ServerMessageGunShoot::encode, ServerMessageGunShoot::decode, ServerMessageGunShoot::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+
         registerAcknowledge();
         registerHandshakeMessage(ServerMessageSyncedEntityDataMapping.class, null);
     }
@@ -121,29 +134,23 @@ public class NetworkHandler {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), message);
     }
 
-    public static void sendToNearby(Level world, BlockPos pos, Object toSend) {
-        if (world instanceof ServerLevel ws) {
-            ws.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
-                    .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 192 * 192)
-                    .forEach(p -> CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), toSend));
-        }
+    /**
+     * 发送给所有监听此实体的玩家
+     */
+    public static void sendToTrackingEntityAndSelf(Entity centerEntity, Object message) {
+        CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> centerEntity), message);
     }
 
-    public static void sendToNearby(Entity entity, Object toSend, int distance) {
-        if (entity.level() instanceof ServerLevel ws) {
-            BlockPos pos = entity.blockPosition();
-            ws.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
-                    .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < distance * distance)
-                    .forEach(p -> CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), toSend));
-        }
+    public static void sendToAllPlayers(Object message) {
+        CHANNEL.send(PacketDistributor.ALL.noArg(), message);
     }
 
-    public static void sendToNearby(Entity entity, Object toSend) {
-        if (entity.level() instanceof ServerLevel ws) {
-            BlockPos pos = entity.blockPosition();
-            ws.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
-                    .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 192 * 192)
-                    .forEach(p -> CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), toSend));
-        }
+    public static void sendToTrackingEntity(Object message, final Entity centerEntity) {
+        CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> centerEntity), message);
+    }
+
+    public static void sendToDimension(Object message, final Entity centerEntity) {
+        ResourceKey<Level> dimension = centerEntity.level().dimension();
+        CHANNEL.send(PacketDistributor.DIMENSION.with(() -> dimension), message);
     }
 }

@@ -12,6 +12,8 @@ import com.tacz.guns.command.sub.DebugCommand;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.debug.GunMeleeDebug;
 import com.tacz.guns.entity.EntityKineticBullet;
+import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.event.ServerMessageGunFire;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.attachment.EffectData;
@@ -112,6 +114,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             // 触发击发事件
             boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(shooter, gunItem, LogicalSide.SERVER));
             if (fire) {
+                NetworkHandler.sendToTrackingEntity(new ServerMessageGunFire(shooter.getId(), gunItem), shooter);
                 if (consumeAmmo) {
                     // 削减弹药
                     this.reduceAmmo(gunItem);

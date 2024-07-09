@@ -6,6 +6,8 @@ import com.tacz.guns.api.event.common.GunMeleeEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
+import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.event.ServerMessageGunMelee;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import com.tacz.guns.resource.pojo.data.gun.GunDefaultMeleeData;
@@ -51,6 +53,7 @@ public class LivingEntityMelee {
         if (MinecraftForge.EVENT_BUS.post(new GunMeleeEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
             return;
         }
+        NetworkHandler.sendToTrackingEntity(new ServerMessageGunMelee(shooter.getId(), currentGunItem), shooter);
         if (currentGunItem.getItem() instanceof AbstractGunItem logicGun) {
             data.meleeTimestamp = System.currentTimeMillis();
 
