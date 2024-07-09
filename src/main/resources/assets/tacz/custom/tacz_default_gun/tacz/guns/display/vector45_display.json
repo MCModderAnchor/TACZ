@@ -32,7 +32,9 @@
     "shoot": "tacz:victor45/vector_shoot",
     "shoot_3p": "tacz:victor45/vector_shoot_3p",
     "silence": "tacz:victor45/vector_silence",
-    "silence_3p": "tacz:victor45/vector_silence_3p"
+    "silence_3p": "tacz:victor45/vector_silence_3p",
+    "melee_push": "tacz:melee_stock/melee_stock_03",
+    "melee_stock": "tacz:melee_stock/melee_stock_01"
   },
   "offhand_show": {
     "pos": [1, 19, 4],

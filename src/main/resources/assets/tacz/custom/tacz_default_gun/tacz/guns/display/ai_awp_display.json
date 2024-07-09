@@ -31,7 +31,9 @@
     "silence": "tacz:ai_awp/awp_silence",
     "silence_3p": "tacz:ai_awp/awp_silence_3p",
     "bolt": "tacz:ai_awp/awp_bolt",
-    "put_away": "tacz:ai_awp/awp_put_away"
+    "put_away": "tacz:ai_awp/awp_put_away",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
   },
   "offhand_show": {
     "pos": [-2, 20, 4],

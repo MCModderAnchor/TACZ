@@ -38,7 +38,9 @@
     "draw": "tacz:uzi/uzi_draw",
     "put_away": "tacz:uzi/uzi_put_away",
     "silence": "tacz:uzi/uzi_silence",
-    "silence_3p": "tacz:uzi/uzi_silence_3p"
+    "silence_3p": "tacz:uzi/uzi_silence_3p",
+    "melee_push": "tacz:melee_stock/melee_stock_03",
+    "melee_stock": "tacz:melee_stock/melee_stock_01"
   },
   "offhand_show": {
     "pos": [1, 20, 4],

@@ -18,7 +18,7 @@
       ]
     },
     "speed": 170,
-    "gravity": 0.0245,
+    "gravity": 0.098,
     "knockback": 0.1,
     "friction": 0.03,
     "ignite": false,
