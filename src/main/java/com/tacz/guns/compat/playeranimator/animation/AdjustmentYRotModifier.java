@@ -18,11 +18,16 @@ public class AdjustmentYRotModifier implements Function<String, Optional<Adjustm
 
     @Override
     public Optional<AdjustmentModifier.PartModifier> apply(String partName) {
+        Minecraft mc = Minecraft.getInstance();
+        if (player.equals(mc.player) && mc.screen != null) {
+            return Optional.empty();
+        }
+
         if (player.getVehicle() != null && "body".equals(partName)) {
             return Optional.empty();
         }
 
-        float partialTick = Minecraft.getInstance().getPartialTick();
+        float partialTick = mc.getPartialTick();
         float yBodyRot = Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
         float yHeadRot = Mth.rotLerp(partialTick, player.yHeadRotO, player.yHeadRot);
         float xRot = Mth.lerp(partialTick, player.xRotO, player.getXRot());
@@ -34,10 +39,8 @@ public class AdjustmentYRotModifier implements Function<String, Optional<Adjustm
         float pitch = Mth.wrapDegrees(xRot);
 
         return switch (partName) {
-            case "body" ->
-                    Optional.of(new AdjustmentModifier.PartModifier(new Vec3f(0, -yaw * Mth.DEG_TO_RAD, 0), Vec3f.ZERO));
-            case "head", "leftArm", "rightArm" ->
-                    Optional.of(new AdjustmentModifier.PartModifier(new Vec3f(pitch * Mth.DEG_TO_RAD, 0, 0), Vec3f.ZERO));
+            case "body" -> Optional.of(new AdjustmentModifier.PartModifier(new Vec3f(0, -yaw * Mth.DEG_TO_RAD, 0), Vec3f.ZERO));
+            case "head", "leftArm", "rightArm" -> Optional.of(new AdjustmentModifier.PartModifier(new Vec3f(pitch * Mth.DEG_TO_RAD, 0, 0), Vec3f.ZERO));
             default -> Optional.empty();
         };
     }
