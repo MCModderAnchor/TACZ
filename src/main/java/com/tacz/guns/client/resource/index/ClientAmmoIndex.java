@@ -33,6 +33,7 @@ public class ClientAmmoIndex {
     private @Nullable AmmoParticle particle;
     private float[] tracerColor = new float[]{1f, 1f, 1f};
     private AmmoTransform transform;
+    private @Nullable String tooltipKey;
 
     private ClientAmmoIndex() {
     }
@@ -55,6 +56,7 @@ public class ClientAmmoIndex {
 
     private static void checkIndex(AmmoIndexPOJO ammoIndexPOJO, ClientAmmoIndex index) {
         Preconditions.checkArgument(ammoIndexPOJO != null, "index object file is empty");
+        index.tooltipKey = ammoIndexPOJO.getTooltip();
     }
 
     private static void checkName(AmmoIndexPOJO ammoIndexPOJO, ClientAmmoIndex index) {
@@ -179,6 +181,11 @@ public class ClientAmmoIndex {
 
     public String getName() {
         return name;
+    }
+
+    @Nullable
+    public String getTooltipKey() {
+        return tooltipKey;
     }
 
     @Nullable

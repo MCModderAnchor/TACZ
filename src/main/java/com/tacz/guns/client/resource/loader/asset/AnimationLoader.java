@@ -3,7 +3,7 @@ package com.tacz.guns.client.resource.loader.asset;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.tacz.guns.GunMod;
-import com.tacz.guns.client.animation.gltf.AnimationStructure;
+import com.tacz.guns.api.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.animation.gltf.RawAnimationStructure;

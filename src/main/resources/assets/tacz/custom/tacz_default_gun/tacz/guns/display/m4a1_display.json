@@ -38,7 +38,9 @@
     "draw": "tacz:m4a1/m4a1_draw",
     "put_away": "tacz:m4a1/m4a1_put_away",
     "silence": "tacz:m4a1/m4a1_silence",
-    "silence_3p": "tacz:m4a1/m4a1_silence_3p"
+    "silence_3p": "tacz:m4a1/m4a1_silence_3p",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_02"
   },
   "offhand_show": {
     "pos": [1, 19, 4],

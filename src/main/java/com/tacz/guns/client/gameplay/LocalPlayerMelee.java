@@ -1,8 +1,8 @@
 package com.tacz.guns.client.gameplay;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.event.common.GunMeleeEvent;
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.animation.internal.GunAnimationConstant;
@@ -42,15 +42,15 @@ public class LocalPlayerMelee {
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         // 先检查枪口有没有近战属性
-        ItemStack muzzle = iGun.getAttachment(mainhandItem, AttachmentType.MUZZLE);
-        MeleeData muzzleMeleeData = getMeleeData(muzzle);
+        ResourceLocation muzzleId = iGun.getAttachmentId(mainhandItem, AttachmentType.MUZZLE);
+        MeleeData muzzleMeleeData = getMeleeData(muzzleId);
         if (muzzleMeleeData != null) {
             this.doMuzzleMelee(gunId);
             return;
         }
 
-        ItemStack stock = iGun.getAttachment(mainhandItem, AttachmentType.STOCK);
-        MeleeData stockMeleeData = getMeleeData(stock);
+        ResourceLocation stockId = iGun.getAttachmentId(mainhandItem, AttachmentType.STOCK);
+        MeleeData stockMeleeData = getMeleeData(stockId);
         if (stockMeleeData != null) {
             this.doStockMelee(gunId);
             return;
@@ -128,12 +128,10 @@ public class LocalPlayerMelee {
     }
 
     @Nullable
-    private MeleeData getMeleeData(ItemStack attachmentStack) {
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-        if (iAttachment == null) {
+    private MeleeData getMeleeData(ResourceLocation attachmentId) {
+        if (DefaultAssets.isEmptyAttachmentId(attachmentId)) {
             return null;
         }
-        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
         return TimelessAPI.getClientAttachmentIndex(attachmentId).map(index -> index.getData().getMeleeData()).orElse(null);
     }
 }

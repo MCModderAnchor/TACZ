@@ -9,6 +9,7 @@
   "slot": "tacz:gun/slot/deagle",
   "animation": "tacz:deagle",
   "use_default_animation": "pistol",
+  "player_animator_3rd": "tacz:pistol_default.player_animation",
   "transform": {
     "scale": {
       "thirdperson": [0.6, 0.6, 0.6],
@@ -20,7 +21,7 @@
     "initial_velocity": [8.0, 5.0, -0.5],
     "random_velocity": [2.5, 1.5, 0.25],
     "acceleration": [0.0, -20, 0.0],
-    "angular_velocity": [720, 1280, 90],
+    "angular_velocity": [720, -1280, 90],
     "living_time": 1.0
   },
   "muzzle_flash": {

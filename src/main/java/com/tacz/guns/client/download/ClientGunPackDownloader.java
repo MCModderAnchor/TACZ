@@ -2,7 +2,7 @@ package com.tacz.guns.client.download;
 
 import com.google.common.collect.Maps;
 import com.tacz.guns.GunMod;
-import com.tacz.guns.client.gui.ClientGunPackDownloadProgressScreen;
+import com.tacz.guns.client.gui.GunPackProgressScreen;
 import com.tacz.guns.client.resource.ClientReloadManager;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
@@ -79,7 +79,7 @@ public class ClientGunPackDownloader {
             // 否则下载，并打开下载界面
             else {
                 // 下载进度界面
-                ClientGunPackDownloadProgressScreen progressScreen = new ClientGunPackDownloadProgressScreen();
+                GunPackProgressScreen progressScreen = new GunPackProgressScreen();
                 Minecraft minecraft = Minecraft.getInstance();
                 minecraft.executeBlocking(() -> minecraft.setScreen(progressScreen));
                 downloadFuture = HttpUtil.downloadTo(gunPack, url, getDownloadHeaders(), MAX_FILE_SIZE, progressScreen, minecraft.getProxy());

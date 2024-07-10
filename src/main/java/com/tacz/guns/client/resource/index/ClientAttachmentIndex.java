@@ -36,6 +36,7 @@ public class ClientAttachmentIndex {
     private boolean isSight;
     private boolean showMuzzle;
     private @Nullable String adapterNodeName;
+    private @Nullable String tooltipKey;
     private Map<String, ResourceLocation> sounds;
 
     private ClientAttachmentIndex() {
@@ -57,6 +58,7 @@ public class ClientAttachmentIndex {
 
     private static void checkIndex(AttachmentIndexPOJO attachmentIndexPOJO, ClientAttachmentIndex index) {
         Preconditions.checkArgument(attachmentIndexPOJO != null, "index object file is empty");
+        index.tooltipKey = attachmentIndexPOJO.getTooltip();
     }
 
     @Nonnull
@@ -160,6 +162,11 @@ public class ClientAttachmentIndex {
 
     public String getName() {
         return name;
+    }
+
+    @Nullable
+    public String getTooltipKey() {
+        return tooltipKey;
     }
 
     @Nullable

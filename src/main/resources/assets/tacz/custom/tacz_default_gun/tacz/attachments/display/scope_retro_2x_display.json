@@ -7,7 +7,7 @@
     "texture": "tacz:attachment/lod/scope_retro_2x_lod"
   },
   "zoom": [
-    2.5
+    3
   ],
   "scope": true,
   "fov": 55.0,

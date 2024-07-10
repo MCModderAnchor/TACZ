@@ -77,7 +77,7 @@
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值
-      "damage": 1,
+      "damage": 2,
       // 击退效果
       "knockback": 0.75,
       // 前摇时长，单位：秒

@@ -94,11 +94,13 @@ public class AttachmentQueryCategory implements IRecipeCategory<AttachmentQueryE
     }
 
     @Override
+    @SuppressWarnings("removal")
     public ResourceLocation getUid() {
         return ATTACHMENT_QUERY.getUid();
     }
 
     @Override
+    @SuppressWarnings("removal")
     public Class<? extends AttachmentQueryEntry> getRecipeClass() {
         return ATTACHMENT_QUERY.getRecipeClass();
     }

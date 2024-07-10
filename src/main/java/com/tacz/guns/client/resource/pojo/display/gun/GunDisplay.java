@@ -24,9 +24,6 @@ public class GunDisplay {
     @SerializedName("hud_empty")
     private ResourceLocation hudEmptyTextureLocation;
     @Nullable
-    @SerializedName("crosshair")
-    private ResourceLocation crosshairTextureLocation;
-    @Nullable
     @SerializedName("slot")
     private ResourceLocation slotTextureLocation;
     @Nullable
@@ -50,6 +47,9 @@ public class GunDisplay {
     @Nullable
     @SerializedName("shell")
     private ShellEjection shellEjection;
+    @Nullable
+    @SerializedName("ammo")
+    private GunAmmo gunAmmo;
     @Nullable
     @SerializedName("muzzle_flash")
     private MuzzleFlash muzzleFlash;
@@ -92,11 +92,6 @@ public class GunDisplay {
     }
 
     @Nullable
-    public ResourceLocation getCrosshairTextureLocation() {
-        return crosshairTextureLocation;
-    }
-
-    @Nullable
     public ResourceLocation getAnimationLocation() {
         return animationLocation;
     }
@@ -129,6 +124,11 @@ public class GunDisplay {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
+    }
+
+    @Nullable
+    public GunAmmo getGunAmmo() {
+        return gunAmmo;
     }
 
     @Nullable

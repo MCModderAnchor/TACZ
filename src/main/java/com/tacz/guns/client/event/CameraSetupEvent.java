@@ -3,6 +3,7 @@ package com.tacz.guns.client.event;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.event.BeforeRenderHandEvent;
 import com.tacz.guns.api.client.event.FieldOfView;
@@ -10,7 +11,6 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.client.other.KeepingItemRenderer;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.model.BedrockGunModel;
@@ -158,13 +158,13 @@ public class CameraSetupEvent {
                 event.setFOV(fov);
                 return;
             }
-            ItemStack scopeItem = iGun.getAttachment(stack, AttachmentType.SCOPE);
-            if (!(scopeItem.getItem() instanceof IAttachment iAttachment)) {
+            ResourceLocation scopeItemId = iGun.getAttachmentId(stack, AttachmentType.SCOPE);
+            if (DefaultAssets.isEmptyAttachmentId(scopeItemId)) {
                 float fov = ITEM_MODEL_FOV_DYNAMICS.update((float) event.getFOV());
                 event.setFOV(fov);
                 return;
             }
-            float modifiedFov = TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(scopeItem)).map(ClientAttachmentIndex::getFov).orElse((float) event.getFOV());
+            float modifiedFov = TimelessAPI.getClientAttachmentIndex(scopeItemId).map(ClientAttachmentIndex::getFov).orElse((float) event.getFOV());
             if (livingEntity instanceof LocalPlayer localPlayer) {
                 IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
                 float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTicks());

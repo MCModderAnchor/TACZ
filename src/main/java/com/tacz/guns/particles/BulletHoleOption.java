@@ -16,7 +16,8 @@ public class BulletHoleOption implements ParticleOptions {
     public static final Codec<BulletHoleOption> CODEC = RecordCodecBuilder.create(builder ->
             builder.group(Codec.INT.fieldOf("dir").forGetter(option -> option.direction.ordinal()),
                     Codec.LONG.fieldOf("pos").forGetter(option -> option.pos.asLong()),
-                    Codec.STRING.fieldOf("ammo_id").forGetter(option -> option.ammoId)
+                    Codec.STRING.fieldOf("ammo_id").forGetter(option -> option.ammoId),
+                    Codec.STRING.fieldOf("gun_id").forGetter(option -> option.gunId)
             ).apply(builder, BulletHoleOption::new));
 
     @SuppressWarnings("deprecation")
@@ -29,29 +30,34 @@ public class BulletHoleOption implements ParticleOptions {
             long pos = reader.readLong();
             reader.expect(' ');
             String ammoId = reader.readString();
-            return new BulletHoleOption(dir, pos, ammoId);
+            reader.expect(' ');
+            String gunId = reader.readString();
+            return new BulletHoleOption(dir, pos, ammoId, gunId);
         }
 
         @Override
         public BulletHoleOption fromNetwork(ParticleType<BulletHoleOption> particleType, FriendlyByteBuf buffer) {
-            return new BulletHoleOption(buffer.readVarInt(), buffer.readLong(), buffer.readUtf());
+            return new BulletHoleOption(buffer.readVarInt(), buffer.readLong(), buffer.readUtf(), buffer.readUtf());
         }
     };
 
     private final Direction direction;
     private final BlockPos pos;
     private final String ammoId;
+    private final String gunId;
 
-    public BulletHoleOption(int dir, long pos, String ammoId) {
+    public BulletHoleOption(int dir, long pos, String ammoId, String gunId) {
         this.direction = Direction.values()[dir];
         this.pos = BlockPos.of(pos);
         this.ammoId = ammoId;
+        this.gunId = gunId;
     }
 
-    public BulletHoleOption(Direction dir, BlockPos pos, String ammoId) {
+    public BulletHoleOption(Direction dir, BlockPos pos, String ammoId, String gunId) {
         this.direction = dir;
         this.pos = pos;
         this.ammoId = ammoId;
+        this.gunId = gunId;
     }
 
     public Direction getDirection() {
@@ -66,6 +72,10 @@ public class BulletHoleOption implements ParticleOptions {
         return ammoId;
     }
 
+    public String getGunId() {
+        return gunId;
+    }
+
     @Override
     public ParticleType<?> getType() {
         return ModParticles.BULLET_HOLE.get();
@@ -76,6 +86,7 @@ public class BulletHoleOption implements ParticleOptions {
         buffer.writeEnum(this.direction);
         buffer.writeBlockPos(this.pos);
         buffer.writeUtf(this.ammoId);
+        buffer.writeUtf(this.gunId);
     }
 
     @Override

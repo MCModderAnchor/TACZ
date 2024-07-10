@@ -2,6 +2,7 @@ package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.other.KeepingItemRenderer;
+import com.tacz.guns.api.event.common.GunDrawEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tacz.guns.client.sound.SoundPlayManager;
@@ -11,6 +12,8 @@ import com.tacz.guns.resource.index.CommonGunIndex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.LogicalSide;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +48,7 @@ public class LocalPlayerDraw {
             Minecraft.getInstance().gameMode.ensureHasSentCarriedItem();
         }
         NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerDrawGun());
+        MinecraftForge.EVENT_BUS.post(new GunDrawEvent(player, lastItem, currentItem, LogicalSide.CLIENT));
 
         // 不处于收枪状态时才能收枪
         if (drawTime >= 0) {

@@ -191,6 +191,23 @@ public interface GunItemDataAccessor extends IGun {
     }
 
     @Override
+    @Nullable
+    default CompoundTag getAttachmentTag(ItemStack gun, AttachmentType type) {
+        if (!allowAttachmentType(gun, type)) {
+            return null;
+        }
+        CompoundTag nbt = gun.getOrCreateTag();
+        String key = GUN_ATTACHMENT_BASE + type.name();
+        if (nbt.contains(key, Tag.TAG_COMPOUND)) {
+            CompoundTag allItemStackTag = nbt.getCompound(key);
+            if (allItemStackTag.contains("tag", Tag.TAG_COMPOUND)) {
+                return allItemStackTag.getCompound("tag");
+            }
+        }
+        return null;
+    }
+
+    @Override
     @Nonnull
     default ItemStack getAttachment(ItemStack gun, AttachmentType type) {
         if (!allowAttachmentType(gun, type)) {
@@ -202,6 +219,16 @@ public interface GunItemDataAccessor extends IGun {
             return ItemStack.of(nbt.getCompound(key));
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    @Nonnull
+    default ResourceLocation getAttachmentId(ItemStack gun, AttachmentType type) {
+        CompoundTag attachmentTag = this.getAttachmentTag(gun, type);
+        if (attachmentTag != null) {
+            return AttachmentItemDataAccessor.getAttachmentIdFromTag(attachmentTag);
+        }
+        return DefaultAssets.EMPTY_ATTACHMENT_ID;
     }
 
     @Override
@@ -235,17 +262,17 @@ public interface GunItemDataAccessor extends IGun {
     @Override
     default float getAimingZoom(ItemStack gunItem) {
         float zoom = 1;
-        ItemStack scopeItem = this.getAttachment(gunItem, AttachmentType.SCOPE);
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(scopeItem);
-        if (iAttachment != null) {
-            ResourceLocation scopeId = iAttachment.getAttachmentId(scopeItem);
-            int zoomNumber = iAttachment.getZoomNumber(scopeItem);
+        ResourceLocation scopeId = this.getAttachmentId(gunItem, AttachmentType.SCOPE);
+        if (!DefaultAssets.isEmptyAttachmentId(scopeId)) {
+            CompoundTag attachmentTag = this.getAttachmentTag(gunItem, AttachmentType.SCOPE);
+            int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(attachmentTag);
             float[] zooms = TimelessAPI.getClientAttachmentIndex(scopeId).map(ClientAttachmentIndex::getZoom).orElse(null);
             if (zooms != null) {
                 zoom = zooms[zoomNumber % zooms.length];
             }
         } else {
-            zoom = TimelessAPI.getClientGunIndex(this.getGunId(gunItem)).map(ClientGunIndex::getIronZoom).orElse(1f);
+            ResourceLocation gunId = this.getGunId(gunItem);
+            zoom = TimelessAPI.getClientGunIndex(gunId).map(ClientGunIndex::getIronZoom).orElse(1f);
         }
         return zoom;
     }

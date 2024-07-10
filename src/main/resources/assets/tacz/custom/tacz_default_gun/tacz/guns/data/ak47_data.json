@@ -43,7 +43,7 @@
     // 速度 m/s
     "speed": 240,
     // 重力
-    "gravity": 0.0245,
+    "gravity": 0.098,
     // 击退效果
     "knockback": 0,
     // 阻力
@@ -146,15 +146,18 @@
     // 会与刺刀等配件的距离做加和
     "distance": 1,
     // 使用时的冷却时间
-    "cooldown": 0.5,
+    // 会与刺刀等配件的冷却时间做加和
+    "cooldown": 0.7,
     // 默认近战数据，会被配件的数据替换掉
     "default": {
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
-      "animation_type": "melee_stock",
+      "animation_type": "melee_push",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
       "distance": 0,
       // 刺刀范围角度
-      "range_angle": 30,
+      "range_angle": 40,
+      // 刺刀冷却时间，枪械里还有个刺刀冷却时间参数，两者做加和
+      "cooldown": 0,
       // 伤害值
       "damage": 1,
       // 击退效果

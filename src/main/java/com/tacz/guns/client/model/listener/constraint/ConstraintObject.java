@@ -1,11 +1,11 @@
 package com.tacz.guns.client.model.listener.constraint;
 
-import com.mojang.math.Vector3f;
-import com.tacz.guns.client.animation.AnimationListener;
-import com.tacz.guns.client.animation.AnimationListenerSupplier;
-import com.tacz.guns.client.animation.ObjectAnimationChannel;
+import com.tacz.guns.api.client.animation.AnimationListener;
+import com.tacz.guns.api.client.animation.AnimationListenerSupplier;
+import com.tacz.guns.api.client.animation.ObjectAnimationChannel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.pojo.model.BonesItem;
+import com.mojang.math.Vector3f;
 
 import javax.annotation.Nullable;
 

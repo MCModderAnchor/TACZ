@@ -2,6 +2,7 @@ package com.tacz.guns.compat.playeranimator.animation;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
+import com.tacz.guns.api.event.common.GunDrawEvent;
 import com.tacz.guns.api.event.common.GunMeleeEvent;
 import com.tacz.guns.api.event.common.GunReloadEvent;
 import com.tacz.guns.api.event.common.GunShootEvent;
@@ -31,7 +32,42 @@ public class AnimationManager {
         return PlayerAnimatorAssetManager.INSTANCE.containsKey(location);
     }
 
+    public static boolean isFlying(AbstractClientPlayer player) {
+        return !player.isOnGround() && player.getAbilities().flying;
+    }
+
+    public static void playRotationAnimation(AbstractClientPlayer player, ClientGunIndex gunIndex) {
+        String animationName = AnimationName.EMPTY;
+        ResourceLocation dataId = PlayerAnimatorCompat.ROTATION_ANIMATION;
+        ResourceLocation animator3rd = gunIndex.getPlayerAnimator3rd();
+        if (animator3rd == null) {
+            return;
+        }
+        if (!PlayerAnimatorAssetManager.INSTANCE.containsKey(animator3rd)) {
+            return;
+        }
+        PlayerAnimatorAssetManager.INSTANCE.getAnimations(animator3rd, animationName).ifPresent(keyframeAnimation -> {
+            var associatedData = PlayerAnimationAccess.getPlayerAssociatedData(player);
+            var modifierLayer = (ModifierLayer<IAnimation>) associatedData.get(dataId);
+            if (modifierLayer == null) {
+                return;
+            }
+            AbstractFadeModifier fadeModifier = AbstractFadeModifier.standardFadeIn(8, Ease.INOUTSINE);
+            modifierLayer.replaceAnimationWithFade(fadeModifier, new KeyframeAnimationPlayer(keyframeAnimation));
+        });
+    }
+
     public static void playLowerAnimation(AbstractClientPlayer player, ClientGunIndex gunIndex, float limbSwingAmount) {
+        // 如果玩家骑乘，不播放任何下半身动画
+        if (player.getVehicle() != null) {
+            playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOWER_ANIMATION, AnimationName.RIDE_LOWER);
+            return;
+        }
+        // 如果玩家在天上，下半身动画就是站立动画
+        if (isFlying(player)) {
+            playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOWER_ANIMATION, AnimationName.HOLD_LOWER);
+            return;
+        }
         if (player.isSprinting()) {
             if (player.getPose() == Pose.CROUCHING) {
                 playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOWER_ANIMATION, AnimationName.CROUCH_WALK_LOWER);
@@ -59,7 +95,7 @@ public class AnimationManager {
         IGunOperator operator = IGunOperator.fromLivingEntity(player);
         float aimingProgress = operator.getSynAimingProgress();
         if (aimingProgress <= 0) {
-            if (player.isSprinting()) {
+            if (!isFlying(player) && player.isSprinting()) {
                 if (player.getPose() == Pose.CROUCHING) {
                     playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.WALK_UPPER);
                 } else {
@@ -67,7 +103,7 @@ public class AnimationManager {
                 }
                 return;
             }
-            if (limbSwingAmount > 0.05) {
+            if (!isFlying(player) && limbSwingAmount > 0.05) {
                 playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.WALK_UPPER);
                 return;
             }
@@ -132,6 +168,7 @@ public class AnimationManager {
         stopAnimation(player, PlayerAnimatorCompat.LOWER_ANIMATION);
         stopAnimation(player, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION);
         stopAnimation(player, PlayerAnimatorCompat.ONCE_UPPER_ANIMATION);
+        stopAnimation(player, PlayerAnimatorCompat.ROTATION_ANIMATION);
     }
 
     @SuppressWarnings("unchecked")
@@ -207,5 +244,23 @@ public class AnimationManager {
             default -> AnimationName.MELEE_3_UPPER;
         };
         TimelessAPI.getClientGunIndex(iGun.getGunId(gunItemStack)).ifPresent(index -> playOnceAnimation(player, index, PlayerAnimatorCompat.ONCE_UPPER_ANIMATION, animationName));
+    }
+
+    @SubscribeEvent
+    public void onDraw(GunDrawEvent event) {
+        if (event.getLogicalSide().isServer()) {
+            return;
+        }
+        LivingEntity entity = event.getEntity();
+        if (!(entity instanceof AbstractClientPlayer player)) {
+            return;
+        }
+        ItemStack currentGunItem = event.getCurrentGunItem();
+        ItemStack previousGunItem = event.getPreviousGunItem();
+        // 在切枪时，重置上半身动画
+        if (currentGunItem.getItem() instanceof IGun && previousGunItem.getItem() instanceof IGun) {
+            stopAnimation(player, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION);
+            stopAnimation(player, PlayerAnimatorCompat.ONCE_UPPER_ANIMATION);
+        }
     }
 }

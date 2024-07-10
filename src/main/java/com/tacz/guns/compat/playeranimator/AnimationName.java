@@ -11,6 +11,7 @@ public final class AnimationName {
     public static final String RUN_LOWER = "run_lower";
     public static final String CROUCH_LOWER = "crouch_lower";
     public static final String CROUCH_WALK_LOWER = "crouch_walk_lower";
+    public static final String RIDE_LOWER = "ride_lower";
 
     public static final String RELOAD_UPPER = "reload_upper";
     public static final String MELEE_UPPER = "melee_upper";
@@ -18,4 +19,6 @@ public final class AnimationName {
     public static final String MELEE_3_UPPER = "melee_3_upper";
     public static final String NORMAL_FIRE_UPPER = "normal_fire_upper";
     public static final String AIM_FIRE_UPPER = "aim_fire_upper";
+
+    public static final String EMPTY = "empty";
 }

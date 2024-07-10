@@ -6,6 +6,7 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.resource.InternalAssetLoader;
+import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.entity.EntityKineticBullet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,7 +23,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
@@ -36,10 +39,16 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
 
     @Override
     public void render(EntityKineticBullet bullet, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        ResourceLocation gunId = bullet.getGunId();
+        Optional<ClientGunIndex> optionalClientGunIndex = TimelessAPI.getClientGunIndex(gunId);
+        if (optionalClientGunIndex.isEmpty()) {
+            return;
+        }
+        float @Nullable [] gunTracerColor = optionalClientGunIndex.get().getTracerColor();
         ResourceLocation ammoId = bullet.getAmmoId();
-        TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(index -> {
-            BedrockAmmoModel ammoEntityModel = index.getAmmoEntityModel();
-            ResourceLocation textureLocation = index.getAmmoEntityTextureLocation();
+        TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(ammoIndex -> {
+            BedrockAmmoModel ammoEntityModel = ammoIndex.getAmmoEntityModel();
+            ResourceLocation textureLocation = ammoIndex.getAmmoEntityTextureLocation();
             if (ammoEntityModel != null && textureLocation != null) {
                 poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
                 poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
@@ -52,7 +61,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
 
             // 曳光弹发光
             if (bullet.isTracerAmmo()) {
-                float[] tracerColor = index.getTracerColor();
+                float[] tracerColor = Objects.requireNonNullElse(gunTracerColor, ammoIndex.getTracerColor());
                 renderTracerAmmo(bullet, tracerColor, partialTicks, poseStack, packedLight);
             }
         });

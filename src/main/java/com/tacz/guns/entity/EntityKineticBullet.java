@@ -11,8 +11,8 @@ import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import com.tacz.guns.network.NetworkHandler;
-import com.tacz.guns.network.message.ServerMessageGunHurt;
-import com.tacz.guns.network.message.ServerMessageGunKill;
+import com.tacz.guns.network.message.event.ServerMessageGunHurt;
+import com.tacz.guns.network.message.event.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExplosionData;
@@ -188,7 +188,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.onBulletTick();
         // 粒子效果
         if (this.level.isClientSide) {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(level, this));
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(this, this.gunId));
         }
         // 子弹模型的旋转与抛物线
         Vec3 movement = this.getDeltaMovement();
@@ -455,10 +455,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 // 如果生物死了
                 if (livingEntity.isDeadOrDying()) {
                     MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingEntity, attacker, newGunId, headshot, LogicalSide.SERVER));
-                    NetworkHandler.sendToNearby(livingEntity, new ServerMessageGunKill(livingEntity.getId(), attackerId, newGunId, headshot));
+                    NetworkHandler.sendToDimension(new ServerMessageGunKill(livingEntity.getId(), attackerId, newGunId, headshot), livingEntity);
                 } else {
                     MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(livingEntity, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
-                    NetworkHandler.sendToNearby(livingEntity, new ServerMessageGunHurt(livingEntity.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier));
+                    NetworkHandler.sendToDimension(new ServerMessageGunHurt(livingEntity.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingEntity);
                 }
             }
         }
@@ -484,7 +484,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         // 弹孔与点燃特效
         if (this.level instanceof ServerLevel serverLevel) {
-            BulletHoleOption bulletHoleOption = new BulletHoleOption(result.getDirection(), result.getBlockPos(), this.ammoId.toString());
+            BulletHoleOption bulletHoleOption = new BulletHoleOption(result.getDirection(), result.getBlockPos(), this.ammoId.toString(), this.gunId.toString());
             serverLevel.sendParticles(bulletHoleOption, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);
             if (this.hasIgnite) {
                 serverLevel.sendParticles(ParticleTypes.LAVA, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);

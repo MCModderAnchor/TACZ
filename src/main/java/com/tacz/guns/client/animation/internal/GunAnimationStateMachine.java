@@ -1,9 +1,9 @@
 package com.tacz.guns.client.animation.internal;
 
-import com.tacz.guns.client.animation.AnimationController;
-import com.tacz.guns.client.animation.AnimationPlan;
-import com.tacz.guns.client.animation.ObjectAnimation;
-import com.tacz.guns.client.animation.ObjectAnimationRunner;
+import com.tacz.guns.api.client.animation.AnimationController;
+import com.tacz.guns.api.client.animation.AnimationPlan;
+import com.tacz.guns.api.client.animation.ObjectAnimation;
+import com.tacz.guns.api.client.animation.ObjectAnimationRunner;
 import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.player.Input;

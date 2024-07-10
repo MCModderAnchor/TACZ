@@ -16,4 +16,8 @@ public final class DefaultAssets {
 
     public static ResourceLocation DEFAULT_ATTACHMENT_SKIN_ID = new ResourceLocation(GunMod.MOD_ID, "sight_sro_dot_blue");
     public static ResourceLocation EMPTY_ATTACHMENT_SKIN_ID = new ResourceLocation(GunMod.MOD_ID, "empty");
+
+    public static boolean isEmptyAttachmentId(ResourceLocation attachmentId) {
+        return EMPTY_ATTACHMENT_ID.equals(attachmentId);
+    }
 }

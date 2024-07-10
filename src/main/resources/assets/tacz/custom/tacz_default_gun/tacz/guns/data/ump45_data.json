@@ -17,7 +17,7 @@
       ]
     },
     "speed": 190,
-    "gravity": 0.0245,
+    "gravity": 0.098,
     "knockback": 0.1,
     "friction": 0.02,
     "ignite": false,
@@ -47,8 +47,14 @@
   "sprint_time": 0.15,
   "fire_mode": [
     "auto",
-    "semi"
+    "burst"
   ],
+  "burst_data": {
+    "continuous_shoot": false,
+    "count": 2,
+    "bpm": 700,
+    "min_interval": 0.35
+  },
   "allow_attachment_types": [
     "scope",
     "muzzle",
@@ -91,9 +97,9 @@
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值
-      "damage": 2,
+      "damage": 4,
       // 击退效果
-      "knockback": 0.5,
+      "knockback": 0.6,
       // 前摇时长，单位：秒
       "prep": 0.1
     }
