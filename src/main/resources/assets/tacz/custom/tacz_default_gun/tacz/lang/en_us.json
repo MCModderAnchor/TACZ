@@ -42,6 +42,9 @@
   "tacz.gun.m16a1.name": "M16A1 Service Rifle",
   "tacz.gun.aa12.name": "AA12 Shotgun",
   "tacz.gun.ump45.name":"UMP45 SMG",
+
+
+  "tacz.gun.ak47.desc": "A common, reliable assault rifle",
   
   
   "tacz.ammo.9mm.name": "§a9mm Bullet",

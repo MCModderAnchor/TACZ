@@ -21,12 +21,14 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Locale;
 
 public class ClientGunTooltip implements ClientTooltipComponent {
@@ -37,6 +39,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     private final IGun iGun;
     private final CommonGunIndex gunIndex;
     private final ItemStack ammo;
+    private @Nullable List<FormattedCharSequence> desc;
     private Component ammoName;
     private MutableComponent ammoCountText;
     private @Nullable MutableComponent gunType;
@@ -62,20 +65,23 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     @Override
     public int getHeight() {
         int height = 0;
+        if (shouldShow(GunTooltipPart.DESCRIPTION) && this.desc != null) {
+            height += 10 * this.desc.size() + 2;
+        }
         if (shouldShow(GunTooltipPart.AMMO_INFO)) {
-            height += 22;
+            height += 24;
         }
         if (shouldShow(GunTooltipPart.BASE_INFO)) {
-            height += 36;
+            height += 34;
         }
         if (shouldShow(GunTooltipPart.EXTRA_DAMAGE_INFO)) {
-            height += 25;
+            height += 24;
         }
         if (shouldShow(GunTooltipPart.UPGRADES_TIP)) {
-            height += 15;
+            height += 14;
         }
         if (shouldShow(GunTooltipPart.PACK_INFO)) {
-            height += 15;
+            height += 14;
         }
         return height;
     }
@@ -87,6 +93,22 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
     private void getText() {
         Font font = Minecraft.getInstance().font;
+
+
+        if (shouldShow(GunTooltipPart.DESCRIPTION)) {
+            @Nullable String tooltip = gunIndex.getPojo().getTooltip();
+            if (tooltip != null) {
+                List<FormattedCharSequence> split = font.split(Component.translatable(tooltip), 200);
+                if (split.size() > 2) {
+                    this.desc = split.subList(0, 2);
+                } else {
+                    this.desc = split;
+                }
+                for (FormattedCharSequence sequence : this.desc) {
+                    this.maxWidth = Math.max(font.width(sequence), this.maxWidth);
+                }
+            }
+        }
 
 
         if (shouldShow(GunTooltipPart.AMMO_INFO)) {
@@ -171,14 +193,25 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     public void renderText(Font font, int pX, int pY, Matrix4f matrix4f, MultiBufferSource.BufferSource bufferSource) {
         int yOffset = pY;
 
+        if (shouldShow(GunTooltipPart.DESCRIPTION) && this.desc != null) {
+            yOffset += 2;
+            for (FormattedCharSequence sequence : this.desc) {
+                font.drawInBatch(sequence, pX, yOffset, 0xaaaaaa, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+                yOffset += 10;
+            }
+        }
+
 
         if (shouldShow(GunTooltipPart.AMMO_INFO)) {
+            yOffset += 4;
+
             // 弹药名
-            font.drawInBatch(this.ammoName, pX + 20, pY + 2, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            font.drawInBatch(this.ammoName, pX + 20, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
 
             // 弹药数
-            font.drawInBatch(this.ammoCountText, pX + 20, pY + 13, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-            yOffset = pY + 22;
+            font.drawInBatch(this.ammoCountText, pX + 20, yOffset + 10, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+
+            yOffset += 20;
         }
 
 
@@ -187,17 +220,17 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
             // 等级信息
             font.drawInBatch(this.levelInfo, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-            yOffset += 11;
+            yOffset += 10;
 
             // 枪械类型
             if (this.gunType != null) {
                 font.drawInBatch(this.gunType, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-                yOffset += 11;
+                yOffset += 10;
             }
 
             // 伤害
             font.drawInBatch(this.damage, pX, yOffset, 0x777777, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-            yOffset += 11;
+            yOffset += 10;
         }
 
 
@@ -206,25 +239,28 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
             // 穿甲伤害
             font.drawInBatch(this.armorIgnore, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-            yOffset += 11;
+            yOffset += 10;
 
             // 爆头伤害
             font.drawInBatch(this.headShotMultiplier, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-            yOffset += 11;
+            yOffset += 10;
         }
 
 
         if (shouldShow(GunTooltipPart.UPGRADES_TIP)) {
+            yOffset += 4;
+
             // Z 键说明
-            font.drawInBatch(this.tips, pX, yOffset + 4, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-            yOffset += 12;
+            font.drawInBatch(this.tips, pX, yOffset, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            yOffset += 10;
         }
 
 
         if (shouldShow(GunTooltipPart.PACK_INFO)) {
             // 枪包名
             if (packInfo != null) {
-                font.drawInBatch(this.packInfo, pX, yOffset + 4, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+                yOffset += 4;
+                font.drawInBatch(this.packInfo, pX, yOffset, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
             }
         }
     }
@@ -236,7 +272,11 @@ public class ClientGunTooltip implements ClientTooltipComponent {
             return;
         }
         if (shouldShow(GunTooltipPart.AMMO_INFO)) {
-            guiGraphics.renderItem(ammo, pX, pY + 3);
+            int yOffset = pY;
+            if (shouldShow(GunTooltipPart.DESCRIPTION) && this.desc != null) {
+                yOffset += this.desc.size() * 10 + 2;
+            }
+            guiGraphics.renderItem(ammo, pX, yOffset + 4);
         }
     }
 

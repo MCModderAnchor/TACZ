@@ -30,4 +30,9 @@ public class AmmoIndexPOJO {
     public int getStackSize() {
         return stackSize;
     }
+
+    @Nullable
+    public String getTooltip() {
+        return tooltip;
+    }
 }

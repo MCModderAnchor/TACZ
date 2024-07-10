@@ -5,6 +5,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
 public enum GunTooltipPart {
+    DESCRIPTION,
     AMMO_INFO,
     BASE_INFO,
     EXTRA_DAMAGE_INFO,
