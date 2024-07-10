@@ -181,8 +181,9 @@ public class CameraSetupEvent {
     @SubscribeEvent
     public static void initialCameraRecoil(GunFireEvent event) {
         if (event.getLogicalSide().isClient()) {
+            LivingEntity shooter = event.getShooter();
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) {
+            if (!shooter.equals(player)) {
                 return;
             }
             ItemStack mainhandItem = player.getMainHandItem();
