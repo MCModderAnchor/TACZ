@@ -4,7 +4,7 @@ import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-public class LuaContextWrapper<T extends AnimationStateContext> implements AnimationStateContext {
+public class LuaContextWrapper<T extends AnimationStateContext> extends AnimationStateContext {
     private T context;
     private LuaValue luaContext;
 

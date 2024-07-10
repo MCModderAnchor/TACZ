@@ -9,7 +9,7 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
+import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import com.tacz.guns.client.renderer.crosshair.CrosshairType;
 import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;

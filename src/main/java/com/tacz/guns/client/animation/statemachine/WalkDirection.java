@@ -1,4 +1,4 @@
-package com.tacz.guns.client.animation.internal;
+package com.tacz.guns.client.animation.statemachine;
 
 import net.minecraft.client.player.Input;
 

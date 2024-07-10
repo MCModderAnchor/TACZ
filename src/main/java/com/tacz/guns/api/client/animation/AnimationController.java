@@ -116,8 +116,8 @@ public class AnimationController {
     }
 
     synchronized public void update() {
-        // 动画混合时，track 级别越低，优先级越低（体现在旋转的叠加先后顺序上）
-        for (int i = currentRunners.size() - 1; i >= 0; i--) {
+        // 动画混合时，track 级别越低，优先级越低
+        for (int i = 0; i < currentRunners.size(); i++) {
             boolean blend = i < blending.size() ? blending.get(i) : false;
             ObjectAnimationRunner runner = currentRunners.get(i);
             if (runner == null) {

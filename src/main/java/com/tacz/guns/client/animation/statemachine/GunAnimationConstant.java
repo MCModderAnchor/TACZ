@@ -1,4 +1,4 @@
-package com.tacz.guns.client.animation.internal;
+package com.tacz.guns.client.animation.statemachine;
 
 public final class GunAnimationConstant {
     /**
