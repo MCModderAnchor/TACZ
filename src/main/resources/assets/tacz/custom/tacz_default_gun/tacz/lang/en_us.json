@@ -44,8 +44,33 @@
   "tacz.gun.aa12.name": "AA12 Shotgun",
   "tacz.gun.ump45.name":"UMP45 SMG",
 
+  
+  "tacz.gun.ak47.desc": "From the jungles to the bays, its presence is never missed.",
+  "tacz.gun.ai_awp.desc": "Unquestionable precision.",
+  "tacz.gun.aa12.desc": "A barrage of pellets that can choke.",
+  "tacz.gun.cz75.desc": "Accuracy through volume.",
+  "tacz.gun.db_long.desc": "You can lay down words, money, or this; one of them will solve the problem.",
+  "tacz.gun.db_short.desc": "Not the right size, but it gets the job done.",
+  "tacz.gun.deagle_golden.desc": "Shiny and charismatic.",
+  "tacz.gun.deagle.desc": "The weight and size justify the power. Watch your wrists.",
+  "tacz.gun.glock17.desc": "Defend your Second Amendment rights.",
+  "tacz.gun.hk_g3.desc": "The left hand of the free world.",
+  "tacz.gun.hk_mp5a5.desc": "Like petting a purring cat.",
+  "tacz.gun.m4a1.desc": "The soldier's love, wife, and mistress.",
+  "tacz.gun.m16a1.desc": "Good morning, jungle!",
+  "tacz.gun.m16a4.desc": "The lie of bureaucracy.",
+  "tacz.gun.m95.desc": "Hear the whistle of authority.",
+  "tacz.gun.m249.desc": "Cut through anything in your way.",
+  "tacz.gun.rpg7.desc": "There's nothing an RPG can't fix... except maybe another RPG!",
+  "tacz.gun.rpk.desc": "Lightweight, with upgraded power.",
+  "tacz.gun.scar_h.desc": "The only drawback of expensive things is the expense.",
+  "tacz.gun.sks_tactical.desc": "Collectors love to see their favorites reborn in the modern age, and this is no exception.",
+  "tacz.gun.ump45.desc": "It really does feel flat, so does the enemy's lifeline.",
+  "tacz.gun.uzi.desc": "Better than going in empty-handed.",
+  "tacz.gun.vector45.desc": "It is fast, maybe a bit too fast.",
 
-  "tacz.gun.ak47.desc": "A common, reliable assault rifle",
+  
+
   
   
   "tacz.ammo.9mm.name": "§a9mm Bullet",
