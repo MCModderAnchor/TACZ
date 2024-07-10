@@ -1,9 +1,30 @@
 {
+  "model": "tacz:ammo/45acp",
+  "texture": "tacz:ammo/uv/45acp",
   "slot": "tacz:ammo/slot/45acp",
   "tracer_color": "#ffb373",
   "shell": {
     "model": "tacz:shell/45acp_shell",
     "texture": "tacz:shell/45acp_shell"
+  },
+  "transform": {
+    "scale": {
+      "thirdperson": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "ground": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "fixed": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    }
   }
 }
     
