@@ -40,7 +40,30 @@
   "tacz.gun.aa12.name": "AA12 霰弹枪",
 
 
-  "tacz.gun.ak47.desc": "常见的，可靠的突击步枪",
+  "tacz.gun.ak47.desc": "从雨林越过沙漠再到海湾，永远不会错过它的身影",
+  "tacz.gun.ai_awp.desc": "“艺术家与狙击手本无区别”",
+  "tacz.gun.aa12.desc": "“天哪，那是接近的！”",
+  "tacz.gun.cz75.desc": "",
+  "tacz.gun.db_long.desc": "“你可以把道理，钱，或者它摆在台面上，总有一个能解决问题”",
+  "tacz.gun.db_short.desc": "“尺寸不对，但就是这么用的”",
+  "tacz.gun.deagle_golden.desc": "“闪闪发光，很有魅力”",
+  "tacz.gun.deagle.desc": "“谨防手腕骨折”",
+  "tacz.gun.glock17.desc": "",
+  "tacz.gun.hk_g3.desc": "自由世界的左手",
+  "tacz.gun.hk_mp5a5.desc": "“谈判破裂，准备攻坚”",
+  "tacz.gun.m4a1.desc": "",
+  "tacz.gun.m16a1.desc": "",
+  "tacz.gun.m16a4.desc": "",
+  "tacz.gun.m95.desc": "",
+  "tacz.gun.m249.desc": "",
+  "tacz.gun.rpg7.desc": "",
+  "tacz.gun.rpk.desc": "",
+  "tacz.gun.scar_h.desc": "",
+  "tacz.gun.sks_tactical.desc": "",
+  "tacz.gun.ump45.desc": "",
+  "tacz.gun.uzi.desc": "",
+  "tacz.gun.vector45.desc": "“枪口上跳是解决了，可水平后坐力......”",
+
 
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",

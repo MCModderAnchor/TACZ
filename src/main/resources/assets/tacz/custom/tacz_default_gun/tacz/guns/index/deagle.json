@@ -2,5 +2,6 @@
   "name": "tacz.gun.deagle.name",
   "display": "tacz:deagle_display",
   "data": "tacz:deagle_data",
+  "tooltip": "tacz.gun.deagle.desc",
   "type": "pistol"
 }
