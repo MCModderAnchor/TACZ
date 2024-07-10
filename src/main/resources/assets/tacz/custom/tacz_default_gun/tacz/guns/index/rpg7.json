@@ -2,5 +2,6 @@
   "name": "tacz.gun.rpg7.name",
   "display": "tacz:rpg7_display",
   "data": "tacz:rpg7_data",
+  "tooltip": "tacz.gun.rpg7.desc",
   "type": "rpg"
 }

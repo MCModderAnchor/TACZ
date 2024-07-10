@@ -1,0 +1,55 @@
+{
+  "model": "tacz:gun/m16a4_geo",
+  "texture": "tacz:gun/uv/m16a4",
+  "lod": {
+    "model": "tacz:gun/lod/m16a4",
+    "texture": "tacz:gun/lod/m16a4"
+  },
+  "hud": "tacz:gun/hud/m16a4",
+  "slot": "tacz:gun/slot/m16a4",
+  "animation": "tacz:m16a4",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.75
+  },
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:m16a4/m16a4_shoot",
+    "shoot_3p": "tacz:m16a4/m16a4_shoot_3p",
+    "silence": "tacz:m16a4/m16a4_silence",
+    "silence_3p": "tacz:m16a4/m16a4_silence_3p",
+    "reload_empty": "tacz:m16a4/m16a4_reload_empty",
+    "reload_tactical": "tacz:m16a4/m16a4_reload_tactical",
+    "inspect": "tacz:m16a4/m16a4_inspect",
+    "inspect_empty": "tacz:m16a4/m16a4_inspect_empty",
+    "draw": "tacz:m16a4/m16a4_draw",
+    "put_away": "tacz:m16a4/m16a4_put_away"
+  },
+  "offhand_show": {
+    "pos": [1, 19, 4],
+    "rotate": [0, 0, 50],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-1, 19, 3],
+      "rotate": [-180, 0, 130],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}
