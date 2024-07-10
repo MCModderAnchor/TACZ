@@ -10,8 +10,6 @@
   },
   // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
   "hud": "tacz:gun/hud/ak47",
-  // 自定义准星材质，没有的话则显示默认准星
-  // "crosshair": "tacz:crosshair/rpg7",
   // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空
   // 若为空，则对应位置渲染改为：上述 hud + 代码着成红色
   // "hud_empty": "tacz:gun/hud/ak47_empty",
@@ -60,6 +58,30 @@
     // 抛壳渲染存活时间，单位为秒
     "living_time": 1.0
   },
+  // 子弹相关渲染参数。ammo display 里也有，但是会被这里的参数覆盖掉
+  "ammo": {
+    // 曳光弹颜色，没有则为 #FFFFFF，没有此字段时，会调用 ammo 的相关字段
+    // 严格遵循 RGB 颜色代码
+    "tracer_color": "#FF8888",
+    // 粒子效果，部分参数和原版指令完全一致，具体可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E5%91%BD%E4%BB%A4/particle
+    // 没有此字段时，会调用 ammo 的相关字段
+    "particle": {
+      // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
+      "name": "campfire_signal_smoke",
+      // 生成的区域，默认为 0 0 0
+      "delta": [
+        0,
+        0,
+        0
+      ],
+      // 速度，默认为0，必须至少为 0
+      "speed": 0,
+      // 粒子存在时间，单位 tick，默认为 20 tick
+      "life_time": 50,
+      // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
+      "count": 5
+    }
+  },
   // 枪械音效，在包目录下 sounds 文件夹内寻找，不建议为空
   "sounds": {
     "shoot": "tacz:ak47/ak47_shoot",
@@ -72,16 +94,16 @@
     "put_away": "tacz:ak47/ak47_put_away",
     "silence": "tacz:ak47/ak47_silence",
     "silence_3p": "tacz:ak47/ak47_silence_3p",
-    // 近战刺刀音效
-    // "melee_bayonet": "tacz:melee_bayonet/melee_bash_05",
-    "melee_push": "tacz:melee_bayonet/melee_bash_04",
-    "melee_stock": "tacz:melee_bayonet/melee_bash_05",
     // 下面四个音效可以不写，模组会自动添加默认音效
     "dry_fire": "tacz:dry_fire",
     "fire_select": "tacz:fire_select",
     "head_hit": "tacz:head_hit",
     "flesh_hit": "tacz:flesh_hit",
-    "kill": "tacz:kill"
+    "kill": "tacz:kill",
+    // 近战音效，默认就会添加
+    "melee_bayonet": "tacz:melee_bayonet/melee_bayonet_01",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_02"
   },
   // 副手枪械显示
   "offhand_show": {

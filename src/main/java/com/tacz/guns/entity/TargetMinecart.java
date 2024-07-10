@@ -9,7 +9,7 @@ import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.init.ModSounds;
 import com.tacz.guns.network.NetworkHandler;
-import com.tacz.guns.network.message.ServerMessageGunHurt;
+import com.tacz.guns.network.message.event.ServerMessageGunHurt;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,6 +23,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.common.MinecraftForge;
@@ -74,7 +75,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
                 boolean isHeadshot = false;
                 float headshotMultiplier = 1;
                 MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(this, player, projectile.getGunId(), damage, isHeadshot, headshotMultiplier, LogicalSide.SERVER));
-                NetworkHandler.sendToNearby(entity, new ServerMessageGunHurt(this.getId(), player.getId(), projectile.getGunId(), damage, isHeadshot, headshotMultiplier));
+                NetworkHandler.sendToDimension(new ServerMessageGunHurt(this.getId(), player.getId(), projectile.getGunId(), damage, isHeadshot, headshotMultiplier), this);
             }
         }
     }
@@ -124,6 +125,7 @@ public class TargetMinecart extends AbstractMinecart implements ITargetEntity {
     public GameProfile getGameProfile() {
         if (this.gameProfile == null && this.getCustomName() != null) {
             this.gameProfile = new GameProfile(null, this.getCustomName().getString());
+            SkullBlockEntity.updateGameprofile(this.gameProfile, gameProfile -> this.gameProfile = gameProfile);
         }
         return gameProfile;
     }

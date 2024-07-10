@@ -3,17 +3,20 @@ package com.tacz.guns.client.resource.index;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.DefaultAssets;
-import com.tacz.guns.client.animation.AnimationController;
-import com.tacz.guns.client.animation.Animations;
-import com.tacz.guns.client.animation.ObjectAnimation;
-import com.tacz.guns.client.animation.gltf.AnimationStructure;
+import com.tacz.guns.api.client.animation.AnimationController;
+import com.tacz.guns.api.client.animation.Animations;
+import com.tacz.guns.api.client.animation.ObjectAnimation;
+import com.tacz.guns.api.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.InternalAssetLoader;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
+import com.tacz.guns.client.resource.pojo.display.ammo.AmmoParticle;
 import com.tacz.guns.client.resource.pojo.display.gun.*;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
@@ -24,6 +27,7 @@ import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.ColorHex;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -50,7 +54,6 @@ public class ClientGunIndex {
     private ResourceLocation slotTexture;
     private ResourceLocation hudTexture;
     private @Nullable ResourceLocation hudEmptyTexture;
-    private @Nullable ResourceLocation crosshairTextureLocation;
     private String type;
     private String itemType;
     private @Nullable ShellEjection shellEjection;
@@ -59,6 +62,8 @@ public class ClientGunIndex {
     private @Nullable Int2ObjectArrayMap<LayerGunShow> hotbarShow;
     private float ironZoom;
     private boolean showCrosshair = false;
+    private @Nullable AmmoParticle particle;
+    private float @Nullable [] tracerColor = null;
 
     private ClientGunIndex() {
     }
@@ -73,11 +78,11 @@ public class ClientGunIndex {
         checkLod(display, index);
         checkSlotTexture(display, index);
         checkHUDTexture(display, index);
-        checkCrosshairTexture(display, index);
         checkAnimation(display, index);
         checkSounds(display, index);
         checkTransform(display, index);
         checkShellEjection(display, index);
+        checkGunAmmo(display, index);
         checkMuzzleFlash(display, index);
         checkLayerGunShow(display, index);
         checkIronZoom(display, index);
@@ -243,6 +248,9 @@ public class ClientGunIndex {
         soundMaps.putIfAbsent(SoundManager.HEAD_HIT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.HEAD_HIT_SOUND));
         soundMaps.putIfAbsent(SoundManager.FLESH_HIT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.FLESH_HIT_SOUND));
         soundMaps.putIfAbsent(SoundManager.KILL_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.KILL_SOUND));
+        soundMaps.putIfAbsent(SoundManager.MELEE_BAYONET, new ResourceLocation(GunMod.MOD_ID, "melee_bayonet/melee_bayonet_01"));
+        soundMaps.putIfAbsent(SoundManager.MELEE_STOCK, new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_01"));
+        soundMaps.putIfAbsent(SoundManager.MELEE_PUSH, new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_02"));
         index.sounds.putAll(soundMaps);
     }
 
@@ -266,12 +274,33 @@ public class ClientGunIndex {
         index.hudEmptyTexture = display.getHudEmptyTextureLocation();
     }
 
-    private static void checkCrosshairTexture(GunDisplay display, ClientGunIndex index) {
-        index.crosshairTextureLocation = display.getCrosshairTextureLocation();
-    }
-
     private static void checkShellEjection(GunDisplay display, ClientGunIndex index) {
         index.shellEjection = display.getShellEjection();
+    }
+
+    private static void checkGunAmmo(GunDisplay display, ClientGunIndex index) {
+        GunAmmo displayGunAmmo = display.getGunAmmo();
+        if (displayGunAmmo == null) {
+            return;
+        }
+        String tracerColorText = displayGunAmmo.getTracerColor();
+        if (StringUtils.isNoneBlank(tracerColorText)) {
+            index.tracerColor = ColorHex.colorTextToRbgFloatArray(tracerColorText);
+        }
+        AmmoParticle particle = displayGunAmmo.getParticle();
+        if (particle != null) {
+            try {
+                String name = particle.getName();
+                if (StringUtils.isNoneBlank()) {
+                    particle.setParticleOptions(ParticleArgument.readParticle(new StringReader(name)));
+                    Preconditions.checkArgument(particle.getCount() > 0, "particle count must be greater than 0");
+                    Preconditions.checkArgument(particle.getLifeTime() > 0, "particle life time must be greater than 0");
+                    index.particle = particle;
+                }
+            } catch (CommandSyntaxException e) {
+                e.fillInStackTrace();
+            }
+        }
     }
 
     private static void checkMuzzleFlash(GunDisplay display, ClientGunIndex index) {
@@ -347,11 +376,6 @@ public class ClientGunIndex {
         return hudEmptyTexture;
     }
 
-    @Nullable
-    public ResourceLocation getCrosshairTextureLocation() {
-        return crosshairTextureLocation;
-    }
-
     public ResourceLocation getModelTexture() {
         return modelTexture;
     }
@@ -367,6 +391,16 @@ public class ClientGunIndex {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
+    }
+
+    @Nullable
+    public float[] getTracerColor() {
+        return tracerColor;
+    }
+
+    @Nullable
+    public AmmoParticle getParticle() {
+        return particle;
     }
 
     @Nullable

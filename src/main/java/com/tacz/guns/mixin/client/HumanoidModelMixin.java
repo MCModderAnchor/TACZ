@@ -1,14 +1,9 @@
 package com.tacz.guns.mixin.client;
 
-import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.client.other.ThirdPersonManager;
-import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
+import com.tacz.guns.client.animation.third.InnerThirdPersonManager;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,26 +28,6 @@ public class HumanoidModelMixin<T extends LivingEntity> {
 
     @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "TAIL"))
     private void setRotationAnglesHead(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
-        if (entityIn instanceof IGunOperator operator) {
-            ItemStack mainHandItem = entityIn.getMainHandItem();
-            IGun iGun = IGun.getIGunOrNull(mainHandItem);
-            if (iGun == null) {
-                PlayerAnimatorCompat.stopAllAnimation(entityIn);
-                return;
-            }
-            TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItem)).ifPresent(index -> {
-                if (PlayerAnimatorCompat.hasPlayerAnimator3rd(entityIn, index)) {
-                    PlayerAnimatorCompat.playAnimation(entityIn, index, limbSwingAmount);
-                } else {
-                    String animation = index.getThirdPersonAnimation();
-                    float aimingProgress = operator.getSynAimingProgress();
-                    if (aimingProgress <= 0) {
-                        ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, body, head);
-                    } else {
-                        ThirdPersonManager.getAnimation(animation).animateGunAim(entityIn, rightArm, leftArm, body, head, aimingProgress);
-                    }
-                }
-            });
-        }
+        InnerThirdPersonManager.setRotationAnglesHead(entityIn, rightArm, leftArm, body, head, limbSwingAmount);
     }
 }

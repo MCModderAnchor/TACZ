@@ -175,6 +175,9 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:selene-499980:4983974")
     runtimeOnly fg.deobf("curse.maven:mmmmmmmmmmmm-225738:4410143")
 
+    // 越肩视角 1.19.2，用来兼容第三人称准星
+    implementation fg.deobf("curse.maven:shoulder-surfing-reloaded-243190:5455949")
+
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
     compileOnly fg.deobf("org.embeddedt:embeddium-1.19.2:${embeddedt_id}")
     compileOnly fg.deobf("curse.maven:oculus-581495:${oculus_id}")

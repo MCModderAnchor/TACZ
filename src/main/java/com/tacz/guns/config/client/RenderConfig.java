@@ -31,7 +31,7 @@ public class RenderConfig {
         BULLET_HOLE_PARTICLE_FADE_THRESHOLD = builder.defineInRange("BulletHoleParticleFadeThreshold", 0.98, 0, 1);
 
         builder.comment("The crosshair when holding a gun");
-        CROSSHAIR_TYPE = builder.defineEnum("CrosshairType", CrosshairType.SQUARE_5);
+        CROSSHAIR_TYPE = builder.defineEnum("CrosshairType", CrosshairType.DOT_1);
 
         builder.comment("The starting position of the hit marker");
         HIT_MARKET_START_POSITION = builder.defineInRange("HitMarketStartPosition", 4d, -1024d, 1024d);

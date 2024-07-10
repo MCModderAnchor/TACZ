@@ -1,14 +1,17 @@
 package com.tacz.guns.entity.shooter;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.event.common.GunMeleeEvent;
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
+import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.event.ServerMessageGunMelee;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import com.tacz.guns.resource.pojo.data.gun.GunDefaultMeleeData;
+import com.tacz.guns.resource.pojo.data.gun.GunMeleeData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -50,19 +53,20 @@ public class LivingEntityMelee {
         if (MinecraftForge.EVENT_BUS.post(new GunMeleeEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
             return;
         }
+        NetworkHandler.sendToTrackingEntity(new ServerMessageGunMelee(shooter.getId(), currentGunItem), shooter);
         if (currentGunItem.getItem() instanceof AbstractGunItem logicGun) {
             data.meleeTimestamp = System.currentTimeMillis();
 
-            ItemStack muzzle = logicGun.getAttachment(currentGunItem, AttachmentType.MUZZLE);
-            MeleeData muzzleMeleeData = getMeleeData(muzzle);
+            ResourceLocation muzzleId = logicGun.getAttachmentId(currentGunItem, AttachmentType.MUZZLE);
+            MeleeData muzzleMeleeData = getMeleeData(muzzleId);
             if (muzzleMeleeData != null) {
                 float prepTime = muzzleMeleeData.getPrepTime();
                 data.meleePrepTickCount = (int) Math.max(0, prepTime * 20);
                 return;
             }
 
-            ItemStack stock = logicGun.getAttachment(currentGunItem, AttachmentType.STOCK);
-            MeleeData stockMeleeData = getMeleeData(stock);
+            ResourceLocation stockId = logicGun.getAttachmentId(currentGunItem, AttachmentType.STOCK);
+            MeleeData stockMeleeData = getMeleeData(stockId);
             if (stockMeleeData != null) {
                 float prepTime = stockMeleeData.getPrepTime();
                 data.meleePrepTickCount = (int) Math.max(0, prepTime * 20);
@@ -109,23 +113,43 @@ public class LivingEntityMelee {
         ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
         return gunIndex.map(index -> {
-            long coolDown = (long) (index.getGunData().getMeleeData().getCooldown() * 1000) - (System.currentTimeMillis() - data.meleeTimestamp);
-            // 给 5 ms 的窗口时间，以平衡延迟
-            coolDown = coolDown - 5;
-            if (coolDown < 0) {
-                return 0L;
+            GunMeleeData meleeData = index.getGunData().getMeleeData();
+            // 获取枪口，看看有没有近战数据
+            ResourceLocation muzzleId = iGun.getAttachmentId(currentGunItem, AttachmentType.MUZZLE);
+            MeleeData muzzleMeleeData = getMeleeData(muzzleId);
+            if (muzzleMeleeData != null) {
+                return getTotalCooldownTime(meleeData, muzzleMeleeData.getCooldown());
             }
-            return coolDown;
+
+            // 枪托
+            ResourceLocation stockId = iGun.getAttachmentId(currentGunItem, AttachmentType.STOCK);
+            MeleeData stockMeleeData = getMeleeData(stockId);
+            if (stockMeleeData != null) {
+                return getTotalCooldownTime(meleeData, stockMeleeData.getCooldown());
+            }
+
+            GunDefaultMeleeData defaultMeleeData = meleeData.getDefaultMeleeData();
+            float defaultMeleeCooldownTime = defaultMeleeData == null ? 0 : defaultMeleeData.getCooldown();
+            return getTotalCooldownTime(meleeData, defaultMeleeCooldownTime);
         }).orElse(-1L);
     }
 
+    private long getTotalCooldownTime(GunMeleeData meleeData, float extraCooldownTime) {
+        float totalCooldownTime = meleeData.getCooldown() + extraCooldownTime;
+        long coolDown = (long) (totalCooldownTime * 1000) - (System.currentTimeMillis() - data.meleeTimestamp);
+        // 给 5 ms 的窗口时间，以平衡延迟
+        coolDown = coolDown - 5;
+        if (coolDown < 0) {
+            return 0L;
+        }
+        return coolDown;
+    }
+
     @Nullable
-    private MeleeData getMeleeData(ItemStack attachmentStack) {
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentStack);
-        if (iAttachment == null) {
+    private MeleeData getMeleeData(ResourceLocation attachmentId) {
+        if (DefaultAssets.isEmptyAttachmentId(attachmentId)) {
             return null;
         }
-        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentStack);
         return TimelessAPI.getCommonAttachmentIndex(attachmentId).map(index -> index.getData().getMeleeData()).orElse(null);
     }
 }

@@ -22,7 +22,9 @@
   },
   "sounds": {
     "shoot": "tacz:m95/m95_shoot",
-    "shoot_3p": "tacz:m95/m95_shoot_3p"
+    "shoot_3p": "tacz:m95/m95_shoot_3p",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
   },
   "offhand_show": {
     "pos": [0, 20, 4],

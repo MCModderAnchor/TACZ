@@ -92,11 +92,6 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     }
 
     private void classifyRecipes() {
-        TimelessAPI.getAllRecipes().forEach((id, recipe) -> {
-            GunSmithTableResult result = recipe.getResult();
-            recipes.computeIfAbsent(result.getGroup(), g -> Lists.newArrayList()).add(id);
-        });
-
         // 排序
         // 子弹
         putRecipeType("ammo");
@@ -114,6 +109,13 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         putRecipeType("smg");
         putRecipeType("rpg");
         putRecipeType("mg");
+
+        TimelessAPI.getAllRecipes().forEach((id, recipe) -> {
+            String groupName = recipe.getResult().getGroup();
+            if (this.recipeKeys.contains(groupName)) {
+                recipes.computeIfAbsent(groupName, g -> Lists.newArrayList()).add(id);
+            }
+        });
     }
 
     private void putRecipeType(String tabName) {

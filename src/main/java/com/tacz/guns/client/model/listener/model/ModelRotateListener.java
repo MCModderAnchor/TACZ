@@ -1,10 +1,10 @@
 package com.tacz.guns.client.model.listener.model;
 
-import com.mojang.math.Quaternion;
-import com.tacz.guns.client.animation.AnimationListener;
-import com.tacz.guns.client.animation.ObjectAnimationChannel;
+import com.tacz.guns.api.client.animation.AnimationListener;
+import com.tacz.guns.api.client.animation.ObjectAnimationChannel;
 import com.tacz.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tacz.guns.util.math.MathUtil;
+import com.mojang.math.Quaternion;
 
 public class ModelRotateListener implements AnimationListener {
     private final ModelRendererWrapper rendererWrapper;

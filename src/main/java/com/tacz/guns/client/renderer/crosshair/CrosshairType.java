@@ -9,6 +9,7 @@ import java.util.Map;
 
 public enum CrosshairType {
     EMPTY,
+    DOT_1,
     CIRCLE_1,
     CIRCLE_2,
     CIRCLE_3,

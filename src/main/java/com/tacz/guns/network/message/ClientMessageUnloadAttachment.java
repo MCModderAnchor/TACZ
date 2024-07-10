@@ -48,7 +48,7 @@ public class ClientMessageUnloadAttachment {
                 IGun iGun = IGun.getIGunOrNull(gunItem);
                 if (iGun != null) {
                     ItemStack attachmentItem = iGun.getAttachment(gunItem, message.attachmentType);
-                    if (attachmentItem != ItemStack.EMPTY && inventory.add(attachmentItem)) {
+                    if (!attachmentItem.isEmpty() && inventory.add(attachmentItem)) {
                         iGun.unloadAttachment(gunItem, message.attachmentType);
                         // 如果卸载的是扩容弹匣，吐出所有子弹
                         if (message.attachmentType == AttachmentType.EXTENDED_MAG) {

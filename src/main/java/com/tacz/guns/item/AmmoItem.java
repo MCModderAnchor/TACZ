@@ -81,6 +81,13 @@ public class AmmoItem extends Item implements AmmoItemDataAccessor {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag isAdvanced) {
         ResourceLocation ammoId = this.getAmmoId(stack);
+        TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(index -> {
+            String tooltipKey = index.getTooltipKey();
+            if (tooltipKey != null) {
+                components.add(Component.translatable(tooltipKey).withStyle(ChatFormatting.GRAY));
+            }
+        });
+
         PackInfo packInfoObject = ClientAssetManager.INSTANCE.getPackInfo(ammoId);
         if (packInfoObject != null) {
             MutableComponent component = Component.translatable(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);

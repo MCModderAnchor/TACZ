@@ -1,10 +1,10 @@
 package com.tacz.guns.client.model.listener.camera;
 
-import com.mojang.math.Quaternion;
-import com.tacz.guns.client.animation.AnimationListener;
-import com.tacz.guns.client.animation.AnimationListenerSupplier;
-import com.tacz.guns.client.animation.ObjectAnimationChannel;
+import com.tacz.guns.api.client.animation.AnimationListener;
+import com.tacz.guns.api.client.animation.AnimationListenerSupplier;
+import com.tacz.guns.api.client.animation.ObjectAnimationChannel;
 import com.tacz.guns.client.model.bedrock.ModelRendererWrapper;
+import com.mojang.math.Quaternion;
 
 import static com.tacz.guns.client.model.BedrockAnimatedModel.CAMERA_NODE_NAME;
 

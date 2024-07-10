@@ -1,6 +1,7 @@
 package com.tacz.guns.client.sound;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.init.ModSounds;
@@ -8,13 +9,17 @@ import com.tacz.guns.network.message.ServerMessageSound;
 import com.tacz.guns.sound.SoundManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class SoundPlayManager {
@@ -47,6 +52,21 @@ public class SoundPlayManager {
                 tmpSoundInstance.setStop();
             }
         }
+    }
+
+    public static void playerRefitSound(ItemStack attachmentItem, LocalPlayer player, String soundName) {
+        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+        if (iAttachment == null) {
+            return;
+        }
+        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
+        TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> {
+            Map<String, ResourceLocation> sounds = index.getSounds();
+            if (sounds.containsKey(soundName)) {
+                ResourceLocation resourceLocation = sounds.get(soundName);
+                SoundPlayManager.playClientSound(player, resourceLocation, 1.0f, 1.0f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
+            }
+        });
     }
 
     public static void playShootSound(LivingEntity entity, ClientGunIndex gunIndex) {

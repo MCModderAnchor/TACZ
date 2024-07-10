@@ -11,9 +11,9 @@
   },
   "transform": {
     "scale": {
-      "thirdperson": [0.6, 0.6, 0.6],
-      "ground": [0.6, 0.6, 0.6],
-      "fixed": [1.2, 1.2, 1.2]
+      "thirdperson": [1, 1, 1],
+      "ground": [1, 1, 1],
+      "fixed": [1.5, 1.5, 1.5]
     }
   },
   "sounds": {
@@ -23,7 +23,9 @@
     "draw": "tacz:rpg7/rpg7_draw",
     "put_away": "tacz:rpg7/rpg7_put_away",
     "shoot": "tacz:rpg7/rpg7_shoot",
-    "shoot_3p": "tacz:rpg7/rpg7_shoot"
+    "shoot_3p": "tacz:rpg7/rpg7_shoot",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
   },
   "offhand_show": {
     "pos": [0, 20, 5],

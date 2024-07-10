@@ -17,7 +17,7 @@
       ]
     },
     "speed": 150,
-    "gravity": 0.0245,
+    "gravity": 0.098,
     "knockback": 0.35,
     "friction": 0.05,
     "ignite": false,
@@ -81,7 +81,7 @@
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值
-      "damage": 1,
+      "damage": 2,
       // 击退效果
       "knockback": 0.45,
       // 前摇时长，单位：秒

@@ -43,7 +43,7 @@
     // 速度 m/s
     "speed": 260,
     // 重力
-    "gravity": 0.0245,
+    "gravity": 0.098,
     // 击退效果
     "knockback": 0,
     // 阻力
@@ -144,7 +144,7 @@
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值
-      "damage": 1,
+      "damage": 2,
       // 击退效果
       "knockback": 0.6,
       // 前摇时长，单位：秒

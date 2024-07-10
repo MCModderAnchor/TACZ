@@ -32,7 +32,7 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startDropdownMenu(Component.translatable("config.tacz.client.render.crosshair_type"),
                         CrosshairDropdown.of(RenderConfig.CROSSHAIR_TYPE.get()), CrosshairDropdown.of())
                 .setSelections(Arrays.stream(CrosshairType.values()).sorted().sorted(Comparator.comparing(CrosshairType::name)).collect(Collectors.toCollection(LinkedHashSet::new)))
-                .setDefaultValue(CrosshairType.SQUARE_5).setTooltip(Component.translatable("config.tacz.client.render.crosshair_type.desc"))
+                .setDefaultValue(CrosshairType.DOT_1).setTooltip(Component.translatable("config.tacz.client.render.crosshair_type.desc"))
                 .setSaveConsumer(RenderConfig.CROSSHAIR_TYPE::set).build());
 
         render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.hit_market_start_position"), RenderConfig.HIT_MARKET_START_POSITION.get())

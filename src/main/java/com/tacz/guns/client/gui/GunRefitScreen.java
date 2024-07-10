@@ -6,6 +6,7 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.client.animation.screen.RefitTransform;
 import com.tacz.guns.client.gui.components.refit.*;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.config.common.GunConfig;
@@ -24,6 +25,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -40,81 +42,11 @@ public class GunRefitScreen extends Screen {
     public static final int SLOT_SIZE = 18;
     private static final int INVENTORY_ATTACHMENT_SLOT_COUNT = 8;
 
-    // 以下参数、变量用于改装窗口动画插值
-    private static final float REFIT_SCREEN_TRANSFORM_TIMES = 0.25f;
-    private static float refitScreenTransformProgress = 1;
-    private static long refitScreenTransformTimestamp = -1;
-    private static AttachmentType oldTransformType = AttachmentType.NONE;
-    private static AttachmentType currentTransformType = AttachmentType.NONE;
-    private static float refitScreenOpeningProgress = 0;
-    private static long refitScreenOpeningTimestamp = -1;
-
     private int currentPage = 0;
 
     public GunRefitScreen() {
         super(Component.literal("Gun Refit Screen"));
-        refitScreenTransformProgress = 1;
-        refitScreenTransformTimestamp = System.currentTimeMillis();
-        oldTransformType = AttachmentType.NONE;
-        currentTransformType = AttachmentType.NONE;
-    }
-
-    @SubscribeEvent
-    public static void tickInterpolation(TickEvent.RenderTickEvent event) {
-        // tick opening progress
-        if (refitScreenOpeningTimestamp == -1) {
-            refitScreenOpeningTimestamp = System.currentTimeMillis();
-        }
-        if (Minecraft.getInstance().screen instanceof GunRefitScreen) {
-            refitScreenOpeningProgress += (System.currentTimeMillis() - refitScreenOpeningTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
-            if (refitScreenOpeningProgress > 1) {
-                refitScreenOpeningProgress = 1;
-            }
-        } else {
-            refitScreenOpeningProgress -= (System.currentTimeMillis() - refitScreenOpeningTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
-            if (refitScreenOpeningProgress < 0) {
-                refitScreenOpeningProgress = 0;
-            }
-        }
-        refitScreenOpeningTimestamp = System.currentTimeMillis();
-        // tick transform progress
-        if (refitScreenTransformTimestamp == -1) {
-            refitScreenTransformTimestamp = System.currentTimeMillis();
-        }
-        refitScreenTransformProgress += (System.currentTimeMillis() - refitScreenTransformTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
-        if (refitScreenTransformProgress > 1) {
-            refitScreenTransformProgress = 1;
-        }
-        refitScreenTransformTimestamp = System.currentTimeMillis();
-    }
-
-    public static float getOpeningProgress() {
-        return refitScreenOpeningProgress;
-    }
-
-    @Nonnull
-    public static AttachmentType getOldTransformType() {
-        return Objects.requireNonNullElse(oldTransformType, AttachmentType.NONE);
-    }
-
-    @Nonnull
-    public static AttachmentType getCurrentTransformType() {
-        return Objects.requireNonNullElse(currentTransformType, AttachmentType.NONE);
-    }
-
-    public static float getTransformProgress() {
-        return refitScreenTransformProgress;
-    }
-
-    private static boolean changeRefitScreenView(AttachmentType attachmentType) {
-        if (refitScreenTransformProgress != 1 || refitScreenOpeningProgress != 1) {
-            return false;
-        }
-        oldTransformType = currentTransformType;
-        currentTransformType = attachmentType;
-        refitScreenTransformProgress = 0;
-        refitScreenTransformTimestamp = System.currentTimeMillis();
-        return true;
+        RefitTransform.init();
     }
 
     public static int getSlotTextureXOffset(ItemStack gunItem, AttachmentType attachmentType) {
@@ -152,24 +84,8 @@ public class GunRefitScreen extends Screen {
         return ICON_UV_SIZE * 7;
     }
 
-    private static void playerSound(ItemStack attachmentItem, LocalPlayer player, String soundName) {
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
-        if (iAttachment == null) {
-            return;
-        }
-        ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
-        TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> {
-            Map<String, ResourceLocation> sounds = index.getSounds();
-            if (sounds.containsKey(soundName)) {
-                ResourceLocation resourceLocation = sounds.get(soundName);
-                SoundPlayManager.playClientSound(player, resourceLocation, 1.0f, 1.0f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
-            }
-        });
-    }
-
     @Override
     public void init() {
-        super.init();
         this.clearWidgets();
         // 添加配件槽位
         this.addAttachmentTypeButtons();
@@ -180,6 +96,9 @@ public class GunRefitScreen extends Screen {
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float pPartialTick) {
         super.render(poseStack, mouseX, mouseY, pPartialTick);
+
+        GunPropertyDiagrams.draw(this, poseStack, font, 11, 11);
+
         this.renderables.stream().filter(w -> w instanceof IComponentTooltip).forEach(w -> ((IComponentTooltip) w)
                 .renderTooltip(component -> this.renderComponentTooltip(poseStack, component, mouseX, mouseY)));
         this.renderables.stream().filter(w -> w instanceof IStackTooltip).forEach(w -> ((IStackTooltip) w)
@@ -193,7 +112,7 @@ public class GunRefitScreen extends Screen {
 
     private void addInventoryAttachmentButtons() {
         LocalPlayer player = getMinecraft().player;
-        if (currentTransformType == AttachmentType.NONE || player == null) {
+        if (RefitTransform.getCurrentTransformType() == AttachmentType.NONE || player == null) {
             return;
         }
         int startX = this.width - 30;
@@ -206,7 +125,7 @@ public class GunRefitScreen extends Screen {
             ItemStack inventoryItem = inventory.getItem(i);
             IAttachment attachment = IAttachment.getIAttachmentOrNull(inventoryItem);
             IGun iGun = IGun.getIGunOrNull(player.getMainHandItem());
-            if (attachment != null && iGun != null && attachment.getType(inventoryItem) == currentTransformType) {
+            if (attachment != null && iGun != null && attachment.getType(inventoryItem) == RefitTransform.getCurrentTransformType()) {
                 if (!iGun.allowAttachment(player.getMainHandItem(), inventoryItem)) {
                     continue;
                 }
@@ -219,8 +138,8 @@ public class GunRefitScreen extends Screen {
                 }
                 InventoryAttachmentSlot button = new InventoryAttachmentSlot(startX, currentY, i, inventory, b -> {
                     int slotIndex = ((InventoryAttachmentSlot) b).getSlotIndex();
-                    playerSound(inventory.getItem(slotIndex), player, SoundManager.INSTALL_SOUND);
-                    ClientMessageRefitGun message = new ClientMessageRefitGun(slotIndex, inventory.selected, currentTransformType);
+                    SoundPlayManager.playerRefitSound(inventory.getItem(slotIndex), player, SoundManager.INSTALL_SOUND);
+                    ClientMessageRefitGun message = new ClientMessageRefitGun(slotIndex, inventory.selected, RefitTransform.getCurrentTransformType());
                     NetworkHandler.CHANNEL.sendToServer(message);
                 });
                 this.addRenderableWidget(button);
@@ -268,24 +187,24 @@ public class GunRefitScreen extends Screen {
                 AttachmentType buttonType = ((GunAttachmentSlot) b).getType();
                 // 如果这个槽位不允许安装配件，则默认退回概览，不选中槽位。
                 if (!((GunAttachmentSlot) b).isAllow()) {
-                    if (changeRefitScreenView(AttachmentType.NONE)) {
+                    if (RefitTransform.changeRefitScreenView(AttachmentType.NONE)) {
                         this.init();
                     }
                     return;
                 }
                 // 点击的是当前选中的槽位，则退回概览
-                if (currentTransformType == buttonType && buttonType != AttachmentType.NONE) {
-                    if (changeRefitScreenView(AttachmentType.NONE)) {
+                if (RefitTransform.getCurrentTransformType() == buttonType && buttonType != AttachmentType.NONE) {
+                    if (RefitTransform.changeRefitScreenView(AttachmentType.NONE)) {
                         this.init();
                     }
                     return;
                 }
                 // 切换选中的槽位。
-                if (changeRefitScreenView(buttonType)) {
+                if (RefitTransform.changeRefitScreenView(buttonType)) {
                     this.init();
                 }
             });
-            if (currentTransformType == type) {
+            if (RefitTransform.getCurrentTransformType() == type) {
                 button.setSelected(true);
                 // 添加拆卸配件按钮
                 RefitUnloadButton unloadButton = new RefitUnloadButton(startX + 5, startY + SLOT_SIZE + 2, b -> {
@@ -293,8 +212,8 @@ public class GunRefitScreen extends Screen {
                     if (!attachmentItem.isEmpty()) {
                         int freeSlot = inventory.getFreeSlot();
                         if (freeSlot != -1) {
-                            playerSound(attachmentItem, player, SoundManager.UNINSTALL_SOUND);
-                            ClientMessageUnloadAttachment message = new ClientMessageUnloadAttachment(inventory.selected, currentTransformType);
+                            SoundPlayManager.playerRefitSound(attachmentItem, player, SoundManager.UNINSTALL_SOUND);
+                            ClientMessageUnloadAttachment message = new ClientMessageUnloadAttachment(inventory.selected, RefitTransform.getCurrentTransformType());
                             NetworkHandler.CHANNEL.sendToServer(message);
                         } else {
                             player.sendSystemMessage(Component.translatable("gui.tacz.gun_refit.unload.no_space"));

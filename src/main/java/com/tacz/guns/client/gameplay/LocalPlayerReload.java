@@ -1,11 +1,11 @@
 package com.tacz.guns.client.gameplay;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunReloadEvent;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
@@ -81,10 +81,9 @@ public class LocalPlayerReload {
 
     // TODO 这块没完全弄好，目前还有问题
     private void playMagExtendedAnimation(ItemStack mainhandItem, IGun iGun, GunAnimationStateMachine animationStateMachine) {
-        ItemStack extendedMagItem = iGun.getAttachment(mainhandItem, AttachmentType.EXTENDED_MAG);
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(extendedMagItem);
-        if (iAttachment != null) {
-            TimelessAPI.getCommonAttachmentIndex(iAttachment.getAttachmentId(extendedMagItem)).ifPresent(index -> {
+        ResourceLocation extendedMagId = iGun.getAttachmentId(mainhandItem, AttachmentType.EXTENDED_MAG);
+        if (!DefaultAssets.isEmptyAttachmentId(extendedMagId)) {
+            TimelessAPI.getCommonAttachmentIndex(extendedMagId).ifPresent(index -> {
                 animationStateMachine.setMagExtended(index.getData().getExtendedMagLevel() > 0);
             });
         }

@@ -11,6 +11,7 @@ import com.tacz.guns.client.tooltip.ClientAmmoBoxTooltip;
 import com.tacz.guns.client.tooltip.ClientAttachmentItemTooltip;
 import com.tacz.guns.client.tooltip.ClientGunTooltip;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
+import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
@@ -79,5 +80,8 @@ public class ClientSetupEvent {
 
         // 与 player animator 的兼容
         event.enqueueWork(PlayerAnimatorCompat::init);
+
+        // 与 Shoulder Surfing Reloaded 的兼容
+        event.enqueueWork(ShoulderSurfingCompat::init);
     }
 }

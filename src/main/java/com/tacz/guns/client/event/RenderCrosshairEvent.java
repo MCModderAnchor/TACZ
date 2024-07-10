@@ -13,6 +13,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import com.tacz.guns.client.renderer.crosshair.CrosshairType;
+import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -79,13 +80,20 @@ public class RenderCrosshairEvent {
             IClientPlayerGunOperator playerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
                 // 瞄准快要完成时，取消准心渲染
-                if (!gunIndex.isShowCrosshair() && playerGunOperator.getClientAimingProgress(event.getPartialTick()) > 0.9) {
-                    return;
+                if (playerGunOperator.getClientAimingProgress(event.getPartialTick()) > 0.9) {
+                    // 枪包可以强制显示准星
+                    boolean forceShow = gunIndex.isShowCrosshair();
+                    // 越肩视角可以强制显示准星
+                    boolean shoulderSurfingForceShow = ShoulderSurfingCompat.showCrosshair();
+                    // 两个强制都没有时，那么才允许隐藏
+                    if (!forceShow && !shoulderSurfingForceShow) {
+                        return;
+                    }
                 }
 
                 GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (!animationStateMachine.shouldHideCrossHair()) {
-                    renderCrosshair(event.getPoseStack(), event.getWindow(), gunIndex.getCrosshairTextureLocation());
+                    renderCrosshair(event.getPoseStack(), event.getWindow());
                 }
             });
         }
@@ -97,9 +105,11 @@ public class RenderCrosshairEvent {
         isRefitScreen = Minecraft.getInstance().screen instanceof GunRefitScreen;
     }
 
-    private static void renderCrosshair(PoseStack poseStack, Window window, @Nullable ResourceLocation crosshairTextureLocation) {
+    private static void renderCrosshair(PoseStack poseStack, Window window) {
         Options options = Minecraft.getInstance().options;
-        if (!options.getCameraType().isFirstPerson()) {
+        // 越肩视角可以强制显示准星
+        boolean shoulderSurfingForceShow = ShoulderSurfingCompat.showCrosshair();
+        if (!options.getCameraType().isFirstPerson() && !shoulderSurfingForceShow) {
             return;
         }
         if (options.hideGui) {
@@ -115,7 +125,7 @@ public class RenderCrosshairEvent {
         int width = window.getGuiScaledWidth();
         int height = window.getGuiScaledHeight();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        ResourceLocation location = Objects.requireNonNullElseGet(crosshairTextureLocation, () -> CrosshairType.getTextureLocation(RenderConfig.CROSSHAIR_TYPE.get()));
+        ResourceLocation location = CrosshairType.getTextureLocation(RenderConfig.CROSSHAIR_TYPE.get());
         RenderSystem.setShaderTexture(0, location);
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
