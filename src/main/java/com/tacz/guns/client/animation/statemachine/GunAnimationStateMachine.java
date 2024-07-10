@@ -1,4 +1,4 @@
-package com.tacz.guns.client.animation.internal;
+package com.tacz.guns.client.animation.statemachine;
 
 import com.tacz.guns.api.client.animation.AnimationController;
 import com.tacz.guns.api.client.animation.AnimationPlan;
@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
 
-import static com.tacz.guns.client.animation.internal.GunAnimationConstant.*;
+import static com.tacz.guns.client.animation.statemachine.GunAnimationConstant.*;
 
 @OnlyIn(Dist.CLIENT)
 public class GunAnimationStateMachine {
@@ -26,6 +26,10 @@ public class GunAnimationStateMachine {
     protected static final IntSet BLENDING_TRACKS = new IntLinkedOpenHashSet();
     protected static int TRACK_INDEX_TOP = 0;
 
+    public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
+    public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
+    public static final int MAIN_TRACK = staticTrack();
+    public static final int MOVEMENT_TRACK = blendingTrack();
     /**
      * 射击轨道 12 个，支持 0.5 秒的射击动画在 rpm 1200 以内播放
      */
@@ -34,10 +38,6 @@ public class GunAnimationStateMachine {
             blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack(),
             blendingTrack(), blendingTrack(), blendingTrack(), blendingTrack()
     };
-    public static final int MOVEMENT_TRACK = blendingTrack();
-    public static final int MAIN_TRACK = staticTrack();
-    public static final int BOLT_CATCH_STATIC_TRACK = staticTrack();
-    public static final int HOLDING_POSE_STATIC_TRACK = staticTrack();
 
     protected AnimationController controller;
     protected boolean noAmmo = false;
