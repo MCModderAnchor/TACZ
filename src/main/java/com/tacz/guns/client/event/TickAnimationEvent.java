@@ -4,7 +4,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.internal.GunAnimationStateMachine;
+import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
