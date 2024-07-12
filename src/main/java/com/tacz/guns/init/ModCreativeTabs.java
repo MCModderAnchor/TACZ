@@ -17,9 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -27,7 +24,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings("all")
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModCreativeTabs {
     private static Map<ResourceLocation, CreativeModeTab> TABS = Maps.newHashMap();
 
@@ -102,11 +98,6 @@ public class ModCreativeTabs {
 
     public static CreativeModeTab getModTabs(ResourceLocation id) {
         return TABS.get(id);
-    }
-
-    @SubscribeEvent
-    public static void onModLoad(final FMLLoadCompleteEvent event) {
-        //event.enqueueWork(() -> initCreativeTabs());
     }
 
     private static class GunModTab extends CreativeModeTab {
