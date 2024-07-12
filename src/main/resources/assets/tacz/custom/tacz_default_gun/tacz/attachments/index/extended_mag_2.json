@@ -1,6 +1,5 @@
 {
   "name": "tacz.attachment.extended_mag_2.name",
-  "tooltip": "tacz.attachment.extended_mag_2.tooltip",
   "display": "tacz:extended_mag_2_display",
   "data": "tacz:extended_mag_2_data",
   "type": "extended_mag"

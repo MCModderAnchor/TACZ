@@ -1,7 +1,6 @@
 {
   // 配件的的显示名称和工具提示，支持本地化
   "name": "tacz.attachment.sight_t1.name",
-  "tooltip": "tacz.attachment.sight_t1.tooltip",
   // 配件的客户端数据
   "display": "tacz:sight_t1_display",
   // 配件的属性
