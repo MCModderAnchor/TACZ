@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "item": "tacz:ammo_box",
+    "nbt": {
+      "Level": 2
+    }
+  },
+  "pattern": [
+    "PIP",
+    "P P",
+    "PPP"
+  ],
+  "key": {
+    "I": {
+      "tag": "forge:gems/diamond"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  }
+}

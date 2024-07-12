@@ -4,13 +4,55 @@
       "predicate": {
         "tacz:ammo_statue": 0
       },
-      "model": "tacz:item/ammo_box_open"
+      "model": "tacz:item/ammo_box/iron_ammo_box_open"
     },
     {
       "predicate": {
         "tacz:ammo_statue": 1
       },
-      "model": "tacz:item/ammo_box_close"
+      "model": "tacz:item/ammo_box/iron_ammo_box_close"
+    },
+    {
+      "predicate": {
+        "tacz:ammo_statue": 2
+      },
+      "model": "tacz:item/ammo_box/gold_ammo_box_open"
+    },
+    {
+      "predicate": {
+        "tacz:ammo_statue": 3
+      },
+      "model": "tacz:item/ammo_box/gold_ammo_box_close"
+    },
+    {
+      "predicate": {
+        "tacz:ammo_statue": 4
+      },
+      "model": "tacz:item/ammo_box/diamond_ammo_box_open"
+    },
+    {
+      "predicate": {
+        "tacz:ammo_statue": 5
+      },
+      "model": "tacz:item/ammo_box/diamond_ammo_box_close"
+    },
+    {
+      "predicate": {
+        "tacz:ammo_statue": 6
+      },
+      "model": "tacz:item/ammo_box/creative_ammo_box_open"
+    },
+    {
+      "predicate": {
+        "tacz:ammo_statue": 7
+      },
+      "model": "tacz:item/ammo_box/creative_ammo_box_close"
+    },
+    {
+      "predicate": {
+        "tacz:ammo_statue": 8
+      },
+      "model": "tacz:item/ammo_box/all_type_creative_ammo_box"
     }
   ]
 }
