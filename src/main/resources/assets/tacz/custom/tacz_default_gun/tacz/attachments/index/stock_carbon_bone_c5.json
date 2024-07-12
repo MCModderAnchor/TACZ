@@ -1,6 +1,5 @@
 {
   "name": "tacz.attachment.stock_carbon_bone_c5.name",
-  "tooltip": "tacz.attachment.stock_carbon_bone_c5.tooltip",
   "display": "tacz:stock_carbon_bone_c5_display",
   "data": "tacz:stock_carbon_bone_c5_data",
   "type": "stock"

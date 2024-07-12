@@ -1,6 +1,5 @@
 {
   "name": "tacz.attachment.bayonet_6h3.name",
-  "tooltip": "tacz.attachment.bayonet_6h3.tooltip",
   "display": "tacz:bayonet_6h3_display",
   "data": "tacz:bayonet_6h3_data",
   "type": "muzzle"

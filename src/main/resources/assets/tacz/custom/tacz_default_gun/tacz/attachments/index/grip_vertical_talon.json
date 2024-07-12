@@ -1,6 +1,5 @@
 {
   "name": "tacz.attachment.grip_vertical_talon.name",
-  "tooltip": "tacz.attachment.grip_magpul_afg_2.tooltip",
   "display": "tacz:grip_vertical_talon_display",
   "data": "tacz:grip_vertical_talon_data",
   "type": "grip"
