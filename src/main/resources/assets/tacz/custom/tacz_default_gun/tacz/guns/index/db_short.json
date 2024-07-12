@@ -1,11 +1,7 @@
 {
-    // 枪械的显示名称，支持本地化
-    "name": "tacz.gun.db_short.name",
-    // 枪械效果文件
-    "display": "tacz:db_short_display",
-    // 枪械参数文件
-    "data": "tacz:db_short_data",
-    // 枪械种类，用于创造标签栏归类。
-    "tooltip": "tacz.gun.db_short.desc",
-    "type": "shotgun"
+  "name": "tacz.gun.db_short.name",
+  "display": "tacz:db_short_display",
+  "data": "tacz:db_short_data",
+  "tooltip": "tacz.gun.db_short.desc",
+  "type": "shotgun"
 }

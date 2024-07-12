@@ -1,8 +1,8 @@
 {
   "pack.tacz.tacz_default_gun.name": "TAC Zero Default Pack",
   "pack.tacz.tacz_default_gun.desc": "That this nation, under God, shall have a new birth of freedom, and that government of the people, by the people, for the people, shall not perish from the earth.",
-  
-  
+
+
   "tacz.type.ammo.name": "Ammo",
   "tacz.type.pistol.name": "Pistol",
   "tacz.type.rifle.name": "Rifle",
@@ -11,7 +11,6 @@
   "tacz.type.sniper.name": "Sniper",
   "tacz.type.shotgun.name": "Shotgun",
   "tacz.type.smg.name": "SMG",
-  "tacz.type.unknown.name": "Unknown",
   "tacz.type.scope.name": "Scope",
   "tacz.type.muzzle.name": "Muzzle",
   "tacz.type.stock.name": "Stock",
@@ -53,7 +52,7 @@
   "tacz.gun.db_short.desc": "Although it's not the right size, it gets the job done.",
   "tacz.gun.deagle_golden.desc": "Shiny and charismatic.",
   "tacz.gun.deagle.desc": "It can destroy anything just like your wrists.",
-  "tacz.gun.glock17.desc": "Exercise your Second Amendment rights.",
+  "tacz.gun.glock_17.desc": "Exercise your Second Amendment rights.",
   "tacz.gun.hk_g3.desc": "The left hand of the world of the freedom.",
   "tacz.gun.hk_mp5a5.desc": "Just like petting a purring cat.",
   "tacz.gun.m4a1.desc": "Soldiers' love, wife, and mistress.",
@@ -69,10 +68,7 @@
   "tacz.gun.uzi.desc": "Better than empty hand.",
   "tacz.gun.vector45.desc": "It is fast, but a bit too fast.",
 
-  
 
-  
-  
   "tacz.ammo.9mm.name": "§a9mm Bullet",
   "tacz.ammo.12g.name": "§912 Gauge Bullet",
   "tacz.ammo.30_06.name": "§b.30-06 Springfield Bullet",
@@ -131,7 +127,9 @@
   "tacz.attachment.muzzle_brake_cthulhu.name": "Cthulhu K7 Brake",
   "tacz.attachment.muzzle_brake_trex.name": "T-Rex Heavy Brake",
 
+
   "tacz.attachment.deagle_golden_long_barrel.name": ".357 Golden Deagle Long Barrel",
+
 
   "tacz.attachment.bayonet_6h3.name": "6H3 Bayonet",
   "tacz.attachment.bayonet_m9.name": "M9 Bayonet",

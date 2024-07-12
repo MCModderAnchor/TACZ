@@ -1,11 +1,7 @@
 {
-    // 枪械的显示名称，支持本地化
-    "name": "tacz.gun.sks_tactical.name",
-    // 枪械效果文件
-    "display": "tacz:sks_tactical_display",
-    // 枪械参数文件
-    "data": "tacz:sks_tactical_data",
-    // 枪械种类，用于创造标签栏归类。
-    "tooltip": "tacz.gun.sks_tactical.desc",
-    "type": "rifle"
+  "name": "tacz.gun.sks_tactical.name",
+  "display": "tacz:sks_tactical_display",
+  "data": "tacz:sks_tactical_data",
+  "tooltip": "tacz.gun.sks_tactical.desc",
+  "type": "rifle"
 }
