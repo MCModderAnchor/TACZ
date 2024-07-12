@@ -170,7 +170,7 @@ public class GunHudOverlay implements IGuiOverlay {
             }
             if (inventoryItem.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(stack, inventoryItem)) {
                 // 创造模式弹药箱？直接返回 9999
-                if (iAmmoBox.isCreative(inventoryItem)) {
+                if (iAmmoBox.isAllTypeCreative(inventoryItem) || iAmmoBox.isCreative(inventoryItem)) {
                     cacheInventoryAmmoCount = 9999;
                     return;
                 }
