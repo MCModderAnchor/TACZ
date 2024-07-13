@@ -69,7 +69,7 @@
   "tooltip.tacz.gun.explosion": " (Eksplozja)",
   "tooltip.tacz.gun.type": "Typ: ",
   "tooltip.tacz.gun.damage": "Obrażenia: ",
-  "tooltip.tacz.gun.armor_ignore": "\n%s Minecraft Przebijalność Pancerza",
+  "tooltip.tacz.gun.armor_ignore": "%s Minecraft Przebijalność Pancerza",
   "tooltip.tacz.gun.head_shot_multiplier": "%s Obrażenia Strzału w Głowę",
   "tooltip.tacz.gun.tips": "<<< Naciśnij %s w grze, aby dostosować  >>>",
   "tooltip.tacz.attachment.scope": "Luneta",
