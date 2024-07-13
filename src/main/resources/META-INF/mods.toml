@@ -30,7 +30,7 @@ side = "BOTH"
 [[dependencies.tacz]]
 modId = "shouldersurfing"
 mandatory = false
-versionRange = "[1.20.1-4.0.0,)"
+versionRange = "[1.19.2-4.0.0,)"
 ordering = "NONE"
 side = "CLIENT"
 
