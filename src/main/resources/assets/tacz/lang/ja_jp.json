@@ -50,7 +50,7 @@
   "tooltip.tacz.gun.explosion": " (爆発)",
   "tooltip.tacz.gun.type": "種類: ",
   "tooltip.tacz.gun.damage": "ダメージ: ",
-  "tooltip.tacz.gun.armor_ignore": "%s Minecraftの防具貫通力",
+  "tooltip.tacz.gun.armor_ignore": "%s 防具貫通率",
   "tooltip.tacz.gun.head_shot_multiplier": "%s ヘッドショットダメージ",
   "tooltip.tacz.gun.tips": "<<< %s を押してカスタマイズ >>>",
   "tooltip.tacz.attachment.scope": "スコープ",
