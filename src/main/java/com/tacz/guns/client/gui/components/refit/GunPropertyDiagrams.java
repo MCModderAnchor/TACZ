@@ -125,7 +125,7 @@ public final class GunPropertyDiagrams {
                 Screen.fill(poseStack, ammoLength, y + 47, barRight, y + 51, barPositivelyColor);
                 font.draw(poseStack, String.format("%d §a(+%d)", ammoAmount, addAmmoCount), valueTextStartX, y + 45, fontColor);
             } else {
-                font.draw(poseStack, String.valueOf(ammoAmount), valueTextStartX, y + 45, fontColor);
+                font.draw(poseStack, String.format("%d", ammoAmount), valueTextStartX, y + 45, fontColor);
             }
 
 
@@ -160,7 +160,7 @@ public final class GunPropertyDiagrams {
                 Screen.fill(poseStack, yawModifierLength, y + 57, yawLength, y + 61, barPositivelyColor);
                 font.draw(poseStack, String.format("%.2f §a(%.2f)", yawRecoil, attachmentRecoilModifier[1]), valueTextStartX, y + 55, fontColor);
             } else {
-                font.draw(poseStack, String.valueOf(yawRecoil), valueTextStartX, y + 55, fontColor);
+                font.draw(poseStack, String.format("%.2f", yawRecoil), valueTextStartX, y + 55, fontColor);
             }
 
             font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.pitch"), nameTextStartX, y + 65, fontColor);
@@ -173,7 +173,7 @@ public final class GunPropertyDiagrams {
                 Screen.fill(poseStack, pitchModifierLength, y + 67, pitchLength, y + 71, barPositivelyColor);
                 font.draw(poseStack, String.format("%.2f §a(%.2f)", pitchRecoil, attachmentRecoilModifier[0]), valueTextStartX, y + 65, fontColor);
             } else {
-                font.draw(poseStack, String.valueOf(pitchRecoil), valueTextStartX, y + 65, fontColor);
+                font.draw(poseStack, String.format("%.2f", pitchRecoil), valueTextStartX, y + 65, fontColor);
             }
 
 
@@ -193,12 +193,12 @@ public final class GunPropertyDiagrams {
             Screen.fill(poseStack, barStartX, y + 77, aimeTimeLength, y + 81, barBaseColor);
             if (adsTimeModifier[0] > 0) {
                 Screen.fill(poseStack, aimeTimeLength, y + 77, adsModifierLength, y + 81, barNegativeColor);
-                font.draw(poseStack, String.format("%.2fs §c(+%.2f)", pitchRecoil, adsTimeModifier[0]), valueTextStartX, y + 75, fontColor);
+                font.draw(poseStack, String.format("%.2fs §c(+%.2f)", aimTime, adsTimeModifier[0]), valueTextStartX, y + 75, fontColor);
             } else if (adsTimeModifier[0] < 0) {
                 Screen.fill(poseStack, adsModifierLength, y + 77, aimeTimeLength, y + 81, barPositivelyColor);
-                font.draw(poseStack, String.format("%.2fs §a(%.2f)", pitchRecoil, adsTimeModifier[0]), valueTextStartX, y + 75, fontColor);
+                font.draw(poseStack, String.format("%.2fs §a(%.2f)", aimTime, adsTimeModifier[0]), valueTextStartX, y + 75, fontColor);
             } else {
-                font.draw(poseStack, String.valueOf(aimTime), valueTextStartX, y + 75, fontColor);
+                font.draw(poseStack, String.format("%.2fs", aimTime), valueTextStartX, y + 75, fontColor);
             }
 
 
