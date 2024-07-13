@@ -50,7 +50,7 @@
   "tooltip.tacz.gun.explosion": " (Explosion)",
   "tooltip.tacz.gun.type": "Type: ",
   "tooltip.tacz.gun.damage": "Dégâts: ",
-  "tooltip.tacz.gun.armor_ignore": "%s Perforation de l'Armure Minecraft",
+  "tooltip.tacz.gun.armor_ignore": "%s Perforation de l'Armure",
   "tooltip.tacz.gun.head_shot_multiplier": "%s Dégâts De Tir À La Tête",
   "tooltip.tacz.gun.tips": "<<< Appuyez sur %s pour les Améliorations >>>",
   "tooltip.tacz.attachment.scope": "Lunette",
