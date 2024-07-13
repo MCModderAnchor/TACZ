@@ -123,7 +123,7 @@ public final class GunPropertyDiagrams {
                 graphics.fill(ammoLength, y + 47, barRight, y + 51, barPositivelyColor);
                 graphics.drawString(font, String.format("%d §a(+%d)", ammoAmount, addAmmoCount), valueTextStartX, y + 45, fontColor, false);
             } else {
-                graphics.drawString(font, String.valueOf(ammoAmount), valueTextStartX, y + 45, fontColor, false);
+                graphics.drawString(font, String.format("%d", ammoAmount), valueTextStartX, y + 45, fontColor, false);
             }
 
 
@@ -158,7 +158,7 @@ public final class GunPropertyDiagrams {
                 graphics.fill(yawModifierLength, y + 57, yawLength, y + 61, barPositivelyColor);
                 graphics.drawString(font, String.format("%.2f §a(%.2f)", yawRecoil, attachmentRecoilModifier[1]), valueTextStartX, y + 55, fontColor, false);
             } else {
-                graphics.drawString(font, String.valueOf(yawRecoil), valueTextStartX, y + 55, fontColor, false);
+                graphics.drawString(font, String.format("%.2f", yawRecoil), valueTextStartX, y + 55, fontColor, false);
             }
 
             graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.pitch"), nameTextStartX, y + 65, fontColor, false);
@@ -171,7 +171,7 @@ public final class GunPropertyDiagrams {
                 graphics.fill(pitchModifierLength, y + 67, pitchLength, y + 71, barPositivelyColor);
                 graphics.drawString(font, String.format("%.2f §a(%.2f)", pitchRecoil, attachmentRecoilModifier[0]), valueTextStartX, y + 65, fontColor, false);
             } else {
-                graphics.drawString(font, String.valueOf(pitchRecoil), valueTextStartX, y + 65, fontColor, false);
+                graphics.drawString(font, String.format("%.2f", pitchRecoil), valueTextStartX, y + 65, fontColor, false);
             }
 
 
@@ -191,12 +191,12 @@ public final class GunPropertyDiagrams {
             graphics.fill(barStartX, y + 77, aimeTimeLength, y + 81, barBaseColor);
             if (adsTimeModifier[0] > 0) {
                 graphics.fill(aimeTimeLength, y + 77, adsModifierLength, y + 81, barNegativeColor);
-                graphics.drawString(font, String.format("%.2fs §c(+%.2f)", pitchRecoil, adsTimeModifier[0]), valueTextStartX, y + 75, fontColor, false);
+                graphics.drawString(font, String.format("%.2fs §c(+%.2f)", aimTime, adsTimeModifier[0]), valueTextStartX, y + 75, fontColor, false);
             } else if (adsTimeModifier[0] < 0) {
                 graphics.fill(adsModifierLength, y + 77, aimeTimeLength, y + 81, barPositivelyColor);
-                graphics.drawString(font, String.format("%.2fs §a(%.2f)", pitchRecoil, adsTimeModifier[0]), valueTextStartX, y + 75, fontColor, false);
+                graphics.drawString(font, String.format("%.2fs §a(%.2f)", aimTime, adsTimeModifier[0]), valueTextStartX, y + 75, fontColor, false);
             } else {
-                graphics.drawString(font, String.valueOf(aimTime), valueTextStartX, y + 75, fontColor, false);
+                graphics.drawString(font, String.format("%.2fs", aimTime), valueTextStartX, y + 75, fontColor, false);
             }
 
 
