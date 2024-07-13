@@ -4,17 +4,11 @@
       "item": {
         "tag": "forge:ingots/iron"
       },
-      "count": 38
+      "count": 70
     },
     {
       "item": {
-        "tag": "forge:gems/lapis"
-      },
-      "count": 6
-    },
-    {
-      "item": {
-        "tag": "minecraft:logs"
+        "tag": "forge:ingots/gold"
       },
       "count": 8
     },
@@ -22,25 +16,13 @@
       "item": {
         "tag": "forge:gems/lapis"
       },
-      "count": 6
+      "count": 4
     },
     {
       "item": {
         "tag": "minecraft:logs"
       },
-      "count": 8
-    },
-    {
-      "item": {
-        "tag": "forge:gems/lapis"
-      },
-      "count": 6
-    },
-    {
-      "item": {
-        "tag": "minecraft:logs"
-      },
-      "count": 8
+      "count": 10
     }
   ],
   "result": {

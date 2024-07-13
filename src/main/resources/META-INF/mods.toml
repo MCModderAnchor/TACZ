@@ -19,12 +19,20 @@ mandatory = true
 versionRange = "[40,)"
 ordering = "NONE"
 side = "BOTH"
+
 [[dependencies.tacz]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.18.2,1.19)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.tacz]]
+modId = "shouldersurfing"
+mandatory = false
+versionRange = "[1.20.1-4.0.0,)"
+ordering = "NONE"
+side = "CLIENT"
 
 [modproperties.tacz]
 catalogueItemIcon = "tacz:gun_smith_table"
