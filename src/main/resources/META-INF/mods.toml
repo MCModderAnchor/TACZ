@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[43,)"
-license = "GPL3 / CC BY-NC-SA 4.0"
+license = "GPL3 / CC BY-NC-ND 4.0"
 
 [[mods]]
 modId = "tacz"
