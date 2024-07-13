@@ -15,7 +15,7 @@
   "message.tacz.target_minecart.hit": "피해량: %s 사거리: %s",
   "key.tacz.reload.desc": "재장전",
   "key.tacz.inspect.desc": "둘러보기",
-  "key.tacz.interact.desc": "총기와 상호작용",
+  "key.tacz.interact.desc": "총기 상호작용",
   "key.tacz.shoot.desc": "사격",
   "key.tacz.fire_select.desc": "사격 모드 변경",
   "key.tacz.aim.desc": "조준",

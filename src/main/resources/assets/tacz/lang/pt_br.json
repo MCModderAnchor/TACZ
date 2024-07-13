@@ -27,7 +27,7 @@
   "block.tacz.gun_smith_table": "Mesa de Armeiro",
   "block.tacz.target": "Alvo Humano",
   "item.tacz.ammo_box": "Caixa de Munição",
-  "item.tacz.ammo_box.creative": "Caixa de Munição (Modo Criativo)",
+  "item.tacz.ammo_box.creative": "Caixa de Munição",
   "item.tacz.target_minecart": "Carrinho de Mina com Alvo",
   "entity.tacz.target_minecart": "Carrinho de Mina com Alvo",
   "gui.tacz.gun_smith_table.preview": "Pré-visualização",
