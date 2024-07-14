@@ -48,7 +48,7 @@
   "gui.tacz.gun_refit.property_diagrams.damage": "Daño",
   "gui.tacz.gun_refit.property_diagrams.rpm": "RPM",
   "gui.tacz.gun_refit.property_diagrams.accuracy": "Precisión",
-  "gui.tacz.gun_refit.property_diagrams.hipfire_inaccuracy": "Disparo desde la cadera",
+  "gui.tacz.gun_refit.property_diagrams.hipfire_inaccuracy": "Disparar sin apuntar",
   "gui.tacz.gun_refit.property_diagrams.ammo_capacity": "Munición",
   "gui.tacz.gun_refit.property_diagrams.pitch": "Retroceso Vertical",
   "gui.tacz.gun_refit.property_diagrams.yaw": "Retroceso Horizontal",
