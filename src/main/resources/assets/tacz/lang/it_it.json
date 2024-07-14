@@ -50,7 +50,7 @@
   "gui.tacz.gun_refit.property_diagrams.accuracy": "Precisione",
   "gui.tacz.gun_refit.property_diagrams.hipfire_inaccuracy": "Hipfire",
   "gui.tacz.gun_refit.property_diagrams.ammo_capacity": "Munizioni",
-  "gui.tacz.gun_refit.property_diagrams.pitch": "Ver.Recoil",
+  "gui.tacz.gun_refit.property_diagrams.pitch": "Rinculo Verticale",
   "gui.tacz.gun_refit.property_diagrams.yaw": "Hor.Recoil",
   "gui.tacz.gun_refit.property_diagrams.ads": "ADS",
   "gui.tacz.gun_refit.property_diagrams.sprint_time": "SPT",
