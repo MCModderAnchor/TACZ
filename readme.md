@@ -48,17 +48,26 @@ Timeless and Classics Guns Zero is a gun mod for Minecraft Forge 1.20.1.
 ```groovy
 repositories {
     maven {
-        // Add jitpack to repositories
-        url 'https://jitpack.io'
+        // Add curse maven to repositories
+        name = "Curse Maven"
+        url = "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
     }
 }
 
 dependencies {
-    // Apache Commons Math, Need by TACZ
-    minecraftLibrary 'org.apache.commons:commons-math3:3.6.1'
-  
-    // Add implementation
-    // tacz_version: copy from https://jitpack.io/#MCModderAnchor/TACZ
-    implementation 'com.github.MCModderAnchor:TACZ:${tacz_version}'
+    // You can see the https://www.cursemaven.com/
+    // Choose one of the following three
+
+    // If you want to use version tacz-1.20.1-1.0.2-release
+    implementation fg.deobf('curse.maven:timeless-and-classics-zero-1028108:5529117-sources-5529578')
+
+    // If you want to use version tacz-1.19.2-1.0.2-release
+    implementation fg.deobf('curse.maven:timeless-and-classics-zero-1028108:5529111-sources-5529576')
+
+    // If you want to use version tacz-1.18.2-1.0.2-release
+    implementation fg.deobf('curse.maven:timeless-and-classics-zero-1028108:5529108-sources-5529188')
 }
 ```
