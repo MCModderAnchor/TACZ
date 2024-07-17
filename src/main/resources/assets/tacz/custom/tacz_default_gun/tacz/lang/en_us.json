@@ -42,6 +42,7 @@
   "tacz.gun.m16a4.name": "M16A4 Service Rifle",
   "tacz.gun.aa12.name": "AA12 Shotgun",
   "tacz.gun.ump45.name":"UMP45 SMG",
+  "tacz.gun.scar_l.name":"SCAR-L Assault Rifle",
 
   
   "tacz.gun.ak47.desc": "From jungles to bays, it's always present.",
@@ -63,6 +64,7 @@
   "tacz.gun.rpg7.desc": "There's nothing the RPG can't deal... except one more shot!",
   "tacz.gun.rpk.desc": "Lightweight, but power-up.",
   "tacz.gun.scar_h.desc": "The only bad thing for expensive things, is the expense.",
+  "tacz.gun.scar_l.desc": "...",
   "tacz.gun.sks_tactical.desc": "Collectors love to see their favorites reborn in the modern age, and this is no exception.",
   "tacz.gun.ump45.desc": "Its flat design makes the enemy's lifeline also flat.",
   "tacz.gun.uzi.desc": "Better than empty hand.",
