@@ -42,6 +42,7 @@
   "tacz.gun.m16a4.name": "M16A4 制式步枪",
   "tacz.gun.aa12.name": "AA12 霰弹枪",
   "tacz.gun.ump45.name":"UMP45 冲锋枪",
+  "tacz.gun.scar_l.name":"SCAR-L 突击步枪",
 
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
@@ -63,6 +64,7 @@
   "tacz.gun.rpg7.desc": "没有什么是一发RPG……再来一发！",
   "tacz.gun.rpk.desc": "轻装上阵，火力升级",
   "tacz.gun.scar_h.desc": "贵的东西唯一的缺点，就是贵",
+  "tacz.gun.scar_l.desc": "贵的东西唯一的缺点，就是贵",
   "tacz.gun.sks_tactical.desc": "收藏家们非常乐意看到自己喜欢的经典款式在现代重生，它也不例外",
   "tacz.gun.ump45.desc": "让对手的心电图和它一样平",
   "tacz.gun.uzi.desc": "总比空着手要强",
