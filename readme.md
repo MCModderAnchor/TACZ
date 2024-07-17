@@ -32,7 +32,7 @@ Timeless and Classics Guns Zero is a gun mod for Minecraft Forge 1.20.1.
 ## Authors
 
 - Programmer: `286799714`, `TartaricAcid`, `F1zeiL`, `xjqsh`, `ClumsyAlien`
-- Artist: `NekoCrane`, `Receke`
+- Artist: `NekoCrane`, `Receke`, `Pos_2333`
 
 ## Credits
 
