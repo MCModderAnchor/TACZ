@@ -15,7 +15,7 @@
   "message.tacz.target_minecart.hit": "Dégâts: %s Distance: %s",
   "key.tacz.reload.desc": "Recharger",
   "key.tacz.inspect.desc": "Inspecter",
-  "key.tacz.interact.desc": "Interagir avec une arme",
+  "key.tacz.interact.desc": "Interagir avec l'arme",
   "key.tacz.shoot.desc": "Tirer",
   "key.tacz.fire_select.desc": "Mode de tir",
   "key.tacz.aim.desc": "Viser",
