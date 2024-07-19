@@ -39,4 +39,18 @@ public class ReloadKey {
             }
         }
     }
+
+    public static boolean onReloadControllerPress(boolean isPress) {
+        if (isInGame() && isPress) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null || player.isSpectator()) {
+                return false;
+            }
+            if (IGun.mainhandHoldGun(player)) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).reload();
+                return true;
+            }
+        }
+        return false;
+    }
 }

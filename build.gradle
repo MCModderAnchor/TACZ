@@ -23,7 +23,6 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
-apply plugin: 'maven-publish'
 
 version = "1.0.3"
 // 版本号，正式发布需要修改这一行
@@ -174,6 +173,9 @@ dependencies {
     // 假人，测试近战伤害
     runtimeOnly fg.deobf("curse.maven:selene-499980:5478857")
     runtimeOnly fg.deobf("curse.maven:mmmmmmmmmmmm-225738:5319203")
+    // 手柄按键支持
+    implementation fg.deobf("curse.maven:framework-549225:4718251")
+    implementation fg.deobf("curse.maven:controllable-317269:4598985")
 
     // 越肩视角，用来兼容第三人称准星
     implementation fg.deobf("curse.maven:shoulder-surfing-reloaded-243190:5455954")
@@ -213,34 +215,6 @@ jar {
 java {
     // 编译源码文件，方便发布 maven
     withSourcesJar()
-}
-
-publishing {
-    // 发布到 jitpack maven，方便其他模组开发者
-    publications.create('mavenJava', MavenPublication) {
-        from components.java
-        groupId = project.group
-        version = project.version
-        artifactId = project.archivesBaseName
-        pom {
-            name = project.archivesBaseName
-            // 删除所有依赖，不需要
-            pom.withXml {
-                asNode().dependencies.dependency.each { dep ->
-                    if (dep.artifactId.get(0).value().get(0) != 'commons-math3') {
-                        assert dep.parent().remove(dep)
-                    } else {
-                        dep.scope.get(0).setValue("minecraftLibrary")
-                    }
-                }
-            }
-        }
-    }
-}
-
-// 禁用元数据生成，它生成的 maven 项目有问题
-tasks.withType(GenerateModuleMetadata).configureEach {
-    enabled = false
 }
 
 tasks.withType(JavaCompile).configureEach {

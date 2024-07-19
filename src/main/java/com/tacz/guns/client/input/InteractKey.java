@@ -47,6 +47,32 @@ public class InteractKey {
         }
     }
 
+    public static boolean onInteractControllerPress(boolean isPress) {
+        if (isInGame() && isPress) {
+            Minecraft mc = Minecraft.getInstance();
+            LocalPlayer player = mc.player;
+            if (player == null || player.isSpectator()) {
+                return false;
+            }
+            if (!IGun.mainhandHoldGun(player)) {
+                return false;
+            }
+            HitResult hitResult = mc.hitResult;
+            if (hitResult == null) {
+                return false;
+            }
+            if (hitResult instanceof BlockHitResult blockHitResult) {
+                interactBlock(blockHitResult, player, mc);
+                return true;
+            }
+            if (hitResult instanceof EntityHitResult entityHitResult) {
+                interactEntity(entityHitResult, mc);
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void doInteractLogic() {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
