@@ -98,9 +98,9 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         if (shouldShow(GunTooltipPart.DESCRIPTION)) {
             @Nullable String tooltip = gunIndex.getPojo().getTooltip();
             if (tooltip != null) {
-                List<FormattedCharSequence> split = font.split(Component.translatable(tooltip), 200);
-                if (split.size() > 2) {
-                    this.desc = split.subList(0, 2);
+                List<FormattedCharSequence> split = font.split(Component.translatable(tooltip), 300);
+                if (split.size() > 3) {
+                    this.desc = split.subList(0, 3);
                 } else {
                     this.desc = split;
                 }
