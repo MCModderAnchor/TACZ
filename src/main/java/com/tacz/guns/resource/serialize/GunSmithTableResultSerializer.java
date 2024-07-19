@@ -8,9 +8,12 @@ import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.crafting.GunSmithTableResult;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.pojo.data.recipe.GunResult;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
@@ -27,17 +30,30 @@ public class GunSmithTableResultSerializer implements JsonDeserializer<GunSmithT
             if (jsonObject.has("count")) {
                 count = Math.max(GsonHelper.getAsInt(jsonObject, "count"), 1);
             }
+
+            GunSmithTableResult result;
             switch (typeName) {
-                case GunSmithTableResult.GUN -> {
-                    return getGunStack(id, count, jsonObject);
-                }
-                case GunSmithTableResult.AMMO -> {
-                    return getAmmoStack(id, count);
-                }
-                case GunSmithTableResult.ATTACHMENT -> {
-                    return getAttachmentStack(id, count);
+                case GunSmithTableResult.GUN -> result = getGunStack(id, count, jsonObject);
+                case GunSmithTableResult.AMMO -> result = getAmmoStack(id, count);
+                case GunSmithTableResult.ATTACHMENT -> result = getAttachmentStack(id, count);
+                default -> {
+                    return new GunSmithTableResult(ItemStack.EMPTY, StringUtils.EMPTY);
                 }
             }
+
+            // 附加 NBT 数据
+            if (jsonObject.has("nbt")) {
+                CompoundTag extraTag = CraftingHelper.getNBT(jsonObject.get("nbt"));
+                CompoundTag itemTag = result.getResult().getOrCreateTag();
+                for (String key : extraTag.getAllKeys()) {
+                    Tag tag = extraTag.get(key);
+                    if (tag != null) {
+                        itemTag.put(key, tag);
+                    }
+                }
+            }
+
+            return result;
         }
         return new GunSmithTableResult(ItemStack.EMPTY, StringUtils.EMPTY);
     }
