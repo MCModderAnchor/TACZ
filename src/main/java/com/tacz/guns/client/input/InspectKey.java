@@ -39,4 +39,18 @@ public class InspectKey {
             }
         }
     }
+
+    public static boolean onInspectControllerPress(boolean isPress) {
+        if (isInGame() && isPress) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null || player.isSpectator()) {
+                return false;
+            }
+            if (IGun.mainhandHoldGun(player)) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).inspect();
+                return true;
+            }
+        }
+        return false;
+    }
 }
