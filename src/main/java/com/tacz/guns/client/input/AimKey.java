@@ -54,6 +54,35 @@ public class AimKey {
         }
     }
 
+    public static boolean onAimControllerPress(boolean isPress) {
+        if (!isInGame()) {
+            return false;
+        }
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || player.isSpectator()) {
+            return false;
+        }
+        if (!(player instanceof IClientPlayerGunOperator operator)) {
+            return false;
+        }
+        if (!IGun.mainhandHoldGun(player)) {
+            return false;
+        }
+        boolean action = true;
+        if (!KeyConfig.HOLD_TO_AIM.get()) {
+            action = !operator.isAim();
+        }
+        if (isPress) {
+            IClientPlayerGunOperator.fromLocalPlayer(player).aim(action);
+            return true;
+        }
+        if (KeyConfig.HOLD_TO_AIM.get()) {
+            IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
+            return true;
+        }
+        return false;
+    }
+
     @SubscribeEvent
     public static void cancelAim(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
