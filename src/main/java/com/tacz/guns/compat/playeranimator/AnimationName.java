@@ -5,6 +5,7 @@ public final class AnimationName {
     public static final String WALK_UPPER = "walk_upper";
     public static final String RUN_UPPER = "run_upper";
     public static final String AIM_UPPER = "aim_upper";
+    public static final String CROUCH_WALK_UPPER = "crouch_walk_upper";
 
     public static final String HOLD_LOWER = "hold_lower";
     public static final String WALK_LOWER = "walk_lower";
