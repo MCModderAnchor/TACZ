@@ -19,7 +19,8 @@
     "pierce": 0,
     "explosion": {
       "damage": 50,
-      "radius": 6
+      "radius": 6,
+      "knockback": true
     }
   },
   "reload": {
