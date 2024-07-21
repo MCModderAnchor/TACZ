@@ -7,7 +7,7 @@
     60
   ],
   "bolt": "closed_bolt",
-  "rpm": 850,
+  "rpm": 810,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
@@ -43,12 +43,11 @@
   },
   "draw_time": 0.3,
   "put_away_time": 0.43,
-  "aim_time": 0.2,
-  "sprint_time": 0.2,
+  "aim_time": 0.17,
+  "sprint_time": 0.18,
   "fire_mode": [
     "auto",
-    "semi",
-    "burst"
+    "semi"
   ],
   "burst_data": {
     "continuous_shoot": false,
@@ -64,8 +63,8 @@
       {"time": 0.65, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [0.15, 0.25]},
-      {"time": 0.3, "value": [0.15, 0.25]},
+      {"time": 0, "value": [-0.35, 0.25]},
+      {"time": 0.3, "value": [-0.35, 0.25]},
       {"time": 0.5, "value": [0, 0]}
     ]
   },
@@ -88,7 +87,7 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_stock",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1,
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值

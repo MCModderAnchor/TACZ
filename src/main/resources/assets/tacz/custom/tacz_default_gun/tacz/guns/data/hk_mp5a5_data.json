@@ -1,6 +1,6 @@
 {
   "ammo": "tacz:9mm",
-  "rpm": 900,
+  "rpm": 820,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
@@ -44,7 +44,7 @@
   },
   "draw_time": 0.32,
   "put_away_time": 0.35,
-  "sprint_time": 0.2,
+  "sprint_time": 0.12,
   "aim_time": 0.17,
   "fire_mode": [
     "auto",
@@ -66,14 +66,14 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.55, 0.55]},
-      {"time": 0.3, "value": [0.55, 0.55]},
+      {"time": 0, "value": [0.45, 0.45]},
+      {"time": 0.3, "value": [0.45, 0.45]},
       {"time": 0.5, "value": [-0.125, -0.125]},
       {"time": 0.65, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [0.15, 0.25]},
-      {"time": 0.3, "value": [0.15, 0.25]},
+      {"time": 0, "value": [-0.275, 0.275]},
+      {"time": 0.3, "value": [-0.275, 0.275]},
       {"time": 0.5, "value": [0, 0]}
     ]
   },
@@ -97,7 +97,7 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_push",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1,
       // 刺刀范围角度
       "range_angle": 40,
       // 刺刀冷却时间，枪械里还有个刺刀冷却时间参数，两者做加和

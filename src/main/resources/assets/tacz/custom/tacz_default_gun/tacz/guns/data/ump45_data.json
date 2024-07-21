@@ -69,8 +69,8 @@
       {"time": 0.7, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.15, 0.15]},
-      {"time": 0.3, "value": [-0.15, 0.1]},
+      {"time": 0, "value": [-0.2, 0.15]},
+      {"time": 0.3, "value": [-0.2, 0.15]},
       {"time": 0.55, "value": [0, 0]}
     ]
   },
@@ -93,11 +93,11 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_stock",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1,
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值
-      "damage": 4,
+      "damage": 6,
       // 击退效果
       "knockback": 0.6,
       // 前摇时长，单位：秒

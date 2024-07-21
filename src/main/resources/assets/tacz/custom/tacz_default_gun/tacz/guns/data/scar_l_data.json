@@ -11,7 +11,7 @@
   "bullet": {
     "life": 0.8,
     "bullet_amount": 1,
-    "damage": 7,
+    "damage": 7.5,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.25,
@@ -26,7 +26,7 @@
     "speed": 300,
     "gravity": 0.098,
     "knockback": 0,
-    "friction": 0.0125,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 1
   },
@@ -58,15 +58,15 @@
   },
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.6, 0.6]},
-      {"time": 0.25, "value": [0.6, 0.6]},
+      {"time": 0, "value": [0.5, 0.5]},
+      {"time": 0.25, "value": [0.5, 0.5]},
       {"time": 0.45, "value": [-0.2, -0.2]},
       {"time": 0.6, "value": [0, 0]},
       {"time": 0.7, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.3, 0.1]},
-      {"time": 0.35, "value": [-0.3, 0.1]},
+      {"time": 0, "value": [-0.2, 0.15]},
+      {"time": 0.35, "value": [-0.2, 0.15]},
       {"time": 0.5, "value": [0, 0]}
     ]
   },
@@ -75,7 +75,7 @@
     "move": 5.5,
     "sneak": 4.875,
     "lie": 4,
-    "aim": 0.125
+    "aim": 0.1
   },
   // 近战相关
   "melee": {

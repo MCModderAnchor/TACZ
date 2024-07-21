@@ -27,6 +27,9 @@
   ],
   "result": {
     "type": "gun",
-    "id": "tacz:rpk"
+    "id": "tacz:rpk",
+    "attachments": {
+      "stock": "tacz:oem_stock_heavy"
+    }
   }
 }
