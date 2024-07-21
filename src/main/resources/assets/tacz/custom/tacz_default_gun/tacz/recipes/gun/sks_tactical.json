@@ -21,6 +21,9 @@
   ],
   "result": {
     "type": "gun",
-    "id": "tacz:sks_tactical"
+    "id": "tacz:sks_tactical",
+    "attachments": {
+      "stock": "tacz:oem_stock_tactical"
+    }
   }
 }
