@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.tacz.guns.GunMod;
-import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.client.animation.AnimationController;
 import com.tacz.guns.api.client.animation.Animations;
 import com.tacz.guns.api.client.animation.ObjectAnimation;
@@ -257,9 +256,8 @@ public class ClientGunIndex {
 
     private static void checkTransform(GunDisplay display, ClientGunIndex index) {
         GunTransform readTransform = display.getTransform();
-        GunDisplay defaultDisplay = ClientAssetManager.INSTANCE.getGunDisplay(DefaultAssets.DEFAULT_GUN_DISPLAY);
         if (readTransform == null || readTransform.getScale() == null) {
-            index.transform = Objects.requireNonNull(defaultDisplay.getTransform());
+            index.transform = GunTransform.getDefault();
         } else {
             index.transform = display.getTransform();
         }
