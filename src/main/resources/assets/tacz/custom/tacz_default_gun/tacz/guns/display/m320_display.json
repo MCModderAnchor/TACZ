@@ -1,0 +1,42 @@
+{
+  "model": "tacz:gun/m320_geo",
+  "texture": "tacz:gun/uv/m320",
+  "hud": "tacz:gun/hud/m320_hud",
+  "slot": "tacz:gun/slot/m320_slot",
+  "animation": "tacz:m320",
+  "use_default_animation": "rifle",
+  "lod": {
+    "model": "tacz:gun/lod/m320",
+    "texture": "tacz:gun/lod/m320"
+  },
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "sounds": {
+    "reload_empty": "tacz:m320/m320_reload_empty",
+    "inspect": "tacz:m320/m320_inspect",
+    "inspect_empty": "tacz:m320/m320_inspect",
+    "draw": "tacz:m320/m320_draw",
+    "put_away":"tacz:m320/m320_put_away",
+    "shoot": "tacz:m320/m320_shoot",
+    "shoot_3p": "tacz:m320/m320_shoot",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  "offhand_show": {
+    "pos": [0, 20, 5],
+    "rotate": [-20, 0, 30],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-4, 24, 4],
+      "rotate": [-90, -5, -90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}
