@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/grip_vertical_ranger",
+  "model": "tacz:attachment/grip_vertical_ranger_geo",
+  "texture": "tacz:attachment/uv/grip_vertical_ranger",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_b",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}
