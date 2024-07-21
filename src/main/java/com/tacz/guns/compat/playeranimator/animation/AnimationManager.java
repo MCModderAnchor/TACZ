@@ -95,16 +95,22 @@ public class AnimationManager {
         IGunOperator operator = IGunOperator.fromLivingEntity(player);
         float aimingProgress = operator.getSynAimingProgress();
         if (aimingProgress <= 0) {
+            // 疾跑时播放的动画
             if (!isFlying(player) && player.isSprinting()) {
                 if (player.getPose() == Pose.CROUCHING) {
-                    playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.WALK_UPPER);
+                    playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.CROUCH_WALK_UPPER);
                 } else {
                     playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.RUN_UPPER);
                 }
                 return;
             }
+            // 行走时的动画
             if (!isFlying(player) && limbSwingAmount > 0.05) {
-                playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.WALK_UPPER);
+                if (player.getPose() == Pose.CROUCHING) {
+                    playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.CROUCH_WALK_UPPER);
+                } else {
+                    playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.RUN_UPPER);
+                }
                 return;
             }
             playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.HOLD_UPPER);
