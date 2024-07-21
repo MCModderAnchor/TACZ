@@ -159,7 +159,7 @@
   "config.tacz.common.ammo.destroy_glass.desc": "Si une munition peut casser le verre",
   "config.tacz.common.ammo.ignite_block": "Enflammer le bloc",
   "config.tacz.common.ammo.ignite_block.desc": "Si une munition peut enflammer le bloc",
-  "config.tacz.common.ammo.ignite_entity": "Enflammer l'entité",
+  "config.tacz.common.ammo.ignite_entity": "Enflammer l'Entité",
   "config.tacz.common.ammo.ignite_entity.desc": "Si une munition peut enflammer l'entité",
   "config.tacz.common.other": "Autre",
   "config.tacz.common.other.default_pack_debug": "Débogage par défaut du pack",
