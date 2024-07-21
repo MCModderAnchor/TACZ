@@ -45,7 +45,7 @@ public class ControllableInner {
     }
 
     @SubscribeEvent
-    private void onClientTickEnd(TickEvent.ClientTickEvent event) {
+    public void onClientTickEnd(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END && !isInGame()) {
             return;
         }
@@ -62,7 +62,7 @@ public class ControllableInner {
     }
 
     @SubscribeEvent
-    private void onButtonInput(ControllerEvent.ButtonInput event) {
+    public void onButtonInput(ControllerEvent.ButtonInput event) {
         boolean isPress = event.getState();
         int button = event.getButton();
         if (!GUN_KEY_CONFLICT.isActive()) {
