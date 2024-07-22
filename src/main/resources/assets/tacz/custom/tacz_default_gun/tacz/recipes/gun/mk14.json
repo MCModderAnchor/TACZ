@@ -14,9 +14,15 @@
     },
     {
       "item": {
-        "tag": "forge:gems/quartz"
+        "tag": "forge:gems/diamond"
       },
-      "count": 5
+      "count": 3
+    },
+    {
+      "item": {
+        "tag": "forge:rods/blaze"
+      },
+      "count": 6
     }
   ],
   "result": {
