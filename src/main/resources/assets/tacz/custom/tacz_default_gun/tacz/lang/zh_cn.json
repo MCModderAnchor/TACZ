@@ -34,7 +34,7 @@
   "tacz.gun.db_long.name": "DB-4 乌萨斯",
   "tacz.gun.hk_g3.name": "G3 战斗步枪",
   "tacz.gun.vector45.name": "维克托 冲锋枪",
-  "tacz.gun.sks_tactical.name": "Sks 战术步枪",
+  "tacz.gun.sks_tactical.name": "SKS 战术步枪",
   "tacz.gun.scar_h.name": "SCAR-H 战斗步枪",
   "tacz.gun.cz75.name": "CZ 75 自动手枪",
   "tacz.gun.rpk.name": "RPK 轻机枪",
@@ -44,6 +44,7 @@
   "tacz.gun.ump45.name":"UMP45 冲锋枪",
   "tacz.gun.scar_l.name":"SCAR-L 突击步枪",
   "tacz.gun.m320.name": "M320 榴弹发射器",
+  "tacz.gun.mk14.name": "MK14 EBR 精确射手步枪",
 
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
@@ -65,12 +66,14 @@
   "tacz.gun.rpg7.desc": "没有什么是一发RPG……再来一发！",
   "tacz.gun.rpk.desc": "轻装上阵，火力升级",
   "tacz.gun.scar_h.desc": "贵的东西唯一的缺点，就是贵",
-  "tacz.gun.scar_l.desc": "...",
+  "tacz.gun.scar_l.desc": "不要触碰任何高速运动的部件...哎哟！",
   "tacz.gun.sks_tactical.desc": "收藏家们非常乐意看到自己喜欢的经典款式在现代重生，它也不例外",
   "tacz.gun.ump45.desc": "让对手的心电图和它一样平",
   "tacz.gun.uzi.desc": "总比空着手要强",
   "tacz.gun.vector45.desc": "打的很快，有点太快了。",
-  "tacz.gun.m320.desc": "...",
+  "tacz.gun.m320.desc": "我数到三，你们还有逃跑的机会...三！",
+  "tacz.gun.hk416d.desc": "我不是M416",
+  "tacz.gun.mk14.desc": "不是生不逢时，只是选错位置",
 
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",
