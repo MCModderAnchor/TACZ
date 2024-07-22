@@ -45,6 +45,7 @@
   "tacz.gun.scar_l.name":"SCAR-L Assault Rifle",
   "tacz.gun.m320.name": "M320 Grenade Launcher",
   "tacz.gun.hk416d.name": "HK-416D",
+  "tacz.gun.mk14.name": "MK14 EBR",
 
   
   "tacz.gun.ak47.desc": "From jungles to bays, it's always present.",
@@ -73,6 +74,7 @@
   "tacz.gun.vector45.desc": "It is fast, but a bit too fast.",
   "tacz.gun.m320.desc": "...",
   "tacz.gun.hk416d.desc": "...",
+  "tacz.gun.mk14.desc": "...",
 
 
   "tacz.ammo.9mm.name": "§a9mm Bullet",

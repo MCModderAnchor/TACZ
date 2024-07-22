@@ -422,12 +422,6 @@
 				"octagon18": {
 					"scale": [1, 1, 1.03]
 				},
-				"grip_pos": {
-					"position": [0, 0, -0.875]
-				},
-				"muzzle_pos": {
-					"position": [0, 0, -0.575]
-				},
 				"constraint": {
 					"rotation": {
 						"0.0": [0.2, 0.15, 0.2],
@@ -808,7 +802,10 @@
 				"magazine_bullet": {
 					"scale": {
 						"0.0": [0, 0, 0],
-						"0.1333": {"pre": [0, 0, 0], "post": [1, 1, 1]}
+						"0.1333": {
+							"pre": [0, 0, 0],
+							"post": [1, 1, 1]
+						}
 					}
 				},
 				"bullet": {
