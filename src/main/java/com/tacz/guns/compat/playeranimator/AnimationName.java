@@ -21,5 +21,12 @@ public final class AnimationName {
     public static final String NORMAL_FIRE_UPPER = "normal_fire_upper";
     public static final String AIM_FIRE_UPPER = "aim_fire_upper";
 
+    public static final String LIE = "lie";
+    public static final String LIE_RELOAD = "lie_reload";
+    public static final String LIE_MOVE = "lie_move";
+    public static final String LIE_AIM = "lie_aim";
+    public static final String LIE_NORMAL_FIRE = "lie_normal_fire";
+    public static final String LIE_AIM_FIRE = "lie_aim_fire";
+
     public static final String EMPTY = "empty";
 }
