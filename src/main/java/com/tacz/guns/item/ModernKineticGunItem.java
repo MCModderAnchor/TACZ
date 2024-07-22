@@ -188,7 +188,10 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             double degree = Math.toDegrees(Math.acos(targetVec.dot(eyeVec) / (targetLength * distance)));
             // 向量夹角在范围内的，才能进行伤害
             if (degree < (rangeAngle / 2)) {
-                doPerLivingHurt(user, living, knockback, damage, effects);
+                // 判断实体和玩家之间是否有阻隔
+                if (user.hasLineOfSight(living)) {
+                    doPerLivingHurt(user, living, knockback, damage, effects);
+                }
             }
         }
 
