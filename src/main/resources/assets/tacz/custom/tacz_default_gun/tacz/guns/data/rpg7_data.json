@@ -12,7 +12,7 @@
       "head_shot_multiplier": 1
     },
     "speed": 80,
-    "gravity": 0.01,
+    "gravity": 0.015,
     "knockback": 0,
     "friction": 0.005,
     "ignite": false,
