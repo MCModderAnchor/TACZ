@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class GunData {
     private List<FireMode> fireModeSet = Collections.singletonList(FireMode.UNKNOWN);
 
     @SerializedName("fire_mode_adjust")
-    private GunFireModeAdjust fireModeAdjust = new GunFireModeAdjust();
+    private EnumMap<FireMode, GunFireModeAdjustData> fireModeAdjust = Maps.newEnumMap(FireMode.class);
 
     @SerializedName("burst_data")
     private BurstData burstData = new BurstData();
@@ -102,14 +103,8 @@ public class GunData {
 
     public int getRoundsPerMinute(FireMode fireMode) {
         int rpm = roundsPerMinute;
-        if (getFireModeAdjust() != null) {
-            if (fireMode == FireMode.AUTO) {
-                rpm += getFireModeAdjust().getAuto().getRoundsPerMinute();
-            } else if (fireMode == FireMode.SEMI) {
-                rpm += getFireModeAdjust().getSemi().getRoundsPerMinute();
-            } else if (fireMode == FireMode.BURST) {
-                rpm += getFireModeAdjust().getBurst().getRoundsPerMinute();
-            }
+        if (fireModeAdjust != null && fireModeAdjust.containsKey(fireMode)) {
+            rpm += fireModeAdjust.get(fireMode).getRoundsPerMinute();
         }
         // 为避免非法运算，随意返回一个默认值。
         if (rpm <= 0) {
@@ -148,10 +143,6 @@ public class GunData {
 
     public List<FireMode> getFireModeSet() {
         return fireModeSet;
-    }
-
-    public GunFireModeAdjust getFireModeAdjust() {
-        return fireModeAdjust;
     }
 
     public BurstData getBurstData() {
@@ -199,7 +190,7 @@ public class GunData {
      * @return 枪械开火的间隔，单位为 ms 。
      */
     public long getShootInterval(FireMode fireMode) {
-        int rpm = getRoundsPerMinute(fireMode);
+        int rpm = this.getRoundsPerMinute(fireMode);
         return 60_000L / rpm;
     }
 
