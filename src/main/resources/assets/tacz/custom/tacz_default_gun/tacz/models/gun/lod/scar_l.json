@@ -18,7 +18,7 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0, 6.3125, 7.2]
+					"pivot": [0, 6.875, 7.2]
 				},
 				{
 					"name": "ground",
@@ -689,8 +689,6 @@
 						{
 							"origin": [-0.3125, 10.41816, -7.82066],
 							"size": [0.625, 2.0625, 0.5],
-							"pivot": [0, 12.85566, -7.60191],
-							"rotation": [0, 0, 0],
 							"uv": {
 								"north": {"uv": [41, 54], "uv_size": [0.5, 2]},
 								"east": {"uv": [43, 54], "uv_size": [0.5, 2]},
