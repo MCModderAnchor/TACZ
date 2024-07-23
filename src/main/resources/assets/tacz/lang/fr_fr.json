@@ -166,6 +166,6 @@
   "config.tacz.common.other.default_pack_debug.desc": "Lorsque cette option est activée, la commande reload n'écrasera pas le fichier modèle par défaut sous la configuration",
   "config.tacz.common.other.target_sound_distance": "Distance de son cible",
   "config.tacz.common.other.target_sound_distance.desc": "La distance maximale à laquelle le son des cibles est audible (cible et minecart avec cible)",
-  "death.attack.tacz.bullet": "%1$s s'est fait tirer dessus par %2$s",
-  "death.attack.tacz.bullet.item": "%1$s s'est fait tirer dessus par %2$s à l'aide d'un %3$s"
+  "death.attack.tacz.bullet": "%1$s a été abattu par %2$s",
+  "death.attack.tacz.bullet.item": "%1$s a été abattu par %2$s à l'aide d'un %3$s"
 }
