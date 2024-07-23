@@ -84,6 +84,7 @@
   "gui.tacz.cloth_config_warning.download": "下载 Cloth Config API 模组",
   "gui.tacz.cloth_config_warning.tips": "你需要安装 Cloth Config API 模组才能使用游戏内配置功能",
   "gui.tacz.gun_refit.property_diagrams.accuracy": "精确度",
+  "gui.tacz.gun_refit.property_diagrams.effective_range": "优势射程",
   "gui.tacz.gun_refit.property_diagrams.ads": "开镜时间",
   "gui.tacz.gun_refit.property_diagrams.ammo_capacity": "弹匣容量",
   "gui.tacz.gun_refit.property_diagrams.damage": "伤害",
