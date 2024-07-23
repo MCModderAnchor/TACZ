@@ -38,6 +38,8 @@ public final class GunPropertyDiagrams {
             GunData gunData = index.getGunData();
             BulletData bulletData = gunData.getBulletData();
             GunRecoil recoil = gunData.getRecoil();
+            FireMode fireMode = iGun.getFireMode(gunItem);
+            GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
 
             int barStartX = x + 58;
             int barMaxWidth = 120;
@@ -55,7 +57,11 @@ public final class GunPropertyDiagrams {
             int pitch = 5;
 
             // 伤害
-            double damageAmount = bulletData.getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get();
+            double damageAmount = bulletData.getDamageAmount();
+            if (fireModeAdjustData != null) {
+                damageAmount += fireModeAdjustData.getDamageAmount();
+            }
+            damageAmount = Math.max(damageAmount * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0F);
             double damagePercent = Math.min(Math.log(damageAmount) / 5.0, 1);
             int damageLength = (int) (barStartX + barMaxWidth * damagePercent);
             String damageValueText = String.format("%.2f", damageAmount);
@@ -69,7 +75,6 @@ public final class GunPropertyDiagrams {
 
 
             // 射速
-            FireMode fireMode = iGun.getFireMode(gunItem);
             int rpm = gunData.getRoundsPerMinute(fireMode);
             double rpmPercent = Math.min(rpm / 1200.0, 1);
             int rpmLength = (int) (barStartX + barMaxWidth * rpmPercent);
