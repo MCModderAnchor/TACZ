@@ -53,6 +53,9 @@ public class GunData {
     @SerializedName("fire_mode")
     private List<FireMode> fireModeSet = Collections.singletonList(FireMode.UNKNOWN);
 
+    @SerializedName("fire_mode_adjust")
+    private GunFireModeAdjust fireModeAdjust = new GunFireModeAdjust();
+
     @SerializedName("burst_data")
     private BurstData burstData = new BurstData();
 
@@ -97,6 +100,24 @@ public class GunData {
         return roundsPerMinute;
     }
 
+    public int getRoundsPerMinute(FireMode fireMode) {
+        int rpm = roundsPerMinute;
+        if (getFireModeAdjust() != null) {
+            if (fireMode == FireMode.AUTO) {
+                rpm += getFireModeAdjust().getAuto().getRoundsPerMinute();
+            } else if (fireMode == FireMode.SEMI) {
+                rpm += getFireModeAdjust().getSemi().getRoundsPerMinute();
+            } else if (fireMode == FireMode.BURST) {
+                rpm += getFireModeAdjust().getBurst().getRoundsPerMinute();
+            }
+        }
+        // 为避免非法运算，随意返回一个默认值。
+        if (rpm <= 0) {
+            return 300;
+        }
+        return rpm;
+    }
+
     public BulletData getBulletData() {
         return bulletData;
     }
@@ -127,6 +148,10 @@ public class GunData {
 
     public List<FireMode> getFireModeSet() {
         return fireModeSet;
+    }
+
+    public GunFireModeAdjust getFireModeAdjust() {
+        return fireModeAdjust;
     }
 
     public BurstData getBurstData() {
@@ -173,12 +198,9 @@ public class GunData {
     /**
      * @return 枪械开火的间隔，单位为 ms 。
      */
-    public long getShootInterval() {
-        // 为避免非法运算，随意返回一个默认值。
-        if (roundsPerMinute <= 0) {
-            return 300;
-        }
-        return 60_000L / roundsPerMinute;
+    public long getShootInterval(FireMode fireMode) {
+        int rpm = getRoundsPerMinute(fireMode);
+        return 60_000L / rpm;
     }
 
     /**
