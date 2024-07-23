@@ -103,8 +103,8 @@ public class GunData {
 
     public int getRoundsPerMinute(FireMode fireMode) {
         int rpm = roundsPerMinute;
-        if (fireModeAdjust != null && fireModeAdjust.containsKey(fireMode)) {
-            rpm += fireModeAdjust.get(fireMode).getRoundsPerMinute();
+        if (getFireModeAdjustData(fireMode) != null) {
+            rpm += getFireModeAdjustData(fireMode).getRoundsPerMinute();
         }
         // 为避免非法运算，随意返回一个默认值。
         if (rpm <= 0) {
@@ -147,6 +147,13 @@ public class GunData {
 
     public BurstData getBurstData() {
         return burstData;
+    }
+
+    public GunFireModeAdjustData getFireModeAdjustData(FireMode fireMode) {
+        if (fireModeAdjust != null && fireModeAdjust.containsKey(fireMode)) {
+            return fireModeAdjust.get(fireMode);
+        }
+        return null;
     }
 
     public GunRecoil getRecoil() {
