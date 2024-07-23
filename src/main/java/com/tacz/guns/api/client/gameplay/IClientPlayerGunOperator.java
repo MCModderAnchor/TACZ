@@ -57,6 +57,11 @@ public interface IClientPlayerGunOperator {
     void aim(boolean isAim);
 
     /**
+     * 客户端爬行
+     */
+    void crawl(boolean isCrawl);
+
+    /**
      * 客户端近战（刺刀）
      */
     void melee();
@@ -65,6 +70,11 @@ public interface IClientPlayerGunOperator {
      * 客户端是否处于瞄准状态
      */
     boolean isAim();
+
+    /**
+     * 是否爬行
+     */
+    boolean isCrawl();
 
     /**
      * 客户端瞄准进度

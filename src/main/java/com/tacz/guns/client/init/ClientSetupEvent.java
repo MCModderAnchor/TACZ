@@ -41,6 +41,7 @@ public class ClientSetupEvent {
             ClientRegistry.registerKeyBinding(InteractKey.INTERACT_KEY);
             ClientRegistry.registerKeyBinding(FireSelectKey.FIRE_SELECT_KEY);
             ClientRegistry.registerKeyBinding(AimKey.AIM_KEY);
+            ClientRegistry.registerKeyBinding(CrawlKey.CRAWL_KEY);
             ClientRegistry.registerKeyBinding(RefitKey.REFIT_KEY);
             ClientRegistry.registerKeyBinding(ZoomKey.ZOOM_KEY);
             ClientRegistry.registerKeyBinding(MeleeKey.MELEE_KEY);

@@ -82,6 +82,10 @@ public class ShooterDataHolder {
      * 记录射击数，用以判定曳光弹
      */
     public int shootCount = 0;
+    /**
+     * 是否处于趴下状态
+     */
+    public boolean isCrawling = false;
 
     public void initialData() {
         // 重置各个状态
