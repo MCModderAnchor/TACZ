@@ -26,6 +26,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     private final @Unique ShooterDataHolder tacz$data = new ShooterDataHolder();
     private final @Unique LivingEntityDrawGun tacz$draw = new LivingEntityDrawGun(tacz$shooter, tacz$data);
     private final @Unique LivingEntityAim tacz$aim = new LivingEntityAim(tacz$shooter, this.tacz$data);
+    private final @Unique LivingEntityCrawl tacz$crawl = new LivingEntityCrawl(tacz$shooter, this.tacz$data);
     private final @Unique LivingEntityAmmoCheck tacz$ammoCheck = new LivingEntityAmmoCheck(tacz$shooter);
     private final @Unique LivingEntityFireSelect tacz$fireSelect = new LivingEntityFireSelect(tacz$shooter, this.tacz$data);
     private final @Unique LivingEntityMelee tacz$melee = new LivingEntityMelee(tacz$shooter, this.tacz$data, this.tacz$draw);
@@ -137,6 +138,11 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         this.tacz$aim.aim(isAim);
     }
 
+    @Override
+    public void crawl(boolean isCrawl) {
+        this.tacz$crawl.crawl(isCrawl);
+    }
+
     @Unique
     @Override
     public void fireSelect() {
@@ -157,6 +163,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             ReloadState reloadState = this.tacz$reload.tickReloadState();
             this.tacz$aim.tickAimingProgress();
             this.tacz$aim.tickSprint();
+            this.tacz$crawl.tickCrawling();
             this.tacz$bolt.tickBolt();
             this.tacz$melee.scheduleTickMelee();
             // 从服务端同步数据

@@ -120,4 +120,9 @@ public interface IGunOperator {
      * @param isAim 是否瞄准
      */
     void aim(boolean isAim);
+
+    /**
+     * 服务端应用趴下逻辑
+     */
+    void crawl(boolean isCrawl);
 }

@@ -13,5 +13,9 @@ public class KeyClothConfig {
         key.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.key.hold_to_aim"), KeyConfig.HOLD_TO_AIM.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.key.hold_to_aim.desc"))
                 .setSaveConsumer(KeyConfig.HOLD_TO_AIM::set).build());
+
+        key.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.key.hold_to_crawl"), KeyConfig.HOLD_TO_CRAWL.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.key.hold_to_crawl.desc"))
+                .setSaveConsumer(KeyConfig.HOLD_TO_CRAWL::set).build());
     }
 }

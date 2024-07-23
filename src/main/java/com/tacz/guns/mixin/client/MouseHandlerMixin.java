@@ -25,7 +25,6 @@ import java.util.Optional;
 
 @Mixin(MouseHandler.class)
 public class MouseHandlerMixin {
-
     @WrapOperation(method = "turnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"))
     public void reduceSensitivity(LocalPlayer player, double yaw, double pitch, Operation<Void> original) {
         ItemStack mainHandItem = player.getMainHandItem();
