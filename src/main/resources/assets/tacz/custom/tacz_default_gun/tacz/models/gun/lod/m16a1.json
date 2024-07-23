@@ -37,6 +37,11 @@
 					"pivot": [0, 9.73125, -23.625]
 				},
 				{
+					"name": "scope_pos",
+					"parent": "positioning",
+					"pivot": [0, 12.375, 5.625]
+				},
+				{
 					"name": "lod",
 					"pivot": [0, 11, 0],
 					"cubes": [
