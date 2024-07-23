@@ -133,7 +133,11 @@ public class AnimationManager {
         } else {
             if (isPlayerLie(player)) {
                 // 趴下时瞄准
-                playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.LIE_AIM);
+                if (!isFlying(player) && limbSwingAmount > 0.05) {
+                    playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.LIE_MOVE);
+                } else {
+                    playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.LIE_AIM);
+                }
             } else {
                 // 普通瞄准
                 playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.AIM_UPPER);
@@ -159,11 +163,6 @@ public class AnimationManager {
             if (modifierLayer.getAnimation() instanceof KeyframeAnimationPlayer animationPlayer && animationPlayer.isActive()) {
                 Object extraDataName = animationPlayer.getData().extraData.get("name");
                 if (extraDataName instanceof String name && !animationName.equals(name)) {
-                    // 趴下动画先暂时不用过渡，会有问题
-                    if (name.startsWith(AnimationName.LIE)) {
-                        modifierLayer.setAnimation(new KeyframeAnimationPlayer(keyframeAnimation));
-                        return;
-                    }
                     AbstractFadeModifier fadeModifier = AbstractFadeModifier.standardFadeIn(8, Ease.INOUTSINE);
                     modifierLayer.replaceAnimationWithFade(fadeModifier, new KeyframeAnimationPlayer(keyframeAnimation));
                 }
