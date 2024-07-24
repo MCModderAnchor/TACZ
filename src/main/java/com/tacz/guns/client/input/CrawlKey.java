@@ -29,7 +29,7 @@ public class CrawlKey {
             "key.category.tacz");
 
     @SubscribeEvent
-    public static void onCrawlPress(InputEvent.Key event) {
+    public static void onCrawlPress(InputEvent.KeyInputEvent event) {
         if (isInGame() && CRAWL_KEY.matches(event.getKey(), event.getScanCode())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null || player.isSpectator()) {
