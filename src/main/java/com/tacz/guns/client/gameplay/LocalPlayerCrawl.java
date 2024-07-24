@@ -23,7 +23,7 @@ public class LocalPlayerCrawl {
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
             return;
         }
-        if (player.isSpectator() || player.isPassenger() || !player.onGround()) {
+        if (player.isSpectator() || player.isPassenger() || !player.isOnGround()) {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
