@@ -23,6 +23,8 @@ public class SyncConfig {
     public static ForgeConfigSpec.IntValue AMMO_BOX_STACK_SIZE;
     // 客户端需要下载的枪械包
     public static ForgeConfigSpec.ConfigValue<List<List<String>>> CLIENT_GUN_PACK_DOWNLOAD_URLS;
+    // 禁用趴下战术动作
+    public static ForgeConfigSpec.BooleanValue ENABLE_CRAWL;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         interactKey(builder);
@@ -75,6 +77,9 @@ public class SyncConfig {
 
         builder.comment("The gun pack that the client player needs to download, needs to fill in the URL and the SHA1 value of the file");
         CLIENT_GUN_PACK_DOWNLOAD_URLS = builder.define("ClientGunPackDownloadUrls", Lists.newArrayList());
+
+        builder.comment("Whether or not players are allowed to use the crawl feature");
+        ENABLE_CRAWL = builder.define("EnableCrawl", true);
 
         builder.pop();
     }

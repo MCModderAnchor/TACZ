@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.config.client.KeyConfig;
+import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -31,6 +32,9 @@ public class CrawlKey {
     @SubscribeEvent
     public static void onCrawlPress(InputEvent.Key event) {
         if (isInGame() && CRAWL_KEY.matches(event.getKey(), event.getScanCode())) {
+            if (!SyncConfig.ENABLE_CRAWL.get()) {
+                return;
+            }
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null || player.isSpectator()) {
                 return;
