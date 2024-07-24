@@ -16,10 +16,7 @@ import com.tacz.guns.client.resource.pojo.CommonTransformObject;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.SoundEffectKeyframes;
 import com.tacz.guns.client.resource.pojo.model.CubesItem;
-import com.tacz.guns.client.resource.serialize.AnimationKeyframesSerializer;
-import com.tacz.guns.client.resource.serialize.ItemStackSerializer;
-import com.tacz.guns.client.resource.serialize.SoundEffectKeyframesSerializer;
-import com.tacz.guns.client.resource.serialize.Vector3fSerializer;
+import com.tacz.guns.client.resource.serialize.*;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
@@ -50,6 +47,7 @@ public class ClientGunPackLoader {
             .registerTypeAdapter(ItemStack.class, new ItemStackSerializer())
             .registerTypeAdapter(AnimationKeyframes.class, new AnimationKeyframesSerializer())
             .registerTypeAdapter(SoundEffectKeyframes.class, new SoundEffectKeyframesSerializer())
+            .registerTypeAdapter(EnumMapInstanceCreator.getType(), EnumMapInstanceCreator.getInstance())
             .create();
 
     /**

@@ -43,9 +43,9 @@ public class FlatColorButton extends Button {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         if (isSelect) {
-            fillGradient(poseStack, this.x, this.y, this.x + this.width, this.y + this.height, 0xff_1E90FF, 0xff_1E90FF);
+            fillGradient(poseStack, this.x, this.y, this.x + this.width, this.y + this.height, 0xAF222222, 0xAF222222);
         } else {
-            fillGradient(poseStack, this.x, this.y, this.x + this.width, this.y + this.height, 0xff_434242, 0xff_434242);
+            fillGradient(poseStack, this.x, this.y, this.x + this.width, this.y + this.height, 0xAF222222, 0xAF222222);
         }
         if (this.isHoveredOrFocused()) {
             fillGradient(poseStack, this.x, this.y + 1, this.x + 1, this.y + this.height - 1, 0xff_F3EFE0, 0xff_F3EFE0);
