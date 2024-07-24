@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,9 @@ public class GunData {
 
     @SerializedName("fire_mode")
     private List<FireMode> fireModeSet = Collections.singletonList(FireMode.UNKNOWN);
+
+    @SerializedName("fire_mode_adjust")
+    private EnumMap<FireMode, GunFireModeAdjustData> fireModeAdjust = Maps.newEnumMap(FireMode.class);
 
     @SerializedName("burst_data")
     private BurstData burstData = new BurstData();
@@ -97,6 +101,19 @@ public class GunData {
         return roundsPerMinute;
     }
 
+    public int getRoundsPerMinute(FireMode fireMode) {
+        int rpm = roundsPerMinute;
+        GunFireModeAdjustData fireModeAdjustData = getFireModeAdjustData(fireMode);
+        if (fireModeAdjustData != null) {
+            rpm += fireModeAdjustData.getRoundsPerMinute();
+        }
+        // 为避免非法运算，随意返回一个默认值。
+        if (rpm <= 0) {
+            return 300;
+        }
+        return rpm;
+    }
+
     public BulletData getBulletData() {
         return bulletData;
     }
@@ -131,6 +148,14 @@ public class GunData {
 
     public BurstData getBurstData() {
         return burstData;
+    }
+
+    @Nullable
+    public GunFireModeAdjustData getFireModeAdjustData(FireMode fireMode) {
+        if (fireModeAdjust != null && fireModeAdjust.containsKey(fireMode)) {
+            return fireModeAdjust.get(fireMode);
+        }
+        return null;
     }
 
     public GunRecoil getRecoil() {
@@ -173,12 +198,9 @@ public class GunData {
     /**
      * @return 枪械开火的间隔，单位为 ms 。
      */
-    public long getShootInterval() {
-        // 为避免非法运算，随意返回一个默认值。
-        if (roundsPerMinute <= 0) {
-            return 300;
-        }
-        return 60_000L / roundsPerMinute;
+    public long getShootInterval(FireMode fireMode) {
+        int rpm = this.getRoundsPerMinute(fireMode);
+        return 60_000L / rpm;
     }
 
     /**

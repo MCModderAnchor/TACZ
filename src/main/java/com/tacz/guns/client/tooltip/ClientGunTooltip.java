@@ -2,6 +2,7 @@ package com.tacz.guns.client.tooltip;
 
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.input.RefitKey;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.PackInfo;
@@ -9,8 +10,7 @@ import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.item.GunTooltipPart;
 import com.tacz.guns.resource.index.CommonGunIndex;
-import com.tacz.guns.resource.pojo.data.gun.Bolt;
-import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
+import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -93,7 +93,10 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
     private void getText() {
         Font font = Minecraft.getInstance().font;
-
+        BulletData bulletData = gunIndex.getBulletData();
+        GunData gunData = gunIndex.getGunData();
+        FireMode fireMode = iGun.getFireMode(gun);
+        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
 
         if (shouldShow(GunTooltipPart.DESCRIPTION)) {
             @Nullable String tooltip = gunIndex.getPojo().getTooltip();
@@ -146,9 +149,13 @@ public class ClientGunTooltip implements ClientTooltipComponent {
             this.gunType = Component.translatable("tooltip.tacz.gun.type").append(Component.translatable(tabKey).withStyle(ChatFormatting.AQUA));
             this.maxWidth = Math.max(font.width(this.gunType), this.maxWidth);
 
-            MutableComponent value = Component.literal(DAMAGE_FORMAT.format(gunIndex.getBulletData().getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
-            if (gunIndex.getBulletData().getExplosionData() != null) {
-                value.append(" + ").append(DAMAGE_FORMAT.format(gunIndex.getBulletData().getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).append(Component.translatable("tooltip.tacz.gun.explosion"));
+            float damage = bulletData.getDamageAmount();
+            if (fireModeAdjustData != null) {
+                damage += fireModeAdjustData.getDamageAmount();
+            }
+            MutableComponent value = Component.literal(DAMAGE_FORMAT.format(damage * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
+            if (bulletData.getExplosionData() != null) {
+                value.append(" + ").append(DAMAGE_FORMAT.format(bulletData.getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).append(Component.translatable("tooltip.tacz.gun.explosion"));
             }
             this.damage = Component.translatable("tooltip.tacz.gun.damage").append(value);
             this.maxWidth = Math.max(font.width(this.damage), this.maxWidth);
@@ -156,10 +163,20 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
 
         if (shouldShow(GunTooltipPart.EXTRA_DAMAGE_INFO)) {
-            @Nullable ExtraDamage extraDamage = gunIndex.getBulletData().getExtraDamage();
+            @Nullable ExtraDamage extraDamage = bulletData.getExtraDamage();
             if (extraDamage != null) {
-                float armorDamagePercent = (float) (extraDamage.getArmorIgnore() * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
-                float headShotMultiplierPercent = (float) (extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+                float armorIgnore = extraDamage.getArmorIgnore();
+                if (fireModeAdjustData != null) {
+                    armorIgnore += fireModeAdjustData.getArmorIgnore();
+                }
+                float armorDamagePercent = (float) (armorIgnore * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
+
+                float headShotMultiplier = extraDamage.getHeadShotMultiplier();
+                if (fireModeAdjustData != null) {
+                    headShotMultiplier += fireModeAdjustData.getHeadShotMultiplier();
+                }
+                float headShotMultiplierPercent = (float) (headShotMultiplier * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+
                 armorDamagePercent = Mth.clamp(armorDamagePercent, 0.0F, 1.0F);
                 this.armorIgnore = Component.translatable("tooltip.tacz.gun.armor_ignore", FORMAT.format(armorDamagePercent));
                 this.headShotMultiplier = Component.translatable("tooltip.tacz.gun.head_shot_multiplier", FORMAT.format(headShotMultiplierPercent));

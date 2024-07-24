@@ -72,27 +72,33 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         CommonGunIndex gunIndex = gunIndexOptional.get();
         // 散射影响
         InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
-        final float[] inaccuracy = new float[]{gunIndex.getGunData().getInaccuracy(inaccuracyState)};
+        GunData gunData = gunIndex.getGunData();
+        final float[] inaccuracy = new float[]{gunData.getInaccuracy(inaccuracyState)};
 
         // 消音器影响
         final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
         final boolean[] useSilenceSound = new boolean[]{false};
 
         // 配件属性的读取计算
-        AttachmentDataUtils.getAllAttachmentData(gunItem, gunIndex.getGunData(), attachmentData -> calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
+        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
         inaccuracy[0] = Math.max(0, inaccuracy[0]);
 
         BulletData bulletData = gunIndex.getBulletData();
-        ResourceLocation ammoId = gunIndex.getGunData().getAmmoId();
+        ResourceLocation ammoId = gunData.getAmmoId();
         FireMode fireMode = getFireMode(gunItem);
+        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
         // 子弹飞行速度
-        float speed = Mth.clamp(bulletData.getSpeed() / 20, 0, Float.MAX_VALUE);
+        float speed = bulletData.getSpeed();
+        if (fireModeAdjustData != null) {
+            speed += fireModeAdjustData.getSpeed();
+        }
+        float finalSpeed = Mth.clamp(speed / 20, 0, Float.MAX_VALUE);
         // 弹丸数量
         int bulletAmount = Math.max(bulletData.getBulletAmount(), 1);
         // 连发数量
-        int cycles = fireMode == FireMode.BURST ? gunIndex.getGunData().getBurstData().getCount() : 1;
+        int cycles = fireMode == FireMode.BURST ? gunData.getBurstData().getCount() : 1;
         // 连发间隔
-        long period = fireMode == FireMode.BURST ? gunIndex.getGunData().getBurstShootInterval() : 1;
+        long period = fireMode == FireMode.BURST ? gunData.getBurstShootInterval() : 1;
         // 是否消耗弹药
         boolean consumeAmmo = IGunOperator.fromLivingEntity(shooter).consumesAmmoOrNot();
 
@@ -104,7 +110,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             }
             // 削减弹药数
             if (consumeAmmo) {
-                Bolt boltType = gunIndex.getGunData().getBolt();
+                Bolt boltType = gunData.getBolt();
                 boolean hasAmmoInBarrel = this.hasBulletInBarrel(gunItem) && boltType != Bolt.OPEN_BOLT;
                 int ammoCount = this.getCurrentAmmoCount(gunItem) + (hasAmmoInBarrel ? 1 : 0);
                 if (ammoCount <= 0) {
@@ -122,7 +128,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                 // 生成子弹
                 Level world = shooter.level();
                 for (int i = 0; i < bulletAmount; i++) {
-                    this.doSpawnBulletEntity(world, shooter, pitch.get(), yaw.get(), speed, inaccuracy[0], ammoId, gunId, tracer, bulletData);
+                    this.doSpawnBulletEntity(world, shooter, pitch.get(), yaw.get(), finalSpeed, inaccuracy[0], ammoId, gunId, tracer, gunData, bulletData, fireMode);
                 }
                 // 播放枪声
                 if (soundDistance[0] > 0) {
@@ -263,8 +269,8 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     /**
      * 生成子弹实体
      */
-    protected void doSpawnBulletEntity(Level world, LivingEntity shooter, float pitch, float yaw, float speed, float inaccuracy, ResourceLocation ammoId, ResourceLocation gunId, boolean tracer, BulletData bulletData) {
-        EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, ammoId, gunId, tracer, bulletData);
+    protected void doSpawnBulletEntity(Level world, LivingEntity shooter, float pitch, float yaw, float speed, float inaccuracy, ResourceLocation ammoId, ResourceLocation gunId, boolean tracer, GunData gunData, BulletData bulletData, FireMode fireMode) {
+        EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, ammoId, gunId, tracer, gunData, bulletData, fireMode);
         bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
         world.addFreshEntity(bullet);
     }

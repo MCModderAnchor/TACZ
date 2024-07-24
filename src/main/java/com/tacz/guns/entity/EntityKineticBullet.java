@@ -6,6 +6,7 @@ import com.tacz.guns.api.entity.KnockBackModifier;
 import com.tacz.guns.api.event.common.EntityHurtByGunEvent;
 import com.tacz.guns.api.event.common.EntityKillByGunEvent;
 import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
 import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.config.sync.SyncConfig;
@@ -15,9 +16,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunHurt;
 import com.tacz.guns.network.message.event.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
-import com.tacz.guns.resource.pojo.data.gun.BulletData;
-import com.tacz.guns.resource.pojo.data.gun.ExplosionData;
-import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
+import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.HitboxHelper;
 import com.tacz.guns.util.TacHitResult;
 import com.tacz.guns.util.block.BlockRayTrace;
@@ -98,6 +97,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private Vec3 originRenderOffset;
     // 发射的枪械 ID
     private ResourceLocation gunId;
+    // 开火模式调整
+    private @Nullable GunFireModeAdjustData fireModeAdjustData;
 
     public EntityKineticBullet(EntityType<? extends Projectile> type, Level worldIn) {
         super(type, worldIn);
@@ -108,26 +109,39 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.setPos(x, y, z);
     }
 
-    public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, BulletData data) {
+    public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, GunData gunData, BulletData bulletData, FireMode fireMode) {
         this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         this.ammoId = ammoId;
-        this.life = Mth.clamp((int) (data.getLifeSecond() * 20), 1, Integer.MAX_VALUE);
+        this.fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
+        this.life = Mth.clamp((int) (bulletData.getLifeSecond() * 20), 1, Integer.MAX_VALUE);
         // 限制最大弹速为 600 m / s，以减轻计算负担
-        this.speed = Mth.clamp(data.getSpeed() / 20, 0, 30);
-        this.gravity = Mth.clamp(data.getGravity(), 0, Float.MAX_VALUE);
-        this.friction = Mth.clamp(data.getFriction(), 0, Float.MAX_VALUE);
-        this.hasIgnite = data.isHasIgnite();
-        this.igniteEntityTime = Math.max(data.getIgniteEntityTime(), 0);
-        this.damageAmount = (float) Mth.clamp(data.getDamageAmount() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
-        // 霰弹情况，每个伤害要扣去
-        if (data.getBulletAmount() > 1) {
-            this.damageModifier = 1f / data.getBulletAmount();
+        float speed = bulletData.getSpeed();
+        if (this.fireModeAdjustData != null) {
+            speed += this.fireModeAdjustData.getSpeed();
         }
-        this.knockback = Mth.clamp(data.getKnockback(), 0, Float.MAX_VALUE);
-        this.pierce = Mth.clamp(data.getPierce(), 1, Integer.MAX_VALUE);
-        this.extraDamage = data.getExtraDamage();
-        ExplosionData explosionData = data.getExplosionData();
+        this.speed = Mth.clamp(speed / 20, 0, 30);
+        this.gravity = Mth.clamp(bulletData.getGravity(), 0, Float.MAX_VALUE);
+        this.friction = Mth.clamp(bulletData.getFriction(), 0, Float.MAX_VALUE);
+        this.hasIgnite = bulletData.isHasIgnite();
+        this.igniteEntityTime = Math.max(bulletData.getIgniteEntityTime(), 0);
+        float damageAmount = bulletData.getDamageAmount();
+        if (this.fireModeAdjustData != null) {
+            damageAmount += this.fireModeAdjustData.getDamageAmount();
+        }
+        this.damageAmount = (float) Mth.clamp(damageAmount * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
+        // 霰弹情况，每个伤害要扣去
+        if (bulletData.getBulletAmount() > 1) {
+            this.damageModifier = 1f / bulletData.getBulletAmount();
+        }
+        float knockback = bulletData.getKnockback();
+        if (this.fireModeAdjustData != null) {
+            knockback += this.fireModeAdjustData.getKnockback();
+        }
+        this.knockback = Mth.clamp(knockback, 0, Float.MAX_VALUE);
+        this.pierce = Mth.clamp(bulletData.getPierce(), 1, Integer.MAX_VALUE);
+        this.extraDamage = bulletData.getExtraDamage();
+        ExplosionData explosionData = bulletData.getExplosionData();
         if (explosionData != null) {
             this.hasExplosion = true;
             this.explosionDamage = (float) Mth.clamp(explosionData.getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Float.MAX_VALUE);
@@ -400,8 +414,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         boolean headshot = result.isHeadshot();
         float damage = this.getDamage(result.getLocation());
         float headShotMultiplier = 1f;
-        if (this.extraDamage != null && this.extraDamage.getHeadShotMultiplier() > 0) {
-            headShotMultiplier = (float) (this.extraDamage.getHeadShotMultiplier() * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+        if (this.extraDamage != null) {
+            headShotMultiplier = this.extraDamage.getHeadShotMultiplier();
+            if (this.fireModeAdjustData != null) {
+                headShotMultiplier += this.fireModeAdjustData.getHeadShotMultiplier();
+            }
+            headShotMultiplier = (float) (Math.max(headShotMultiplier * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get(), 0F));
         }
         // 发布Pre事件
         var preEvent = new EntityHurtByGunEvent.Pre(entity, attacker, this.gunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
@@ -520,7 +538,11 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         double playerDistance = hitVec.distanceTo(this.startPos);
         for (ExtraDamage.DistanceDamagePair pair : damageDecay) {
             if (playerDistance < pair.getDistance()) {
-                return (float) (Math.max(0F, pair.getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get()) * this.damageModifier);
+                float damage = pair.getDamage();
+                if (this.fireModeAdjustData != null) {
+                    damage += this.fireModeAdjustData.getDamageAmount();
+                }
+                return (float) (Math.max(damage * SyncConfig.DAMAGE_BASE_MULTIPLIER.get() * this.damageModifier, 0F));
             }
         }
         // 如果忘记写最大值，那我就直接认为你伤害为 0
@@ -530,8 +552,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private void tacAttackEntity(Entity entity, float damage) {
         DamageSource source = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), false);
         float armorIgnore = 0;
-        if (this.extraDamage != null && this.extraDamage.getArmorIgnore() > 0) {
-            armorIgnore = (float) (this.extraDamage.getArmorIgnore() * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
+        if (this.extraDamage != null) {
+            armorIgnore = this.extraDamage.getArmorIgnore();
+            if (this.fireModeAdjustData != null) {
+                armorIgnore += this.fireModeAdjustData.getArmorIgnore();
+            }
+            armorIgnore = (float) (Math.max(armorIgnore * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get(), 0F));
         }
         // 给末影人造成伤害
         if (entity instanceof EnderMan) {
