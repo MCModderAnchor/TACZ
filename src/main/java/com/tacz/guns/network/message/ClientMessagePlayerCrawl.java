@@ -1,6 +1,7 @@
 package com.tacz.guns.network.message;
 
 import com.tacz.guns.api.entity.IGunOperator;
+import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -28,6 +29,9 @@ public class ClientMessagePlayerCrawl {
             context.enqueueWork(() -> {
                 ServerPlayer entity = context.getSender();
                 if (entity == null) {
+                    return;
+                }
+                if (!SyncConfig.ENABLE_CRAWL.get()) {
                     return;
                 }
                 IGunOperator.fromLivingEntity(entity).crawl(message.isCrawl);
