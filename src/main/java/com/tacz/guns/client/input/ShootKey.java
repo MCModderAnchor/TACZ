@@ -3,6 +3,7 @@ package com.tacz.guns.client.input;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
+import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.sound.SoundPlayManager;
@@ -56,14 +57,14 @@ public class ShootKey {
         }
     }
 
-    public static void autoShootController() {
+    public static boolean autoShootController() {
         if (!isInGame()) {
-            return;
+            return false;
         }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null || player.isSpectator()) {
-            return;
+            return false;
         }
         ItemStack mainHandItem = player.getMainHandItem();
         if (mainHandItem.getItem() instanceof IGun iGun) {
@@ -73,9 +74,10 @@ public class ShootKey {
                     .orElse(false);
             IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
             if (fireMode == FireMode.AUTO || isBurstAuto) {
-                operator.shoot();
+                return operator.shoot() == ShootResult.SUCCESS;
             }
         }
+        return false;
     }
 
     @SubscribeEvent
@@ -129,11 +131,10 @@ public class ShootKey {
                     .orElse(false);
             if (fireMode == FireMode.UNKNOWN) {
                 player.sendSystemMessage(Component.translatable("message.tacz.fire_select.fail"));
-                return true;
+                return false;
             }
             if (fireMode == FireMode.SEMI || isBurstSemi) {
-                IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
-                return true;
+                return IClientPlayerGunOperator.fromLocalPlayer(player).shoot() == ShootResult.SUCCESS;
             }
         }
         return false;

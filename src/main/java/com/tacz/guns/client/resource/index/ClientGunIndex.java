@@ -10,6 +10,7 @@ import com.tacz.guns.api.client.animation.AnimationController;
 import com.tacz.guns.api.client.animation.Animations;
 import com.tacz.guns.api.client.animation.ObjectAnimation;
 import com.tacz.guns.api.client.animation.gltf.AnimationStructure;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.ClientAssetManager;
@@ -36,6 +37,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -64,6 +66,7 @@ public class ClientGunIndex {
     private boolean showCrosshair = false;
     private @Nullable AmmoParticle particle;
     private float @Nullable [] tracerColor = null;
+    private EnumMap<FireMode, ControllableData> controllableData;
 
     private ClientGunIndex() {
     }
@@ -88,6 +91,7 @@ public class ClientGunIndex {
         checkIronZoom(display, index);
         checkTextShow(display, index);
         index.showCrosshair = display.isShowCrosshair();
+        index.controllableData = display.getControllableData();
         return index;
     }
 
@@ -426,5 +430,9 @@ public class ClientGunIndex {
 
     public @Nullable ResourceLocation getPlayerAnimator3rd() {
         return playerAnimator3rd;
+    }
+
+    public EnumMap<FireMode, ControllableData> getControllableData() {
+        return controllableData;
     }
 }
