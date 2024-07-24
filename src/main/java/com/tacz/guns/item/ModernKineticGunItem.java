@@ -4,6 +4,7 @@ import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
+import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
@@ -65,15 +66,32 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     @Override
     public void shoot(ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, boolean tracer, LivingEntity shooter) {
         ResourceLocation gunId = getGunId(gunItem);
+        IGun iGun = IGun.getIGunOrNull(gunItem);
+        if (iGun == null) {
+            return;
+        }
         Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
         if (gunIndexOptional.isEmpty()) {
             return;
         }
         CommonGunIndex gunIndex = gunIndexOptional.get();
+        BulletData bulletData = gunIndex.getBulletData();
+        GunData gunData = gunIndex.getGunData();
+        ResourceLocation ammoId = gunData.getAmmoId();
+        FireMode fireMode = iGun.getFireMode(gunItem);
+        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
+
         // 散射影响
         InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
-        GunData gunData = gunIndex.getGunData();
-        final float[] inaccuracy = new float[]{gunData.getInaccuracy(inaccuracyState)};
+        float inaccuracyAddend = 0;
+        if (fireModeAdjustData != null) {
+            if (inaccuracyState == InaccuracyType.AIM) {
+                inaccuracyAddend = fireModeAdjustData.getAimInaccuracy();
+            } else {
+                inaccuracyAddend = fireModeAdjustData.getOtherInaccuracy();
+            }
+        }
+        final float[] inaccuracy = new float[]{gunData.getInaccuracy(inaccuracyState, inaccuracyAddend)};
 
         // 消音器影响
         final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
@@ -83,10 +101,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
         inaccuracy[0] = Math.max(0, inaccuracy[0]);
 
-        BulletData bulletData = gunIndex.getBulletData();
-        ResourceLocation ammoId = gunData.getAmmoId();
-        FireMode fireMode = getFireMode(gunItem);
-        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
         // 子弹飞行速度
         float speed = bulletData.getSpeed();
         if (fireModeAdjustData != null) {

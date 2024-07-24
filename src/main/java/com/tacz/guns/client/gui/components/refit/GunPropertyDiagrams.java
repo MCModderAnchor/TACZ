@@ -88,6 +88,9 @@ public final class GunPropertyDiagrams {
 
             // 精确度，也就是瞄准时的扩散
             float aimInaccuracy = gunData.getInaccuracy(InaccuracyType.AIM);
+            if (fireModeAdjustData != null) {
+                aimInaccuracy += fireModeAdjustData.getAimInaccuracy();
+            }
             double aimInaccuracyPercent = Mth.clamp(1 - aimInaccuracy, 0, 1);
             int aimInaccuracyLength = (int) (barStartX + barMaxWidth * aimInaccuracyPercent);
             String aimInaccuracyValueText = String.format("%.2f%%", aimInaccuracyPercent * 100);
@@ -121,6 +124,9 @@ public final class GunPropertyDiagrams {
 
             // 腰射扩散
             float standInaccuracy = gunData.getInaccuracy(InaccuracyType.STAND);
+            if (fireModeAdjustData != null) {
+                standInaccuracy += fireModeAdjustData.getOtherInaccuracy();
+            }
             double standInaccuracyPercent = Math.min(standInaccuracy / 10.0, 1);
             int inaccuracyLength = (int) (barStartX + barMaxWidth * standInaccuracyPercent);
 

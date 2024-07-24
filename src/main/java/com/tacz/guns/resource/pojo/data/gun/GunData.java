@@ -175,7 +175,11 @@ public class GunData {
     }
 
     public float getInaccuracy(InaccuracyType type) {
-        return inaccuracy.get(type);
+        return Math.max(inaccuracy.get(type), 0F);
+    }
+
+    public float getInaccuracy(InaccuracyType type, float addend) {
+        return Math.max(inaccuracy.get(type) + addend, 0F);
     }
 
     public MoveSpeed getMoveSpeed() {
