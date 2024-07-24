@@ -111,7 +111,7 @@ public final class GunPropertyDiagrams {
             }
             double effectiveRangePercent = Mth.clamp(effectiveRange / 100.0, 0, 1);
             int effectiveRangeLength = (int) (barStartX + barMaxWidth * effectiveRangePercent);
-            String effectiveRangeValueText = String.format("%.1f", effectiveRange);
+            String effectiveRangeValueText = String.format("%.1fm", effectiveRange);
 
             font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.effective_range"), nameTextStartX, y + pitch, fontColor);
             Screen.fill(poseStack, barStartX, y + pitch + 2, barEndX, y + pitch + 6, barBackgroundColor);

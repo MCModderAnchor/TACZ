@@ -96,7 +96,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     // 发射的枪械 ID
     private ResourceLocation gunId;
     // 开火模式调整
-    private GunFireModeAdjustData fireModeAdjustData;
+    private @Nullable GunFireModeAdjustData fireModeAdjustData;
 
     public EntityKineticBullet(EntityType<? extends Projectile> type, Level worldIn) {
         super(type, worldIn);
