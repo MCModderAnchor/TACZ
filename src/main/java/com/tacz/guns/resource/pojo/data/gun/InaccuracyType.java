@@ -3,8 +3,10 @@ package com.tacz.guns.resource.pojo.data.gun;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.entity.IGunOperator;
+import com.tacz.guns.util.HitboxHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
 
@@ -71,8 +73,10 @@ public enum InaccuracyType {
     }
 
     private static boolean isMove(LivingEntity livingEntity) {
-        // FIXME 该判断并不总是起效，有很大的问题
         double distance = Math.abs(livingEntity.walkDist - livingEntity.walkDistO);
+        if (livingEntity instanceof Player player) {
+            distance = HitboxHelper.getPlayerVelocity(player).length();
+        }
         return distance > 0.05f;
     }
 
