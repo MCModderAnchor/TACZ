@@ -21,6 +21,12 @@ public class GunFireModeAdjustData {
     @SerializedName("head_shot_multiplier")
     private float headShotMultiplier = 0f;
 
+    @SerializedName("aim_inaccuracy")
+    private float aimInaccuracy = 0f;
+
+    @SerializedName("other_inaccuracy")
+    private float otherInaccuracy = 0f;
+
     public float getDamageAmount() {
         return damageAmount;
     }
@@ -43,5 +49,13 @@ public class GunFireModeAdjustData {
 
     public float getHeadShotMultiplier() {
         return headShotMultiplier;
+    }
+
+    public float getAimInaccuracy() {
+        return aimInaccuracy;
+    }
+
+    public float getOtherInaccuracy() {
+        return otherInaccuracy;
     }
 }
