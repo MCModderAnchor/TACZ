@@ -24,6 +24,7 @@ public class ControllableInner {
     public static final ButtonBinding SHOOT = new ButtonBinding(Buttons.RIGHT_TRIGGER, "key.tacz.shoot.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding RELOAD = new ButtonBinding(Buttons.B, "key.tacz.reload.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding MELEE = new ButtonBinding(Buttons.X, "key.tacz.melee.desc", "key.category.tacz", GUN_KEY_CONFLICT);
+    public static final ButtonBinding CRAWL = new ButtonBinding(Buttons.LEFT_THUMB_STICK, "key.tacz.crawl.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding ZOOM = new ButtonBinding(Buttons.X, "key.tacz.zoom.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding FIRE_SELECT = new ButtonBinding(Buttons.DPAD_LEFT, "key.tacz.fire_select.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding INTERACT = new ButtonBinding(-1, "key.tacz.interact.desc", "key.category.tacz", GUN_KEY_CONFLICT);
@@ -34,6 +35,7 @@ public class ControllableInner {
         BindingRegistry.getInstance().register(SHOOT);
         BindingRegistry.getInstance().register(RELOAD);
         BindingRegistry.getInstance().register(MELEE);
+        BindingRegistry.getInstance().register(CRAWL);
         BindingRegistry.getInstance().register(ZOOM);
         BindingRegistry.getInstance().register(FIRE_SELECT);
         BindingRegistry.getInstance().register(INTERACT);
@@ -73,6 +75,9 @@ public class ControllableInner {
             event.setCanceled(true);
         }
         if (MELEE.getButton() == button && MeleeKey.onMeleeControllerPress(isPress)) {
+            event.setCanceled(true);
+        }
+        if (CRAWL.getButton() == button && CrawlKey.onCrawlControllerPress(isPress)) {
             event.setCanceled(true);
         }
         if (ZOOM.getButton() == button && ZoomKey.onZoomControllerPress(isPress)) {
