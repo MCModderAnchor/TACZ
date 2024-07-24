@@ -100,6 +100,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
         LocalPlayer player = (LocalPlayer) (Object) this;
         if (player.level().isClientSide()) {
             tac$aim.tickAimingProgress();
+            tac$crawl.tickCrawl();
             tac$data.tickStateLock();
             tac$bolt.tickAutoBolt();
         }

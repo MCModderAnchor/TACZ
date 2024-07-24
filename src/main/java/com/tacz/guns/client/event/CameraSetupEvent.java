@@ -25,6 +25,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ViewportEvent;
@@ -212,6 +213,10 @@ public class CameraSetupEvent {
             float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
             float zoom = iGun.getAimingZoom(mainHandItem);
             float aimingRecoilModifier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
+            // 如果是趴下，那么后坐力减半
+            if (!player.isSwimming() && player.getPose() == Pose.SWIMMING) {
+                aimingRecoilModifier = aimingRecoilModifier * 0.5f;
+            }
             pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction(modifierNumber(attachmentRecoilModifier[0]) * aimingRecoilModifier);
             yawSplineFunction = gunData.getRecoil().genYawSplineFunction(modifierNumber(attachmentRecoilModifier[1]) * aimingRecoilModifier);
             shootTimeStamp = System.currentTimeMillis();
