@@ -6,10 +6,16 @@ FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"))
 
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = "https://plugins.gradle.org/m2/" }
+        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://maven.parchmentmc.org' }
-        maven { url = 'https://repo.spongepowered.org/maven' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        maven {
+            // 阿里云镜像，方便国内开发
+            url = uri("https://maven.aliyun.com/repository/public/")
+        }
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
@@ -105,27 +111,9 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven {
-        // 阿里云镜像，方便国内开发
-        url = uri("https://maven.aliyun.com/repository/public/")
-        content {
-            includeGroup 'org.apache.commons'
-        }
-    }
-    maven {
-        // location of the maven that hosts JEI files since January 2023
-        // Patchouli
-        name = "Jared's maven"
-        url = "https://maven.blamejared.com/"
-    }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "Mod Maven"
-        url = "https://modmaven.k-4u.nl"
-    }
-    maven {
-        // cloth config api
-        url "https://maven.shedaniel.me/"
+    // 优先本地 libs 文件夹
+    flatDir {
+        dir 'libs'
     }
     maven {
         url "https://cursemaven.com"
@@ -133,41 +121,29 @@ repositories {
             includeGroup "curse.maven"
         }
     }
-    maven {
-        url 'https://jitpack.io'
-    }
-    maven {
-        name "KosmX's maven"
-        url 'https://maven.kosmx.dev/'
-    }
-    mavenCentral() // MixinExtras is there
-    mavenLocal()
-    flatDir {
-        dir 'libs'
-    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
 
     // Apache Commons Math 库，用于进行一些插值运算
-    minecraftLibrary(jarJar('org.apache.commons:commons-math3:3.6.1')) {
+    minecraftLibrary(jarJar('libs:commons-math3:3.6.1')) {
         jarJar.ranged(it, "[3.6.1,)")
     }
 
     // LuaJ 库，将 lua 脚本语言引入用于控制枪械的逻辑和动画状态机
-    implementation(jarJar('com.github.286799714.luaj:luaj-jse:3.0.3')) {
+    implementation(jarJar('libs:luaj-jse:3.0.3')) {
         jarJar.ranged(it, "[3.0.3,)")
     }
-    implementation(jarJar('com.github.286799714.luaj:luaj-core:3.0.3')) {
+    implementation(jarJar('libs:luaj-core:3.0.3')) {
         jarJar.ranged(it, "[3.0.3,)")
     }
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-common-api:${jei_version}"))
-    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge-api:${jei_version}"))
+    compileOnly(fg.deobf("libs:jei-1.20.1-common-api:${jei_version}"))
+    compileOnly(fg.deobf("libs:jei-1.20.1-forge-api:${jei_version}"))
     // at runtime, use the full JEI jar for Forge
-    runtimeOnly(fg.deobf("mezz.jei:jei-1.20.1-forge:${jei_version}"))
+    runtimeOnly(fg.deobf("libs:jei-1.20.1-forge:${jei_version}"))
     // 性能分析工具模组
     runtimeOnly fg.deobf("curse.maven:spark-361579:4738952")
     // 假人，测试近战伤害
@@ -180,21 +156,21 @@ dependencies {
     // 越肩视角，用来兼容第三人称准星
     implementation fg.deobf("curse.maven:shoulder-surfing-reloaded-243190:5455954")
 
-    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
+    implementation fg.deobf("libs:cloth-config-forge:${cloth_config_forge}")
 
-    compileOnly fg.deobf("org.embeddedt:embeddium-1.20.1:${embeddedt_id}")
+    compileOnly fg.deobf("curse.maven:embeddium-908741:${embeddedt_id}")
     // 同时兼容两个版本
     compileOnly fg.deobf('libs:oculus_legacy:mc1.20.1-1.6.13')
     compileOnly fg.deobf('libs:oculus:mc1.20.1-1.7.0')
 
     runtimeOnly fg.deobf("curse.maven:carry-on-274259:${carry_on_id}")
 
-    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animation_lib}")
+    implementation fg.deobf("libs:player-animation-lib-forge:${player_animation_lib}")
 
     // 引入 MixinExtras 以解决一些棘手的 Mixin 冲突问题（比如 @Redirect 不能嵌套）
     // 如果未来有迁移到 Fabric / NeoForge 的计划，请注意这两个框架都已自带 MixinExtras，无需自行打包。
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.6"))
-    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.3.6")) {
+    compileOnly(annotationProcessor("libs:mixinextras-common:0.3.6"))
+    implementation(jarJar("libs:mixinextras-forge:0.3.6")) {
         jarJar.ranged(it, "[0.3.6,)")
     }
 

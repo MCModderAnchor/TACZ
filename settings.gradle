@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.parchmentmc.org' }
+        maven {
+            // 阿里云镜像，方便国内开发
+            url = uri("https://maven.aliyun.com/repository/public/")
+        }
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = 'https://maven.minecraftforge.net/' }
+    }
+}
+
+rootProject.name = "tacz"
