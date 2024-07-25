@@ -41,6 +41,8 @@ public class LocalPlayerFireSelect {
             SoundPlayManager.playFireSelectSound(player, gunIndex);
             // 发送切换开火模式的数据包，通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
+            // Fixme: 对于开火模式，这块其实还有问题
+            // AttachmentPropertyManager.postChangeEvent(player, mainhandItem);
             // 动画状态机转移状态
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {

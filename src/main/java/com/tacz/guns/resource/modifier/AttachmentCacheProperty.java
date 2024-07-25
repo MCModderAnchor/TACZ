@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.tacz.guns.api.modifier.CacheProperty;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
 
@@ -14,9 +15,9 @@ public class AttachmentCacheProperty {
     @SuppressWarnings("rawtypes")
     private final Map<String, CacheProperty> cacheProperties = Maps.newHashMap();
 
-    public AttachmentCacheProperty(GunData gunData) {
+    public AttachmentCacheProperty(ItemStack gunItem, GunData gunData) {
         var modifiers = AttachmentPropertyManager.getModifiers();
-        modifiers.forEach((id, value) -> cacheProperties.put(id, value.initCache(gunData)));
+        modifiers.forEach((id, value) -> cacheProperties.put(id, value.initCache(gunItem, gunData)));
     }
 
     @SuppressWarnings("all")

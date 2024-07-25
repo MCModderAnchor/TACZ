@@ -86,6 +86,9 @@ public final class AttachmentDataLoader {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             if (jsonObject.has(key)) {
                 data.addModifier(key, value.readJson(json));
+            } else if (jsonObject.has(value.getOptionalFields())) {
+                // 为了兼容旧版本，读取可选字段名
+                data.addModifier(key, value.readJson(json));
             }
         });
         CommonAssetManager.INSTANCE.putAttachmentData(id, data);

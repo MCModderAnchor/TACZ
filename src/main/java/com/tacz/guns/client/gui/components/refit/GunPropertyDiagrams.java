@@ -7,6 +7,7 @@ import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.AdsModifier;
+import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
 import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.AttachmentDataUtils;
@@ -21,6 +22,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 public final class GunPropertyDiagrams {
     public static void draw(GuiGraphics graphics, Font font, int x, int y) {
@@ -35,8 +37,8 @@ public final class GunPropertyDiagrams {
         if (iGun == null) {
             return;
         }
-        AttachmentCacheProperty attachmentProperty = IGunOperator.fromLivingEntity(player).getCacheProperty();
-        if (attachmentProperty == null) {
+        AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(player).getCacheProperty();
+        if (cacheProperty == null) {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(gunItem);
@@ -157,9 +159,8 @@ public final class GunPropertyDiagrams {
             double standInaccuracyPercent = Math.min(standInaccuracy / 10.0, 1);
             int inaccuracyLength = (int) (barStartX + barMaxWidth * standInaccuracyPercent);
 
-            float[] inaccuracyModifier = new float[]{0};
-            AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> inaccuracyModifier[0] += attachmentData.getInaccuracyAddend());
-            double attachmentInaccuracyPercent = Math.min(inaccuracyModifier[0] / 10.0, 1);
+            float inaccuracyModifier = cacheProperty.<Map<InaccuracyType, Float>>getCache(InaccuracyModifier.ID).get(InaccuracyType.STAND) - standInaccuracy;
+            double attachmentInaccuracyPercent = Math.min(inaccuracyModifier / 10.0, 1);
             int inaccuracyModifierLength = Mth.clamp(inaccuracyLength + (int) (barMaxWidth * attachmentInaccuracyPercent), barStartX, barEndX);
 
             graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.hipfire_inaccuracy"), nameTextStartX, pitch, fontColor, false);
@@ -167,10 +168,10 @@ public final class GunPropertyDiagrams {
             graphics.fill(barStartX, pitch + 2, inaccuracyLength, pitch + 6, barBaseColor);
             if (attachmentInaccuracyPercent < 0) {
                 graphics.fill(inaccuracyModifierLength, pitch + 2, inaccuracyLength, pitch + 6, barPositivelyColor);
-                graphics.drawString(font, String.format("%.2f §a(%.2f)", standInaccuracy, inaccuracyModifier[0]), valueTextStartX, pitch, fontColor, false);
+                graphics.drawString(font, String.format("%.2f §a(%.2f)", standInaccuracy, inaccuracyModifier), valueTextStartX, pitch, fontColor, false);
             } else if (attachmentInaccuracyPercent > 0) {
                 graphics.fill(inaccuracyLength, pitch + 2, inaccuracyModifierLength, pitch + 6, barNegativeColor);
-                graphics.drawString(font, String.format("%.2f §c(+%.2f)", standInaccuracy, inaccuracyModifier[0]), valueTextStartX, pitch, fontColor, false);
+                graphics.drawString(font, String.format("%.2f §c(+%.2f)", standInaccuracy, inaccuracyModifier), valueTextStartX, pitch, fontColor, false);
             } else {
                 graphics.drawString(font, String.format("%.2f", standInaccuracy), valueTextStartX, pitch, fontColor, false);
             }
@@ -255,7 +256,7 @@ public final class GunPropertyDiagrams {
 
             // 开镜时间
             float aimTime = gunData.getAimTime();
-            float adsTimeModifier = attachmentProperty.<Float>getCache(AdsModifier.ID) - aimTime;
+            float adsTimeModifier = cacheProperty.<Float>getCache(AdsModifier.ID) - aimTime;
             double aimTimePercent = Math.min(aimTime, 1);
             int aimeTimeLength = (int) (barStartX + barMaxWidth * aimTimePercent);
             int adsModifierLength = Mth.clamp(aimeTimeLength + (int) (barMaxWidth * adsTimeModifier), barStartX, barEndX);

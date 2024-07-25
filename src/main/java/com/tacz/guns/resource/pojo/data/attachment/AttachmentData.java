@@ -19,19 +19,8 @@ public class AttachmentData {
     @SerializedName("weight")
     private float weight = 0;
 
-    @SerializedName("ads_addend")
-    @Deprecated
-    private float adsAddendTime = 0;
-
-    @SerializedName("ads")
-    @Nullable
-    private ModifiedValue ads = null;
-
     @SerializedName("extended_mag_level")
     private int extendedMagLevel = 0;
-
-    @SerializedName("inaccuracy_addend")
-    private float inaccuracyAddend = 0;
 
     @SerializedName("recoil_modifier")
     @Nullable
@@ -52,20 +41,6 @@ public class AttachmentData {
 
     public int getExtendedMagLevel() {
         return extendedMagLevel;
-    }
-
-    @Deprecated
-    public float getAdsAddendTime() {
-        return adsAddendTime;
-    }
-
-    @Nullable
-    public ModifiedValue getAds() {
-        return ads;
-    }
-
-    public float getInaccuracyAddend() {
-        return inaccuracyAddend;
     }
 
     @Nullable

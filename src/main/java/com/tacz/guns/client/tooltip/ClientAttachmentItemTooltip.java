@@ -176,19 +176,19 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                 }
             }
 
-            float adsAddendTime = data.getAdsAddendTime();
-            if (adsAddendTime > 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.ads.increase").withStyle(ChatFormatting.RED));
-            } else if (adsAddendTime < 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.ads.decrease").withStyle(ChatFormatting.GREEN));
-            }
-
-            float inaccuracyAddend = data.getInaccuracyAddend();
-            if (inaccuracyAddend > 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.increase").withStyle(ChatFormatting.RED));
-            } else if (inaccuracyAddend < 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.decrease").withStyle(ChatFormatting.GREEN));
-            }
+//            float adsAddendTime = data.getAdsAddendTime();
+//            if (adsAddendTime > 0) {
+//                components.add(Component.translatable("tooltip.tacz.attachment.ads.increase").withStyle(ChatFormatting.RED));
+//            } else if (adsAddendTime < 0) {
+//                components.add(Component.translatable("tooltip.tacz.attachment.ads.decrease").withStyle(ChatFormatting.GREEN));
+//            }
+//
+//            float inaccuracyAddend = data.getInaccuracyAddend();
+//            if (inaccuracyAddend > 0) {
+//                components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.increase").withStyle(ChatFormatting.RED));
+//            } else if (inaccuracyAddend < 0) {
+//                components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.decrease").withStyle(ChatFormatting.GREEN));
+//            }
 
             RecoilModifier recoilModifier = data.getRecoilModifier();
             if (recoilModifier != null) {

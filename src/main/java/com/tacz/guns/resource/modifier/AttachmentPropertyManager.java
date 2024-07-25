@@ -8,6 +8,7 @@ import com.tacz.guns.api.event.common.AttachmentPropertyEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.resource.modifier.custom.AdsModifier;
+import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
 import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,6 +28,7 @@ public class AttachmentPropertyManager {
 
     public static void registerModifier() {
         MODIFIERS.put(AdsModifier.ID, new AdsModifier());
+        MODIFIERS.put(InaccuracyModifier.ID, new InaccuracyModifier());
     }
 
     public static Map<String, IAttachmentModifier<?, ?>> getModifiers() {
@@ -39,7 +41,7 @@ public class AttachmentPropertyManager {
         }
         ResourceLocation gunId = iGun.getGunId(gunItem);
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
-            AttachmentCacheProperty cacheProperty = new AttachmentCacheProperty(index.getGunData());
+            AttachmentCacheProperty cacheProperty = new AttachmentCacheProperty(gunItem, index.getGunData());
             MinecraftForge.EVENT_BUS.post(new AttachmentPropertyEvent(gunItem, cacheProperty));
             IGunOperator.fromLivingEntity(shooter).updateCacheProperty(cacheProperty);
         });
@@ -68,8 +70,8 @@ public class AttachmentPropertyManager {
         } catch (ScriptException e) {
             GunMod.LOGGER.catching(e);
         }
-        if (LUAJ_ENGINE.get("y") instanceof Double number) {
-            return number;
+        if (LUAJ_ENGINE.get("y") instanceof Number number) {
+            return number.doubleValue();
         }
         return value;
     }

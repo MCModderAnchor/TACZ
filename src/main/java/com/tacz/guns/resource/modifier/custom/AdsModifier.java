@@ -8,8 +8,9 @@ import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import net.minecraft.world.item.ItemStack;
 
-public class AdsModifier implements IAttachmentModifier<AdsModifier.AdsData, Float> {
+public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float> {
     public static final String ID = "ads";
 
     @Override
@@ -18,24 +19,29 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.AdsData, Flo
     }
 
     @Override
-    public JsonProperty<AdsData, Float> readJson(String json) {
-        AdsData data = CommonGunPackLoader.GSON.fromJson(json, AdsData.class);
+    public String getOptionalFields() {
+        return "ads_addend";
+    }
+
+    @Override
+    public JsonProperty<Data, Float> readJson(String json) {
+        Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
         return new AdsJsonProperty(data);
     }
 
     @Override
-    public CacheProperty<Float> initCache(GunData gunData) {
+    public CacheProperty<Float> initCache(ItemStack gunItem, GunData gunData) {
         return new CacheProperty<>(gunData.getAimTime());
     }
 
-    public static class AdsJsonProperty extends JsonProperty<AdsData, Float> {
-        public AdsJsonProperty(AdsData value) {
+    public static class AdsJsonProperty extends JsonProperty<Data, Float> {
+        public AdsJsonProperty(Data value) {
             super(value);
         }
 
         @Override
         public void eval(GunData gunData, CacheProperty<Float> cache) {
-            AdsData jsonData = this.getValue();
+            Data jsonData = this.getValue();
             if (jsonData.getAds() == null) {
                 // 兼容旧版本写法
                 cache.setValue(cache.getValue() + jsonData.getAdsAddendTime());
@@ -45,7 +51,7 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.AdsData, Flo
         }
     }
 
-    public static class AdsData {
+    public static class Data {
         @SerializedName("ads")
         private ModifiedValue ads;
 

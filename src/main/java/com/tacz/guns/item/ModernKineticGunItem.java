@@ -16,6 +16,8 @@ import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunFire;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.attachment.EffectData;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
@@ -42,6 +44,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -80,26 +83,19 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         ResourceLocation ammoId = gunData.getAmmoId();
         FireMode fireMode = iGun.getFireMode(gunItem);
         GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
+        AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(shooter).getCacheProperty();
+        if (cacheProperty == null) {
+            return;
+        }
 
         // 散射影响
-        InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
-        float inaccuracyAddend = 0;
-        if (fireModeAdjustData != null) {
-            if (inaccuracyState == InaccuracyType.AIM) {
-                inaccuracyAddend = fireModeAdjustData.getAimInaccuracy();
-            } else {
-                inaccuracyAddend = fireModeAdjustData.getOtherInaccuracy();
-            }
-        }
-        final float[] inaccuracy = new float[]{gunData.getInaccuracy(inaccuracyState, inaccuracyAddend)};
+        InaccuracyType inaccuracyType = InaccuracyType.getInaccuracyType(shooter);
+        final float inaccuracy = Math.max(0, cacheProperty.<Map<InaccuracyType, Float>>getCache(InaccuracyModifier.ID).get(inaccuracyType));
 
         // 消音器影响
         final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
         final boolean[] useSilenceSound = new boolean[]{false};
-
-        // 配件属性的读取计算
-        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
-        inaccuracy[0] = Math.max(0, inaccuracy[0]);
+        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> calculateAttachmentData(attachmentData, soundDistance, useSilenceSound));
 
         // 子弹飞行速度
         float speed = bulletData.getSpeed();
@@ -142,7 +138,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                 // 生成子弹
                 Level world = shooter.level();
                 for (int i = 0; i < bulletAmount; i++) {
-                    this.doSpawnBulletEntity(world, shooter, pitch.get(), yaw.get(), finalSpeed, inaccuracy[0], ammoId, gunId, tracer, gunData, bulletData, fireMode);
+                    this.doSpawnBulletEntity(world, shooter, pitch.get(), yaw.get(), finalSpeed, inaccuracy, ammoId, gunId, tracer, gunData, bulletData, fireMode);
                 }
                 // 播放枪声
                 if (soundDistance[0] > 0) {
@@ -327,11 +323,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         }
     }
 
-    private void calculateAttachmentData(AttachmentData attachmentData, InaccuracyType inaccuracyState, float[] inaccuracy, int[] soundDistance, boolean[] useSilenceSound) {
-        // 影响除瞄准外所有的不准确度
-        if (!inaccuracyState.isAim()) {
-            inaccuracy[0] += attachmentData.getInaccuracyAddend();
-        }
+    private void calculateAttachmentData(AttachmentData attachmentData, int[] soundDistance, boolean[] useSilenceSound) {
         Silence silence = attachmentData.getSilence();
         if (silence != null) {
             soundDistance[0] += silence.getDistanceAddend();
