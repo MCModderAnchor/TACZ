@@ -5,7 +5,8 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.config.sync.SyncConfig;
-import com.tacz.guns.entity.shooter.AttachmentProperty;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.AdsModifier;
 import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.AttachmentDataUtils;
@@ -34,7 +35,7 @@ public final class GunPropertyDiagrams {
         if (iGun == null) {
             return;
         }
-        AttachmentProperty attachmentProperty = IGunOperator.fromLivingEntity(player).getAttachmentProperty();
+        AttachmentCacheProperty attachmentProperty = IGunOperator.fromLivingEntity(player).getCacheProperty();
         if (attachmentProperty == null) {
             return;
         }
@@ -254,7 +255,7 @@ public final class GunPropertyDiagrams {
 
             // 开镜时间
             float aimTime = gunData.getAimTime();
-            float adsTimeModifier = attachmentProperty.ads - aimTime;
+            float adsTimeModifier = attachmentProperty.<Float>getCache(AdsModifier.ID) - aimTime;
             double aimTimePercent = Math.min(aimTime, 1);
             int aimeTimeLength = (int) (barStartX + barMaxWidth * aimTimePercent);
             int adsModifierLength = Mth.clamp(aimeTimeLength + (int) (barMaxWidth * adsTimeModifier), barStartX, barEndX);

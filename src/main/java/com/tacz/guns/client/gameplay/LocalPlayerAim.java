@@ -6,6 +6,7 @@ import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerAim;
+import com.tacz.guns.resource.modifier.custom.AdsModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -97,8 +98,8 @@ public class LocalPlayerAim {
     private float getAlphaProgress(GunData gunData) {
         float aimTime = gunData.getAimTime();
         IGunOperator operator = IGunOperator.fromLivingEntity(this.player);
-        if (operator.getAttachmentProperty() != null) {
-            aimTime = operator.getAttachmentProperty().ads;
+        if (operator.getCacheProperty() != null) {
+            aimTime = operator.getCacheProperty().<Float>getCache(AdsModifier.ID);
         }
         aimTime = Math.max(0, aimTime);
         return (System.currentTimeMillis() - data.clientAimingTimestamp + 1) / (aimTime * 1000);

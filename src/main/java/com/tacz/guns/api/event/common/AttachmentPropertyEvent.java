@@ -1,6 +1,6 @@
 package com.tacz.guns.api.event.common;
 
-import com.tacz.guns.entity.shooter.AttachmentProperty;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -11,18 +11,18 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public class AttachmentPropertyEvent extends Event {
     private final ItemStack gunItem;
-    private final AttachmentProperty property;
+    private final AttachmentCacheProperty cacheProperty;
 
-    public AttachmentPropertyEvent(ItemStack gunItem, AttachmentProperty attachmentProperty) {
+    public AttachmentPropertyEvent(ItemStack gunItem, AttachmentCacheProperty attachmentProperty) {
         this.gunItem = gunItem;
-        this.property = attachmentProperty;
+        this.cacheProperty = attachmentProperty;
     }
 
     public ItemStack getGunItem() {
         return gunItem;
     }
 
-    public AttachmentProperty getProperty() {
-        return property;
+    public AttachmentCacheProperty getCacheProperty() {
+        return cacheProperty;
     }
 }

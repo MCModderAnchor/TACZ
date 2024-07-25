@@ -1,6 +1,6 @@
 package com.tacz.guns.api.entity;
 
-import com.tacz.guns.entity.shooter.AttachmentProperty;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -133,9 +133,9 @@ public interface IGunOperator {
      * <p>
      * 通过将配件修改的属性值缓存在实体上，避免频繁的计算，提升性能
      *
-     * @param attachmentProperty 更新完的配件属性修改值
+     * @param cacheProperty 更新完的配件属性修改值
      */
-    void updateAttachmentProperty(AttachmentProperty attachmentProperty);
+    void updateCacheProperty(AttachmentCacheProperty cacheProperty);
 
     /**
      * 获取配件属性修改值缓存
@@ -143,5 +143,5 @@ public interface IGunOperator {
      * @return 绝大部分情况下，这个数值都不可能为 null
      */
     @Nullable
-    AttachmentProperty getAttachmentProperty();
+    AttachmentCacheProperty getCacheProperty();
 }

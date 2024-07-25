@@ -3,8 +3,8 @@ package com.tacz.guns.event;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.event.common.AttachmentPropertyEvent;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.entity.shooter.AttachmentProperty;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +27,7 @@ public class ChangeGunPropertyEvent {
 
     private static void getAllAttachmentData(AttachmentPropertyEvent event, CommonGunIndex gunIndex, ItemStack gunItem) {
         GunData gunData = gunIndex.getGunData();
-        AttachmentProperty property = event.getProperty();
-        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, data -> property.eval(gunData, data));
+        AttachmentCacheProperty cacheProperty = event.getCacheProperty();
+        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, data -> cacheProperty.eval(gunData, data));
     }
 }

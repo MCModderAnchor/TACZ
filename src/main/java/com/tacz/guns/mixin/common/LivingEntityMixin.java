@@ -6,6 +6,8 @@ import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.entity.shooter.*;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -91,7 +93,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     public void initialData() {
         this.tacz$data.initialData();
         // 刷新配件属性缓存
-        AttachmentProperty.postChangeEvent(tacz$shooter, tacz$shooter.getMainHandItem());
+        AttachmentPropertyManager.postChangeEvent(tacz$shooter, tacz$shooter.getMainHandItem());
     }
 
     @Unique
@@ -147,13 +149,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     }
 
     @Override
-    public void updateAttachmentProperty(AttachmentProperty attachmentProperty) {
-        this.tacz$data.attachmentProperty = attachmentProperty;
+    public void updateCacheProperty(AttachmentCacheProperty cacheProperty) {
+        this.tacz$data.cacheProperty = cacheProperty;
     }
 
     @Nullable
-    public AttachmentProperty getAttachmentProperty() {
-        return this.tacz$data.attachmentProperty;
+    public AttachmentCacheProperty getCacheProperty() {
+        return this.tacz$data.cacheProperty;
     }
 
     @Unique

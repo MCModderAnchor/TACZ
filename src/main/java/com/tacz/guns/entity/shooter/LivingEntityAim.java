@@ -8,6 +8,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.modifier.custom.AdsModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -67,8 +68,8 @@ public class LivingEntityAim {
         }
         GunData gunData = gunIndexOptional.get().getGunData();
         float aimTime = gunData.getAimTime();
-        if (this.data.attachmentProperty != null) {
-            aimTime = this.data.attachmentProperty.ads;
+        if (this.data.cacheProperty != null) {
+            aimTime = this.data.cacheProperty.<Float>getCache(AdsModifier.ID);
         }
         aimTime = Math.max(0, aimTime);
         float alphaProgress = (System.currentTimeMillis() - data.aimingTimestamp + 1) / (aimTime * 1000);

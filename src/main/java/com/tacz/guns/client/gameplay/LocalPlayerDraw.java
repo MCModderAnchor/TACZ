@@ -6,10 +6,11 @@ import com.tacz.guns.api.event.common.GunDrawEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import com.tacz.guns.client.sound.SoundPlayManager;
-import com.tacz.guns.entity.shooter.AttachmentProperty;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerDrawGun;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -60,7 +61,7 @@ public class LocalPlayerDraw {
         if (currentGun != null) {
             doDraw(currentGun, currentItem, putAwayTime);
             // 刷新配件数据
-            AttachmentProperty.postChangeEvent(player, currentItem);
+            AttachmentPropertyManager.postChangeEvent(player, currentItem);
         }
     }
 

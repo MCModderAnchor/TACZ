@@ -1,6 +1,7 @@
 package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.entity.ReloadState;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -90,7 +91,7 @@ public class ShooterDataHolder {
      * 配件修改过的各种属性缓存
      */
     @Nullable
-    public AttachmentProperty attachmentProperty = null;
+    public AttachmentCacheProperty cacheProperty = null;
 
     public void initialData() {
         // 重置各个状态
