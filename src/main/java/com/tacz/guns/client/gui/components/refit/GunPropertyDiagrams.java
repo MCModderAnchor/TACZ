@@ -132,7 +132,9 @@ public final class GunPropertyDiagrams {
             float effectiveRange = 0f;
             if (extraDamage != null) {
                 LinkedList<ExtraDamage.DistanceDamagePair> damageDecay = extraDamage.getDamageAdjust();
-                effectiveRange = damageDecay.getFirst().getDistance();
+                if (damageDecay.size() > 0) {
+                    effectiveRange = damageDecay.get(0).getDistance();
+                }
             }
             double effectiveRangePercent = Mth.clamp(effectiveRange / 100.0, 0, 1);
             int effectiveRangeLength = (int) (barStartX + barMaxWidth * effectiveRangePercent);
