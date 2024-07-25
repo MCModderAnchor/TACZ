@@ -13,7 +13,12 @@ public class AttachmentData {
     private float weight = 0;
 
     @SerializedName("ads_addend")
+    @Deprecated
     private float adsAddendTime = 0;
+
+    @SerializedName("ads")
+    @Nullable
+    private ModifiedValue ads = null;
 
     @SerializedName("extended_mag_level")
     private int extendedMagLevel = 0;
@@ -42,8 +47,14 @@ public class AttachmentData {
         return extendedMagLevel;
     }
 
+    @Deprecated
     public float getAdsAddendTime() {
         return adsAddendTime;
+    }
+
+    @Nullable
+    public ModifiedValue getAds() {
+        return ads;
     }
 
     public float getInaccuracyAddend() {

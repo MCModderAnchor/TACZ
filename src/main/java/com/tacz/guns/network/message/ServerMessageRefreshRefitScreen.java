@@ -1,6 +1,7 @@
 package com.tacz.guns.network.message;
 
 import com.tacz.guns.client.gui.GunRefitScreen;
+import com.tacz.guns.entity.shooter.AttachmentProperty;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -31,6 +32,8 @@ public class ServerMessageRefreshRefitScreen {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && Minecraft.getInstance().screen instanceof GunRefitScreen screen) {
             screen.init();
+            // 刷新配件数据，客户端的
+            AttachmentProperty.postChangeEvent(player, player.getMainHandItem());
         }
     }
 }

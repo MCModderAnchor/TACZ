@@ -46,6 +46,8 @@ public class LivingEntityDrawGun {
         MinecraftForge.EVENT_BUS.post(new GunDrawEvent(shooter, lastItem, gunItemSupplier.get(), LogicalSide.SERVER));
         NetworkHandler.sendToTrackingEntity(new ServerMessageGunDraw(shooter.getId(), lastItem, gunItemSupplier.get()), shooter);
         data.currentGunItem = gunItemSupplier;
+        // 刷新配件数据
+        AttachmentProperty.postChangeEvent(shooter, gunItemSupplier.get());
         updatePutAwayTime();
     }
 

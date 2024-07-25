@@ -9,7 +9,6 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
-import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -67,10 +66,12 @@ public class LivingEntityAim {
             return;
         }
         GunData gunData = gunIndexOptional.get().getGunData();
-        final float[] aimTime = new float[]{gunData.getAimTime()};
-        AttachmentDataUtils.getAllAttachmentData(currentGunItem, gunData, attachmentData -> aimTime[0] += attachmentData.getAdsAddendTime());
-        aimTime[0] = Math.max(0, aimTime[0]);
-        float alphaProgress = (System.currentTimeMillis() - data.aimingTimestamp + 1) / (aimTime[0] * 1000);
+        float aimTime = gunData.getAimTime();
+        if (this.data.attachmentProperty != null) {
+            aimTime = this.data.attachmentProperty.ads;
+        }
+        aimTime = Math.max(0, aimTime);
+        float alphaProgress = (System.currentTimeMillis() - data.aimingTimestamp + 1) / (aimTime * 1000);
         if (data.isAiming) {
             // 处于执行瞄准状态，增加 aimingProgress
             data.aimingProgress += alphaProgress;

@@ -4,6 +4,7 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
+import com.tacz.guns.entity.shooter.AttachmentProperty;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.network.FriendlyByteBuf;
@@ -50,6 +51,8 @@ public class ClientMessageUnloadAttachment {
                     ItemStack attachmentItem = iGun.getAttachment(gunItem, message.attachmentType);
                     if (!attachmentItem.isEmpty() && inventory.add(attachmentItem)) {
                         iGun.unloadAttachment(gunItem, message.attachmentType);
+                        // 刷新配件数据
+                        AttachmentProperty.postChangeEvent(player, gunItem);
                         // 如果卸载的是扩容弹匣，吐出所有子弹
                         if (message.attachmentType == AttachmentType.EXTENDED_MAG) {
                             dropAllAmmo(player, iGun, gunItem);

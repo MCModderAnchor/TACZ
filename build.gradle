@@ -132,10 +132,10 @@ dependencies {
     }
 
     // LuaJ 库，将 lua 脚本语言引入用于控制枪械的逻辑和动画状态机
-    implementation(jarJar('libs:luaj-jse:3.0.3')) {
+    minecraftLibrary(jarJar('libs:luaj-jse:3.0.3')) {
         jarJar.ranged(it, "[3.0.3,)")
     }
-    implementation(jarJar('libs:luaj-core:3.0.3')) {
+    minecraftLibrary(jarJar('libs:luaj-core:3.0.3')) {
         jarJar.ranged(it, "[3.0.3,)")
     }
 

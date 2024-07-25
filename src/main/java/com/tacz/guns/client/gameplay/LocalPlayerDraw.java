@@ -6,6 +6,7 @@ import com.tacz.guns.api.event.common.GunDrawEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import com.tacz.guns.client.sound.SoundPlayManager;
+import com.tacz.guns.entity.shooter.AttachmentProperty;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerDrawGun;
 import com.tacz.guns.resource.index.CommonGunIndex;
@@ -58,6 +59,8 @@ public class LocalPlayerDraw {
         // 异步放映抬枪动画
         if (currentGun != null) {
             doDraw(currentGun, currentItem, putAwayTime);
+            // 刷新配件数据
+            AttachmentProperty.postChangeEvent(player, currentItem);
         }
     }
 

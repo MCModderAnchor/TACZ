@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 @SuppressWarnings("All")
@@ -89,6 +90,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     public void initialData() {
         this.tacz$data.initialData();
+        // 刷新配件属性缓存
+        AttachmentProperty.postChangeEvent(tacz$shooter, tacz$shooter.getMainHandItem());
     }
 
     @Unique
@@ -141,6 +144,16 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Override
     public void crawl(boolean isCrawl) {
         this.tacz$crawl.crawl(isCrawl);
+    }
+
+    @Override
+    public void updateAttachmentProperty(AttachmentProperty attachmentProperty) {
+        this.tacz$data.attachmentProperty = attachmentProperty;
+    }
+
+    @Nullable
+    public AttachmentProperty getAttachmentProperty() {
+        return this.tacz$data.attachmentProperty;
     }
 
     @Unique

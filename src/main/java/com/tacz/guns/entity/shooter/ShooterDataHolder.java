@@ -86,6 +86,11 @@ public class ShooterDataHolder {
      * 是否处于趴下状态
      */
     public boolean isCrawling = false;
+    /**
+     * 配件修改过的各种属性缓存
+     */
+    @Nullable
+    public AttachmentProperty attachmentProperty = null;
 
     public void initialData() {
         // 重置各个状态

@@ -1,9 +1,11 @@
 package com.tacz.guns.client.gui.components.refit;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.config.sync.SyncConfig;
+import com.tacz.guns.entity.shooter.AttachmentProperty;
 import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.AttachmentDataUtils;
@@ -30,6 +32,10 @@ public final class GunPropertyDiagrams {
         ItemStack gunItem = player.getMainHandItem();
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {
+            return;
+        }
+        AttachmentProperty attachmentProperty = IGunOperator.fromLivingEntity(player).getAttachmentProperty();
+        if (attachmentProperty == null) {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(gunItem);
@@ -68,7 +74,7 @@ public final class GunPropertyDiagrams {
             }
 
             graphics.drawString(font, fireModeText, nameTextStartX, pitch, fontColor, false);
-            
+
             pitch += 10;
 
 
@@ -245,25 +251,21 @@ public final class GunPropertyDiagrams {
 
 
             // 开镜时间
-            final float[] adsTimeModifier = new float[]{0f};
-            AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> {
-                adsTimeModifier[0] += attachmentData.getAdsAddendTime();
-            });
-
             float aimTime = gunData.getAimTime();
+            float adsTimeModifier = attachmentProperty.ads - aimTime;
             double aimTimePercent = Math.min(aimTime, 1);
             int aimeTimeLength = (int) (barStartX + barMaxWidth * aimTimePercent);
-            int adsModifierLength = Mth.clamp(aimeTimeLength + (int) (barMaxWidth * adsTimeModifier[0]), barStartX, barEndX);
+            int adsModifierLength = Mth.clamp(aimeTimeLength + (int) (barMaxWidth * adsTimeModifier), barStartX, barEndX);
 
             graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.ads"), nameTextStartX, pitch, fontColor, false);
             graphics.fill(barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
             graphics.fill(barStartX, pitch + 2, aimeTimeLength, pitch + 6, barBaseColor);
-            if (adsTimeModifier[0] > 0) {
+            if (adsTimeModifier > 0) {
                 graphics.fill(aimeTimeLength, pitch + 2, adsModifierLength, pitch + 6, barNegativeColor);
-                graphics.drawString(font, String.format("%.2fs §c(+%.2f)", aimTime, adsTimeModifier[0]), valueTextStartX, pitch, fontColor, false);
-            } else if (adsTimeModifier[0] < 0) {
+                graphics.drawString(font, String.format("%.2fs §c(+%.2f)", aimTime, adsTimeModifier), valueTextStartX, pitch, fontColor, false);
+            } else if (adsTimeModifier < 0) {
                 graphics.fill(adsModifierLength, pitch + 2, aimeTimeLength, pitch + 6, barPositivelyColor);
-                graphics.drawString(font, String.format("%.2fs §a(%.2f)", aimTime, adsTimeModifier[0]), valueTextStartX, pitch, fontColor, false);
+                graphics.drawString(font, String.format("%.2fs §a(%.2f)", aimTime, adsTimeModifier), valueTextStartX, pitch, fontColor, false);
             } else {
                 graphics.drawString(font, String.format("%.2fs", aimTime), valueTextStartX, pitch, fontColor, false);
             }
