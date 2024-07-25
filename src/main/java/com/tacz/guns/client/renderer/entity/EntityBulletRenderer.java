@@ -88,7 +88,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
                     width *= (float) Math.max(1.0, disToEye / 3.5);
                     poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
                     poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
-                    poseStack.translate(0, 0, trailLength / 2.0);
+                    poseStack.translate(0, -0.2, trailLength / 2.0);
                     poseStack.scale(width, width, (float) trailLength);
                 }
                 // 距离两格外才渲染，只在前 5 tick 判定
