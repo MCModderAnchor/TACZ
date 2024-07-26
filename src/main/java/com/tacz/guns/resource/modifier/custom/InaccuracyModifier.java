@@ -87,7 +87,7 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
         }
 
         @Override
-        public void eval(GunData gunData, CacheProperty<Map<InaccuracyType, Float>> cache) {
+        public void eval(ItemStack gunItem, GunData gunData, CacheProperty<Map<InaccuracyType, Float>> cache) {
             Data jsonData = this.getValue();
             Map<InaccuracyType, Float> tmp = Maps.newHashMap();
             if (jsonData.getInaccuracy() == null) {

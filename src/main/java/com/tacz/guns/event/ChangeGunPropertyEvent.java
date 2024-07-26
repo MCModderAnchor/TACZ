@@ -28,6 +28,6 @@ public class ChangeGunPropertyEvent {
     private static void getAllAttachmentData(AttachmentPropertyEvent event, CommonGunIndex gunIndex, ItemStack gunItem) {
         GunData gunData = gunIndex.getGunData();
         AttachmentCacheProperty cacheProperty = event.getCacheProperty();
-        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, data -> cacheProperty.eval(gunData, data));
+        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, data -> cacheProperty.eval(gunItem, gunData, data));
     }
 }

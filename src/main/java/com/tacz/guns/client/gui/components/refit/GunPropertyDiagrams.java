@@ -9,6 +9,7 @@ import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.AdsModifier;
 import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
 import com.tacz.guns.resource.modifier.custom.RecoilModifier;
+import com.tacz.guns.resource.modifier.custom.RpmModifier;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.AttachmentDataUtils;
 import it.unimi.dsi.fastutil.Pair;
@@ -102,14 +103,25 @@ public final class GunPropertyDiagrams {
 
             // 射速
             int rpm = gunData.getRoundsPerMinute(fireMode);
+            int rpmModifier = cacheProperty.<Integer>getCache(RpmModifier.ID) - rpm;
             double rpmPercent = Math.min(rpm / 1200.0, 1);
             int rpmLength = (int) (barStartX + barMaxWidth * rpmPercent);
-            String rpmValueText = String.format("%drpm", rpm);
+            double attachmentRpmPercent = rpmModifier / 1200.0;
+            int rpmModifierLength = Mth.clamp(rpmLength + (int) (barMaxWidth * attachmentRpmPercent), barStartX, barEndX);
 
             graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.rpm"), nameTextStartX, pitch, fontColor, false);
             graphics.fill(barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
             graphics.fill(barStartX, pitch + 2, rpmLength, pitch + 6, barBaseColor);
-            graphics.drawString(font, rpmValueText, valueTextStartX, pitch, fontColor, false);
+
+            if (rpmModifier < 0) {
+                graphics.fill(rpmModifierLength, pitch + 2, rpmLength, pitch + 6, barNegativeColor);
+                graphics.drawString(font, String.format("%drpm §c(%d)", rpm, rpmModifier), valueTextStartX, pitch, fontColor, false);
+            } else if (rpmModifier > 0) {
+                graphics.fill(rpmLength, pitch + 2, rpmModifierLength, pitch + 6, barPositivelyColor);
+                graphics.drawString(font, String.format("%drpm §a(+%d)", rpm, rpmModifier), valueTextStartX, pitch, fontColor, false);
+            } else {
+                graphics.drawString(font, String.format("%drpm", rpm), valueTextStartX, pitch, fontColor, false);
+            }
 
             pitch += 10;
 

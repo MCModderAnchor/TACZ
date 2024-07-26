@@ -63,7 +63,7 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float>
         }
 
         @Override
-        public void eval(GunData gunData, CacheProperty<Float> cache) {
+        public void eval(ItemStack gunItem, GunData gunData, CacheProperty<Float> cache) {
             Data jsonData = this.getValue();
             if (jsonData.getAds() == null) {
                 // 兼容旧版本写法

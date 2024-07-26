@@ -21,8 +21,8 @@ public class AttachmentCacheProperty {
     }
 
     @SuppressWarnings("all")
-    public void eval(GunData gunData, AttachmentData data) {
-        data.getModifier().forEach((id, value) -> value.eval(gunData, cacheProperties.get(id)));
+    public void eval(ItemStack gunItem, GunData gunData, AttachmentData data) {
+        data.getModifier().forEach((id, value) -> value.eval(gunItem, gunData, cacheProperties.get(id)));
     }
 
     @SuppressWarnings("unchecked")

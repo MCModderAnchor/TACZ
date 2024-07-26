@@ -77,7 +77,7 @@ public class RecoilModifier implements IAttachmentModifier<RecoilModifier.Data, 
         }
 
         @Override
-        public void eval(GunData gunData, CacheProperty<Pair<Float, Float>> cache) {
+        public void eval(ItemStack gunItem, GunData gunData, CacheProperty<Pair<Float, Float>> cache) {
             Data jsonData = this.getValue();
             OldRecoilData oldRecoilData = jsonData.oldRecoilData;
             NewRecoilData newRecoilData = jsonData.newRecoilData;
