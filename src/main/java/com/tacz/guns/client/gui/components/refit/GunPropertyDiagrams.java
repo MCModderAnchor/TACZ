@@ -8,9 +8,10 @@ import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.AdsModifier;
 import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
-import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
+import com.tacz.guns.resource.modifier.custom.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.AttachmentDataUtils;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -203,35 +204,27 @@ public final class GunPropertyDiagrams {
 
 
             // 水平后坐力和垂直后坐力
-            final float[] attachmentRecoilModifier = new float[]{0f, 0f};
-            AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> {
-                RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
-                if (recoilModifier == null) {
-                    return;
-                }
-                attachmentRecoilModifier[0] += recoilModifier.getPitch();
-                attachmentRecoilModifier[1] += recoilModifier.getYaw();
-            });
+            Pair<Float, Float> attachmentRecoilModifier = cacheProperty.getCache(RecoilModifier.ID);
 
             float yawRecoil = getMaxInGunRecoilKeyFrame(recoil.getYaw());
             double yawRecoilPercent = Math.min(yawRecoil / 5.0, 1);
             int yawLength = (int) (barStartX + barMaxWidth * yawRecoilPercent);
-            int yawModifierLength = Mth.clamp(yawLength + (int) (barMaxWidth * attachmentRecoilModifier[1] / 5.0), barStartX, barEndX);
+            int yawModifierLength = Mth.clamp(yawLength + (int) (barMaxWidth * attachmentRecoilModifier.right() / 5.0), barStartX, barEndX);
 
             float pitchRecoil = getMaxInGunRecoilKeyFrame(recoil.getPitch());
             double pitchRecoilPercent = Math.min(pitchRecoil / 5.0, 1);
             int pitchLength = (int) (barStartX + barMaxWidth * pitchRecoilPercent);
-            int pitchModifierLength = Mth.clamp(pitchLength + (int) (barMaxWidth * attachmentRecoilModifier[0] / 5.0), barStartX, barEndX);
+            int pitchModifierLength = Mth.clamp(pitchLength + (int) (barMaxWidth * attachmentRecoilModifier.left() / 5.0), barStartX, barEndX);
 
             graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.yaw"), nameTextStartX, pitch, fontColor, false);
             graphics.fill(barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
             graphics.fill(barStartX, pitch + 2, yawLength, pitch + 6, barBaseColor);
-            if (attachmentRecoilModifier[1] > 0) {
+            if (attachmentRecoilModifier.right() > 0) {
                 graphics.fill(yawLength, pitch + 2, yawModifierLength, pitch + 6, barNegativeColor);
-                graphics.drawString(font, String.format("%.2f §c(+%.2f)", yawRecoil, attachmentRecoilModifier[1]), valueTextStartX, pitch, fontColor, false);
-            } else if (attachmentRecoilModifier[1] < 0) {
+                graphics.drawString(font, String.format("%.2f §c(+%.2f)", yawRecoil, attachmentRecoilModifier.right()), valueTextStartX, pitch, fontColor, false);
+            } else if (attachmentRecoilModifier.right() < 0) {
                 graphics.fill(yawModifierLength, pitch + 2, yawLength, pitch + 6, barPositivelyColor);
-                graphics.drawString(font, String.format("%.2f §a(%.2f)", yawRecoil, attachmentRecoilModifier[1]), valueTextStartX, pitch, fontColor, false);
+                graphics.drawString(font, String.format("%.2f §a(%.2f)", yawRecoil, attachmentRecoilModifier.right()), valueTextStartX, pitch, fontColor, false);
             } else {
                 graphics.drawString(font, String.format("%.2f", yawRecoil), valueTextStartX, pitch, fontColor, false);
             }
@@ -241,12 +234,12 @@ public final class GunPropertyDiagrams {
             graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.pitch"), nameTextStartX, pitch, fontColor, false);
             graphics.fill(barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
             graphics.fill(barStartX, pitch + 2, pitchLength, pitch + 6, barBaseColor);
-            if (attachmentRecoilModifier[0] > 0) {
+            if (attachmentRecoilModifier.left() > 0) {
                 graphics.fill(pitchLength, pitch + 2, pitchModifierLength, pitch + 6, barNegativeColor);
-                graphics.drawString(font, String.format("%.2f §c(+%.2f)", pitchRecoil, attachmentRecoilModifier[0]), valueTextStartX, pitch, fontColor, false);
-            } else if (attachmentRecoilModifier[0] < 0) {
+                graphics.drawString(font, String.format("%.2f §c(+%.2f)", pitchRecoil, attachmentRecoilModifier.left()), valueTextStartX, pitch, fontColor, false);
+            } else if (attachmentRecoilModifier.left() < 0) {
                 graphics.fill(pitchModifierLength, pitch + 2, pitchLength, pitch + 6, barPositivelyColor);
-                graphics.drawString(font, String.format("%.2f §a(%.2f)", pitchRecoil, attachmentRecoilModifier[0]), valueTextStartX, pitch, fontColor, false);
+                graphics.drawString(font, String.format("%.2f §a(%.2f)", pitchRecoil, attachmentRecoilModifier.left()), valueTextStartX, pitch, fontColor, false);
             } else {
                 graphics.drawString(font, String.format("%.2f", pitchRecoil), valueTextStartX, pitch, fontColor, false);
             }

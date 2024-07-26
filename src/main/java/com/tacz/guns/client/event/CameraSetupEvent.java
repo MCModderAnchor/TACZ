@@ -14,11 +14,12 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
-import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
-import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.SecondOrderDynamics;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -191,6 +192,10 @@ public class CameraSetupEvent {
             if (!(mainHandItem.getItem() instanceof IGun iGun)) {
                 return;
             }
+            AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(player).getCacheProperty();
+            if (cacheProperty == null) {
+                return;
+            }
             ResourceLocation gunId = iGun.getGunId(mainHandItem);
             Optional<ClientGunIndex> gunIndexOptional = TimelessAPI.getClientGunIndex(gunId);
             if (gunIndexOptional.isEmpty()) {
@@ -199,15 +204,7 @@ public class CameraSetupEvent {
             ClientGunIndex gunIndex = gunIndexOptional.get();
             GunData gunData = gunIndex.getGunData();
             // 获取所有配件对摄像机后坐力的修改
-            final float[] attachmentRecoilModifier = new float[]{0f, 0f};
-            AttachmentDataUtils.getAllAttachmentData(mainHandItem, gunData, attachmentData -> {
-                RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
-                if (recoilModifier == null) {
-                    return;
-                }
-                attachmentRecoilModifier[0] += recoilModifier.getPitch();
-                attachmentRecoilModifier[1] += recoilModifier.getYaw();
-            });
+            Pair<Float, Float> attachmentRecoilModifier = cacheProperty.getCache(RecoilModifier.ID);
             IClientPlayerGunOperator clientPlayerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             float partialTicks = Minecraft.getInstance().getFrameTime();
             float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
@@ -217,8 +214,8 @@ public class CameraSetupEvent {
             if (!player.isSwimming() && player.getPose() == Pose.SWIMMING) {
                 aimingRecoilModifier = aimingRecoilModifier * 0.5f;
             }
-            pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction(modifierNumber(attachmentRecoilModifier[0]) * aimingRecoilModifier);
-            yawSplineFunction = gunData.getRecoil().genYawSplineFunction(modifierNumber(attachmentRecoilModifier[1]) * aimingRecoilModifier);
+            pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction(modifierNumber(attachmentRecoilModifier.left()) * aimingRecoilModifier);
+            yawSplineFunction = gunData.getRecoil().genYawSplineFunction(modifierNumber(attachmentRecoilModifier.right()) * aimingRecoilModifier);
             shootTimeStamp = System.currentTimeMillis();
             xRotO = 0;
             yRotO = 0;

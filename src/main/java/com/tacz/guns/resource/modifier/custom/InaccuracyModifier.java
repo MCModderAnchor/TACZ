@@ -16,7 +16,6 @@ import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.Map;
 import java.util.Objects;
@@ -80,7 +79,6 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
             }
 
             // 添加文本提示
-            this.components = Lists.newArrayList();
             if (inaccuracyAddend > 0) {
                 components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.increase").withStyle(ChatFormatting.RED));
             } else if (inaccuracyAddend < 0) {

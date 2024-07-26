@@ -12,7 +12,6 @@ import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
-import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -173,23 +172,6 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                     components.add(Component.translatable("tooltip.tacz.attachment.extended_mag_level_2").withStyle(ChatFormatting.BLUE));
                 } else if (magLevel == 3) {
                     components.add(Component.translatable("tooltip.tacz.attachment.extended_mag_level_3").withStyle(ChatFormatting.LIGHT_PURPLE));
-                }
-            }
-
-            RecoilModifier recoilModifier = data.getRecoilModifier();
-            if (recoilModifier != null) {
-                float pitch = recoilModifier.getPitch();
-                if (pitch > 0) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.pitch.increase").withStyle(ChatFormatting.RED));
-                } else if (pitch < 0) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.pitch.decrease").withStyle(ChatFormatting.GREEN));
-                }
-
-                float yaw = recoilModifier.getYaw();
-                if (yaw > 0) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.yaw.increase").withStyle(ChatFormatting.RED));
-                } else if (yaw < 0) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.yaw.decrease").withStyle(ChatFormatting.GREEN));
                 }
             }
 

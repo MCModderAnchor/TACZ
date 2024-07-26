@@ -2,6 +2,7 @@ package com.tacz.guns.api.modifier;
 
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.network.chat.Component;
+import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * @param <K> 配件缓存属性值
  */
 public abstract class JsonProperty<T, K> {
-    protected List<Component> components;
+    protected List<Component> components = Lists.newArrayList();
     private T value;
 
     public JsonProperty(T value) {

@@ -11,7 +11,6 @@ import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.apache.commons.compress.utils.Lists;
 
 public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float> {
     public static final String ID = "ads";
@@ -56,7 +55,6 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float>
             }
 
             // 添加文本提示
-            this.components = Lists.newArrayList();
             if (adsAddendTime > 0) {
                 components.add(Component.translatable("tooltip.tacz.attachment.ads.increase").withStyle(ChatFormatting.RED));
             } else if (adsAddendTime < 0) {

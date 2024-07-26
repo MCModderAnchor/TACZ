@@ -22,10 +22,6 @@ public class AttachmentData {
     @SerializedName("extended_mag_level")
     private int extendedMagLevel = 0;
 
-    @SerializedName("recoil_modifier")
-    @Nullable
-    private RecoilModifier recoilModifier = null;
-
     @SerializedName("melee")
     @Nullable
     private MeleeData meleeData = null;
@@ -41,11 +37,6 @@ public class AttachmentData {
 
     public int getExtendedMagLevel() {
         return extendedMagLevel;
-    }
-
-    @Nullable
-    public RecoilModifier getRecoilModifier() {
-        return recoilModifier;
     }
 
     @Nullable
