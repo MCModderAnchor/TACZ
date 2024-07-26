@@ -8,14 +8,20 @@ import com.tacz.guns.api.modifier.CacheProperty;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.GunFireModeAdjustData;
 import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Map;
 import java.util.Objects;
@@ -58,6 +64,43 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
             tmp.put(type, inaccuracy);
         });
         return new CacheProperty<>(tmp);
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void renderPropertyDiagrams(ItemStack gunItem, GunData gunData, AttachmentCacheProperty cacheProperty,
+                                       int barStartX, int barEndX, int barMaxWidth,
+                                       int barBackgroundColor, int barBaseColor, int barPositivelyColor, int barNegativeColor,
+                                       int fontColor, int nameTextStartX, int valueTextStartX,
+                                       GuiGraphics graphics, Font font, int yOffset
+    ) {
+        IGun iGun = Objects.requireNonNull(IGun.getIGunOrNull(gunItem));
+        FireMode fireMode = iGun.getFireMode(gunItem);
+        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
+        // 腰射扩散
+        float standInaccuracy = gunData.getInaccuracy(InaccuracyType.STAND);
+        if (fireModeAdjustData != null) {
+            standInaccuracy += fireModeAdjustData.getOtherInaccuracy();
+        }
+        double standInaccuracyPercent = Math.min(standInaccuracy / 10.0, 1);
+        int inaccuracyLength = (int) (barStartX + barMaxWidth * standInaccuracyPercent);
+
+        float inaccuracyModifier = cacheProperty.<Map<InaccuracyType, Float>>getCache(InaccuracyModifier.ID).get(InaccuracyType.STAND) - standInaccuracy;
+        double attachmentInaccuracyPercent = Math.min(inaccuracyModifier / 10.0, 1);
+        int inaccuracyModifierLength = Mth.clamp(inaccuracyLength + (int) (barMaxWidth * attachmentInaccuracyPercent), barStartX, barEndX);
+
+        graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.hipfire_inaccuracy"), nameTextStartX, yOffset, fontColor, false);
+        graphics.fill(barStartX, yOffset + 2, barEndX, yOffset + 6, barBackgroundColor);
+        graphics.fill(barStartX, yOffset + 2, inaccuracyLength, yOffset + 6, barBaseColor);
+        if (attachmentInaccuracyPercent < 0) {
+            graphics.fill(inaccuracyModifierLength, yOffset + 2, inaccuracyLength, yOffset + 6, barPositivelyColor);
+            graphics.drawString(font, String.format("%.2f §a(%.2f)", standInaccuracy, inaccuracyModifier), valueTextStartX, yOffset, fontColor, false);
+        } else if (attachmentInaccuracyPercent > 0) {
+            graphics.fill(inaccuracyLength, yOffset + 2, inaccuracyModifierLength, yOffset + 6, barNegativeColor);
+            graphics.drawString(font, String.format("%.2f §c(+%.2f)", standInaccuracy, inaccuracyModifier), valueTextStartX, yOffset, fontColor, false);
+        } else {
+            graphics.drawString(font, String.format("%.2f", standInaccuracy), valueTextStartX, yOffset, fontColor, false);
+        }
     }
 
     public static class AdsJsonProperty extends JsonProperty<Data, Map<InaccuracyType, Float>> {

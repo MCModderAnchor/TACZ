@@ -89,7 +89,8 @@ public class GunRefitScreen extends Screen {
             this.addRenderableWidget(new FlatColorButton(11, 11, 258, 16,
                     Component.translatable("gui.tacz.gun_refit.property_diagrams.show"), b -> switchHideButton()));
         } else {
-            this.addRenderableWidget(new FlatColorButton(11, 129, 258, 12,
+            int buttonYOffset = GunPropertyDiagrams.getHidePropertyButtonYOffset();
+            this.addRenderableWidget(new FlatColorButton(11, buttonYOffset, 258, 12,
                     Component.translatable("gui.tacz.gun_refit.property_diagrams.hide"), b -> switchHideButton()));
         }
     }

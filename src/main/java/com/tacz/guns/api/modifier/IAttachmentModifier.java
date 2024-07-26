@@ -1,7 +1,12 @@
 package com.tacz.guns.api.modifier;
 
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -43,4 +48,25 @@ public interface IAttachmentModifier<T, K> {
      * @return 初始化读取的数据
      */
     CacheProperty<K> initCache(ItemStack gunItem, GunData gunData);
+
+    /**
+     * 用于渲染改装界面的配置属性
+     */
+    @OnlyIn(Dist.CLIENT)
+    void renderPropertyDiagrams(ItemStack gunItem, GunData gunData, AttachmentCacheProperty cacheProperty,
+                                int barStartX, int barEndX, int barMaxWidth,
+                                int barBackgroundColor, int barBaseColor, int barPositivelyColor, int barNegativeColor,
+                                int fontColor, int nameTextStartX, int valueTextStartX,
+                                GuiGraphics graphics, Font font, int yOffset
+    );
+
+    /**
+     * 用于渲染渲染改装界面的配置属性的 YOffset 偏移
+     *
+     * @return YOffset 偏移
+     */
+    @OnlyIn(Dist.CLIENT)
+    default int getYOffset() {
+        return 10;
+    }
 }
