@@ -13,7 +13,10 @@ import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.GunFireModeAdjustData;
 import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.compress.utils.Lists;
 
 import java.util.Map;
 import java.util.Objects;
@@ -64,11 +67,33 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
         }
 
         @Override
-        public void eval(GunData gunData, CacheProperty<Map<InaccuracyType, Float>> cache) {
+        public void initComponents() {
             Data jsonData = this.getValue();
+            float inaccuracyAddend;
             if (jsonData.getInaccuracy() == null) {
                 // 兼容旧版本写法
-                Map<InaccuracyType, Float> tmp = Maps.newHashMap();
+                inaccuracyAddend = jsonData.getInaccuracyAddendTime();
+            } else {
+                // 传入默认值 5 进行测试，看看最终结果差值
+                double eval = AttachmentPropertyManager.eval(jsonData.getInaccuracy(), 5, 5);
+                inaccuracyAddend = (float) (eval - 5);
+            }
+
+            // 添加文本提示
+            this.components = Lists.newArrayList();
+            if (inaccuracyAddend > 0) {
+                components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.increase").withStyle(ChatFormatting.RED));
+            } else if (inaccuracyAddend < 0) {
+                components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.decrease").withStyle(ChatFormatting.GREEN));
+            }
+        }
+
+        @Override
+        public void eval(GunData gunData, CacheProperty<Map<InaccuracyType, Float>> cache) {
+            Data jsonData = this.getValue();
+            Map<InaccuracyType, Float> tmp = Maps.newHashMap();
+            if (jsonData.getInaccuracy() == null) {
+                // 兼容旧版本写法
                 cache.getValue().forEach((type, value) -> {
                     // 瞄准不应用此散布
                     if (type.isAim()) {
@@ -77,9 +102,7 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
                     }
                     tmp.put(type, value + jsonData.getInaccuracyAddendTime());
                 });
-                cache.setValue(tmp);
             } else {
-                Map<InaccuracyType, Float> tmp = Maps.newHashMap();
                 cache.getValue().forEach((type, value) -> {
                     // 瞄准不应用此散布
                     if (type.isAim()) {
@@ -89,8 +112,8 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
                     float eval = (float) AttachmentPropertyManager.eval(jsonData.getInaccuracy(), cache.getValue().get(type), gunData.getInaccuracy(type));
                     tmp.put(type, eval);
                 });
-                cache.setValue(tmp);
             }
+            cache.setValue(tmp);
         }
     }
 

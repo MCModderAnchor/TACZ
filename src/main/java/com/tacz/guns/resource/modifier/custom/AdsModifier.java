@@ -8,7 +8,10 @@ import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.compress.utils.Lists;
 
 public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float> {
     public static final String ID = "ads";
@@ -37,6 +40,28 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float>
     public static class AdsJsonProperty extends JsonProperty<Data, Float> {
         public AdsJsonProperty(Data value) {
             super(value);
+        }
+
+        @Override
+        public void initComponents() {
+            Data jsonData = this.getValue();
+            float adsAddendTime;
+            if (jsonData.getAds() == null) {
+                // 兼容旧版本写法
+                adsAddendTime = jsonData.getAdsAddendTime();
+            } else {
+                // 传入默认值 0.2 进行测试，看看最终结果差值
+                double eval = AttachmentPropertyManager.eval(jsonData.getAds(), 0.2, 0.2);
+                adsAddendTime = (float) (eval - 0.2);
+            }
+
+            // 添加文本提示
+            this.components = Lists.newArrayList();
+            if (adsAddendTime > 0) {
+                components.add(Component.translatable("tooltip.tacz.attachment.ads.increase").withStyle(ChatFormatting.RED));
+            } else if (adsAddendTime < 0) {
+                components.add(Component.translatable("tooltip.tacz.attachment.ads.decrease").withStyle(ChatFormatting.GREEN));
+            }
         }
 
         @Override

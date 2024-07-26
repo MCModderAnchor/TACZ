@@ -2,6 +2,7 @@ package com.tacz.guns.resource.loader.asset;
 
 import com.google.gson.*;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
@@ -85,10 +86,14 @@ public final class AttachmentDataLoader {
             }
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             if (jsonObject.has(key)) {
-                data.addModifier(key, value.readJson(json));
+                JsonProperty<?, ?> property = value.readJson(json);
+                property.initComponents();
+                data.addModifier(key, property);
             } else if (jsonObject.has(value.getOptionalFields())) {
                 // 为了兼容旧版本，读取可选字段名
-                data.addModifier(key, value.readJson(json));
+                JsonProperty<?, ?> property = value.readJson(json);
+                property.initComponents();
+                data.addModifier(key, property);
             }
         });
         CommonAssetManager.INSTANCE.putAttachmentData(id, data);
