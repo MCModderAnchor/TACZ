@@ -31,7 +31,7 @@ public final class GunPropertyDiagrams {
     }
 
     public static void draw(GuiGraphics graphics, Font font, int x, int y) {
-        graphics.fill(x, y, x + 258, y + getHidePropertyButtonYOffset() - 11, 0xAF222222);
+        graphics.fill(x, y, x + 288, y + getHidePropertyButtonYOffset() - 11, 0xAF222222);
 
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
@@ -53,7 +53,7 @@ public final class GunPropertyDiagrams {
             FireMode fireMode = iGun.getFireMode(gunItem);
             GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
 
-            int barStartX = x + 58;
+            int barStartX = x + 83;
             int barMaxWidth = 120;
             int barEndX = barStartX + barMaxWidth;
 
@@ -64,7 +64,7 @@ public final class GunPropertyDiagrams {
 
             int fontColor = 0xCCCCCC;
             int nameTextStartX = x + 5;
-            int valueTextStartX = x + 185;
+            int valueTextStartX = x + 210;
 
             int[] yOffset = new int[]{y + 5};
 

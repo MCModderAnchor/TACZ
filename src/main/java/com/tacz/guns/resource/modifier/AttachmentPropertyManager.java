@@ -31,6 +31,7 @@ public class AttachmentPropertyManager {
         MODIFIERS.put(RecoilModifier.ID, new RecoilModifier());
         MODIFIERS.put(RpmModifier.ID, new RpmModifier());
         MODIFIERS.put(PierceModifier.ID, new PierceModifier());
+        MODIFIERS.put(AmmoSpeedModifier.ID, new AmmoSpeedModifier());
     }
 
     public static Map<String, IAttachmentModifier<?, ?>> getModifiers() {

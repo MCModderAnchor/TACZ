@@ -17,6 +17,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunFire;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.AmmoSpeedModifier;
 import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.attachment.EffectData;
@@ -98,10 +99,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> calculateAttachmentData(attachmentData, soundDistance, useSilenceSound));
 
         // 子弹飞行速度
-        float speed = bulletData.getSpeed();
-        if (fireModeAdjustData != null) {
-            speed += fireModeAdjustData.getSpeed();
-        }
+        float speed = cacheProperty.<Float>getCache(AmmoSpeedModifier.ID);
         float finalSpeed = Mth.clamp(speed / 20, 0, Float.MAX_VALUE);
         // 弹丸数量
         int bulletAmount = Math.max(bulletData.getBulletAmount(), 1);

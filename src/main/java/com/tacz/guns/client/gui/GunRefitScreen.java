@@ -33,7 +33,7 @@ public class GunRefitScreen extends Screen {
     public static final int ICON_UV_SIZE = 32;
     public static final int SLOT_SIZE = 18;
     private static final int INVENTORY_ATTACHMENT_SLOT_COUNT = 8;
-    private static boolean HIDE_GUN_PROPERTY_DIAGRAMS = false;
+    private static boolean HIDE_GUN_PROPERTY_DIAGRAMS = true;
 
     private int currentPage = 0;
 
@@ -86,11 +86,11 @@ public class GunRefitScreen extends Screen {
         this.addInventoryAttachmentButtons();
         // 添加属性图隐藏按钮
         if (HIDE_GUN_PROPERTY_DIAGRAMS) {
-            this.addRenderableWidget(new FlatColorButton(11, 11, 258, 16,
+            this.addRenderableWidget(new FlatColorButton(11, 11, 288, 16,
                     Component.translatable("gui.tacz.gun_refit.property_diagrams.show"), b -> switchHideButton()));
         } else {
             int buttonYOffset = GunPropertyDiagrams.getHidePropertyButtonYOffset();
-            this.addRenderableWidget(new FlatColorButton(11, buttonYOffset, 258, 12,
+            this.addRenderableWidget(new FlatColorButton(11, buttonYOffset, 288, 12,
                     Component.translatable("gui.tacz.gun_refit.property_diagrams.hide"), b -> switchHideButton()));
         }
     }

@@ -53,8 +53,8 @@ public class RpmModifier implements IAttachmentModifier<RpmModifier.Data, Intege
         int rpm = gunData.getRoundsPerMinute(fireMode);
         int rpmModifier = cacheProperty.<Integer>getCache(RpmModifier.ID) - rpm;
 
-        double rpmPercent = Math.min(Math.log10(rpm) / Math.log10(1200), 1);
-        double rpmModifierPercent = Math.min(Math.log10(rpmModifier) / Math.log10(1200), 1);
+        double rpmPercent = Math.min(rpm / 1200.0, 1);
+        double rpmModifierPercent = Math.min(rpmModifier / 1200.0, 1);
 
         String titleKey = "gui.tacz.gun_refit.property_diagrams.rpm";
         String positivelyString = String.format("%drpm §a(+%d)", rpm, rpmModifier);

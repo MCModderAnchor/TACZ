@@ -18,6 +18,7 @@ import com.tacz.guns.network.message.event.ServerMessageGunHurt;
 import com.tacz.guns.network.message.event.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.AmmoSpeedModifier;
 import com.tacz.guns.resource.modifier.custom.PierceModifier;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.HitboxHelper;
@@ -121,10 +122,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
         this.life = Mth.clamp((int) (bulletData.getLifeSecond() * 20), 1, Integer.MAX_VALUE);
         // 限制最大弹速为 600 m / s，以减轻计算负担
-        float speed = bulletData.getSpeed();
-        if (this.fireModeAdjustData != null) {
-            speed += this.fireModeAdjustData.getSpeed();
-        }
+        float speed = cacheProperty.<Float>getCache(AmmoSpeedModifier.ID);
         this.speed = Mth.clamp(speed / 20, 0, 30);
         this.gravity = Mth.clamp(bulletData.getGravity(), 0, Float.MAX_VALUE);
         this.friction = Mth.clamp(bulletData.getFriction(), 0, Float.MAX_VALUE);
