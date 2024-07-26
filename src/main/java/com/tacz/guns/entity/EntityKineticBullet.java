@@ -1,6 +1,7 @@
 package com.tacz.guns.entity;
 
 import com.tacz.guns.api.DefaultAssets;
+import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ITargetEntity;
 import com.tacz.guns.api.entity.KnockBackModifier;
 import com.tacz.guns.api.event.common.EntityHurtByGunEvent;
@@ -16,6 +17,8 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunHurt;
 import com.tacz.guns.network.message.event.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.PierceModifier;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.HitboxHelper;
 import com.tacz.guns.util.TacHitResult;
@@ -62,6 +65,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -112,6 +116,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, GunData gunData, BulletData bulletData, FireMode fireMode) {
         this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
+        AttachmentCacheProperty cacheProperty = Objects.requireNonNull(IGunOperator.fromLivingEntity(throwerIn).getCacheProperty());
         this.ammoId = ammoId;
         this.fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
         this.life = Mth.clamp((int) (bulletData.getLifeSecond() * 20), 1, Integer.MAX_VALUE);
@@ -139,7 +144,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             knockback += this.fireModeAdjustData.getKnockback();
         }
         this.knockback = Mth.clamp(knockback, 0, Float.MAX_VALUE);
-        this.pierce = Mth.clamp(bulletData.getPierce(), 1, Integer.MAX_VALUE);
+        this.pierce = Mth.clamp(cacheProperty.getCache(PierceModifier.ID), 1, Integer.MAX_VALUE);
         this.extraDamage = bulletData.getExtraDamage();
         ExplosionData explosionData = bulletData.getExplosionData();
         if (explosionData != null) {

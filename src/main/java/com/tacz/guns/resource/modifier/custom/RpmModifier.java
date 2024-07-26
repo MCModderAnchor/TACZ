@@ -12,15 +12,14 @@ import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class RpmModifier implements IAttachmentModifier<RpmModifier.Data, Integer> {
@@ -47,35 +46,24 @@ public class RpmModifier implements IAttachmentModifier<RpmModifier.Data, Intege
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderPropertyDiagrams(ItemStack gunItem, GunData gunData, AttachmentCacheProperty cacheProperty,
-                                       int barStartX, int barEndX, int barMaxWidth,
-                                       int barBackgroundColor, int barBaseColor, int barPositivelyColor, int barNegativeColor,
-                                       int fontColor, int nameTextStartX, int valueTextStartX,
-                                       GuiGraphics graphics, Font font, int yOffset
-    ) {
+    public List<DiagramsData> getPropertyDiagramsData(ItemStack gunItem, GunData gunData, AttachmentCacheProperty cacheProperty) {
         IGun iGun = Objects.requireNonNull(IGun.getIGunOrNull(gunItem));
         FireMode fireMode = iGun.getFireMode(gunItem);
-        // 射速
+
         int rpm = gunData.getRoundsPerMinute(fireMode);
         int rpmModifier = cacheProperty.<Integer>getCache(RpmModifier.ID) - rpm;
-        double rpmPercent = Math.min(rpm / 1200.0, 1);
-        int rpmLength = (int) (barStartX + barMaxWidth * rpmPercent);
-        double attachmentRpmPercent = rpmModifier / 1200.0;
-        int rpmModifierLength = Mth.clamp(rpmLength + (int) (barMaxWidth * attachmentRpmPercent), barStartX, barEndX);
 
-        graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.rpm"), nameTextStartX, yOffset, fontColor, false);
-        graphics.fill(barStartX, yOffset + 2, barEndX, yOffset + 6, barBackgroundColor);
-        graphics.fill(barStartX, yOffset + 2, rpmLength, yOffset + 6, barBaseColor);
+        double rpmPercent = Math.min(Math.log10(rpm) / Math.log10(1200), 1);
+        double rpmModifierPercent = Math.min(Math.log10(rpmModifier) / Math.log10(1200), 1);
 
-        if (rpmModifier < 0) {
-            graphics.fill(rpmModifierLength, yOffset + 2, rpmLength, yOffset + 6, barNegativeColor);
-            graphics.drawString(font, String.format("%drpm §c(%d)", rpm, rpmModifier), valueTextStartX, yOffset, fontColor, false);
-        } else if (rpmModifier > 0) {
-            graphics.fill(rpmLength, yOffset + 2, rpmModifierLength, yOffset + 6, barPositivelyColor);
-            graphics.drawString(font, String.format("%drpm §a(+%d)", rpm, rpmModifier), valueTextStartX, yOffset, fontColor, false);
-        } else {
-            graphics.drawString(font, String.format("%drpm", rpm), valueTextStartX, yOffset, fontColor, false);
-        }
+        String titleKey = "gui.tacz.gun_refit.property_diagrams.rpm";
+        String positivelyString = String.format("%drpm §a(+%d)", rpm, rpmModifier);
+        String negativelyString = String.format("%drpm §c(%d)", rpm, rpmModifier);
+        String defaultString = String.format("%drpm", rpm);
+        boolean positivelyBetter = true;
+
+        DiagramsData diagramsData = new DiagramsData(rpmPercent, rpmModifierPercent, rpmModifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);
+        return Collections.singletonList(diagramsData);
     }
 
     public static class RpmJsonProperty extends JsonProperty<Data, Integer> {

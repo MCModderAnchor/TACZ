@@ -10,13 +10,13 @@ import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.Collections;
+import java.util.List;
 
 public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float> {
     public static final String ID = "ads";
@@ -44,31 +44,18 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float>
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderPropertyDiagrams(ItemStack gunItem, GunData gunData, AttachmentCacheProperty cacheProperty,
-                                       int barStartX, int barEndX, int barMaxWidth,
-                                       int barBackgroundColor, int barBaseColor, int barPositivelyColor, int barNegativeColor,
-                                       int fontColor, int nameTextStartX, int valueTextStartX,
-                                       GuiGraphics graphics, Font font, int yOffset
-    ) {
-        // 开镜时间
+    public List<DiagramsData> getPropertyDiagramsData(ItemStack gunItem, GunData gunData, AttachmentCacheProperty cacheProperty) {
         float aimTime = gunData.getAimTime();
         float adsTimeModifier = cacheProperty.<Float>getCache(AdsModifier.ID) - aimTime;
-        double aimTimePercent = Math.min(aimTime, 1);
-        int aimeTimeLength = (int) (barStartX + barMaxWidth * aimTimePercent);
-        int adsModifierLength = Mth.clamp(aimeTimeLength + (int) (barMaxWidth * adsTimeModifier), barStartX, barEndX);
 
-        graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.ads"), nameTextStartX, yOffset, fontColor, false);
-        graphics.fill(barStartX, yOffset + 2, barEndX, yOffset + 6, barBackgroundColor);
-        graphics.fill(barStartX, yOffset + 2, aimeTimeLength, yOffset + 6, barBaseColor);
-        if (adsTimeModifier > 0) {
-            graphics.fill(aimeTimeLength, yOffset + 2, adsModifierLength, yOffset + 6, barNegativeColor);
-            graphics.drawString(font, String.format("%.2fs §c(+%.2f)", aimTime, adsTimeModifier), valueTextStartX, yOffset, fontColor, false);
-        } else if (adsTimeModifier < 0) {
-            graphics.fill(adsModifierLength, yOffset + 2, aimeTimeLength, yOffset + 6, barPositivelyColor);
-            graphics.drawString(font, String.format("%.2fs §a(%.2f)", aimTime, adsTimeModifier), valueTextStartX, yOffset, fontColor, false);
-        } else {
-            graphics.drawString(font, String.format("%.2fs", aimTime), valueTextStartX, yOffset, fontColor, false);
-        }
+        String titleKey = "gui.tacz.gun_refit.property_diagrams.ads";
+        String positivelyString = String.format("%.2fs §c(+%.2f)", aimTime, adsTimeModifier);
+        String negativelyString = String.format("%.2fs §a(%.2f)", aimTime, adsTimeModifier);
+        String defaultString = String.format("%.2fs", aimTime);
+        boolean positivelyBetter = false;
+
+        DiagramsData diagramsData = new DiagramsData(aimTime, adsTimeModifier, adsTimeModifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);
+        return Collections.singletonList(diagramsData);
     }
 
     public static class AdsJsonProperty extends JsonProperty<Data, Float> {

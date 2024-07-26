@@ -7,10 +7,7 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.AttachmentPropertyEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
-import com.tacz.guns.resource.modifier.custom.AdsModifier;
-import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
-import com.tacz.guns.resource.modifier.custom.RecoilModifier;
-import com.tacz.guns.resource.modifier.custom.RpmModifier;
+import com.tacz.guns.resource.modifier.custom.*;
 import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,6 +30,7 @@ public class AttachmentPropertyManager {
         MODIFIERS.put(InaccuracyModifier.ID, new InaccuracyModifier());
         MODIFIERS.put(RecoilModifier.ID, new RecoilModifier());
         MODIFIERS.put(RpmModifier.ID, new RpmModifier());
+        MODIFIERS.put(PierceModifier.ID, new PierceModifier());
     }
 
     public static Map<String, IAttachmentModifier<?, ?>> getModifiers() {
