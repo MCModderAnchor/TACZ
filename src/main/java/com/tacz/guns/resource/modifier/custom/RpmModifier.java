@@ -72,6 +72,12 @@ public class RpmModifier implements IAttachmentModifier<ModifiedValue, Integer> 
         return Collections.singletonList(diagramsData);
     }
 
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public int getDiagramsDataSize() {
+        return 1;
+    }
+
     public static class RpmJsonProperty extends JsonProperty<ModifiedValue> {
         public RpmJsonProperty(ModifiedValue value) {
             super(value);

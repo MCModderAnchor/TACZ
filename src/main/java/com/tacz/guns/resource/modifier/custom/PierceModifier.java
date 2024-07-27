@@ -64,6 +64,12 @@ public class PierceModifier implements IAttachmentModifier<ModifiedValue, Intege
         return Collections.singletonList(diagramsData);
     }
 
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public int getDiagramsDataSize() {
+        return 1;
+    }
+
     public static class DamageJsonProperty extends JsonProperty<ModifiedValue> {
         public DamageJsonProperty(ModifiedValue value) {
             super(value);

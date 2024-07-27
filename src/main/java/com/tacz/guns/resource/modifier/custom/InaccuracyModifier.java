@@ -136,6 +136,12 @@ public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyTyp
         return Collections.singletonList(diagramsData);
     }
 
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public int getDiagramsDataSize() {
+        return 1;
+    }
+
     public static class AdsJsonProperty extends JsonProperty<Map<InaccuracyType, ModifiedValue>> {
         public AdsJsonProperty(Map<InaccuracyType, ModifiedValue> value) {
             super(value);

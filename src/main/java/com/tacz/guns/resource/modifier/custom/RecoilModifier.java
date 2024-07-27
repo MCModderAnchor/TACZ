@@ -108,6 +108,7 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public int getDiagramsDataSize() {
         return 2;
     }

@@ -73,6 +73,12 @@ public class AdsModifier implements IAttachmentModifier<ModifiedValue, Float> {
         return Collections.singletonList(diagramsData);
     }
 
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public int getDiagramsDataSize() {
+        return 1;
+    }
+
     public static class AdsJsonProperty extends JsonProperty<ModifiedValue> {
         public AdsJsonProperty(ModifiedValue value) {
             super(value);
