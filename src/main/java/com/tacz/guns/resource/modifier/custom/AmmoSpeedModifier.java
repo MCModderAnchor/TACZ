@@ -3,7 +3,7 @@ package com.tacz.guns.resource.modifier.custom;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
-import com.tacz.guns.api.modifier.CacheProperty;
+import com.tacz.guns.api.modifier.CacheValue;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class AmmoSpeedModifier implements IAttachmentModifier<AmmoSpeedModifier.Data, Float> {
+public class AmmoSpeedModifier implements IAttachmentModifier<ModifiedValue, Float> {
     public static final String ID = "ammo_speed";
 
     @Override
@@ -30,13 +30,13 @@ public class AmmoSpeedModifier implements IAttachmentModifier<AmmoSpeedModifier.
     }
 
     @Override
-    public JsonProperty<Data, Float> readJson(String json) {
+    public JsonProperty<ModifiedValue> readJson(String json) {
         AmmoSpeedModifier.Data data = CommonGunPackLoader.GSON.fromJson(json, AmmoSpeedModifier.Data.class);
-        return new AmmoSpeedModifier.BulletSpeedJsonProperty(data);
+        return new AmmoSpeedModifier.BulletSpeedJsonProperty(data.getAmmoSpeed());
     }
 
     @Override
-    public CacheProperty<Float> initCache(ItemStack gunItem, GunData gunData) {
+    public CacheValue<Float> initCache(ItemStack gunItem, GunData gunData) {
         IGun iGun = Objects.requireNonNull(IGun.getIGunOrNull(gunItem));
         FireMode fireMode = iGun.getFireMode(gunItem);
         GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
@@ -44,7 +44,13 @@ public class AmmoSpeedModifier implements IAttachmentModifier<AmmoSpeedModifier.
         if (fireModeAdjustData != null) {
             speed += fireModeAdjustData.getSpeed();
         }
-        return new CacheProperty<>(speed);
+        return new CacheValue<>(speed);
+    }
+
+    @Override
+    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Float> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+        cache.setValue((float) eval);
     }
 
     @Override
@@ -65,32 +71,21 @@ public class AmmoSpeedModifier implements IAttachmentModifier<AmmoSpeedModifier.
         return Collections.singletonList(diagramsData);
     }
 
-    public static class BulletSpeedJsonProperty extends JsonProperty<Data, Float> {
-        public BulletSpeedJsonProperty(Data data) {
-            super(data);
+    public static class BulletSpeedJsonProperty extends JsonProperty<ModifiedValue> {
+        public BulletSpeedJsonProperty(ModifiedValue value) {
+            super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue ammoSpeed = this.getValue().getAmmoSpeed();
+            ModifiedValue ammoSpeed = this.getValue();
             if (ammoSpeed != null) {
-                double eval = AttachmentPropertyManager.eval(ammoSpeed, 300, 300);
+                double eval = AttachmentPropertyManager.eval(ammoSpeed, 300);
                 if (eval > 300) {
                     components.add(Component.translatable("tooltip.tacz.attachment.ammo_speed.increase").withStyle(ChatFormatting.GREEN));
                 } else if (eval < 300) {
                     components.add(Component.translatable("tooltip.tacz.attachment.ammo_speed.decrease").withStyle(ChatFormatting.RED));
                 }
-            }
-        }
-
-        @Override
-        public void eval(ItemStack gunItem, GunData gunData, CacheProperty<Float> cache) {
-            ModifiedValue ammoSpeed = this.getValue().getAmmoSpeed();
-            float cacheValue = cache.getValue();
-            float defaultSpeed = gunData.getBulletData().getSpeed();
-            if (ammoSpeed != null) {
-                double eval = AttachmentPropertyManager.eval(ammoSpeed, cacheValue, defaultSpeed);
-                cache.setValue((float) eval);
             }
         }
     }

@@ -3,10 +3,10 @@ package com.tacz.guns.api.modifier;
 /**
  * 单个的配件缓存属性值
  */
-public class CacheProperty<T> {
+public class CacheValue<T> {
     private T value;
 
-    public CacheProperty(T value) {
+    public CacheValue(T value) {
         this.value = value;
     }
 

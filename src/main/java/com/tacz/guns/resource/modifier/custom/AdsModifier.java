@@ -1,7 +1,7 @@
 package com.tacz.guns.resource.modifier.custom;
 
 import com.google.gson.annotations.SerializedName;
-import com.tacz.guns.api.modifier.CacheProperty;
+import com.tacz.guns.api.modifier.CacheValue;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
@@ -15,10 +15,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float> {
+public class AdsModifier implements IAttachmentModifier<ModifiedValue, Float> {
     public static final String ID = "ads";
 
     @Override
@@ -31,15 +32,29 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float>
         return "ads_addend";
     }
 
+
     @Override
-    public JsonProperty<Data, Float> readJson(String json) {
+    @SuppressWarnings("deprecation")
+    public JsonProperty<ModifiedValue> readJson(String json) {
         Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
-        return new AdsJsonProperty(data);
+        ModifiedValue ads = data.getAds();
+        // 兼容旧版本写法
+        if (ads == null) {
+            ads = new ModifiedValue();
+            ads.setAddend(data.getAdsAddendTime());
+        }
+        return new AdsJsonProperty(ads);
     }
 
     @Override
-    public CacheProperty<Float> initCache(ItemStack gunItem, GunData gunData) {
-        return new CacheProperty<>(gunData.getAimTime());
+    public CacheValue<Float> initCache(ItemStack gunItem, GunData gunData) {
+        return new CacheValue<>(gunData.getAimTime());
+    }
+
+    @Override
+    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Float> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+        cache.setValue((float) eval);
     }
 
     @Override
@@ -58,24 +73,20 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float>
         return Collections.singletonList(diagramsData);
     }
 
-    public static class AdsJsonProperty extends JsonProperty<Data, Float> {
-        public AdsJsonProperty(Data value) {
+    public static class AdsJsonProperty extends JsonProperty<ModifiedValue> {
+        public AdsJsonProperty(ModifiedValue value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            Data jsonData = this.getValue();
-            float adsAddendTime;
-            if (jsonData.getAds() == null) {
-                // 兼容旧版本写法
-                adsAddendTime = jsonData.getAdsAddendTime();
-            } else {
+            ModifiedValue value = this.getValue();
+            float adsAddendTime = 0;
+            if (value != null) {
                 // 传入默认值 0.2 进行测试，看看最终结果差值
-                double eval = AttachmentPropertyManager.eval(jsonData.getAds(), 0.2, 0.2);
+                double eval = AttachmentPropertyManager.eval(value, 0.2);
                 adsAddendTime = (float) (eval - 0.2);
             }
-
             // 添加文本提示
             if (adsAddendTime > 0) {
                 components.add(Component.translatable("tooltip.tacz.attachment.ads.increase").withStyle(ChatFormatting.RED));
@@ -83,20 +94,10 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float>
                 components.add(Component.translatable("tooltip.tacz.attachment.ads.decrease").withStyle(ChatFormatting.GREEN));
             }
         }
-
-        @Override
-        public void eval(ItemStack gunItem, GunData gunData, CacheProperty<Float> cache) {
-            Data jsonData = this.getValue();
-            if (jsonData.getAds() == null) {
-                // 兼容旧版本写法
-                cache.setValue(cache.getValue() + jsonData.getAdsAddendTime());
-            } else {
-                cache.setValue((float) AttachmentPropertyManager.eval(jsonData.getAds(), cache.getValue(), gunData.getAimTime()));
-            }
-        }
     }
 
     public static class Data {
+        @Nullable
         @SerializedName("ads")
         private ModifiedValue ads;
 
@@ -104,6 +105,7 @@ public class AdsModifier implements IAttachmentModifier<AdsModifier.Data, Float>
         @Deprecated
         private float adsAddendTime = 0;
 
+        @Nullable
         public ModifiedValue getAds() {
             return ads;
         }

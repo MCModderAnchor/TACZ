@@ -3,7 +3,7 @@ package com.tacz.guns.resource.modifier.custom;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
-import com.tacz.guns.api.modifier.CacheProperty;
+import com.tacz.guns.api.modifier.CacheValue;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class RpmModifier implements IAttachmentModifier<RpmModifier.Data, Integer> {
+public class RpmModifier implements IAttachmentModifier<ModifiedValue, Integer> {
     public static final String ID = "rpm";
 
     @Override
@@ -31,17 +31,23 @@ public class RpmModifier implements IAttachmentModifier<RpmModifier.Data, Intege
     }
 
     @Override
-    public JsonProperty<Data, Integer> readJson(String json) {
+    public JsonProperty<ModifiedValue> readJson(String json) {
         RpmModifier.Data data = CommonGunPackLoader.GSON.fromJson(json, RpmModifier.Data.class);
-        return new RpmModifier.RpmJsonProperty(data);
+        return new RpmModifier.RpmJsonProperty(data.getRpm());
     }
 
     @Override
-    public CacheProperty<Integer> initCache(ItemStack gunItem, GunData gunData) {
+    public CacheValue<Integer> initCache(ItemStack gunItem, GunData gunData) {
         IGun iGun = Objects.requireNonNull(IGun.getIGunOrNull(gunItem));
         FireMode fireMode = iGun.getFireMode(gunItem);
         int roundsPerMinute = gunData.getRoundsPerMinute(fireMode);
-        return new CacheProperty<>(roundsPerMinute);
+        return new CacheValue<>(roundsPerMinute);
+    }
+
+    @Override
+    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Integer> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+        cache.setValue((int) Math.round(eval));
     }
 
     @Override
@@ -66,34 +72,22 @@ public class RpmModifier implements IAttachmentModifier<RpmModifier.Data, Intege
         return Collections.singletonList(diagramsData);
     }
 
-    public static class RpmJsonProperty extends JsonProperty<Data, Integer> {
-        public RpmJsonProperty(Data data) {
-            super(data);
+    public static class RpmJsonProperty extends JsonProperty<ModifiedValue> {
+        public RpmJsonProperty(ModifiedValue value) {
+            super(value);
         }
 
         @Override
         public void initComponents() {
-            Data jsonData = getValue();
-            if (jsonData.getRpm() != null) {
-                double eval = AttachmentPropertyManager.eval(jsonData.getRpm(), 300, 300);
+            ModifiedValue value = getValue();
+            if (value != null) {
+                double eval = AttachmentPropertyManager.eval(value, 300);
                 int rpm = (int) Math.round(eval);
                 if (rpm > 300) {
                     components.add(Component.translatable("tooltip.tacz.attachment.rpm.increase").withStyle(ChatFormatting.GREEN));
                 } else if (rpm < 300) {
                     components.add(Component.translatable("tooltip.tacz.attachment.rpm.decrease").withStyle(ChatFormatting.RED));
                 }
-            }
-        }
-
-        @Override
-        public void eval(ItemStack gunItem, GunData gunData, CacheProperty<Integer> cache) {
-            Data jsonData = getValue();
-            Integer cacheValue = cache.getValue();
-            IGun iGun = Objects.requireNonNull(IGun.getIGunOrNull(gunItem));
-            FireMode fireMode = iGun.getFireMode(gunItem);
-            if (jsonData.getRpm() != null) {
-                double eval = AttachmentPropertyManager.eval(jsonData.getRpm(), cacheValue, gunData.getRoundsPerMinute(fireMode));
-                cache.setValue((int) Math.round(eval));
             }
         }
     }

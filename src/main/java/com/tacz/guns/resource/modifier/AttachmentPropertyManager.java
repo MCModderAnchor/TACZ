@@ -10,6 +10,7 @@ import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.resource.modifier.custom.*;
 import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,6 +19,8 @@ import org.luaj.vm2.script.LuaScriptEngineFactory;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -44,24 +47,34 @@ public class AttachmentPropertyManager {
         }
         ResourceLocation gunId = iGun.getGunId(gunItem);
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
-            AttachmentCacheProperty cacheProperty = new AttachmentCacheProperty(gunItem, index.getGunData());
+            AttachmentCacheProperty cacheProperty = new AttachmentCacheProperty();
             MinecraftForge.EVENT_BUS.post(new AttachmentPropertyEvent(gunItem, cacheProperty));
             IGunOperator.fromLivingEntity(shooter).updateCacheProperty(cacheProperty);
         });
     }
 
-    public static double eval(ModifiedValue modifiedValue, double value, double defaultValue) {
-        String script = modifiedValue.getFunction();
-        // 如果没有脚本 function，那么检查乘和加
-        if (StringUtils.isBlank(script)) {
-            Double multiply = modifiedValue.getMultiply();
-            // 没有乘，那么为加
-            if (multiply == null) {
-                return value + modifiedValue.getAddend();
-            }
-            return value * multiply;
+    public static double eval(ModifiedValue modified, double defaultValue) {
+        return eval(Collections.singletonList(modified), defaultValue);
+    }
+
+    public static double eval(List<ModifiedValue> modified, double defaultValue) {
+        double addend = defaultValue;
+        double percent = 1;
+        double multiply = 1;
+        for (ModifiedValue modifiedValue : modified) {
+            addend += modifiedValue.getAddend();
+            percent += Mth.clamp(modifiedValue.getPercent(), 0, 1);
+            multiply *= modifiedValue.getMultiply();
         }
-        return functionEval(value, defaultValue, script);
+        double value = addend * percent * multiply;
+        for (ModifiedValue modifiedValue : modified) {
+            String function = modifiedValue.getFunction();
+            if (StringUtils.isEmpty(function)) {
+                continue;
+            }
+            value = functionEval(value, defaultValue, function);
+        }
+        return value;
     }
 
     private static double functionEval(double value, double defaultValue, String script) {

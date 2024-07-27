@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 配件属性修改器
  *
- * @param <T> Json 读取的数据类型
+ * @param <T> Json 读取后处理的数据类型
  * @param <K> 配件缓存属性值
  */
 public interface IAttachmentModifier<T, K> {
@@ -36,18 +36,26 @@ public interface IAttachmentModifier<T, K> {
      * 从 Json 读取数据
      *
      * @param json 输入的 json 字符串
-     * @return 读取后的 json 对象
+     * @return 读取后经过处理的 json 对象
      */
-    JsonProperty<T, K> readJson(String json);
+    JsonProperty<T> readJson(String json);
 
     /**
-     * 初始化缓存
+     * 初始化缓存，用于填入枪械的默认数据
      *
      * @param gunItem 当前枪械物品
      * @param gunData 枪械数据
      * @return 初始化读取的数据
      */
-    CacheProperty<K> initCache(ItemStack gunItem, GunData gunData);
+    CacheValue<K> initCache(ItemStack gunItem, GunData gunData);
+
+    /**
+     * 计算，用于将各个配件的数据与枪械数据求值，最终计算出来
+     *
+     * @param modifiedValues 各个配件的数据值
+     * @param cache          缓存的枪械默认数值
+     */
+    void eval(List<T> modifiedValues, CacheValue<K> cache);
 
     /**
      * 获取改装界面的配置属性条相关数据

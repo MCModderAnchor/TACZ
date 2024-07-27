@@ -8,9 +8,13 @@ public class ModifiedValue {
     @SerializedName("addend")
     private double addend = 0;
 
-    @SerializedName("multiply")
-    private Double multiply = null;
+    @SerializedName("percent")
+    private double percent = 0;
 
+    @SerializedName("multiply")
+    private double multiply = 1;
+
+    @Nullable
     @SerializedName("function")
     private String function = null;
 
@@ -18,13 +22,21 @@ public class ModifiedValue {
         return addend;
     }
 
-    @Nullable
-    public Double getMultiply() {
+    public double getPercent() {
+        return percent;
+    }
+
+    public double getMultiply() {
         return multiply;
     }
 
     @Nullable
     public String getFunction() {
         return function;
+    }
+
+    @Deprecated
+    public void setAddend(double addend) {
+        this.addend = addend;
     }
 }

@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
-import com.tacz.guns.api.modifier.CacheProperty;
+import com.tacz.guns.api.modifier.CacheValue;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
@@ -19,13 +19,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.compress.utils.Lists;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifier.Data, Map<InaccuracyType, Float>> {
+public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyType, ModifiedValue>, Map<InaccuracyType, Float>> {
     public static final String ID = "inaccuracy";
 
     @Override
@@ -39,13 +41,29 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
     }
 
     @Override
-    public JsonProperty<Data, Map<InaccuracyType, Float>> readJson(String json) {
+    @SuppressWarnings("deprecation")
+    public JsonProperty<Map<InaccuracyType, ModifiedValue>> readJson(String json) {
         Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
-        return new InaccuracyModifier.AdsJsonProperty(data);
+        ModifiedValue inaccuracy = data.getInaccuracy();
+        // 兼容旧版本
+        if (inaccuracy == null) {
+            float inaccuracyAddendTime = data.getInaccuracyAddendTime();
+            inaccuracy = new ModifiedValue();
+            inaccuracy.setAddend(inaccuracyAddendTime);
+        }
+        // 除去 aim 状态，全部写入一样的数值
+        Map<InaccuracyType, ModifiedValue> jsonProperties = Maps.newHashMap();
+        for (InaccuracyType type : InaccuracyType.values()) {
+            if (type.isAim()) {
+                continue;
+            }
+            jsonProperties.put(type, inaccuracy);
+        }
+        return new InaccuracyModifier.AdsJsonProperty(jsonProperties);
     }
 
     @Override
-    public CacheProperty<Map<InaccuracyType, Float>> initCache(ItemStack gunItem, GunData gunData) {
+    public CacheValue<Map<InaccuracyType, Float>> initCache(ItemStack gunItem, GunData gunData) {
         Map<InaccuracyType, Float> tmp = Maps.newHashMap();
         IGun iGun = Objects.requireNonNull(IGun.getIGunOrNull(gunItem));
         FireMode fireMode = iGun.getFireMode(gunItem);
@@ -62,7 +80,34 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
             float inaccuracy = gunData.getInaccuracy(type, inaccuracyAddend);
             tmp.put(type, inaccuracy);
         });
-        return new CacheProperty<>(tmp);
+        return new CacheValue<>(tmp);
+    }
+
+    @Override
+    public void eval(List<Map<InaccuracyType, ModifiedValue>> modifiedValues, CacheValue<Map<InaccuracyType, Float>> cache) {
+        Map<InaccuracyType, Float> result = Maps.newHashMap();
+        Map<InaccuracyType, List<ModifiedValue>> tmpModified = Maps.newHashMap();
+        // 先遍历，把配件的数据集中在一起
+        for (InaccuracyType type : InaccuracyType.values()) {
+            if (type.isAim()) {
+                continue;
+            }
+            for (Map<InaccuracyType, ModifiedValue> value : modifiedValues) {
+                tmpModified.computeIfAbsent(type, t -> Lists.newArrayList()).add(value.get(type));
+            }
+        }
+        // 一次性把配件的数据计算完
+        cache.getValue().forEach((type, value) -> {
+            // 瞄准不应用此散布
+            if (type.isAim()) {
+                result.put(type, value);
+                return;
+            }
+            double eval = AttachmentPropertyManager.eval(tmpModified.get(type), cache.getValue().get(type));
+            result.put(type, (float) eval);
+        });
+        // 写入缓存
+        cache.setValue(result);
     }
 
     @Override
@@ -91,24 +136,20 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
         return Collections.singletonList(diagramsData);
     }
 
-    public static class AdsJsonProperty extends JsonProperty<Data, Map<InaccuracyType, Float>> {
-        public AdsJsonProperty(Data value) {
+    public static class AdsJsonProperty extends JsonProperty<Map<InaccuracyType, ModifiedValue>> {
+        public AdsJsonProperty(Map<InaccuracyType, ModifiedValue> value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            Data jsonData = this.getValue();
-            float inaccuracyAddend;
-            if (jsonData.getInaccuracy() == null) {
-                // 兼容旧版本写法
-                inaccuracyAddend = jsonData.getInaccuracyAddendTime();
-            } else {
+            var value = this.getValue();
+            float inaccuracyAddend = 0;
+            if (value != null && value.containsKey(InaccuracyType.STAND)) {
                 // 传入默认值 5 进行测试，看看最终结果差值
-                double eval = AttachmentPropertyManager.eval(jsonData.getInaccuracy(), 5, 5);
+                double eval = AttachmentPropertyManager.eval(value.get(InaccuracyType.STAND), 5);
                 inaccuracyAddend = (float) (eval - 5);
             }
-
             // 添加文本提示
             if (inaccuracyAddend > 0) {
                 components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.increase").withStyle(ChatFormatting.RED));
@@ -116,37 +157,10 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
                 components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.decrease").withStyle(ChatFormatting.GREEN));
             }
         }
-
-        @Override
-        public void eval(ItemStack gunItem, GunData gunData, CacheProperty<Map<InaccuracyType, Float>> cache) {
-            Data jsonData = this.getValue();
-            Map<InaccuracyType, Float> tmp = Maps.newHashMap();
-            if (jsonData.getInaccuracy() == null) {
-                // 兼容旧版本写法
-                cache.getValue().forEach((type, value) -> {
-                    // 瞄准不应用此散布
-                    if (type.isAim()) {
-                        tmp.put(type, value);
-                        return;
-                    }
-                    tmp.put(type, value + jsonData.getInaccuracyAddendTime());
-                });
-            } else {
-                cache.getValue().forEach((type, value) -> {
-                    // 瞄准不应用此散布
-                    if (type.isAim()) {
-                        tmp.put(type, value);
-                        return;
-                    }
-                    float eval = (float) AttachmentPropertyManager.eval(jsonData.getInaccuracy(), cache.getValue().get(type), gunData.getInaccuracy(type));
-                    tmp.put(type, eval);
-                });
-            }
-            cache.setValue(tmp);
-        }
     }
 
     public static class Data {
+        @Nullable
         @SerializedName("inaccuracy")
         private ModifiedValue inaccuracy;
 
@@ -154,6 +168,7 @@ public class InaccuracyModifier implements IAttachmentModifier<InaccuracyModifie
         @Deprecated
         private float adsAddendTime = 0;
 
+        @Nullable
         public ModifiedValue getInaccuracy() {
             return inaccuracy;
         }

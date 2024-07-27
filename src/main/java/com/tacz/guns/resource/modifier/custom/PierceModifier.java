@@ -1,7 +1,7 @@
 package com.tacz.guns.resource.modifier.custom;
 
 import com.google.gson.annotations.SerializedName;
-import com.tacz.guns.api.modifier.CacheProperty;
+import com.tacz.guns.api.modifier.CacheValue;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class PierceModifier implements IAttachmentModifier<PierceModifier.Data, Integer> {
+public class PierceModifier implements IAttachmentModifier<ModifiedValue, Integer> {
     public static final String ID = "pierce";
 
     @Override
@@ -28,15 +28,21 @@ public class PierceModifier implements IAttachmentModifier<PierceModifier.Data, 
     }
 
     @Override
-    public JsonProperty<Data, Integer> readJson(String json) {
+    public JsonProperty<ModifiedValue> readJson(String json) {
         PierceModifier.Data data = CommonGunPackLoader.GSON.fromJson(json, PierceModifier.Data.class);
-        return new PierceModifier.DamageJsonProperty(data);
+        return new PierceModifier.DamageJsonProperty(data.getPierce());
     }
 
     @Override
-    public CacheProperty<Integer> initCache(ItemStack gunItem, GunData gunData) {
+    public CacheValue<Integer> initCache(ItemStack gunItem, GunData gunData) {
         int pierce = gunData.getBulletData().getPierce();
-        return new CacheProperty<>(pierce);
+        return new CacheValue<>(pierce);
+    }
+
+    @Override
+    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Integer> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+        cache.setValue((int) Math.round(eval));
     }
 
     @Override
@@ -58,34 +64,22 @@ public class PierceModifier implements IAttachmentModifier<PierceModifier.Data, 
         return Collections.singletonList(diagramsData);
     }
 
-    public static class DamageJsonProperty extends JsonProperty<Data, Integer> {
-        public DamageJsonProperty(Data data) {
-            super(data);
+    public static class DamageJsonProperty extends JsonProperty<ModifiedValue> {
+        public DamageJsonProperty(ModifiedValue value) {
+            super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue pierce = getValue().getPierce();
+            ModifiedValue pierce = getValue();
             if (pierce != null) {
-                long eval = Math.round(AttachmentPropertyManager.eval(pierce, 5, 5));
+                long eval = Math.round(AttachmentPropertyManager.eval(pierce, 5));
                 eval = Math.max(eval, 1);
                 if (eval > 5) {
                     components.add(Component.translatable("tooltip.tacz.attachment.pierce.increase").withStyle(ChatFormatting.GREEN));
                 } else if (eval < 5) {
                     components.add(Component.translatable("tooltip.tacz.attachment.pierce.decrease").withStyle(ChatFormatting.RED));
                 }
-            }
-        }
-
-        @Override
-        public void eval(ItemStack gunItem, GunData gunData, CacheProperty<Integer> cache) {
-            ModifiedValue pierce = getValue().getPierce();
-            Integer cacheValue = cache.getValue();
-            int defaultValue = gunData.getBulletData().getPierce();
-            if (pierce != null) {
-                double eval = AttachmentPropertyManager.eval(pierce, cacheValue, defaultValue);
-                int round = (int) Math.round(eval);
-                cache.setValue(Math.max(round, 1));
             }
         }
     }

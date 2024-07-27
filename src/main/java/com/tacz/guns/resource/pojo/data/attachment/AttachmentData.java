@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class AttachmentData {
     @Expose(serialize = false, deserialize = false)
-    private Map<String, JsonProperty<?, ?>> modifier = Maps.newHashMap();
+    private Map<String, JsonProperty<?>> modifier = Maps.newHashMap();
 
     @SerializedName("silence")
     @Nullable
@@ -44,11 +44,11 @@ public class AttachmentData {
         return meleeData;
     }
 
-    public void addModifier(String id, JsonProperty<?, ?> jsonProperty) {
+    public void addModifier(String id, JsonProperty<?> jsonProperty) {
         modifier.put(id, jsonProperty);
     }
 
-    public Map<String, JsonProperty<?, ?>> getModifier() {
+    public Map<String, JsonProperty<?>> getModifier() {
         return modifier;
     }
 }

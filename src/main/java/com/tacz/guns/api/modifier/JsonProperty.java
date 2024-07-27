@@ -1,31 +1,30 @@
 package com.tacz.guns.api.modifier;
 
-import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import org.apache.commons.compress.utils.Lists;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
  * 配件从 Json 读取的数据
  *
- * @param <T> Json 读取的数据类型
- * @param <K> 配件缓存属性值
+ * @param <T> Json 读取后转换成的中间数据类型
  */
-public abstract class JsonProperty<T, K> {
+public abstract class JsonProperty<T> {
     protected List<Component> components = Lists.newArrayList();
-    private T value;
+    private @Nullable T value;
 
-    public JsonProperty(T value) {
+    public JsonProperty(@Nullable T value) {
         this.value = value;
     }
 
+    @Nullable
     public T getValue() {
         return value;
     }
 
-    public void setValue(T value) {
+    public void setValue(@Nullable T value) {
         this.value = value;
     }
 
@@ -37,13 +36,4 @@ public abstract class JsonProperty<T, K> {
      * 初始化文本提示，用于配件的描述文本
      */
     public abstract void initComponents();
-
-    /**
-     * 依据 Json 读取的数据类型，对缓存数据进行计算
-     *
-     * @param gunItem 当前持有的枪械
-     * @param gunData 枪械数据
-     * @param cache   缓存数据
-     */
-    public abstract void eval(ItemStack gunItem, GunData gunData, CacheProperty<K> cache);
 }
