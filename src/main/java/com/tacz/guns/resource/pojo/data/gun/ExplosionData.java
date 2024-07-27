@@ -3,6 +3,9 @@ package com.tacz.guns.resource.pojo.data.gun;
 import com.google.gson.annotations.SerializedName;
 
 public class ExplosionData {
+    @SerializedName("explode")
+    private boolean explode = true;
+
     @SerializedName("radius")
     private float radius = 5;
 
@@ -14,6 +17,10 @@ public class ExplosionData {
 
     @SerializedName("delay")
     private int delay = Integer.MAX_VALUE;
+
+    public boolean isExplode() {
+        return explode;
+    }
 
     public float getRadius() {
         return radius;
