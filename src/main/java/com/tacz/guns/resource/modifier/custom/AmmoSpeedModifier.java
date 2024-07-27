@@ -58,7 +58,13 @@ public class AmmoSpeedModifier implements IAttachmentModifier<ModifiedValue, Flo
     @Override
     @OnlyIn(Dist.CLIENT)
     public List<DiagramsData> getPropertyDiagramsData(ItemStack gunItem, GunData gunData, AttachmentCacheProperty cacheProperty) {
+        IGun iGun = Objects.requireNonNull(IGun.getIGunOrNull(gunItem));
+        FireMode fireMode = iGun.getFireMode(gunItem);
+        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
         float ammoSpeed = gunData.getBulletData().getSpeed();
+        if (fireModeAdjustData != null) {
+            ammoSpeed += fireModeAdjustData.getSpeed();
+        }
         float ammoSpeedModifier = cacheProperty.<Float>getCache(AmmoSpeedModifier.ID) - ammoSpeed;
 
         double ammoSpeedPercent = Math.min(ammoSpeed / 600.0, 1);

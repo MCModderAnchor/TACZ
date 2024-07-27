@@ -4,7 +4,6 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
-import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.gun.*;
@@ -23,7 +22,7 @@ import java.util.LinkedList;
 
 public final class GunPropertyDiagrams {
     public static int getHidePropertyButtonYOffset() {
-        int[] startYOffset = new int[]{79};
+        int[] startYOffset = new int[]{69};
         AttachmentPropertyManager.getModifiers().forEach((key, value) -> {
             startYOffset[0] += value.getDiagramsDataSize() * 10;
         });
@@ -81,24 +80,6 @@ public final class GunPropertyDiagrams {
             }
 
             graphics.drawString(font, fireModeText, nameTextStartX, yOffset[0], fontColor, false);
-
-            yOffset[0] += 10;
-
-
-            // 伤害
-            double damageAmount = bulletData.getDamageAmount();
-            if (fireModeAdjustData != null) {
-                damageAmount += fireModeAdjustData.getDamageAmount();
-            }
-            damageAmount = Math.max(damageAmount * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0F);
-            double damagePercent = Math.min(Math.log(damageAmount) / 5.0, 1);
-            int damageLength = (int) (barStartX + barMaxWidth * damagePercent);
-            String damageValueText = String.format("%.2f", damageAmount);
-
-            graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.damage"), nameTextStartX, yOffset[0], fontColor, false);
-            graphics.fill(barStartX, yOffset[0] + 2, barEndX, yOffset[0] + 6, barBackgroundColor);
-            graphics.fill(barStartX, yOffset[0] + 2, damageLength, yOffset[0] + 6, barBaseColor);
-            graphics.drawString(font, damageValueText, valueTextStartX, yOffset[0], fontColor, false);
 
             yOffset[0] += 10;
 
