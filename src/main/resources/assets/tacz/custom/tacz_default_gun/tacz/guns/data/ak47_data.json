@@ -52,15 +52,19 @@
     "ignite_entity_time": 2,
     // 穿透数
     "pierce": 1
-    // 是否爆炸，没有此字段时为 false
-    //"explosion": {
-    //  延时爆炸，单位：秒
-    //  "delay": 5
-    //  "radius": 5,
-    //  "damage": 5,
-    //  爆炸导致的击退，默认为 false，需要服务器也开启爆炸击退才能使用
-    //  "knockback": false
-    //}
+    // 是否爆炸，没有此字段时不会触发爆炸（包括配件爆炸）
+    // "explosion": {
+      // 是否爆炸，默认为 true，如果不希望爆炸则设置为 false
+      // "explode": false,
+      // 延时爆炸，单位：秒
+      // "delay": 5,
+      // 爆炸半径，单位：米（格）
+      // "radius": 5,
+      // 爆炸伤害
+      // "damage": 5,
+      // 爆炸导致的击退，默认为 false，需要服务器也开启爆炸击退才能使用
+      // "knockback": false
+    // }
   },
   // 换弹相关
   "reload": {

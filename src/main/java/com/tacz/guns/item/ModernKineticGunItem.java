@@ -83,7 +83,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         GunData gunData = gunIndex.getGunData();
         ResourceLocation ammoId = gunData.getAmmoId();
         FireMode fireMode = iGun.getFireMode(gunItem);
-        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
         AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(shooter).getCacheProperty();
         if (cacheProperty == null) {
             return;
@@ -136,7 +135,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                 // 生成子弹
                 Level world = shooter.level();
                 for (int i = 0; i < bulletAmount; i++) {
-                    this.doSpawnBulletEntity(world, shooter, pitch.get(), yaw.get(), finalSpeed, inaccuracy, ammoId, gunId, tracer, gunData, bulletData, fireMode);
+                    this.doSpawnBulletEntity(world, shooter, gunItem, pitch.get(), yaw.get(), finalSpeed, inaccuracy, ammoId, gunId, tracer, gunData, bulletData, fireMode);
                 }
                 // 播放枪声
                 if (soundDistance[0] > 0) {
@@ -277,8 +276,8 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     /**
      * 生成子弹实体
      */
-    protected void doSpawnBulletEntity(Level world, LivingEntity shooter, float pitch, float yaw, float speed, float inaccuracy, ResourceLocation ammoId, ResourceLocation gunId, boolean tracer, GunData gunData, BulletData bulletData, FireMode fireMode) {
-        EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, ammoId, gunId, tracer, gunData, bulletData, fireMode);
+    protected void doSpawnBulletEntity(Level world, LivingEntity shooter, ItemStack gunItem, float pitch, float yaw, float speed, float inaccuracy, ResourceLocation ammoId, ResourceLocation gunId, boolean tracer, GunData gunData, BulletData bulletData, FireMode fireMode) {
+        EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, gunItem, ammoId, gunId, tracer, gunData, bulletData, fireMode);
         bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
         world.addFreshEntity(bullet);
     }

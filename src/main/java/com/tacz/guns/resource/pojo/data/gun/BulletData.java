@@ -32,7 +32,7 @@ public class BulletData {
     private int pierce = 1;
 
     @SerializedName("ignite")
-    private boolean hasIgnite = false;
+    private boolean ignite = false;
 
     @SerializedName("ignite_entity_time")
     private int igniteEntityTime = 2;
@@ -80,8 +80,8 @@ public class BulletData {
         return pierce;
     }
 
-    public boolean isHasIgnite() {
-        return hasIgnite;
+    public boolean isIgnite() {
+        return ignite;
     }
 
     public int getIgniteEntityTime() {
