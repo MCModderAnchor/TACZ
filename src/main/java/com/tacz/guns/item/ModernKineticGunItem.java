@@ -10,7 +10,6 @@ import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
 import com.tacz.guns.command.sub.DebugCommand;
-import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.debug.GunMeleeDebug;
 import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.network.NetworkHandler;
@@ -19,14 +18,13 @@ import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.AmmoSpeedModifier;
 import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
-import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tacz.guns.resource.modifier.custom.SilenceModifier;
 import com.tacz.guns.resource.pojo.data.attachment.EffectData;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
-import com.tacz.guns.resource.pojo.data.attachment.Silence;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.sound.SoundManager;
-import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.CycleTaskHelper;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -83,7 +81,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         GunData gunData = gunIndex.getGunData();
         ResourceLocation ammoId = gunData.getAmmoId();
         FireMode fireMode = iGun.getFireMode(gunItem);
-        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
         AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(shooter).getCacheProperty();
         if (cacheProperty == null) {
             return;
@@ -94,9 +91,9 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         final float inaccuracy = Math.max(0, cacheProperty.<Map<InaccuracyType, Float>>getCache(InaccuracyModifier.ID).get(inaccuracyType));
 
         // 消音器影响
-        final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
-        final boolean[] useSilenceSound = new boolean[]{false};
-        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> calculateAttachmentData(attachmentData, soundDistance, useSilenceSound));
+        Pair<Integer, Boolean> silence = cacheProperty.getCache(SilenceModifier.ID);
+        final int soundDistance = silence.first();
+        final boolean useSilenceSound = silence.right();
 
         // 子弹飞行速度
         float speed = cacheProperty.<Float>getCache(AmmoSpeedModifier.ID);
@@ -139,9 +136,9 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                     this.doSpawnBulletEntity(world, shooter, pitch.get(), yaw.get(), finalSpeed, inaccuracy, ammoId, gunId, tracer, gunData, bulletData, fireMode);
                 }
                 // 播放枪声
-                if (soundDistance[0] > 0) {
-                    String soundId = useSilenceSound[0] ? SoundManager.SILENCE_3P_SOUND : SoundManager.SHOOT_3P_SOUND;
-                    SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
+                if (soundDistance > 0) {
+                    String soundId = useSilenceSound ? SoundManager.SILENCE_3P_SOUND : SoundManager.SHOOT_3P_SOUND;
+                    SoundManager.sendSoundToNearby(shooter, soundDistance, gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
                 }
             }
             return true;
@@ -318,16 +315,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             }
         } else {
             this.reduceCurrentAmmoCount(currentGunItem);
-        }
-    }
-
-    private void calculateAttachmentData(AttachmentData attachmentData, int[] soundDistance, boolean[] useSilenceSound) {
-        Silence silence = attachmentData.getSilence();
-        if (silence != null) {
-            soundDistance[0] += silence.getDistanceAddend();
-            if (silence.isUseSilenceSound()) {
-                useSilenceSound[0] = true;
-            }
         }
     }
 

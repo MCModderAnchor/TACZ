@@ -13,6 +13,8 @@ import com.tacz.guns.client.model.SlotModel;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.resource.pojo.display.gun.MuzzleFlash;
 import com.tacz.guns.compat.oculus.OculusCompat;
+import com.tacz.guns.resource.modifier.custom.SilenceModifier;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -102,6 +104,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
         if (OculusCompat.isRenderShadow()) {
             return;
@@ -119,13 +122,17 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(currentGunItem);
-        // 如果安装了消音器，则不渲染枪口火光
         ItemStack muzzleAttachment = bedrockGunModel.getCurrentAttachmentItem().get(AttachmentType.MUZZLE);
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(muzzleAttachment);
         if (iAttachment != null) {
-            TimelessAPI.getCommonAttachmentIndex(iAttachment.getAttachmentId(muzzleAttachment)).ifPresent(index -> {
-                if (index.getData().getSilence() != null) {
-                    return;
+            ResourceLocation attachmentId = iAttachment.getAttachmentId(muzzleAttachment);
+            TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> {
+                var modifier = index.getData().getModifier();
+                if (modifier.containsKey(SilenceModifier.ID) && modifier.get(SilenceModifier.ID).getValue() instanceof Pair<?, ?> pair) {
+                    // 如果安装了消音器，则不渲染枪口火光
+                    if (((Pair<Integer, Boolean>) pair).right()) {
+                        return;
+                    }
                 }
                 renderMuzzleFlash(gunId, poseStack, bedrockGunModel, time);
             });

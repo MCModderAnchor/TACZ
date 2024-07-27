@@ -14,10 +14,12 @@ import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerShoot;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.SilenceModifier;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.sound.SoundManager;
-import com.tacz.guns.util.AttachmentDataUtils;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -161,7 +163,7 @@ public class LocalPlayerShoot {
                     animationStateMachine.onGunShoot();
                 }
                 // 获取消音
-                boolean useSilenceSound = this.useSilenceSound(mainhandItem, gunData);
+                final boolean useSilenceSound = this.useSilenceSound();
                 // 播放声音需要从异步线程上传到主线程执行。
                 Minecraft.getInstance().submitAsync(() -> {
                     // 开火需要打断检视
@@ -177,14 +179,13 @@ public class LocalPlayerShoot {
         }, delay, period, TimeUnit.MILLISECONDS);
     }
 
-    private boolean useSilenceSound(ItemStack mainhandItem, GunData gunData) {
-        final boolean[] useSilenceSound = new boolean[]{false};
-        AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> {
-            if (attachmentData.getSilence() != null && attachmentData.getSilence().isUseSilenceSound()) {
-                useSilenceSound[0] = true;
-            }
-        });
-        return useSilenceSound[0];
+    private boolean useSilenceSound() {
+        AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(player).getCacheProperty();
+        if (cacheProperty != null) {
+            Pair<Integer, Boolean> silence = cacheProperty.getCache(SilenceModifier.ID);
+            return silence.right();
+        }
+        return false;
     }
 
     private long getCoolDown(IGun iGun, ItemStack mainHandItem, GunData gunData) {

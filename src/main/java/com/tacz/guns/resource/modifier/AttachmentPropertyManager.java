@@ -35,6 +35,7 @@ public class AttachmentPropertyManager {
         MODIFIERS.put(RpmModifier.ID, new RpmModifier());
         MODIFIERS.put(PierceModifier.ID, new PierceModifier());
         MODIFIERS.put(AmmoSpeedModifier.ID, new AmmoSpeedModifier());
+        MODIFIERS.put(SilenceModifier.ID, new SilenceModifier());
     }
 
     public static Map<String, IAttachmentModifier<?, ?>> getModifiers() {
@@ -75,6 +76,16 @@ public class AttachmentPropertyManager {
             value = functionEval(value, defaultValue, function);
         }
         return value;
+    }
+
+    public static boolean eval(List<Boolean> modified, boolean defaultValue) {
+        if (defaultValue) {
+            // 如果默认值为 true，那么只要有一个 false 就返回 false
+            return modified.stream().allMatch(s -> s);
+        } else {
+            // 如果默认值为 false，那么只要有一个 true 就返回 true
+            return modified.stream().anyMatch(s -> s);
+        }
     }
 
     private static double functionEval(double value, double defaultValue, String script) {

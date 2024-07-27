@@ -12,10 +12,6 @@ public class AttachmentData {
     @Expose(serialize = false, deserialize = false)
     private Map<String, JsonProperty<?>> modifier = Maps.newHashMap();
 
-    @SerializedName("silence")
-    @Nullable
-    private Silence silence;
-
     @SerializedName("weight")
     private float weight = 0;
 
@@ -25,11 +21,6 @@ public class AttachmentData {
     @SerializedName("melee")
     @Nullable
     private MeleeData meleeData = null;
-
-    @Nullable
-    public Silence getSilence() {
-        return silence;
-    }
 
     public float getWeight() {
         return weight;
