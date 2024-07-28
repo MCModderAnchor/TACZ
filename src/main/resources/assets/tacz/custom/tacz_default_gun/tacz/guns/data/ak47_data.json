@@ -47,7 +47,13 @@
     // 阻力
     "friction": 0.02,
     // 点燃目标
-    "ignite": false,
+    // "ignite": false,
+    "ignite": {
+      // 点燃实体
+      "entity": false,
+      // 点燃方块
+      "block": false
+    },
     // 点燃时间，默认为 2 秒，仅用于实体
     "ignite_entity_time": 2,
     // 穿透数

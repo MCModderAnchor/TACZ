@@ -17,6 +17,7 @@ import com.tacz.guns.resource.loader.index.CommonAttachmentIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonGunIndexLoader;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
+import com.tacz.guns.resource.pojo.data.gun.Ignite;
 import com.tacz.guns.resource.serialize.*;
 import com.tacz.guns.util.GetJarResources;
 import net.minecraft.resources.ResourceLocation;
@@ -43,6 +44,7 @@ public class CommonGunPackLoader {
             .registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResultSerializer())
             .registerTypeAdapter(ExtraDamage.DistanceDamagePair.class, new DistanceDamagePairSerializer())
             .registerTypeAdapter(Vec3.class, new Vec3Serializer())
+            .registerTypeAdapter(Ignite.class, new IgniteSerializer())
             .create();
     /**
      * 放置自定义枪械模型的目录

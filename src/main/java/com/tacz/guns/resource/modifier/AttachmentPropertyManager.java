@@ -32,10 +32,12 @@ public class AttachmentPropertyManager {
         MODIFIERS.put(AdsModifier.ID, new AdsModifier());
         MODIFIERS.put(AmmoSpeedModifier.ID, new AmmoSpeedModifier());
         MODIFIERS.put(DamageModifier.ID, new DamageModifier());
+        MODIFIERS.put(IgniteModifier.ID, new IgniteModifier());
         MODIFIERS.put(InaccuracyModifier.ID, new InaccuracyModifier());
         MODIFIERS.put(PierceModifier.ID, new PierceModifier());
         MODIFIERS.put(RecoilModifier.ID, new RecoilModifier());
         MODIFIERS.put(RpmModifier.ID, new RpmModifier());
+        MODIFIERS.put(SilenceModifier.ID, new SilenceModifier());
     }
 
     public static Map<String, IAttachmentModifier<?, ?>> getModifiers() {
