@@ -6447,7 +6447,7 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0.125, 4.05, 7.175]
+					"pivot": [0.125, 5.05, 7.175]
 				},
 				{
 					"name": "views",
