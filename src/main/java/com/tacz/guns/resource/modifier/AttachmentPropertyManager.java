@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class AttachmentPropertyManager {
     private static final ScriptEngine LUAJ_ENGINE = new LuaScriptEngineFactory().getScriptEngine();
-    private static final Map<String, IAttachmentModifier<?, ?>> MODIFIERS = Maps.newHashMap();
+    private static final Map<String, IAttachmentModifier<?, ?>> MODIFIERS = Maps.newLinkedHashMap();
 
     public static void registerModifier() {
         MODIFIERS.put(AdsModifier.ID, new AdsModifier());
