@@ -31,9 +31,12 @@ public class AttachmentPropertyManager {
     public static void registerModifier() {
         MODIFIERS.put(AdsModifier.ID, new AdsModifier());
         MODIFIERS.put(AmmoSpeedModifier.ID, new AmmoSpeedModifier());
+        MODIFIERS.put(ArmorIgnoreModifier.ID, new ArmorIgnoreModifier());
         MODIFIERS.put(DamageModifier.ID, new DamageModifier());
+        MODIFIERS.put(HeadShotModifier.ID, new HeadShotModifier());
         MODIFIERS.put(IgniteModifier.ID, new IgniteModifier());
         MODIFIERS.put(InaccuracyModifier.ID, new InaccuracyModifier());
+        MODIFIERS.put(KnockbackModifier.ID, new KnockbackModifier());
         MODIFIERS.put(PierceModifier.ID, new PierceModifier());
         MODIFIERS.put(RecoilModifier.ID, new RecoilModifier());
         MODIFIERS.put(RpmModifier.ID, new RpmModifier());
@@ -63,13 +66,13 @@ public class AttachmentPropertyManager {
     public static double eval(List<ModifiedValue> modified, double defaultValue) {
         double addend = defaultValue;
         double percent = 1;
-        double multiply = 1;
+        double multiplier = 1;
         for (ModifiedValue modifiedValue : modified) {
             addend += modifiedValue.getAddend();
             percent += Mth.clamp(modifiedValue.getPercent(), 0, 1);
-            multiply *= modifiedValue.getMultiply();
+            multiplier *= modifiedValue.getMultiplier();
         }
-        double value = addend * percent * multiply;
+        double value = addend * percent * multiplier;
         for (ModifiedValue modifiedValue : modified) {
             String function = modifiedValue.getFunction();
             if (StringUtils.isEmpty(function)) {

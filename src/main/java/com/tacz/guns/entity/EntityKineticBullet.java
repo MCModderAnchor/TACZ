@@ -19,10 +19,7 @@ import com.tacz.guns.network.message.event.ServerMessageGunHurt;
 import com.tacz.guns.network.message.event.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
-import com.tacz.guns.resource.modifier.custom.AmmoSpeedModifier;
-import com.tacz.guns.resource.modifier.custom.IgniteModifier;
-import com.tacz.guns.resource.modifier.custom.DamageModifier;
-import com.tacz.guns.resource.modifier.custom.PierceModifier;
+import com.tacz.guns.resource.modifier.custom.*;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair;
 import com.tacz.guns.util.AttachmentDataUtils;
@@ -84,7 +81,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private float gravity = 0;
     private float friction = 0.01F;
     private LinkedList<DistanceDamagePair> damageAmount = Lists.newLinkedList();;
-    private float knockback = 0;
+    private float knockback;
     private boolean explosion = false;
     private boolean igniteEntity = false;
     private boolean igniteBlock = false;
@@ -93,7 +90,6 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private float explosionRadius = 3;
     private int explosionDelayCount = Integer.MAX_VALUE;
     private boolean explosionKnockback = false;
-    private ExtraDamage extraDamage = null;
     private float damageModifier = 1;
     // 穿透数
     private int pierce = 1;
@@ -106,8 +102,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private Vec3 originRenderOffset;
     // 发射的枪械 ID
     private ResourceLocation gunId;
-    // 开火模式调整
-    private @Nullable GunFireModeAdjustData fireModeAdjustData;
+    private float armorIgnore;
+    private float headShot;
 
     public EntityKineticBullet(EntityType<? extends Projectile> type, Level worldIn) {
         super(type, worldIn);
@@ -118,12 +114,14 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.setPos(x, y, z);
     }
 
-    public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ItemStack gunItem, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, GunData gunData, BulletData bulletData, FireMode fireMode) {
+    public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ItemStack gunItem, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
         this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         AttachmentCacheProperty cacheProperty = Objects.requireNonNull(IGunOperator.fromLivingEntity(throwerIn).getCacheProperty());
+        this.armorIgnore = Mth.clamp(cacheProperty.getCache(ArmorIgnoreModifier.ID), 0, 1);
+        this.headShot = Math.max(cacheProperty.getCache(HeadShotModifier.ID), 0);
+        this.knockback = Math.max(cacheProperty.getCache(KnockbackModifier.ID), 0);
         this.ammoId = ammoId;
-        this.fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
         this.life = Mth.clamp((int) (bulletData.getLifeSecond() * 20), 1, Integer.MAX_VALUE);
         // 限制最大弹速为 600 m / s，以减轻计算负担
         float speed = cacheProperty.<Float>getCache(AmmoSpeedModifier.ID);
@@ -139,13 +137,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         if (bulletData.getBulletAmount() > 1) {
             this.damageModifier = 1f / bulletData.getBulletAmount();
         }
-        float knockback = bulletData.getKnockback();
-        if (this.fireModeAdjustData != null) {
-            knockback += this.fireModeAdjustData.getKnockback();
-        }
-        this.knockback = Mth.clamp(knockback, 0, Float.MAX_VALUE);
         this.pierce = Mth.clamp(cacheProperty.getCache(PierceModifier.ID), 1, Integer.MAX_VALUE);
-        this.extraDamage = bulletData.getExtraDamage();
         ExplosionData explosionData = bulletData.getExplosionData();
         if (explosionData != null) {
             this.explosion = explosionData.isExplode() || isExplode(gunItem, gunData);
@@ -418,14 +410,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         LivingEntity attacker = owner instanceof LivingEntity ? (LivingEntity) owner : null;
         boolean headshot = result.isHeadshot();
         float damage = this.getDamage(result.getLocation());
-        float headShotMultiplier = 1f;
-        if (this.extraDamage != null) {
-            headShotMultiplier = this.extraDamage.getHeadShotMultiplier();
-            if (this.fireModeAdjustData != null) {
-                headShotMultiplier += this.fireModeAdjustData.getHeadShotMultiplier();
-            }
-            headShotMultiplier = (float) (Math.max(headShotMultiplier * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get(), 0F));
-        }
+        float headShotMultiplier = Math.max(this.headShot, 0);
         // 发布Pre事件
         var preEvent = new EntityHurtByGunEvent.Pre(entity, attacker, this.gunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
         var cancelled = MinecraftForge.EVENT_BUS.post(preEvent);
@@ -547,20 +532,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     private void tacAttackEntity(Entity entity, float damage) {
         DamageSource source = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), false);
-        float armorIgnore = 0;
-        if (this.extraDamage != null) {
-            armorIgnore = this.extraDamage.getArmorIgnore();
-            if (this.fireModeAdjustData != null) {
-                armorIgnore += this.fireModeAdjustData.getArmorIgnore();
-            }
-            armorIgnore = (float) (Math.max(armorIgnore * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get(), 0F));
-        }
         // 给末影人造成伤害
         if (entity instanceof EnderMan) {
             source = this.damageSources().indirectMagic(this, getOwner());
         }
         // 穿甲伤害和普通伤害的比例计算
-        float armorDamagePercent = Mth.clamp(armorIgnore, 0.0F, 1.0F);
+        float armorDamagePercent = Mth.clamp(this.armorIgnore, 0.0F, 1.0F);
         float normalDamagePercent = 1 - armorDamagePercent;
         // 取消无敌时间
         entity.invulnerableTime = 0;

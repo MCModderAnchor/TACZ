@@ -88,7 +88,7 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
         double pitchModifierPercent = Math.min(pitchModifier / 5.0, 1);
         String pitchTitleKey = "gui.tacz.gun_refit.property_diagrams.pitch";
         String pitchPositivelyString = String.format("%.2f §c(+%.2f)", pitch, pitchModifier);
-        String pitchNegativelyString = String.format("%.2f §c(%.2f)", pitch, pitchModifier);
+        String pitchNegativelyString = String.format("%.2f §a(%.2f)", pitch, pitchModifier);
         String pitchDefaultString = String.format("%.2f", pitch);
 
         float yaw = getMaxInGunRecoilKeyFrame(recoil.getYaw());
@@ -97,7 +97,7 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
         double yawModifierPercent = Math.min(yawModifier / 5.0, 1);
         String yawTitleKey = "gui.tacz.gun_refit.property_diagrams.yaw";
         String yawPositivelyString = String.format("%.2f §c(+%.2f)", yaw, yawModifier);
-        String yawNegativelyString = String.format("%.2f §c(%.2f)", yaw, yawModifier);
+        String yawNegativelyString = String.format("%.2f §a(%.2f)", yaw, yawModifier);
         String yawDefaultString = String.format("%.2f", yaw);
 
         boolean positivelyBetter = false;

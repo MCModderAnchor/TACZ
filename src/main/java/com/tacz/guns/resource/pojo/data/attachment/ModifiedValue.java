@@ -11,8 +11,8 @@ public class ModifiedValue {
     @SerializedName("percent")
     private double percent = 0;
 
-    @SerializedName("multiply")
-    private double multiply = 1;
+    @SerializedName("multiplier")
+    private double multiplier = 1;
 
     @Nullable
     @SerializedName("function")
@@ -26,8 +26,8 @@ public class ModifiedValue {
         return percent;
     }
 
-    public double getMultiply() {
-        return multiply;
+    public double getMultiplier() {
+        return multiplier;
     }
 
     @Nullable

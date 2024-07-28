@@ -39,7 +39,7 @@ public class DamageModifier implements IAttachmentModifier<ModifiedValue, Linked
 
     @Override
     public JsonProperty<ModifiedValue> readJson(String json) {
-        DamageModifier.Data data = CommonGunPackLoader.GSON.fromJson(json, DamageModifier.Data.class);
+        Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
         return new DamageJsonProperty(data.getDamage());
     }
 
@@ -99,26 +99,26 @@ public class DamageModifier implements IAttachmentModifier<ModifiedValue, Linked
         // 额外伤害
         ExtraDamage extraDamage = bulletData.getExtraDamage();
         // 开火模式调整
-        float fireAdjustDamageAmount = fireModeAdjustData != null ? fireModeAdjustData.getDamageAmount() : 0;
         // 最终的 base 伤害
-        float finalBaseDamage;
+        float finalBase = fireModeAdjustData != null ? fireModeAdjustData.getDamageAmount() : 0f;
         if (extraDamage != null && !extraDamage.getDamageAdjust().isEmpty()) {
-            finalBaseDamage = extraDamage.getDamageAdjust().get(0).getDamage() + fireAdjustDamageAmount;
+            finalBase += extraDamage.getDamageAdjust().get(0).getDamage();
         } else {
-            finalBaseDamage = rawDamage + fireAdjustDamageAmount;
+            finalBase += rawDamage;
         }
+        finalBase *= SyncConfig.DAMAGE_BASE_MULTIPLIER.get();
+        float modifier = damagePairModifier.get(0).getDamage() - finalBase;
 
-        float damageModifier = damagePairModifier.get(0).getDamage() - finalBaseDamage;
-        double damagePercent = Math.min(finalBaseDamage / 100.0, 1);
-        double damageModifierPercent = Math.min(damageModifier / 100.0, 1);
+        double percent = Math.min(finalBase / 100.0, 1);
+        double modifierPercent = Math.min(modifier / 100.0, 1);
 
         String titleKey = "gui.tacz.gun_refit.property_diagrams.damage";
-        String positivelyString = String.format("%.2f §a(+%.2f)", finalBaseDamage, damageModifier);
-        String negativelyString = String.format("%.2f §c(%.2f)", finalBaseDamage, damageModifier);
-        String defaultString = String.format("%.2f", finalBaseDamage);
+        String positivelyString = String.format("%.2f §a(+%.2f)", finalBase, modifier);
+        String negativelyString = String.format("%.2f §c(%.2f)", finalBase, modifier);
+        String defaultString = String.format("%.2f", finalBase);
         boolean positivelyBetter = true;
 
-        DiagramsData diagramsData = new DiagramsData(damagePercent, damageModifierPercent, damageModifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);
+        DiagramsData diagramsData = new DiagramsData(percent, modifierPercent, modifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);
         return Collections.singletonList(diagramsData);
     }
 

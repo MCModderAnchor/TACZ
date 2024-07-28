@@ -12,7 +12,7 @@
     // 百分比加数（1 + 多个配件相加，作为第二个乘区）
     // "percent": 0.2,
     // 乘数（多个配件相乘，作为第三个乘区）
-    // "multiply": 1.2,
+    // "multiplier": 1.2,
     // 调用 lua 的函数，返回值作为最终结果（输入值 x 为前三个乘区相乘的结果，r 代表枪械 data 中的原始数值，y 代表返回值）
     // "function": "if (x > 20) then y = r + 5 else y = x * 3 end"
   },
@@ -64,6 +64,21 @@
   // },
   // "damage": {
     // "addend": 1
+  // },
+  // 护甲穿透配置
+  // "armor_ignore":{
+    // "addend": 0.2,
+    // "multiplier": 1.5
+  // },
+  // 爆头配置
+  // "head_shot":{
+    // "addend": 0.2,
+    // "multiplier": 1.5
+  // },
+  // 击退配置
+  // "knockback": {
+    // "addend": 0.2,
+    // "multiplier": 1.5
   // },
   // 近战伤害，用于刺刀
   "melee": {
