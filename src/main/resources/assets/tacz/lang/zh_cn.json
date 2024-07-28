@@ -83,6 +83,8 @@
   "gui.tacz.client_gun_pack_downloader.fail.title": "枪械包下载失败",
   "gui.tacz.cloth_config_warning.download": "下载 Cloth Config API 模组",
   "gui.tacz.cloth_config_warning.tips": "你需要安装 Cloth Config API 模组才能使用游戏内配置功能",
+  "gui.tacz.gun_refit.property_diagrams.hide": "隐藏详细信息",
+  "gui.tacz.gun_refit.property_diagrams.show": "展示详细信息",
   "gui.tacz.gun_refit.property_diagrams.fire_mode": "开火模式：",
   "gui.tacz.gun_refit.property_diagrams.accuracy": "精确度",
   "gui.tacz.gun_refit.property_diagrams.effective_range": "优势射程",
