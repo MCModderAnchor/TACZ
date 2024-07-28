@@ -46,6 +46,7 @@
   "tacz.gun.m320.name": "M320 Grenade Launcher",
   "tacz.gun.hk416d.name": "HK-416D",
   "tacz.gun.mk14.name": "MK14 EBR",
+  "tacz.gun.p320.name": "P320",
 
   
   "tacz.gun.ak47.desc": "From jungles to bays, it's always present.",
@@ -75,7 +76,7 @@
   "tacz.gun.m320.desc": "Count to three, you still have a chance to run... Three!",
   "tacz.gun.hk416d.desc": "Don't call me M416",
   "tacz.gun.mk14.desc": "Not born on the wrong date, just on the wrong place",
-
+  "tacz.gun.p320.desc": "...",
 
   "tacz.ammo.9mm.name": "§a9mm Bullet",
   "tacz.ammo.12g.name": "§912 Gauge Bullet",

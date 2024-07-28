@@ -1,0 +1,7 @@
+{
+  "name": "tacz.gun.p320.name",
+  "display": "tacz:p320_display",
+  "data": "tacz:p320_data",
+  "tooltip": "tacz.gun.p320.desc",
+  "type": "pistol"
+}
