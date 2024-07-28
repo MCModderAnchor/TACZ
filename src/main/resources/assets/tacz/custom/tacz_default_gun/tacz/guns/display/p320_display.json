@@ -34,6 +34,7 @@
     "inspect": "tacz:p320/p320_inspect",
     "inspect_empty": "tacz:p320/p320_inspect_empty",
     "draw": "tacz:p320/p320_draw",
+    "put_away": "tacz:p320/p320_put_away",
     "shoot": "tacz:p320/p320_shoot",
     "shoot_3p": "tacz:p320/p320_shoot_3p",
     "silence": "tacz:p320/p320_silence",
