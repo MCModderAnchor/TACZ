@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.resource.ResourceManager;
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
@@ -15,13 +16,17 @@ import com.tacz.guns.resource.loader.asset.*;
 import com.tacz.guns.resource.loader.index.CommonAmmoIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonAttachmentIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonGunIndexLoader;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.resource.pojo.data.gun.Ignite;
 import com.tacz.guns.resource.serialize.*;
 import com.tacz.guns.util.GetJarResources;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
@@ -29,10 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -88,6 +90,17 @@ public class CommonGunPackLoader {
         File[] files = FOLDER.toFile().listFiles((dir, name) -> true);
         if (files != null) {
             readIndex(files);
+        }
+
+        // 刷新全部手持枪械的玩家的缓存
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server != null) {
+            List<ServerPlayer> players = server.getPlayerList().getPlayers();
+            players.forEach(player -> {
+                if (player != null && IGun.mainhandHoldGun(player)) {
+                    AttachmentPropertyManager.postChangeEvent(player, player.getMainHandItem());
+                }
+            });
         }
     }
 
