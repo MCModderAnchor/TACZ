@@ -1,5 +1,6 @@
 package com.tacz.guns.entity;
 
+import com.google.common.collect.Lists;
 import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ITargetEntity;
@@ -20,8 +21,10 @@ import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.AmmoSpeedModifier;
 import com.tacz.guns.resource.modifier.custom.IgniteModifier;
+import com.tacz.guns.resource.modifier.custom.DamageModifier;
 import com.tacz.guns.resource.modifier.custom.PierceModifier;
 import com.tacz.guns.resource.pojo.data.gun.*;
+import com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair;
 import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.HitboxHelper;
 import com.tacz.guns.util.TacHitResult;
@@ -66,10 +69,7 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -83,7 +83,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private float speed = 1;
     private float gravity = 0;
     private float friction = 0.01F;
-    private float damageAmount = 5;
+    private LinkedList<DistanceDamagePair> damageAmount = Lists.newLinkedList();;
     private float knockback = 0;
     private boolean explosion = false;
     private boolean igniteEntity = false;
@@ -134,11 +134,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.igniteEntity = bulletData.getIgnite().isIgniteEntity() || ignite.isIgniteEntity();
         this.igniteEntityTime = Math.max(bulletData.getIgniteEntityTime(), 0);
         this.igniteBlock = bulletData.getIgnite().isIgniteBlock() || ignite.isIgniteBlock();
-        float damageAmount = bulletData.getDamageAmount();
-        if (this.fireModeAdjustData != null) {
-            damageAmount += this.fireModeAdjustData.getDamageAmount();
-        }
-        this.damageAmount = (float) Mth.clamp(damageAmount * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Double.MAX_VALUE);
+        this.damageAmount = cacheProperty.getCache(DamageModifier.ID);
         // 霰弹情况，每个伤害要扣去
         if (bulletData.getBulletAmount() > 1) {
             this.damageModifier = 1f / bulletData.getBulletAmount();
@@ -537,25 +533,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     // 根据距离进行伤害衰减设计
     public float getDamage(Vec3 hitVec) {
-        // 如果没有额外伤害，直接原样返回
-        if (this.extraDamage == null) {
-            return Math.max(0F, this.damageAmount * this.damageModifier);
-        }
-        // 调用距离伤害函数进行具体伤害计算
-        var damageDecay = extraDamage.getDamageAdjust();
-        // 距离伤害函数为空，直接全程默认伤害
-        if (damageDecay == null || damageDecay.isEmpty()) {
-            return Math.max(0F, this.damageAmount * this.damageModifier);
-        }
         // 遍历进行判断
         double playerDistance = hitVec.distanceTo(this.startPos);
-        for (ExtraDamage.DistanceDamagePair pair : damageDecay) {
+        for (ExtraDamage.DistanceDamagePair pair : this.damageAmount) {
             if (playerDistance < pair.getDistance()) {
                 float damage = pair.getDamage();
-                if (this.fireModeAdjustData != null) {
-                    damage += this.fireModeAdjustData.getDamageAmount();
-                }
-                return (float) (Math.max(damage * SyncConfig.DAMAGE_BASE_MULTIPLIER.get() * this.damageModifier, 0F));
+                return Math.max(damage * this.damageModifier, 0F);
             }
         }
         // 如果忘记写最大值，那我就直接认为你伤害为 0

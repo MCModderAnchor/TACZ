@@ -7,6 +7,7 @@ import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.modifier.CacheValue;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.api.modifier.JsonProperty;
+import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
@@ -62,10 +63,11 @@ public class DamageModifier implements IAttachmentModifier<ModifiedValue, Linked
         if (extraDamage != null) {
             for (DistanceDamagePair pair : extraDamage.getDamageAdjust()) {
                 float finalBaseDamage = pair.getDamage() + fireAdjustDamageAmount;
-                cacheValue.add(new DistanceDamagePair(pair.getDistance(), finalBaseDamage));
+                cacheValue.add(new DistanceDamagePair(pair.getDistance(), (float) (finalBaseDamage * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())));
             }
         } else {
-            cacheValue.add(new DistanceDamagePair(Integer.MAX_VALUE, rawDamage + fireAdjustDamageAmount));
+            float finalBaseDamage = rawDamage + fireAdjustDamageAmount;
+            cacheValue.add(new DistanceDamagePair(Integer.MAX_VALUE, (float) (finalBaseDamage * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())));
         }
         return new CacheValue<>(cacheValue);
     }
