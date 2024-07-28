@@ -124,6 +124,7 @@
   "tooltip.tacz.attachment.silence": "+ Silence",
   "tooltip.tacz.attachment.ignite.entity": "+ Ignite Entity",
   "tooltip.tacz.attachment.ignite.block": "+ Ignite Block",
+  "tooltip.tacz.attachment.explosion": "+ Explosion",
   "tooltip.tacz.attachment.yaw.shift": "Press [Shift] to see the support guns",
   "tooltip.tacz.attachment.yaw.support": "Support Guns:",
   "tooltip.tacz.page.previous": "Previous",

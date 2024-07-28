@@ -21,7 +21,6 @@ import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.*;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair;
-import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.HitboxHelper;
 import com.tacz.guns.util.TacHitResult;
 import com.tacz.guns.util.block.BlockRayTrace;
@@ -136,9 +135,9 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             this.damageModifier = 1f / bulletData.getBulletAmount();
         }
         this.pierce = Mth.clamp(cacheProperty.getCache(PierceModifier.ID), 1, Integer.MAX_VALUE);
-        ExplosionData explosionData = bulletData.getExplosionData();
+        ExplosionData explosionData = cacheProperty.getCache(ExplosionModifier.ID);
         if (explosionData != null) {
-            this.explosion = explosionData.isExplode() || isExplode(gunItem, gunData);
+            this.explosion = explosionData.isExplode();
             this.explosionDamage = (float) Mth.clamp(explosionData.getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0, Float.MAX_VALUE);
             this.explosionRadius = Mth.clamp(explosionData.getRadius(), 0, Float.MAX_VALUE);
             this.explosionKnockback = explosionData.isKnockback();
@@ -631,16 +630,6 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     public void setOriginRenderOffset(Vec3 originRenderOffset) {
         this.originRenderOffset = originRenderOffset;
-    }
-
-    private boolean isExplode(ItemStack gunItem, GunData gunData) {
-        final boolean[] isExplode = new boolean[]{false};
-        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> {
-            if (attachmentData.isExplode()) {
-                isExplode[0] = true;
-            }
-        });
-        return isExplode[0];
     }
 
     @Override

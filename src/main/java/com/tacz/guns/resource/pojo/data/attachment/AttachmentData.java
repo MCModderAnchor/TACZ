@@ -18,9 +18,6 @@ public class AttachmentData {
     @SerializedName("extended_mag_level")
     private int extendedMagLevel = 0;
 
-    @SerializedName("explode")
-    private boolean explode;
-
     @SerializedName("melee")
     @Nullable
     private MeleeData meleeData = null;
@@ -31,10 +28,6 @@ public class AttachmentData {
 
     public int getExtendedMagLevel() {
         return extendedMagLevel;
-    }
-
-    public boolean isExplode() {
-        return explode;
     }
 
     @Nullable
