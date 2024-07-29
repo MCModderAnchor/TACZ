@@ -79,7 +79,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private float gravity = 0;
     private float friction = 0.01F;
     private LinkedList<DistanceDamagePair> damageAmount = Lists.newLinkedList();
-    private float knockback;
+    private float distanceAmount = 0;
+    private float knockback = 0;
     private boolean explosion = false;
     private boolean igniteEntity = false;
     private boolean igniteBlock = false;
@@ -130,6 +131,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.igniteEntityTime = Math.max(bulletData.getIgniteEntityTime(), 0);
         this.igniteBlock = bulletData.getIgnite().isIgniteBlock() || ignite.isIgniteBlock();
         this.damageAmount = cacheProperty.getCache(DamageModifier.ID);
+        this.distanceAmount = cacheProperty.getCache(EffectiveRangeModifier.ID);
         // 霰弹情况，每个伤害要扣去
         if (bulletData.getBulletAmount() > 1) {
             this.damageModifier = 1f / bulletData.getBulletAmount();
@@ -517,8 +519,9 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     public float getDamage(Vec3 hitVec) {
         // 遍历进行判断
         double playerDistance = hitVec.distanceTo(this.startPos);
-        for (ExtraDamage.DistanceDamagePair pair : this.damageAmount) {
-            if (playerDistance < pair.getDistance()) {
+        for (DistanceDamagePair pair : this.damageAmount) {
+            float effectiveDistance = this.damageAmount.get(0).getDistance() == pair.getDistance() ? this.distanceAmount : pair.getDistance();
+            if (playerDistance < effectiveDistance) {
                 float damage = pair.getDamage();
                 return Math.max(damage * this.damageModifier, 0F);
             }

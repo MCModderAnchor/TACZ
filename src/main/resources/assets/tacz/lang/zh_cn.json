@@ -161,6 +161,8 @@
   "tooltip.tacz.attachment.armor_ignore.increase": "+ 穿甲倍率",
   "tooltip.tacz.attachment.damage.decrease": "- 伤害",
   "tooltip.tacz.attachment.damage.increase": "+ 伤害",
+  "tooltip.tacz.attachment.effective_range.decrease": "- 优势射程",
+  "tooltip.tacz.attachment.effective_range.increase": "+ 优势射程",
   "tooltip.tacz.attachment.explosion": "+ 爆炸",
   "tooltip.tacz.attachment.extended_mag": "扩容弹匣",
   "tooltip.tacz.attachment.extended_mag_level_1": "弹药容量 I",

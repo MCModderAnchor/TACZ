@@ -25,6 +25,9 @@
   // "aim_inaccuracy": {
     // "addend": 0.05
   // },
+  // "effective_range": {
+    // "addend": 10
+  // },
   // 子弹速度配置
   // "ammo_speed": {
   // ...

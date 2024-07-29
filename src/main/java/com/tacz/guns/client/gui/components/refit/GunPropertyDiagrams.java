@@ -22,7 +22,7 @@ import java.util.LinkedList;
 
 public final class GunPropertyDiagrams {
     public static int getHidePropertyButtonYOffset() {
-        int[] startYOffset = new int[]{59};
+        int[] startYOffset = new int[]{49};
         AttachmentPropertyManager.getModifiers().forEach((key, value) -> {
             startYOffset[0] += value.getDiagramsDataSize() * 10;
         });
@@ -80,27 +80,6 @@ public final class GunPropertyDiagrams {
             }
 
             graphics.drawString(font, fireModeText, nameTextStartX, yOffset[0], fontColor, false);
-
-            yOffset[0] += 10;
-
-
-            // 优势射程
-            ExtraDamage extraDamage = bulletData.getExtraDamage();
-            float effectiveRange = 0f;
-            if (extraDamage != null) {
-                LinkedList<ExtraDamage.DistanceDamagePair> damageDecay = extraDamage.getDamageAdjust();
-                if (damageDecay.size() > 0) {
-                    effectiveRange = damageDecay.get(0).getDistance();
-                }
-            }
-            double effectiveRangePercent = Mth.clamp(effectiveRange / 100.0, 0, 1);
-            int effectiveRangeLength = (int) (barStartX + barMaxWidth * effectiveRangePercent);
-            String effectiveRangeValueText = String.format("%.1fm", effectiveRange);
-
-            graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.effective_range"), nameTextStartX, yOffset[0], fontColor, false);
-            graphics.fill(barStartX, yOffset[0] + 2, barEndX, yOffset[0] + 6, barBackgroundColor);
-            graphics.fill(barStartX, yOffset[0] + 2, effectiveRangeLength, yOffset[0] + 6, barBaseColor);
-            graphics.drawString(font, effectiveRangeValueText, valueTextStartX, yOffset[0], fontColor, false);
 
             yOffset[0] += 10;
 

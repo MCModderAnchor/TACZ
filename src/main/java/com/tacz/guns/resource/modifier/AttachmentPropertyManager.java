@@ -34,6 +34,7 @@ public class AttachmentPropertyManager {
         MODIFIERS.put(AmmoSpeedModifier.ID, new AmmoSpeedModifier());
         MODIFIERS.put(ArmorIgnoreModifier.ID, new ArmorIgnoreModifier());
         MODIFIERS.put(DamageModifier.ID, new DamageModifier());
+        MODIFIERS.put(EffectiveRangeModifier.ID, new EffectiveRangeModifier());
         MODIFIERS.put(ExplosionModifier.ID, new ExplosionModifier());
         MODIFIERS.put(HeadShotModifier.ID, new HeadShotModifier());
         MODIFIERS.put(IgniteModifier.ID, new IgniteModifier());

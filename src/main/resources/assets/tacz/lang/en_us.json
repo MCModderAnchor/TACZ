@@ -121,6 +121,8 @@
   "tooltip.tacz.attachment.ammo_speed.decrease": "- Ammo Speed",
   "tooltip.tacz.attachment.damage.increase": "+ Damage",
   "tooltip.tacz.attachment.damage.decrease": "- Damage",
+  "tooltip.tacz.attachment.effective_range.increase": "+ Effective Range",
+  "tooltip.tacz.attachment.effective_range.decrease": "- Effective Range",
   "tooltip.tacz.attachment.sound_distance.increase": "+ Sound Distance",
   "tooltip.tacz.attachment.sound_distance.decrease": "- Sound Distance",
   "tooltip.tacz.attachment.silence": "+ Silence",
