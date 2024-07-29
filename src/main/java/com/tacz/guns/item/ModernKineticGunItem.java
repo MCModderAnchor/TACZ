@@ -16,6 +16,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunFire;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.AimInaccuracyModifier;
 import com.tacz.guns.resource.modifier.custom.AmmoSpeedModifier;
 import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
@@ -88,7 +89,11 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
 
         // 散射影响
         InaccuracyType inaccuracyType = InaccuracyType.getInaccuracyType(shooter);
-        final float inaccuracy = Math.max(0, cacheProperty.<Map<InaccuracyType, Float>>getCache(InaccuracyModifier.ID).get(inaccuracyType));
+        float inaccuracy = Math.max(0, cacheProperty.<Map<InaccuracyType, Float>>getCache(InaccuracyModifier.ID).get(inaccuracyType));
+        if (inaccuracyType == InaccuracyType.AIM) {
+            inaccuracy = Math.max(0, cacheProperty.<Map<InaccuracyType, Float>>getCache(AimInaccuracyModifier.ID).get(inaccuracyType));
+        }
+        final float finalInaccuracy = inaccuracy;
 
         // 消音器影响
         Pair<Integer, Boolean> silence = cacheProperty.getCache(SilenceModifier.ID);
@@ -107,7 +112,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         // 是否消耗弹药
         boolean consumeAmmo = IGunOperator.fromLivingEntity(shooter).consumesAmmoOrNot();
 
-        // 将连发任务委托到循环任务工具
         CycleTaskHelper.addCycleTask(() -> {
             // 如果射击者死亡，取消射击
             if (shooter.isDeadOrDying()) {
@@ -133,7 +137,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                 // 生成子弹
                 Level world = shooter.level();
                 for (int i = 0; i < bulletAmount; i++) {
-                    this.doSpawnBulletEntity(world, shooter, gunItem, pitch.get(), yaw.get(), finalSpeed, inaccuracy, ammoId, gunId, tracer, gunData, bulletData);
+                    this.doSpawnBulletEntity(world, shooter, gunItem, pitch.get(), yaw.get(), finalSpeed, finalInaccuracy, ammoId, gunId, tracer, gunData, bulletData);
                 }
                 // 播放枪声
                 if (soundDistance > 0) {

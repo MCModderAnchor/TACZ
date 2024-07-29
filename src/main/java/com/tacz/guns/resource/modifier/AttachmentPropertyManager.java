@@ -30,6 +30,7 @@ public class AttachmentPropertyManager {
 
     public static void registerModifier() {
         MODIFIERS.put(AdsModifier.ID, new AdsModifier());
+        MODIFIERS.put(AimInaccuracyModifier.ID, new AimInaccuracyModifier());
         MODIFIERS.put(AmmoSpeedModifier.ID, new AmmoSpeedModifier());
         MODIFIERS.put(ArmorIgnoreModifier.ID, new ArmorIgnoreModifier());
         MODIFIERS.put(DamageModifier.ID, new DamageModifier());

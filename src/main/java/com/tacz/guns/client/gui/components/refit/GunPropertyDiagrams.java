@@ -22,7 +22,7 @@ import java.util.LinkedList;
 
 public final class GunPropertyDiagrams {
     public static int getHidePropertyButtonYOffset() {
-        int[] startYOffset = new int[]{69};
+        int[] startYOffset = new int[]{59};
         AttachmentPropertyManager.getModifiers().forEach((key, value) -> {
             startYOffset[0] += value.getDiagramsDataSize() * 10;
         });
@@ -80,23 +80,6 @@ public final class GunPropertyDiagrams {
             }
 
             graphics.drawString(font, fireModeText, nameTextStartX, yOffset[0], fontColor, false);
-
-            yOffset[0] += 10;
-
-
-            // 精确度，也就是瞄准时的扩散
-            float aimInaccuracy = gunData.getInaccuracy(InaccuracyType.AIM);
-            if (fireModeAdjustData != null) {
-                aimInaccuracy += fireModeAdjustData.getAimInaccuracy();
-            }
-            double aimInaccuracyPercent = Mth.clamp(1 - aimInaccuracy, 0, 1);
-            int aimInaccuracyLength = (int) (barStartX + barMaxWidth * aimInaccuracyPercent);
-            String aimInaccuracyValueText = String.format("%.2f%%", aimInaccuracyPercent * 100);
-
-            graphics.drawString(font, Component.translatable("gui.tacz.gun_refit.property_diagrams.accuracy"), nameTextStartX, yOffset[0], fontColor, false);
-            graphics.fill(barStartX, yOffset[0] + 2, barEndX, yOffset[0] + 6, barBackgroundColor);
-            graphics.fill(barStartX, yOffset[0] + 2, aimInaccuracyLength, yOffset[0] + 6, barBaseColor);
-            graphics.drawString(font, aimInaccuracyValueText, valueTextStartX, yOffset[0], fontColor, false);
 
             yOffset[0] += 10;
 
