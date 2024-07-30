@@ -2,6 +2,7 @@ package com.tacz.guns.resource.pojo.data.gun;
 
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 
@@ -23,8 +24,9 @@ public class ExtraDamage {
         return headShotMultiplier;
     }
 
+    @Nullable
     public LinkedList<DistanceDamagePair> getDamageAdjust() {
-        return damageAdjust;
+        return damageAdjust.isEmpty() ? null : damageAdjust;
     }
 
     public static class DistanceDamagePair {

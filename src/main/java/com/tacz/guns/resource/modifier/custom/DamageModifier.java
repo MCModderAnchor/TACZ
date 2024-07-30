@@ -60,7 +60,7 @@ public class DamageModifier implements IAttachmentModifier<ModifiedValue, Linked
 
         // 开始存入我们的数据
         LinkedList<DistanceDamagePair> cacheValue = Lists.newLinkedList();
-        if (extraDamage != null) {
+        if (extraDamage != null && extraDamage.getDamageAdjust() != null) {
             for (DistanceDamagePair pair : extraDamage.getDamageAdjust()) {
                 float finalBaseDamage = pair.getDamage() + fireAdjustDamageAmount;
                 cacheValue.add(new DistanceDamagePair(pair.getDistance(), (float) (finalBaseDamage * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())));
@@ -101,7 +101,7 @@ public class DamageModifier implements IAttachmentModifier<ModifiedValue, Linked
         // 开火模式调整
         // 最终的 base 伤害
         float finalBase = fireModeAdjustData != null ? fireModeAdjustData.getDamageAmount() : 0f;
-        if (extraDamage != null && !extraDamage.getDamageAdjust().isEmpty()) {
+        if (extraDamage != null && extraDamage.getDamageAdjust() != null) {
             finalBase += extraDamage.getDamageAdjust().get(0).getDamage();
         } else {
             finalBase += rawDamage;

@@ -48,9 +48,7 @@ public final class GunPropertyDiagrams {
         ResourceLocation gunId = iGun.getGunId(gunItem);
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
             GunData gunData = index.getGunData();
-            BulletData bulletData = gunData.getBulletData();
             FireMode fireMode = iGun.getFireMode(gunItem);
-            GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
 
             int barStartX = x + 83;
             int barMaxWidth = 120;

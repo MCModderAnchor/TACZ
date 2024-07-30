@@ -51,7 +51,7 @@ public class EffectiveRangeModifier implements IAttachmentModifier<ModifiedValue
         }
         float effectiveRange;
         if (damageAdjust != null) {
-            effectiveRange = damageAdjust.getFirst().getDistance();
+            effectiveRange = damageAdjust.get(0).getDistance();
         } else {
             effectiveRange = 0;
         }
@@ -75,7 +75,7 @@ public class EffectiveRangeModifier implements IAttachmentModifier<ModifiedValue
         }
         float effectiveRange;
         if (damageAdjust != null) {
-            effectiveRange = damageAdjust.getFirst().getDistance();
+            effectiveRange = damageAdjust.get(0).getDistance();
         } else {
             effectiveRange = 0;
         }
@@ -85,9 +85,9 @@ public class EffectiveRangeModifier implements IAttachmentModifier<ModifiedValue
         double modifierPercent = Math.min(modifier / 100.0, 1);
 
         String titleKey = "gui.tacz.gun_refit.property_diagrams.effective_range";
-        String positivelyString = String.format("%.2f §a(+%.2f)", effectiveRange, modifier);
-        String negativelyString = String.format("%.2f §c(%.2f)", effectiveRange, modifier);
-        String defaultString = String.format("%.2f", effectiveRange);
+        String positivelyString = String.format("%.1fm §a(+%.1f)", effectiveRange, modifier);
+        String negativelyString = String.format("%.1fm §c(%.1f)", effectiveRange, modifier);
+        String defaultString = String.format("%.1fm", effectiveRange);
         boolean positivelyBetter = true;
 
         DiagramsData diagramsData = new DiagramsData(percent, modifierPercent, modifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);
