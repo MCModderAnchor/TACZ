@@ -1,5 +1,6 @@
 package com.tacz.guns.api.client.animation;
 
+import com.mojang.math.Vector3f;
 import com.tacz.guns.api.client.animation.gltf.AccessorModel;
 import com.tacz.guns.api.client.animation.gltf.AnimationModel;
 import com.tacz.guns.api.client.animation.gltf.AnimationStructure;
@@ -13,7 +14,6 @@ import com.tacz.guns.util.math.MathUtil;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

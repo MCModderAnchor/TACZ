@@ -1,9 +1,9 @@
 package com.tacz.guns.api.client.animation.interpolator;
 
+import com.mojang.math.Quaternion;
 import com.tacz.guns.api.client.animation.AnimationChannelContent;
 import com.tacz.guns.api.client.animation.AnimationChannelContent.LerpMode;
 import com.tacz.guns.util.math.MathUtil;
-import com.mojang.math.Quaternion;
 
 import java.util.Arrays;
 

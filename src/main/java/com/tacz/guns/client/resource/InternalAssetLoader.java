@@ -1,4 +1,5 @@
 package com.tacz.guns.client.resource;
+
 import com.google.common.collect.Maps;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
@@ -13,6 +14,7 @@ import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
