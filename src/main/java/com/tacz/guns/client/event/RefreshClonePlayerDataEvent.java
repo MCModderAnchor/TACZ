@@ -18,7 +18,7 @@ import java.util.function.BooleanSupplier;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class RefreshClonePlayerDataEvent {
     @SubscribeEvent
-    public static void onClientPlayerClone(ClientPlayerNetworkEvent.Clone event) {
+    public static void onClientPlayerClone(ClientPlayerNetworkEvent.RespawnEvent event) {
         LocalPlayer newPlayer = event.getNewPlayer();
         // 但是这个事件触发时，玩家的背包并未同步，导致无法读取枪械数据进行配件属性缓存的刷新
         // 延迟 10 tick 执行缓存刷新就好了

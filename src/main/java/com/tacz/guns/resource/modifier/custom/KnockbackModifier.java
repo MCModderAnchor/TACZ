@@ -16,7 +16,7 @@ import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.GunFireModeAdjustData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -107,9 +107,9 @@ public class KnockbackModifier implements IAttachmentModifier<ModifiedValue, Flo
             if (value != null) {
                 double eval = AttachmentPropertyManager.eval(value, 0.2);
                 if (eval > 0.2) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.knockback.increase").withStyle(ChatFormatting.GREEN));
+                    components.add(new TranslatableComponent("tooltip.tacz.attachment.knockback.increase").withStyle(ChatFormatting.GREEN));
                 } else if (eval < 0.2) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.knockback.decrease").withStyle(ChatFormatting.RED));
+                    components.add(new TranslatableComponent("tooltip.tacz.attachment.knockback.decrease").withStyle(ChatFormatting.RED));
                 }
             }
         }

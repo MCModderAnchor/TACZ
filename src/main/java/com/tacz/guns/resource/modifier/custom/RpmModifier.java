@@ -12,7 +12,7 @@ import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -90,9 +90,9 @@ public class RpmModifier implements IAttachmentModifier<ModifiedValue, Integer> 
                 double eval = AttachmentPropertyManager.eval(value, 300);
                 int rpm = (int) Math.round(eval);
                 if (rpm > 300) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.rpm.increase").withStyle(ChatFormatting.GREEN));
+                    components.add(new TranslatableComponent("tooltip.tacz.attachment.rpm.increase").withStyle(ChatFormatting.GREEN));
                 } else if (rpm < 300) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.rpm.decrease").withStyle(ChatFormatting.RED));
+                    components.add(new TranslatableComponent("tooltip.tacz.attachment.rpm.decrease").withStyle(ChatFormatting.RED));
                 }
             }
         }

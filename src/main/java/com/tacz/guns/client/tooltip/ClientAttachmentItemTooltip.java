@@ -181,7 +181,7 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
             }
 
             data.getModifier().forEach((key, value) -> {
-                List<TranslatableComponent> result = value.getComponents();
+                List<Component> result = value.getComponents();
                 components.addAll(result);
             });
         });

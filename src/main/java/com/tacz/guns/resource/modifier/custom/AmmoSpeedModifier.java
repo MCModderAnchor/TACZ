@@ -13,7 +13,7 @@ import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.GunFireModeAdjustData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -97,9 +97,9 @@ public class AmmoSpeedModifier implements IAttachmentModifier<ModifiedValue, Flo
             if (ammoSpeed != null) {
                 double eval = AttachmentPropertyManager.eval(ammoSpeed, 300);
                 if (eval > 300) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.ammo_speed.increase").withStyle(ChatFormatting.GREEN));
+                    components.add(new TranslatableComponent("tooltip.tacz.attachment.ammo_speed.increase").withStyle(ChatFormatting.GREEN));
                 } else if (eval < 300) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.ammo_speed.decrease").withStyle(ChatFormatting.RED));
+                    components.add(new TranslatableComponent("tooltip.tacz.attachment.ammo_speed.decrease").withStyle(ChatFormatting.RED));
                 }
             }
         }

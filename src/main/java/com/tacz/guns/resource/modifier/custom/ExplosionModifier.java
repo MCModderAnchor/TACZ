@@ -11,7 +11,7 @@ import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
 import com.tacz.guns.resource.pojo.data.gun.ExplosionData;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -80,7 +80,7 @@ public class ExplosionModifier implements IAttachmentModifier<ExplosionModifier.
         public void initComponents() {
             ExplosionModifierValue modifierValue = getValue();
             if (modifierValue != null && modifierValue.explode) {
-                components.add(Component.translatable("tooltip.tacz.attachment.explosion").withStyle(ChatFormatting.GOLD));
+                components.add(new TranslatableComponent("tooltip.tacz.attachment.explosion").withStyle(ChatFormatting.GOLD));
             }
         }
     }

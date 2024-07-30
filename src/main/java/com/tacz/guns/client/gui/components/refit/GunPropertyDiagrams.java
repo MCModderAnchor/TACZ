@@ -134,7 +134,7 @@ public final class GunPropertyDiagrams {
                 int defaultLength = (int) (barStartX + barMaxWidth * defaultPercent);
                 int modifierLength = Mth.clamp(defaultLength + (int) (barMaxWidth * modifierPercent), barStartX, barEndX);
 
-                font.draw(poseStack, Component.translatable(titleKey), nameTextStartX, yOffset[0], fontColor);
+                font.draw(poseStack, new TranslatableComponent(titleKey), nameTextStartX, yOffset[0], fontColor);
                 Screen.fill(poseStack, barStartX, yOffset[0] + 2, barEndX, yOffset[0] + 6, barBackgroundColor);
                 Screen.fill(poseStack, barStartX, yOffset[0] + 2, defaultLength, yOffset[0] + 6, barBaseColor);
                 if (modifier > 0) {

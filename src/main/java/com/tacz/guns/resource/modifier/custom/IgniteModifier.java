@@ -9,7 +9,7 @@ import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.Ignite;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.compress.utils.Lists;
 
@@ -61,10 +61,10 @@ public class IgniteModifier implements IAttachmentModifier<Ignite, Ignite> {
                 return;
             }
             if (value.isIgniteEntity()) {
-                components.add(Component.translatable("tooltip.tacz.attachment.ignite.entity").withStyle(ChatFormatting.GREEN));
+                components.add(new TranslatableComponent("tooltip.tacz.attachment.ignite.entity").withStyle(ChatFormatting.GREEN));
             }
             if (value.isIgniteBlock()) {
-                components.add(Component.translatable("tooltip.tacz.attachment.ignite.block").withStyle(ChatFormatting.GREEN));
+                components.add(new TranslatableComponent("tooltip.tacz.attachment.ignite.block").withStyle(ChatFormatting.GREEN));
             }
         }
     }
