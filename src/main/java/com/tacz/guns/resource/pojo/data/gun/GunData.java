@@ -3,10 +3,15 @@ package com.tacz.guns.resource.pojo.data.gun;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
+import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.FireMode;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.RpmModifier;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -97,6 +102,7 @@ public class GunData {
         return bolt;
     }
 
+    @Deprecated
     public int getRoundsPerMinute() {
         return roundsPerMinute;
     }
@@ -202,8 +208,12 @@ public class GunData {
     /**
      * @return 枪械开火的间隔，单位为 ms 。
      */
-    public long getShootInterval(FireMode fireMode) {
+    public long getShootInterval(LivingEntity shooter, FireMode fireMode) {
         int rpm = this.getRoundsPerMinute(fireMode);
+        AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(shooter).getCacheProperty();
+        if (cacheProperty != null) {
+            rpm = Mth.clamp(cacheProperty.<Integer>getCache(RpmModifier.ID), 1, 1200);
+        }
         return 60_000L / rpm;
     }
 

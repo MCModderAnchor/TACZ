@@ -5,6 +5,7 @@
   "slot": "tacz:gun/slot/m320_slot",
   "animation": "tacz:m320",
   "use_default_animation": "rifle",
+  "player_animator_3rd": "tacz:rifle_default.player_animation",
   "lod": {
     "model": "tacz:gun/lod/m320",
     "texture": "tacz:gun/lod/m320"
@@ -28,15 +29,15 @@
     "melee_stock": "tacz:melee_stock/melee_stock_03"
   },
   "offhand_show": {
-    "pos": [0, 20, 5],
-    "rotate": [-20, 0, 30],
+    "pos": [1, 20, 4],
+    "rotate": [0, 0, 45],
     "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [-4, 24, 4],
-      "rotate": [-90, -5, -90],
-      "scale": [0.5, 0.5, 0.5]
+      "pos": [1, 16, -2],
+    "rotate": [0, 0, 20],
+    "scale": [0.5, 0.5, 0.5]
     }
   }
 }

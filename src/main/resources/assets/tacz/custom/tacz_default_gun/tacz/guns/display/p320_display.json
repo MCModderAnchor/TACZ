@@ -1,0 +1,55 @@
+{
+  "model": "tacz:gun/p320_geo",
+  "texture": "tacz:gun/uv/p320",
+  "lod": {
+    "model": "tacz:gun/lod/p320",
+    "texture": "tacz:gun/lod/p320"
+  },
+  "hud": "tacz:gun/hud/p320_hud",
+  "slot": "tacz:gun/slot/p320_slot",
+  "animation": "tacz:p320",
+  "use_default_animation": "pistol",
+  "player_animator_3rd": "tacz:pistol_default.player_animation",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "shell": {
+    "initial_velocity": [5.0, 3.0, 1],
+    "random_velocity": [2.5, 2, 0.25],
+    "acceleration": [0.0, -20, 0.0],
+    "angular_velocity": [360, -960, 90],
+    "living_time": 1.0
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.5
+  },
+  "sounds": {
+    "reload_empty": "tacz:p320/p320_reload_empty",
+    "reload_tactical": "tacz:p320/p320_reload_tactical",
+    "inspect": "tacz:p320/p320_inspect",
+    "inspect_empty": "tacz:p320/p320_inspect_empty",
+    "draw": "tacz:p320/p320_draw",
+    "put_away": "tacz:p320/p320_put_away",
+    "shoot": "tacz:p320/p320_shoot",
+    "shoot_3p": "tacz:p320/p320_shoot_3p",
+    "silence": "tacz:p320/p320_silence",
+    "silence_3p": "tacz:p320/p320_silence_3p"
+  },
+  "offhand_show": {
+    "pos": [4, 13, -1],
+    "rotate": [-90, -35, 90],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-5, 13, -1],
+      "rotate": [-90, -35, 90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}
