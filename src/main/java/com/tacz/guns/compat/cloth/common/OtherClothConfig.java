@@ -1,6 +1,5 @@
 package com.tacz.guns.compat.cloth.common;
 
-import com.google.common.collect.Lists;
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;

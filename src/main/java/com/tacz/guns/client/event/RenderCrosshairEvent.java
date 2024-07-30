@@ -29,9 +29,6 @@ import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 import static com.tacz.guns.util.RenderHelper.blit;
 

@@ -1,5 +1,6 @@
 package com.tacz.guns.client.model;
 
+import com.mojang.math.Quaternion;
 import com.tacz.guns.api.client.animation.AnimationListener;
 import com.tacz.guns.api.client.animation.AnimationListenerSupplier;
 import com.tacz.guns.api.client.animation.ObjectAnimationChannel;
@@ -14,7 +15,6 @@ import com.tacz.guns.client.model.listener.model.ModelTranslateListener;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.client.resource.pojo.model.BonesItem;
-import com.mojang.math.Quaternion;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
