@@ -59,7 +59,7 @@ public class GunData {
     private List<FireMode> fireModeSet = Collections.singletonList(FireMode.UNKNOWN);
 
     @SerializedName("fire_mode_adjust")
-    private Map<FireMode, GunFireModeAdjustData> fireModeAdjust = Maps.newLinkedHashMap();
+    private Map<FireMode, GunFireModeAdjustData> fireModeAdjust = Maps.newEnumMap(FireMode.class);
 
     @SerializedName("burst_data")
     private BurstData burstData = new BurstData();
