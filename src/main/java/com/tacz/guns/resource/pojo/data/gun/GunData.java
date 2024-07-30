@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +60,7 @@ public class GunData {
     private List<FireMode> fireModeSet = Collections.singletonList(FireMode.UNKNOWN);
 
     @SerializedName("fire_mode_adjust")
-    private Map<FireMode, GunFireModeAdjustData> fireModeAdjust = Maps.newLinkedHashMap();
+    private EnumMap<FireMode, GunFireModeAdjustData> fireModeAdjust = Maps.newEnumMap(FireMode.class);
 
     @SerializedName("burst_data")
     private BurstData burstData = new BurstData();
