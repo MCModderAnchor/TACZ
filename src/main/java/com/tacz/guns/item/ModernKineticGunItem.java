@@ -10,20 +10,22 @@ import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.nbt.GunItemDataAccessor;
 import com.tacz.guns.command.sub.DebugCommand;
-import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.debug.GunMeleeDebug;
 import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunFire;
 import com.tacz.guns.resource.index.CommonGunIndex;
-import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.AimInaccuracyModifier;
+import com.tacz.guns.resource.modifier.custom.AmmoSpeedModifier;
+import com.tacz.guns.resource.modifier.custom.InaccuracyModifier;
+import com.tacz.guns.resource.modifier.custom.SilenceModifier;
 import com.tacz.guns.resource.pojo.data.attachment.EffectData;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
-import com.tacz.guns.resource.pojo.data.attachment.Silence;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.sound.SoundManager;
-import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.CycleTaskHelper;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -43,6 +45,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -80,33 +83,26 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         GunData gunData = gunIndex.getGunData();
         ResourceLocation ammoId = gunData.getAmmoId();
         FireMode fireMode = iGun.getFireMode(gunItem);
-        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
+        AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(shooter).getCacheProperty();
+        if (cacheProperty == null) {
+            return;
+        }
 
         // 散射影响
-        InaccuracyType inaccuracyState = InaccuracyType.getInaccuracyType(shooter);
-        float inaccuracyAddend = 0;
-        if (fireModeAdjustData != null) {
-            if (inaccuracyState == InaccuracyType.AIM) {
-                inaccuracyAddend = fireModeAdjustData.getAimInaccuracy();
-            } else {
-                inaccuracyAddend = fireModeAdjustData.getOtherInaccuracy();
-            }
+        InaccuracyType inaccuracyType = InaccuracyType.getInaccuracyType(shooter);
+        float inaccuracy = Math.max(0, cacheProperty.<Map<InaccuracyType, Float>>getCache(InaccuracyModifier.ID).get(inaccuracyType));
+        if (inaccuracyType == InaccuracyType.AIM) {
+            inaccuracy = Math.max(0, cacheProperty.<Map<InaccuracyType, Float>>getCache(AimInaccuracyModifier.ID).get(inaccuracyType));
         }
-        final float[] inaccuracy = new float[]{gunData.getInaccuracy(inaccuracyState, inaccuracyAddend)};
+        final float finalInaccuracy = inaccuracy;
 
         // 消音器影响
-        final int[] soundDistance = new int[]{GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get()};
-        final boolean[] useSilenceSound = new boolean[]{false};
-
-        // 配件属性的读取计算
-        AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> calculateAttachmentData(attachmentData, inaccuracyState, inaccuracy, soundDistance, useSilenceSound));
-        inaccuracy[0] = Math.max(0, inaccuracy[0]);
+        Pair<Integer, Boolean> silence = cacheProperty.getCache(SilenceModifier.ID);
+        final int soundDistance = silence.first();
+        final boolean useSilenceSound = silence.right();
 
         // 子弹飞行速度
-        float speed = bulletData.getSpeed();
-        if (fireModeAdjustData != null) {
-            speed += fireModeAdjustData.getSpeed();
-        }
+        float speed = cacheProperty.<Float>getCache(AmmoSpeedModifier.ID);
         float finalSpeed = Mth.clamp(speed / 20, 0, Float.MAX_VALUE);
         // 弹丸数量
         int bulletAmount = Math.max(bulletData.getBulletAmount(), 1);
@@ -117,7 +113,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         // 是否消耗弹药
         boolean consumeAmmo = IGunOperator.fromLivingEntity(shooter).consumesAmmoOrNot();
 
-        // 将连发任务委托到循环任务工具
         CycleTaskHelper.addCycleTask(() -> {
             // 如果射击者死亡，取消射击
             if (shooter.isDeadOrDying()) {
@@ -143,12 +138,12 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                 // 生成子弹
                 Level world = shooter.getLevel();
                 for (int i = 0; i < bulletAmount; i++) {
-                    this.doSpawnBulletEntity(world, shooter, pitch.get(), yaw.get(), finalSpeed, inaccuracy[0], ammoId, gunId, tracer, gunData, bulletData, fireMode);
+                    this.doSpawnBulletEntity(world, shooter, gunItem, pitch.get(), yaw.get(), finalSpeed, finalInaccuracy, ammoId, gunId, tracer, gunData, bulletData);
                 }
                 // 播放枪声
-                if (soundDistance[0] > 0) {
-                    String soundId = useSilenceSound[0] ? SoundManager.SILENCE_3P_SOUND : SoundManager.SHOOT_3P_SOUND;
-                    SoundManager.sendSoundToNearby(shooter, soundDistance[0], gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
+                if (soundDistance > 0) {
+                    String soundId = useSilenceSound ? SoundManager.SILENCE_3P_SOUND : SoundManager.SHOOT_3P_SOUND;
+                    SoundManager.sendSoundToNearby(shooter, soundDistance, gunId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
                 }
             }
             return true;
@@ -284,8 +279,8 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     /**
      * 生成子弹实体
      */
-    protected void doSpawnBulletEntity(Level world, LivingEntity shooter, float pitch, float yaw, float speed, float inaccuracy, ResourceLocation ammoId, ResourceLocation gunId, boolean tracer, GunData gunData, BulletData bulletData, FireMode fireMode) {
-        EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, ammoId, gunId, tracer, gunData, bulletData, fireMode);
+    protected void doSpawnBulletEntity(Level world, LivingEntity shooter, ItemStack gunItem, float pitch, float yaw, float speed, float inaccuracy, ResourceLocation ammoId, ResourceLocation gunId, boolean tracer, GunData gunData, BulletData bulletData) {
+        EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, gunItem, ammoId, gunId, tracer, gunData, bulletData);
         bullet.shootFromRotation(bullet, pitch, yaw, 0.0F, speed, inaccuracy);
         world.addFreshEntity(bullet);
     }
@@ -325,20 +320,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             }
         } else {
             this.reduceCurrentAmmoCount(currentGunItem);
-        }
-    }
-
-    private void calculateAttachmentData(AttachmentData attachmentData, InaccuracyType inaccuracyState, float[] inaccuracy, int[] soundDistance, boolean[] useSilenceSound) {
-        // 影响除瞄准外所有的不准确度
-        if (!inaccuracyState.isAim()) {
-            inaccuracy[0] += attachmentData.getInaccuracyAddend();
-        }
-        Silence silence = attachmentData.getSilence();
-        if (silence != null) {
-            soundDistance[0] += silence.getDistanceAddend();
-            if (silence.isUseSilenceSound()) {
-                useSilenceSound[0] = true;
-            }
         }
     }
 

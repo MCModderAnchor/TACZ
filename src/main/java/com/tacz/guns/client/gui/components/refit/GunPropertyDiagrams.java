@@ -2,11 +2,12 @@ package com.tacz.guns.client.gui.components.refit;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import com.tacz.guns.api.item.gun.FireMode;
-import com.tacz.guns.config.sync.SyncConfig;
-import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.client.Minecraft;
@@ -21,8 +22,16 @@ import net.minecraft.world.item.ItemStack;
 import java.util.LinkedList;
 
 public final class GunPropertyDiagrams {
+    public static int getHidePropertyButtonYOffset() {
+        int[] startYOffset = new int[]{49};
+        AttachmentPropertyManager.getModifiers().forEach((key, value) -> {
+            startYOffset[0] += value.getDiagramsDataSize() * 10;
+        });
+        return startYOffset[0];
+    }
+
     public static void draw(GunRefitScreen screen, PoseStack poseStack, Font font, int x, int y) {
-        Screen.fill(poseStack, x, y, x + 258, y + 118, 0xAF222222);
+        Screen.fill(poseStack, x, y, x + 288, y + getHidePropertyButtonYOffset() - 11, 0xAF222222);
 
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
@@ -33,15 +42,16 @@ public final class GunPropertyDiagrams {
         if (iGun == null) {
             return;
         }
+        AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(player).getCacheProperty();
+        if (cacheProperty == null) {
+            return;
+        }
         ResourceLocation gunId = iGun.getGunId(gunItem);
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
             GunData gunData = index.getGunData();
-            BulletData bulletData = gunData.getBulletData();
-            GunRecoil recoil = gunData.getRecoil();
             FireMode fireMode = iGun.getFireMode(gunItem);
-            GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
 
-            int barStartX = x + 58;
+            int barStartX = x + 83;
             int barMaxWidth = 120;
             int barEndX = barStartX + barMaxWidth;
 
@@ -52,9 +62,9 @@ public final class GunPropertyDiagrams {
 
             int fontColor = 0xCCCCCC;
             int nameTextStartX = x + 5;
-            int valueTextStartX = x + 185;
+            int valueTextStartX = x + 210;
 
-            int pitch = y + 5;
+            int[] yOffset = new int[]{y + 5};
 
             // 射击模式
             TranslatableComponent fireModeText = new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.fire_mode");
@@ -68,108 +78,9 @@ public final class GunPropertyDiagrams {
                 fireModeText.append(new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.unknown"));
             }
 
-            font.draw(poseStack, fireModeText, nameTextStartX, pitch, fontColor);
+            font.draw(poseStack, fireModeText, nameTextStartX, yOffset[0], fontColor);
 
-            pitch += 10;
-
-
-            // 伤害
-            double damageAmount = bulletData.getDamageAmount();
-            if (fireModeAdjustData != null) {
-                damageAmount += fireModeAdjustData.getDamageAmount();
-            }
-            damageAmount = Math.max(damageAmount * SyncConfig.DAMAGE_BASE_MULTIPLIER.get(), 0F);
-            double damagePercent = Math.min(Math.log(damageAmount) / 5.0, 1);
-            int damageLength = (int) (barStartX + barMaxWidth * damagePercent);
-            String damageValueText = String.format("%.2f", damageAmount);
-
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.damage"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, damageLength, pitch + 6, barBaseColor);
-            font.draw(poseStack, damageValueText, valueTextStartX, pitch, fontColor);
-
-            pitch += 10;
-
-
-            // 射速
-            int rpm = gunData.getRoundsPerMinute(fireMode);
-            double rpmPercent = Math.min(rpm / 1200.0, 1);
-            int rpmLength = (int) (barStartX + barMaxWidth * rpmPercent);
-            String rpmValueText = String.format("%drpm", rpm);
-
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.rpm"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, rpmLength, pitch + 6, barBaseColor);
-            font.draw(poseStack, rpmValueText, valueTextStartX, pitch, fontColor);
-
-            pitch += 10;
-
-
-            // 精确度，也就是瞄准时的扩散
-            float aimInaccuracy = gunData.getInaccuracy(InaccuracyType.AIM);
-            if (fireModeAdjustData != null) {
-                aimInaccuracy += fireModeAdjustData.getAimInaccuracy();
-            }
-            double aimInaccuracyPercent = Mth.clamp(1 - aimInaccuracy, 0, 1);
-            int aimInaccuracyLength = (int) (barStartX + barMaxWidth * aimInaccuracyPercent);
-            String aimInaccuracyValueText = String.format("%.2f%%", aimInaccuracyPercent * 100);
-
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.accuracy"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, aimInaccuracyLength, pitch + 6, barBaseColor);
-            font.draw(poseStack, aimInaccuracyValueText, valueTextStartX, pitch, fontColor);
-
-            pitch += 10;
-
-
-            // 优势射程
-            ExtraDamage extraDamage = bulletData.getExtraDamage();
-            float effectiveRange = 0f;
-            if (extraDamage != null) {
-                LinkedList<ExtraDamage.DistanceDamagePair> damageDecay = extraDamage.getDamageAdjust();
-                if (damageDecay.size() > 0) {
-                    effectiveRange = damageDecay.get(0).getDistance();
-                }
-            }
-            double effectiveRangePercent = Mth.clamp(effectiveRange / 100.0, 0, 1);
-            int effectiveRangeLength = (int) (barStartX + barMaxWidth * effectiveRangePercent);
-            String effectiveRangeValueText = String.format("%.1fm", effectiveRange);
-
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.effective_range"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, effectiveRangeLength, pitch + 6, barBaseColor);
-            font.draw(poseStack, effectiveRangeValueText, valueTextStartX, pitch, fontColor);
-
-            pitch += 10;
-
-
-            // 腰射扩散
-            float standInaccuracy = gunData.getInaccuracy(InaccuracyType.STAND);
-            if (fireModeAdjustData != null) {
-                standInaccuracy += fireModeAdjustData.getOtherInaccuracy();
-            }
-            double standInaccuracyPercent = Math.min(standInaccuracy / 10.0, 1);
-            int inaccuracyLength = (int) (barStartX + barMaxWidth * standInaccuracyPercent);
-
-            float[] inaccuracyModifier = new float[]{0};
-            AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> inaccuracyModifier[0] += attachmentData.getInaccuracyAddend());
-            double attachmentInaccuracyPercent = Math.min(inaccuracyModifier[0] / 10.0, 1);
-            int inaccuracyModifierLength = Mth.clamp(inaccuracyLength + (int) (barMaxWidth * attachmentInaccuracyPercent), barStartX, barEndX);
-
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.hipfire_inaccuracy"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, inaccuracyLength, pitch + 6, barBaseColor);
-            if (attachmentInaccuracyPercent < 0) {
-                Screen.fill(poseStack, inaccuracyModifierLength, pitch + 2, inaccuracyLength, pitch + 6, barPositivelyColor);
-                font.draw(poseStack, String.format("%.2f §a(%.2f)", standInaccuracy, inaccuracyModifier[0]), valueTextStartX, pitch, fontColor);
-            } else if (attachmentInaccuracyPercent > 0) {
-                Screen.fill(poseStack, inaccuracyLength, pitch + 2, inaccuracyModifierLength, pitch + 6, barNegativeColor);
-                font.draw(poseStack, String.format("%.2f §c(+%.2f)", standInaccuracy, inaccuracyModifier[0]), valueTextStartX, pitch, fontColor);
-            } else {
-                font.draw(poseStack, String.format("%.2f", standInaccuracy), valueTextStartX, pitch, fontColor);
-            }
-
-            pitch += 10;
+            yOffset[0] += 10;
 
 
             // 弹匣容量
@@ -181,119 +92,64 @@ public final class GunPropertyDiagrams {
             int addAmmoCount = Math.max(maxAmmoCount - ammoAmount, 0);
             int addAmmoCountLength = (int) (barMaxWidth * addAmmoCount / 100.0);
 
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.ammo_capacity"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, ammoLength, pitch + 6, barBaseColor);
+            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.ammo_capacity"), nameTextStartX, yOffset[0], fontColor);
+            Screen.fill(poseStack, barStartX, yOffset[0] + 2, barEndX, yOffset[0] + 6, barBackgroundColor);
+            Screen.fill(poseStack, barStartX, yOffset[0] + 2, ammoLength, yOffset[0] + 6, barBaseColor);
             if (addAmmoCount > 0) {
                 int barRight = Math.min(ammoLength + addAmmoCountLength, barEndX);
-                Screen.fill(poseStack, ammoLength, pitch + 2, barRight, pitch + 6, barPositivelyColor);
-                font.draw(poseStack, String.format("%d §a(+%d)", ammoAmount, addAmmoCount), valueTextStartX, pitch, fontColor);
+                Screen.fill(poseStack, ammoLength, yOffset[0] + 2, barRight, yOffset[0] + 6, barPositivelyColor);
+                font.draw(poseStack, String.format("%d §a(+%d)", ammoAmount, addAmmoCount), valueTextStartX, yOffset[0], fontColor);
             } else {
-                font.draw(poseStack, String.format("%d", ammoAmount), valueTextStartX, pitch, fontColor);
+                font.draw(poseStack, String.format("%d", ammoAmount), valueTextStartX, yOffset[0], fontColor);
             }
 
-            pitch += 10;
-
-
-            // 水平后坐力和垂直后坐力
-            final float[] attachmentRecoilModifier = new float[]{0f, 0f};
-            AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> {
-                RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
-                if (recoilModifier == null) {
-                    return;
-                }
-                attachmentRecoilModifier[0] += recoilModifier.getPitch();
-                attachmentRecoilModifier[1] += recoilModifier.getYaw();
-            });
-
-            float yawRecoil = getMaxInGunRecoilKeyFrame(recoil.getYaw());
-            double yawRecoilPercent = Math.min(yawRecoil / 5.0, 1);
-            int yawLength = (int) (barStartX + barMaxWidth * yawRecoilPercent);
-            int yawModifierLength = Mth.clamp(yawLength + (int) (barMaxWidth * attachmentRecoilModifier[1] / 5.0), barStartX, barEndX);
-
-            float pitchRecoil = getMaxInGunRecoilKeyFrame(recoil.getPitch());
-            double pitchRecoilPercent = Math.min(pitchRecoil / 5.0, 1);
-            int pitchLength = (int) (barStartX + barMaxWidth * pitchRecoilPercent);
-            int pitchModifierLength = Mth.clamp(pitchLength + (int) (barMaxWidth * attachmentRecoilModifier[0] / 5.0), barStartX, barEndX);
-
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.yaw"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, yawLength, pitch + 6, barBaseColor);
-            if (attachmentRecoilModifier[1] > 0) {
-                Screen.fill(poseStack, yawLength, pitch + 2, yawModifierLength, pitch + 6, barNegativeColor);
-                font.draw(poseStack, String.format("%.2f §c(+%.2f)", yawRecoil, attachmentRecoilModifier[1]), valueTextStartX, pitch, fontColor);
-            } else if (attachmentRecoilModifier[1] < 0) {
-                Screen.fill(poseStack, yawModifierLength, pitch + 2, yawLength, pitch + 6, barPositivelyColor);
-                font.draw(poseStack, String.format("%.2f §a(%.2f)", yawRecoil, attachmentRecoilModifier[1]), valueTextStartX, pitch, fontColor);
-            } else {
-                font.draw(poseStack, String.format("%.2f", yawRecoil), valueTextStartX, pitch, fontColor);
-            }
-
-            pitch += 10;
-
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.pitch"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, pitchLength, pitch + 6, barBaseColor);
-            if (attachmentRecoilModifier[0] > 0) {
-                Screen.fill(poseStack, pitchLength, pitch + 2, pitchModifierLength, pitch + 6, barNegativeColor);
-                font.draw(poseStack, String.format("%.2f §c(+%.2f)", pitchRecoil, attachmentRecoilModifier[0]), valueTextStartX, pitch, fontColor);
-            } else if (attachmentRecoilModifier[0] < 0) {
-                Screen.fill(poseStack, pitchModifierLength, pitch + 2, pitchLength, pitch + 6, barPositivelyColor);
-                font.draw(poseStack, String.format("%.2f §a(%.2f)", pitchRecoil, attachmentRecoilModifier[0]), valueTextStartX, pitch, fontColor);
-            } else {
-                font.draw(poseStack, String.format("%.2f", pitchRecoil), valueTextStartX, pitch, fontColor);
-            }
-
-            pitch += 10;
-
-
-            // 开镜时间
-            final float[] adsTimeModifier = new float[]{0f};
-            AttachmentDataUtils.getAllAttachmentData(gunItem, gunData, attachmentData -> {
-                adsTimeModifier[0] += attachmentData.getAdsAddendTime();
-            });
-
-            float aimTime = gunData.getAimTime();
-            double aimTimePercent = Math.min(aimTime, 1);
-            int aimeTimeLength = (int) (barStartX + barMaxWidth * aimTimePercent);
-            int adsModifierLength = Mth.clamp(aimeTimeLength + (int) (barMaxWidth * adsTimeModifier[0]), barStartX, barEndX);
-
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.ads"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, aimeTimeLength, pitch + 6, barBaseColor);
-            if (adsTimeModifier[0] > 0) {
-                Screen.fill(poseStack, aimeTimeLength, pitch + 2, adsModifierLength, pitch + 6, barNegativeColor);
-                font.draw(poseStack, String.format("%.2fs §c(+%.2f)", aimTime, adsTimeModifier[0]), valueTextStartX, pitch, fontColor);
-            } else if (adsTimeModifier[0] < 0) {
-                Screen.fill(poseStack, adsModifierLength, pitch + 2, aimeTimeLength, pitch + 6, barPositivelyColor);
-                font.draw(poseStack, String.format("%.2fs §a(%.2f)", aimTime, adsTimeModifier[0]), valueTextStartX, pitch, fontColor);
-            } else {
-                font.draw(poseStack, String.format("%.2fs", aimTime), valueTextStartX, pitch, fontColor);
-            }
-
-            pitch += 10;
+            yOffset[0] += 10;
 
 
             // 跑射延迟
+            float aimTime = gunData.getAimTime();
             float sprintTime = gunData.getSprintTime();
             double sprintTimePercent = Mth.clamp(aimTime, 0, 1);
             int sprintLength = (int) (barStartX + barMaxWidth * sprintTimePercent);
             String sprintValueText = String.format("%.2fs", sprintTime);
 
-            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.sprint_time"), nameTextStartX, pitch, fontColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, barEndX, pitch + 6, barBackgroundColor);
-            Screen.fill(poseStack, barStartX, pitch + 2, sprintLength, pitch + 6, barBaseColor);
-            font.draw(poseStack, sprintValueText, valueTextStartX, pitch, fontColor);
-        });
-    }
+            font.draw(poseStack, new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.sprint_time"), nameTextStartX, yOffset[0], fontColor);
+            Screen.fill(poseStack, barStartX, yOffset[0] + 2, barEndX, yOffset[0] + 6, barBackgroundColor);
+            Screen.fill(poseStack, barStartX, yOffset[0] + 2, sprintLength, yOffset[0] + 6, barBaseColor);
+            font.draw(poseStack, sprintValueText, valueTextStartX, yOffset[0], fontColor);
 
-    private static float getMaxInGunRecoilKeyFrame(GunRecoilKeyFrame[] frames) {
-        if (frames.length == 0) {
-            return 0;
-        }
-        float[] value = frames[0].getValue();
-        float leftValue = Math.abs(value[0]);
-        float rightValue = Math.abs(value[1]);
-        return Math.max(leftValue, rightValue);
+            yOffset[0] += 10;
+
+            AttachmentPropertyManager.getModifiers().forEach((key, value) -> value.getPropertyDiagramsData(gunItem, gunData, cacheProperty).forEach(data -> {
+                double defaultPercent = data.defaultPercent();
+                double modifierPercent = data.modifierPercent();
+                double modifier = data.modifier().doubleValue();
+                String titleKey = data.titleKey();
+                String positivelyString = data.positivelyString();
+                String negativeString = data.negativeString();
+                String defaultString = data.defaultString();
+                boolean positivelyBetter = data.positivelyBetter();
+
+                defaultPercent = Mth.clamp(defaultPercent, 0, 1);
+                int defaultLength = (int) (barStartX + barMaxWidth * defaultPercent);
+                int modifierLength = Mth.clamp(defaultLength + (int) (barMaxWidth * modifierPercent), barStartX, barEndX);
+
+                font.draw(poseStack, Component.translatable(titleKey), nameTextStartX, yOffset[0], fontColor);
+                Screen.fill(poseStack, barStartX, yOffset[0] + 2, barEndX, yOffset[0] + 6, barBackgroundColor);
+                Screen.fill(poseStack, barStartX, yOffset[0] + 2, defaultLength, yOffset[0] + 6, barBaseColor);
+                if (modifier > 0) {
+                    int barColor = positivelyBetter ? barPositivelyColor : barNegativeColor;
+                    Screen.fill(poseStack, defaultLength, yOffset[0] + 2, modifierLength, yOffset[0] + 6, barColor);
+                    font.draw(poseStack, positivelyString, valueTextStartX, yOffset[0], fontColor);
+                } else if (modifier < 0) {
+                    int barColor = positivelyBetter ? barNegativeColor : barPositivelyColor;
+                    Screen.fill(poseStack, modifierLength, yOffset[0] + 2, defaultLength, yOffset[0] + 6, barColor);
+                    font.draw(poseStack, negativeString, valueTextStartX, yOffset[0], fontColor);
+                } else {
+                    font.draw(poseStack, defaultString, valueTextStartX, yOffset[0], fontColor);
+                }
+                yOffset[0] += 10;
+            }));
+        });
     }
 }
