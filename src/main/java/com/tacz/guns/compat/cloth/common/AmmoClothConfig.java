@@ -2,7 +2,6 @@ package com.tacz.guns.compat.cloth.common;
 
 import com.google.common.collect.Lists;
 import com.tacz.guns.config.common.AmmoConfig;
-import com.tacz.guns.config.sync.SyncConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;

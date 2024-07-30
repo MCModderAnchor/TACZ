@@ -1,7 +1,6 @@
 package com.tacz.guns.api.item;
 
 import com.tacz.guns.api.item.attachment.AttachmentType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 

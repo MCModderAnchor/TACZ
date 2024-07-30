@@ -6,7 +6,8 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.gun.*;
+import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -17,8 +18,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.LinkedList;
 
 public final class GunPropertyDiagrams {
     public static int getHidePropertyButtonYOffset() {

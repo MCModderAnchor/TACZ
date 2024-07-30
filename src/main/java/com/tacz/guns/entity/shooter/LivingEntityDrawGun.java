@@ -6,7 +6,6 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunDraw;
 import com.tacz.guns.resource.index.CommonGunIndex;
-import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
