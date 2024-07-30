@@ -46,7 +46,8 @@ public class CommonGunPackLoader {
             .registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResultSerializer())
             .registerTypeAdapter(ExtraDamage.DistanceDamagePair.class, new DistanceDamagePairSerializer())
             .registerTypeAdapter(Vec3.class, new Vec3Serializer())
-            .registerTypeAdapter(EnumMapInstanceCreator.getType(), EnumMapInstanceCreator.getInstance())
+            .registerTypeAdapter(EnumMapInstanceCreator.getAttachmentType(), EnumMapInstanceCreator.getAttachmentInstance())
+            .registerTypeAdapter(EnumMapInstanceCreator.getFireModeType(), EnumMapInstanceCreator.getFireModeInstance())
             .registerTypeAdapter(Ignite.class, new IgniteSerializer())
             .create();
     /**
