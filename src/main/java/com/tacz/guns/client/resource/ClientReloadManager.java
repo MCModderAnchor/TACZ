@@ -4,6 +4,7 @@ import com.tacz.guns.client.download.ClientGunPackDownloadManager;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.network.message.ServerMessageSyncGunPack;
 import com.tacz.guns.resource.CommonGunPackLoader;
+import com.tacz.guns.resource.VersionChecker;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.network.DataType;
 import net.minecraft.client.Minecraft;
@@ -19,6 +20,8 @@ public class ClientReloadManager {
     private static final EnumMap<DataType, Map<ResourceLocation, String>> LOCALE_CACHE = new EnumMap<>(DataType.class);
 
     public static void reloadAllPack() {
+        // 版本检查重置
+        VersionChecker.clearCache();
         ClientGunPackLoader.init();
         // 先加载全部资源文件
         CommonGunPackLoader.reloadAsset();

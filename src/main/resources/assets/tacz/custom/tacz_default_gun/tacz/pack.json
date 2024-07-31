@@ -14,5 +14,12 @@
   // 日期：ISO 8601 标准，即 YYYY-MM-DD
   "date": "2024-06-01",
   // URL 链接，可以在枪械合成台看到，点击按钮可以访问网络链接
-  "url": "https://tacwiki.mcma.club/zh/"
+  "url": "https://tacwiki.mcma.club/zh/",
+  // 依赖，这些依赖需要全部满足，枪包才会加载
+  // 否则会在日志中进行提示
+  // 不写这一行，那么不会进行任何检查
+  "dependencies": {
+    // 模组 ID 和版本号
+    // "tacz": "[1.0.3,)"
+  }
 }
