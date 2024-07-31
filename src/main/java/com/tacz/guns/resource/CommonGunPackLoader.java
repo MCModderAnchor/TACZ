@@ -155,6 +155,10 @@ public class CommonGunPackLoader {
 
     private static void readZipAsset(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
+            // 不符合版本检查，不加载
+            if (VersionChecker.noneMatch(zipFile, file.toPath())) {
+                return;
+            }
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
@@ -173,7 +177,7 @@ public class CommonGunPackLoader {
     }
 
     private static void readDirAsset(File root) {
-        if (root.isDirectory()) {
+        if (VersionChecker.match(root)) {
             GunDataLoader.load(root);
             AttachmentDataLoader.load(root);
             AttachmentTagsLoader.load(root);
@@ -200,6 +204,10 @@ public class CommonGunPackLoader {
 
     private static void readZipIndex(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
+            // 不符合版本检查，不加载
+            if (VersionChecker.noneMatch(zipFile, file.toPath())) {
+                return;
+            }
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
@@ -213,7 +221,7 @@ public class CommonGunPackLoader {
     }
 
     private static void readDirIndex(File root) {
-        if (root.isDirectory()) {
+        if (VersionChecker.match(root)) {
             try {
                 CommonAmmoIndexLoader.loadAmmoIndex(root);
                 CommonGunIndexLoader.loadGunIndex(root);
@@ -243,6 +251,10 @@ public class CommonGunPackLoader {
 
     private static void readZipRecipes(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
+            // 不符合版本检查，不加载
+            if (VersionChecker.noneMatch(zipFile, file.toPath())) {
+                return;
+            }
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
@@ -254,7 +266,7 @@ public class CommonGunPackLoader {
     }
 
     private static void readDirRecipes(File root) {
-        if (root.isDirectory()) {
+        if (VersionChecker.match(root)) {
             RecipeLoader.load(root);
         }
     }
