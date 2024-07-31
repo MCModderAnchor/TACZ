@@ -8,6 +8,7 @@
   "commands.tacz.reload.success": "§a§l[TACZ]§r All pack is reload, time: %.3f ms",
   "commands.tacz.reload.overwrite_on": "§a§l●§r Now that the overwrite config is turned on, §6any changes in the tacz default gun pack will be §lreset!",
   "commands.tacz.reload.overwrite_off": "§a§l●§r Now that the overwrite config is turned off, §6You are §lfree to modify§6 the tacz default gun pack!",
+  "commands.tacz.reload.backup": "§a§l●§r You can find the overwritten files in the §c§nconfig/tacz/backup§r folder",
   "commands.tacz.reload.overwrite_command.on": "§a§l●§r You can use command §c§n/tacz overwrite false§r to disable overwrite feature.",
   "commands.tacz.reload.overwrite_command.off": "§a§l●§r You can use command §c§n/tacz overwrite true§r to enable overwrite feature.",
   "message.tacz.fire_select.fail": "Unknown fire mode, unable to shoot",
