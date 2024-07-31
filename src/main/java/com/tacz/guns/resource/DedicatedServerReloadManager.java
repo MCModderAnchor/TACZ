@@ -6,6 +6,8 @@ import net.minecraft.commands.CommandSourceStack;
 
 public class DedicatedServerReloadManager {
     public static void loadGunPack() {
+        // 版本检查重置
+        VersionChecker.clearCache();
         CommonGunPackLoader.init();
         CommonGunPackLoader.reloadAsset();
         CommonGunPackLoader.reloadIndex();

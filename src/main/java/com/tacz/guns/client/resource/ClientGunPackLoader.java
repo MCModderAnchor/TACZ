@@ -20,6 +20,7 @@ import com.tacz.guns.client.resource.pojo.model.CubesItem;
 import com.tacz.guns.client.resource.serialize.*;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import com.tacz.guns.config.common.OtherConfig;
+import com.tacz.guns.resource.VersionChecker;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.util.GetJarResources;
@@ -138,7 +139,7 @@ public class ClientGunPackLoader {
     }
 
     private static void readDirAsset(File root) {
-        if (root.isDirectory()) {
+        if (VersionChecker.match(root)) {
             GunDisplayLoader.load(root);
             AmmoDisplayLoader.load(root);
             AttachmentDisplayLoader.load(root);
@@ -155,6 +156,10 @@ public class ClientGunPackLoader {
 
     public static void readZipAsset(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
+            // 不符合版本检查，不加载
+            if (VersionChecker.noneMatch(zipFile, file.toPath())) {
+                return;
+            }
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();
