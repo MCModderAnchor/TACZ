@@ -43,6 +43,7 @@ public class ReloadCommand {
             } else {
                 serverPlayer.sendMessage(new TranslatableComponent("commands.tacz.reload.overwrite_on"), Util.NIL_UUID);
                 serverPlayer.sendMessage(new TranslatableComponent("commands.tacz.reload.overwrite_command.on"), Util.NIL_UUID);
+                serverPlayer.sendMessage(new TranslatableComponent("commands.tacz.reload.backup"), Util.NIL_UUID);
             }
         }
         GunMod.LOGGER.info("Model loading time: {} ms", time);
