@@ -42,6 +42,7 @@ public class ReloadCommand {
             } else {
                 serverPlayer.sendSystemMessage(Component.translatable("commands.tacz.reload.overwrite_on"));
                 serverPlayer.sendSystemMessage(Component.translatable("commands.tacz.reload.overwrite_command.on"));
+                serverPlayer.sendSystemMessage(Component.translatable("commands.tacz.reload.backup"));
             }
         }
         GunMod.LOGGER.info("Model loading time: {} ms", time);
