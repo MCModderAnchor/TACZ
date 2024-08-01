@@ -705,11 +705,6 @@
 					"pivot": [0, 11.3725, 5.95]
 				},
 				{
-					"name": "stock_pos",
-					"parent": "positioning_attachment",
-					"pivot": [0, 9.6125, 12.375]
-				},
-				{
 					"name": "grip_pos",
 					"parent": "positioning_attachment",
 					"pivot": [0, 8.00625, -5.05]
