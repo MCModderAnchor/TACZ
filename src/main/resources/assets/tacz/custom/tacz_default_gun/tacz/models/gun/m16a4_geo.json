@@ -12638,7 +12638,7 @@
 				{
 					"name": "grip_pos",
 					"parent": "positioning2",
-					"pivot": [0, 8.1875, -3.125]
+					"pivot": [0, 8.1875, -4.125]
 				},
 				{
 					"name": "righthand",
