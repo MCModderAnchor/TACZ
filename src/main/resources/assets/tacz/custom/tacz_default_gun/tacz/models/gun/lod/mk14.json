@@ -835,11 +835,6 @@
 					"pivot": [-0.125, 7.55625, 4.975]
 				},
 				{
-					"name": "stock_pos",
-					"parent": "positioning2",
-					"pivot": [0, 5.8125, 14.625]
-				},
-				{
 					"name": "mount",
 					"parent": "lod",
 					"pivot": [0, 11, 0],

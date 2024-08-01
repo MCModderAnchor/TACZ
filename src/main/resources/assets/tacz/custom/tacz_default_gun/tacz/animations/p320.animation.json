@@ -1983,11 +1983,11 @@
 							"lerp_mode": "catmullrom"
 						},
 						"0.0417": {
-							"post": [-18.70824, -1.30704, -2.72798],
+							"post": [-12, -1.30704, -2],
 							"lerp_mode": "catmullrom"
 						},
 						"0.0833": {
-							"post": [-11.75, 0, 0],
+							"post": [-7, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
 						"0.125": {
@@ -2017,30 +2017,34 @@
 							"lerp_mode": "catmullrom"
 						},
 						"0.0417": {
-							"post": [0, 0.375, 1.225],
+							"post": [0, 0.375, 0.6625],
 							"lerp_mode": "catmullrom"
 						},
 						"0.0833": {
+							"post": [0, 0.41, 1.1875],
+							"lerp_mode": "catmullrom"
+						},
+						"0.1667": {
 							"post": [0, 0.2375, 0.45],
 							"lerp_mode": "catmullrom"
 						},
-						"0.125": {
+						"0.2083": {
 							"post": [0, 0, 0.075],
 							"lerp_mode": "catmullrom"
 						},
-						"0.2083": {
+						"0.2917": {
 							"post": [0, -0.1, 0.075],
 							"lerp_mode": "catmullrom"
 						},
-						"0.2917": {
+						"0.375": {
 							"post": [0.0125, -0.025, 0.125],
 							"lerp_mode": "catmullrom"
 						},
-						"0.4167": {
+						"0.5": {
 							"post": [0, -0.005, -0.015],
 							"lerp_mode": "catmullrom"
 						},
-						"0.5833": {
+						"0.6667": {
 							"post": [0, 0, 0],
 							"lerp_mode": "catmullrom"
 						}
@@ -2082,22 +2086,26 @@
 							"lerp_mode": "catmullrom"
 						},
 						"0.0417": {
-							"post": [0, 0, -0.75],
+							"post": [0, 0, 1.025],
 							"lerp_mode": "catmullrom"
 						},
 						"0.0833": {
-							"post": [0, 0, 0.75],
+							"post": [0, 0, -0.7],
+							"lerp_mode": "catmullrom"
+						},
+						"0.125": {
+							"post": [0, 0, 0.6],
 							"lerp_mode": "catmullrom"
 						},
 						"0.1667": {
-							"post": [0, 0, -0.5],
+							"post": [0, 0, -0.3],
 							"lerp_mode": "catmullrom"
 						},
 						"0.25": {
-							"post": [0, 0, 0.375],
+							"post": [0, 0, 0.35],
 							"lerp_mode": "catmullrom"
 						},
-						"0.375": {
+						"0.3333": {
 							"post": [0, 0, -0.15],
 							"lerp_mode": "catmullrom"
 						},

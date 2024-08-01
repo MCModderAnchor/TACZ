@@ -6503,7 +6503,7 @@
 					]
 				},
 				{
-					"name": "bone2",
+					"name": "sight_illuminated",
 					"parent": "fore_sight",
 					"pivot": [0, 12.62097, -7.59063],
 					"cubes": [
