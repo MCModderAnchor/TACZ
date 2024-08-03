@@ -117,7 +117,11 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     }
 
     public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ItemStack gunItem, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
-        this(TYPE, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
+        this(TYPE, worldIn, throwerIn, gunItem, ammoId, gunId, isTracerAmmo, gunData, bulletData);
+    }
+
+    protected EntityKineticBullet(EntityType<? extends Projectile> type, Level worldIn, LivingEntity throwerIn, ItemStack gunItem, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
+        this(type, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         AttachmentCacheProperty cacheProperty = Objects.requireNonNull(IGunOperator.fromLivingEntity(throwerIn).getCacheProperty());
         this.armorIgnore = Mth.clamp(cacheProperty.getCache(ArmorIgnoreModifier.ID), 0f, 1f);
