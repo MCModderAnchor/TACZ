@@ -151,7 +151,7 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:mmmmmmmmmmmm-225738:5319203")
     // 手柄按键支持
     implementation fg.deobf("curse.maven:framework-549225:4718251")
-    implementation fg.deobf("curse.maven:controllable-317269:4598985")
+    compileOnly(fg.deobf("curse.maven:controllable-317269:4598985"))
 
     // 越肩视角，用来兼容第三人称准星
     implementation fg.deobf("curse.maven:shoulder-surfing-reloaded-243190:5455954")
