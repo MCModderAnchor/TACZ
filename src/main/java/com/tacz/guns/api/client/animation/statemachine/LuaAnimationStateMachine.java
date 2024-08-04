@@ -61,11 +61,21 @@ public class LuaAnimationStateMachine<T extends AnimationStateContext> extends A
         super.exit();
     }
 
+    /**
+     * @deprecated
+     * @see LuaAnimationStateMachine#getContextOverride()
+     */
+    @Deprecated
     @Override
     public LuaContextWrapper<T> getContext(){
         throw new UnsupportedOperationException("call getContextOverride instead");
     }
 
+    /**
+     * @deprecated
+     * @see LuaAnimationStateMachine#setContextOverride(AnimationStateContext)
+     */
+    @Deprecated
     @Override
     public void setContext(@Nonnull LuaContextWrapper<T> ignore){
         throw new UnsupportedOperationException("call setContextOverride instead");

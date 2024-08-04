@@ -137,6 +137,7 @@ public class AnimationStateMachine<T extends AnimationStateContext> {
         if (this.context != null) {
             this.context.stateMachine = null;
         }
+        context.stateMachine = this;
         this.context = context;
     }
 
@@ -150,11 +151,11 @@ public class AnimationStateMachine<T extends AnimationStateContext> {
     }
 
     private void checkNullPointer(){
-        if (currentStates == null) {
-            throw new IllegalStateException("State machine has not been initialized");
-        }
         if (context == null) {
             throw new IllegalStateException("Context has not been initialized");
+        }
+        if (currentStates == null) {
+            throw new IllegalStateException("State machine has not been initialized");
         }
     }
 }
