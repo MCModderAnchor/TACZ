@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
-import com.tacz.guns.compat.oculus.OculusCompat;
+import com.tacz.guns.compat.optifine.OptifineCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -45,10 +45,8 @@ public final class RenderHelper {
 
     public static void enableItemEntityStencilTest() {
         RenderSystem.assertOnRenderThread();
-        if (OculusCompat.isUsingRenderPack()) {
-            // Oculus 会自动沿用用 Minecraft.mainRenderTarget 的深度缓冲格式。
-            Minecraft.getInstance().getMainRenderTarget().enableStencil();
-        } else {
+        if (OptifineCompat.isOptifineInstalled()) {
+            // 以下代码用于应对 使用 optifine 的场景
             int depthTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME);
             int stencilTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
             if (depthTextureId != GL30.GL_NONE && stencilTextureId == GL30.GL_NONE) {
@@ -61,8 +59,10 @@ public final class RenderHelper {
                     GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, depthTextureId, 0);
                 }
             }
+            GL11.glEnable(GL11.GL_STENCIL_TEST);
+        } else {
+            Minecraft.getInstance().getMainRenderTarget().enableStencil();
         }
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
     }
 
     public static void disableItemEntityStencilTest() {
