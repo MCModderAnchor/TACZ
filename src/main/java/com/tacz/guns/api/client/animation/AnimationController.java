@@ -15,6 +15,7 @@ public class AnimationController {
     private final AnimationListenerSupplier listenerSupplier;
     private final ArrayList<Queue<AnimationPlan>> animationQueue = new ArrayList<>();
     protected Map<String, ObjectAnimation> prototypes = Maps.newHashMap();
+    protected @Nullable Iterable<Integer> updatingTrackArray = null;
 
     public AnimationController(List<ObjectAnimation> animationPrototypes, AnimationListenerSupplier model) {
         for (ObjectAnimation prototype : animationPrototypes) {
@@ -115,38 +116,57 @@ public class AnimationController {
         blending.set(track, blend);
     }
 
+    public @Nullable Iterable<Integer> getUpdatingTrackArray() {
+        return updatingTrackArray;
+    }
+
+    public void setUpdatingTrackArray(@Nullable Iterable<Integer> updatingTrackArray) {
+        this.updatingTrackArray = updatingTrackArray;
+    }
+
     synchronized public void update() {
-        // 动画混合时，track 级别越低，优先级越低
-        for (int i = 0; i < currentRunners.size(); i++) {
-            boolean blend = i < blending.size() ? blending.get(i) : false;
-            ObjectAnimationRunner runner = currentRunners.get(i);
-            if (runner == null) {
-                continue;
+        // 如果有 updatingTrackArray，则按照 updatingTrackArray 指定的顺序更新，否则从低到高更新。
+        if (updatingTrackArray != null) {
+            updatingTrackArray.forEach(this::updateByTrack);
+        } else {
+            for (int i = 0; i < currentRunners.size(); i++) {
+                updateByTrack(i);
             }
-            //更新当前动画runner
-            if (runner.isRunning() || runner.isHolding() || runner.isTransitioning()) {
-                runner.update(blend);
+        }
+    }
+
+    private void updateByTrack(int track) {
+        if (track >= currentRunners.size()) {
+            return;
+        }
+        boolean blend = track < blending.size() ? blending.get(track) : false;
+        ObjectAnimationRunner runner = currentRunners.get(track);
+        if (runner == null) {
+            return;
+        }
+        //更新当前动画runner
+        if (runner.isRunning() || runner.isHolding() || runner.isTransitioning()) {
+            runner.update(blend);
+        }
+        //更新过渡目标动画runner，并且如果过渡已经完成，将其塞进currentRunners
+        if (runner.getTransitionTo() != null) {
+            runner.getTransitionTo().update(blend);
+            if (!runner.isTransitioning()) {
+                currentRunners.set(track, runner.getTransitionTo());
+                runner = runner.getTransitionTo();
             }
-            //更新过渡目标动画runner，并且如果过渡已经完成，将其塞进currentRunners
-            if (runner.getTransitionTo() != null) {
-                runner.getTransitionTo().update(blend);
-                if (!runner.isTransitioning()) {
-                    currentRunners.set(i, runner.getTransitionTo());
-                    runner = runner.getTransitionTo();
-                }
-            }
-            // 如果动画结束，检查队列是否有下一个动画，有则播放
-            if ((runner.isHolding() || runner.isStopped()) && !runner.isTransitioning()) {
-                if (i < animationQueue.size()) {
-                    Queue<AnimationPlan> queue = animationQueue.get(i);
-                    if (queue != null) {
-                        AnimationPlan plan = null;
-                        while (plan == null && !queue.isEmpty()) {
-                            plan = queue.poll();
-                        }
-                        if (plan != null) {
-                            run(i, plan.animationName, plan.playType, plan.transitionTimeS);
-                        }
+        }
+        // 如果动画结束，检查队列是否有下一个动画，有则播放
+        if ((runner.isHolding() || runner.isStopped()) && !runner.isTransitioning()) {
+            if (track < animationQueue.size()) {
+                Queue<AnimationPlan> queue = animationQueue.get(track);
+                if (queue != null) {
+                    AnimationPlan plan = null;
+                    while (plan == null && !queue.isEmpty()) {
+                        plan = queue.poll();
+                    }
+                    if (plan != null) {
+                        run(track, plan.animationName, plan.playType, plan.transitionTimeS);
                     }
                 }
             }
