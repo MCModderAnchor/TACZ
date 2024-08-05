@@ -23,12 +23,13 @@ public class DiscreteTrackArray implements Iterable<Integer>{
         tracks = new ArrayList<>();
     }
 
-    public void addTrackLine() {
+    public int addTrackLine() {
         modCount++;
         tracks.add(null);
+        return tracks.size() - 1;
     }
 
-    public void assignNewTrack(int index) {
+    public int assignNewTrack(int index) {
         if (top == Integer.MAX_VALUE) {
             throw new RuntimeException("Can't assign new track due to overflow");
         }
@@ -41,6 +42,7 @@ public class DiscreteTrackArray implements Iterable<Integer>{
                     tracks.set(index, list);
                 }
         );
+        return top;
     }
 
     @UnmodifiableView
@@ -86,7 +88,7 @@ public class DiscreteTrackArray implements Iterable<Integer>{
         }
 
         @Override
-        public Integer next() throws IllegalStateException{
+        public Integer next() throws IllegalStateException {
             checkForModifications();
             if (iterator != null && iterator.hasNext()) {
                 return iterator.next();

@@ -58,10 +58,10 @@ public final class RenderHelper {
                     GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, depthTextureId, 0);
                 }
             }
-            GL11.glEnable(GL11.GL_STENCIL_TEST);
         } else {
             Minecraft.getInstance().getMainRenderTarget().enableStencil();
         }
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
     }
 
     public static void disableItemEntityStencilTest() {
