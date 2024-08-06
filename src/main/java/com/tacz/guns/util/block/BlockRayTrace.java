@@ -1,16 +1,13 @@
 package com.tacz.guns.util.block;
 
 import com.tacz.guns.config.common.AmmoConfig;
+import com.tacz.guns.init.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -26,10 +23,7 @@ import java.util.function.Predicate;
 
 public final class BlockRayTrace {
     private static final Predicate<BlockState> IGNORES = input -> input != null &&
-            ((input.getBlock() instanceof LeavesBlock) ||
-                    (input.getBlock() instanceof FenceBlock) ||
-                    (input.is(Blocks.IRON_BARS)) ||
-                    (input.getBlock() instanceof FenceGateBlock));
+            input.is(ModBlocks.BULLET_IGNORE_BLOCKS);
 
     public static BlockHitResult rayTraceBlocks(Level level, ClipContext context) {
         return performRayTrace(context, (rayTraceContext, blockPos) -> {
@@ -40,7 +34,7 @@ public final class BlockRayTrace {
             if (blockId != null && ids.contains(blockId.toString())) {
                 return null;
             }
-            // 硬编码控制某些方块
+            // tag
             if (IGNORES.test(blockState)) {
                 return null;
             }
