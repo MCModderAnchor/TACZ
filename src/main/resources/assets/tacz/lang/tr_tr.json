@@ -47,7 +47,7 @@
   "gui.tacz.gun_refit.unload.no_space": "Bu eklentiyi çıkarmak için envanterinde yer yok.",
   "gui.tacz.gun_refit.property_diagrams.damage": "Hasar",
   "gui.tacz.gun_refit.property_diagrams.rpm": "Devir/Dakika",
-  "gui.tacz.gun_refit.property_diagrams.accuracy": "Kesinlik",
+  "gui.tacz.gun_refit.property_diagrams.accuracy": "İsabetlilik",
   "gui.tacz.gun_refit.property_diagrams.hipfire_inaccuracy": "Kalça Ateşi",
   "gui.tacz.gun_refit.property_diagrams.ammo_capacity": "Cephane",
   "gui.tacz.gun_refit.property_diagrams.pitch": "Ver. Geri Tepmesi",
