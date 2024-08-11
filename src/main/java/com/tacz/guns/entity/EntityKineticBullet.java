@@ -402,6 +402,18 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         return new EntityResult(entity, hitPos, headshot);
     }
 
+    public record MaybeMultipartEntity(
+            Entity hitPart,
+            Entity core
+    ) {
+        public static MaybeMultipartEntity of(Entity hitPart) {
+            var core = (hitPart instanceof PartEntity<?> part)
+                    ? part.getParent()
+                    : hitPart;
+            return new MaybeMultipartEntity(hitPart, core);
+        }
+    }
+
     protected void onHitEntity(TacHitResult result, Vec3 startVec, Vec3 endVec) {
         if (result.getEntity() instanceof ITargetEntity targetEntity) {
             DamageSource source = this.damageSources().thrown(this, this.getOwner());
@@ -426,8 +438,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         // 刷新由Pre事件修改后的参数
         entity = preEvent.getHurtEntity();
         // 受击目标
-        LivingEntity livingEntity = (entity instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity partOwner) ?
-                partOwner : (entity instanceof LivingEntity ? (LivingEntity) entity : null);
+        var parts = MaybeMultipartEntity.of(entity);
         attacker = preEvent.getAttacker();
         var newGunId = preEvent.getGunId();
         damage = preEvent.getBaseAmount();
@@ -450,36 +461,36 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             damage *= headShotMultiplier;
         }
         // 对 LivingEntity 进行击退强度的自定义
-        if (livingEntity != null) {
+        if (parts.core() instanceof LivingEntity livingCore) {
             // 取消击退效果，设定自己的击退强度
-            KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(livingEntity);
+            KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(livingCore);
             modifier.setKnockBackStrength(this.knockback);
             // 创建伤害
-            tacAttackEntity(entity, damage);
+            tacAttackEntity(parts, damage);
             // 恢复原位
             modifier.resetKnockBackStrength();
         } else {
             // 创建伤害
-            tacAttackEntity(entity, damage);
+            tacAttackEntity(parts, damage);
         }
         // 爆炸逻辑
         if (this.explosion) {
             // 取消无敌时间
-            entity.invulnerableTime = 0;
+            parts.core().invulnerableTime = 0;
             createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, result.getLocation());
         }
         // 只对 LivingEntity 执行击杀判定
-        if (livingEntity != null) {
+        if (parts.core() instanceof LivingEntity livingCore) {
             // 事件同步，从服务端到客户端
             if (!level().isClientSide) {
                 int attackerId = attacker == null ? 0 : attacker.getId();
                 // 如果生物死了
-                if (livingEntity.isDeadOrDying()) {
-                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingEntity, attacker, newGunId, headshot, LogicalSide.SERVER));
-                    NetworkHandler.sendToDimension(new ServerMessageGunKill(livingEntity.getId(), attackerId, newGunId, headshot), livingEntity);
+                if (livingCore.isDeadOrDying()) {
+                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingCore, attacker, newGunId, headshot, LogicalSide.SERVER));
+                    NetworkHandler.sendToDimension(new ServerMessageGunKill(livingCore.getId(), attackerId, newGunId, headshot), livingCore);
                 } else {
-                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(livingEntity, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
-                    NetworkHandler.sendToDimension(new ServerMessageGunHurt(livingEntity.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingEntity);
+                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(livingCore, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
+                    NetworkHandler.sendToDimension(new ServerMessageGunHurt(livingCore.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingCore);
                 }
             }
         }
@@ -537,24 +548,24 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         return 0;
     }
 
-    private void tacAttackEntity(Entity entity, float damage) {
+    private void tacAttackEntity(MaybeMultipartEntity parts, float damage) {
         DamageSource source = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), false);
         // 给末影人造成伤害
-        if (entity instanceof EnderMan) {
+        if (parts.hitPart() instanceof EnderMan) {
             source = this.damageSources().indirectMagic(this, getOwner());
         }
         // 穿甲伤害和普通伤害的比例计算
         float armorDamagePercent = Mth.clamp(this.armorIgnore, 0.0F, 1.0F);
         float normalDamagePercent = 1 - armorDamagePercent;
         // 取消无敌时间
-        entity.invulnerableTime = 0;
+        parts.core().invulnerableTime = 0;
         // 普通伤害
-        entity.hurt(source, damage * normalDamagePercent);
+        parts.hitPart().hurt(source, damage * normalDamagePercent);
         // 穿甲伤害
         source = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), true);
         // 取消无敌时间
-        entity.invulnerableTime = 0;
-        entity.hurt(source, damage * armorDamagePercent);
+        parts.core().invulnerableTime = 0;
+        parts.hitPart().hurt(source, damage * armorDamagePercent);
     }
 
     @Override
