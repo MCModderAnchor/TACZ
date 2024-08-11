@@ -2,8 +2,8 @@
   "ammo": "tacz:556x45",
   "ammo_amount": 30,
   "extended_mag_ammo_amount": [
+    40,
     50,
-    70,
     100
   ],
   "bolt": "closed_bolt",
