@@ -29,7 +29,7 @@
     "type": "gun",
     "id": "tacz:hk416d",
     "attachments": {
-      "stock": "tacz:stock_tactical_ar"
+      "stock": "tacz:oem_stock_tactical"
     }
   }
 }
