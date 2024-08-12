@@ -45,7 +45,7 @@ public class EffectiveRangeModifier implements IAttachmentModifier<ModifiedValue
         if (damageAdjust != null) {
             effectiveRange = damageAdjust.get(0).getDistance();
         } else {
-            effectiveRange = 0;
+            effectiveRange = Integer.MAX_VALUE;
         }
         return new CacheValue<>(effectiveRange);
     }
