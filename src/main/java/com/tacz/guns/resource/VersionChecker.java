@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.tacz.guns.client.resource.ClientGunPackLoader.GSON;
+import static com.tacz.guns.resource.CommonGunPackLoader.GSON;
 
 public final class VersionChecker {
     private static final Marker MARKER = MarkerManager.getMarker("VersionChecker");
