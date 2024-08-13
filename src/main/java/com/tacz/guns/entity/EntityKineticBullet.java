@@ -30,12 +30,14 @@ import com.tacz.guns.util.block.BlockRayTrace;
 import com.tacz.guns.util.block.ProjectileExplosion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -43,7 +45,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -75,6 +76,8 @@ import java.util.function.Predicate;
  */
 public class EntityKineticBullet extends Projectile implements IEntityAdditionalSpawnData {
     public static final EntityType<EntityKineticBullet> TYPE = EntityType.Builder.<EntityKineticBullet>of(EntityKineticBullet::new, MobCategory.MISC).noSummon().noSave().fireImmune().sized(0.0625F, 0.0625F).clientTrackingRange(5).updateInterval(5).setShouldReceiveVelocityUpdates(false).build("bullet");
+    public static final TagKey<EntityType<?>> USE_MAGIC_DAMAGE_ON = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("tacz:use_magic_damage_on"));
+    public static final TagKey<EntityType<?>> USE_VOID_DAMAGE_ON = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("tacz:use_void_damage_on"));
     private static final Predicate<Entity> PROJECTILE_TARGETS = input -> input != null && input.isPickable() && !input.isSpectator();
     private ResourceLocation ammoId = DefaultAssets.EMPTY_AMMO_ID;
     private int life = 200;
@@ -549,10 +552,16 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     }
 
     private void tacAttackEntity(MaybeMultipartEntity parts, float damage) {
-        DamageSource source = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), false);
+        DamageSource source1, source2;
         // 给末影人造成伤害
-        if (parts.hitPart() instanceof EnderMan) {
-            source = this.damageSources().indirectMagic(this, getOwner());
+        if (parts.hitPart().getType().is(USE_MAGIC_DAMAGE_ON)) {
+            source1 = source2 = this.damageSources().indirectMagic(this, getOwner());
+        } else if (parts.hitPart().getType().is(USE_VOID_DAMAGE_ON)) {
+            source1 = ModDamageTypes.Sources.bulletVoid(this.level().registryAccess(), this, this.getOwner(), false);
+            source2 = ModDamageTypes.Sources.bulletVoid(this.level().registryAccess(), this, this.getOwner(), true);
+        } else {
+            source1 = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), false);
+            source2 = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), true);
         }
         // 穿甲伤害和普通伤害的比例计算
         float armorDamagePercent = Mth.clamp(this.armorIgnore, 0.0F, 1.0F);
@@ -560,12 +569,11 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         // 取消无敌时间
         parts.core().invulnerableTime = 0;
         // 普通伤害
-        parts.hitPart().hurt(source, damage * normalDamagePercent);
-        // 穿甲伤害
-        source = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), true);
+        parts.hitPart().hurt(source1, damage * normalDamagePercent);
         // 取消无敌时间
         parts.core().invulnerableTime = 0;
-        parts.hitPart().hurt(source, damage * armorDamagePercent);
+        // 穿甲伤害
+        parts.hitPart().hurt(source2, damage * armorDamagePercent);
     }
 
     @Override

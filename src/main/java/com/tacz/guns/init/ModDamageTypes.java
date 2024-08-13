@@ -14,6 +14,8 @@ import net.minecraft.world.entity.Entity;
 public class ModDamageTypes {
     public static final ResourceKey<DamageType> BULLET = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(GunMod.MOD_ID, "bullet"));
     public static final ResourceKey<DamageType> BULLET_IGNORE_ARMOR = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(GunMod.MOD_ID, "bullet_ignore_armor"));
+    public static final ResourceKey<DamageType> BULLET_VOID = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(GunMod.MOD_ID, "bullet_void"));
+    public static final ResourceKey<DamageType> BULLET_VOID_IGNORE_ARMOR = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(GunMod.MOD_ID, "bullet_void_ignore_armor"));
 
     public static class Sources {
         private static Holder.Reference<DamageType> getHolder(RegistryAccess access, ResourceKey<DamageType> damageTypeKey) {
@@ -22,6 +24,10 @@ public class ModDamageTypes {
 
         public static DamageSource bullet(RegistryAccess access, EntityKineticBullet bullet, Entity shooter, boolean ignoreArmor) {
             return new DamageSource(getHolder(access, ignoreArmor ? BULLET_IGNORE_ARMOR : BULLET), bullet, shooter);
+        }
+
+        public static DamageSource bulletVoid(RegistryAccess access, EntityKineticBullet bullet, Entity shooter, boolean ignoreArmor) {
+            return new DamageSource(getHolder(access, ignoreArmor ? BULLET_VOID_IGNORE_ARMOR : BULLET_VOID), bullet, shooter);
         }
     }
 }
