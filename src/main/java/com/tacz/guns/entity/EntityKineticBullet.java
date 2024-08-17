@@ -78,6 +78,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     public static final EntityType<EntityKineticBullet> TYPE = EntityType.Builder.<EntityKineticBullet>of(EntityKineticBullet::new, MobCategory.MISC).noSummon().noSave().fireImmune().sized(0.0625F, 0.0625F).clientTrackingRange(5).updateInterval(5).setShouldReceiveVelocityUpdates(false).build("bullet");
     public static final TagKey<EntityType<?>> USE_MAGIC_DAMAGE_ON = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("tacz:use_magic_damage_on"));
     public static final TagKey<EntityType<?>> USE_VOID_DAMAGE_ON = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("tacz:use_void_damage_on"));
+    public static final TagKey<EntityType<?>> PRETEND_MELEE_DAMAGE_ON = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("tacz:pretend_melee_damage_on"));
     private static final Predicate<Entity> PROJECTILE_TARGETS = input -> input != null && input.isPickable() && !input.isSpectator();
     private ResourceLocation ammoId = DefaultAssets.EMPTY_AMMO_ID;
     private int life = 200;
@@ -553,15 +554,17 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     private void tacAttackEntity(MaybeMultipartEntity parts, float damage) {
         DamageSource source1, source2;
+        var hitPartType = parts.hitPart().getType();
+        var directCause = hitPartType.is(PRETEND_MELEE_DAMAGE_ON) ? this.getOwner() : this;
         // 给末影人造成伤害
-        if (parts.hitPart().getType().is(USE_MAGIC_DAMAGE_ON)) {
+        if (hitPartType.is(USE_MAGIC_DAMAGE_ON)) {
             source1 = source2 = this.damageSources().indirectMagic(this, getOwner());
-        } else if (parts.hitPart().getType().is(USE_VOID_DAMAGE_ON)) {
-            source1 = ModDamageTypes.Sources.bulletVoid(this.level().registryAccess(), this, this.getOwner(), false);
-            source2 = ModDamageTypes.Sources.bulletVoid(this.level().registryAccess(), this, this.getOwner(), true);
+        } else if (hitPartType.is(USE_VOID_DAMAGE_ON)) {
+            source1 = ModDamageTypes.Sources.bulletVoid(this.level().registryAccess(), directCause, this.getOwner(), false);
+            source2 = ModDamageTypes.Sources.bulletVoid(this.level().registryAccess(), directCause, this.getOwner(), true);
         } else {
-            source1 = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), false);
-            source2 = ModDamageTypes.Sources.bullet(this.level().registryAccess(), this, this.getOwner(), true);
+            source1 = ModDamageTypes.Sources.bullet(this.level().registryAccess(), directCause, this.getOwner(), false);
+            source2 = ModDamageTypes.Sources.bullet(this.level().registryAccess(), directCause, this.getOwner(), true);
         }
         // 穿甲伤害和普通伤害的比例计算
         float armorDamagePercent = Mth.clamp(this.armorIgnore, 0.0F, 1.0F);
