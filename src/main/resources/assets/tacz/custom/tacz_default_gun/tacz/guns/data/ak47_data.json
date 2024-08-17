@@ -58,18 +58,20 @@
     "ignite_entity_time": 2,
     // 穿透数
     "pierce": 1
-    // 是否爆炸，没有此字段时不会触发爆炸（包括配件爆炸）
+    // 储存爆炸的相关数据，如果没有的话会有一套默认的配置
     // "explosion": {
-      // 是否爆炸，默认为 true，如果不希望爆炸则设置为 false
+      // 是否爆炸，默认为 false，如果希望默认爆炸则设置为 true
       // "explode": false,
       // 延时爆炸，单位：秒
-      // "delay": 5,
+      // "delay": 30,
       // 爆炸半径，单位：米（格）
       // "radius": 5,
       // 爆炸伤害
       // "damage": 5,
       // 爆炸导致的击退，默认为 false，需要服务器也开启爆炸击退才能使用
       // "knockback": false
+      // 爆炸是否破坏方块，默认为 false，需要服务器也开启爆炸破坏方块才能使用
+      // "destroy_block": false
     // }
   },
   // 换弹相关
@@ -160,6 +162,7 @@
     // 每组连发之间的时间间隔（上一组结束时间到下一组开始的时间间隔），单位秒
     "min_interval": 0.3
   },
+  "crawl_recoil_multiplier": 0.5,
   // 后坐力
   "recoil": {
     "pitch": [

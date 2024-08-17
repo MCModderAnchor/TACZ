@@ -4,32 +4,33 @@ import com.google.gson.annotations.SerializedName;
 
 public class ExplosionData {
     @SerializedName("explode")
-    private boolean explode = true;
+    private boolean explode;
 
     @SerializedName("radius")
-    private float radius = 0.5f;
+    private float radius;
 
     @SerializedName("damage")
-    private float damage = 2;
+    private float damage;
 
     @SerializedName("knockback")
-    private boolean knockback = false;
+    private boolean knockback;
+
+    @SerializedName("destroy_block")
+    private boolean destroyBlock;
 
     /**
      * 无论是否触碰实体或者方块，默认延迟 30 秒就爆炸
      */
     @SerializedName("delay")
-    private int delay = 30;
+    private int delay;
 
-    public ExplosionData() {
-    }
-
-    public ExplosionData(boolean explode, float radius, float damage, boolean knockback, int delay) {
+    public ExplosionData(boolean explode, float radius, float damage, boolean knockback, int delay, boolean destroyBlock) {
         this.explode = explode;
         this.radius = radius;
         this.damage = damage;
         this.knockback = knockback;
         this.delay = delay;
+        this.destroyBlock = destroyBlock;
     }
 
     public boolean isExplode() {
@@ -46,6 +47,10 @@ public class ExplosionData {
 
     public boolean isKnockback() {
         return knockback;
+    }
+
+    public boolean isDestroyBlock() {
+        return destroyBlock;
     }
 
     public int getDelay() {

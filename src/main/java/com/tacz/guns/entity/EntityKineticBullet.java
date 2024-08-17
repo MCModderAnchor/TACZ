@@ -96,6 +96,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private float explosionRadius = 3;
     private int explosionDelayCount = Integer.MAX_VALUE;
     private boolean explosionKnockback = false;
+    private boolean explosionDestroyBlock = false;
     private float damageModifier = 1;
     // 穿透数
     private int pierce = 1;
@@ -159,6 +160,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             if (delayTickCount < 0) {
                 delayTickCount = Integer.MAX_VALUE;
             }
+            this.explosionDestroyBlock = explosionData.isDestroyBlock() && AmmoConfig.EXPLOSIVE_AMMO_DESTROYS_BLOCK.get();
             this.explosionDelayCount = Math.max(delayTickCount, 1);
         }
         // 子弹初始位置重置
@@ -171,14 +173,14 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.gunId = gunId;
     }
 
-    public static void createExplosion(Entity owner, Entity exploder, float damage, float radius, boolean knockback, Vec3 hitPos) {
+    public static void createExplosion(Entity owner, Entity exploder, float damage, float radius, boolean knockback, boolean destroy, Vec3 hitPos) {
         // 客户端不执行
         if (!(exploder.level() instanceof ServerLevel level)) {
             return;
         }
         // 依据配置文件读取方块破坏方式
         Explosion.BlockInteraction mode = Explosion.BlockInteraction.KEEP;
-        if (AmmoConfig.EXPLOSIVE_AMMO_DESTROYS_BLOCKS.get()) {
+        if (destroy) {
             mode = Explosion.BlockInteraction.DESTROY;
         }
         // 创建爆炸
@@ -263,7 +265,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 if (this.explosionDelayCount > 0) {
                     this.explosionDelayCount--;
                 } else {
-                    createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, this.position());
+                    createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, this.explosionDestroyBlock, this.position());
                     // 爆炸直接结束不留弹孔，不处理之后的逻辑
                     this.discard();
                     return;
@@ -481,7 +483,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         if (this.explosion) {
             // 取消无敌时间
             parts.core().invulnerableTime = 0;
-            createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, result.getLocation());
+            createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, this.explosionDestroyBlock, result.getLocation());
         }
         // 只对 LivingEntity 执行击杀判定
         if (parts.core() instanceof LivingEntity livingCore) {
@@ -513,7 +515,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         // 爆炸
         if (this.explosion) {
-            createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, hitVec);
+            createExplosion(this.getOwner(), this, this.explosionDamage, this.explosionRadius, this.explosionKnockback, this.explosionDestroyBlock, hitVec);
             // 爆炸直接结束不留弹孔，不处理之后的逻辑
             this.discard();
             return;
