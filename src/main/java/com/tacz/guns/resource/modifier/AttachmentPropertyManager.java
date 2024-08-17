@@ -72,9 +72,10 @@ public class AttachmentPropertyManager {
         double multiplier = 1;
         for (ModifiedValue modifiedValue : modified) {
             addend += modifiedValue.getAddend();
-            percent += Mth.clamp(modifiedValue.getPercent(), 0, 1);
-            multiplier *= modifiedValue.getMultiplier();
+            percent += modifiedValue.getPercent();
+            multiplier *= Math.max(modifiedValue.getMultiplier(), 0f);
         }
+        percent = Math.max(percent, 0f);
         double value = addend * percent * multiplier;
         for (ModifiedValue modifiedValue : modified) {
             String function = modifiedValue.getFunction();
