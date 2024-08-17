@@ -6,7 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import java.util.List;
 
 public class AmmoConfig {
-    public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_DESTROYS_BLOCKS;
+    public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_DESTROYS_BLOCK;
     public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_FIRE;
     public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_KNOCK_BACK;
     public static ForgeConfigSpec.IntValue EXPLOSIVE_AMMO_VISIBLE_DISTANCE;
@@ -19,7 +19,7 @@ public class AmmoConfig {
         builder.push("ammo");
 
         builder.comment("Warning: Ammo with explosive properties can break blocks");
-        EXPLOSIVE_AMMO_DESTROYS_BLOCKS = builder.define("ExplosiveAmmoDestroysBlocks", false);
+        EXPLOSIVE_AMMO_DESTROYS_BLOCK = builder.define("ExplosiveAmmoDestroysBlock", true);
 
         builder.comment("Warning: Ammo with explosive properties can set the surroundings on fire");
         EXPLOSIVE_AMMO_FIRE = builder.define("ExplosiveAmmoFire", false);

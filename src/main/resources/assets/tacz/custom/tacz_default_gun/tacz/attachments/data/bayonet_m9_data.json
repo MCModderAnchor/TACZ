@@ -54,16 +54,18 @@
   //   "block": true
   // },
   // "explode": {
-  // 一但为 true，那么强行开启爆炸，必须显式声明
-  // "explode": true,
+  // 一但为 true，那么强行开启爆炸，默认为 false
+  // "explode": false,
   // "radius": {
   // 里面填写参照其他新方法的四个参数
   // },
   // "damage": {
   // 里面填写参照其他新方法的四个参数
   // },
-  // 一但为 true，那么强行开启击退
-  // "knockback": true,
+  // 一但为 true，那么强行开启击退，默认为 false
+  // "knockback": false,
+  // 一但为 true，那么强行开启破坏方块，默认为 false
+  // "destroy_block": false,
   // "delay": {
   // 里面填写参照其他新方法的四个参数
   // }
