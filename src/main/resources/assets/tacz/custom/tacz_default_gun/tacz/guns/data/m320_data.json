@@ -9,7 +9,7 @@
     "damage": 10,
     "extra_damage": {
       "armor_ignore": 0.0,
-      "head_shot_multiplier": 1.5
+      "head_shot_multiplier": 1.0
     },
     "speed": 60,
     "gravity": 0.15,
@@ -54,8 +54,8 @@
     ]
   },
   "inaccuracy": {
-    "stand": 1,
-    "move": 2,
+    "stand": 1.5,
+    "move": 2.5,
     "sneak": 1,
     "lie": 0.5,
     "aim": 0.2

@@ -4,7 +4,7 @@
       "item": {
         "tag": "forge:ingots/gold"
       },
-      "count": 9
+      "count": 20
     },
     {
       "item": {
@@ -16,13 +16,13 @@
       "item": {
         "tag": "forge:gems/diamond"
       },
-      "count": 3
+      "count": 4
     },
     {
       "item": {
         "tag": "forge:rods/blaze"
       },
-      "count": 6
+      "count": 2
     }
   ],
   "result": {

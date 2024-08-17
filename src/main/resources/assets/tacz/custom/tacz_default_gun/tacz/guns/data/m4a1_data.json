@@ -88,13 +88,13 @@
     // "other_inaccuracy": 0
     // }
   },
-  */
   "burst_data": {
     "continuous_shoot": false,
     "count": 3,
     "bpm": 900,
     "min_interval": 0.3
   },
+  */
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.55, 0.55]},

@@ -15,17 +15,17 @@
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.5,
-      "head_shot_multiplier": 1.5,
+      "head_shot_multiplier": 1.75,
       "damage_adjust": [
         {"distance": 60, "damage": 16},
-        {"distance": 120, "damage": 13},
-        {"distance": "infinite", "damage": 9}
+        {"distance": 120, "damage": 13.5},
+        {"distance": "infinite", "damage": 10.5}
       ]
     },
     "speed": 310,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.025,
+    "friction": 0.01,
     "ignite": false,
     "pierce": 3
   },
@@ -48,6 +48,19 @@
     "semi",
     "auto"
   ],
+  "fire_mode_adjust": {
+    "auto": {
+      // 加算，全自动模式的开火数值调整，如无调整可不写
+      "damage": -5,
+      "rpm": 550,
+      "speed": -30,
+      "knockback": 0,
+      "armor_ignore": -0.2,
+      "head_shot_multiplier": -0.25,
+      "aim_inaccuracy": 0.05,
+      "other_inaccuracy": -0.5
+    }
+  },
   "recoil": {
     "pitch": [
       {"time": 0, "value": [1.75, 1.75]},
@@ -64,9 +77,9 @@
     ]
   },
   "inaccuracy": {
-    "stand": 5.5,
-    "move": 6.5,
-    "sneak": 4.5,
+    "stand": 6,
+    "move": 7.5,
+    "sneak": 5.25,
     "lie": 5,
     "aim": 0.05
   },
