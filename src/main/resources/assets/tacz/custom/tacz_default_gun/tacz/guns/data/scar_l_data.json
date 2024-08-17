@@ -72,9 +72,9 @@
   "inaccuracy": {
     "stand": 5,
     "move": 5.5,
-    "sneak": 4.875,
+    "sneak": 4.75,
     "lie": 4,
-    "aim": 0.1
+    "aim": 0.125
   },
   // 近战相关
   "melee": {
