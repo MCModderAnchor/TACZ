@@ -18,9 +18,11 @@
     "ignite": false,
     "pierce": 0,
     "explosion": {
+      "explode": true,
       "damage": 50,
       "radius": 6,
-      "knockback": true
+      "knockback": true,
+      "delay": 30
     }
   },
   "reload": {
