@@ -22,11 +22,11 @@ public class ModDamageTypes {
             return access.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(damageTypeKey);
         }
 
-        public static DamageSource bullet(RegistryAccess access, EntityKineticBullet bullet, Entity shooter, boolean ignoreArmor) {
+        public static DamageSource bullet(RegistryAccess access, Entity bullet, Entity shooter, boolean ignoreArmor) {
             return new DamageSource(getHolder(access, ignoreArmor ? BULLET_IGNORE_ARMOR : BULLET), bullet, shooter);
         }
 
-        public static DamageSource bulletVoid(RegistryAccess access, EntityKineticBullet bullet, Entity shooter, boolean ignoreArmor) {
+        public static DamageSource bulletVoid(RegistryAccess access, Entity bullet, Entity shooter, boolean ignoreArmor) {
             return new DamageSource(getHolder(access, ignoreArmor ? BULLET_VOID_IGNORE_ARMOR : BULLET_VOID), bullet, shooter);
         }
     }
