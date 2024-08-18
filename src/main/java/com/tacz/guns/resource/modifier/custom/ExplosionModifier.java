@@ -7,7 +7,7 @@ import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.ExplosionData;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
@@ -45,11 +45,11 @@ public class ExplosionModifier implements IAttachmentModifier<ExplosionModifier.
         ExplosionData cacheValue = cache.getValue();
 
         List<Boolean> explodeValues = Lists.newArrayList();
-        List<ModifiedValue> radiusValues = Lists.newArrayList();
-        List<ModifiedValue> damageValues = Lists.newArrayList();
+        List<Modifier> radiusValues = Lists.newArrayList();
+        List<Modifier> damageValues = Lists.newArrayList();
         List<Boolean> knockbackValues = Lists.newArrayList();
         List<Boolean> destroyBlockValues = Lists.newArrayList();
-        List<ModifiedValue> delayValues = Lists.newArrayList();
+        List<Modifier> delayValues = Lists.newArrayList();
 
         modifiedValues.forEach(v -> {
             explodeValues.add(v.explode);
@@ -107,10 +107,10 @@ public class ExplosionModifier implements IAttachmentModifier<ExplosionModifier.
         private boolean explode = false;
 
         @SerializedName("radius")
-        private ModifiedValue radius = new ModifiedValue();
+        private Modifier radius = new Modifier();
 
         @SerializedName("damage")
-        private ModifiedValue damage = new ModifiedValue();
+        private Modifier damage = new Modifier();
 
         @SerializedName("knockback")
         private boolean knockback = false;
@@ -119,6 +119,6 @@ public class ExplosionModifier implements IAttachmentModifier<ExplosionModifier.
         private boolean destroyBlock = false;
 
         @SerializedName("delay")
-        private ModifiedValue delay = new ModifiedValue();
+        private Modifier delay = new Modifier();
     }
 }

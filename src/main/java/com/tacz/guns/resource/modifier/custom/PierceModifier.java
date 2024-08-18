@@ -7,7 +7,7 @@ import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class PierceModifier implements IAttachmentModifier<ModifiedValue, Integer> {
+public class PierceModifier implements IAttachmentModifier<Modifier, Integer> {
     public static final String ID = "pierce";
 
     @Override
@@ -28,7 +28,7 @@ public class PierceModifier implements IAttachmentModifier<ModifiedValue, Intege
     }
 
     @Override
-    public JsonProperty<ModifiedValue> readJson(String json) {
+    public JsonProperty<Modifier> readJson(String json) {
         PierceModifier.Data data = CommonGunPackLoader.GSON.fromJson(json, PierceModifier.Data.class);
         return new PierceModifier.DamageJsonProperty(data.getPierce());
     }
@@ -40,8 +40,8 @@ public class PierceModifier implements IAttachmentModifier<ModifiedValue, Intege
     }
 
     @Override
-    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Integer> cache) {
-        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+    public void eval(List<Modifier> modifiers, CacheValue<Integer> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiers, cache.getValue());
         cache.setValue((int) Math.round(eval));
     }
 
@@ -70,14 +70,14 @@ public class PierceModifier implements IAttachmentModifier<ModifiedValue, Intege
         return 1;
     }
 
-    public static class DamageJsonProperty extends JsonProperty<ModifiedValue> {
-        public DamageJsonProperty(ModifiedValue value) {
+    public static class DamageJsonProperty extends JsonProperty<Modifier> {
+        public DamageJsonProperty(Modifier value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue pierce = getValue();
+            Modifier pierce = getValue();
             if (pierce != null) {
                 long eval = Math.round(AttachmentPropertyManager.eval(pierce, 5));
                 eval = Math.max(eval, 1);
@@ -93,10 +93,10 @@ public class PierceModifier implements IAttachmentModifier<ModifiedValue, Intege
     public static class Data {
         @SerializedName("pierce")
         @Nullable
-        private ModifiedValue pierce = null;
+        private Modifier pierce = null;
 
         @Nullable
-        public ModifiedValue getPierce() {
+        public Modifier getPierce() {
             return pierce;
         }
     }

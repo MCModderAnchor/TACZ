@@ -9,7 +9,7 @@ import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class RpmModifier implements IAttachmentModifier<ModifiedValue, Integer> {
+public class RpmModifier implements IAttachmentModifier<Modifier, Integer> {
     public static final String ID = "rpm";
 
     @Override
@@ -31,7 +31,7 @@ public class RpmModifier implements IAttachmentModifier<ModifiedValue, Integer> 
     }
 
     @Override
-    public JsonProperty<ModifiedValue> readJson(String json) {
+    public JsonProperty<Modifier> readJson(String json) {
         RpmModifier.Data data = CommonGunPackLoader.GSON.fromJson(json, RpmModifier.Data.class);
         return new RpmModifier.RpmJsonProperty(data.getRpm());
     }
@@ -45,8 +45,8 @@ public class RpmModifier implements IAttachmentModifier<ModifiedValue, Integer> 
     }
 
     @Override
-    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Integer> cache) {
-        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+    public void eval(List<Modifier> modifiers, CacheValue<Integer> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiers, cache.getValue());
         cache.setValue((int) Math.round(eval));
     }
 
@@ -78,14 +78,14 @@ public class RpmModifier implements IAttachmentModifier<ModifiedValue, Integer> 
         return 1;
     }
 
-    public static class RpmJsonProperty extends JsonProperty<ModifiedValue> {
-        public RpmJsonProperty(ModifiedValue value) {
+    public static class RpmJsonProperty extends JsonProperty<Modifier> {
+        public RpmJsonProperty(Modifier value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue value = getValue();
+            Modifier value = getValue();
             if (value != null) {
                 double eval = AttachmentPropertyManager.eval(value, 300);
                 int rpm = (int) Math.round(eval);
@@ -101,10 +101,10 @@ public class RpmModifier implements IAttachmentModifier<ModifiedValue, Integer> 
     public static class Data {
         @SerializedName("rpm")
         @Nullable
-        private ModifiedValue rpm = null;
+        private Modifier rpm = null;
 
         @Nullable
-        public ModifiedValue getRpm() {
+        public Modifier getRpm() {
             return rpm;
         }
     }

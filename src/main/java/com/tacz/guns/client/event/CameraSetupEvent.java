@@ -11,6 +11,7 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.modifier.ParameterizedCachePair;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
@@ -204,7 +205,7 @@ public class CameraSetupEvent {
             ClientGunIndex gunIndex = gunIndexOptional.get();
             GunData gunData = gunIndex.getGunData();
             // 获取所有配件对摄像机后坐力的修改
-            Pair<Float, Float> attachmentRecoilModifier = cacheProperty.getCache(RecoilModifier.ID);
+            ParameterizedCachePair<Float, Float> attachmentRecoilModifier = cacheProperty.getCache(RecoilModifier.ID);
             IClientPlayerGunOperator clientPlayerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             float partialTicks = Minecraft.getInstance().getFrameTime();
             float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
@@ -214,8 +215,8 @@ public class CameraSetupEvent {
             if (!player.isSwimming() && player.getPose() == Pose.SWIMMING) {
                 aimingRecoilModifier = aimingRecoilModifier * gunData.getCrawlRecoilMultiplier();
             }
-            pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction(modifierNumber(attachmentRecoilModifier.left()) * aimingRecoilModifier);
-            yawSplineFunction = gunData.getRecoil().genYawSplineFunction(modifierNumber(attachmentRecoilModifier.right()) * aimingRecoilModifier);
+            pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction((float) attachmentRecoilModifier.left().eval(aimingRecoilModifier));
+            yawSplineFunction = gunData.getRecoil().genYawSplineFunction((float) attachmentRecoilModifier.right().eval(aimingRecoilModifier));
             shootTimeStamp = System.currentTimeMillis();
             xRotO = 0;
             yRotO = 0;

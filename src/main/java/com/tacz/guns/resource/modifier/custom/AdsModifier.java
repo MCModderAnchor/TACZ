@@ -7,7 +7,7 @@ import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class AdsModifier implements IAttachmentModifier<ModifiedValue, Float> {
+public class AdsModifier implements IAttachmentModifier<Modifier, Float> {
     public static final String ID = "ads";
 
     @Override
@@ -35,12 +35,12 @@ public class AdsModifier implements IAttachmentModifier<ModifiedValue, Float> {
 
     @Override
     @SuppressWarnings("deprecation")
-    public JsonProperty<ModifiedValue> readJson(String json) {
+    public JsonProperty<Modifier> readJson(String json) {
         Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
-        ModifiedValue ads = data.getAds();
+        Modifier ads = data.getAds();
         // 兼容旧版本写法
         if (ads == null) {
-            ads = new ModifiedValue();
+            ads = new Modifier();
             ads.setAddend(data.getAdsAddendTime());
         }
         return new AdsJsonProperty(ads);
@@ -52,8 +52,8 @@ public class AdsModifier implements IAttachmentModifier<ModifiedValue, Float> {
     }
 
     @Override
-    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Float> cache) {
-        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+    public void eval(List<Modifier> modifiers, CacheValue<Float> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiers, cache.getValue());
         cache.setValue((float) eval);
     }
 
@@ -79,14 +79,14 @@ public class AdsModifier implements IAttachmentModifier<ModifiedValue, Float> {
         return 1;
     }
 
-    public static class AdsJsonProperty extends JsonProperty<ModifiedValue> {
-        public AdsJsonProperty(ModifiedValue value) {
+    public static class AdsJsonProperty extends JsonProperty<Modifier> {
+        public AdsJsonProperty(Modifier value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue value = this.getValue();
+            Modifier value = this.getValue();
             float adsAddendTime = 0;
             if (value != null) {
                 // 传入默认值 0.2 进行测试，看看最终结果差值
@@ -105,14 +105,14 @@ public class AdsModifier implements IAttachmentModifier<ModifiedValue, Float> {
     public static class Data {
         @Nullable
         @SerializedName("ads")
-        private ModifiedValue ads;
+        private Modifier ads;
 
         @SerializedName("ads_addend")
         @Deprecated
         private float adsAddendTime = 0;
 
         @Nullable
-        public ModifiedValue getAds() {
+        public Modifier getAds() {
             return ads;
         }
 

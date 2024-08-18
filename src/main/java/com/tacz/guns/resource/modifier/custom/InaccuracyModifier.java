@@ -10,7 +10,7 @@ import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.GunFireModeAdjustData;
 import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyType, ModifiedValue>, Map<InaccuracyType, Float>> {
+public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyType, Modifier>, Map<InaccuracyType, Float>> {
     public static final String ID = "inaccuracy";
 
     @Override
@@ -42,17 +42,17 @@ public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyTyp
 
     @Override
     @SuppressWarnings("deprecation")
-    public JsonProperty<Map<InaccuracyType, ModifiedValue>> readJson(String json) {
+    public JsonProperty<Map<InaccuracyType, Modifier>> readJson(String json) {
         Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
-        ModifiedValue inaccuracy = data.getInaccuracy();
+        Modifier inaccuracy = data.getInaccuracy();
         // 兼容旧版本
         if (inaccuracy == null) {
             float inaccuracyAddendTime = data.getInaccuracyAddendTime();
-            inaccuracy = new ModifiedValue();
+            inaccuracy = new Modifier();
             inaccuracy.setAddend(inaccuracyAddendTime);
         }
         // 除去 aim 状态，全部写入一样的数值
-        Map<InaccuracyType, ModifiedValue> jsonProperties = Maps.newHashMap();
+        Map<InaccuracyType, Modifier> jsonProperties = Maps.newHashMap();
         for (InaccuracyType type : InaccuracyType.values()) {
             if (type.isAim()) {
                 continue;
@@ -84,15 +84,15 @@ public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyTyp
     }
 
     @Override
-    public void eval(List<Map<InaccuracyType, ModifiedValue>> modifiedValues, CacheValue<Map<InaccuracyType, Float>> cache) {
+    public void eval(List<Map<InaccuracyType, Modifier>> modifiedValues, CacheValue<Map<InaccuracyType, Float>> cache) {
         Map<InaccuracyType, Float> result = Maps.newHashMap();
-        Map<InaccuracyType, List<ModifiedValue>> tmpModified = Maps.newHashMap();
+        Map<InaccuracyType, List<Modifier>> tmpModified = Maps.newHashMap();
         // 先遍历，把配件的数据集中在一起
         for (InaccuracyType type : InaccuracyType.values()) {
             if (type.isAim()) {
                 continue;
             }
-            for (Map<InaccuracyType, ModifiedValue> value : modifiedValues) {
+            for (Map<InaccuracyType, Modifier> value : modifiedValues) {
                 tmpModified.computeIfAbsent(type, t -> Lists.newArrayList()).add(value.get(type));
             }
         }
@@ -142,8 +142,8 @@ public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyTyp
         return 1;
     }
 
-    public static class InaccuracyJsonProperty extends JsonProperty<Map<InaccuracyType, ModifiedValue>> {
-        public InaccuracyJsonProperty(Map<InaccuracyType, ModifiedValue> value) {
+    public static class InaccuracyJsonProperty extends JsonProperty<Map<InaccuracyType, Modifier>> {
+        public InaccuracyJsonProperty(Map<InaccuracyType, Modifier> value) {
             super(value);
         }
 
@@ -168,14 +168,14 @@ public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyTyp
     public static class Data {
         @Nullable
         @SerializedName("inaccuracy")
-        private ModifiedValue inaccuracy;
+        private Modifier inaccuracy;
 
         @SerializedName("inaccuracy_addend")
         @Deprecated
         private float adsAddendTime = 0;
 
         @Nullable
-        public ModifiedValue getInaccuracy() {
+        public Modifier getInaccuracy() {
             return inaccuracy;
         }
 

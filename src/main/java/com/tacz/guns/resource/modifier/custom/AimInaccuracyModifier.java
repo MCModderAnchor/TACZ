@@ -10,7 +10,7 @@ import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.GunFireModeAdjustData;
 import com.tacz.guns.resource.pojo.data.gun.InaccuracyType;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class AimInaccuracyModifier implements IAttachmentModifier<Map<InaccuracyType, ModifiedValue>, Map<InaccuracyType, Float>> {
+public class AimInaccuracyModifier implements IAttachmentModifier<Map<InaccuracyType, Modifier>, Map<InaccuracyType, Float>> {
     public static final String ID = "aim_inaccuracy";
 
     @Override
@@ -36,11 +36,11 @@ public class AimInaccuracyModifier implements IAttachmentModifier<Map<Inaccuracy
     }
 
     @Override
-    public JsonProperty<Map<InaccuracyType, ModifiedValue>> readJson(String json) {
+    public JsonProperty<Map<InaccuracyType, Modifier>> readJson(String json) {
         Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
-        ModifiedValue inaccuracy = data.getAimInaccuracy();
+        Modifier inaccuracy = data.getAimInaccuracy();
         // 除去 aim 状态，全部写入一样的数值
-        Map<InaccuracyType, ModifiedValue> jsonProperties = Maps.newHashMap();
+        Map<InaccuracyType, Modifier> jsonProperties = Maps.newHashMap();
         for (InaccuracyType type : InaccuracyType.values()) {
             if (!type.isAim()) {
                 continue;
@@ -72,15 +72,15 @@ public class AimInaccuracyModifier implements IAttachmentModifier<Map<Inaccuracy
     }
 
     @Override
-    public void eval(List<Map<InaccuracyType, ModifiedValue>> modifiedValues, CacheValue<Map<InaccuracyType, Float>> cache) {
+    public void eval(List<Map<InaccuracyType, Modifier>> modifiedValues, CacheValue<Map<InaccuracyType, Float>> cache) {
         Map<InaccuracyType, Float> result = Maps.newHashMap();
-        Map<InaccuracyType, List<ModifiedValue>> tmpModified = Maps.newHashMap();
+        Map<InaccuracyType, List<Modifier>> tmpModified = Maps.newHashMap();
         // 先遍历，把配件的数据集中在一起
         for (InaccuracyType type : InaccuracyType.values()) {
             if (!type.isAim()) {
                 continue;
             }
-            for (Map<InaccuracyType, ModifiedValue> value : modifiedValues) {
+            for (Map<InaccuracyType, Modifier> value : modifiedValues) {
                 tmpModified.computeIfAbsent(type, t -> Lists.newArrayList()).add(value.get(type));
             }
         }
@@ -133,8 +133,8 @@ public class AimInaccuracyModifier implements IAttachmentModifier<Map<Inaccuracy
         return 1;
     }
 
-    public static class AimInaccuracyJsonProperty extends JsonProperty<Map<InaccuracyType, ModifiedValue>> {
-        public AimInaccuracyJsonProperty(Map<InaccuracyType, ModifiedValue> value) {
+    public static class AimInaccuracyJsonProperty extends JsonProperty<Map<InaccuracyType, Modifier>> {
+        public AimInaccuracyJsonProperty(Map<InaccuracyType, Modifier> value) {
             super(value);
         }
 
@@ -159,10 +159,10 @@ public class AimInaccuracyModifier implements IAttachmentModifier<Map<Inaccuracy
     public static class Data {
         @Nullable
         @SerializedName("aim_inaccuracy")
-        private ModifiedValue aimInaccuracy;
+        private Modifier aimInaccuracy;
 
         @Nullable
-        public ModifiedValue getAimInaccuracy() {
+        public Modifier getAimInaccuracy() {
             return aimInaccuracy;
         }
     }

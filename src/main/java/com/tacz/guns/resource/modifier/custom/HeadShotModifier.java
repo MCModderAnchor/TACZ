@@ -10,7 +10,7 @@ import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class HeadShotModifier implements IAttachmentModifier<ModifiedValue, Float> {
+public class HeadShotModifier implements IAttachmentModifier<Modifier, Float> {
     public static final String ID = "head_shot";
 
     @Override
@@ -36,7 +36,7 @@ public class HeadShotModifier implements IAttachmentModifier<ModifiedValue, Floa
     }
 
     @Override
-    public JsonProperty<ModifiedValue> readJson(String json) {
+    public JsonProperty<Modifier> readJson(String json) {
         Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
         return new HeadShotJsonProperty(data.getHeadShot());
     }
@@ -60,8 +60,8 @@ public class HeadShotModifier implements IAttachmentModifier<ModifiedValue, Floa
     }
 
     @Override
-    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Float> cache) {
-        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+    public void eval(List<Modifier> modifiers, CacheValue<Float> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiers, cache.getValue());
         cache.setValue((float) eval);
     }
 
@@ -102,14 +102,14 @@ public class HeadShotModifier implements IAttachmentModifier<ModifiedValue, Floa
         return 1;
     }
 
-    public static class HeadShotJsonProperty extends JsonProperty<ModifiedValue> {
-        public HeadShotJsonProperty(ModifiedValue value) {
+    public static class HeadShotJsonProperty extends JsonProperty<Modifier> {
+        public HeadShotJsonProperty(Modifier value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue value = this.getValue();
+            Modifier value = this.getValue();
             if (value != null) {
                 double eval = AttachmentPropertyManager.eval(value, 2);
                 if (eval > 2) {
@@ -124,10 +124,10 @@ public class HeadShotModifier implements IAttachmentModifier<ModifiedValue, Floa
     public static class Data {
         @SerializedName("head_shot")
         @Nullable
-        private ModifiedValue headShot = null;
+        private Modifier headShot = null;
 
         @Nullable
-        public ModifiedValue getHeadShot() {
+        public Modifier getHeadShot() {
             return headShot;
         }
     }
