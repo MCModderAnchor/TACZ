@@ -59,13 +59,7 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
 
     @Override
     public CacheValue<Pair<Float, Float>> initCache(ItemStack gunItem, GunData gunData) {
-        GunRecoil recoil = gunData.getRecoil();
-        if (recoil == null) {
-            return new CacheValue<>(Pair.of(0f, 0f));
-        }
-        float pitch = getMaxInGunRecoilKeyFrame(recoil.getPitch());
-        float yaw = getMaxInGunRecoilKeyFrame(recoil.getYaw());
-        return new CacheValue<>(Pair.of(pitch, yaw));
+        return new CacheValue<>(Pair.of(1f, 1f));
     }
 
     @Override
@@ -89,7 +83,7 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
         GunRecoil recoil = gunData.getRecoil();
 
         float pitch = getMaxInGunRecoilKeyFrame(recoil.getPitch());
-        float pitchModifier = propertyCache.left() - pitch;
+        float pitchModifier = propertyCache.left() - 1;
         double pitchPercent = Math.min(pitch / 5.0, 1);
         double pitchModifierPercent = Math.min(pitchModifier / 5.0, 1);
         String pitchTitleKey = "gui.tacz.gun_refit.property_diagrams.pitch";
@@ -98,7 +92,7 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
         String pitchDefaultString = String.format("%.2f", pitch);
 
         float yaw = getMaxInGunRecoilKeyFrame(recoil.getYaw());
-        float yawModifier = propertyCache.right() - yaw;
+        float yawModifier = propertyCache.right() - 1;
         double yawPercent = Math.min(yaw / 5.0, 1);
         double yawModifierPercent = Math.min(yawModifier / 5.0, 1);
         String yawTitleKey = "gui.tacz.gun_refit.property_diagrams.yaw";
@@ -137,22 +131,22 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
         @Override
         public void initComponents() {
             Pair<ModifiedValue, ModifiedValue> modified = this.getValue();
-            float pitch = 2;
-            float yaw = 2;
+            float pitch = 1;
+            float yaw = 1;
 
             if (modified != null) {
-                pitch = (float) AttachmentPropertyManager.eval(modified.left(), 2);
-                yaw = (float) AttachmentPropertyManager.eval(modified.right(), 2);
+                pitch = (float) AttachmentPropertyManager.eval(modified.left(), 1);
+                yaw = (float) AttachmentPropertyManager.eval(modified.right(), 1);
             }
 
-            if (pitch > 2) {
+            if (pitch > 1) {
                 components.add(Component.translatable("tooltip.tacz.attachment.pitch.increase").withStyle(ChatFormatting.RED));
-            } else if (pitch < 2) {
+            } else if (pitch < 1) {
                 components.add(Component.translatable("tooltip.tacz.attachment.pitch.decrease").withStyle(ChatFormatting.GREEN));
             }
-            if (yaw > 2) {
+            if (yaw > 1) {
                 components.add(Component.translatable("tooltip.tacz.attachment.yaw.increase").withStyle(ChatFormatting.RED));
-            } else if (yaw < 2) {
+            } else if (yaw < 1) {
                 components.add(Component.translatable("tooltip.tacz.attachment.yaw.decrease").withStyle(ChatFormatting.GREEN));
             }
         }
