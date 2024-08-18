@@ -74,7 +74,7 @@ public class RecoilModifier implements IAttachmentModifier<Pair<Modifier, Modifi
             pitch.add(modifiedValue.left());
             yaw.add(modifiedValue.right());
         }
-        var newCache = ParameterizedCachePair.of(yaw, pitch, cache.getValue().left().getDefaultValue(),
+        var newCache = ParameterizedCachePair.of(pitch, yaw, cache.getValue().left().getDefaultValue(),
                 cache.getValue().right().getDefaultValue());
         cache.setValue(newCache);
     }
@@ -85,8 +85,8 @@ public class RecoilModifier implements IAttachmentModifier<Pair<Modifier, Modifi
         ParameterizedCachePair<Float, Float> propertyCache = cacheProperty.getCache(RecoilModifier.ID);
         GunRecoil recoil = gunData.getRecoil();
 
-        double pitch = propertyCache.left().eval(getMaxInGunRecoilKeyFrame(recoil.getPitch()));
-        double pitchModifier = pitch - propertyCache.left().getDefaultValue();
+        double pitch = propertyCache.left().getDefaultValue();
+        double pitchModifier = propertyCache.left().eval(getMaxInGunRecoilKeyFrame(recoil.getPitch())) - pitch;
         double pitchPercent = Math.min(pitch / 5.0, 1);
         double pitchModifierPercent = Math.min(pitchModifier / 5.0, 1);
         String pitchTitleKey = "gui.tacz.gun_refit.property_diagrams.pitch";
@@ -94,8 +94,8 @@ public class RecoilModifier implements IAttachmentModifier<Pair<Modifier, Modifi
         String pitchNegativelyString = String.format("%.2f §a(%.2f)", pitch, pitchModifier);
         String pitchDefaultString = String.format("%.2f", pitch);
 
-        double yaw = propertyCache.right().eval(getMaxInGunRecoilKeyFrame(recoil.getYaw()));
-        double yawModifier = yaw - propertyCache.right().getDefaultValue();
+        double yaw = propertyCache.right().getDefaultValue();
+        double yawModifier = propertyCache.right().eval(getMaxInGunRecoilKeyFrame(recoil.getYaw())) - yaw;
         double yawPercent = Math.min(yaw / 5.0, 1);
         double yawModifierPercent = Math.min(yawModifier / 5.0, 1);
         String yawTitleKey = "gui.tacz.gun_refit.property_diagrams.yaw";
