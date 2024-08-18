@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nullable;
 
-public class ModifiedValue {
+public class Modifier {
     @SerializedName("addend")
     private double addend = 0;
 
@@ -38,5 +38,10 @@ public class ModifiedValue {
     @Deprecated
     public void setAddend(double addend) {
         this.addend = addend;
+    }
+
+    @Deprecated
+    public void setPercent(double percent) {
+        this.percent = percent;
     }
 }

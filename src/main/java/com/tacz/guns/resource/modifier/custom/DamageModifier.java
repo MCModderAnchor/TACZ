@@ -11,7 +11,7 @@ import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair;
@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class DamageModifier implements IAttachmentModifier<ModifiedValue, LinkedList<DistanceDamagePair>> {
+public class DamageModifier implements IAttachmentModifier<Modifier, LinkedList<DistanceDamagePair>> {
     public static final String ID = "damage";
 
     @Override
@@ -38,7 +38,7 @@ public class DamageModifier implements IAttachmentModifier<ModifiedValue, Linked
     }
 
     @Override
-    public JsonProperty<ModifiedValue> readJson(String json) {
+    public JsonProperty<Modifier> readJson(String json) {
         Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
         return new DamageJsonProperty(data.getDamage());
     }
@@ -73,12 +73,12 @@ public class DamageModifier implements IAttachmentModifier<ModifiedValue, Linked
     }
 
     @Override
-    public void eval(List<ModifiedValue> modifiedValues, CacheValue<LinkedList<DistanceDamagePair>> cache) {
+    public void eval(List<Modifier> modifiers, CacheValue<LinkedList<DistanceDamagePair>> cache) {
         LinkedList<DistanceDamagePair> cacheValue = cache.getValue();
         LinkedList<DistanceDamagePair> modifiedValue = new LinkedList<>();
         for (DistanceDamagePair pair : cacheValue) {
             float base = pair.getDamage();
-            float eval = (float) AttachmentPropertyManager.eval(modifiedValues, base);
+            float eval = (float) AttachmentPropertyManager.eval(modifiers, base);
             modifiedValue.add(new DistanceDamagePair(pair.getDistance(), eval));
         }
         cache.setValue(modifiedValue);
@@ -128,14 +128,14 @@ public class DamageModifier implements IAttachmentModifier<ModifiedValue, Linked
         return 1;
     }
 
-    public static class DamageJsonProperty extends JsonProperty<ModifiedValue> {
-        public DamageJsonProperty(ModifiedValue value) {
+    public static class DamageJsonProperty extends JsonProperty<Modifier> {
+        public DamageJsonProperty(Modifier value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue value = getValue();
+            Modifier value = getValue();
             if (value != null) {
                 double eval = AttachmentPropertyManager.eval(value, 9);
                 int damage = (int) Math.round(eval);
@@ -151,10 +151,10 @@ public class DamageModifier implements IAttachmentModifier<ModifiedValue, Linked
     public static class Data {
         @SerializedName("damage")
         @Nullable
-        private ModifiedValue damage = null;
+        private Modifier damage = null;
 
         @Nullable
-        public ModifiedValue getDamage() {
+        public Modifier getDamage() {
             return damage;
         }
     }

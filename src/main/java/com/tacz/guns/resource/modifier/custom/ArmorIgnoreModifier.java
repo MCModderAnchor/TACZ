@@ -10,7 +10,7 @@ import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class ArmorIgnoreModifier implements IAttachmentModifier<ModifiedValue, Float> {
+public class ArmorIgnoreModifier implements IAttachmentModifier<Modifier, Float> {
     public static final String ID = "armor_ignore";
 
     @Override
@@ -36,7 +36,7 @@ public class ArmorIgnoreModifier implements IAttachmentModifier<ModifiedValue, F
     }
 
     @Override
-    public JsonProperty<ModifiedValue> readJson(String json) {
+    public JsonProperty<Modifier> readJson(String json) {
         Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
         return new ArmorIgnoreJsonProperty(data.getArmorIgnore());
     }
@@ -60,8 +60,8 @@ public class ArmorIgnoreModifier implements IAttachmentModifier<ModifiedValue, F
     }
 
     @Override
-    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Float> cache) {
-        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+    public void eval(List<Modifier> modifiers, CacheValue<Float> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiers, cache.getValue());
         cache.setValue((float) eval);
     }
 
@@ -104,14 +104,14 @@ public class ArmorIgnoreModifier implements IAttachmentModifier<ModifiedValue, F
         return 1;
     }
 
-    public static class ArmorIgnoreJsonProperty extends JsonProperty<ModifiedValue> {
-        public ArmorIgnoreJsonProperty(ModifiedValue value) {
+    public static class ArmorIgnoreJsonProperty extends JsonProperty<Modifier> {
+        public ArmorIgnoreJsonProperty(Modifier value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue value = this.getValue();
+            Modifier value = this.getValue();
             if (value != null) {
                 double eval = AttachmentPropertyManager.eval(value, 0.5);
                 if (eval > 0.5) {
@@ -126,10 +126,10 @@ public class ArmorIgnoreModifier implements IAttachmentModifier<ModifiedValue, F
     public static class Data {
         @SerializedName("armor_ignore")
         @Nullable
-        private ModifiedValue armorIgnore = null;
+        private Modifier armorIgnore = null;
 
         @Nullable
-        public ModifiedValue getArmorIgnore() {
+        public Modifier getArmorIgnore() {
             return armorIgnore;
         }
     }

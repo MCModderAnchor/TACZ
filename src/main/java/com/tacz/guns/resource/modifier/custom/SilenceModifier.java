@@ -7,7 +7,7 @@ import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.ChatFormatting;
@@ -18,7 +18,7 @@ import org.apache.commons.compress.utils.Lists;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SilenceModifier implements IAttachmentModifier<Pair<ModifiedValue, Boolean>, Pair<Integer, Boolean>> {
+public class SilenceModifier implements IAttachmentModifier<Pair<Modifier, Boolean>, Pair<Integer, Boolean>> {
     public static final String ID = "silence";
 
     @Override
@@ -32,12 +32,12 @@ public class SilenceModifier implements IAttachmentModifier<Pair<ModifiedValue, 
         SilenceModifier.Data data = CommonGunPackLoader.GSON.fromJson(json, SilenceModifier.Data.class);
         Silence silence = data.getSilence();
         if (silence == null) {
-            return new SilenceJsonProperty(Pair.of(new ModifiedValue(), false));
+            return new SilenceJsonProperty(Pair.of(new Modifier(), false));
         }
-        ModifiedValue distance = silence.getDistance();
+        Modifier distance = silence.getDistance();
         // 兼容旧版本
         if (distance == null) {
-            distance = new ModifiedValue();
+            distance = new Modifier();
             distance.setAddend(silence.getDistanceAddend());
         }
         return new SilenceJsonProperty(Pair.of(distance, silence.isUseSilenceSound()));
@@ -50,8 +50,8 @@ public class SilenceModifier implements IAttachmentModifier<Pair<ModifiedValue, 
     }
 
     @Override
-    public void eval(List<Pair<ModifiedValue, Boolean>> modifiedValues, CacheValue<Pair<Integer, Boolean>> cache) {
-        List<ModifiedValue> distanceModifiers = Lists.newArrayList();
+    public void eval(List<Pair<Modifier, Boolean>> modifiedValues, CacheValue<Pair<Integer, Boolean>> cache) {
+        List<Modifier> distanceModifiers = Lists.newArrayList();
         List<Boolean> useSilenceSoundModifiers = Lists.newArrayList();
         modifiedValues.forEach(v -> {
             distanceModifiers.add(v.left());
@@ -63,14 +63,14 @@ public class SilenceModifier implements IAttachmentModifier<Pair<ModifiedValue, 
         cache.setValue(Pair.of((int) Math.round(evalDistance), useSilenceSound));
     }
 
-    public static class SilenceJsonProperty extends JsonProperty<Pair<ModifiedValue, Boolean>> {
-        public SilenceJsonProperty(Pair<ModifiedValue, Boolean> value) {
+    public static class SilenceJsonProperty extends JsonProperty<Pair<Modifier, Boolean>> {
+        public SilenceJsonProperty(Pair<Modifier, Boolean> value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            Pair<ModifiedValue, Boolean> value = this.getValue();
+            Pair<Modifier, Boolean> value = this.getValue();
             if (value != null) {
                 int defaultDistance = GunConfig.DEFAULT_GUN_FIRE_SOUND_DISTANCE.get();
                 double eval = AttachmentPropertyManager.eval(value.left(), defaultDistance);
@@ -105,7 +105,7 @@ public class SilenceModifier implements IAttachmentModifier<Pair<ModifiedValue, 
 
         @Nullable
         @SerializedName("distance")
-        private ModifiedValue distance = null;
+        private Modifier distance = null;
 
         @SerializedName("use_silence_sound")
         private boolean useSilenceSound = false;
@@ -116,7 +116,7 @@ public class SilenceModifier implements IAttachmentModifier<Pair<ModifiedValue, 
         }
 
         @Nullable
-        public ModifiedValue getDistance() {
+        public Modifier getDistance() {
             return distance;
         }
 

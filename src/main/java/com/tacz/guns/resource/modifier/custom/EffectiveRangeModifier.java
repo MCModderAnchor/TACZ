@@ -7,7 +7,7 @@ import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class EffectiveRangeModifier implements IAttachmentModifier<ModifiedValue, Float> {
+public class EffectiveRangeModifier implements IAttachmentModifier<Modifier, Float> {
     public static final String ID = "effective_range";
 
     @Override
@@ -30,7 +30,7 @@ public class EffectiveRangeModifier implements IAttachmentModifier<ModifiedValue
     }
 
     @Override
-    public JsonProperty<ModifiedValue> readJson(String json) {
+    public JsonProperty<Modifier> readJson(String json) {
         Data data = CommonGunPackLoader.GSON.fromJson(json, Data.class);
         return new EffectiveRangeJsonProperty(data.getEffectiveRange());
     }
@@ -51,8 +51,8 @@ public class EffectiveRangeModifier implements IAttachmentModifier<ModifiedValue
     }
 
     @Override
-    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Float> cache) {
-        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+    public void eval(List<Modifier> modifiers, CacheValue<Float> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiers, cache.getValue());
         cache.setValue((float) eval);
     }
 
@@ -92,14 +92,14 @@ public class EffectiveRangeModifier implements IAttachmentModifier<ModifiedValue
         return 1;
     }
 
-    public static class EffectiveRangeJsonProperty extends JsonProperty<ModifiedValue> {
-        public EffectiveRangeJsonProperty(ModifiedValue value) {
+    public static class EffectiveRangeJsonProperty extends JsonProperty<Modifier> {
+        public EffectiveRangeJsonProperty(Modifier value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue value = getValue();
+            Modifier value = getValue();
             if (value != null) {
                 double eval = AttachmentPropertyManager.eval(value, 25);
                 if (eval > 25) {
@@ -114,10 +114,10 @@ public class EffectiveRangeModifier implements IAttachmentModifier<ModifiedValue
     public static class Data {
         @SerializedName("effective_range")
         @Nullable
-        private ModifiedValue effectiveRange = null;
+        private Modifier effectiveRange = null;
 
         @Nullable
-        public ModifiedValue getEffectiveRange() {
+        public Modifier getEffectiveRange() {
             return effectiveRange;
         }
     }
