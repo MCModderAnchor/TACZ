@@ -1,13 +1,11 @@
 package com.tacz.guns.resource.modifier.custom;
 
 import com.google.gson.annotations.SerializedName;
-import com.tacz.guns.api.modifier.CacheValue;
-import com.tacz.guns.api.modifier.IAttachmentModifier;
-import com.tacz.guns.api.modifier.JsonProperty;
+import com.tacz.guns.api.modifier.*;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.GunRecoil;
 import com.tacz.guns.resource.pojo.data.gun.GunRecoilKeyFrame;
@@ -26,7 +24,7 @@ import java.util.List;
  * left 是 Pitch
  * right 是 Yaw
  */
-public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, ModifiedValue>, Pair<Float, Float>> {
+public class RecoilModifier implements IAttachmentModifier<Pair<Modifier, Modifier>, ParameterizedCachePair<Float, Float>> {
     public static final String ID = "recoil";
 
     @Override
@@ -41,16 +39,16 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
 
     @Override
     @SuppressWarnings("deprecation")
-    public JsonProperty<Pair<ModifiedValue, ModifiedValue>> readJson(String json) {
+    public JsonProperty<Pair<Modifier, Modifier>> readJson(String json) {
         RecoilModifier.Data data = CommonGunPackLoader.GSON.fromJson(json, RecoilModifier.Data.class);
         NewRecoilData newRecoilData = data.newRecoilData;
         OldRecoilData oldRecoilData = data.oldRecoilData;
         // 兼容旧版本写法
         if (newRecoilData == null && oldRecoilData != null) {
-            ModifiedValue pitch = new ModifiedValue();
-            ModifiedValue yaw = new ModifiedValue();
-            pitch.setAddend(oldRecoilData.getPitch());
-            yaw.setAddend(oldRecoilData.getYaw());
+            Modifier pitch = new Modifier();
+            Modifier yaw = new Modifier();
+            pitch.setPercent(oldRecoilData.getPitch());
+            yaw.setPercent(oldRecoilData.getYaw());
             return new RecoilModifier.RecoilJsonProperty(Pair.of(pitch, yaw));
         }
         assert newRecoilData != null;
@@ -58,32 +56,37 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
     }
 
     @Override
-    public CacheValue<Pair<Float, Float>> initCache(ItemStack gunItem, GunData gunData) {
-        return new CacheValue<>(Pair.of(1f, 1f));
+    public CacheValue<ParameterizedCachePair<Float, Float>> initCache(ItemStack gunItem, GunData gunData) {
+        GunRecoil recoil = gunData.getRecoil();
+        if (recoil == null) {
+            return new CacheValue<>(ParameterizedCachePair.of(0f, 0f));
+        }
+        float pitch = getMaxInGunRecoilKeyFrame(recoil.getPitch());
+        float yaw = getMaxInGunRecoilKeyFrame(recoil.getYaw());
+        return new CacheValue<>(ParameterizedCachePair.of(pitch, yaw));
     }
 
     @Override
-    public void eval(List<Pair<ModifiedValue, ModifiedValue>> modifiedValues, CacheValue<Pair<Float, Float>> cache) {
-        Pair<Float, Float> cacheValue = cache.getValue();
-        List<ModifiedValue> yaw = Lists.newArrayList();
-        List<ModifiedValue> pitch = Lists.newArrayList();
+    public void eval(List<Pair<Modifier, Modifier>> modifiedValues, CacheValue<ParameterizedCachePair<Float, Float>> cache) {
+        List<Modifier> yaw = Lists.newArrayList();
+        List<Modifier> pitch = Lists.newArrayList();
         for (var modifiedValue : modifiedValues) {
             pitch.add(modifiedValue.left());
             yaw.add(modifiedValue.right());
         }
-        double evalPitch = AttachmentPropertyManager.eval(pitch, cacheValue.left());
-        double evalYaw = AttachmentPropertyManager.eval(yaw, cacheValue.right());
-        cache.setValue(Pair.of((float) evalPitch, (float) evalYaw));
+        var newCache = ParameterizedCachePair.of(yaw, pitch, cache.getValue().left().getDefaultValue(),
+                cache.getValue().right().getDefaultValue());
+        cache.setValue(newCache);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public List<DiagramsData> getPropertyDiagramsData(ItemStack gunItem, GunData gunData, AttachmentCacheProperty cacheProperty) {
-        Pair<Float, Float> propertyCache = cacheProperty.getCache(RecoilModifier.ID);
+        ParameterizedCachePair<Float, Float> propertyCache = cacheProperty.getCache(RecoilModifier.ID);
         GunRecoil recoil = gunData.getRecoil();
 
-        float pitch = getMaxInGunRecoilKeyFrame(recoil.getPitch());
-        float pitchModifier = propertyCache.left() - 1;
+        double pitch = propertyCache.left().eval(getMaxInGunRecoilKeyFrame(recoil.getPitch()));
+        double pitchModifier = pitch - propertyCache.left().getDefaultValue();
         double pitchPercent = Math.min(pitch / 5.0, 1);
         double pitchModifierPercent = Math.min(pitchModifier / 5.0, 1);
         String pitchTitleKey = "gui.tacz.gun_refit.property_diagrams.pitch";
@@ -91,8 +94,8 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
         String pitchNegativelyString = String.format("%.2f §a(%.2f)", pitch, pitchModifier);
         String pitchDefaultString = String.format("%.2f", pitch);
 
-        float yaw = getMaxInGunRecoilKeyFrame(recoil.getYaw());
-        float yawModifier = propertyCache.right() - 1;
+        double yaw = propertyCache.right().eval(getMaxInGunRecoilKeyFrame(recoil.getYaw()));
+        double yawModifier = yaw - propertyCache.right().getDefaultValue();
         double yawPercent = Math.min(yaw / 5.0, 1);
         double yawModifierPercent = Math.min(yawModifier / 5.0, 1);
         String yawTitleKey = "gui.tacz.gun_refit.property_diagrams.yaw";
@@ -123,14 +126,14 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
         return Math.max(leftValue, rightValue);
     }
 
-    public static class RecoilJsonProperty extends JsonProperty<Pair<ModifiedValue, ModifiedValue>> {
-        public RecoilJsonProperty(Pair<ModifiedValue, ModifiedValue> value) {
+    public static class RecoilJsonProperty extends JsonProperty<Pair<Modifier, Modifier>> {
+        public RecoilJsonProperty(Pair<Modifier, Modifier> value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            Pair<ModifiedValue, ModifiedValue> modified = this.getValue();
+            Pair<Modifier, Modifier> modified = this.getValue();
             float pitch = 1;
             float yaw = 1;
 
@@ -182,16 +185,16 @@ public class RecoilModifier implements IAttachmentModifier<Pair<ModifiedValue, M
 
     private static class NewRecoilData {
         @SerializedName("pitch")
-        private ModifiedValue pitch = new ModifiedValue();
+        private Modifier pitch = new Modifier();
 
         @SerializedName("yaw")
-        private ModifiedValue yaw = new ModifiedValue();
+        private Modifier yaw = new Modifier();
 
-        public ModifiedValue getPitch() {
+        public Modifier getPitch() {
             return pitch;
         }
 
-        public ModifiedValue getYaw() {
+        public Modifier getYaw() {
             return yaw;
         }
     }

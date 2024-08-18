@@ -9,7 +9,7 @@ import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
-import com.tacz.guns.resource.pojo.data.attachment.ModifiedValue;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.GunFireModeAdjustData;
 import net.minecraft.ChatFormatting;
@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class AmmoSpeedModifier implements IAttachmentModifier<ModifiedValue, Float> {
+public class AmmoSpeedModifier implements IAttachmentModifier<Modifier, Float> {
     public static final String ID = "ammo_speed";
 
     @Override
@@ -32,7 +32,7 @@ public class AmmoSpeedModifier implements IAttachmentModifier<ModifiedValue, Flo
     }
 
     @Override
-    public JsonProperty<ModifiedValue> readJson(String json) {
+    public JsonProperty<Modifier> readJson(String json) {
         AmmoSpeedModifier.Data data = CommonGunPackLoader.GSON.fromJson(json, AmmoSpeedModifier.Data.class);
         return new AmmoSpeedModifier.BulletSpeedJsonProperty(data.getAmmoSpeed());
     }
@@ -50,8 +50,8 @@ public class AmmoSpeedModifier implements IAttachmentModifier<ModifiedValue, Flo
     }
 
     @Override
-    public void eval(List<ModifiedValue> modifiedValues, CacheValue<Float> cache) {
-        double eval = AttachmentPropertyManager.eval(modifiedValues, cache.getValue());
+    public void eval(List<Modifier> modifiers, CacheValue<Float> cache) {
+        double eval = AttachmentPropertyManager.eval(modifiers, cache.getValue());
         cache.setValue((float) eval);
     }
 
@@ -86,14 +86,14 @@ public class AmmoSpeedModifier implements IAttachmentModifier<ModifiedValue, Flo
         return 1;
     }
 
-    public static class BulletSpeedJsonProperty extends JsonProperty<ModifiedValue> {
-        public BulletSpeedJsonProperty(ModifiedValue value) {
+    public static class BulletSpeedJsonProperty extends JsonProperty<Modifier> {
+        public BulletSpeedJsonProperty(Modifier value) {
             super(value);
         }
 
         @Override
         public void initComponents() {
-            ModifiedValue ammoSpeed = this.getValue();
+            Modifier ammoSpeed = this.getValue();
             if (ammoSpeed != null) {
                 double eval = AttachmentPropertyManager.eval(ammoSpeed, 300);
                 if (eval > 300) {
@@ -108,10 +108,10 @@ public class AmmoSpeedModifier implements IAttachmentModifier<ModifiedValue, Flo
     public static class Data {
         @SerializedName("ammo_speed")
         @Nullable
-        private ModifiedValue ammoSpeed = null;
+        private Modifier ammoSpeed = null;
 
         @Nullable
-        public ModifiedValue getAmmoSpeed() {
+        public Modifier getAmmoSpeed() {
             return ammoSpeed;
         }
     }
