@@ -9,10 +9,10 @@
   },
   "recoil": {
     "pitch": {
-      "multiplier": 0.8
+      "multiplier": 0.75
     },
     "yaw": {
-      "multiplier": 0.8
+      "multiplier": 0.6
     }
   },
   // 近战伤害，用于刺刀
