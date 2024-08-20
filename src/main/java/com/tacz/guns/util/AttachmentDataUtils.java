@@ -4,11 +4,16 @@ import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
+import com.tacz.guns.resource.modifier.custom.WeightModifier;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public final class AttachmentDataUtils {
@@ -63,5 +68,40 @@ public final class AttachmentDataUtils {
                 return extendedMagAmmoAmount[level - 1];
             }).orElse(gunData.getAmmoAmount());
         }
+    }
+
+    public static double getWightWithAttachment(ItemStack gunItem, GunData gunData) {
+        IGun iGun = IGun.getIGunOrNull(gunItem);
+        if (iGun == null) {
+            return gunData.getWeight();
+        }
+
+        List<Modifier> modifiers = new ArrayList<>();
+        for (AttachmentType type : AttachmentType.values()){
+            ResourceLocation id = iGun.getAttachmentId(gunItem, type);
+            AttachmentData attachmentData = gunData.getExclusiveAttachments().get(id);
+            if (attachmentData != null) {
+                var m = attachmentData.getModifier().get(WeightModifier.ID);
+                if(m != null && m.getValue() instanceof Modifier modifier) {
+                    modifiers.add(modifier);
+                } else {
+                    Modifier modifier = new Modifier();
+                    modifier.setAddend(attachmentData.getWeight());
+                    modifiers.add(modifier);
+                }
+            } else {
+                TimelessAPI.getCommonAttachmentIndex(id).ifPresent(index -> {
+                    var m = index.getData().getModifier().get(WeightModifier.ID);
+                    if(m != null && m.getValue() instanceof Modifier modifier) {
+                        modifiers.add(modifier);
+                    } else {
+                        Modifier modifier = new Modifier();
+                        modifier.setAddend(index.getData().getWeight());
+                        modifiers.add(modifier);
+                    }
+                });
+            }
+        }
+        return AttachmentPropertyManager.eval(modifiers, gunData.getWeight());
     }
 }
