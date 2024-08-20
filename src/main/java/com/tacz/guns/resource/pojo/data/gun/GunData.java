@@ -77,7 +77,7 @@ public class GunData {
     @SerializedName("inaccuracy")
     private Map<InaccuracyType, Float> inaccuracy = null;
 
-    @SerializedName("move_speed")
+    @SerializedName("movement_speed")
     private MoveSpeed moveSpeed = new MoveSpeed();
 
     @SerializedName("melee")
@@ -88,6 +88,9 @@ public class GunData {
 
     @SerializedName("exclusive_attachments")
     private Map<ResourceLocation, AttachmentData> exclusiveAttachments = Maps.newHashMap();
+
+    @SerializedName("weight")
+    private float weight = 0f;
 
     public ResourceLocation getAmmoId() {
         return ammoId;
@@ -157,6 +160,10 @@ public class GunData {
 
     public BurstData getBurstData() {
         return burstData;
+    }
+
+    public float getWeight() {
+        return weight;
     }
 
     @Nullable

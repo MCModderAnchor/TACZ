@@ -2,6 +2,7 @@ package com.tacz.guns.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -13,6 +14,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessageRefitGun;
 import com.tacz.guns.network.message.ClientMessageUnloadAttachment;
 import com.tacz.guns.sound.SoundManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.Util;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
@@ -90,6 +92,14 @@ public class GunRefitScreen extends Screen {
             this.addRenderableWidget(new FlatColorButton(11, 11, 288, 16,
                     new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.show"), b -> switchHideButton()));
         } else {
+            this.addRenderableWidget(new FlatColorButton(14, 14, 12, 12, new TextComponent("S"), b -> {
+                LocalPlayer player = Minecraft.getInstance().player;
+                if (player == null || player.isSpectator()) return;
+                if (IGun.mainhandHoldGun(player)) {
+                    IClientPlayerGunOperator.fromLocalPlayer(player).fireSelect();
+                    this.init();
+                }
+            }).setTooltips(new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.fire_mode.switch")));
             int buttonYOffset = GunPropertyDiagrams.getHidePropertyButtonYOffset();
             this.addRenderableWidget(new FlatColorButton(11, buttonYOffset, 288, 12,
                     new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.hide"), b -> switchHideButton()));

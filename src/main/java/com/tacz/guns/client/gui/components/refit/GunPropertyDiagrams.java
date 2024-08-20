@@ -77,7 +77,7 @@ public final class GunPropertyDiagrams {
                 fireModeText.append(new TranslatableComponent("gui.tacz.gun_refit.property_diagrams.unknown"));
             }
 
-            font.draw(poseStack, fireModeText, nameTextStartX, yOffset[0], fontColor);
+            font.draw(poseStack, fireModeText, nameTextStartX+12, yOffset[0], fontColor);
 
             yOffset[0] += 10;
 
