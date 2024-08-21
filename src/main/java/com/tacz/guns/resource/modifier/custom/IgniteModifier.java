@@ -11,7 +11,7 @@ import com.tacz.guns.resource.pojo.data.gun.Ignite;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.apache.commons.compress.utils.Lists;
+import com.google.common.collect.Lists;
 
 import javax.annotation.Nullable;
 import java.util.List;

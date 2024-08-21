@@ -1,7 +1,7 @@
 package com.tacz.guns.api.modifier;
 
 import net.minecraft.network.chat.Component;
-import org.apache.commons.compress.utils.Lists;
+import com.google.common.collect.Lists;
 
 import javax.annotation.Nullable;
 import java.util.List;

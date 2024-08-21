@@ -190,12 +190,8 @@ public class ClientGunTooltip implements ClientTooltipComponent {
             }
 
             double weightFactor = SyncConfig.WEIGHT_SPEED_MULTIPLIER.get();
-            if (weightFactor > 0) {
-                double weight = AttachmentDataUtils.getWightWithAttachment(gun, gunData);
-                if (weight > 0) {
-                    this.weight = Component.translatable("tooltip.tacz.gun.movment_speed", FORMAT_P_D1.format(-weightFactor * weight)).withStyle(ChatFormatting.RED);
-                }
-            }
+            double weight = AttachmentDataUtils.getWightWithAttachment(gun, gunData);
+            this.weight = Component.translatable("tooltip.tacz.gun.movment_speed", FORMAT_P_D1.format(-weightFactor * weight)).withStyle(ChatFormatting.RED);
 
             this.maxWidth = Math.max(font.width(this.armorIgnore), this.maxWidth);
             this.maxWidth = Math.max(font.width(this.headShotMultiplier), this.maxWidth);
@@ -276,7 +272,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
             font.drawInBatch(this.headShotMultiplier, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, false, 0, 0xF000F0);
             yOffset += 10;
 
-            font.drawInBatch(this.weight, pX, yOffset, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            font.drawInBatch(this.weight, pX, yOffset, 0xffffff, false, matrix4f, bufferSource, false, 0, 0xF000F0);
             yOffset += 10;
         }
 
