@@ -92,6 +92,9 @@ public class GunData {
     @SerializedName("weight")
     private float weight = 0f;
 
+    @SerializedName("builtin_attachments")
+    private Map<AttachmentType, ResourceLocation> builtInAttachments = Maps.newHashMap();
+
     public ResourceLocation getAmmoId() {
         return ammoId;
     }
@@ -213,6 +216,10 @@ public class GunData {
     @Nullable
     public List<AttachmentType> getAllowAttachments() {
         return allowAttachments;
+    }
+
+    public Map<AttachmentType, ResourceLocation> getBuiltInAttachments() {
+        return builtInAttachments;
     }
 
     public Map<ResourceLocation, AttachmentData> getExclusiveAttachments() {

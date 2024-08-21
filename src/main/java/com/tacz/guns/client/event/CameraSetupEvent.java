@@ -161,6 +161,9 @@ public class CameraSetupEvent {
                 return;
             }
             ResourceLocation scopeItemId = iGun.getAttachmentId(stack, AttachmentType.SCOPE);
+            if (scopeItemId.equals(DefaultAssets.EMPTY_ATTACHMENT_ID)) {
+                scopeItemId = iGun.getBuiltInAttachmentId(stack, AttachmentType.SCOPE);
+            }
             if (DefaultAssets.isEmptyAttachmentId(scopeItemId)) {
                 float fov = ITEM_MODEL_FOV_DYNAMICS.update((float) event.getFOV());
                 event.setFOV(fov);
