@@ -37,27 +37,29 @@ public class LivingEntitySpeedModifier {
             if (cacheProperty != null) {
                 double weightFactor = SyncConfig.WEIGHT_SPEED_MULTIPLIER.get();
                 if(weightFactor > 0){
-                    double targetSpeed = cacheProperty.getCache(WeightModifier.ID);
-                    targetSpeed *= -weightFactor;
+                    float targetSpeed = cacheProperty.getCache(WeightModifier.ID);
+                    targetSpeed *= (float) -weightFactor;
                     AttributeModifier currentModifier = speedModifier.getModifier(WEIGHT_SPEED_MODIFIER_UUID);
-                    if (currentModifier != null && currentModifier.getAmount() == targetSpeed){
-                        return;
+                    if (currentModifier != null) {
+                        if (currentModifier.getAmount() != targetSpeed) {
+                            speedModifier.removeModifier(WEIGHT_SPEED_MODIFIER_UUID);
+                            speedModifier.addTransientModifier(new AttributeModifier(WEIGHT_SPEED_MODIFIER_UUID, "Gun Speed Modifier",
+                                    targetSpeed, AttributeModifier.Operation.MULTIPLY_BASE));
+                        }
                     }
-                    speedModifier.removeModifier(WEIGHT_SPEED_MODIFIER_UUID);
-                    speedModifier.addTransientModifier(new AttributeModifier(WEIGHT_SPEED_MODIFIER_UUID, "Gun Speed Modifier",
-                            targetSpeed, AttributeModifier.Operation.MULTIPLY_BASE));
                 }
 
                 MoveSpeed speed = cacheProperty.getCache(ExtraMovementModifier.ID);
                 if (speed != null) {
                     double targetSpeed = getTargetSpeed(speed);
                     AttributeModifier currentModifier = speedModifier.getModifier(EXTRA_SPEED_MODIFIER_UUID);
-                    if (currentModifier != null && currentModifier.getAmount() == targetSpeed) {
-                        return;
+                    if (currentModifier != null) {
+                        if (currentModifier.getAmount() != targetSpeed) {
+                            speedModifier.removeModifier(EXTRA_SPEED_MODIFIER_UUID);
+                            speedModifier.addTransientModifier(new AttributeModifier(EXTRA_SPEED_MODIFIER_UUID, "Extra Gun Speed Modifier",
+                                    targetSpeed, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                        }
                     }
-                    speedModifier.removeModifier(EXTRA_SPEED_MODIFIER_UUID);
-                    speedModifier.addTransientModifier(new AttributeModifier(EXTRA_SPEED_MODIFIER_UUID, "Extra Gun Speed Modifier",
-                            targetSpeed, AttributeModifier.Operation.MULTIPLY_TOTAL));
                 }
             }
         } else {
@@ -76,19 +78,4 @@ public class LivingEntitySpeedModifier {
         return moveSpeed.getBaseMultiplier();
     }
 
-//    private float calcExtraSpeedModifier(ItemStack stack) {
-//        IGun iGun = IGun.getIGunOrNull(stack);
-//        if (iGun != null) {
-//            if(TimelessAPI.getCommonGunIndex(iGun.getGunId(stack)).isPresent()){
-//                if (dataHolder.reloadStateType.isReloading()){
-//                    return TimelessAPI.getCommonGunIndex(iGun.getGunId(stack)).get().getGunData().getMoveSpeed().getReloadMultiplier();
-//                }
-//                if (dataHolder.isAiming){
-//                    return TimelessAPI.getCommonGunIndex(iGun.getGunId(stack)).get().getGunData().getMoveSpeed().getAimMultiplier();
-//                }
-//                return TimelessAPI.getCommonGunIndex(iGun.getGunId(stack)).get().getGunData().getMoveSpeed().getBaseMultiplier();
-//            }
-//        }
-//        return 0;
-//    }
 }

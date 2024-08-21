@@ -6,13 +6,13 @@ import java.util.List;
 
 public class MoveSpeed {
     @SerializedName("base")
-    private float baseMultiplier = 1.0f;
+    private float baseMultiplier = 0.0f;
 
     @SerializedName("aim")
-    private float aimMultiplier = 0.5f;
+    private float aimMultiplier = 0.0f;
 
     @SerializedName("reload")
-    private float reloadMultiplier = 1.0f;
+    private float reloadMultiplier = 0.0f;
 
     public float getBaseMultiplier() {
         return baseMultiplier;
