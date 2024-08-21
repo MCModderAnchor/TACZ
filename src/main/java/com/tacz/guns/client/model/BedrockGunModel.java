@@ -10,6 +10,7 @@ import com.tacz.guns.api.client.animation.ObjectAnimationChannel;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tacz.guns.client.model.functional.*;
@@ -18,6 +19,7 @@ import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
+import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -240,6 +242,9 @@ public class BedrockGunModel extends BedrockAnimatedModel {
                 continue;
             }
             ItemStack attachmentItem = iGun.getAttachment(gunItem, type);
+            if (attachmentItem.isEmpty()) {
+                attachmentItem = iGun.getBuiltinAttachment(gunItem, type);
+            }
             currentAttachmentItem.put(type, attachmentItem);
             IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentItem);
             if (attachment != null) {
