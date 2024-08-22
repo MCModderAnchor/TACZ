@@ -35,14 +35,17 @@ public class MouseHandlerMixin {
             original.call(player, yaw, pitch);
             return;
         }
-        ResourceLocation attachmentId = iGun.getAttachmentId(mainHandItem, AttachmentType.SCOPE);
+        ResourceLocation scopeId = iGun.getAttachmentId(mainHandItem, AttachmentType.SCOPE);
+        if (scopeId.equals(DefaultAssets.EMPTY_ATTACHMENT_ID)) {
+            scopeId = iGun.getBuiltInAttachmentId(mainHandItem, AttachmentType.SCOPE);
+        }
         float zoomLevel = 1;
-        if (DefaultAssets.isEmptyAttachmentId(attachmentId)) {
+        if (DefaultAssets.isEmptyAttachmentId(scopeId)) {
             // 缩放倍率
             ResourceLocation gunId = iGun.getGunId(mainHandItem);
             zoomLevel = TimelessAPI.getClientGunIndex(gunId).map(ClientGunIndex::getIronZoom).orElse(1f);
         } else {
-            Optional<ClientAttachmentIndex> optional = TimelessAPI.getClientAttachmentIndex(attachmentId);
+            Optional<ClientAttachmentIndex> optional = TimelessAPI.getClientAttachmentIndex(scopeId);
             if (optional.isPresent()) {
                 float[] zoom = optional.get().getZoom();
                 if (zoom != null && zoom.length > 0) {

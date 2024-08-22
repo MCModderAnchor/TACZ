@@ -346,6 +346,9 @@ public class FirstPersonRenderGunEvent {
         List<BedrockPart> idleNodePath = model.getIdleSightPath();
         List<BedrockPart> aimingNodePath = null;
         ResourceLocation scopeId = iGun.getAttachmentId(stack, AttachmentType.SCOPE);
+        if (scopeId.equals(DefaultAssets.EMPTY_ATTACHMENT_ID)) {
+            scopeId = iGun.getBuiltInAttachmentId(stack, AttachmentType.SCOPE);
+        }
         if (DefaultAssets.isEmptyAttachmentId(scopeId)) {
             // 未安装瞄具，使用机瞄定位组
             aimingNodePath = model.getIronSightPath();

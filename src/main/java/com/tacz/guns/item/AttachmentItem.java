@@ -45,6 +45,9 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
     public static NonNullList<ItemStack> fillItemCategory(AttachmentType type) {
         NonNullList<ItemStack> stacks = NonNullList.create();
         TimelessAPI.getAllCommonAttachmentIndex().forEach(entry -> {
+            if (entry.getValue().getPojo().isHidden()) {
+                return;
+            }
             if (type.equals(entry.getValue().getType())) {
                 ItemStack itemStack = AttachmentItemBuilder.create().setId(entry.getKey()).build();
                 stacks.add(itemStack);

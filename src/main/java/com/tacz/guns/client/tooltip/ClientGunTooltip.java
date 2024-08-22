@@ -20,6 +20,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -33,6 +34,7 @@ import java.util.Locale;
 
 public class ClientGunTooltip implements ClientTooltipComponent {
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##%");
+    private static final DecimalFormat FORMAT_P_D1 = new DecimalFormat("#.#%");
     private static final DecimalFormat DAMAGE_FORMAT = new DecimalFormat("#.##");
 
     private final ItemStack gun;
@@ -46,6 +48,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     private MutableComponent damage;
     private MutableComponent armorIgnore;
     private MutableComponent headShotMultiplier;
+    private MutableComponent weight;
     private MutableComponent tips;
     private MutableComponent levelInfo;
     private @Nullable MutableComponent packInfo;
@@ -75,7 +78,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
             height += 34;
         }
         if (shouldShow(GunTooltipPart.EXTRA_DAMAGE_INFO)) {
-            height += 24;
+            height += 34;
         }
         if (shouldShow(GunTooltipPart.UPGRADES_TIP)) {
             height += 14;
@@ -184,8 +187,14 @@ public class ClientGunTooltip implements ClientTooltipComponent {
                 this.armorIgnore = Component.translatable("tooltip.tacz.gun.armor_ignore", FORMAT.format(0));
                 this.headShotMultiplier = Component.translatable("tooltip.tacz.gun.head_shot_multiplier", FORMAT.format(1));
             }
+
+            double weightFactor = SyncConfig.WEIGHT_SPEED_MULTIPLIER.get();
+            double weight = AttachmentDataUtils.getWightWithAttachment(gun, gunData);
+            this.weight = Component.translatable("tooltip.tacz.gun.movment_speed", FORMAT_P_D1.format(-weightFactor * weight)).withStyle(ChatFormatting.RED);
+
             this.maxWidth = Math.max(font.width(this.armorIgnore), this.maxWidth);
             this.maxWidth = Math.max(font.width(this.headShotMultiplier), this.maxWidth);
+            this.maxWidth = Math.max(font.width(this.weight), this.maxWidth);
         }
 
 
@@ -260,6 +269,9 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
             // 爆头伤害
             font.drawInBatch(this.headShotMultiplier, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+            yOffset += 10;
+
+            font.drawInBatch(this.weight, pX, yOffset, 0xffffff, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
             yOffset += 10;
         }
 
