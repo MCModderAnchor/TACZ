@@ -38,6 +38,9 @@ public class AttachmentQueryEntry {
     public static List<AttachmentQueryEntry> getAllAttachmentQueryEntries() {
         List<AttachmentQueryEntry> entries = Lists.newArrayList();
         TimelessAPI.getAllCommonAttachmentIndex().forEach(entry -> {
+            if (entry.getValue().getPojo().isHidden()) {
+                return;
+            }
             for (GunTabType tabType : GunTabType.values()) {
                 AttachmentQueryEntry queryEntry = new AttachmentQueryEntry(entry.getKey(), tabType);
                 if (!queryEntry.getAllowGunStacks().isEmpty()) {
