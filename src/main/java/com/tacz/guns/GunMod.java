@@ -37,6 +37,7 @@ public class GunMod {
         ModContainer.CONTAINER_TYPE.register(bus);
         ModSounds.SOUNDS.register(bus);
         ModParticles.PARTICLE_TYPES.register(bus);
+        ModAttributes.ATTRIBUTES.register(bus);
 
         registerDefaultExtraGunPack();
     }

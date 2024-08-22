@@ -195,6 +195,9 @@ public interface IGun {
     @Nonnull
     ItemStack getAttachment(ItemStack gun, AttachmentType type);
 
+    @Nonnull
+    ItemStack getBuiltinAttachment(ItemStack gun, AttachmentType type);
+
     /**
      * 获取当前枪械指定类型的配件的 NBT 数据
      *
@@ -202,6 +205,9 @@ public interface IGun {
      */
     @Nullable
     CompoundTag getAttachmentTag(ItemStack gun, AttachmentType type);
+
+    @Nonnull
+    ResourceLocation getBuiltInAttachmentId(ItemStack gun, AttachmentType type);
 
     /**
      * 获取枪械的配件 ID

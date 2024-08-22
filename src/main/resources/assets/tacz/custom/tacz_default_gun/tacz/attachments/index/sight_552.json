@@ -1,4 +1,6 @@
 {
+  // 是否将配件从创造模式物品栏和jei中隐藏，用于默认瞄具等场合
+  "hidden": false,
   // 配件的的显示名称和工具提示，支持本地化
   "name": "tacz.attachment.sight_552.name",
   // 配件的客户端数据

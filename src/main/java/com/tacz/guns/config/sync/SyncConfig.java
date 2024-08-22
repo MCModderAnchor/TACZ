@@ -16,6 +16,7 @@ public class SyncConfig {
     public static ForgeConfigSpec.DoubleValue DAMAGE_BASE_MULTIPLIER;
     public static ForgeConfigSpec.DoubleValue ARMOR_IGNORE_BASE_MULTIPLIER;
     public static ForgeConfigSpec.DoubleValue HEAD_SHOT_BASE_MULTIPLIER;
+    public static ForgeConfigSpec.DoubleValue WEIGHT_SPEED_MULTIPLIER;
 
     // 需要同步到客户端，方便客户端 debug 显示碰撞箱
     public static ForgeConfigSpec.ConfigValue<List<String>> HEAD_SHOT_AABB;
@@ -61,6 +62,9 @@ public class SyncConfig {
 
         builder.comment("All head shot damage number is multiplied by this factor");
         HEAD_SHOT_BASE_MULTIPLIER = builder.defineInRange("HeadShotBaseMultiplier", 1, 0, Double.MAX_VALUE);
+
+        builder.comment("The movement speed will decrease per kg of weight. 0.015 means 1.5% speed decrease per kg. Set a negative value to disable this feature");
+        WEIGHT_SPEED_MULTIPLIER = builder.defineInRange("WeightSpeedMultiplier", 0.015, -1, Double.MAX_VALUE);
 
         builder.pop();
     }

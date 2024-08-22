@@ -28,6 +28,11 @@ public class FlatColorButton extends Button {
         return this;
     }
 
+    public FlatColorButton setTooltips(Component... tooltips) {
+        this.tooltips = List.of(tooltips);
+        return this;
+    }
+
     public void renderToolTip(GuiGraphics graphics, Screen screen, int pMouseX, int pMouseY) {
         if (this.isHovered && tooltips != null) {
             graphics.renderComponentTooltip(screen.getMinecraft().font, tooltips, pMouseX, pMouseY);
@@ -50,6 +55,7 @@ public class FlatColorButton extends Button {
             graphics.fillGradient(this.getX(), this.getY() + this.height - 1, this.getX() + this.width, this.getY() + this.height, 0xff_F3EFE0, 0xff_F3EFE0);
         }
         this.renderScrollingString(graphics, font, 2, 0xF3EFE0);
+        this.renderToolTip(graphics, minecraft.screen, mouseX, mouseY);
     }
 
     public void setSelect(boolean select) {

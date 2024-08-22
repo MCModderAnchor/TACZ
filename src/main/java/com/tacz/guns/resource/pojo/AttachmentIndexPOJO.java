@@ -23,6 +23,9 @@ public class AttachmentIndexPOJO {
     @SerializedName("type")
     private AttachmentType type;
 
+    @SerializedName("hidden")
+    private boolean hidden = false;
+
     public String getName() {
         return name;
     }
@@ -42,5 +45,9 @@ public class AttachmentIndexPOJO {
 
     public AttachmentType getType() {
         return type;
+    }
+
+    public boolean isHidden() {
+        return hidden;
     }
 }
