@@ -243,9 +243,9 @@
   // 配件槽的默认配件，当未安装配件时使用
   // 默认配件的data将不会被应用，仅仅有外观效果
   // 用于默认瞄具等特殊场合
-  "builtin_attachments": {
-    "scope": "tacz:scope_standard_8x"
-  },
+//  "builtin_attachments": {
+//    "scope": "tacz:scope_standard_8x"
+//  },
   // 专属的配件属性
   "exclusive_attachments": {
     // 配件 ID，后面的数据和配件的 data 部分结构完全一致
