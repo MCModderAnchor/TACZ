@@ -1,0 +1,57 @@
+{
+  "model": "tacz:gun/aug_geo",
+  "texture": "tacz:gun/uv/aug",
+  "lod": {
+    "model": "tacz:gun/lod/aug",
+    "texture": "tacz:gun/lod/aug"
+  },
+  "hud": "tacz:gun/hud/aug_hud",
+  "slot": "tacz:gun/slot/aug_slot",
+  "animation": "tacz:aug",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.75
+  },
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:aug/aug_shoot",
+    "shoot_3p": "tacz:aug/aug_shoot_3p",
+    "silence": "tacz:aug/aug_silence",
+    "silence_3p": "tacz:aug/aug_silence_3p",
+    "reload_empty": "tacz:aug/aug_reload_empty",
+    "reload_tactical": "tacz:aug/aug_reload_tactical",
+    "inspect": "tacz:aug/aug_inspect",
+    "inspect_empty": "tacz:aug/aug_inspect_empty",
+    "draw": "tacz:aug/aug_draw",
+    "put_away": "tacz:aug/aug_put_away",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_02"
+  },
+  "offhand_show": {
+    "pos": [1, 19, 4],
+    "rotate": [0, 0, 50],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-1, 19, 3],
+      "rotate": [-180, 0, 130],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}
