@@ -1,0 +1,8 @@
+{
+  "name": "tacz.gun.aug.name",
+  "display": "tacz:aug_display",
+  "data": "tacz:aug_data",
+  "type": "rifle",
+  "tooltip": "tacz.gun.aug.desc",
+  "sort": 10
+}
