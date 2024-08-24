@@ -182,6 +182,8 @@
   "config.tacz.client.render.first_person_bullet_tracer_enable.desc": "Whether or not to render first person bullet trail",
   "config.tacz.client.render.disable_interact_hud_text": "Disable Interact Hud Text",
   "config.tacz.client.render.disable_interact_hud_text.desc": "Disable the interact hud text in center of the screen",
+  "config.tacz.client.render.disable_movement_fov.desc": "Disable all fov effect from the movement speed attribute while holding a gun.",
+  "config.tacz.client.render.disable_movement_fov": "Disable Speed Fov Effect",
   "config.tacz.client.zoom": "Zoom",
   "config.tacz.client.zoom.screen_distance_coefficient": "Screen Distance Coefficient",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Screen distance coefficient for zoom, using MDV standard, default is MDV133",
