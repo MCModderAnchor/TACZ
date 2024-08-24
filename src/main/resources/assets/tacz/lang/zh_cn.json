@@ -45,6 +45,8 @@
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "缩放时的荧幕距离系数，使用 MDV 标准，默认为 MDV133",
   "config.tacz.client.zoom.zoom_sensitivity_base_multiplier": "开镜灵敏度基础乘数",
   "config.tacz.client.zoom.zoom_sensitivity_base_multiplier.desc": "开镜灵敏度最终会乘上这个系数",
+  "config.tacz.client.render.disable_movement_fov": "禁用移速FOV效果",
+  "config.tacz.client.render.disable_movement_fov.desc": "持枪时完全屏蔽移速属性带来的fov变化",
   "config.tacz.common.ammo": "弹药",
   "config.tacz.common.ammo.destroy_glass": "破坏玻璃",
   "config.tacz.common.ammo.destroy_glass.desc": "子弹是否可以摧毁玻璃（因为玻璃的性质无法掉落）",

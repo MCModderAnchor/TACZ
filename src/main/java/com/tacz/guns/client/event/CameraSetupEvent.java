@@ -11,16 +11,17 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.modifier.ParameterizedCachePair;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.SecondOrderDynamics;
-import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +31,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
@@ -242,6 +245,22 @@ public class CameraSetupEvent {
             double value = yawSplineFunction.value(timeTotal);
             player.setYRot(player.getYRot() - (float) (value - yRotO));
             yRotO = value;
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onComputeMovementFov(ComputeFovModifierEvent event){
+        if (!RenderConfig.DISABLE_MOVEMENT_ATTRIBUTE_FOV.get()) return;
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        float f = 1.0f;
+        if (player.getMainHandItem().getItem() instanceof AbstractGunItem) {
+            if (player.getAbilities().flying) {
+                f *= 1.1F;
+            }
+            event.setNewFovModifier(player.isSprinting() ? 1.15f * f : f);
         }
     }
 }
