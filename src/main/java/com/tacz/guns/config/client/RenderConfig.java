@@ -17,6 +17,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue FIRST_PERSON_BULLET_TRACER_ENABLE;
     public static ForgeConfigSpec.BooleanValue DISABLE_INTERACT_HUD_TEXT;
     public static ForgeConfigSpec.IntValue DAMAGE_COUNTER_RESET_TIME;
+    public static ForgeConfigSpec.BooleanValue DISABLE_MOVEMENT_ATTRIBUTE_FOV;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -59,6 +60,9 @@ public class RenderConfig {
 
         builder.comment("Max time the damage counter will reset");
         DAMAGE_COUNTER_RESET_TIME = builder.defineInRange("DamageCounterResetTime", 2000, 10, Integer.MAX_VALUE);
+
+        builder.comment("Disable the fov effect from the movement speed attribute while holding a gun");
+        DISABLE_MOVEMENT_ATTRIBUTE_FOV = builder.define("DisableMovementAttributeFov", true);
 
         builder.pop();
     }
