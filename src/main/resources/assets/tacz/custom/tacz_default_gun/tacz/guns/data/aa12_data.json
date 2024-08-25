@@ -44,6 +44,16 @@
   "put_away_time": 0.6,
   "aim_time": 0.2,
   "sprint_time": 0.21,
+  "weight": 5.2,
+  "movement_speed": {
+    // 默认修正
+    "base": 0.0,
+    // 瞄准时
+    "aim": -0.2,
+    // 换弹时
+    "reload": -0.2
+  },
+  "crawl_recoil_multiplier": 0.5,
   "fire_mode": [
     "semi",
     "auto"

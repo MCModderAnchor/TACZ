@@ -7,7 +7,7 @@
     50
   ],
   "bolt": "closed_bolt",
-  "rpm": 690,
+  "rpm": 710,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
@@ -49,7 +49,7 @@
   // 重量，枪械的总重将影响“移速属性”，默认-1.5%移动速度/kg，可在ServerConfig中调整
   // 调整的属性会作为“百分比增加”类型(MULTIPLY_BASE)的属性修饰器添加至实体上
   // 注意，移速属性并不能直接反应实际移速，此属性对实际移速的影响较为复杂，请自行查阅相关资料
-  "weight": 3.6,
+  "weight": 3.1,
   // 额外移速修正，多种情况同时满足时，仅计算最后一个修正
   // 对于其中的每个情况，最终的修正值是枪械和所有配件该情况下修正值的和
   // 调整的属性将作为“最终乘算”类型(MULTIPLY_TOTAL)的属性修饰器添加至实体上
@@ -57,15 +57,15 @@
     // 默认修正
     "base": 0.0,
     // 瞄准时
-    "aim": -0.5,
+    "aim": -0.35,
     // 换弹时
-    "reload": -0.2
+    "reload": -0.1
   },
   "fire_mode": [
     "auto",
     "semi"
   ],
-  "crawl_recoil_multiplier": 0.33,
+  "crawl_recoil_multiplier": 0.75,
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.375, 0.375]},

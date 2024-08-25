@@ -45,6 +45,13 @@
   "aim_time": 0.25,
   "sprint_time": 0.2,
   "bolt_action_time": 0.9,
+  "weight": 6.9,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.4,
+    "reload": -0.2
+  },
+  "crawl_recoil_multiplier": 0.25,
   "fire_mode": [
     "semi"
   ],
