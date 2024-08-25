@@ -71,8 +71,8 @@ public class RenderClothConfig {
                 .setMin(10).setMax(Integer.MAX_VALUE).setDefaultValue(2000).setTooltip(new TranslatableComponent("config.tacz.client.render.damage_counter_reset_time.desc"))
                 .setSaveConsumer(RenderConfig.DAMAGE_COUNTER_RESET_TIME::set).build());
 
-        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.disable_movement_fov"), RenderConfig.DISABLE_INTERACT_HUD_TEXT.get())
-                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.disable_movement_fov.desc"))
+        render.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.client.render.disable_movement_fov"), RenderConfig.DISABLE_INTERACT_HUD_TEXT.get())
+                .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.client.render.disable_movement_fov.desc"))
                 .setSaveConsumer(RenderConfig.DISABLE_INTERACT_HUD_TEXT::set).build());
     }
 }

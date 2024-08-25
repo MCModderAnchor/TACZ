@@ -85,7 +85,7 @@ public class EntityUtil {
             return null;
         }
         Vec3 hitBoxPos = hitPos.subtract(entity.position());
-        ResourceLocation entityId = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
+        ResourceLocation entityId = ForgeRegistries.ENTITIES.getKey(entity.getType());
         // 有配置的调用配置
         if (entityId != null) {
             AABB aabb = HeadShotAABBConfigRead.getAABB(entityId);

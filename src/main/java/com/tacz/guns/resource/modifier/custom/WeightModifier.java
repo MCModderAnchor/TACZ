@@ -11,6 +11,7 @@ import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -97,9 +98,9 @@ public class WeightModifier implements IAttachmentModifier<Modifier, Float> {
             }
             // 添加文本提示
             if (adsAddendTime > 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.weight.increase").withStyle(ChatFormatting.RED));
+                components.add(new TranslatableComponent("tooltip.tacz.attachment.weight.increase").withStyle(ChatFormatting.RED));
             } else if (adsAddendTime < 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.weight.decrease").withStyle(ChatFormatting.GREEN));
+                components.add(new TranslatableComponent("tooltip.tacz.attachment.weight.decrease").withStyle(ChatFormatting.GREEN));
             }
         }
     }
