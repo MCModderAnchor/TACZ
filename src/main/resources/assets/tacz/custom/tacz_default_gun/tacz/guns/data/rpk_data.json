@@ -92,6 +92,13 @@
   // 拉栓上膛的时间，仅当枪栓类型为 manual_action 时有效
   // "bolt_action_time": 0.9,
   // 开火模式
+  "weight": 4.8,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.2,
+    "reload": -0.1
+  },
+  "crawl_recoil_multiplier": 0.2,
   "fire_mode": [
     // 全自动
     "auto",
@@ -122,7 +129,7 @@
     // 潜行射击散布
     "sneak": 3.5,
     // 趴下射击散布
-    "lie": 0.5,
+    "lie": 2,
     // 瞄准射击时散布
     "aim": 0.15
   },

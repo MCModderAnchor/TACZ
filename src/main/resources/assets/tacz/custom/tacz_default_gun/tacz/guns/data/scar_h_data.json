@@ -11,7 +11,7 @@
   "bullet": {
     "life": 0.8,
     "bullet_amount": 1,
-    "damage": 13,
+    "damage": 14,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.5,
@@ -44,6 +44,13 @@
   "put_away_time": 0.43,
   "aim_time": 0.21,
   "sprint_time": 0.19,
+  "weight": 4.6,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.2,
+    "reload": -0.1
+  },
+  "crawl_recoil_multiplier": 0.5,
   "fire_mode": [
     "semi",
     "auto"
@@ -51,7 +58,7 @@
   "recoil": {
     "pitch": [
       {"time": 0, "value": [1.0, 1.0]},
-      {"time": 0.25, "value": [1.0, 1.0]},
+      {"time": 0.2, "value": [1.0, 1.0]},
       {"time": 0.45, "value": [-0.2, -0.2]},
       {"time": 0.6, "value": [0, 0]},
       {"time": 0.7, "value": [0, 0]}

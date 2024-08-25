@@ -45,6 +45,16 @@
   "aim_time": 0.27,
   "sprint_time": 0.2,
   "bolt_action_time": 1.43,
+  "weight": 10.7,
+  "movement_speed": {
+    // 默认修正
+    "base": 0.0,
+    // 瞄准时
+    "aim": -0.4,
+    // 换弹时
+    "reload": -0.2
+  },
+  "crawl_recoil_multiplier": 0.1,
   "fire_mode": [
     "semi"
   ],

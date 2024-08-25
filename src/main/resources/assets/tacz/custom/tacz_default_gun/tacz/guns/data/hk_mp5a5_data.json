@@ -45,6 +45,13 @@
   "put_away_time": 0.35,
   "sprint_time": 0.12,
   "aim_time": 0.17,
+  "weight": 2.5,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.1,
+    "reload": 0
+  },
+  "crawl_recoil_multiplier": 0.75,
   "fire_mode": [
     "auto",
     "burst",
