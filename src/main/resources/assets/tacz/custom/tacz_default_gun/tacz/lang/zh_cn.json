@@ -124,6 +124,12 @@
   "tacz.attachment.sniper_extended_mag_3.name": "§5狙击弹药扩容弹匣",
 
 
+  "tacz.attachment.ammo_mod_fmj.name":"全金属被甲",
+  "tacz.attachment.ammo_mod_he.name":"高爆弹",
+  "tacz.attachment.ammo_mod_hp.name":"空尖弹",
+  "tacz.attachment.ammo_mod_i.name": "燃烧弹",
+
+
   "tacz.attachment.grip_magpul_afg_2.name": "塔伦 AFG2 阻手",
   "tacz.attachment.grip_vertical_talon.name": "塔伦 SG2 前握把",
   "tacz.attachment.grip_vertical_military.name":"名驹 军用制式握把",

@@ -126,6 +126,12 @@
   "tacz.attachment.sniper_extended_mag_1.name":"Sniper Ammo Extended mag",
   "tacz.attachment.sniper_extended_mag_2.name":"§9Sniper Ammo Extended mag",
   "tacz.attachment.sniper_extended_mag_3.name": "§5Sniper Ammo Extended Mag",
+
+
+  "tacz.attachment.ammo_mod_fmj.name":"Full metal jacket Ammo",
+  "tacz.attachment.ammo_mod_he.name":"High Explosive Ammo",
+  "tacz.attachment.ammo_mod_hp.name":"Hollow-point Ammo",
+  "tacz.attachment.ammo_mod_i.name": "Incendiary Ammo",
   
   
   "tacz.attachment.grip_magpul_afg_2.name": "Talon AFG1 Handstop",
