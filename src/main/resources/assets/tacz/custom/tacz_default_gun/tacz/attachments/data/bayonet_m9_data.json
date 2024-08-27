@@ -53,7 +53,7 @@
   //   "entity": true,
   //   "block": true
   // },
-  // "explode": {
+  // "explosion": {
   // 一但为 true，那么强行开启爆炸，默认为 false
   // "explode": false,
   // "radius": {
