@@ -22,7 +22,14 @@
     "knockback": 0.05,
     "friction": 0.03,
     "ignite": false,
-    "pierce": 1
+    "pierce": 1,
+    "explosion": {
+      "explode": false,
+      "damage": 20,
+      "radius": 0.6,
+      "knockback": true,
+      "delay": 1
+    }
   },
   "ammo_amount": 9,
   "extended_mag_ammo_amount": [

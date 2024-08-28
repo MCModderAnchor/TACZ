@@ -115,19 +115,24 @@
 
   "tacz.attachment.extended_mag_1.name": "重型弹药扩容弹匣",
   "tacz.attachment.extended_mag_2.name": "§9重型弹药扩容弹匣",
-  "tacz.attachment.extended_mag_3.name": "§5重型弹药扩容弹匣",
+  "tacz.attachment.extended_mag_3.name": "§d重型弹药扩容弹匣",
   "tacz.attachment.light_extended_mag_1.name":"轻型弹药扩容弹匣",
   "tacz.attachment.light_extended_mag_2.name":"§9轻型弹药扩容弹匣",
-  "tacz.attachment.light_extended_mag_3.name":"§5轻型弹药扩容弹匣",
+  "tacz.attachment.light_extended_mag_3.name":"§d轻型弹药扩容弹匣",
   "tacz.attachment.sniper_extended_mag_1.name":"狙击弹药扩容弹匣",
   "tacz.attachment.sniper_extended_mag_2.name":"§9狙击弹药扩容弹匣",
-  "tacz.attachment.sniper_extended_mag_3.name": "§5狙击弹药扩容弹匣",
+  "tacz.attachment.sniper_extended_mag_3.name": "§d狙击弹药扩容弹匣",
 
 
-  "tacz.attachment.ammo_mod_fmj.name":"全金属被甲",
-  "tacz.attachment.ammo_mod_he.name":"高爆弹",
-  "tacz.attachment.ammo_mod_hp.name":"空尖弹",
-  "tacz.attachment.ammo_mod_i.name": "燃烧弹",
+  "tacz.attachment.ammo_mod_fmj.name":"§e全金属被甲弹",
+  "tacz.attachment.ammo_mod_he.name":"§e高爆弹",
+  "tacz.attachment.ammo_mod_hp.name":"§e空尖弹",
+  "tacz.attachment.ammo_mod_i.name": "§e燃烧弹",
+
+  "tacz.attachment.ammo_mod_fmj.desc": "全金属外壳弹头 \n提高对护甲的穿透力，但降低子弹后效",
+  "tacz.attachment.ammo_mod_he.desc": "高爆填充弹头 \n降低直击伤害和穿甲能力，但爆炸威力巨大",
+  "tacz.attachment.ammo_mod_hp.desc": "中空弹头 \n提高对无护甲目标的伤害，但降低护甲穿透能力和弹道性能",
+  "tacz.attachment.ammo_mod_i.desc": "铝热填充弹头 \n能点燃目标，但降低护甲穿透能力",
 
 
   "tacz.attachment.grip_magpul_afg_2.name": "塔伦 AFG2 阻手",

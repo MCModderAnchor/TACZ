@@ -27,7 +27,14 @@
     "knockback": 0,
     "friction": 0.03,
     "ignite": false,
-    "pierce": 5
+    "pierce": 5,
+    "explosion": {
+      "explode": false,
+      "damage": 140,
+      "radius": 1.8,
+      "knockback": true,
+      "delay": 1
+    }
   },
   "reload": {
     "type": "magazine",
@@ -106,5 +113,8 @@
   "allow_attachment_types": [
     "scope",
     "extended_mag"
-  ]
+  ],
+  "exclusive_attachments": {
+   
+  }
 }

@@ -32,8 +32,8 @@
       "head_shot_multiplier": 1.5,
       // 距离-伤害分段常函数
       "damage_adjust": [
-        {"distance": 30, "damage": 9},
-        {"distance": 75, "damage": 7},
+        {"distance": 30, "damage": 10},
+        {"distance": 60, "damage": 7},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 6}
       ]
@@ -51,7 +51,7 @@
     // 点燃时间，默认为 2 秒，仅用于实体
     "ignite_entity_time": 2,
     // 穿透数
-    "pierce": 2
+    "pierce": 2,
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
     //  延时爆炸，单位：秒
@@ -61,6 +61,13 @@
     //  爆炸导致的击退，默认为 false，需要服务器也开启爆炸击退才能使用
     //  "knockback": false
     //}
+    "explosion": {
+      "explode": false,
+      "damage": 22,
+      "radius": 0.6,
+      "knockback": true,
+      "delay": 1
+    }
   },
   // 换弹相关
   "reload": {
