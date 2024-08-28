@@ -5,9 +5,15 @@
     "addend": 0.01
   },
   "inaccuracy": {
-    "multiplier": 0.9
+    "multiplier": 0.85
   },
   "aim_inaccuracy": {
+    "multiplier": 0.95
+  },
+  "head_shot":{
+    "multiplier": 1.1
+  },
+  "effective_range": {
     "multiplier": 1.1
   },
   "silence": {

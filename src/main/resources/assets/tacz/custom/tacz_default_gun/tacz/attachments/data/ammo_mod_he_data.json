@@ -1,21 +1,19 @@
 {
   "weight": 0.6,
-  "ads": {
-    // 加数（多个配件的数值相加，作为第一个乘区）
-    "addend": 0.02
-  },
   "explosion": {
     "explode": true
   },
   "armor_ignore": {
-    "multiplier": 1.0
+    "multiplier": 0.5
   },
   "damage": {
-    "multiplier": 0.95
+    "multiplier": 0.5
   },
-  "ammo_speed": {
-    "multiplier": 1.0
+  "pierce": {
+    "multiplier": 0
   },
-  // 扩容弹夹（匣）等级
+  "rpm": {
+    "multiplier":0.8
+  },
   "extended_mag_level": 1
 }
