@@ -11,10 +11,10 @@
   },
   "recoil": {
     "pitch": {
-      "multiplier": 1.1
+      "multiplier": 0.75
     },
     "yaw": {
-      "multiplier": 0.7
+      "multiplier": 1.2
     }
   }
 }

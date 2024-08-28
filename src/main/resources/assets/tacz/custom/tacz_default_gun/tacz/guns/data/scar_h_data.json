@@ -17,7 +17,7 @@
       "armor_ignore": 0.5,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 35, "damage": 13},
+        {"distance": 35, "damage": 14},
         {"distance": 85, "damage": 11},
         {"distance": "infinite", "damage": 9}
       ]
@@ -27,7 +27,14 @@
     "knockback": 0,
     "friction": 0.0125,
     "ignite": false,
-    "pierce": 1
+    "pierce": 2,
+    "explosion": {
+      "explode": false,
+      "damage": 25,
+      "radius": 0.75,
+      "knockback": true,
+      "delay": 1
+    }
   },
   "reload": {
     "type": "magazine",
