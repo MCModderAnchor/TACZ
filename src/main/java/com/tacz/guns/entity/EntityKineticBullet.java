@@ -11,7 +11,6 @@ import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
 import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.config.sync.SyncConfig;
-import com.tacz.guns.init.ModAttributes;
 import com.tacz.guns.init.ModDamageTypes;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunHurt;
@@ -44,7 +43,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -62,10 +60,12 @@ import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkHooks;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Predicate;
+
+import static com.tacz.guns.api.event.common.GunDamageSourcePart.*;
 
 /**
  * 动能武器打出的子弹实体。
@@ -314,11 +314,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         @Nullable Entity owner = this.getOwner();
         // 攻击者
         LivingEntity attacker = owner instanceof LivingEntity ? (LivingEntity) owner : null;
+        var sources = createDamageSources(MaybeMultipartEntity.of(entity));
         boolean headshot = result.isHeadshot();
         float damage = this.getDamage(result.getLocation());
         float headShotMultiplier = Math.max(this.headShot, 0);
         // 发布Pre事件
-        var preEvent = new EntityHurtByGunEvent.Pre(entity, attacker, this.gunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
+        var preEvent = new EntityHurtByGunEvent.Pre(this, entity, attacker, this.gunId, damage, sources, headshot, headShotMultiplier, LogicalSide.SERVER);
         var cancelled = MinecraftForge.EVENT_BUS.post(preEvent);
         if (cancelled) {
             return;
@@ -330,6 +331,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         attacker = preEvent.getAttacker();
         var newGunId = preEvent.getGunId();
         damage = preEvent.getBaseAmount();
+        sources = Pair.of(preEvent.getDamageSource(NON_ARMOR_PIERCING), preEvent.getDamageSource(ARMOR_PIERCING));
         headshot = preEvent.isHeadShot();
         headShotMultiplier = preEvent.getHeadshotMultiplier();
         if (entity == null) {
@@ -354,12 +356,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             KnockBackModifier modifier = KnockBackModifier.fromLivingEntity(livingCore);
             modifier.setKnockBackStrength(this.knockback);
             // 创建伤害
-            tacAttackEntity(parts, damage);
+            tacAttackEntity(parts, damage, sources);
             // 恢复原位
             modifier.resetKnockBackStrength();
         } else {
             // 创建伤害
-            tacAttackEntity(parts, damage);
+            tacAttackEntity(parts, damage, sources);
         }
         // 爆炸逻辑
         if (this.explosion) {
@@ -374,11 +376,11 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 int attackerId = attacker == null ? 0 : attacker.getId();
                 // 如果生物死了
                 if (livingCore.isDeadOrDying()) {
-                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingCore, attacker, newGunId, headshot, LogicalSide.SERVER));
-                    NetworkHandler.sendToDimension(new ServerMessageGunKill(livingCore.getId(), attackerId, newGunId, headshot), livingCore);
+                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(this, livingCore, attacker, newGunId, damage, sources, headshot, headShotMultiplier, LogicalSide.SERVER));
+                    NetworkHandler.sendToDimension(new ServerMessageGunKill(getId(), livingCore.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingCore);
                 } else {
-                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(livingCore, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
-                    NetworkHandler.sendToDimension(new ServerMessageGunHurt(livingCore.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingCore);
+                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(this, livingCore, attacker, newGunId, damage, sources, headshot, headShotMultiplier, LogicalSide.SERVER));
+                    NetworkHandler.sendToDimension(new ServerMessageGunHurt(getId(), livingCore.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingCore);
                 }
             }
         }
@@ -436,7 +438,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         return 0;
     }
 
-    private void tacAttackEntity(MaybeMultipartEntity parts, float damage) {
+    /**
+     * @return Pair<非穿甲伤害源，穿甲伤害源>
+     */
+    private Pair<DamageSource, DamageSource> createDamageSources(MaybeMultipartEntity parts) {
         DamageSource source1, source2;
         var hitPartType = parts.hitPart().getType();
         var directCause = hitPartType.is(PRETEND_MELEE_DAMAGE_ON) ? this.getOwner() : this;
@@ -450,6 +455,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             source1 = ModDamageTypes.Sources.bullet(this.level().registryAccess(), directCause, this.getOwner(), false);
             source2 = ModDamageTypes.Sources.bullet(this.level().registryAccess(), directCause, this.getOwner(), true);
         }
+        return Pair.of(source1, source2);
+    }
+
+    private void tacAttackEntity(MaybeMultipartEntity parts, float damage, Pair<DamageSource, DamageSource> sources) {
+        var source1 = sources.getLeft();
+        var source2 = sources.getRight();
         // 穿甲伤害和普通伤害的比例计算
         float armorDamagePercent = Mth.clamp(this.armorIgnore, 0.0F, 1.0F);
         float normalDamagePercent = 1 - armorDamagePercent;
