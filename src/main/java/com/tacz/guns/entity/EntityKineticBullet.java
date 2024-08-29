@@ -310,7 +310,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         float damage = this.getDamage(result.getLocation());
         float headShotMultiplier = Math.max(this.headShot, 0);
         // 发布Pre事件
-        var preEvent = new EntityHurtByGunEvent.Pre(entity, attacker, this.gunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
+        var preEvent = new EntityHurtByGunEvent.Pre(this, entity, attacker, this.gunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
         var cancelled = MinecraftForge.EVENT_BUS.post(preEvent);
         if (cancelled) {
             return;
@@ -365,11 +365,11 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 int attackerId = attacker == null ? 0 : attacker.getId();
                 // 如果生物死了
                 if (livingCore.isDeadOrDying()) {
-                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(livingCore, attacker, newGunId, headshot, LogicalSide.SERVER));
-                    NetworkHandler.sendToDimension(new ServerMessageGunKill(livingCore.getId(), attackerId, newGunId, headshot), livingCore);
+                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(this, livingCore, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
+                    NetworkHandler.sendToDimension(new ServerMessageGunKill(getId(),livingCore.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingCore);
                 } else {
-                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(livingCore, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
-                    NetworkHandler.sendToDimension(new ServerMessageGunHurt(livingCore.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingCore);
+                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(this, livingCore, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
+                    NetworkHandler.sendToDimension(new ServerMessageGunHurt(getId(),livingCore.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingCore);
                 }
             }
         }
