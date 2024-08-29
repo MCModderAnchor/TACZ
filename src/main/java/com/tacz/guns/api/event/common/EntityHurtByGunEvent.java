@@ -7,6 +7,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import org.apache.http.annotation.Obsolete;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nullable;
 
@@ -14,15 +15,18 @@ import javax.annotation.Nullable;
  * 生物被枪械子弹伤害时触发的事件
  */
 public class EntityHurtByGunEvent extends Event {
+    protected final Entity bullet;
     protected @Nullable Entity hurtEntity;
     protected @Nullable LivingEntity attacker;
     protected ResourceLocation gunId;
     protected float baseAmount;
     protected boolean isHeadShot;
     protected float headshotMultiplier;
-    private final LogicalSide logicalSide;
+    protected final LogicalSide logicalSide;
 
-    protected EntityHurtByGunEvent(@Nullable Entity hurtEntity, @Nullable LivingEntity attacker, ResourceLocation gunId, float baseAmount, boolean isHeadShot, float headshotMultiplier, LogicalSide logicalSide) {
+    @ApiStatus.Internal
+    protected EntityHurtByGunEvent(Entity bullet,@Nullable Entity hurtEntity, @Nullable LivingEntity attacker, ResourceLocation gunId, float baseAmount, boolean isHeadShot, float headshotMultiplier, LogicalSide logicalSide) {
+        this.bullet = bullet;
         this.hurtEntity = hurtEntity;
         this.attacker = attacker;
         this.gunId = gunId;
@@ -37,8 +41,9 @@ public class EntityHurtByGunEvent extends Event {
      */
     @Cancelable
     public static class Pre extends EntityHurtByGunEvent {
-        public Pre(@Nullable Entity hurtEntity, @Nullable LivingEntity attacker, ResourceLocation gunId, float amount, boolean isHeadShot, float headshotMultiplier, LogicalSide logicalSide) {
-            super(hurtEntity, attacker, gunId, amount, isHeadShot, headshotMultiplier, logicalSide);
+        @ApiStatus.Internal
+        public Pre(Entity bullet,@Nullable Entity hurtEntity, @Nullable LivingEntity attacker, ResourceLocation gunId, float amount, boolean isHeadShot, float headshotMultiplier, LogicalSide logicalSide) {
+            super(bullet, hurtEntity, attacker, gunId, amount, isHeadShot, headshotMultiplier, logicalSide);
             this.headshotMultiplier = headshotMultiplier;
         }
 
@@ -72,9 +77,14 @@ public class EntityHurtByGunEvent extends Event {
      * @see EntityKillByGunEvent 实体因枪击致死时触发的事件
      */
     public static class Post extends EntityHurtByGunEvent {
-        public Post(@Nullable Entity hurtEntity, @Nullable LivingEntity attacker, ResourceLocation gunId, float amount, boolean isHeadShot, float headshotMultiplier, LogicalSide logicalSide) {
-            super(hurtEntity, attacker, gunId, amount, isHeadShot, headshotMultiplier, logicalSide);
+        @ApiStatus.Internal
+        public Post(Entity bullet, @Nullable Entity hurtEntity, @Nullable LivingEntity attacker, ResourceLocation gunId, float amount, boolean isHeadShot, float headshotMultiplier, LogicalSide logicalSide) {
+            super(bullet, hurtEntity, attacker, gunId, amount, isHeadShot, headshotMultiplier, logicalSide);
         }
+    }
+
+    public Entity getBullet() {
+        return bullet;
     }
 
     @Nullable
