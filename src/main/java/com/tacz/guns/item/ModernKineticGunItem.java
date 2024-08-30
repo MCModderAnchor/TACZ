@@ -232,6 +232,9 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         } else {
             target.hurt(DamageSource.mobAttack(user), damage);
         }
+        // 修复近战枪械不触发神化词条/宝石的bug
+        user.doEnchantDamageEffects(user, target);
+
         if (!target.isAlive()) {
             return;
         }
