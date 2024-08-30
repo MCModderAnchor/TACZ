@@ -18,6 +18,9 @@
       "multiplier": 0.8
     }
   },
+  "rpm": {
+    "multiplier":0.9
+  },
   "effective_range": {
     "multiplier": 1.2
   },
