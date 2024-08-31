@@ -22,7 +22,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -158,7 +157,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
                 damage += fireModeAdjustData.getDamageAmount();
             }
             MutableComponent value = Component.literal(DAMAGE_FORMAT.format(damage * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
-            if (bulletData.getExplosionData() != null) {
+            if (bulletData.getExplosionData() != null && AttachmentDataUtils.isExplodeEnabled(gun, gunData)) {
                 value.append(" + ").append(DAMAGE_FORMAT.format(bulletData.getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).append(Component.translatable("tooltip.tacz.gun.explosion"));
             }
             this.damage = Component.translatable("tooltip.tacz.gun.damage").append(value);
