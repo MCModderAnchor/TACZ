@@ -216,7 +216,7 @@
   "tooltip.tacz.gun.explosion": " (爆炸)",
   "tooltip.tacz.gun.head_shot_multiplier": "%s 爆头伤害",
   "tooltip.tacz.gun.level": "经验等级：",
-  "tooltip.tacz.gun.movment_speed": "移动速度: %s",
+  "tooltip.tacz.gun.movement_speed": "移动速度: %s",
   "tooltip.tacz.gun.tips": "<<< 在游戏内按下 %s 打开改装界面 >>>",
   "tooltip.tacz.gun.type": "枪种: ",
   "tooltip.tacz.page.next": "下一页",
