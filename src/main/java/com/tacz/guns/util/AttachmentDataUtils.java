@@ -274,7 +274,7 @@ public final class AttachmentDataUtils {
     }
 
     private static <T> boolean resolve(JsonProperty<?> raw, BooleanResolver<T> data, Class<T> type){
-        if (raw.getValue()!=null && raw.getValue().getClass().equals(type)) {
+        if (raw != null && raw.getValue() != null && raw.getValue().getClass().equals(type)) {
             return data.apply((T) raw.getValue());
         }
         return false;

@@ -97,8 +97,6 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         Font font = Minecraft.getInstance().font;
         BulletData bulletData = gunIndex.getBulletData();
         GunData gunData = gunIndex.getGunData();
-        FireMode fireMode = iGun.getFireMode(gun);
-        GunFireModeAdjustData fireModeAdjustData = gunData.getFireModeAdjustData(fireMode);
 
         if (shouldShow(GunTooltipPart.DESCRIPTION)) {
             @Nullable String tooltip = gunIndex.getPojo().getTooltip();
@@ -178,7 +176,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
 
             double weightFactor = SyncConfig.WEIGHT_SPEED_MULTIPLIER.get();
             double weight = AttachmentDataUtils.getWightWithAttachment(gun, gunData);
-            this.weight = Component.translatable("tooltip.tacz.gun.movment_speed", FORMAT_P_D1.format(-weightFactor * weight)).withStyle(ChatFormatting.RED);
+            this.weight = Component.translatable("tooltip.tacz.gun.movement_speed", FORMAT_P_D1.format(-weightFactor * weight)).withStyle(ChatFormatting.RED);
 
             this.maxWidth = Math.max(font.width(this.armorIgnore), this.maxWidth);
             this.maxWidth = Math.max(font.width(this.headShotMultiplier), this.maxWidth);
