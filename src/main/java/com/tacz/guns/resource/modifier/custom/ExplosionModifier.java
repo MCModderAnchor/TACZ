@@ -120,5 +120,9 @@ public class ExplosionModifier implements IAttachmentModifier<ExplosionModifier.
 
         @SerializedName("delay")
         private Modifier delay = new Modifier();
+
+        public boolean isExplode() {
+            return explode;
+        }
     }
 }
