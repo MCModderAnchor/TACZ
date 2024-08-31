@@ -156,8 +156,8 @@ public class ClientGunTooltip implements ClientTooltipComponent {
                 damage += fireModeAdjustData.getDamageAmount();
             }
             MutableComponent value = new TextComponent(DAMAGE_FORMAT.format(damage * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
-            if (bulletData.getExplosionData() != null) {
-                value.append(" + ").append(DAMAGE_FORMAT.format(bulletData.getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).append(new TranslatableComponent("tooltip.tacz.gun.explosion"));
+            if (bulletData.getExplosionData() != null && AttachmentDataUtils.isExplodeEnabled(gun, gunData)) {
+                value.append(" + ").append(DAMAGE_FORMAT.format(bulletData.getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).append(Component.translatable("tooltip.tacz.gun.explosion"));
             }
             this.damage = new TranslatableComponent("tooltip.tacz.gun.damage").append(value);
             this.maxWidth = Math.max(font.width(this.damage), this.maxWidth);
