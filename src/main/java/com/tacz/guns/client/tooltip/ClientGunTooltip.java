@@ -151,11 +151,8 @@ public class ClientGunTooltip implements ClientTooltipComponent {
             this.gunType = Component.translatable("tooltip.tacz.gun.type").append(Component.translatable(tabKey).withStyle(ChatFormatting.AQUA));
             this.maxWidth = Math.max(font.width(this.gunType), this.maxWidth);
 
-            float damage = bulletData.getDamageAmount();
-            if (fireModeAdjustData != null) {
-                damage += fireModeAdjustData.getDamageAmount();
-            }
-            MutableComponent value = Component.literal(DAMAGE_FORMAT.format(damage * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).withStyle(ChatFormatting.AQUA);
+            double damage = AttachmentDataUtils.getDamageWithAttachment(gun, gunData);
+            MutableComponent value = Component.literal(DAMAGE_FORMAT.format(damage)).withStyle(ChatFormatting.AQUA);
             if (bulletData.getExplosionData() != null && AttachmentDataUtils.isExplodeEnabled(gun, gunData)) {
                 value.append(" + ").append(DAMAGE_FORMAT.format(bulletData.getExplosionData().getDamage() * SyncConfig.DAMAGE_BASE_MULTIPLIER.get())).append(Component.translatable("tooltip.tacz.gun.explosion"));
             }
@@ -167,19 +164,11 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         if (shouldShow(GunTooltipPart.EXTRA_DAMAGE_INFO)) {
             @Nullable ExtraDamage extraDamage = bulletData.getExtraDamage();
             if (extraDamage != null) {
-                float armorIgnore = extraDamage.getArmorIgnore();
-                if (fireModeAdjustData != null) {
-                    armorIgnore += fireModeAdjustData.getArmorIgnore();
-                }
-                float armorDamagePercent = (float) (armorIgnore * SyncConfig.ARMOR_IGNORE_BASE_MULTIPLIER.get());
-
-                float headShotMultiplier = extraDamage.getHeadShotMultiplier();
-                if (fireModeAdjustData != null) {
-                    headShotMultiplier += fireModeAdjustData.getHeadShotMultiplier();
-                }
-                float headShotMultiplierPercent = (float) (headShotMultiplier * SyncConfig.HEAD_SHOT_BASE_MULTIPLIER.get());
+                double armorDamagePercent = AttachmentDataUtils.getArmorIgnoreWithAttachment(gun, gunData);
+                double headShotMultiplierPercent = AttachmentDataUtils.getHeadshotMultiplier(gun, gunData);
 
                 armorDamagePercent = Mth.clamp(armorDamagePercent, 0.0F, 1.0F);
+
                 this.armorIgnore = Component.translatable("tooltip.tacz.gun.armor_ignore", FORMAT.format(armorDamagePercent));
                 this.headShotMultiplier = Component.translatable("tooltip.tacz.gun.head_shot_multiplier", FORMAT.format(headShotMultiplierPercent));
             } else {
