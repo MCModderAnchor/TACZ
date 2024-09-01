@@ -241,13 +241,14 @@ public class FirstPersonRenderGunEvent {
             poseStack1.mulPose(Axis.XN.rotation((float) xRot));
             poseStack1.translate(originRenderOffset.x, originRenderOffset.y, originRenderOffset.z - distance);
             float trailLength = 0.5f * (float) entityBullet.getDeltaMovement().length();
+            float trailWidth = 0.03f * entityBullet.getTracerSizeOverride();
             poseStack1.translate(0, 0, -trailLength / 2);
-            poseStack1.scale(0.03f, 0.03f, trailLength);
+            poseStack1.scale(trailWidth, trailWidth, trailLength);
 
             ResourceLocation gunId = entityBullet.getGunId();
             TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-                float[] gunTracerColor = gunIndex.getTracerColor();
-                if (gunTracerColor == null) {
+                float[] entityTracerColor = entityBullet.getTracerColorOverride().orElseGet(gunIndex::getTracerColor);
+                if (entityTracerColor == null) {
                     // 如果枪械没有添加弋光弹参数，那么调用子弹的
                     ResourceLocation ammoId = entityBullet.getAmmoId();
                     TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(ammoIndex -> {
@@ -260,7 +261,7 @@ public class FirstPersonRenderGunEvent {
                     // 否则调用调用枪械的
                     RenderType type = RenderType.energySwirl(InternalAssetLoader.DEFAULT_BULLET_TEXTURE, 15, 15);
                     model.render(poseStack1, ItemDisplayContext.NONE, type, LightTexture.pack(15, 15),
-                            OverlayTexture.NO_OVERLAY, gunTracerColor[0], gunTracerColor[1], gunTracerColor[2], 1);
+                            OverlayTexture.NO_OVERLAY, entityTracerColor[0], entityTracerColor[1], entityTracerColor[2], 1);
                 }
             });
         }

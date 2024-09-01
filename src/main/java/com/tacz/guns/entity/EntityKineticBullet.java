@@ -1,6 +1,7 @@
 package com.tacz.guns.entity;
 
 import com.google.common.collect.Lists;
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ITargetEntity;
@@ -30,6 +31,7 @@ import com.tacz.guns.util.block.BlockRayTrace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -75,6 +77,26 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     public static final TagKey<EntityType<?>> USE_MAGIC_DAMAGE_ON = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("tacz:use_magic_damage_on"));
     public static final TagKey<EntityType<?>> USE_VOID_DAMAGE_ON = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("tacz:use_void_damage_on"));
     public static final TagKey<EntityType<?>> PRETEND_MELEE_DAMAGE_ON = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("tacz:pretend_melee_damage_on"));
+
+    /**
+     * 允许其他 mod 使用 persistent data（永久数据） 控制曳光弹的颜色和粗细。<p>
+     * 使用永久数据的好处是即使以后本类大改，使用了这个功能的其他 mod 也不会崩溃。<p>
+     * 下面两个字段是 persistent data 的 key。<p>
+     * 这个字段的值的类型是 int[4]。<p>
+     * <p>
+     * 使用例：
+     * <pre>{@code
+     *     bullet.getPersistentData().putIntArray(TRACER_COLOR_OVERRIDER_KEY, new int[]{255, 255, 255, 255});
+     * }</pre>
+     */
+    public static final String TRACER_COLOR_OVERRIDER_KEY = GunMod.MOD_ID + ":tracer_override";
+
+    /**
+     * 这个字段的值的类型是 float。
+     * 1 表示默认大小，0 表示 0 倍率粗细（不显示了）
+     */
+    public static final String TRACER_SIZE_OVERRIDER_KEY = GunMod.MOD_ID + ":tracer_size";
+
     private ResourceLocation ammoId = DefaultAssets.EMPTY_AMMO_ID;
     private int life = 200;
     private float speed = 1;
@@ -557,6 +579,48 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     public void setOriginRenderOffset(Vec3 originRenderOffset) {
         this.originRenderOffset = originRenderOffset;
+    }
+
+    public Optional<float[]> getTracerColorOverride() {
+        var pd = getPersistentData();
+        if (!pd.contains(TRACER_COLOR_OVERRIDER_KEY, Tag.TAG_INT_ARRAY)) {
+            return Optional.empty();
+        } else {
+            var ints = pd.getIntArray(TRACER_COLOR_OVERRIDER_KEY);
+            // 请避免使用 1 或者 2 个值的数组。
+            // 此处 1~2 个值的分支仅为优雅地处理异常情况来代替崩溃所作的措施 :(
+            switch (ints.length) {
+                case 0:
+                    return Optional.empty();
+                case 1: {
+                    var albedo = ints[0] / 255F;
+                    return Optional.of(new float[]{albedo, albedo, albedo, 1});
+                }
+                case 2: {
+                    var albedo = ints[0] / 255F;
+                    var alpha = ints[1] / 255F;
+                    return Optional.of(new float[]{albedo, albedo, albedo, alpha});
+                }
+                case 3: {
+                    var r = ints[0] / 255F;
+                    var g = ints[1] / 255F;
+                    var b = ints[2] / 255F;
+                    return Optional.of(new float[]{r, g, b, 1});
+                }
+                default: {
+                    var r = ints[0] / 255F;
+                    var g = ints[1] / 255F;
+                    var b = ints[2] / 255F;
+                    var a = ints[3] / 255F;
+                    return Optional.of(new float[]{r, g, b, a});
+                }
+            }
+        }
+    }
+
+    public float getTracerSizeOverride() {
+        var pd = getPersistentData();
+        return pd.contains(TRACER_SIZE_OVERRIDER_KEY, Tag.TAG_ANY_NUMERIC) ? pd.getFloat(TRACER_SIZE_OVERRIDER_KEY) : 1;
     }
 
     @Override
