@@ -45,10 +45,13 @@ public class ExplosionModifier implements IAttachmentModifier<ExplosionModifier.
         ExplosionData cacheValue = cache.getValue();
 
         List<Boolean> explodeValues = Lists.newArrayList();
+        explodeValues.add(cacheValue.isExplode());
         List<Modifier> radiusValues = Lists.newArrayList();
         List<Modifier> damageValues = Lists.newArrayList();
         List<Boolean> knockbackValues = Lists.newArrayList();
+        knockbackValues.add(cacheValue.isKnockback());
         List<Boolean> destroyBlockValues = Lists.newArrayList();
+        destroyBlockValues.add(cacheValue.isDestroyBlock());
         List<Modifier> delayValues = Lists.newArrayList();
 
         modifiedValues.forEach(v -> {
