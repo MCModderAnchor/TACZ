@@ -5,6 +5,7 @@ import com.tacz.guns.config.ClientConfig;
 import com.tacz.guns.config.CommonConfig;
 import com.tacz.guns.config.ServerConfig;
 import com.tacz.guns.init.*;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -40,6 +41,7 @@ public class GunMod {
         ModAttributes.ATTRIBUTES.register(bus);
 
         registerDefaultExtraGunPack();
+        AttachmentPropertyManager.registerModifier();
     }
 
     private static void registerDefaultExtraGunPack() {
