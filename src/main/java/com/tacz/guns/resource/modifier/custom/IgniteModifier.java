@@ -38,8 +38,11 @@ public class IgniteModifier implements IAttachmentModifier<Ignite, Ignite> {
 
     @Override
     public void eval(List<Ignite> modifiedValues, CacheValue<Ignite> cache) {
+        Ignite cacheValue = cache.getValue();
         List<Boolean> igniteEntityValues = Lists.newArrayList();
+        igniteEntityValues.add(cacheValue.isIgniteEntity());
         List<Boolean> igniteBlockValues = Lists.newArrayList();
+        igniteBlockValues.add(cacheValue.isIgniteBlock());
         modifiedValues.forEach(v -> {
             igniteEntityValues.add(v.isIgniteEntity());
             igniteBlockValues.add(v.isIgniteBlock());
