@@ -1,5 +1,5 @@
 {
-	"format_version": "1.21.0",
+	"format_version": "1.12.0",
 	"minecraft:geometry": [
 		{
 			"description": {
@@ -6432,7 +6432,7 @@
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [3.5, 13, 15]
+					"pivot": [2.575, 12.05625, 13.5]
 				},
 				{
 					"name": "iron_view",
@@ -6471,7 +6471,7 @@
 				},
 				{
 					"name": "camera",
-					"pivot": [3.5, 13, 15]
+					"pivot": [2.575, 12.05625, 13.5]
 				}
 			]
 		}
