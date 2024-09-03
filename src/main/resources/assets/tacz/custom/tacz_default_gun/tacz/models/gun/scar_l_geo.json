@@ -5414,7 +5414,7 @@
 				{
 					"name": "holdrelease",
 					"parent": "buttons",
-					"pivot": [1.5, 7, -0.9375],
+					"pivot": [0.78657, 8.66584, 5.25],
 					"cubes": [
 						{
 							"origin": [0.8125, 8.9375, 5],
