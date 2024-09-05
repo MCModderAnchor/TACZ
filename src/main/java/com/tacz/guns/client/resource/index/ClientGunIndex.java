@@ -67,6 +67,7 @@ public class ClientGunIndex {
     private @Nullable AmmoParticle particle;
     private float @Nullable [] tracerColor = null;
     private EnumMap<FireMode, ControllableData> controllableData;
+    private AmmoCountStyle ammoCountStyle = AmmoCountStyle.NORMAL;
 
     private ClientGunIndex() {
     }
@@ -92,6 +93,7 @@ public class ClientGunIndex {
         checkTextShow(display, index);
         index.showCrosshair = display.isShowCrosshair();
         index.controllableData = display.getControllableData();
+        index.ammoCountStyle = display.getAmmoCountStyle();
         return index;
     }
 
@@ -434,5 +436,9 @@ public class ClientGunIndex {
 
     public EnumMap<FireMode, ControllableData> getControllableData() {
         return controllableData;
+    }
+
+    public AmmoCountStyle getAmmoCountStyle() {
+        return ammoCountStyle;
     }
 }

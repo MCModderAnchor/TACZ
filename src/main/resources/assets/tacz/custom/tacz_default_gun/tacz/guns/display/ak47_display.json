@@ -15,6 +15,8 @@
   // "hud_empty": "tacz:gun/hud/ak47_empty",
   // 背包/快捷栏等容器中槽位显示的 2D 材质，在包目录下的 textures 文件夹中寻找，不建议为空
   "slot": "tacz:gun/slot/ak47",
+  // 弹药计量样式，可选值：”normal“(显示实际值)、”percent“(显示百分比)，默认为”normal“
+  "ammo_count_style": "normal",
   // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空
   "animation": "tacz:ak47",
   // 指定使用缺省动画，可为空。如果上文指定的动画文件里缺少某个动画，如 draw 动画，则会从缺省动画拷贝。

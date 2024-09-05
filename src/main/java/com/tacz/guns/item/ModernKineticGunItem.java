@@ -267,16 +267,6 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         });
     }
 
-    @Override
-    public void reloadAmmo(ItemStack gunItem, int ammoCount, boolean loadBarrel) {
-        ResourceLocation gunId = getGunId(gunItem);
-        Bolt boltType = TimelessAPI.getCommonGunIndex(gunId).map(index -> index.getGunData().getBolt()).orElse(null);
-        this.setCurrentAmmoCount(gunItem, ammoCount);
-        if (loadBarrel && (boltType == Bolt.MANUAL_ACTION || boltType == Bolt.CLOSED_BOLT)) {
-            this.reduceCurrentAmmoCount(gunItem);
-            this.setBulletInBarrel(gunItem, true);
-        }
-    }
 
     /**
      * 生成子弹实体

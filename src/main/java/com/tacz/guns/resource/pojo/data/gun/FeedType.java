@@ -12,5 +12,10 @@ public enum FeedType {
      * 手动供弹
      */
     @SerializedName("manual")
-    MANUAL
+    MANUAL,
+    /**
+     * 燃料供弹(消耗单个物品补满弹药)
+     */
+    @SerializedName("fuel")
+    FUEL
 }

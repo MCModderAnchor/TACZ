@@ -1,11 +1,13 @@
 package com.tacz.guns.client.tooltip;
 
+import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
-import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.input.RefitKey;
 import com.tacz.guns.client.resource.ClientAssetManager;
+import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.resource.pojo.PackInfo;
+import com.tacz.guns.client.resource.pojo.display.gun.AmmoCountStyle;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.item.GunTooltipPart;
@@ -35,10 +37,12 @@ public class ClientGunTooltip implements ClientTooltipComponent {
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##%");
     private static final DecimalFormat FORMAT_P_D1 = new DecimalFormat("#.#%");
     private static final DecimalFormat DAMAGE_FORMAT = new DecimalFormat("#.##");
+    private static final DecimalFormat CURRENT_AMMO_FORMAT_PERCENT = new DecimalFormat("0%");
 
     private final ItemStack gun;
     private final IGun iGun;
     private final CommonGunIndex gunIndex;
+    private @Nullable final ClientGunIndex clientGunIndex;
     private final ItemStack ammo;
     private @Nullable List<FormattedCharSequence> desc;
     private Component ammoName;
@@ -59,6 +63,7 @@ public class ClientGunTooltip implements ClientTooltipComponent {
         this.iGun = tooltip.getIGun();
         ResourceLocation ammoId = tooltip.getAmmoId();
         this.gunIndex = tooltip.getGunIndex();
+        this.clientGunIndex = TimelessAPI.getClientGunIndex(this.iGun.getGunId(this.gun)).orElse(null);
         this.ammo = AmmoItemBuilder.create().setId(ammoId).build();
         this.maxWidth = 0;
         this.getText();
@@ -123,10 +128,20 @@ public class ClientGunTooltip implements ClientTooltipComponent {
             int currentAmmoCount = iGun.getCurrentAmmoCount(this.gun) + barrelBulletAmount;
 
             if (!iGun.useDummyAmmo(gun)) {
-                this.ammoCountText = Component.literal("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
+                if (clientGunIndex != null && clientGunIndex.getAmmoCountStyle()== AmmoCountStyle.PERCENT) {
+                    this.ammoCountText = Component.literal(CURRENT_AMMO_FORMAT_PERCENT.format((float) currentAmmoCount / (maxAmmoCount == 0 ? 1f : maxAmmoCount)));
+                } else {
+                    this.ammoCountText = Component.literal("%d/%d".formatted(currentAmmoCount, maxAmmoCount));
+                }
             } else {
                 int dummyAmmoAmount = iGun.getDummyAmmoAmount(gun);
-                this.ammoCountText = Component.literal("%d/%d (%d)".formatted(currentAmmoCount, maxAmmoCount, dummyAmmoAmount));
+                if (clientGunIndex != null && clientGunIndex.getAmmoCountStyle()== AmmoCountStyle.PERCENT) {
+                    String p = CURRENT_AMMO_FORMAT_PERCENT.format((float) currentAmmoCount / (maxAmmoCount == 0 ? 1f : maxAmmoCount));
+                    this.ammoCountText = Component.literal("%s (%d)".formatted(p, dummyAmmoAmount));
+                } else {
+                    this.ammoCountText = Component.literal("%d/%d (%d)".formatted(currentAmmoCount, maxAmmoCount, dummyAmmoAmount));
+                }
+
             }
             this.maxWidth = Math.max(font.width(this.ammoCountText) + 22, this.maxWidth);
         }
