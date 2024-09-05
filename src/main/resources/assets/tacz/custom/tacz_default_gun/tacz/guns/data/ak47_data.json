@@ -76,7 +76,7 @@
   },
   // 换弹相关
   "reload": {
-    // magazine 是弹匣供弹，manual 是手动供弹
+    // magazine 是弹匣供弹，manual 是手动供弹，fuel是类燃料罐供弹（消耗一个物品填满）
     "type": "magazine",
     // 弹匣供弹换弹时长（秒），到达此时间点，服务端就更新枪内子弹数量
     "feed": {

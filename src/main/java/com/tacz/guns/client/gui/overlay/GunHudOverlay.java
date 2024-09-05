@@ -11,6 +11,7 @@ import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.client.resource.pojo.display.gun.AmmoCountStyle;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.util.AttachmentDataUtils;
@@ -33,6 +34,7 @@ public class GunHudOverlay {
     private static final ResourceLocation AUTO = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_auto.png");
     private static final ResourceLocation BURST = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_burst.png");
     private static final DecimalFormat CURRENT_AMMO_FORMAT = new DecimalFormat("000");
+    private static final DecimalFormat CURRENT_AMMO_FORMAT_PERCENT = new DecimalFormat("000%");
     private static final DecimalFormat INVENTORY_AMMO_FORMAT = new DecimalFormat("0000");
     private static long checkAmmoTimestamp = -1L;
     private static int cacheMaxAmmoCount = 0;
@@ -66,7 +68,15 @@ public class GunHudOverlay {
             // 白色
             ammoCountColor = 0xFFFFFF;
         }
-        String currentAmmoCountText = CURRENT_AMMO_FORMAT.format(ammoCount);
+
+        String currentAmmoCountText;
+        if (gunIndex.getAmmoCountStyle() == AmmoCountStyle.PERCENT) {
+            // 百分比模式
+            currentAmmoCountText = CURRENT_AMMO_FORMAT_PERCENT.format((float)ammoCount/(cacheMaxAmmoCount==0 ? 1f : cacheMaxAmmoCount));
+        } else {
+            // 普通模式
+            currentAmmoCountText = CURRENT_AMMO_FORMAT.format(ammoCount);
+        }
 
         // 计算弹药数
         handleCacheCount(player, stack, gunIndex, iGun);
