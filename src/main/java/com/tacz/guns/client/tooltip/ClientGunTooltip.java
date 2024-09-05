@@ -9,6 +9,7 @@ import com.tacz.guns.client.input.RefitKey;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.resource.pojo.PackInfo;
+import com.tacz.guns.client.resource.pojo.display.gun.AmmoCountStyle;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.item.GunTooltipPart;
