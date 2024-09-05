@@ -1,12 +1,9 @@
 package com.tacz.guns.entity.shooter;
 
-import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.event.common.GunReloadEvent;
-import com.tacz.guns.api.item.IAmmo;
-import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.network.NetworkHandler;
@@ -15,14 +12,11 @@ import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.GunReloadData;
-import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.Optional;
 
@@ -44,10 +38,10 @@ public class LivingEntityReload {
             return;
         }
         ItemStack currentGunItem = data.currentGunItem.get();
-        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
+        if (!(currentGunItem.getItem() instanceof AbstractGunItem gunItem)) {
             return;
         }
-        ResourceLocation gunId = iGun.getGunId(currentGunItem);
+        ResourceLocation gunId = gunItem.getGunId(currentGunItem);
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {
             // 检查换弹是否还未完成
             if (data.reloadStateType.isReloading()) {
@@ -65,10 +59,8 @@ public class LivingEntityReload {
             if (data.boltCoolDown >= 0) {
                 return;
             }
-            int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
-            int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunIndex.getGunData());
             // 检查弹药
-            if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !inventoryHasAmmo(shooter, currentAmmoCount, maxAmmoCount, currentGunItem, iGun)) {
+            if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !gunItem.canReload(shooter, currentGunItem)) {
                 return;
             }
             // 触发装弹事件
@@ -77,7 +69,7 @@ public class LivingEntityReload {
             }
             NetworkHandler.sendToTrackingEntity(new ServerMessageGunReload(shooter.getId(), currentGunItem), shooter);
             Bolt boltType = gunIndex.getGunData().getBolt();
-            int ammoCount = iGun.getCurrentAmmoCount(currentGunItem) + (iGun.hasBulletInBarrel(currentGunItem) && boltType != Bolt.OPEN_BOLT ? 1 : 0);
+            int ammoCount = gunItem.getCurrentAmmoCount(currentGunItem) + (gunItem.hasBulletInBarrel(currentGunItem) && boltType != Bolt.OPEN_BOLT ? 1 : 0);
             if (ammoCount <= 0) {
                 // 初始化空仓换弹的 tick 的状态
                 data.reloadStateType = ReloadState.StateType.EMPTY_RELOAD_FEEDING;
@@ -141,19 +133,17 @@ public class LivingEntityReload {
                 data.reloadTimestamp = -1;
             }
         }
-        // 更新枪内弹药
-        int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(currentGunItem, gunData);
         if (data.reloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
                 if (iGun instanceof AbstractGunItem abstractGunItem && data.currentGunItem != null) {
-                    abstractGunItem.reloadAmmo(currentGunItem, getAndExtractNeedAmmoCount(shooter, data.currentGunItem.get(), iGun, maxAmmoCount), true);
+                    abstractGunItem.doReload(shooter, currentGunItem, true);
                 }
             }
         }
         if (data.reloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
             if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
                 if (iGun instanceof AbstractGunItem abstractGunItem && data.currentGunItem != null) {
-                    abstractGunItem.reloadAmmo(currentGunItem, getAndExtractNeedAmmoCount(shooter, data.currentGunItem.get(), iGun, maxAmmoCount), false);
+                    abstractGunItem.doReload(shooter, currentGunItem, false);
                 }
             }
         }
@@ -163,79 +153,5 @@ public class LivingEntityReload {
         reloadState.setStateType(stateType);
         reloadState.setCountDown(countDown);
         return reloadState;
-    }
-
-    public static boolean inventoryHasAmmo(LivingEntity shooter, int currentAmmoCount, int maxAmmoCount, ItemStack currentGunItem, IGun iGun) {
-        // 超出或达到上限，不换弹
-        if (currentAmmoCount >= maxAmmoCount) {
-            return false;
-        }
-        if (iGun.useDummyAmmo(currentGunItem)) {
-            return iGun.getDummyAmmoAmount(currentGunItem) > 0;
-        }
-        return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null).map(cap -> {
-            // 背包检查
-            for (int i = 0; i < cap.getSlots(); i++) {
-                ItemStack checkAmmoStack = cap.getStackInSlot(i);
-                if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(currentGunItem, checkAmmoStack)) {
-                    return true;
-                }
-                if (checkAmmoStack.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(currentGunItem, checkAmmoStack)) {
-                    return true;
-                }
-            }
-            return false;
-        }).orElse(false);
-    }
-
-    public static int getAndExtractNeedAmmoCount(LivingEntity shooter, ItemStack currentGunItem, IGun iGun, int maxAmmoCount) {
-        int currentAmmoCount = iGun.getCurrentAmmoCount(currentGunItem);
-        if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo()) {
-            if (iGun.useDummyAmmo(currentGunItem)) {
-                return getAndExtractDummyAmmoCount(maxAmmoCount, currentAmmoCount, currentGunItem, iGun);
-            }
-            return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
-                    .map(cap -> getAndExtractInventoryAmmoCount(cap, maxAmmoCount, currentAmmoCount, currentGunItem))
-                    .orElse(currentAmmoCount);
-        }
-        return maxAmmoCount;
-    }
-
-    private static int getAndExtractDummyAmmoCount(int maxAmmoCount, int currentAmmoCount, ItemStack currentGunItem, IGun iGun) {
-        int needAmmoCount = maxAmmoCount - currentAmmoCount;
-        int dummyAmmoCount = iGun.getDummyAmmoAmount(currentGunItem);
-        int extractCount = Math.min(dummyAmmoCount, needAmmoCount);
-        iGun.setDummyAmmoAmount(currentGunItem, dummyAmmoCount - extractCount);
-        return maxAmmoCount - (needAmmoCount - extractCount);
-    }
-
-    private static int getAndExtractInventoryAmmoCount(IItemHandler itemHandler, int maxAmmoCount, int currentAmmoCount, ItemStack currentGunItem) {
-        // 子弹数量检查
-        int needAmmoCount = maxAmmoCount - currentAmmoCount;
-        // 背包检查
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            ItemStack checkAmmoStack = itemHandler.getStackInSlot(i);
-            if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(currentGunItem, checkAmmoStack)) {
-                ItemStack extractItem = itemHandler.extractItem(i, needAmmoCount, false);
-                needAmmoCount = needAmmoCount - extractItem.getCount();
-                if (needAmmoCount <= 0) {
-                    break;
-                }
-            }
-            if (checkAmmoStack.getItem() instanceof IAmmoBox iAmmoBox && iAmmoBox.isAmmoBoxOfGun(currentGunItem, checkAmmoStack)) {
-                int boxAmmoCount = iAmmoBox.getAmmoCount(checkAmmoStack);
-                int extractCount = Math.min(boxAmmoCount, needAmmoCount);
-                int remainCount = boxAmmoCount - extractCount;
-                iAmmoBox.setAmmoCount(checkAmmoStack, remainCount);
-                if (remainCount <= 0) {
-                    iAmmoBox.setAmmoId(checkAmmoStack, DefaultAssets.EMPTY_AMMO_ID);
-                }
-                needAmmoCount = needAmmoCount - extractCount;
-                if (needAmmoCount <= 0) {
-                    break;
-                }
-            }
-        }
-        return maxAmmoCount - needAmmoCount;
     }
 }

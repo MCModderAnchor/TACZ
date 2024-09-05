@@ -8,6 +8,7 @@ import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
@@ -34,17 +35,18 @@ public class LocalPlayerReload {
     public void reload() {
         // 暂定只有主手可以装弹
         ItemStack mainhandItem = player.getMainHandItem();
-        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+        if (!(mainhandItem.getItem() instanceof AbstractGunItem gunItem)) {
             return;
         }
-        ResourceLocation gunId = iGun.getGunId(mainhandItem);
+        ResourceLocation gunId = gunItem.getGunId(mainhandItem);
         TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
             // 检查状态锁
             if (data.clientStateLock) {
                 return;
             }
             // 弹药简单检查
-            if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && !inventoryHasAmmo(iGun, gunIndex, mainhandItem)) {
+            boolean canReload = gunItem.canReload(player, mainhandItem);
+            if (IGunOperator.fromLivingEntity(player).needCheckAmmo() && !canReload) {
                 return;
             }
             // 锁上状态锁
@@ -56,7 +58,7 @@ public class LocalPlayerReload {
             // 发包通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
             // 执行客户端 reload 相关内容
-            this.doReload(iGun, gunIndex, mainhandItem);
+            this.doReload(gunItem, gunIndex, mainhandItem);
         });
     }
 
