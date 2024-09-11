@@ -54,7 +54,7 @@ public class InventoryEvent {
         if (player == null) {
             return;
         }
-        IClientPlayerGunOperator.fromLocalPlayer(player).draw(player.getOffhandItem());
+        IClientPlayerGunOperator.fromLocalPlayer(player).draw(player.getMainHandItem());
     }
 
     @SubscribeEvent
