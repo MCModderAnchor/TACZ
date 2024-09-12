@@ -1,5 +1,6 @@
 package com.tacz.guns.item;
 
+import com.google.common.base.Suppliers;
 import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
@@ -33,6 +34,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -42,10 +45,8 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
 /**
@@ -178,6 +179,11 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         });
     }
 
+    private static final DoubleFunction<AttributeModifier> AM_FACTORY = amount -> new AttributeModifier(
+            UUID.randomUUID(), "TACZ Melee Damage",
+            amount, AttributeModifier.Operation.ADDITION
+    );
+
     private void doMelee(LivingEntity user, float gunDistance, float meleeDistance, float rangeAngle, float knockback, float damage, List<EffectData> effects) {
         // 枪长 + 刺刀长 = 总长
         double distance = gunDistance + meleeDistance;
@@ -189,6 +195,22 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         Vec3 centrePos = user.getEyePosition().subtract(eyeVec);
         // 先获取范围内所有的实体
         List<LivingEntity> entityList = user.level().getEntitiesOfClass(LivingEntity.class, user.getBoundingBox().inflate(distance));
+        Supplier<Float> realDamage = Suppliers.memoize(() -> {
+            var instance = user.getAttribute(Attributes.ATTACK_DAMAGE);
+            if (instance == null) {
+                return damage;
+            }
+            var oldBase = instance.getBaseValue();
+            var modifier = AM_FACTORY.apply(damage);
+            try {
+                instance.setBaseValue(0);
+                instance.addTransientModifier(modifier);
+                return (float)instance.getValue();
+            } finally {
+                instance.setBaseValue(oldBase);
+                instance.removeModifier(modifier);
+            }
+        });
         // 而后检查是否在锥形范围内
         for (LivingEntity living : entityList) {
             // 先计算出球心->目标向量
@@ -205,7 +227,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             if (degree < (rangeAngle / 2)) {
                 // 判断实体和玩家之间是否有阻隔
                 if (user.hasLineOfSight(living)) {
-                    doPerLivingHurt(user, living, knockback, damage, effects);
+                    doPerLivingHurt(user, living, knockback, realDamage.get(), effects);
                 }
             }
         }
