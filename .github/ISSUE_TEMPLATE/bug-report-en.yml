@@ -21,9 +21,9 @@ body:
           required: true
 
   - type: input
-    id: minecraft version and modloader version
+    id: minecraft-modloader-version
     attributes:
-      label: modloader version
+      label: The version of Minecraft and modloader
       description: |
         The minecraft version and mod loader you use(forge/fabric) and their version.  
 
