@@ -23,7 +23,7 @@ body:
   - type: input
     id: minecraft-modloader-version
     attributes:
-      label: The version of Minecraft and modloader
+      label: Minecraft and modloader version
       description: |
         The minecraft version and mod loader you use(forge/fabric) and their version.  
 
@@ -47,7 +47,7 @@ body:
       description: >-
         The mods related to the bug.
         <br>Try to remove unrelated plugins and mods before reporting
-      placeholder: 'Mods & plugins list here'
+      placeholder: 'Mods list here'
       render: 'raw'
     validations:
       required: true
@@ -80,9 +80,9 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Logs
+      label: Logs & Crash reports
       description: >-
-        Logs can be found in /logs/latest.log
+        Logs can be found in /logs/latest.log and crash reports can be finded in /crash-reports
         <br>After server is stopped, drag log file below or upload it to site like https://paste.ubuntu.com/ or https://mclo.gs/
         <br>**DO NOT COPY PASTE LOG CONTENT DIRECTLY!**
       placeholder: 'Drag log file here to upload or external pastebin link'
