@@ -2,13 +2,13 @@
   "materials": [
     {
       "item": {
-        "tag": "tac:original/crying_obsidian"
+        "item": "minecraft:crying_obsidian"
       },
       "count": 3
     },
     {
       "item": {
-        "tag": "tac:original/end_crystal"
+        "item": "minecraft:end_crystal"
       }
     }
   ],

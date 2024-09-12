@@ -5,12 +5,14 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.*;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.client.renderer.item.GunItemRenderer;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.resource.pojo.data.gun.FeedType;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.AllowAttachmentTagMatcher;
 import com.tacz.guns.util.AttachmentDataUtils;
@@ -20,6 +22,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +31,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -151,6 +155,52 @@ public abstract class AbstractGunItem extends Item implements IGun {
         }
 
         finishReload(gunItem, updatedAmmoCount, loadBarrel);
+    }
+
+    @Override
+    public void dropAllAmmo(Player player, ItemStack gunItem) {
+        int ammoCount = getCurrentAmmoCount(gunItem);
+        if (ammoCount <= 0) {
+            return;
+        }
+        ResourceLocation gunId = getGunId(gunItem);
+        TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
+            // 如果使用的是虚拟备弹，返还至虚拟备弹
+            if (useDummyAmmo(gunItem)) {
+                setCurrentAmmoCount(gunItem, 0);
+                // 燃料罐类型的换弹不返还
+                if (index.getGunData().getReloadData().getType().equals(FeedType.FUEL)) {
+                    return;
+                }
+                setDummyAmmoAmount(gunItem, getDummyAmmoAmount(gunItem) + ammoCount);
+                return;
+            }
+
+            ResourceLocation ammoId = index.getGunData().getAmmoId();
+            // 创造模式类型的换弹，只填满子弹总数，不进行任何卸载弹药逻辑
+            if (player.isCreative()) {
+                int maxAmmCount = AttachmentDataUtils.getAmmoCountWithAttachment(gunItem, index.getGunData());
+                setCurrentAmmoCount(gunItem, maxAmmCount);
+                return;
+            }
+            // 燃料罐类型的只清空不返还
+            if (index.getGunData().getReloadData().getType().equals(FeedType.FUEL)) {
+                setCurrentAmmoCount(gunItem, 0);
+                return;
+            }
+            TimelessAPI.getCommonAmmoIndex(ammoId).ifPresent(ammoIndex -> {
+                int stackSize = ammoIndex.getStackSize();
+                int tmpAmmoCount = ammoCount;
+                int roundCount = tmpAmmoCount / (stackSize + 1);
+                for (int i = 0; i <= roundCount; i++) {
+                    int count = Math.min(tmpAmmoCount, stackSize);
+                    ItemStack ammoItem = AmmoItemBuilder.create().setId(ammoId).setCount(count).build();
+                    ItemHandlerHelper.giveItemToPlayer(player, ammoItem);
+                    tmpAmmoCount -= stackSize;
+                }
+                setCurrentAmmoCount(gunItem, 0);
+            });
+        });
     }
 
     /**
