@@ -335,6 +335,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         if (this.selectedRecipe != null) {
             this.renderLeftModel(this.selectedRecipe);
             this.renderPackInfo(poseStack, this.selectedRecipe);
+            font.draw(poseStack, Component.translatable("gui.tacz.gun_smith_table.count", this.selectedRecipe.getResult().getResult().getCount()), leftPos + 254, topPos + 140, 0x555555);
         }
         if (selectedRecipeList != null && !selectedRecipeList.isEmpty()) {
             renderIngredient(poseStack);
