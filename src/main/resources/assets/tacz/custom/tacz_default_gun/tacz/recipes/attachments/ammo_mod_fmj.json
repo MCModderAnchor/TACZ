@@ -2,7 +2,7 @@
   "materials": [
     {
       "item": {
-        "tag": "tac:original/crying_obsidian"
+        "item": "minecraft:crying_obsidian"
       },
       "count": 2
     },
