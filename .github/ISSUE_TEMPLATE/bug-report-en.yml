@@ -1,0 +1,88 @@
+name: 🐞 Bug Report
+description: English template for reporting a bug
+title: "[Bug]: "
+labels: [ "bug" ]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Make sure you're using the latest version of tacz, the problem you're experiencing has most likely been fixed!
+        
+        Make sure you have searched issues and no similar is present.
+
+  - type: checkboxes
+    id: preliminary
+    attributes:
+      label: I have confirmed that ...
+      options:
+        - label: tacz is up to date
+        - label: unable to reproduce without tacz
+          required: true
+
+  - type: input
+    id: minecraft-modloader-version
+    attributes:
+      label: Minecraft and modloader version
+      description: |
+        The minecraft version and mod loader you use(forge/fabric) and their version.  
+
+        You can find them at the corner of main menu or in the log while startup.
+        
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: tac version
+      description: Versions can be find in mod menu or at the corner of hud when you hold a tacz gun.
+    validations:
+      required: true
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related Mods
+      description: >-
+        The mods related to the bug.
+        <br>Try to remove unrelated plugins and mods before reporting
+      placeholder: 'Mods list here'
+      render: 'raw'
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Please include as much information as possible. 
+        <br>For the description, assume we have no idea how mods work, 
+        be as detailed as possible and include a step by step reproduction. 
+        <br>It is recommended you try to reproduce the issue you are having yourself with as few mods as possible. 
+        <br>The clearer the description, the higher the report processing priority
+      placeholder: "Detailed information about what should(not) happen"
+    validations:
+      required: true
+
+  - type: textarea
+    id: step
+    attributes:
+      label: Step to reproduce
+      placeholder: |
+        1. Install something...
+
+        2. Join the game...
+
+        3. ....
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs & Crash reports
+      description: >-
+        Logs can be found in /logs/latest.log and crash reports can be finded in /crash-reports
+        <br>After server is stopped, drag log file below or upload it to site like https://paste.ubuntu.com/ or https://mclo.gs/
+        <br>**DO NOT COPY PASTE LOG CONTENT DIRECTLY!**
+      placeholder: 'Drag log file here to upload or external pastebin link'

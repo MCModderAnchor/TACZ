@@ -1,0 +1,85 @@
+name: 🐞 Bug反馈
+description: 中文Bug反馈模板
+title: "[Bug]: "
+labels: [ "bug" ]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请确保您使用的是最新版的tacz，您所反馈的bug很可能已经在更新版本中修复
+
+        在反馈bug前，请先尝试搜索是否已有相似的问题，请不要重复打开相同的issue
+
+  - type: checkboxes
+    id: preliminary
+    attributes:
+      label: 我已确认 ...
+      options:
+        - label: 我正在使用最新版的tacz
+        - label: 无法在不安装tacz时复现
+          required: true
+
+  - type: input
+    id: minecraft-modloader-version
+    attributes:
+      label: Minecraft和模组加载器版本
+      description: |
+        你所使用的Minecraft和模组加载器(forge/fabric)的版本.  
+
+        你可以在游戏主界面作下角或者游戏启动时的日志开头等地方找到.
+        
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: tacz的版本
+      description: 你可以在模组菜单中找到tacz的版本，或者检测手持枪械时右下角标识的版本号
+    validations:
+      required: true
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related Mods
+      description: >-
+        和bug相关的模组
+        <br>请在反馈问题前尝试尽可能移除不相干的模组的情况下复现bug
+      placeholder: 'Mods list here'
+      render: 'raw'
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        请尽可能详细的描述遇到的问题. 
+        <br>请在反馈问题前尝试尽可能移除不相干的模组的情况下复现bug
+        <br>越清晰和详尽的描述会使该bug的处理优先级更高
+    validations:
+      required: true
+
+  - type: textarea
+    id: step
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. Install something...
+
+        2. Join the game...
+
+        3. ....
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志和崩溃报告
+      description: >-
+       你可以在/logs/lastest.log 和 /crash-report 中找到错误报告，或者使用启动器的导出功能
+        <br>你可以日志上传到类似 https://paste.ubuntu.com/ 或者 https://mclo.gs/ 的网站并在此贴出链接
+        <br>**请不要在此此处直接粘贴大段的日志文本!!**
+      placeholder: '把日志文件往这丢或者使用外部链接'
