@@ -122,7 +122,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
             case MAGAZINE -> {
                 if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo()) {
                     if (useDummyAmmo(gunItem)) {
-                        updatedAmmoCount += findAndExtractDummyAmmos(gunItem, needAmmoCount);
+                        updatedAmmoCount += findAndExtractDummyAmmo(gunItem, needAmmoCount);
                     } else {
                         updatedAmmoCount += shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
                                 .map(cap -> findAndExtractInventoryAmmos(cap, gunItem, needAmmoCount))
@@ -135,7 +135,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
             case FUEL -> {
                 if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo()) {
                     if (useDummyAmmo(gunItem)) {
-                        if (findAndExtractDummyAmmos(gunItem, 1) > 0) {
+                        if (findAndExtractDummyAmmo(gunItem, 1) > 0) {
                             updatedAmmoCount = maxAmmoCount;
                         }
                     } else {
@@ -172,7 +172,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
                 if (index.getGunData().getReloadData().getType().equals(FeedType.FUEL)) {
                     return;
                 }
-                setDummyAmmoAmount(gunItem, getDummyAmmoAmount(gunItem) + ammoCount);
+                addDummyAmmoAmount(gunItem, ammoCount);
                 return;
             }
 
@@ -245,10 +245,10 @@ public abstract class AbstractGunItem extends Item implements IGun {
      * @param needAmmoCount 需要的弹药(物品)数量
      * @return 找到的弹药(物品)数量
      */
-    public int findAndExtractDummyAmmos(ItemStack gunItem, int needAmmoCount) {
+    public int findAndExtractDummyAmmo(ItemStack gunItem, int needAmmoCount) {
         int dummyAmmoCount = getDummyAmmoAmount(gunItem);
         int extractCount = Math.min(dummyAmmoCount, needAmmoCount);
-        setDummyAmmoAmount(gunItem, dummyAmmoCount - extractCount);
+        addDummyAmmoAmount(gunItem, -extractCount);
         return extractCount;
     }
 
