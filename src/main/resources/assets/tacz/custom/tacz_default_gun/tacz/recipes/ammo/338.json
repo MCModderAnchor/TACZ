@@ -8,14 +8,15 @@
     },
     {
       "item": {
-        "tag": "forge:gems/lapis"
-      }
+        "tag": "forge:gunpowder"
+      },
+      "count": 8
     },
     {
       "item": {
-        "tag": "forge:gunpowder"
+        "tag": "forge:gems/lapis"
       },
-      "count": 10
+      "count": 4
     }
   ],
   "result": {

@@ -4,7 +4,7 @@
       "item": {
         "tag": "forge:ingots/copper"
       },
-      "count": 11
+      "count": 10
     },
     {
       "item": {
@@ -16,6 +16,6 @@
   "result": {
     "type": "ammo",
     "id": "tacz:45acp",
-    "count": 45
+    "count": 30
   }
 }
