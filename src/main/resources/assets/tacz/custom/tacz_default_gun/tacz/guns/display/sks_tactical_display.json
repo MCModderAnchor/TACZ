@@ -5,7 +5,7 @@
     "model": "tacz:gun/lod/sks_tactical",
     "texture": "tacz:gun/lod/sks_tactical"
   },
-  "hud": "tacz:gun/hud/sks_tactical_hud",
+  "hud": "tacz:gun/hud/sks_tactical",
   "slot": "tacz:gun/slot/sks_tactical",
   "animation": "tacz:sks_tactical",
   "use_default_animation": "rifle",

@@ -7,8 +7,8 @@
   // 只有 瞄具 配件需要设置这个属性，表示瞄具的放大倍率。
   // 玩家可以在数组设置的几个倍率之间切换
   "lod": {
-    "model": "tacz:attachment/lod/scope_lpvo_1_6_lod",
-    "texture": "tacz:attachment/lod/scope_lpvo_1_6_lod"
+    "model": "tacz:attachment/lod/scope_lpvo_1_6",
+    "texture": "tacz:attachment/lod/scope_lpvo_1_6"
   },
   "zoom": [
     1.33,

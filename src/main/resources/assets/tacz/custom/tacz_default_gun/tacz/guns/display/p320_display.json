@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/p320",
     "texture": "tacz:gun/lod/p320"
   },
-  "hud": "tacz:gun/hud/p320_hud",
-  "slot": "tacz:gun/slot/p320_slot",
+  "hud": "tacz:gun/hud/p320",
+  "slot": "tacz:gun/slot/p320",
   "animation": "tacz:p320",
   "use_default_animation": "pistol",
   "player_animator_3rd": "tacz:pistol_default.player_animation",

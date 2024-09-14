@@ -1,12 +1,12 @@
 {
-  "slot": "tacz:attachment/slot/sight_p90_slot",
+  "slot": "tacz:attachment/slot/sight_p90",
   // 配件的默认模型，不可为空
   "model": "tacz:attachment/sight_p90_geo",
   // 配件默认模型使用的材质，不可为空
   "texture": "tacz:attachment/uv/sight_p90",
   "lod": {
-    "model": "tacz:attachment/lod/sight_p90_lod",
-    "texture": "tacz:attachment/lod/sight_p90_lod"
+    "model": "tacz:attachment/lod/sight_p90",
+    "texture": "tacz:attachment/lod/sight_p90"
   },
   "zoom": [
     1.35

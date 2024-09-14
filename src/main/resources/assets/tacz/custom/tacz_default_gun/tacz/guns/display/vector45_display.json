@@ -5,7 +5,7 @@
     "model": "tacz:gun/lod/vector45",
     "texture": "tacz:gun/lod/vector45"
   },
-  "hud": "tacz:gun/hud/vector45_hud",
+  "hud": "tacz:gun/hud/vector45",
   "slot": "tacz:gun/slot/vector45",
   "animation": "tacz:vector45",
   "use_default_animation": "rifle",

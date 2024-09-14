@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/mk14",
     "texture": "tacz:gun/lod/mk14"
   },
-  "hud": "tacz:gun/hud/mk14_hud",
-  "slot": "tacz:gun/slot/mk14_slot",
+  "hud": "tacz:gun/hud/mk14",
+  "slot": "tacz:gun/slot/mk14",
   "animation": "tacz:mk14",
   "use_default_animation": "rifle",
   "third_person_animation": "default",

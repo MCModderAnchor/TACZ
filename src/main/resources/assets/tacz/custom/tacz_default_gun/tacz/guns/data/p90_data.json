@@ -63,6 +63,7 @@
     "min_interval": 0.3
   },
   "allow_attachment_types": [
+    "scope",
     "muzzle",
     "extended_mag"
   ],

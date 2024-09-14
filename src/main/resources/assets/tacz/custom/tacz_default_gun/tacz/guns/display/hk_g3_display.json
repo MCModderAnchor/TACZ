@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/hk_g3",
     "texture": "tacz:gun/lod/hk_g3"
   },
-  "hud": "tacz:gun/hud/hk_g3_hud",
-  "slot": "tacz:gun/slot/hk_g3_slot",
+  "hud": "tacz:gun/hud/hk_g3",
+  "slot": "tacz:gun/slot/hk_g3",
   "animation": "tacz:hk_g3",
   "use_default_animation": "rifle",
   "third_person_animation": "default",

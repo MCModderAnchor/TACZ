@@ -7,8 +7,8 @@
   // 只有 瞄具 配件需要设置这个属性，表示瞄具的放大倍率。
   // 玩家可以在数组设置的几个倍率之间切换
   "lod": {
-    "model": "tacz:attachment/lod/sight_rmr_dot_lod",
-    "texture": "tacz:attachment/lod/sight_rmr_dot_lod"
+    "model": "tacz:attachment/lod/sight_rmr_dot",
+    "texture": "tacz:attachment/lod/sight_rmr_dot"
   },
   "zoom": [
     1.2

@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/m1911",
     "texture": "tacz:gun/lod/m1911"
   },
-  "hud": "tacz:gun/hud/m1911_hud",
-  "slot": "tacz:gun/slot/m1911_slot",
+  "hud": "tacz:gun/hud/m1911",
+  "slot": "tacz:gun/slot/m1911",
   "animation": "tacz:m1911",
   "use_default_animation": "pistol",
   "player_animator_3rd": "tacz:pistol_default.player_animation",

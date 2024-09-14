@@ -1,10 +1,10 @@
 {
   "slot": "tacz:attachment/slot/scope_retro_2x",
-  "model": "tacz:attachment/scope_retro_2x",
+  "model": "tacz:attachment/scope_retro_2x_geo",
   "texture": "tacz:attachment/uv/scope_retro_2x",
   "lod": {
-    "model": "tacz:attachment/lod/scope_retro_2x_lod",
-    "texture": "tacz:attachment/lod/scope_retro_2x_lod"
+    "model": "tacz:attachment/lod/scope_retro_2x",
+    "texture": "tacz:attachment/lod/scope_retro_2x"
   },
   "zoom": [
     3

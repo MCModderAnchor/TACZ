@@ -1,6 +1,6 @@
 {
   "slot": "tacz:attachment/slot/stock_tactical_ar",
-  "model": "tacz:attachment/stock_tactical_ar",
+  "model": "tacz:attachment/stock_tactical_ar_geo",
   "texture": "tacz:attachment/uv/stock_tactical_ar",
   "adapter": "ar_stock_adapter",
   "sounds": {

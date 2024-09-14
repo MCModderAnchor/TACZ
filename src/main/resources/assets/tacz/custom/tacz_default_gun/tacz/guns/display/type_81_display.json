@@ -9,12 +9,12 @@
     "texture": "tacz:gun/lod/type_81"
   },
   // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
-  "hud": "tacz:gun/hud/type_81_hud",
+  "hud": "tacz:gun/hud/type_81",
   // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空
   // 若为空，则对应位置渲染改为：上述 hud + 代码着成红色
   // "hud_empty": "tacz:gun/hud/type_81_empty",
   // 背包/快捷栏等容器中槽位显示的 2D 材质，在包目录下的 textures 文件夹中寻找，不建议为空
-  "slot": "tacz:gun/slot/type_81_slot",
+  "slot": "tacz:gun/slot/type_81",
   // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空
   "animation": "tacz:type_81",
   // 指定使用缺省动画，可为空。如果上文指定的动画文件里缺少某个动画，如 draw 动画，则会从缺省动画拷贝。
