@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/m1911",
     "texture": "tacz:gun/lod/m1911"
   },
-  "hud": "tacz:gun/hud/m1911",
-  "slot": "tacz:gun/slot/m1911",
+  "hud": "tacz:gun/hud/m1911_hud",
+  "slot": "tacz:gun/slot/m1911_slot",
   "animation": "tacz:m1911",
   "use_default_animation": "pistol",
   "player_animator_3rd": "tacz:pistol_default.player_animation",
@@ -29,10 +29,6 @@
     "scale": 0.5
   },
   "sounds": {
-    "reload_empty": "tacz:m1911/m1911_reload_empty",
-    "reload_tactical": "tacz:m1911/m1911_reload_tactical",
-    "inspect": "tacz:m1911/m1911_inspect",
-    "inspect_empty": "tacz:m1911/m1911_inspect_empty",
     "draw": "tacz:m1911/m1911_draw",
     "put_away": "tacz:m1911/m1911_put_away",
     "shoot": "tacz:m1911/m1911_shoot",
