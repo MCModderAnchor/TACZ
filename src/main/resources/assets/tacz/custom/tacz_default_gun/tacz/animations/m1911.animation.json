@@ -554,8 +554,25 @@
 				"bullet": {
 					"scale": {
 						"0.0": [0, 0, 0],
-						"0.8": {"pre": [0, 0, 0], "post": [1, 1, 1]}
+						"0.8": {
+							"pre": [0, 0, 0],
+							"post": [1, 1, 1]
+						}
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:m1911/m1911_reload_lift"
+				},
+				"0.3333": {
+					"effect": "tacz:m1911/m1911_reload_magout"
+				},
+				"1.1": {
+					"effect": "tacz:m1911/m1911_reload_magin"
+				},
+				"1.5": {
+					"effect": "tacz:m1911/m1911_reload_end"
 				}
 			}
 		},
@@ -919,8 +936,28 @@
 				"bullet": {
 					"scale": {
 						"0.0": [0, 0, 0],
-						"0.7333": {"pre": [0, 0, 0], "post": [1, 1, 1]}
+						"0.7333": {
+							"pre": [0, 0, 0],
+							"post": [1, 1, 1]
+						}
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:m1911/m1911_reload_empty_lift"
+				},
+				"0.2333": {
+					"effect": "tacz:m1911/m1911_reload_empty_magout"
+				},
+				"0.8667": {
+					"effect": "tacz:m1911/m1911_reload_empty_magin"
+				},
+				"1.4667": {
+					"effect": "tacz:m1911/m1911_reload_empty_chamber"
+				},
+				"1.8": {
+					"effect": "tacz:m1911/m1911_reload_empty_end"
 				}
 			}
 		},
@@ -1463,8 +1500,31 @@
 				"bullet": {
 					"scale": {
 						"0.0": [0, 0, 0],
-						"4.3": {"pre": [0, 0, 0], "post": [1, 1, 1]}
+						"4.3": {
+							"pre": [0, 0, 0],
+							"post": [1, 1, 1]
+						}
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:m1911/m1911_reload_lift"
+				},
+				"1.0333": {
+					"effect": "tacz:m1911/m1911_reload_magout"
+				},
+				"2.1667": {
+					"effect": "tacz:m1911/m1911_reload_magin"
+				},
+				"2.8": {
+					"effect": "tacz:m1911/m1911_inspect_slide_pull"
+				},
+				"3.4333": {
+					"effect": "tacz:m1911/m1911_inspect_chamber"
+				},
+				"3.8": {
+					"effect": "tacz:m1911/m1911_reload_end"
 				}
 			}
 		},
@@ -1947,6 +2007,32 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				},
+				"bullet_in_mag": {
+					"scale": 0
+				},
+				"bullet2": {
+					"scale": 0
+				},
+				"bullet_in_barrel": {
+					"scale": 0
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:m1911/m1911_reload_empty_lift"
+				},
+				"0.8667": {
+					"effect": "tacz:m1911/m1911_reload_empty_magout"
+				},
+				"2.0333": {
+					"effect": "tacz:m1911/m1911_reload_magin"
+				},
+				"2.5": {
+					"effect": "tacz:m1911/m1911_inspect_quick"
+				},
+				"3.6667": {
+					"effect": "tacz:m1911/m1911_reload_empty_end"
 				}
 			}
 		},
@@ -2203,9 +2289,6 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
-				},
-				"bullet2": {
-					"scale": 0
 				}
 			}
 		}

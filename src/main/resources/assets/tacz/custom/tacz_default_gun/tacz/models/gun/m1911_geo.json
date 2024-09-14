@@ -1654,7 +1654,7 @@
 					]
 				},
 				{
-					"name": "bullet2",
+					"name": "bullet_in_barrel",
 					"parent": "slide",
 					"pivot": [0, 5.415, -0.7625],
 					"rotation": [90, 0, 0],
