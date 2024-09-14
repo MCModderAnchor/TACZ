@@ -5,8 +5,8 @@
   // 配件默认模型使用的材质，不可为空
   "texture": "tacz:attachment/uv/sight_exp3",
   "lod": {
-    "model": "tacz:attachment/lod/sight_exp3_lod",
-    "texture": "tacz:attachment/lod/sight_exp3_lod"
+    "model": "tacz:attachment/lod/sight_exp3",
+    "texture": "tacz:attachment/lod/sight_exp3"
   },
   "zoom": [
     1.66

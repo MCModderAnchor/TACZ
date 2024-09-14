@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/cz75",
     "texture": "tacz:gun/lod/cz75"
   },
-  "hud": "tacz:gun/hud/cz75_hud",
-  "slot": "tacz:gun/slot/cz75_slot",
+  "hud": "tacz:gun/hud/cz75",
+  "slot": "tacz:gun/slot/cz75",
   "animation": "tacz:cz75",
   "use_default_animation": "pistol",
   "player_animator_3rd": "tacz:pistol_default.player_animation",

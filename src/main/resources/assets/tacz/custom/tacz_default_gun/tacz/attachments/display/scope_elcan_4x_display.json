@@ -3,8 +3,8 @@
   "model": "tacz:attachment/scope_elcan_4x_geo",
   "texture": "tacz:attachment/uv/scope_elcan_4x",
   "lod": {
-    "model": "tacz:attachment/lod/scope_elcan_4x_lod",
-    "texture": "tacz:attachment/lod/scope_elcan_4x_lod"
+    "model": "tacz:attachment/lod/scope_elcan_4x",
+    "texture": "tacz:attachment/lod/scope_elcan_4x"
   },
   "zoom": [
     1.3,

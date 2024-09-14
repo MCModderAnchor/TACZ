@@ -3,7 +3,7 @@
   "model": "tacz:attachment/scope_standard_8x_geo",
   "texture": "tacz:attachment/uv/scope_standard_8x",
   "lod": {
-    "model": "tacz:attachment/lod/scope_standard_8x_geo",
+    "model": "tacz:attachment/lod/scope_standard_8x",
     "texture": "tacz:attachment/lod/scope_standard_8x"
   },
   "zoom": [

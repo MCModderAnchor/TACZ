@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/aug",
     "texture": "tacz:gun/lod/aug"
   },
-  "hud": "tacz:gun/hud/aug_hud",
-  "slot": "tacz:gun/slot/aug_slot",
+  "hud": "tacz:gun/hud/aug",
+  "slot": "tacz:gun/slot/aug",
   "animation": "tacz:aug",
   "use_default_animation": "rifle",
   "third_person_animation": "default",

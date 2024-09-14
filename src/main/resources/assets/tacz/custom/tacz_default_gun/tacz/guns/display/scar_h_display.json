@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/scar_h",
     "texture": "tacz:gun/lod/scar_h"
   },
-  "hud": "tacz:gun/hud/scar_h_hud",
-  "slot": "tacz:gun/slot/scar_h_slot",
+  "hud": "tacz:gun/hud/scar_h",
+  "slot": "tacz:gun/slot/scar_h",
   "animation": "tacz:scar_h",
   "use_default_animation": "rifle",
   "third_person_animation": "default",

@@ -1,8 +1,8 @@
 {
   "model": "tacz:gun/m320_geo",
   "texture": "tacz:gun/uv/m320",
-  "hud": "tacz:gun/hud/m320_hud",
-  "slot": "tacz:gun/slot/m320_slot",
+  "hud": "tacz:gun/hud/m320",
+  "slot": "tacz:gun/slot/m320",
   "animation": "tacz:m320",
   "use_default_animation": "rifle",
   "player_animator_3rd": "tacz:rifle_default.player_animation",

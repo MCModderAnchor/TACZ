@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/p90",
     "texture": "tacz:gun/lod/p90"
   },
-  "hud": "tacz:gun/hud/p90_hud",
-  "slot": "tacz:gun/slot/p90_slot",
+  "hud": "tacz:gun/hud/p90",
+  "slot": "tacz:gun/slot/p90",
   "animation": "tacz:p90",
   "use_default_animation": "rifle",
   "third_person_animation": "default",

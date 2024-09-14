@@ -9,7 +9,7 @@
     "texture": "tacz:gun/lod/rpk"
   },
   // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
-  "hud": "tacz:gun/hud/rpk_hud",
+  "hud": "tacz:gun/hud/rpk",
   // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空
   // 若为空，则对应位置渲染改为：上述 hud + 代码着成红色
   // "hud_empty": "tacz:gun/hud/rpk_empty",

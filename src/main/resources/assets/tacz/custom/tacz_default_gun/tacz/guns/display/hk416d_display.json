@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/hk416d",
     "texture": "tacz:gun/lod/hk416d"
   },
-  "hud": "tacz:gun/hud/hk416d_hud",
-  "slot": "tacz:gun/slot/hk416d_slot",
+  "hud": "tacz:gun/hud/hk416d",
+  "slot": "tacz:gun/slot/hk416d",
   "animation": "tacz:hk416d",
   "use_default_animation": "rifle",
   "third_person_animation": "default",
