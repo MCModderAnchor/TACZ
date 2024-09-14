@@ -5,8 +5,8 @@
     "model": "tacz:gun/lod/m700",
     "texture": "tacz:gun/lod/m700"
   },
-  "hud": "tacz:gun/hud/m700_hud",
-  "slot": "tacz:gun/slot/m700_slot",
+  "hud": "tacz:gun/hud/m700",
+  "slot": "tacz:gun/slot/m700",
   "animation": "tacz:m700",
   "use_default_animation": "rifle",
   "transform": {
