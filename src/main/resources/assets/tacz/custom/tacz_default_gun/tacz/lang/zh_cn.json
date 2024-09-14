@@ -44,7 +44,16 @@
   "tacz.gun.ump45.name":"UMP45 冲锋枪",
   "tacz.gun.scar_l.name":"SCAR-L 突击步枪",
   "tacz.gun.m320.name": "M320 榴弹发射器",
+  "tacz.gun.hk416d.name": "HK-416D 突击步枪",
   "tacz.gun.mk14.name": "MK14 EBR 精确射手步枪",
+  "tacz.gun.p320.name": "P320 手枪",
+  "tacz.gun.aug.name": "AUG 突击步枪",
+    "tacz.gun.m107.name": "M107 狙击步枪",
+  "tacz.gun.m700.name": "M700 狙击步枪",
+  "tacz.gun.m1911.name": "M1911 手枪",
+  "tacz.gun.type_81.name": "Type 81-1 军用步枪",
+  "tacz.gun.qbz_95.name": "QBZ-95 \"长弓\"",
+  "tacz.gun.p90.name": "P90 冲锋枪",
 
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
@@ -75,6 +84,13 @@
   "tacz.gun.hk416d.desc": "并非M416",
   "tacz.gun.mk14.desc": "不是生不逢时，只是选错位置",
   "tacz.gun.p320.desc": "据说把它丢出去可以靠走火消灭对手",
+  "tacz.gun.aug.desc": "...",
+  "tacz.gun.m700.desc": "...",
+  "tacz.gun.m107.desc": "...",
+  "tacz.gun.m1911.desc": "...",
+  "tacz.gun.type_81.desc": "...",
+  "tacz.gun.qbz_95.desc": "...",
+  "tacz.gun.p90.desc": "...",
 
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",
@@ -96,6 +112,7 @@
   "tacz.ammo.magnum_r.name": "§c.357 马格南 手枪弹",
   "tacz.ammo.rpg_rocket.name": "§dRPG-7 火箭弹",
   "tacz.ammo.40mm.name": "§d40mm 榴弹",
+  "tacz.ammo.57x28.name":"§d5.7x28mm 穿甲弹",
 
 
   "tacz.attachment.sight_sro_dot.name": "SRO 微型红点瞄准镜",
@@ -129,6 +146,7 @@
   "tacz.attachment.ammo_mod_hp.name":"§e空尖弹",
   "tacz.attachment.ammo_mod_i.name": "§e燃烧弹",
 
+
   "tacz.attachment.ammo_mod_fmj.desc": "全金属外壳弹头 \n提高对护甲的穿透力，但降低子弹后效",
   "tacz.attachment.ammo_mod_he.desc": "高爆填充弹头 \n降低直击伤害和穿甲能力，但爆炸威力巨大",
   "tacz.attachment.ammo_mod_hp.desc": "中空弹头 \n提高对无护甲目标的伤害，但降低护甲穿透能力和弹道性能",
@@ -148,6 +166,7 @@
   "tacz.attachment.muzzle_silence_ursus.name": "乌萨斯制式消音器",
   "tacz.attachment.muzzle_silence_ptilopsis.name": "PO-2 \"白面鸮\" 手枪消音器",
   "tacz.attachment.muzzle_silence_knight_qd.name": "骑士快拆消音器",
+  "tacz.attachment.muzzle_silence_vulture.name" : "秃鹫.50口径消音器",
   "tacz.attachment.muzzle_brake_pioneer.name": "先锋 A3 制退器",
   "tacz.attachment.muzzle_brake_cthulhu.name": "克苏鲁 K7 制退器",
   "tacz.attachment.muzzle_brake_trex.name": "霸王龙 重型制退器",
