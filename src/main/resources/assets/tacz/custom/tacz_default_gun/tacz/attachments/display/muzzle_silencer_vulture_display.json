@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_silencer_vulture",
+  "model": "tacz:attachment/muzzle_silencer_vulture_geo",
+  "texture": "tacz:attachment/uv/muzzle_silencer_vulture",
+  "sounds": {
+    "install": "tacz:attachments/muzzle_general",
+    "uninstall": "tacz:attachments/muzzle_general"
+  }
+}

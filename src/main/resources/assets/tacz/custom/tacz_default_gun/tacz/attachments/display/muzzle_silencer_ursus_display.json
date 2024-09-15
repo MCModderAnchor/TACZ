@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_silencer_ursus",
+  "model": "tacz:attachment/muzzle_silencer_ursus_geo",
+  "texture": "tacz:attachment/uv/muzzle_silencer_ursus",
+  "sounds": {
+    "install": "tacz:attachments/muzzle_general",
+    "uninstall": "tacz:attachments/muzzle_general"
+  }
+}

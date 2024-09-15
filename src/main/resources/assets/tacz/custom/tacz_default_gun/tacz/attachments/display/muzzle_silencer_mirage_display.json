@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_silencer_mirage",
+  "model": "tacz:attachment/muzzle_silencer_mirage_geo",
+  "texture": "tacz:attachment/uv/muzzle_silencer_mirage",
+  "sounds": {
+    "install": "tacz:attachments/muzzle_general",
+    "uninstall": "tacz:attachments/muzzle_general"
+  }
+}
