@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_silencer_ptilopsis",
+  "model": "tacz:attachment/muzzle_silencer_ptilopsis_geo",
+  "texture": "tacz:attachment/uv/muzzle_silencer_ptilopsis",
+  "sounds": {
+    "install": "tacz:attachments/muzzle_general",
+    "uninstall": "tacz:attachments/muzzle_general"
+  }
+}

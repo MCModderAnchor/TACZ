@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_silencer_knight_qd",
+  "model": "tacz:attachment/muzzle_silencer_knight_qd_geo",
+  "texture": "tacz:attachment/uv/muzzle_silencer_knight_qd",
+  "sounds": {
+    "install": "tacz:attachments/muzzle_general",
+    "uninstall": "tacz:attachments/muzzle_general"
+  }
+}

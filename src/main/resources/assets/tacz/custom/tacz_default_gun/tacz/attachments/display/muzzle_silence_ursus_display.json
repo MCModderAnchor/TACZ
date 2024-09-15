@@ -1,9 +1,0 @@
-{
-  "slot": "tacz:attachment/slot/muzzle_silence_ursus",
-  "model": "tacz:attachment/muzzle_silence_ursus_geo",
-  "texture": "tacz:attachment/uv/muzzle_silence_ursus",
-  "sounds": {
-    "install": "tacz:attachments/muzzle_general",
-    "uninstall": "tacz:attachments/muzzle_general"
-  }
-}
