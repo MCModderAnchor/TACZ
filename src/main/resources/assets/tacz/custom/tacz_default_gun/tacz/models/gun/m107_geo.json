@@ -8930,7 +8930,7 @@
 					"name": "fixed",
 					"parent": "positioning",
 					"pivot": [-2, 9, 0],
-					"rotation": [0, -90, 0]
+					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "thirdperson_hand",
