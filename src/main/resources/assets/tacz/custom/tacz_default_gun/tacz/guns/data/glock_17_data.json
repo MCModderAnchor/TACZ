@@ -10,14 +10,13 @@
       "armor_ignore": 0,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 1, "damage": 7},
         {"distance": 20, "damage": 6},
         {"distance": 45, "damage": 5},
         {"distance": "infinite", "damage": 4}
       ]
     },
     "speed": 150,
-    "gravity": 0.098,
+    "gravity": 0.15,
     "knockback": 0,
     "friction": 0.025,
     "ignite": false,
@@ -45,6 +44,13 @@
   "put_away_time": 0.35,
   "aim_time": 0.17,
   "sprint_time": 0.05,
+  "weight": 1,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": 0,
+    "reload": 0.1
+  },
+  "crawl_recoil_multiplier": 0.75,
   "fire_mode": [
     "semi"
   ],

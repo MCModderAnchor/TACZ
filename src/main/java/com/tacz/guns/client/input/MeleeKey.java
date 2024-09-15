@@ -40,6 +40,21 @@ public class MeleeKey {
         }
     }
 
+    public static boolean onMeleeControllerPress(boolean isPress) {
+        if (isInGame() && isPress) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null || player.isSpectator()) {
+                return false;
+            }
+            IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
+            if (!operator.isAim()) {
+                operator.melee();
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void doMeleeLogic() {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || player.isSpectator()) {

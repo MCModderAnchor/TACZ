@@ -1,9 +1,17 @@
 {
-  "weight": 0.1,
-  "ads_addend": 0.0,
-  "inaccuracy_addend": -0.2,
-  "recoil_modifier": {
-    "pitch": -0.5,
-    "yaw": 0.3
+  "weight": 0.5,
+  "ads": {
+    "addend": 0.03
+  },
+  "inaccuracy": {
+    "multiplier": 0.9
+  },
+  "recoil": {
+    "pitch": {
+      "multiplier": 0.66
+    },
+    "yaw": {
+      "multiplier": 1.1
+    }
   }
 }

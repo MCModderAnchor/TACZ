@@ -1,0 +1,30 @@
+{
+  "model": "tacz:ammo_entity/40mm_grenade",
+  "texture": "tacz:ammo_entity/40mm_grenade",
+  "slot": "tacz:ammo/slot/40mm",
+  // 子弹实体
+  "entity": {
+    // 模型
+    "model": "tacz:ammo_entity/40mm_grenade",
+    // 材质
+    "texture": "tacz:ammo_entity/40mm_grenade"
+  },
+  // 粒子效果，部分参数和原版指令完全一致，具体可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E5%91%BD%E4%BB%A4/particle
+  // 没有此字段时，不生成粒子
+  "particle": {
+    // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
+    "name": "smoke",
+    // 生成的区域，默认为 0 0 0
+    "delta": [
+      0,
+      0,
+      0
+    ],
+    // 速度，默认为0，必须至少为 0
+    "speed": 0,
+    // 粒子存在时间，单位 tick，默认为 20 tick
+    "life_time": 50,
+    // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
+    "count": 5
+  }
+}

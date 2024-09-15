@@ -17,14 +17,13 @@
       "armor_ignore": 0.25,
       "head_shot_multiplier": 1.35,
       "damage_adjust": [
-        {"distance": 0.5, "damage": 9},
         {"distance": 35, "damage": 8},
         {"distance": 70, "damage": 6.5},
         {"distance": "infinite", "damage": 6}
       ]
     },
     "speed": 305,
-    "gravity": 0.0245,
+    "gravity": 0.15,
     "knockback": 0,
     "friction": 0.015,
     "ignite": false,
@@ -45,6 +44,13 @@
   "put_away_time": 0.53,
   "aim_time": 0.21,
   "sprint_time": 0.15,
+  "weight": 3.6,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.2,
+    "reload": -0.1
+  },
+  "crawl_recoil_multiplier": 0.5,
   "fire_mode": [
     "burst",
     "semi"
@@ -63,8 +69,8 @@
       {"time": 0.7, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.35, 0.35]},
-      {"time": 0.3, "value": [-0.25, 0.25]},
+      {"time": 0, "value": [-0.3, 0.1]},
+      {"time": 0.3, "value": [-0.3, 0.1]},
       {"time": 0.5, "value": [0, 0]}
     ]
   },
@@ -73,7 +79,7 @@
     "move": 4.5,
     "sneak": 3.25,
     "lie": 1,
-    "aim": 0.17
+    "aim": 0.12
   },
   // 近战相关
   "melee": {
@@ -87,7 +93,7 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_stock",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1,
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值

@@ -2,6 +2,7 @@ package com.tacz.guns.init;
 
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.network.NetworkHandler;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -24,5 +25,12 @@ public final class CommonRegistry {
 
     public static boolean isLoadComplete() {
         return LOAD_COMPLETE;
+    }
+
+    @SubscribeEvent
+    public static void registerAttributes(EntityAttributeModificationEvent event) {
+        event.getTypes().forEach(type -> {
+            event.add(type, ModAttributes.BULLET_RESISTANCE.get());
+        });
     }
 }

@@ -1,10 +1,11 @@
 package com.tacz.guns.resource.loader.asset;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.CommonGunPackLoader;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.network.DataType;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
@@ -77,6 +78,24 @@ public final class AttachmentDataLoader {
 
     public static void loadFromJsonString(ResourceLocation id, String json) {
         AttachmentData data = CommonGunPackLoader.GSON.fromJson(json, AttachmentData.class);
+        // 序列化注册的配件属性修改
+        AttachmentPropertyManager.getModifiers().forEach((key, value) -> {
+            JsonElement jsonElement = JsonParser.parseString(json);
+            if (!jsonElement.isJsonObject()) {
+                return;
+            }
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            if (jsonObject.has(key)) {
+                JsonProperty<?> property = value.readJson(json);
+                property.initComponents();
+                data.addModifier(key, property);
+            } else if (jsonObject.has(value.getOptionalFields())) {
+                // 为了兼容旧版本，读取可选字段名
+                JsonProperty<?> property = value.readJson(json);
+                property.initComponents();
+                data.addModifier(key, property);
+            }
+        });
         CommonAssetManager.INSTANCE.putAttachmentData(id, data);
     }
 }

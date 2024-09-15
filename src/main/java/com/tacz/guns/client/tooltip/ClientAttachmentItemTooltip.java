@@ -12,7 +12,6 @@ import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
-import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -176,36 +175,10 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                 }
             }
 
-            float adsAddendTime = data.getAdsAddendTime();
-            if (adsAddendTime > 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.ads.increase").withStyle(ChatFormatting.RED));
-            } else if (adsAddendTime < 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.ads.decrease").withStyle(ChatFormatting.GREEN));
-            }
-
-            float inaccuracyAddend = data.getInaccuracyAddend();
-            if (inaccuracyAddend > 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.increase").withStyle(ChatFormatting.RED));
-            } else if (inaccuracyAddend < 0) {
-                components.add(Component.translatable("tooltip.tacz.attachment.inaccuracy.decrease").withStyle(ChatFormatting.GREEN));
-            }
-
-            RecoilModifier recoilModifier = data.getRecoilModifier();
-            if (recoilModifier != null) {
-                float pitch = recoilModifier.getPitch();
-                if (pitch > 0) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.pitch.increase").withStyle(ChatFormatting.RED));
-                } else if (pitch < 0) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.pitch.decrease").withStyle(ChatFormatting.GREEN));
-                }
-
-                float yaw = recoilModifier.getYaw();
-                if (yaw > 0) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.yaw.increase").withStyle(ChatFormatting.RED));
-                } else if (yaw < 0) {
-                    components.add(Component.translatable("tooltip.tacz.attachment.yaw.decrease").withStyle(ChatFormatting.GREEN));
-                }
-            }
+            data.getModifier().forEach((key, value) -> {
+                List<Component> result = value.getComponents();
+                components.addAll(result);
+            });
         });
     }
 }

@@ -1,16 +1,19 @@
 package com.tacz.guns.client.gui;
 
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.animation.screen.RefitTransform;
+import com.tacz.guns.client.gui.components.FlatColorButton;
 import com.tacz.guns.client.gui.components.refit.*;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessageRefitGun;
 import com.tacz.guns.network.message.ClientMessageUnloadAttachment;
 import com.tacz.guns.sound.SoundManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
@@ -32,6 +35,7 @@ public class GunRefitScreen extends Screen {
     public static final int ICON_UV_SIZE = 32;
     public static final int SLOT_SIZE = 18;
     private static final int INVENTORY_ATTACHMENT_SLOT_COUNT = 8;
+    private static boolean HIDE_GUN_PROPERTY_DIAGRAMS = true;
 
     private int currentPage = 0;
 
@@ -82,13 +86,32 @@ public class GunRefitScreen extends Screen {
         this.addAttachmentTypeButtons();
         // 添加可选配件列表
         this.addInventoryAttachmentButtons();
+        // 添加属性图隐藏按钮
+        if (HIDE_GUN_PROPERTY_DIAGRAMS) {
+            this.addRenderableWidget(new FlatColorButton(11, 11, 288, 16,
+                    Component.translatable("gui.tacz.gun_refit.property_diagrams.show"), b -> switchHideButton()));
+        } else {
+            this.addRenderableWidget(new FlatColorButton(14, 14, 12, 12, Component.literal("S"), b -> {
+                LocalPlayer player = Minecraft.getInstance().player;
+                if (player == null || player.isSpectator()) return;
+                if (IGun.mainhandHoldGun(player)) {
+                    IClientPlayerGunOperator.fromLocalPlayer(player).fireSelect();
+                    this.init();
+                }
+            }).setTooltips(Component.translatable("gui.tacz.gun_refit.property_diagrams.fire_mode.switch")));
+            int buttonYOffset = GunPropertyDiagrams.getHidePropertyButtonYOffset();
+            this.addRenderableWidget(new FlatColorButton(11, buttonYOffset, 288, 12,
+                    Component.translatable("gui.tacz.gun_refit.property_diagrams.hide"), b -> switchHideButton()));
+        }
     }
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         super.render(graphics, mouseX, mouseY, pPartialTick);
 
-        GunPropertyDiagrams.draw(graphics, font, 11, 11);
+        if (!HIDE_GUN_PROPERTY_DIAGRAMS) {
+            GunPropertyDiagrams.draw(graphics, font, 11, 11);
+        }
 
         this.renderables.stream().filter(w -> w instanceof IComponentTooltip).forEach(w -> ((IComponentTooltip) w)
                 .renderTooltip(component -> graphics.renderComponentTooltip(font, component, mouseX, mouseY)));
@@ -218,5 +241,10 @@ public class GunRefitScreen extends Screen {
             this.addRenderableWidget(button);
             startX = startX - SLOT_SIZE;
         }
+    }
+
+    private void switchHideButton() {
+        HIDE_GUN_PROPERTY_DIAGRAMS = !HIDE_GUN_PROPERTY_DIAGRAMS;
+        this.init();
     }
 }

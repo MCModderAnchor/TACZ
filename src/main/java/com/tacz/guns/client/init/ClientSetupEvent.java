@@ -10,6 +10,7 @@ import com.tacz.guns.client.input.*;
 import com.tacz.guns.client.tooltip.ClientAmmoBoxTooltip;
 import com.tacz.guns.client.tooltip.ClientAttachmentItemTooltip;
 import com.tacz.guns.client.tooltip.ClientGunTooltip;
+import com.tacz.guns.compat.controllable.ControllableCompat;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
 import com.tacz.guns.init.ModItems;
@@ -40,6 +41,7 @@ public class ClientSetupEvent {
         event.register(InteractKey.INTERACT_KEY);
         event.register(FireSelectKey.FIRE_SELECT_KEY);
         event.register(AimKey.AIM_KEY);
+        event.register(CrawlKey.CRAWL_KEY);
         event.register(RefitKey.REFIT_KEY);
         event.register(ZoomKey.ZOOM_KEY);
         event.register(MeleeKey.MELEE_KEY);
@@ -83,5 +85,8 @@ public class ClientSetupEvent {
 
         // 与 Shoulder Surfing Reloaded 的兼容
         event.enqueueWork(ShoulderSurfingCompat::init);
+
+        // 与 Controllable 的兼容
+        event.enqueueWork(ControllableCompat::init);
     }
 }

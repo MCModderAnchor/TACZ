@@ -1,8 +1,10 @@
 package com.tacz.guns.api.entity;
 
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public interface IGunOperator {
@@ -120,4 +122,26 @@ public interface IGunOperator {
      * @param isAim 是否瞄准
      */
     void aim(boolean isAim);
+
+    /**
+     * 服务端应用趴下逻辑
+     */
+    void crawl(boolean isCrawl);
+
+    /**
+     * 更新枪械的配件属性修改值
+     * <p>
+     * 通过将配件修改的属性值缓存在实体上，避免频繁的计算，提升性能
+     *
+     * @param cacheProperty 更新完的配件属性修改值
+     */
+    void updateCacheProperty(AttachmentCacheProperty cacheProperty);
+
+    /**
+     * 获取配件属性修改值缓存
+     *
+     * @return 绝大部分情况下，这个数值都不可能为 null
+     */
+    @Nullable
+    AttachmentCacheProperty getCacheProperty();
 }

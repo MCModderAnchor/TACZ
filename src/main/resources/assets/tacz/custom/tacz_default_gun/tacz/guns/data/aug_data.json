@@ -1,0 +1,121 @@
+{
+  "ammo": "tacz:556x45",
+  "ammo_amount": 30,
+  "extended_mag_ammo_amount": [
+    34,
+    39,
+    50
+  ],
+  "bolt": "closed_bolt",
+  "rpm": 710,
+  "bullet": {
+    "life": 0.75,
+    "bullet_amount": 1,
+    "damage": 7,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.25,
+      "head_shot_multiplier": 1.5,
+      "damage_adjust": [
+        {"distance": 28, "damage": 7},
+        {"distance": 65, "damage": 6},
+        {"distance": "infinite", "damage": 5}
+      ]
+    },
+    "speed": 295,
+    "gravity": 0.15,
+    "knockback": 0,
+    "friction": 0.0175,
+    "ignite": false,
+    "pierce": 1
+  },
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 2.63,
+      "tactical": 1.42
+    },
+    "cooldown": {
+      "empty": 3,
+      "tactical": 2.25
+    }
+  },
+  "draw_time": 0.43,
+  "put_away_time": 0.33,
+  "aim_time": 0.2,
+  "sprint_time": 0.2,
+  // 拉栓上膛的时间，仅当枪栓类型为 manual_action 时有效
+  // "bolt_action_time": 0.9,
+  // 重量，枪械的总重将影响“移速属性”，默认-1.5%移动速度/kg，可在ServerConfig中调整
+  // 调整的属性会作为“百分比增加”类型(MULTIPLY_BASE)的属性修饰器添加至实体上
+  // 注意，移速属性并不能直接反应实际移速，此属性对实际移速的影响较为复杂，请自行查阅相关资料
+  "weight": 3.1,
+  // 额外移速修正，多种情况同时满足时，仅计算最后一个修正
+  // 对于其中的每个情况，最终的修正值是枪械和所有配件该情况下修正值的和
+  // 调整的属性将作为“最终乘算”类型(MULTIPLY_TOTAL)的属性修饰器添加至实体上
+  "movement_speed": {
+    // 默认修正
+    "base": 0.0,
+    // 瞄准时
+    "aim": -0.35,
+    // 换弹时
+    "reload": -0.1
+  },
+  "fire_mode": [
+    "auto",
+    "semi"
+  ],
+  "crawl_recoil_multiplier": 0.75,
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [0.375, 0.375]},
+      {"time": 0.1875, "value": [0.375, 0.375]},
+      {"time": 0.55, "value": [-0.125, -0.125]},
+      {"time": 0.7, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-0.25, 0.25]},
+      {"time": 0.1, "value": [-0.2, 0.25]},
+      {"time": 0.5, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 3.75,
+    "move": 4.5,
+    "sneak": 3.25,
+    "lie": 2.75,
+    "aim": 0.1375
+  },
+  // 近战相关
+  "melee": {
+    // 枪械距离参数，用来延升近战攻击范围
+    // 会与刺刀等配件的距离做加和
+    "distance": 1,
+    // 使用时的冷却时间
+    "cooldown": 0.6,
+    // 默认近战数据，会被配件的数据替换掉
+    "default": {
+      // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
+      "animation_type": "melee_stock",
+      // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
+      "distance": 1,
+      // 刺刀范围角度
+      "range_angle": 30,
+      // 伤害值
+      "damage": 2,
+      // 击退效果
+      "knockback": 0.5,
+      // 前摇时长，单位：秒
+      "prep": 0.1
+    }
+  },
+  "allow_attachment_types": [
+    "muzzle",
+    "extended_mag"
+  ],
+  "builtin_attachments": {
+    "scope": "tacz:scope_aug_default"
+  },
+  "exclusive_attachments": {
+  }
+}

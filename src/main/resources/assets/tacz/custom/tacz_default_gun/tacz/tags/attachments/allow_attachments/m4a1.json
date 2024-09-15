@@ -2,7 +2,8 @@
   "#tacz:scope",
   "#tacz:muzzle",
   "#tacz:extended_mag",
-  "#tacz:stock",
   "#tacz:grip",
-  "tacz:bayonet_m9"
+  "#tacz:bayonet_ar",
+  "#tacz:m4a1_stock",
+  "#tacz:ammo_mod_no_he"
 ]

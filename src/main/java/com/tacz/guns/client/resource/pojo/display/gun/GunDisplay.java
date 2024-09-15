@@ -2,9 +2,12 @@ package com.tacz.guns.client.resource.pojo.display.gun;
 
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
+import com.tacz.guns.api.item.gun.FireMode;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class GunDisplay {
@@ -26,6 +29,9 @@ public class GunDisplay {
     @Nullable
     @SerializedName("slot")
     private ResourceLocation slotTextureLocation;
+    @NotNull
+    @SerializedName("ammo_count_style")
+    private AmmoCountStyle ammoCountStyle = AmmoCountStyle.NORMAL;
     @Nullable
     @SerializedName("third_person_animation")
     private String thirdPersonAnimation;
@@ -62,6 +68,8 @@ public class GunDisplay {
     private Map<String, TextShow> textShows = Maps.newHashMap();
     @SerializedName("show_crosshair")
     private boolean showCrosshair = false;
+    @SerializedName("controllable")
+    private EnumMap<FireMode, ControllableData> controllableData = Maps.newEnumMap(FireMode.class);
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -155,5 +163,13 @@ public class GunDisplay {
 
     public boolean isShowCrosshair() {
         return showCrosshair;
+    }
+
+    public EnumMap<FireMode, ControllableData> getControllableData() {
+        return controllableData;
+    }
+
+    public @NotNull AmmoCountStyle getAmmoCountStyle() {
+        return ammoCountStyle;
     }
 }

@@ -1,0 +1,63 @@
+{
+  "model": "tacz:gun/mk14_geo",
+  "texture": "tacz:gun/uv/mk14",
+  "lod": {
+    "model": "tacz:gun/lod/mk14",
+    "texture": "tacz:gun/lod/mk14"
+  },
+  "hud": "tacz:gun/hud/mk14_hud",
+  "slot": "tacz:gun/slot/mk14_slot",
+  "animation": "tacz:mk14",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1.0
+  },
+  "iron_zoom": 1.2,
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:mk14/mk14_shoot",
+    "shoot_3p": "tacz:mk14/mk14_shoot_3p",
+    "reload_empty": "tacz:mk14/mk14_reload_empty",
+    "reload_tactical": "tacz:mk14/mk14_reload_tactical",
+    "inspect": "tacz:mk14/mk14_inspect",
+    "inspect_empty": "tacz:mk14/mk14_inspect_empty",
+    "draw": "tacz:mk14/mk14_draw",
+    "put_away": "tacz:mk14/mk14_put_away",
+    "silence": "tacz:mk14/mk14_silence",
+    "silence_3p": "tacz:mk14/mk14_silence_3p",
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  "offhand_show": {
+    "pos": [0, 19, 4],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [0, 19, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

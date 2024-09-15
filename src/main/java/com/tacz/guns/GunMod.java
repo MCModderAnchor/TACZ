@@ -5,6 +5,7 @@ import com.tacz.guns.config.ClientConfig;
 import com.tacz.guns.config.CommonConfig;
 import com.tacz.guns.config.ServerConfig;
 import com.tacz.guns.init.*;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -37,8 +38,10 @@ public class GunMod {
         ModContainer.CONTAINER_TYPE.register(bus);
         ModSounds.SOUNDS.register(bus);
         ModParticles.PARTICLE_TYPES.register(bus);
+        ModAttributes.ATTRIBUTES.register(bus);
 
         registerDefaultExtraGunPack();
+        AttachmentPropertyManager.registerModifier();
     }
 
     private static void registerDefaultExtraGunPack() {

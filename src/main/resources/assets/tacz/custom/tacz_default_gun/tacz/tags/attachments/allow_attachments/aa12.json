@@ -1,5 +1,7 @@
 [
-  "#tacz:scope",
+  "#tacz:scope_sight",
+  "#tacz:scope_scope",
   "#tacz:extended_mag",
-  "#tacz:grip"
+  "#tacz:grip",
+  "#tacz:ammo_mod_no_he"
 ]

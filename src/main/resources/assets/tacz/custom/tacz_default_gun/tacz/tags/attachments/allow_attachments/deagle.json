@@ -1,5 +1,6 @@
 [
-  "tacz:sight_t1",
-  "tacz:muzzle_silence_mirage",
-  "#tacz:light_extended_mag"
+  "#tacz:deagle_sight",
+  "#tacz:pistol_muzzle",
+  "#tacz:light_extended_mag",
+  "#tacz:ammo_mod"
 ]

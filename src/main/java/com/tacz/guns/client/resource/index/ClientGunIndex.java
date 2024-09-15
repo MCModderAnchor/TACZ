@@ -6,11 +6,11 @@ import com.google.common.collect.Maps;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.tacz.guns.GunMod;
-import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.client.animation.AnimationController;
 import com.tacz.guns.api.client.animation.Animations;
 import com.tacz.guns.api.client.animation.ObjectAnimation;
 import com.tacz.guns.api.client.animation.gltf.AnimationStructure;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.ClientAssetManager;
@@ -37,6 +37,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -65,6 +66,8 @@ public class ClientGunIndex {
     private boolean showCrosshair = false;
     private @Nullable AmmoParticle particle;
     private float @Nullable [] tracerColor = null;
+    private EnumMap<FireMode, ControllableData> controllableData;
+    private AmmoCountStyle ammoCountStyle = AmmoCountStyle.NORMAL;
 
     private ClientGunIndex() {
     }
@@ -89,6 +92,8 @@ public class ClientGunIndex {
         checkIronZoom(display, index);
         checkTextShow(display, index);
         index.showCrosshair = display.isShowCrosshair();
+        index.controllableData = display.getControllableData();
+        index.ammoCountStyle = display.getAmmoCountStyle();
         return index;
     }
 
@@ -257,9 +262,8 @@ public class ClientGunIndex {
 
     private static void checkTransform(GunDisplay display, ClientGunIndex index) {
         GunTransform readTransform = display.getTransform();
-        GunDisplay defaultDisplay = ClientAssetManager.INSTANCE.getGunDisplay(DefaultAssets.DEFAULT_GUN_DISPLAY);
         if (readTransform == null || readTransform.getScale() == null) {
-            index.transform = Objects.requireNonNull(defaultDisplay.getTransform());
+            index.transform = GunTransform.getDefault();
         } else {
             index.transform = display.getTransform();
         }
@@ -428,5 +432,13 @@ public class ClientGunIndex {
 
     public @Nullable ResourceLocation getPlayerAnimator3rd() {
         return playerAnimator3rd;
+    }
+
+    public EnumMap<FireMode, ControllableData> getControllableData() {
+        return controllableData;
+    }
+
+    public AmmoCountStyle getAmmoCountStyle() {
+        return ammoCountStyle;
     }
 }

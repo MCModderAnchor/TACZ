@@ -2,6 +2,10 @@
   "model": "tacz:ammo/12g",
   "texture": "tacz:ammo/uv/12g",
   "slot": "tacz:ammo/slot/12g",
+  "shell": {
+    "model": "tacz:shell/12g_shell",
+    "texture": "tacz:shell/12g_shell"
+  },
   "tracer_color": "#FF3030",
   "transform": {
     "scale": {

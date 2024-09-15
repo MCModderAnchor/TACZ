@@ -23,11 +23,18 @@
       ]
     },
     "speed": 400,
-    "gravity": 0.098,
+    "gravity": 0.15,
     "knockback": 0,
     "friction": 0.03,
     "ignite": false,
-    "pierce": 5
+    "pierce": 5,
+    "explosion": {
+      "explode": false,
+      "damage": 140,
+      "radius": 1.8,
+      "knockback": true,
+      "delay": 1
+    }
   },
   "reload": {
     "type": "magazine",
@@ -45,6 +52,16 @@
   "aim_time": 0.27,
   "sprint_time": 0.2,
   "bolt_action_time": 1.43,
+  "weight": 10.7,
+  "movement_speed": {
+    // 默认修正
+    "base": 0.0,
+    // 瞄准时
+    "aim": -0.4,
+    // 换弹时
+    "reload": -0.2
+  },
+  "crawl_recoil_multiplier": 0.1,
   "fire_mode": [
     "semi"
   ],
@@ -58,8 +75,8 @@
       {"time": 1.47, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.9, -0.75]},
-      {"time": 0.32, "value": [-0.9, -0.75]},
+      {"time": 0, "value": [-1.2, -0.9]},
+      {"time": 0.32, "value": [-1.2, -0.9]},
       {"time": 0.57, "value": [0, 0]}
     ]
   },
@@ -82,11 +99,11 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_stock",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1.25,
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值
-      "damage": 2,
+      "damage": 5,
       // 击退效果
       "knockback": 0.85,
       // 前摇时长，单位：秒
@@ -96,5 +113,8 @@
   "allow_attachment_types": [
     "scope",
     "extended_mag"
-  ]
+  ],
+  "exclusive_attachments": {
+   
+  }
 }

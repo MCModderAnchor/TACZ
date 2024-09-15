@@ -7,7 +7,7 @@
     60
   ],
   "bolt": "closed_bolt",
-  "rpm": 850,
+  "rpm": 810,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
@@ -17,14 +17,13 @@
       "armor_ignore": 0.2,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 0.5, "damage": 7.5},
         {"distance": 25, "damage": 6.5},
         {"distance": 60, "damage": 5.5},
         {"distance": "infinite", "damage": 4.5}
       ]
     },
     "speed": 265,
-    "gravity": 0.098,
+    "gravity": 0.15,
     "knockback": 0,
     "friction": 0.015,
     "ignite": false,
@@ -43,19 +42,66 @@
   },
   "draw_time": 0.3,
   "put_away_time": 0.43,
-  "aim_time": 0.2,
-  "sprint_time": 0.2,
+  "aim_time": 0.17,
+  "sprint_time": 0.18,
+  "weight": 3.5,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.15,
+    "reload": -0.1
+  },
+  "crawl_recoil_multiplier": 0.5,
   "fire_mode": [
     "auto",
-    "semi",
-    "burst"
+    "semi"
   ],
+  // 开火模式调整（如无调整可不写）
+  /*
+  "fire_mode_adjust": {
+    // 全自动状态的数值调整，如无调整可不写
+    "auto": {
+      // 加算，全自动模式的开火数值调整，如无调整可不写
+      "damage": 0,
+      "rpm": 0,
+      "speed": 0,
+      "knockback": 0,
+      "armor_ignore": 0,
+      "head_shot_multiplier": 0,
+      "aim_inaccuracy": 0,
+      "other_inaccuracy": 0
+    },
+    // 半自动状态的数值调整，如无调整可不写
+    "semi": {
+      // 加算，半自动模式的开火数值调整，如无调整可不写
+      "damage": 9,
+      "rpm": -400,
+      "speed": 20,
+      "knockback": 0.1,
+      "armor_ignore": 0.1,
+      "head_shot_multiplier": 0.1,
+      "aim_inaccuracy": -0.1,
+      "other_inaccuracy": -0.5
+    }
+    // 多连发状态的数值调整，如无调整可不写
+    // "burst": {
+    // 加算，多连发模式的开火数值调整，如无调整可不写
+    // "damage": 0,
+    // "rpm": 0,
+    // "speed": 0,
+    // "knockback": 0,
+    // "armor_ignore": 0,
+    // "head_shot_multiplier": 0,
+    // "aim_inaccuracy": 0,
+    // "other_inaccuracy": 0
+    // }
+  },
   "burst_data": {
     "continuous_shoot": false,
     "count": 3,
     "bpm": 900,
     "min_interval": 0.3
   },
+  */
   "recoil": {
     "pitch": [
       {"time": 0, "value": [0.55, 0.55]},
@@ -64,8 +110,8 @@
       {"time": 0.65, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [0.15, 0.25]},
-      {"time": 0.3, "value": [0.15, 0.25]},
+      {"time": 0, "value": [-0.35, 0.25]},
+      {"time": 0.3, "value": [-0.35, 0.25]},
       {"time": 0.5, "value": [0, 0]}
     ]
   },
@@ -88,7 +134,7 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_stock",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1,
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值

@@ -131,12 +131,14 @@ public class AnimationStateMachine<T extends AnimationStateContext> {
      * 设置状态机的上下文。在状态机进行其他操作之前，务必调用此方法将 context 初始化。
      */
     public void setContext(@Nonnull T context) {
-        if (context.stateMachine != null && context.stateMachine != this) {
+        AnimationStateMachine<?> stateMachine = context.getStateMachine();
+        if (stateMachine != null && stateMachine != this) {
             throw new IllegalStateException("Context is already used");
         }
         if (this.context != null) {
-            this.context.stateMachine = null;
+            this.context.setStateMachine(null);
         }
+        context.setStateMachine(this);
         this.context = context;
     }
 
@@ -150,11 +152,11 @@ public class AnimationStateMachine<T extends AnimationStateContext> {
     }
 
     private void checkNullPointer(){
-        if (currentStates == null) {
-            throw new IllegalStateException("State machine has not been initialized");
-        }
         if (context == null) {
             throw new IllegalStateException("Context has not been initialized");
+        }
+        if (currentStates == null) {
+            throw new IllegalStateException("State machine has not been initialized");
         }
     }
 }

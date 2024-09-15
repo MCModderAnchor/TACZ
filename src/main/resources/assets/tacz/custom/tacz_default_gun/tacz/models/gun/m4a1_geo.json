@@ -6848,8 +6848,13 @@
 					]
 				},
 				{
-					"name": "stock_default",
+					"name": "attachment_adapter",
 					"parent": "m4a1",
+					"pivot": [0, 20, -8]
+				},
+				{
+					"name": "oem_stock_tactical",
+					"parent": "attachment_adapter",
 					"pivot": [0, 20, -8],
 					"cubes": [
 						{
@@ -7453,7 +7458,7 @@
 				},
 				{
 					"name": "group23",
-					"parent": "stock_default",
+					"parent": "oem_stock_tactical",
 					"pivot": [0, 19.76812, 11.86876],
 					"rotation": [-7.5, 0, 0],
 					"cubes": [
@@ -12484,7 +12489,7 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0, 5.875, -2.65]
+					"pivot": [0, 6.875, -2.65]
 				},
 				{
 					"name": "ground",

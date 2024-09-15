@@ -1,9 +1,15 @@
 {
-  "weight": 0.015,
-  "ads_addend": 0.025,
-  "inaccuracy_addend": -0.55,
-  "recoil_modifier": {
-    "pitch": -0.1,
-    "yaw": -0.35
+  "weight": 0.2,
+  "ads": {
+    // 加数（多个配件的数值相加，作为第一个乘区）
+    "multiplier": 1.01
+  },
+  "aim_inaccuracy": {
+    "multiplier": 0.9
+  },
+  "recoil": {
+    "pitch": {
+      "multiplier": 0.85
+    }
   }
 }

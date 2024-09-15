@@ -11,12 +11,15 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
+import com.tacz.guns.api.modifier.ParameterizedCachePair;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
-import com.tacz.guns.resource.pojo.data.attachment.RecoilModifier;
+import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
-import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
@@ -25,9 +28,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
@@ -46,7 +52,7 @@ public class CameraSetupEvent {
     private static PolynomialSplineFunction yawSplineFunction;
     private static long shootTimeStamp = -1L;
     private static double xRotO = 0;
-    private static double yRot0 = 0;
+    private static double yRotO = 0;
     private static BedrockGunModel lastModel = null;
 
     @SubscribeEvent
@@ -158,6 +164,9 @@ public class CameraSetupEvent {
                 return;
             }
             ResourceLocation scopeItemId = iGun.getAttachmentId(stack, AttachmentType.SCOPE);
+            if (scopeItemId.equals(DefaultAssets.EMPTY_ATTACHMENT_ID)) {
+                scopeItemId = iGun.getBuiltInAttachmentId(stack, AttachmentType.SCOPE);
+            }
             if (DefaultAssets.isEmptyAttachmentId(scopeItemId)) {
                 float fov = ITEM_MODEL_FOV_DYNAMICS.update((float) event.getFOV());
                 event.setFOV(fov);
@@ -186,11 +195,15 @@ public class CameraSetupEvent {
             if (!shooter.equals(player)) {
                 return;
             }
-            ItemStack mainhandItem = player.getMainHandItem();
-            if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+            ItemStack mainHandItem = player.getMainHandItem();
+            if (!(mainHandItem.getItem() instanceof IGun iGun)) {
                 return;
             }
-            ResourceLocation gunId = iGun.getGunId(mainhandItem);
+            AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(player).getCacheProperty();
+            if (cacheProperty == null) {
+                return;
+            }
+            ResourceLocation gunId = iGun.getGunId(mainHandItem);
             Optional<ClientGunIndex> gunIndexOptional = TimelessAPI.getClientGunIndex(gunId);
             if (gunIndexOptional.isEmpty()) {
                 return;
@@ -198,24 +211,21 @@ public class CameraSetupEvent {
             ClientGunIndex gunIndex = gunIndexOptional.get();
             GunData gunData = gunIndex.getGunData();
             // 获取所有配件对摄像机后坐力的修改
-            final float[] attachmentRecoilModifier = new float[]{0f, 0f};
-            AttachmentDataUtils.getAllAttachmentData(mainhandItem, gunData, attachmentData -> {
-                RecoilModifier recoilModifier = attachmentData.getRecoilModifier();
-                if (recoilModifier == null) {
-                    return;
-                }
-                attachmentRecoilModifier[0] += recoilModifier.getPitch();
-                attachmentRecoilModifier[1] += recoilModifier.getYaw();
-            });
+            ParameterizedCachePair<Float, Float> attachmentRecoilModifier = cacheProperty.getCache(RecoilModifier.ID);
             IClientPlayerGunOperator clientPlayerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             float partialTicks = Minecraft.getInstance().getFrameTime();
             float aimingProgress = clientPlayerGunOperator.getClientAimingProgress(partialTicks);
-            float zoom = iGun.getAimingZoom(mainhandItem);
+            float zoom = iGun.getAimingZoom(mainHandItem);
             float aimingRecoilModifier = 1 - aimingProgress + aimingProgress / (float) Math.sqrt(zoom);
-            pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction(modifierNumber(attachmentRecoilModifier[0]) * aimingRecoilModifier);
-            yawSplineFunction = gunData.getRecoil().genYawSplineFunction(modifierNumber(attachmentRecoilModifier[1]) * aimingRecoilModifier);
+            // 如果是趴下，那么后坐力按 data 设计减少（默认为降低一半）
+            if (!player.isSwimming() && player.getPose() == Pose.SWIMMING) {
+                aimingRecoilModifier = aimingRecoilModifier * gunData.getCrawlRecoilMultiplier();
+            }
+            pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction((float) attachmentRecoilModifier.left().eval(aimingRecoilModifier));
+            yawSplineFunction = gunData.getRecoil().genYawSplineFunction((float) attachmentRecoilModifier.right().eval(aimingRecoilModifier));
             shootTimeStamp = System.currentTimeMillis();
             xRotO = 0;
+            yRotO = 0;
         }
     }
 
@@ -233,12 +243,24 @@ public class CameraSetupEvent {
         }
         if (yawSplineFunction != null && yawSplineFunction.isValidPoint(timeTotal)) {
             double value = yawSplineFunction.value(timeTotal);
-            player.setYRot(player.getYRot() - (float) (value - yRot0));
-            yRot0 = value;
+            player.setYRot(player.getYRot() - (float) (value - yRotO));
+            yRotO = value;
         }
     }
 
-    private static float modifierNumber(float modifier) {
-        return Math.max(0, 1 + modifier);
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onComputeMovementFov(ComputeFovModifierEvent event){
+        if (!RenderConfig.DISABLE_MOVEMENT_ATTRIBUTE_FOV.get()) return;
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        float f = 1.0f;
+        if (player.getMainHandItem().getItem() instanceof AbstractGunItem) {
+            if (player.getAbilities().flying) {
+                f *= 1.1F;
+            }
+            event.setNewFovModifier(player.isSprinting() ? 1.15f * f : f);
+        }
     }
 }

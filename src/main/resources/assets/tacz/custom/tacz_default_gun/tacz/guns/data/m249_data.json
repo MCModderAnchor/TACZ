@@ -7,7 +7,7 @@
     200
   ],
   "bolt": "open_bolt",
-  "rpm": 850,
+  "rpm": 750,
   "bullet": {
     "life": 1.0,
     "bullet_amount": 1,
@@ -17,14 +17,13 @@
       "armor_ignore": 0.3,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 1, "damage": 8.5},
         {"distance": 35, "damage": 7},
         {"distance": 80, "damage": 5.5},
         {"distance": "infinite", "damage": 4.5}
       ]
     },
     "speed": 260,
-    "gravity": 0.098,
+    "gravity": 0.15,
     "knockback": 0,
     "friction": 0.015,
     "ignite": false,
@@ -44,7 +43,14 @@
   "draw_time": 1,
   "put_away_time": 0.67,
   "aim_time": 0.3,
-  "sprint_time": 0.2,
+  "sprint_time": 0.25,
+  "weight": 8,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.25,
+    "reload": -0.2
+  },
+  "crawl_recoil_multiplier": 0.1,
   "fire_mode": [
     "auto"
   ],
@@ -56,8 +62,8 @@
       {"time": 0.65, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.1, 0.2]},
-      {"time": 0.3, "value": [0.2, 0.3]},
+      {"time": 0, "value": [-0.3, 0.2]},
+      {"time": 0.3, "value": [-0.3, 0.2]},
       {"time": 0.5, "value": [0, 0]}
     ]
   },
@@ -65,7 +71,7 @@
     "stand": 7,
     "move": 8.5,
     "sneak": 6,
-    "lie": 5,
+    "lie": 3,
     "aim": 0.175
   },
   // 近战相关
@@ -84,7 +90,7 @@
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值
-      "damage": 2,
+      "damage": 4,
       // 击退效果
       "knockback": 0.75,
       // 前摇时长，单位：秒

@@ -3,6 +3,7 @@ package com.tacz.guns.client.resource;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.resource.ResourceManager;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
@@ -21,8 +22,12 @@ import com.tacz.guns.client.resource.serialize.SoundEffectKeyframesSerializer;
 import com.tacz.guns.client.resource.serialize.Vector3fSerializer;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import com.tacz.guns.config.common.OtherConfig;
+import com.tacz.guns.resource.VersionChecker;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.util.GetJarResources;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -91,6 +96,12 @@ public class ClientGunPackLoader {
         ClientAmmoIndexLoader.loadAmmoIndex();
         ClientGunIndexLoader.loadGunIndex();
         ClientAttachmentIndexLoader.loadAttachmentIndex();
+
+        // 如果玩家此时持有枪械，那么需要刷新配件缓存
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null && IGun.mainhandHoldGun(player)) {
+            AttachmentPropertyManager.postChangeEvent(player, player.getMainHandItem());
+        }
     }
 
     private static void createFolder() {
@@ -130,7 +141,7 @@ public class ClientGunPackLoader {
     }
 
     private static void readDirAsset(File root) {
-        if (root.isDirectory()) {
+        if (VersionChecker.match(root)) {
             GunDisplayLoader.load(root);
             AmmoDisplayLoader.load(root);
             AttachmentDisplayLoader.load(root);
@@ -147,6 +158,10 @@ public class ClientGunPackLoader {
 
     public static void readZipAsset(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
+            // 不符合版本检查，不加载
+            if (VersionChecker.noneMatch(zipFile, file.toPath())) {
+                return;
+            }
             Enumeration<? extends ZipEntry> iteration = zipFile.entries();
             while (iteration.hasMoreElements()) {
                 String path = iteration.nextElement().getName();

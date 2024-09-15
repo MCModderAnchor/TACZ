@@ -1,6 +1,7 @@
 [
   "#tacz:muzzle",
   "#tacz:extended_mag",
-  "tacz:bayonet_m9",
-  "tacz:scope_retro_2x"
+  "#tacz:bayonet_ar",
+  "#tacz:m16a1_scope",
+  "#tacz:ammo_mod_no_he"
 ]

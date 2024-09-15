@@ -32,8 +32,6 @@
       "head_shot_multiplier": 1.5,
       // 距离-伤害分段常函数
       "damage_adjust": [
-        // 这样就能写抵近伤害了
-        {"distance": 0.5, "damage": 10},
         {"distance": 25, "damage": 9},
         {"distance": 55, "damage": 7.5},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
@@ -43,30 +41,42 @@
     // 速度 m/s
     "speed": 240,
     // 重力
-    "gravity": 0.098,
+    "gravity": 0.15,
     // 击退效果
     "knockback": 0,
     // 阻力
     "friction": 0.02,
     // 点燃目标
-    "ignite": false,
+    // "ignite": false,
+    "ignite": {
+      // 点燃实体
+      "entity": false,
+      // 点燃方块
+      "block": false
+    },
     // 点燃时间，默认为 2 秒，仅用于实体
     "ignite_entity_time": 2,
     // 穿透数
     "pierce": 1
-    // 是否爆炸，没有此字段时为 false
-    //"explosion": {
-    //  延时爆炸，单位：秒
-    //  "delay": 5
-    //  "radius": 5,
-    //  "damage": 5,
-    //  爆炸导致的击退，默认为 false，需要服务器也开启爆炸击退才能使用
-    //  "knockback": false
-    //}
+    // 储存爆炸的相关数据，如果没有的话会有一套默认的配置
+    // "explosion": {
+      // 是否爆炸，默认为 false，如果希望默认爆炸则设置为 true
+      // "explode": false,
+      // 延时爆炸，单位：秒
+      // "delay": 30,
+      // 爆炸半径，单位：米（格）
+      // "radius": 5,
+      // 爆炸伤害
+      // "damage": 5,
+      // 爆炸导致的击退，默认为 false，需要服务器也开启爆炸击退才能使用
+      // "knockback": false
+      // 爆炸是否破坏方块，默认为 false，需要服务器也开启爆炸破坏方块才能使用
+      // "destroy_block": false
+    // }
   },
   // 换弹相关
   "reload": {
-    // magazine 是弹匣供弹，manual 是手动供弹
+    // magazine 是弹匣供弹，manual 是手动供弹，fuel是类燃料罐供弹（消耗一个物品填满）
     "type": "magazine",
     // 弹匣供弹换弹时长（秒），到达此时间点，服务端就更新枪内子弹数量
     "feed": {
@@ -93,6 +103,21 @@
   "sprint_time": 0.2,
   // 拉栓上膛的时间，仅当枪栓类型为 manual_action 时有效
   // "bolt_action_time": 0.9,
+  // 重量，枪械的总重将影响“移速属性”，默认-1.5%移动速度/kg，可在ServerConfig中调整
+  // 调整的属性会作为“百分比增加”类型(MULTIPLY_BASE)的属性修饰器添加至实体上
+  // 注意，移速属性并不能直接反应实际移速，此属性对实际移速的影响较为复杂，请自行查阅相关资料
+  "weight": 3.5,
+  // 额外移速修正，多种情况同时满足时，仅计算最后一个修正
+  // 对于其中的每个情况，最终的修正值是枪械和所有配件该情况下修正值的和
+  // 调整的属性将作为“最终乘算”类型(MULTIPLY_TOTAL)的属性修饰器添加至实体上
+  "movement_speed": {
+    // 默认修正
+    "base": 0.0,
+    // 瞄准时
+    "aim": -0.2,
+    // 换弹时
+    "reload": -0.15
+  },
   // 开火模式
   "fire_mode": [
     // 全自动
@@ -100,6 +125,47 @@
     // 半自动
     "semi"
   ],
+  // 开火模式调整（如无调整可不写）
+  /*
+  "fire_mode_adjust": {
+    // 全自动状态的数值调整，如无调整可不写
+    "auto": {
+      // 加算，全自动模式的开火数值调整，如无调整可不写
+      "damage": 0,
+      "rpm": 0,
+      "speed": 0,
+      "knockback": 0,
+      "armor_ignore": 0,
+      "head_shot_multiplier": 0,
+      "aim_inaccuracy": 0,
+      "other_inaccuracy": 0
+    },
+    // 半自动状态的数值调整，如无调整可不写
+    "semi": {
+      // 加算，半自动模式的开火数值调整，如无调整可不写
+      "damage": 9,
+      "rpm": -400,
+      "speed": 20,
+      "knockback": 0.1,
+      "armor_ignore": 0.1,
+      "head_shot_multiplier": 0.1,
+      "aim_inaccuracy": -0.1,
+      "other_inaccuracy": -0.5
+    }
+    // 多连发状态的数值调整，如无调整可不写
+    // "burst": {
+      // 加算，多连发模式的开火数值调整，如无调整可不写
+      // "damage": 0,
+      // "rpm": 0,
+      // "speed": 0,
+      // "knockback": 0,
+      // "armor_ignore": 0,
+      // "head_shot_multiplier": 0,
+      // "aim_inaccuracy": 0,
+      // "other_inaccuracy": 0
+    // }
+  },
+  */
   // 多连续发数据，仅多连发会调用
   "burst_data": {
     // 是否连续射击
@@ -111,6 +177,7 @@
     // 每组连发之间的时间间隔（上一组结束时间到下一组开始的时间间隔），单位秒
     "min_interval": 0.3
   },
+  "crawl_recoil_multiplier": 0.5,
   // 后坐力
   "recoil": {
     "pitch": [
@@ -120,8 +187,7 @@
       {"time": 0.6, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.35, -0.15]},
-      {"time": 0.25, "value": [-0.35, -0.15]},
+      {"time": 0, "value": [-0.35, 0.25]},
       {"time": 0.45, "value": [0, 0]}
     ]
   },
@@ -153,7 +219,7 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_push",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1,
       // 刺刀范围角度
       "range_angle": 40,
       // 刺刀冷却时间，枪械里还有个刺刀冷却时间参数，两者做加和
@@ -174,6 +240,12 @@
     "muzzle",
     "extended_mag"
   ],
+  // 配件槽的默认配件，当未安装配件时使用
+  // 默认配件的data将不会被应用，仅仅有外观效果
+  // 用于默认瞄具等特殊场合
+//  "builtin_attachments": {
+//    "scope": "tacz:scope_standard_8x"
+//  },
   // 专属的配件属性
   "exclusive_attachments": {
     // 配件 ID，后面的数据和配件的 data 部分结构完全一致

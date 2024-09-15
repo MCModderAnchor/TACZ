@@ -1,6 +1,6 @@
 {
   "ammo": "tacz:9mm",
-  "rpm": 900,
+  "rpm": 820,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
@@ -10,7 +10,6 @@
       "armor_ignore": 0.15,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
-        {"distance": 1, "damage": 7.5},
         {"distance": 18, "damage": 6},
         {"distance": 40, "damage": 5},
         {"distance": 65, "damage": 4.5},
@@ -18,7 +17,7 @@
       ]
     },
     "speed": 180,
-    "gravity": 0.098,
+    "gravity": 0.15,
     "knockback": 0,
     "friction": 0.02,
     "ignite": false,
@@ -44,8 +43,15 @@
   },
   "draw_time": 0.32,
   "put_away_time": 0.35,
-  "sprint_time": 0.2,
+  "sprint_time": 0.12,
   "aim_time": 0.17,
+  "weight": 2.5,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.1,
+    "reload": 0
+  },
+  "crawl_recoil_multiplier": 0.75,
   "fire_mode": [
     "auto",
     "burst",
@@ -66,14 +72,14 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.55, 0.55]},
-      {"time": 0.3, "value": [0.55, 0.55]},
+      {"time": 0, "value": [0.45, 0.45]},
+      {"time": 0.3, "value": [0.45, 0.45]},
       {"time": 0.5, "value": [-0.125, -0.125]},
       {"time": 0.65, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [0.15, 0.25]},
-      {"time": 0.3, "value": [0.15, 0.25]},
+      {"time": 0, "value": [-0.275, 0.275]},
+      {"time": 0.3, "value": [-0.275, 0.275]},
       {"time": 0.5, "value": [0, 0]}
     ]
   },
@@ -97,7 +103,7 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_push",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1,
       // 刺刀范围角度
       "range_angle": 40,
       // 刺刀冷却时间，枪械里还有个刺刀冷却时间参数，两者做加和

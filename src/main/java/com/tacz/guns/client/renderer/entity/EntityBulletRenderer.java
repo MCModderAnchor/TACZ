@@ -44,7 +44,7 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
         if (optionalClientGunIndex.isEmpty()) {
             return;
         }
-        float @Nullable [] gunTracerColor = optionalClientGunIndex.get().getTracerColor();
+        float @Nullable [] tracerColor = bullet.getTracerColorOverride().orElseGet(optionalClientGunIndex.get()::getTracerColor);
         ResourceLocation ammoId = bullet.getAmmoId();
         TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(ammoIndex -> {
             BedrockAmmoModel ammoEntityModel = ammoIndex.getAmmoEntityModel();
@@ -61,8 +61,8 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
 
             // 曳光弹发光
             if (bullet.isTracerAmmo()) {
-                float[] tracerColor = Objects.requireNonNullElse(gunTracerColor, ammoIndex.getTracerColor());
-                renderTracerAmmo(bullet, tracerColor, partialTicks, poseStack, packedLight);
+                float[] actualTracerColor = Objects.requireNonNullElse(tracerColor, ammoIndex.getTracerColor());
+                renderTracerAmmo(bullet, actualTracerColor, partialTicks, poseStack, packedLight);
             }
         });
     }
@@ -85,10 +85,13 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
                     poseStack.popPose();
                     return;
                 } else {
+                    // 说是 override 其实默认值是 1
+                    // 所以这里直接乘也没关系
+                    width *= bullet.getTracerSizeOverride();
                     width *= (float) Math.max(1.0, disToEye / 3.5);
                     poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
                     poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
-                    poseStack.translate(0, 0, trailLength / 2.0);
+                    poseStack.translate(0, -0.2, trailLength / 2.0);
                     poseStack.scale(width, width, (float) trailLength);
                 }
                 // 距离两格外才渲染，只在前 5 tick 判定

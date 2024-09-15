@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.ammo_mod_he.name",
+  "display": "tacz:ammo_mod_he_display",
+  "data": "tacz:ammo_mod_he_data",
+  "tooltip": "tacz.attachment.ammo_mod_he.desc",
+  "type": "extended_mag"
+}

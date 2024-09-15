@@ -6,6 +6,7 @@ import com.tacz.guns.api.item.gun.FireMode;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -190,10 +191,18 @@ public interface IGun {
     void reduceCurrentAmmoCount(ItemStack gun);
 
     /**
+     * 取下枪内所有子弹。玩家的特殊方法，默认卸载弹药时使用
+     */
+    void dropAllAmmo(Player player, ItemStack gun);
+
+    /**
      * 获取当前枪械指定类型的配件
      */
     @Nonnull
     ItemStack getAttachment(ItemStack gun, AttachmentType type);
+
+    @Nonnull
+    ItemStack getBuiltinAttachment(ItemStack gun, AttachmentType type);
 
     /**
      * 获取当前枪械指定类型的配件的 NBT 数据
@@ -202,6 +211,9 @@ public interface IGun {
      */
     @Nullable
     CompoundTag getAttachmentTag(ItemStack gun, AttachmentType type);
+
+    @Nonnull
+    ResourceLocation getBuiltInAttachmentId(ItemStack gun, AttachmentType type);
 
     /**
      * 获取枪械的配件 ID

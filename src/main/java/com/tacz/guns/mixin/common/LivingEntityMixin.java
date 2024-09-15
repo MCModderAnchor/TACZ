@@ -6,6 +6,8 @@ import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.entity.shooter.*;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
+import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 @SuppressWarnings("All")
@@ -26,12 +29,15 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     private final @Unique ShooterDataHolder tacz$data = new ShooterDataHolder();
     private final @Unique LivingEntityDrawGun tacz$draw = new LivingEntityDrawGun(tacz$shooter, tacz$data);
     private final @Unique LivingEntityAim tacz$aim = new LivingEntityAim(tacz$shooter, this.tacz$data);
+    private final @Unique LivingEntityCrawl tacz$crawl = new LivingEntityCrawl(tacz$shooter, this.tacz$data);
     private final @Unique LivingEntityAmmoCheck tacz$ammoCheck = new LivingEntityAmmoCheck(tacz$shooter);
     private final @Unique LivingEntityFireSelect tacz$fireSelect = new LivingEntityFireSelect(tacz$shooter, this.tacz$data);
     private final @Unique LivingEntityMelee tacz$melee = new LivingEntityMelee(tacz$shooter, this.tacz$data, this.tacz$draw);
     private final @Unique LivingEntityShoot tacz$shoot = new LivingEntityShoot(tacz$shooter, this.tacz$data, this.tacz$draw);
     private final @Unique LivingEntityBolt tacz$bolt = new LivingEntityBolt(this.tacz$data, this.tacz$draw, this.tacz$shoot);
     private final @Unique LivingEntityReload tacz$reload = new LivingEntityReload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot);
+    private final @Unique LivingEntitySpeedModifier tacz$speed = new LivingEntitySpeedModifier(tacz$shooter, tacz$data);
+
 
     public LivingEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -88,6 +94,8 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     public void initialData() {
         this.tacz$data.initialData();
+        // 刷新配件属性缓存
+        AttachmentPropertyManager.postChangeEvent(tacz$shooter, tacz$shooter.getMainHandItem());
     }
 
     @Unique
@@ -137,6 +145,21 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         this.tacz$aim.aim(isAim);
     }
 
+    @Override
+    public void crawl(boolean isCrawl) {
+        this.tacz$crawl.crawl(isCrawl);
+    }
+
+    @Override
+    public void updateCacheProperty(AttachmentCacheProperty cacheProperty) {
+        this.tacz$data.cacheProperty = cacheProperty;
+    }
+
+    @Nullable
+    public AttachmentCacheProperty getCacheProperty() {
+        return this.tacz$data.cacheProperty;
+    }
+
     @Unique
     @Override
     public void fireSelect() {
@@ -157,8 +180,10 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             ReloadState reloadState = this.tacz$reload.tickReloadState();
             this.tacz$aim.tickAimingProgress();
             this.tacz$aim.tickSprint();
+            this.tacz$crawl.tickCrawling();
             this.tacz$bolt.tickBolt();
             this.tacz$melee.scheduleTickMelee();
+            this.tacz$speed.updateSpeedModifier();
             // 从服务端同步数据
             ModSyncedEntityData.SHOOT_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$shoot.getShootCoolDown());
             ModSyncedEntityData.MELEE_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$melee.getMeleeCoolDown());

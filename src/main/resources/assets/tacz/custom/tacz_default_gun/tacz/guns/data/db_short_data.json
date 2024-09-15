@@ -10,14 +10,13 @@
       "armor_ignore": 0.33,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
-        {"distance": 2, "damage": 32},
         {"distance": 5, "damage": 24},
         {"distance": 9, "damage": 18},
         {"distance": "infinite", "damage": 12}
       ]
     },
     "speed": 120,
-    "gravity": 0.098,
+    "gravity": 0.15,
     "knockback": 0.875,
     "friction": 0.05,
     "ignite": false,
@@ -40,6 +39,13 @@
   "put_away_time": 0.203,
   "aim_time": 0.1,
   "sprint_time": 0.075,
+  "weight": 2.1,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": 0,
+    "reload": 0.15
+  },
+  "crawl_recoil_multiplier": 0.5,
   "fire_mode": [
     "burst",
     "semi"
@@ -51,7 +57,8 @@
     "min_interval": 0.5
   },
   "allow_attachment_types": [
-    "stock"
+    "stock",
+    "extended_mag"
   ],
   "exclusive_attachments": {
     "tacz:oem_stock_tactical": {
@@ -98,7 +105,7 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_push",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1,
       // 刺刀范围角度
       "range_angle": 40,
       // 伤害值

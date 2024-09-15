@@ -21,6 +21,9 @@
   ],
   "result": {
     "type": "gun",
-    "id": "tacz:m4a1"
+    "id": "tacz:m4a1",
+    "attachments": {
+      "stock": "tacz:oem_stock_tactical"
+    }
   }
 }

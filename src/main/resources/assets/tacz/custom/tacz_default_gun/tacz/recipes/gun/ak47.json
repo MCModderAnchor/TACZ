@@ -16,11 +16,14 @@
       "item": {
         "tag": "minecraft:logs"
       },
-      "count": 8
+      "count": 10
     }
   ],
   "result": {
     "type": "gun",
-    "id": "tacz:ak47"
+    "id": "tacz:ak47",
+    "attachments": {
+      "stock": "tacz:oem_stock_tactical"
+    }
   }
 }

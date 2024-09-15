@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.ammo_mod_fmj.name",
+  "display": "tacz:ammo_mod_fmj_display",
+  "data": "tacz:ammo_mod_fmj_data",
+  "tooltip": "tacz.attachment.ammo_mod_fmj.desc",
+  "type": "extended_mag"
+}

@@ -15,6 +15,8 @@
   // "hud_empty": "tacz:gun/hud/ak47_empty",
   // 背包/快捷栏等容器中槽位显示的 2D 材质，在包目录下的 textures 文件夹中寻找，不建议为空
   "slot": "tacz:gun/slot/ak47",
+  // 弹药计量样式，可选值：”normal“(显示实际值)、”percent“(显示百分比)，默认为”normal“
+  "ammo_count_style": "normal",
   // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空
   "animation": "tacz:ak47",
   // 指定使用缺省动画，可为空。如果上文指定的动画文件里缺少某个动画，如 draw 动画，则会从缺省动画拷贝。
@@ -65,22 +67,22 @@
     "tracer_color": "#FF8888"
     // 粒子效果，部分参数和原版指令完全一致，具体可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E5%91%BD%E4%BB%A4/particle
     // 没有此字段时，会调用 ammo 的相关字段
-//    "particle": {
-//      // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
-//      "name": "campfire_signal_smoke",
-//      // 生成的区域，默认为 0 0 0
-//      "delta": [
-//        0,
-//        0,
-//        0
-//      ],
-//      // 速度，默认为0，必须至少为 0
-//      "speed": 0,
-//      // 粒子存在时间，单位 tick，默认为 20 tick
-//      "life_time": 50,
-//      // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
-//      "count": 5
-//    }
+    //    "particle": {
+    //      // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
+    //      "name": "campfire_signal_smoke",
+    //      // 生成的区域，默认为 0 0 0
+    //      "delta": [
+    //        0,
+    //        0,
+    //        0
+    //      ],
+    //      // 速度，默认为0，必须至少为 0
+    //      "speed": 0,
+    //      // 粒子存在时间，单位 tick，默认为 20 tick
+    //      "life_time": 50,
+    //      // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
+    //      "count": 5
+    //    }
   },
   // 枪械音效，在包目录下 sounds 文件夹内寻找，不建议为空
   "sounds": {
@@ -143,6 +145,29 @@
       // 本地化，且支持PlaceholderAPI 风格的占位符
       // 目前仅支持两个：%player_name% %ammo_count%
       "text": "text_show.tacz.ak47.ammo_count"
+    }
+  },
+  // controllable 模组支持，用于调节手柄的震动强度
+  "controllable": {
+    // 开火模式
+    "semi": {
+      // 低频马达，也就是手柄左侧那个马达，个头较小
+      // 范围 0-1，1 震动最大
+      "low_frequency": 0.25,
+      // 高频马达，也就是手柄右侧那个马达，个头较大
+      "high_frequency": 0.5,
+      // 震动时长，单位 ms
+      "time": 100
+    },
+    "auto": {
+      "low_frequency": 0.15,
+      "high_frequency": 0.25,
+      "time": 80
+    },
+    "burst": {
+      "low_frequency": 0.25,
+      "high_frequency": 0.5,
+      "time": 100
     }
   }
 }

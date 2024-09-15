@@ -12,7 +12,7 @@
   // 枪栓类型：开膛待机（open_bolt）、闭膛待击（closed_bolt）、手动上膛（manual_action)
   "bolt": "closed_bolt",
   // 每分钟射出弹药量，最大不应超过 1200
-  "rpm": 600,
+  "rpm": 630,
   // 子弹实体属性
   "bullet": {
     // 寿命，单位秒
@@ -32,10 +32,8 @@
       "head_shot_multiplier": 1.5,
       // 距离-伤害分段常函数
       "damage_adjust": [
-        // 这样就能写抵近伤害了
-        {"distance": 0.5, "damage": 11},
-        {"distance": 30, "damage": 9},
-        {"distance": 75, "damage": 7},
+        {"distance": 30, "damage": 10},
+        {"distance": 60, "damage": 7},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 6}
       ]
@@ -43,7 +41,7 @@
     // 速度 m/s
     "speed": 260,
     // 重力
-    "gravity": 0.098,
+    "gravity": 0.15,
     // 击退效果
     "knockback": 0,
     // 阻力
@@ -53,7 +51,7 @@
     // 点燃时间，默认为 2 秒，仅用于实体
     "ignite_entity_time": 2,
     // 穿透数
-    "pierce": 2
+    "pierce": 2,
     // 是否爆炸，没有此字段时为 false
     //"explosion": {
     //  延时爆炸，单位：秒
@@ -63,6 +61,13 @@
     //  爆炸导致的击退，默认为 false，需要服务器也开启爆炸击退才能使用
     //  "knockback": false
     //}
+    "explosion": {
+      "explode": false,
+      "damage": 22,
+      "radius": 0.6,
+      "knockback": true,
+      "delay": 1
+    }
   },
   // 换弹相关
   "reload": {
@@ -90,10 +95,17 @@
   "put_away_time": 0.6,
   // 瞄准时长，单位秒。
   "aim_time": 0.18,
-  "sprint_time": 0.22,
+  "sprint_time": 0.23,
   // 拉栓上膛的时间，仅当枪栓类型为 manual_action 时有效
   // "bolt_action_time": 0.9,
   // 开火模式
+  "weight": 4.8,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.2,
+    "reload": -0.1
+  },
+  "crawl_recoil_multiplier": 0.2,
   "fire_mode": [
     // 全自动
     "auto",
@@ -108,8 +120,8 @@
       {"time": 0.7, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.25, 0.15]},
-      {"time": 0.25, "value": [-0.25, 0.15]},
+      {"time": 0, "value": [-0.375, 0.35]},
+      {"time": 0.25, "value": [-0.375, 0.35]},
       {"time": 0.45, "value": [0, 0]}
     ]
   },
@@ -124,7 +136,7 @@
     // 潜行射击散布
     "sneak": 3.5,
     // 趴下射击散布
-    "lie": 0.5,
+    "lie": 2,
     // 瞄准射击时散布
     "aim": 0.15
   },
@@ -140,11 +152,11 @@
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
       "animation_type": "melee_stock",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
-      "distance": 0,
+      "distance": 1,
       // 刺刀范围角度
       "range_angle": 30,
       // 伤害值
-      "damage": 2,
+      "damage": 4,
       // 击退效果
       "knockback": 0.6,
       // 前摇时长，单位：秒

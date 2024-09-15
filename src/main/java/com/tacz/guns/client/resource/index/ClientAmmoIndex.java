@@ -3,7 +3,6 @@ package com.tacz.guns.client.resource.index;
 import com.google.common.base.Preconditions;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.display.ammo.*;
@@ -168,9 +167,8 @@ public class ClientAmmoIndex {
 
     private static void checkTransform(AmmoDisplay display, ClientAmmoIndex index) {
         AmmoTransform readTransform = display.getTransform();
-        AmmoDisplay defaultDisplay = ClientAssetManager.INSTANCE.getAmmoDisplay(DefaultAssets.DEFAULT_AMMO_DISPLAY);
         if (readTransform == null || readTransform.getScale() == null) {
-            index.transform = Objects.requireNonNull(defaultDisplay.getTransform());
+            index.transform = AmmoTransform.getDefault();
         } else {
             index.transform = display.getTransform();
         }

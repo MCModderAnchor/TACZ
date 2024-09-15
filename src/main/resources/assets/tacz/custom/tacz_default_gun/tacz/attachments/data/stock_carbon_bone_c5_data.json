@@ -1,9 +1,19 @@
 {
-  "weight": 0.34,
-  "ads_addend": -0.05,
-  "recoil_modifier": {
-    "pitch": -0.01,
-    "yaw": -0.05
+  "weight": 0.3,
+  "ads": {
+    // 加数（多个配件的数值相加，作为第一个乘区）
+    "addend": -0.02
+  },
+  "aim_inaccuracy": {
+    "multiplier": 1.1
+  },
+  "recoil": {
+    "pitch": {
+      "multiplier": 0.85
+    },
+    "yaw": {
+      "multiplier": 0.8
+    }
   },
   // 近战伤害，用于刺刀
   "melee": {

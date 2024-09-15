@@ -121,7 +121,7 @@ public class LivingEntityShoot {
             }).orElse(-1L);
         }
         return gunIndex.map(index -> {
-            long coolDown = index.getGunData().getShootInterval() - (System.currentTimeMillis() - data.shootTimestamp);
+            long coolDown = index.getGunData().getShootInterval(this.shooter, fireMode) - (System.currentTimeMillis() - data.shootTimestamp);
             // 给 5 ms 的窗口时间，以平衡延迟
             coolDown = coolDown - 5;
             return Math.max(coolDown, 0L);

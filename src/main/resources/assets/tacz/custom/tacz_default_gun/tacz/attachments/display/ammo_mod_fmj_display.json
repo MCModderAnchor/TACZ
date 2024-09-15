@@ -1,0 +1,7 @@
+{
+  "slot": "tacz:attachment/slot/ammo_mod_fmj",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}
