@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"static": {
+		"static_idle": {
 			"loop": true,
 			"bones": {
 				"righthand": {
@@ -13,6 +13,10 @@
 					"rotation": [93.33461, -11.79537, -185.00486],
 					"position": [6.7, -14.7, -8.9],
 					"scale": [1, 1.5, 1]
+				},
+				"constraint": {
+					"rotation": [0.2, 0.2, 0.2],
+					"position": [0.2, 0.2, 0.2]
 				}
 			}
 		},
@@ -806,43 +810,43 @@
 			},
 			"sound_effects": {
 				"0.125": {
-					"effect": "p07_sm_papa90_reload_maggrab"
+					"effect": "tacz:p90/p90_reload_maggrab"
 				},
 				"0.25": {
-					"effect": "p07_sm_papa90_reload_magrelease"
+					"effect": "tacz:p90/p90_reload_magrelease"
 				},
 				"0.2917": {
-					"effect": "p07_sm_papa90_reload_empty_magin"
+					"effect": "tacz:p90/p90_reload_empty_magout"
 				},
 				"0.375": {
-					"effect": "p07_sm_papa90_reload_rattlearm1"
+					"effect": "tacz:p90/p90_reload_rattlearm1"
 				},
 				"0.9167": {
-					"effect": "p07_sm_papa90_reload_empty_armmvmnt"
+					"effect": "tacz:p90/p90_reload_empty_armmvmnt"
 				},
 				"0.9583": {
-					"effect": "iw8_phys_mag_drop_smg_poly_dirt_03"
+					"effect": "tacz:p90/p90_mag_drop"
 				},
 				"1.3333": {
-					"effect": "p07_sm_papa90_reload_maghitwell"
+					"effect": "tacz:p90/p90_reload_maghitwell"
 				},
 				"1.4167": {
-					"effect": "p07_sm_papa90_reload_empty_magin"
+					"effect": "tacz:p90/p90_reload_empty_magin"
 				},
 				"1.7083": {
-					"effect": "p07_sm_papa90_reload_empty_rattlearm2"
+					"effect": "tacz:p90/p90_reload_empty_rattlearm2"
 				},
 				"1.875": {
-					"effect": "p07_sm_papa90_reload_magbangdown"
+					"effect": "tacz:p90/p90_reload_magbangdown"
 				},
 				"2.3333": {
-					"effect": "p07_sm_papa90_reload_empty_boltcharge"
+					"effect": "tacz:p90/p90_reload_empty_boltcharge"
 				},
 				"2.5417": {
-					"effect": "p07_sm_papa90_reload_empty_end"
+					"effect": "tacz:p90/p90_reload_empty_end"
 				},
 				"2.6667": {
-					"effect": "p07_sm_papa90_reload_empty_handlegrab"
+					"effect": "tacz:p90/p90_reload_empty_handlegrab"
 				}
 			}
 		},
@@ -1367,31 +1371,31 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "p07_sm_papa90_reload_raise"
+					"effect": "tacz:p90/p90_reload_raise"
 				},
 				"0.0833": {
-					"effect": "p07_sm_papa90_reload_rattlearm2"
+					"effect": "tacz:p90/p90_reload_rattlearm2"
 				},
 				"0.25": {
-					"effect": "p07_sm_papa90_reload_magrelease"
+					"effect": "tacz:p90/p90_reload_magrelease"
 				},
 				"0.375": {
-					"effect": "p07_sm_papa90_reload_magout"
+					"effect": "tacz:p90/p90_reload_magout"
 				},
 				"0.75": {
-					"effect": "p07_sm_papa90_reload_rattlearm1"
+					"effect": "tacz:p90/p90_reload_rattlearm1"
 				},
 				"1.3333": {
-					"effect": "p07_sm_papa90_reload_maghitwell"
+					"effect": "tacz:p90/p90_reload_maghitwell"
 				},
 				"1.5": {
-					"effect": "p07_sm_papa90_reload_magin"
+					"effect": "tacz:p90/p90_reload_magin"
 				},
 				"1.9167": {
-					"effect": "p07_sm_papa90_reload_fast_empty_magin"
+					"effect": "tacz:p90/p90_reload_fast_empty_magin"
 				},
 				"2.1667": {
-					"effect": "p07_sm_papa90_reload_end"
+					"effect": "tacz:p90/p90_reload_end"
 				}
 			}
 		},
@@ -1978,31 +1982,31 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "p07_sm_papa90_inspect_raise"
+					"effect": "tacz:p90/p90_inspect_raise"
 				},
 				"0.875": {
-					"effect": "p07_sm_papa90_inspect_rattle2"
+					"effect": "tacz:p90/p90_inspect_rattle"
 				},
 				"2.2083": {
-					"effect": "p07_sm_papa90_inspect_rattle2"
+					"effect": "tacz:p90/p90_inspect_rattle"
 				},
 				"2.375": {
-					"effect": "p07_sm_papa90_hybrid03_toggle_on_armup"
+					"effect": "tacz:p90/p90_inspect_armup"
 				},
 				"2.625": {
-					"effect": "p07_sm_papa90_inspect_grabgrip"
+					"effect": "tacz:p90/p90_inspect_grabgrip"
 				},
 				"3.7083": {
-					"effect": "p07_sm_papa90_inspect_tilt"
+					"effect": "tacz:p90/p90_inspect_tilt"
 				},
 				"5.25": {
-					"effect": "p07_sm_papa90_inspect_grabgrip"
+					"effect": "tacz:p90/p90_inspect_grabgrip"
 				},
 				"5.4583": {
-					"effect": "p07_sm_papa90_hybrid03_toggle_off_armdown"
+					"effect": "tacz:p90/p90_inspect_armdown"
 				},
 				"6.9583": {
-					"effect": "p07_sm_papa90_inspect_end"
+					"effect": "tacz:p90/p90_inspect_end"
 				}
 			}
 		},
@@ -2589,31 +2593,31 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "p07_sm_papa90_inspect_raise"
+					"effect": "tacz:p90/p90_inspect_raise"
 				},
 				"0.875": {
-					"effect": "p07_sm_papa90_inspect_rattle2"
+					"effect": "tacz:p90/p90_inspect_rattle"
 				},
 				"2.2083": {
-					"effect": "p07_sm_papa90_inspect_rattle2"
+					"effect": "tacz:p90/p90_inspect_rattle"
 				},
 				"2.375": {
-					"effect": "p07_sm_papa90_hybrid03_toggle_on_armup"
+					"effect": "tacz:p90/p90_inspect_armup"
 				},
 				"2.625": {
-					"effect": "p07_sm_papa90_inspect_grabgrip"
+					"effect": "tacz:p90/p90_inspect_grabgrip"
 				},
 				"3.7083": {
-					"effect": "p07_sm_papa90_inspect_tilt"
+					"effect": "tacz:p90/p90_inspect_tilt"
 				},
 				"5.25": {
-					"effect": "p07_sm_papa90_inspect_grabgrip"
+					"effect": "tacz:p90/p90_inspect_grabgrip"
 				},
 				"5.4583": {
-					"effect": "p07_sm_papa90_hybrid03_toggle_off_armdown"
+					"effect": "tacz:p90/p90_inspect_armdown"
 				},
 				"6.9583": {
-					"effect": "p07_sm_papa90_inspect_end"
+					"effect": "tacz:p90/p90_inspect_end"
 				}
 			}
 		},
