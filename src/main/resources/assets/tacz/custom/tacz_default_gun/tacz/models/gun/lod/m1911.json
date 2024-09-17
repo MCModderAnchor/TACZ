@@ -37,6 +37,11 @@
 					"pivot": [0, 5.49375, -6.225]
 				},
 				{
+					"name": "shell",
+					"parent": "positioning",
+					"pivot": [0, 5.55, 0.625]
+				},
+				{
 					"name": "lod",
 					"pivot": [1.025, -16.875, -7],
 					"cubes": [
