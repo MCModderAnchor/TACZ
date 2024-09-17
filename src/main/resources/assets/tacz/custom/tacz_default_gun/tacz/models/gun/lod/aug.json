@@ -32,6 +32,16 @@
 					"rotation": [0, 90, 0]
 				},
 				{
+					"name": "shell",
+					"parent": "positioning",
+					"pivot": [-0.15, 9.0125, 10.25]
+				},
+				{
+					"name": "muzzle_flash",
+					"parent": "positioning",
+					"pivot": [0, 8.875, -17]
+				},
+				{
 					"name": "lod",
 					"pivot": [0.54687, -4.54321, 5.3125],
 					"cubes": [
