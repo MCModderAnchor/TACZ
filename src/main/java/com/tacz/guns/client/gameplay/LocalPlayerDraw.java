@@ -88,9 +88,11 @@ public class LocalPlayerDraw {
             return;
         }
         TimelessAPI.getClientGunIndex(lastGun.getGunId(lastItem)).ifPresent(gunIndex -> {
-            // 播放收枪音效
-            SoundPlayManager.stopPlayGunSound();
-            SoundPlayManager.playPutAwaySound(player, gunIndex);
+            Minecraft.getInstance().submitAsync(() -> {
+                // 播放收枪音效
+                SoundPlayManager.stopPlayGunSound();
+                SoundPlayManager.playPutAwaySound(player, gunIndex);
+            });
             // 播放收枪动画
             GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
