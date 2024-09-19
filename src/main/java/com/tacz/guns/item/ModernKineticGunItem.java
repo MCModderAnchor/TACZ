@@ -119,7 +119,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             if (shooter.isDeadOrDying()) {
                 return false;
             }
-            // 削减弹药数
+            // 准备削减弹药数
             if (consumeAmmo) {
                 Bolt boltType = gunData.getBolt();
                 boolean hasAmmoInBarrel = this.hasBulletInBarrel(gunItem) && boltType != Bolt.OPEN_BOLT;
