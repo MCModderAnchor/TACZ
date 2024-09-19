@@ -1,0 +1,19 @@
+{
+  // 这是一个测试用配方，正式上线前它应当被移除
+  "type": "tacz:gun_smith_table_crafting",
+  "materials": [
+    {
+      "item": {
+        "tag": "minecraft:logs"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "type": "custom",
+    "group": "ammo",
+    "item": {
+      "item": "minecraft:snowball"
+    }
+  }
+}

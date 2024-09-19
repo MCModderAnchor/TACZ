@@ -24,7 +24,6 @@ public class GunSmithTableResultSerializer implements JsonDeserializer<GunSmithT
     public GunSmithTableResult deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         if (json.isJsonObject()) {
             JsonObject jsonObject = json.getAsJsonObject();
-            ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(jsonObject, "id"));
             String typeName = GsonHelper.getAsString(jsonObject, "type");
             int count = 1;
             if (jsonObject.has("count")) {
@@ -33,9 +32,15 @@ public class GunSmithTableResultSerializer implements JsonDeserializer<GunSmithT
 
             GunSmithTableResult result;
             switch (typeName) {
-                case GunSmithTableResult.GUN -> result = getGunStack(id, count, jsonObject);
-                case GunSmithTableResult.AMMO -> result = getAmmoStack(id, count);
-                case GunSmithTableResult.ATTACHMENT -> result = getAttachmentStack(id, count);
+                case GunSmithTableResult.GUN -> result = getGunStack(getId(jsonObject), count, jsonObject);
+                case GunSmithTableResult.AMMO -> result = getAmmoStack(getId(jsonObject), count);
+                case GunSmithTableResult.ATTACHMENT -> result = getAttachmentStack(getId(jsonObject), count);
+                case GunSmithTableResult.CUSTOM -> {
+                    JsonObject resultObject = GsonHelper.getAsJsonObject(jsonObject, "item");
+                    String group = GsonHelper.getAsString(jsonObject, "group", StringUtils.EMPTY);
+                    ItemStack itemStack = CraftingHelper.getItemStack(resultObject, true);
+                    return new GunSmithTableResult(itemStack, group);
+                }
                 default -> {
                     return new GunSmithTableResult(ItemStack.EMPTY, StringUtils.EMPTY);
                 }
@@ -56,6 +61,10 @@ public class GunSmithTableResultSerializer implements JsonDeserializer<GunSmithT
             return result;
         }
         return new GunSmithTableResult(ItemStack.EMPTY, StringUtils.EMPTY);
+    }
+
+    private ResourceLocation getId(JsonObject jsonObject) {
+        return new ResourceLocation(GsonHelper.getAsString(jsonObject, "id"));
     }
 
     private GunSmithTableResult getGunStack(ResourceLocation id, int count, JsonObject extraData) {

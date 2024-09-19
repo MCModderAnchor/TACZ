@@ -34,6 +34,7 @@ public class GunMod {
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
         ModRecipe.RECIPE_SERIALIZERS.register(bus);
+        ModRecipe.RECIPE_TYPES.register(bus);
         ModContainer.CONTAINER_TYPE.register(bus);
         ModSounds.SOUNDS.register(bus);
         ModParticles.PARTICLE_TYPES.register(bus);
