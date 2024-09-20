@@ -19,6 +19,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import javax.sound.sampled.AudioFormat;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 /**
@@ -56,7 +58,7 @@ public enum ClientAssetManager {
     /**
      * 储存声音
      */
-    private final Map<ResourceLocation, SoundBuffer> soundBuffers = Maps.newHashMap();
+    private final Map<ResourceLocation, SoundData> soundBuffers = Maps.newHashMap();
     /**
      * 存储语言
      */
@@ -118,8 +120,8 @@ public enum ClientAssetManager {
         models.put(registryName, model);
     }
 
-    public void putSoundBuffer(ResourceLocation registryName, SoundBuffer soundBuffer) {
-        soundBuffers.put(registryName, soundBuffer);
+    public void putSoundBuffer(ResourceLocation registryName, SoundData soundData) {
+        soundBuffers.put(registryName, soundData);
     }
 
     public void putLanguage(String region, Map<String, String> lang) {
@@ -157,7 +159,7 @@ public enum ClientAssetManager {
         return models.get(registryName);
     }
 
-    public SoundBuffer getSoundBuffers(ResourceLocation registryName) {
+    public SoundData getSoundBuffers(ResourceLocation registryName) {
         return soundBuffers.get(registryName);
     }
 
@@ -211,5 +213,8 @@ public enum ClientAssetManager {
         this.tempGunModelMap.clear();
         this.tempAttachmentModelMap.clear();
         PlayerAnimatorCompat.clearAllAnimationCache();
+    }
+
+    public record SoundData(ByteBuffer byteBuffer, AudioFormat audioFormat) {
     }
 }
