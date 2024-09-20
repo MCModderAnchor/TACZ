@@ -29,6 +29,12 @@
     "living_time": 1.0
   },
   "sounds": {
+    "reload_empty": "tacz:p90/p90_reload_empty",
+    "reload_tactical": "tacz:p90/p90_reload_tactical",
+    "inspect": "tacz:p90/p90_inspect",
+    "inspect_empty": "tacz:p90/p90_inspect_empty",
+    "draw": "tacz:p90/p90_draw",
+    "put_away": "tacz:p90/p90_put_away",
     "shoot": "tacz:p90/p90_shoot",
     "shoot_3p": "tacz:p90/p90_shoot_3p",
     "silence": "tacz:p90/p90_silence",
