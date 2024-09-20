@@ -51,7 +51,7 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
     }
 
     public void doCraft(ResourceLocation recipeId, Player player) {
-        GunSmithTableRecipe recipe = getRecipe(recipeId, player.level().getRecipeManager());
+        GunSmithTableRecipe recipe = getRecipe(recipeId, player.level.getRecipeManager());
         if (recipe == null) {
             return;
         }
