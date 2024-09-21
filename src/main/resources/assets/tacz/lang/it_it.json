@@ -184,7 +184,7 @@
   "config.tacz.client.render.disable_interact_hud_text": "Disabilita interfaccia d'interazione testuale",
   "config.tacz.client.render.disable_interact_hud_text.desc": "Disabilità l'interfaccia interattiva al centro dello schermo",
   "config.tacz.client.render.disable_movement_fov.desc": "Disable all fov effect from the movement speed attribute while holding a gun.",
-  "config.tacz.client.render.disable_movement_fov": "Disable Speed Fov Effect",
+  "config.tacz.client.render.disable_movement_fov": "Disabilita l'effetto della velocità sul FOV",
   "config.tacz.client.zoom": "Ingrandimento",
   "config.tacz.client.zoom.screen_distance_coefficient": "Coefficiente di distanza dello schermo",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Coefficiente di distanza dello schermo per lo zoom, utilizzando MDV di base, predefinito è MDV133",
