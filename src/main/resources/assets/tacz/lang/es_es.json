@@ -24,7 +24,7 @@
   "key.tacz.open_config.desc": "Abrir configuración de TAC",
   "key.tacz.zoom.desc": "Zoom",
   "key.tacz.melee.desc": "Cuerpo a cuerpo",
-  "key.tacz.crawl.desc": "Crawl",
+  "key.tacz.crawl.desc": "",
   "itemGroup.tab.tacz.other": "Timeless & Classic Guns: Zero",
   "itemGroup.tab.tacz.ammo": "TAC | Munición",
   "block.tacz.gun_smith_table": "Mesa de armero",
