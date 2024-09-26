@@ -1,0 +1,13 @@
+{
+  // 方块的显示名称，支持本地化
+  "name": "tacz.gun.ak47.name",
+  // 方块效果文件
+  "display": "tacz:gun_smith_table",
+  // 枪械参数文件
+  "data": "tacz:gun_smith_table",
+  // 方块文本提示
+  "tooltip": "tacz.gun.ak47.desc",
+  // 排序数，决定了在创造模式标签页中的顺序
+  // 数字越小，优先级越高
+  "sort": 1
+}
