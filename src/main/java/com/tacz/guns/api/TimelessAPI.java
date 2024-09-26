@@ -11,6 +11,7 @@ import com.tacz.guns.resource.CommonAssetManager;
 import com.tacz.guns.resource.CommonGunPackLoader;
 import com.tacz.guns.resource.index.CommonAmmoIndex;
 import com.tacz.guns.resource.index.CommonAttachmentIndex;
+import com.tacz.guns.resource.index.CommonBlockIndex;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -65,6 +66,10 @@ public final class TimelessAPI {
 
     public static Optional<GunSmithTableRecipe> getRecipe(ResourceLocation recipeId) {
         return CommonAssetManager.INSTANCE.getRecipe(recipeId);
+    }
+
+    public static Set<Map.Entry<ResourceLocation, CommonBlockIndex>> getAllCommonBlockIndex() {
+        return CommonGunPackLoader.getAllBlocks();
     }
 
     public static Set<Map.Entry<ResourceLocation, CommonGunIndex>> getAllCommonGunIndex() {

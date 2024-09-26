@@ -4,10 +4,12 @@ import com.google.common.collect.Maps;
 import com.tacz.guns.client.resource.ClientGunPackLoader;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageSyncGunPack;
+import com.tacz.guns.resource.loader.CommonDataLoaders;
 import com.tacz.guns.resource.loader.asset.*;
 import com.tacz.guns.resource.loader.index.CommonAmmoIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonAttachmentIndexLoader;
 import com.tacz.guns.resource.loader.index.CommonGunIndexLoader;
+import com.tacz.guns.resource.loader.index.CommonIndexLoaders;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -95,11 +97,13 @@ public class CommonGunPackNetwork {
                 case ATTACHMENT_DATA -> AttachmentDataLoader.loadFromJsonString(id, json);
                 case AMMO_INDEX -> CommonAmmoIndexLoader.loadAmmoFromJsonString(id, json);
                 case GUN_INDEX -> CommonGunIndexLoader.loadGunFromJsonString(id, json);
+                case BLOCK_INDEX -> CommonIndexLoaders.BLOCK.resolveJson(id, json);
                 case ATTACHMENT_INDEX -> CommonAttachmentIndexLoader.loadAttachmentFromJsonString(id, json);
                 case RECIPES -> RecipeLoader.loadFromJsonString(id, json);
+                case RECIPE_FILTER -> CommonDataLoaders.RECIPE_FILTER.resolveJson(id, json);
                 case ATTACHMENT_TAGS -> AttachmentTagsLoader.loadFromJsonString(id, json);
                 case ALLOW_ATTACHMENT_TAGS -> AllowAttachmentTagsLoader.loadFromJsonString(id, json);
-            }
+                case BLOCK_DATA -> CommonDataLoaders.BLOCKS.resolveJson(id, json);}
         }));
         ClientGunPackLoader.reloadIndex();
     }
