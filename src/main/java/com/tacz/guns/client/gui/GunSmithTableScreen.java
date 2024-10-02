@@ -258,7 +258,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             String type = recipeKeys.get(typeIndex);
             int xOffset = leftPos + 157 + 24 * i;
             List<ResourceLocation> recipeIdGroups = recipes.get(type);
-            if (recipeIdGroups.isEmpty()) {
+            if (recipeIdGroups == null || recipeIdGroups.isEmpty()) {
                 continue;
             }
             ItemStack icon = ItemStack.EMPTY;
