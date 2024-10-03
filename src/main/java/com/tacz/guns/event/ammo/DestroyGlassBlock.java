@@ -24,9 +24,15 @@ public class DestroyGlassBlock {
         EntityKineticBullet ammo = event.getAmmo();
         Block stateBlock = state.getBlock();
         NoteBlockInstrument instrument = state.instrument();
-        if (AmmoConfig.DESTROY_GLASS.get() && (stateBlock instanceof AbstractGlassBlock ||
-                stateBlock instanceof StainedGlassPaneBlock ||
-                (stateBlock instanceof IronBarsBlock && instrument.equals(NoteBlockInstrument.HAT)))) {
+        if (AmmoConfig.DESTROY_GLASS.get() && 
+            !(stateBlock instanceof TintedGlassBlock) && 
+            (stateBlock instanceof AbstractGlassBlock ||
+             stateBlock instanceof StainedGlassPaneBlock ||
+             (stateBlock instanceof IronBarsBlock && instrument.equals(NoteBlockInstrument.HAT)))) {
+            level.destroyBlock(pos, false, ammo.getOwner());
+        }
+        // Break tinted glass if bullet pierce value is 5 or more
+        if (stateBlock instanceof TintedGlassBlock && ammo.getPierce() >= 5) {
             level.destroyBlock(pos, false, ammo.getOwner());
         }
     }
