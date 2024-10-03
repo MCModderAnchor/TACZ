@@ -561,6 +561,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         return isTracerAmmo;
     }
 
+    public int getPierce() {
+        return this.pierce;
+    }
+
     public RandomSource getRandom() {
         return this.random;
     }
