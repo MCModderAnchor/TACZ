@@ -1,0 +1,9 @@
+sourceControl {
+    gitRepository(URI.create("https://github.com/FiguraMC/luaj.git")) {
+    	producesModule("com.github.FiguraMC.luaj:luaj-jse-figura")
+    }
+
+    gitRepository(URI.create("https://github.com/FiguraMC/luaj.git")) {
+    	producesModule("com.github.FiguraMC.luaj:luaj-core-figura")
+    }
+}
