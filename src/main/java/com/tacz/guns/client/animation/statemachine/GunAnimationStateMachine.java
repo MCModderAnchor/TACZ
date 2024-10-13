@@ -52,6 +52,7 @@ public class GunAnimationStateMachine {
     protected float keepDistanceWalked = 0.0f;
     protected WalkDirection lastWalkDirection = WalkDirection.NONE;
     protected boolean isWalkAiming = false;
+    protected boolean isHolstering = false;
 
     public GunAnimationStateMachine(AnimationController controller) {
         this.controller = controller;
@@ -241,6 +242,12 @@ public class GunAnimationStateMachine {
         // TODO：切换开火方式的动画
     }
 
+    public void onShooterHolster(float walkDist) {
+        // TODO: Currently faked as sprinting
+        this.setHolstering(true);
+        this.onShooterRun(walkDist);
+    }
+
     public void onGunCatchBolt() {
         if (!isPlayingAnimation(BOLT_CATCH_STATIC_TRACK, STATIC_BOLT_CAUGHT_ANIMATION)) {
             controller.runAnimation(BOLT_CATCH_STATIC_TRACK, STATIC_BOLT_CAUGHT_ANIMATION, ObjectAnimation.PlayType.LOOP, 0);
@@ -272,6 +279,11 @@ public class GunAnimationStateMachine {
         return this;
     }
 
+    public GunAnimationStateMachine setHolstering(boolean isHolstering) {
+        this.isHolstering = isHolstering;
+        return this;
+    }
+
     public AnimationController getController() {
         return controller;
     }
@@ -283,7 +295,7 @@ public class GunAnimationStateMachine {
         if (isPlayingInspectAnimation()) {
             return true;
         }
-        return isPlayingRunHold() || isPlayingRunLoop();
+        return (isPlayingRunHold() || isPlayingRunLoop()) && !isHolstering;
     }
 
     public void update(float partialTicks, Entity entity) {

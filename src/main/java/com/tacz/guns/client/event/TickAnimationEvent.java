@@ -4,7 +4,9 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
+import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -34,18 +36,35 @@ public class TickAnimationEvent {
             if (animationStateMachine == null) {
                 return;
             }
-            animationStateMachine.setAiming(clientGunOperator.getClientAimingProgress(1) == 1f);
+            animationStateMachine
+                .setAiming(clientGunOperator.getClientAimingProgress(1) == 1f)
+                .setHolstering(false);
             boolean isShooting = clientGunOperator.getClientShootCoolDown() > 0;
+            boolean isCorrectlyRunning = !player.isMovingSlowly() && player.isSprinting();
 
+            boolean isHolsterAnimationAllowed = RenderConfig.ENABLE_HOLSTER_ANIMATION_ON_GUN_SAFETY.get();
+            // Both aiming, inspecting and reloading actions are allowed in gun safety/player holster mode.
+            // If the weapon is in safety, we need to cancel off the sprint animation for the animation of the allowed actions to play first.
+            // This allows the animation of the ongoing action to play correctly without accounting for offsets, 
+            // so it could blend back to holstering after the ongoing animation is done 
+            boolean isPlayingAllowedActionsInSafety = animationStateMachine.isPlayingInspectAnimation() || 
+                                                      animationStateMachine.isPlayingReloadAnimation() ||
+                                                      clientGunOperator.isAim();
+            boolean isWeaponInSafetyAndNotPlayingOtherActions = iGun.getFireMode(mainhandItem) == FireMode.SAFETY && !isPlayingAllowedActionsInSafety;
+    
             if (isShooting) {
-                // 如果玩家正在射击，只能处于 idle 状态
+                // 如果玩家正在射击，只能处于静止状态
                 animationStateMachine.onShooterIdle();
-            } else if (!player.isMovingSlowly() && player.isSprinting()) {
-                // 如果玩家正在移动，播放移动动画，否则播放 idle 动画
+            } else if (isCorrectlyRunning) {
+                // 如果玩家正在奔跑，播放奔跑动画
                 animationStateMachine.setOnGround(player.onGround()).onShooterRun(player.walkDist);
+            } else if (isHolsterAnimationAllowed && isWeaponInSafetyAndNotPlayingOtherActions) {
+                // 如果玩家目前手持的枪正在保险模式，但正在特定的状态下，先继续播放特定动画直到完成，否则播放枪械保护动画
+                animationStateMachine.setOnGround(player.onGround()).onShooterHolster(player.walkDist);
             } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
                 animationStateMachine.setOnGround(player.onGround()).onShooterWalk(player.input, player.walkDist);
             } else {
+                // 缺省动画，静止状态
                 animationStateMachine.onShooterIdle();
             }
 

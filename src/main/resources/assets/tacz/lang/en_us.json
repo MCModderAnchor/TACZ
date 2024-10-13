@@ -186,6 +186,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "Disable the interact hud text in center of the screen",
   "config.tacz.client.render.disable_movement_fov.desc": "Disable all fov effect from the movement speed attribute while holding a gun.",
   "config.tacz.client.render.disable_movement_fov": "Disable Speed Fov Effect",
+  "config.tacz.client.render.enable_holster_animation_on_gun_safety.desc": "Controls whether to run holster animation when the currently holding gun is in safety (default true)",
+  "config.tacz.client.render.enable_holster_animation_on_gun_safety": "Enable holster animation on gun safety",
   "config.tacz.client.zoom": "Zoom",
   "config.tacz.client.zoom.screen_distance_coefficient": "Screen Distance Coefficient",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Screen distance coefficient for zoom, using MDV standard, default is MDV133",

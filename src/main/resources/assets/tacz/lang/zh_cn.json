@@ -47,6 +47,8 @@
   "config.tacz.client.zoom.zoom_sensitivity_base_multiplier.desc": "开镜灵敏度最终会乘上这个系数",
   "config.tacz.client.render.disable_movement_fov": "禁用移速FOV效果",
   "config.tacz.client.render.disable_movement_fov.desc": "持枪时完全屏蔽移速属性带来的fov变化",
+  "config.tacz.client.render.enable_holster_animation_on_gun_safety": "持枪保险启用护枪动画",
+  "config.tacz.client.render.enable_holster_animation_on_gun_safety.desc": "当玩家手持的枪械正在保险模式时，是否播放枪械保护动画（默认打开）",
   "config.tacz.common.ammo": "弹药",
   "config.tacz.common.ammo.destroy_glass": "破坏玻璃",
   "config.tacz.common.ammo.destroy_glass.desc": "子弹是否可以摧毁玻璃（因为玻璃的性质无法掉落）",
