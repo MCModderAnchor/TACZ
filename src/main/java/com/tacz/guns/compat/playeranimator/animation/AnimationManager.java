@@ -7,9 +7,12 @@ import com.tacz.guns.api.event.common.GunMeleeEvent;
 import com.tacz.guns.api.event.common.GunReloadEvent;
 import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.compat.playeranimator.AnimationName;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
+import com.tacz.guns.config.client.RenderConfig;
+
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.KeyframeAnimationPlayer;
 import dev.kosmx.playerAnim.api.layered.ModifierLayer;
@@ -99,8 +102,10 @@ public class AnimationManager {
         IGunOperator operator = IGunOperator.fromLivingEntity(player);
         float aimingProgress = operator.getSynAimingProgress();
         if (aimingProgress <= 0) {
+            boolean isCorrectlySprinting = !isFlying(player) && player.isSprinting();
+
             // 疾跑时播放的动画
-            if (!isFlying(player) && player.isSprinting()) {
+            if (isCorrectlySprinting) {
                 if (isPlayerLie(player)) {
                     playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.LIE_MOVE);
                 } else if (player.getPose() == Pose.CROUCHING) {
@@ -109,6 +114,14 @@ public class AnimationManager {
                     playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.RUN_UPPER);
                 }
                 return;
+            }
+
+            boolean isHolsterAnimationAllowed = RenderConfig.ENABLE_HOLSTER_ANIMATION_ON_GUN_SAFETY.get();
+            boolean isCurrentlyHoldingGunInSafety = IGun.getMainhandFireMode(player) == FireMode.SAFETY;
+
+            // 护枪时播放的动画
+            if (isHolsterAnimationAllowed && isCurrentlyHoldingGunInSafety) {
+                playLoopAnimation(player, gunIndex, PlayerAnimatorCompat.LOOP_UPPER_ANIMATION, AnimationName.HOLSTER_UPPER);
             }
 
             // 行走时的动画
