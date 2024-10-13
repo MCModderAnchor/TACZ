@@ -60,7 +60,7 @@ public class TickAnimationEvent {
                 animationStateMachine.setOnGround(player.onGround()).onShooterRun(player.walkDist);
             } else if (isHolsterAnimationAllowed && isWeaponInSafetyAndNotPlayingOtherActions) {
                 // 如果玩家目前手持的枪正在保险模式，但正在特定的状态下，先继续播放特定动画直到完成，否则播放枪械保护动画
-                animationStateMachine.setOnGround(player.onGround()).onShooterHolster(player.walkDist);
+                animationStateMachine.setOnGround(player.onGround() || player.isPassenger()).onShooterHolster(player.walkDist);
             } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
                 animationStateMachine.setOnGround(player.onGround()).onShooterWalk(player.input, player.walkDist);
             } else {
