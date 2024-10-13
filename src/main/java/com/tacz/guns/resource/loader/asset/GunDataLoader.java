@@ -9,6 +9,7 @@ import com.tacz.guns.resource.network.CommonGunPackNetwork;
 import com.tacz.guns.resource.network.DataType;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.TacPathVisitor;
+import com.tacz.guns.api.item.gun.FireMode;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
@@ -77,6 +78,14 @@ public final class GunDataLoader {
 
     public static void loadFromJsonString(ResourceLocation id, String json) {
         GunData data = CommonGunPackLoader.GSON.fromJson(json, GunData.class);
+        // Give every gun a safety fire mode, unless the data pack choose to opt-out
+        // by explicitly setting {"safety": false}
+        // TODO: Technically speaking, all guns have safeties nowadays.
+        // It's just the kind of safety, whether external or internal, matters,
+        // In the future this can be added as a enum rather than a boolean, but for now it works
+        if (data.getSafety()) {
+            data.getFireModeSet().add(FireMode.SAFETY);
+        }
         CommonAssetManager.INSTANCE.putGunData(id, data);
     }
 }

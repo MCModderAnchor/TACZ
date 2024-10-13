@@ -57,6 +57,7 @@
   "gui.tacz.gun_refit.property_diagrams.auto": "AUTO",
   "gui.tacz.gun_refit.property_diagrams.semi": "SEMI",
   "gui.tacz.gun_refit.property_diagrams.burst": "BURST",
+  "gui.tacz.gun_refit.property_diagrams.safety": "SAFETY",
   "gui.tacz.gun_refit.property_diagrams.unknown": "UNKNOWN",
   "gui.tacz.gun_refit.property_diagrams.effective_range": "Eff.Range",
   "gui.tacz.gun_refit.property_diagrams.aim_inaccuracy": "Accuracy",

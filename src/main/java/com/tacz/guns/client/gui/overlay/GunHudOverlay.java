@@ -35,6 +35,7 @@ public class GunHudOverlay implements IGuiOverlay {
     private static final ResourceLocation SEMI = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_semi.png");
     private static final ResourceLocation AUTO = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_auto.png");
     private static final ResourceLocation BURST = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_burst.png");
+    private static final ResourceLocation SAFETY = new ResourceLocation(GunMod.MOD_ID, "textures/hud/fire_mode_safety.png");
     private static final DecimalFormat CURRENT_AMMO_FORMAT = new DecimalFormat("000");
     private static final DecimalFormat CURRENT_AMMO_FORMAT_PERCENT = new DecimalFormat("000%");
     private static final DecimalFormat INVENTORY_AMMO_FORMAT = new DecimalFormat("0000");
@@ -144,6 +145,7 @@ public class GunHudOverlay implements IGuiOverlay {
         ResourceLocation fireModeTexture = switch (fireMode) {
             case AUTO -> AUTO;
             case BURST -> BURST;
+            case SAFETY -> SAFETY;
             default -> SEMI;
         };
         RenderSystem.setShaderColor(1, 1, 1, 1);
