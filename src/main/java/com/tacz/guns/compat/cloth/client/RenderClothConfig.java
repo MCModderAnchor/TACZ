@@ -74,5 +74,9 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.disable_movement_fov"), RenderConfig.DISABLE_MOVEMENT_ATTRIBUTE_FOV.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.disable_movement_fov.desc"))
                 .setSaveConsumer(RenderConfig.DISABLE_MOVEMENT_ATTRIBUTE_FOV::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.enable_holster_animation_on_gun_safety"), RenderConfig.ENABLE_HOLSTER_ANIMATION_ON_GUN_SAFETY.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.enable_holster_animation_on_gun_safety.desc"))
+                .setSaveConsumer(RenderConfig.ENABLE_HOLSTER_ANIMATION_ON_GUN_SAFETY::set).build());
     }
 }

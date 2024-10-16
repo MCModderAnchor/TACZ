@@ -95,6 +95,9 @@ public class GunData {
     @SerializedName("builtin_attachments")
     private Map<AttachmentType, ResourceLocation> builtInAttachments = Maps.newHashMap();
 
+    @SerializedName("safety")
+    private boolean safety = true;
+
     public ResourceLocation getAmmoId() {
         return ammoId;
     }
@@ -247,5 +250,9 @@ public class GunData {
             return 300;
         }
         return 60_000L / burstData.getBpm();
+    }
+
+    public boolean getSafety() {
+        return this.safety;
     }
 }

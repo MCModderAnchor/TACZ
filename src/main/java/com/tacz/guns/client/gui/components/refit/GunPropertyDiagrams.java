@@ -66,20 +66,19 @@ public final class GunPropertyDiagrams {
 
             // 射击模式
             MutableComponent fireModeText = Component.translatable("gui.tacz.gun_refit.property_diagrams.fire_mode");
-            if (fireMode == FireMode.AUTO) {
-                fireModeText.append(Component.translatable("gui.tacz.gun_refit.property_diagrams.auto"));
-            } else if (fireMode == FireMode.SEMI) {
-                fireModeText.append(Component.translatable("gui.tacz.gun_refit.property_diagrams.semi"));
-            } else if (fireMode == FireMode.BURST) {
-                fireModeText.append(Component.translatable("gui.tacz.gun_refit.property_diagrams.burst"));
-            } else {
-                fireModeText.append(Component.translatable("gui.tacz.gun_refit.property_diagrams.unknown"));
-            }
 
-            graphics.drawString(font, fireModeText, nameTextStartX+12, yOffset[0], fontColor, false);
+            fireModeText.append(Component.translatable(switch (fireMode) {
+                case AUTO -> "gui.tacz.gun_refit.property_diagrams.auto";
+                case SEMI -> "gui.tacz.gun_refit.property_diagrams.semi";
+                case BURST -> "gui.tacz.gun_refit.property_diagrams.burst";
+                case SAFETY -> "gui.tacz.gun_refit.property_diagrams.safety";
+                default -> "gui.tacz.gun_refit.property_diagrams.unknown";
+            }));
+
+            graphics.drawString(font, fireModeText, nameTextStartX + 12, yOffset[0], fontColor, false);
 
             yOffset[0] += 10;
-
+            
 
             // 弹匣容量
             int barrelBulletAmount = (iGun.hasBulletInBarrel(gunItem) && index.getGunData().getBolt() != Bolt.OPEN_BOLT) ? 1 : 0;

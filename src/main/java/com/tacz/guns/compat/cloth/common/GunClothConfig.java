@@ -25,5 +25,9 @@ public class GunClothConfig {
         gun.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.gun.auto_reload_when_respawn"), GunConfig.AUTO_RELOAD_WHEN_RESPAWN.get())
                 .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.common.gun.auto_reload_when_respawn.desc"))
                 .setSaveConsumer(GunConfig.AUTO_RELOAD_WHEN_RESPAWN::set).build());
+
+        gun.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.gun.enable_gun_safety"), GunConfig.ENABLE_GUN_SAFETY.get())
+                .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.common.gun.enable_gun_safety.desc"))
+                .setSaveConsumer(GunConfig.ENABLE_GUN_SAFETY::set).build());
     }
 }

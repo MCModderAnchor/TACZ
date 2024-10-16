@@ -49,7 +49,7 @@ public class ShootKey {
             FireMode fireMode = iGun.getFireMode(mainHandItem);
             boolean isBurstAuto = fireMode == FireMode.BURST && TimelessAPI.getCommonGunIndex(iGun.getGunId(mainHandItem))
                     .map(index -> index.getGunData().getBurstData().isContinuousShoot())
-                    .orElse(false);
+                    .orElse(false); 
             IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
             if (SHOOT_KEY.isDown() && (fireMode == FireMode.AUTO || isBurstAuto)) {
                 operator.shoot();
@@ -96,7 +96,8 @@ public class ShootKey {
             ItemStack mainHandItem = player.getMainHandItem();
             if (mainHandItem.getItem() instanceof IGun iGun) {
                 FireMode fireMode = iGun.getFireMode(mainHandItem);
-                boolean isBurstSemi = fireMode == FireMode.BURST && TimelessAPI.getCommonGunIndex(iGun.getGunId(mainHandItem))
+                var gunId = iGun.getGunId(mainHandItem);
+                boolean isBurstSemi = fireMode == FireMode.BURST && TimelessAPI.getCommonGunIndex(gunId)
                         .map(index -> !index.getGunData().getBurstData().isContinuousShoot())
                         .orElse(false);
                 if (fireMode == FireMode.UNKNOWN) {
@@ -104,6 +105,9 @@ public class ShootKey {
                 }
                 if (fireMode == FireMode.SEMI || isBurstSemi) {
                     IClientPlayerGunOperator.fromLocalPlayer(player).shoot();
+                }
+                if (fireMode == FireMode.SAFETY) {
+                    TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> SoundPlayManager.playDryFireSound(player, gunIndex));
                 }
             }
         }
@@ -126,7 +130,8 @@ public class ShootKey {
         ItemStack mainHandItem = player.getMainHandItem();
         if (mainHandItem.getItem() instanceof IGun iGun) {
             FireMode fireMode = iGun.getFireMode(mainHandItem);
-            boolean isBurstSemi = fireMode == FireMode.BURST && TimelessAPI.getCommonGunIndex(iGun.getGunId(mainHandItem))
+            var gunId = iGun.getGunId(mainHandItem);
+            boolean isBurstSemi = fireMode == FireMode.BURST && TimelessAPI.getCommonGunIndex(gunId)
                     .map(index -> !index.getGunData().getBurstData().isContinuousShoot())
                     .orElse(false);
             if (fireMode == FireMode.UNKNOWN) {
@@ -135,6 +140,9 @@ public class ShootKey {
             }
             if (fireMode == FireMode.SEMI || isBurstSemi) {
                 return IClientPlayerGunOperator.fromLocalPlayer(player).shoot() == ShootResult.SUCCESS;
+            }
+            if (fireMode == FireMode.SAFETY) {
+                TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> SoundPlayManager.playDryFireSound(player, gunIndex));
             }
         }
         return false;

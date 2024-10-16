@@ -18,6 +18,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue DISABLE_INTERACT_HUD_TEXT;
     public static ForgeConfigSpec.IntValue DAMAGE_COUNTER_RESET_TIME;
     public static ForgeConfigSpec.BooleanValue DISABLE_MOVEMENT_ATTRIBUTE_FOV;
+    public static ForgeConfigSpec.BooleanValue ENABLE_HOLSTER_ANIMATION_ON_GUN_SAFETY;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -63,6 +64,9 @@ public class RenderConfig {
 
         builder.comment("Disable the fov effect from the movement speed attribute while holding a gun");
         DISABLE_MOVEMENT_ATTRIBUTE_FOV = builder.define("DisableMovementAttributeFov", true);
+
+        builder.comment("Controls whether to run holster animation when the currently holding gun is in safety (default true)");
+        ENABLE_HOLSTER_ANIMATION_ON_GUN_SAFETY = builder.define("EnableHolsterAnimationOnGunSafety", true);
 
         builder.pop();
     }
