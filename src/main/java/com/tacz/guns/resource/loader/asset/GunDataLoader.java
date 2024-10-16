@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static com.tacz.guns.config.common.GunConfig.ENABLE_GUN_SAFETY;
+
 public final class GunDataLoader {
     private static final Marker MARKER = MarkerManager.getMarker("GunDataLoader");
     private static final Pattern DATA_PATTERN = Pattern.compile("^(\\w+)/guns/data/([\\w/]+)\\.json$");
@@ -83,7 +85,7 @@ public final class GunDataLoader {
         // TODO: Technically speaking, all guns have safeties nowadays.
         // It's just the kind of safety, whether external or internal, matters,
         // In the future this can be added as a enum rather than a boolean, but for now it works
-        if (data.getSafety()) {
+        if (data.getSafety() && ENABLE_GUN_SAFETY.get()) {
             data.getFireModeSet().add(FireMode.SAFETY);
         }
         CommonAssetManager.INSTANCE.putGunData(id, data);

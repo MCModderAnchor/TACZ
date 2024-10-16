@@ -69,6 +69,8 @@
   "config.tacz.common.gun": "枪械",
   "config.tacz.common.gun.auto_reload_when_respawn": "重生后自动重载弹药",
   "config.tacz.common.gun.auto_reload_when_respawn.desc": "重生后，自动重载玩家背包内全部枪械弹药，主要用于 PVP 服务器",
+  "config.tacz.common.gun.enable_gun_safety": "启用枪械保险功能",
+  "config.tacz.common.gun.enable_gun_safety.desc": "（仅为客户端操作）选择默认是否打开枪械保险切换功能",
   "config.tacz.common.gun.creative_player_consume_ammo": "创造模式玩家消耗弹药",
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "玩家处于创造模式时，是否会消耗枪械内弹药",
   "config.tacz.common.gun.default_gun_fire_sound_distance": "默认枪声范围",
