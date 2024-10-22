@@ -149,7 +149,7 @@
   "tooltip.tacz.refit.unload": "ถอดกระสุน",
   "subtitle.tacz.gun": "เสียงปืน",
   "subtitle.tacz.target_block_hit": "เป้าหมายบล็อก: โดน!",
-  "jei.tacz.attachment_query.title": "ข้อมูลสิ่งที่แนบมา",
+  "jei.tacz.attachment_query.title": "Attachment Query",
   "jei.tacz.attachment_query.more": "เพิ่มเติม...",
   "config.tacz.client.key": "คีย์",
   "config.tacz.client.key.hold_to_aim": "กดค้างเพื่อเล็ง",
