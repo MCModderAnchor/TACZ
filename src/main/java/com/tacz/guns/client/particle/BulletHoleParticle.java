@@ -1,7 +1,6 @@
 package com.tacz.guns.client.particle;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.init.ModBlocks;
