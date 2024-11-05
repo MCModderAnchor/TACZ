@@ -50,7 +50,6 @@ public class BulletHoleParticle extends TextureSheetParticle {
         this.gravity = 0.0F;
         this.quadSize = 0.05F;
 
-        // 如果方块是空气，则立即移除粒子
         BlockState state = world.getBlockState(pos);
         if (state.is(ModBlocks.TARGET.get()) || shouldRemove()) {
             this.remove();
