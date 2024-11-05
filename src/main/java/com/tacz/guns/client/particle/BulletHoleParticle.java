@@ -52,7 +52,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
 
         // 如果方块是空气，则立即移除粒子
         BlockState state = world.getBlockState(pos);
-        if (shouldRemove() || state.is(ModBlocks.TARGET.get())) {
+        if (state.is(ModBlocks.TARGET.get()) || shouldRemove()) {
             this.remove();
         }
         TimelessAPI.getClientGunIndex(new ResourceLocation(gunId)).ifPresent(gunIndex -> {
