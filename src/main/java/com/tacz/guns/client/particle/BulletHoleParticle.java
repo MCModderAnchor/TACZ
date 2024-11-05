@@ -189,7 +189,11 @@ public class BulletHoleParticle extends TextureSheetParticle {
             return true;
         } else {
             // 阻止弹孔在与方块不构成有效附着时继续渲染
-            AABB baseBlockBoundingBox = blockState.getCollisionShape(this.level, this.pos).bounds();
+            VoxelShape shape = blockState.getCollisionShape(this.level, this.pos);
+            if (shape.isEmpty()) {
+                return true;
+            }
+            AABB baseBlockBoundingBox = shape.bounds();
             AABB blockBoundingBox = baseBlockBoundingBox.move(this.pos);
             boolean intersects = blockBoundingBox.intersects(
                     this.x - 0.1, this.y - 0.1, this.z - 0.1,
