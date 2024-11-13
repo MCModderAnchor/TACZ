@@ -2,7 +2,7 @@
     <img width="300" src="https://s2.loli.net/2024/04/30/NJrstR1QzpoLyIT.png" alt="title">
 </p>
 <hr>
-<p align="center">Timeless and Classics Guns Zero</p>
+<p align="center">Timeless and Classics Guns Zero Foxified</p>
 <p align="center">
     <a href="https://www.curseforge.com/minecraft/mc-mods/timeless-and-classics-zero">
         <img src="http://cf.way2muchnoise.eu/full_timeless-and-classics-zero.svg" alt="CurseForge Download">
@@ -22,7 +22,7 @@
     <a href="https://tacwiki.mcma.club/zh/">Wiki</a>
 </p>
 
-Timeless and Classics Guns Zero is a gun mod for Minecraft Forge 1.20.1.
+Timeless and Classics Guns Zero Foxified is a port of a TACZ gun mod for Minecraft NeoForge 1.21.1.
 
 ## Notice
 
