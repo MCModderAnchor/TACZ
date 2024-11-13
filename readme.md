@@ -22,7 +22,7 @@
     <a href="https://tacwiki.mcma.club/zh/">Wiki</a>
 </p>
 
-Timeless and Classics Guns Zero is a gun mod for Minecraft NeoForge 1.21.1.
+Timeless and Classics Guns Zero Foxified is a port of a TACZ gun mod for Minecraft NeoForge 1.21.1.
 
 ## Notice
 
