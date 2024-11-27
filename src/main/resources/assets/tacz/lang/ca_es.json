@@ -65,7 +65,7 @@
   "gui.tacz.gun_refit.property_diagrams.pitch": "Retrocés vertical",
   "gui.tacz.gun_refit.property_diagrams.yaw": "Retrocés horitzontal",
   "gui.tacz.gun_refit.property_diagrams.ads": "Temps per apuntar",
-  "gui.tacz.gun_refit.property_diagrams.armor_ignore": "Relación de penetración",
+  "gui.tacz.gun_refit.property_diagrams.armor_ignore": "Relació de perforació",
   "gui.tacz.gun_refit.property_diagrams.head_shot": "Relació de tir al cap",
   "gui.tacz.gun_refit.property_diagrams.knockback": "Força d'empenta",
   "gui.tacz.gun_refit.property_diagrams.pierce": "Penetració",
