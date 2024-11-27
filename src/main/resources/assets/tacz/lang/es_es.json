@@ -65,7 +65,7 @@
   "gui.tacz.gun_refit.property_diagrams.pitch": "Ret. Vert",
   "gui.tacz.gun_refit.property_diagrams.yaw": "Ret. Hor",
   "gui.tacz.gun_refit.property_diagrams.ads": "ADS",
-  "gui.tacz.gun_refit.property_diagrams.armor_ignore": "Rango AP",
+  "gui.tacz.gun_refit.property_diagrams.armor_ignore": "Relación de penetración",
   "gui.tacz.gun_refit.property_diagrams.head_shot": "Radio HS",
   "gui.tacz.gun_refit.property_diagrams.knockback": "Empuje",
   "gui.tacz.gun_refit.property_diagrams.pierce": "Penetración",
