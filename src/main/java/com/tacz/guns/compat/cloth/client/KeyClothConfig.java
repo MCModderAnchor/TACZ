@@ -5,6 +5,7 @@ import com.tacz.guns.config.client.KeyConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 public class KeyClothConfig {
@@ -19,6 +20,6 @@ public class KeyClothConfig {
                 .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.client.key.hold_to_crawl.desc"))
                 .setSaveConsumer(KeyConfig.HOLD_TO_CRAWL::set).build());
 
-        key.addEntry(new OpenGunPackDirEntry(Component.literal("test")));
+        key.addEntry(new OpenGunPackDirEntry(new TextComponent("test")));
     }
 }

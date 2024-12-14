@@ -19,7 +19,7 @@ public class GunSoundInstance extends EntityBoundSoundInstance {
     private final boolean mono;
 
     public GunSoundInstance(SoundEvent soundEvent, SoundSource source, float volume, float pitch, Entity entity, int soundDistance, ResourceLocation registryName, boolean mono) {
-        super(soundEvent, source, volume, pitch, entity, 943);
+        super(soundEvent, source, volume, pitch, entity);
         this.attenuation = Attenuation.NONE;
         this.registryName = registryName;
         LocalPlayer player = Minecraft.getInstance().player;

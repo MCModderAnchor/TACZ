@@ -1,13 +1,16 @@
 package com.tacz.guns.api.util;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 @SuppressWarnings("unused")
 public record LuaEntityAccessor(LivingEntity entity) {
     public void sendSystemMessage(Component message) {
-        entity.sendSystemMessage(message);
+        entity.sendMessage(message, entity.getUUID());
     }
 
     public void sendActionBar(Component message) {
@@ -21,18 +24,18 @@ public record LuaEntityAccessor(LivingEntity entity) {
     }
 
     public boolean hurt(float amount) {
-        return entity.hurt(entity.level().damageSources().generic(), amount);
+        return entity.hurt(DamageSource.GENERIC, amount);
     }
 
     public Component literal(String text) {
-        return Component.literal(text);
+        return new TextComponent(text);
     }
 
     public Component translatable(String key) {
-        return Component.translatable(key);
+        return new TranslatableComponent(key);
     }
 
     public Component translatable(String key, Component... components) {
-        return Component.translatable(key, (Object[]) components);
+        return new TranslatableComponent(key, (Object[]) components);
     }
 }

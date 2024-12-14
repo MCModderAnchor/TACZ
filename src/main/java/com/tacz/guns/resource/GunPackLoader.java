@@ -2,28 +2,25 @@ package com.tacz.guns.resource;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.bridge.game.PackType;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.resource.ResourceManager;
 import com.tacz.guns.config.PreLoadConfig;
 import com.tacz.guns.util.GetJarResources;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraft.SharedConstants;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackType;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
-import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.DelegatingPackResources;
-import net.minecraftforge.resource.PathPackResources;
+import net.minecraftforge.resource.DelegatingResourcePack;
+import net.minecraftforge.resource.PathResourcePack;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -48,7 +45,8 @@ import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.tacz.guns.resource_legacy.CommonGunPackLoader.GSON;
+import static com.tacz.guns.client.resource.ClientAssetsManager.GSON;
+
 
 public enum GunPackLoader implements RepositorySource {
     INSTANCE;
@@ -56,16 +54,15 @@ public enum GunPackLoader implements RepositorySource {
     public PackType packType;
     private boolean firstLoad = true;
 
-
     @Override
-    public void loadPacks(Consumer<Pack> pOnLoad) {
-        Pack extensionsPack = discoverExtensions();
+    public void loadPacks(Consumer<Pack> pOnLoad, Pack.PackConstructor pInfoFactory) {
+        Pack extensionsPack = discoverExtensions(pInfoFactory);
         if (extensionsPack != null) {
             pOnLoad.accept(extensionsPack);
         }
     }
 
-    public Pack discoverExtensions() {
+    public Pack discoverExtensions(Pack.PackConstructor pInfoFactory) {
         Path resourcePacksPath = FMLPaths.GAMEDIR.get().resolve("tacz");
         File folder = resourcePacksPath.toFile();
         if (!folder.isDirectory()) {
@@ -91,10 +88,10 @@ public enum GunPackLoader implements RepositorySource {
         }
 
         List<GunPack> gunPacks = scanExtensions(resourcePacksPath);
-        List<PathPackResources> extensionPacks = new ArrayList<>();
+        List<PathResourcePack> extensionPacks = new ArrayList<>();
 
         for(GunPack gunPack : gunPacks) {
-            PathPackResources packResources = new PathPackResources(gunPack.name, false, gunPack.path) {
+            PathResourcePack packResources = new PathResourcePack(gunPack.name, gunPack.path) {
                 private final SecureJar secureJar = SecureJar.from(gunPack.path);
 
                 @NotNull
@@ -106,32 +103,30 @@ public enum GunPackLoader implements RepositorySource {
                     }
                 }
 
-                public IoSupplier<InputStream> getResource(PackType type, ResourceLocation location) {
-                    return super.getResource(type, location);
+                @Override
+                protected InputStream getResource(String name) throws IOException {
+                    return super.getResource(name);
                 }
 
-                public void listResources(PackType type, String namespace, String path, PackResources.ResourceOutput resourceOutput) {
-                    super.listResources(type, namespace, path, resourceOutput);
-                }
             };
             extensionPacks.add(packResources);
         }
 
 
-        return Pack.readMetaAndCreate("tacz_resources", Component.literal("TACZ Resources"), true, (id) -> {
-            return new DelegatingPackResources(id, false, new PackMetadataSection(Component.translatable("tacz.resources.modresources"),
+        return Pack.create("tacz_resources", true, () -> {
+            return new DelegatingResourcePack("tacz_resources", "TACZ Resources", new PackMetadataSection(new TranslatableComponent("tacz.resources.modresources"),
                     SharedConstants.getCurrentVersion().getPackVersion(packType)), extensionPacks) {
-                public IoSupplier<InputStream> getRootResource(String... paths) {
-                    if (paths.length == 1 && paths[0].equals("pack.png")) {
+                public InputStream getRootResource(String fileName) throws IOException {
+                    if (fileName.equals("pack.png")) {
                         Path logoPath = getModIcon("tacz");
                         if (logoPath != null) {
-                            return IoSupplier.create(logoPath);
+                            return Files.newInputStream(logoPath);
                         }
                     }
                     return null;
                 }
             };
-        }, packType, Pack.Position.BOTTOM, PackSource.BUILT_IN);
+        }, pInfoFactory, Pack.Position.BOTTOM, PackSource.BUILT_IN);
     }
 
     public static @Nullable Path getModIcon(String modId) {

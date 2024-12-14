@@ -10,7 +10,7 @@ import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.filter.RecipeFilter;
 import com.tacz.guns.resource.network.DataType;
 import com.tacz.guns.util.ResourceScanner;
-import net.minecraft.resources.FileToIdConverter;
+import com.tacz.guns.util.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;

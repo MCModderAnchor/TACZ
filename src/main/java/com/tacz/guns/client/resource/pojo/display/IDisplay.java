@@ -1,6 +1,6 @@
 package com.tacz.guns.client.resource.pojo.display;
 
-import net.minecraft.resources.FileToIdConverter;
+import com.tacz.guns.util.FileToIdConverter;
 
 /**
  * 这个接口其实是妥协用的，用于将旧的texture路径转换为新的路径<br/>

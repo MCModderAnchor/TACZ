@@ -75,8 +75,8 @@ public class RenderClothConfig {
                 .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.client.render.disable_movement_fov.desc"))
                 .setSaveConsumer(RenderConfig.DISABLE_MOVEMENT_ATTRIBUTE_FOV::set).build());
 
-        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.enable_tooltip_id"), RenderConfig.ENABLE_TACZ_ID_IN_TOOLTIP.get())
-                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.enable_tooltip_id.desc"))
+        render.addEntry(entryBuilder.startBooleanToggle(new TranslatableComponent("config.tacz.client.render.enable_tooltip_id"), RenderConfig.ENABLE_TACZ_ID_IN_TOOLTIP.get())
+                .setDefaultValue(true).setTooltip(new TranslatableComponent("config.tacz.client.render.enable_tooltip_id.desc"))
                 .setSaveConsumer(RenderConfig.ENABLE_TACZ_ID_IN_TOOLTIP::set).build());
     }
 }

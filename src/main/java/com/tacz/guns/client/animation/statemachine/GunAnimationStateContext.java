@@ -23,7 +23,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.luaj.vm2.LuaTable;
 
 import java.util.Optional;
@@ -163,7 +163,7 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
             return iGun.getDummyAmmoAmount(currentGunItem) > 0;
         }
         return processCameraEntity(entity ->
-                    entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
+                    entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
                         .map(cap -> {
                             // 背包检查
                             for (int i = 0; i < cap.getSlots(); i++) {
@@ -291,7 +291,7 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
      * @return 玩家是否接触地面
      */
     public boolean isOnGround() {
-        return processCameraEntity(Entity::onGround).orElse(false);
+        return processCameraEntity(Entity::isOnGround).orElse(false);
     }
 
     /**

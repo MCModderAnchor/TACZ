@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
@@ -57,7 +58,7 @@ public class GunSmithTableItem extends BlockItem implements BlockItemDataAccesso
         ResourceLocation blockId = this.getBlockId(stack);
         Optional<ClientBlockIndex> blockIndex = TimelessAPI.getClientBlockIndex(blockId);
         if (blockIndex.isPresent()) {
-            return Component.translatable(blockIndex.get().getName());
+            return new TranslatableComponent(blockIndex.get().getName());
         }
         return super.getName(stack);
     }
@@ -69,13 +70,13 @@ public class GunSmithTableItem extends BlockItem implements BlockItemDataAccesso
 //        TimelessAPI.getClientBlockIndex(blockId).ifPresent(index -> {
 //            String tooltipKey = index.getTooltipKey();
 //            if (tooltipKey != null) {
-//                components.add(Component.translatable(tooltipKey).withStyle(ChatFormatting.GRAY));
+//                components.add(new TranslatableComponent(tooltipKey).withStyle(ChatFormatting.GRAY));
 //            }
 //        });
 //
 //        PackInfo packInfoObject = ClientAssetsManager.INSTANCE.getPackInfo(blockId);
 //        if (packInfoObject != null) {
-//            MutableComponent component = Component.translatable(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
+//            MutableComponent component = new TranslatableComponent(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
 //            components.add(component);
 //        }
 //    }

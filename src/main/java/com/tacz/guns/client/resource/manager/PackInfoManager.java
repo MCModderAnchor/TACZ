@@ -6,6 +6,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.resource.CommonAssetsManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
@@ -13,8 +14,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.util.Map;
 
 public class PackInfoManager extends SimplePreparableReloadListener<Map<String, PackInfo>> {
@@ -27,17 +27,19 @@ public class PackInfoManager extends SimplePreparableReloadListener<Map<String, 
         Map<String, PackInfo> output = Maps.newHashMap();
 
         for (String namespaces : manager.getNamespaces()) {
-            manager.getResource(new ResourceLocation(namespaces, PACK_INFO_NAME)).ifPresent(rl -> {
-                try (Reader reader = rl.openAsReader()) {
-                    PackInfo packInfo = GsonHelper.fromJson(CommonAssetsManager.GSON, reader, PackInfo.class, true);
-                    PackInfo packInfo1 = output.put(namespaces, packInfo);
-                    if (packInfo1 != null) {
-                        throw new IllegalStateException("Duplicate data file ignored with namespace " + namespaces);
-                    }
-                } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
-                    GunMod.LOGGER.error(MARKER, "Couldn't parse pack info for namespace '{}' from {}", namespaces, rl, jsonparseexception);
+            ResourceLocation rl = new ResourceLocation(namespaces, PACK_INFO_NAME);
+            try (Resource resource = manager.getResource(rl);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))
+            ) {
+                PackInfo packInfo = GsonHelper.fromJson(CommonAssetsManager.GSON, reader, PackInfo.class, true);
+                PackInfo packInfo1 = output.put(namespaces, packInfo);
+                if (packInfo1 != null) {
+                    throw new IllegalStateException("Duplicate data file ignored with namespace " + namespaces);
                 }
-            });
+            } catch (FileNotFoundException ignore) {
+            } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
+                GunMod.LOGGER.error(MARKER, "Couldn't parse pack info for namespace '{}' from {}", namespaces, rl, jsonparseexception);
+            }
         }
         return output;
     }

@@ -2,6 +2,7 @@ package com.tacz.guns.client.resource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.math.Vector3f;
 import com.tacz.guns.api.client.animation.gltf.AnimationStructure;
 import com.tacz.guns.api.vmlib.LuaAnimationConstant;
 import com.tacz.guns.api.vmlib.LuaGunAnimationConstant;
@@ -31,7 +32,7 @@ import com.tacz.guns.resource.manager.ScriptManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.resources.FileToIdConverter;
+import com.tacz.guns.util.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +40,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 import org.luaj.vm2.LuaTable;
 
 import java.util.ArrayList;

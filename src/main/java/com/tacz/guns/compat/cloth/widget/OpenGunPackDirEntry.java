@@ -1,12 +1,14 @@
 package com.tacz.guns.compat.cloth.widget;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import net.minecraft.Util;
-import net.minecraft.client.gui.GuiGraphics;
+
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,10 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class OpenGunPackDirEntry extends AbstractConfigListEntry<Boolean> {
-    private final Button button = Button.builder(Component.translatable("config.tacz.open_gunpack_folder"), button -> {
+    private final Button button = new Button(0, 0, 150, 20, new TranslatableComponent("config.tacz.open_gunpack_folder"), button -> {
         Util.getPlatform().openUri(FMLPaths.GAMEDIR.get().resolve("tacz").toUri());
-        button.setFocused(false);
-    }).bounds(0, 0, 150, 20).build();
+    });
 
     public OpenGunPackDirEntry(Component name) {
         super(name, true);
@@ -45,10 +46,10 @@ public class OpenGunPackDirEntry extends AbstractConfigListEntry<Boolean> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
-        button.setX(x + entryWidth - 150);
-        button.setY(y);
-        button.render(graphics, mouseX, mouseY, delta);
-        super.render(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
+    public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
+        button.x = (x + entryWidth - 150);
+        button.y = (y);
+        button.render(matrices, mouseX, mouseY, delta);
+        super.render(matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
     }
 }

@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonParseException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.vmlib.LuaLibrary;
-import net.minecraft.resources.FileToIdConverter;
+import com.tacz.guns.util.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -16,8 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.luaj.vm2.*;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStreamReader;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +63,7 @@ public class ScriptManager extends SimplePreparableReloadListener< List<Map.Entr
         pObject.forEach(entry -> scriptMap.put(entry.getKey(), entry.getValue().get()));
     }
 
-    private Map.Entry<String, Supplier<LuaTable>> wrapLoadingFunction(ResourceLocation rawResourceLocation, Resource resource) {
-        ResourceLocation resourceLocation = filetoidconverter.fileToId(rawResourceLocation);
+    private Map.Entry<String, Supplier<LuaTable>> wrapLoadingFunction(ResourceLocation resourceLocation, Resource resource) {
         String moduleName = getModuleName(resourceLocation);
         return new AbstractMap.SimpleEntry<>(moduleName, new Supplier<>() {
             private LuaTable loaded = null;
@@ -72,7 +72,7 @@ public class ScriptManager extends SimplePreparableReloadListener< List<Map.Entr
                 if (loaded != null) {
                     return loaded;
                 }
-                try (Reader reader = resource.openAsReader()) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
                     LuaValue chunk = globals.load(reader, moduleName);
                     loaded = chunk.call().checktable(1);
                     return loaded;

@@ -6,16 +6,14 @@ import com.tacz.guns.GunMod;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.data.gson.AnimationSerializing;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
-import net.minecraft.resources.FileToIdConverter;
+import com.tacz.guns.util.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.util.*;
 
 public class PlayerAnimatorAssetManager extends SimplePreparableReloadListener<Map<ResourceLocation, HashMap<String, KeyframeAnimation>>> {
@@ -62,14 +60,14 @@ public class PlayerAnimatorAssetManager extends SimplePreparableReloadListener<M
         Map<ResourceLocation, HashMap<String, KeyframeAnimation>> output = Maps.newHashMap();
         for(Map.Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(manager).entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();
-            ResourceLocation resourcelocation1 = filetoidconverter.fileToId(resourcelocation);
 
-            try (Reader reader = entry.getValue().openAsReader()) {
+            try (Resource resource = entry.getValue();
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
                 List<KeyframeAnimation> keyframeAnimations = AnimationSerializing.deserializeAnimation(reader);
                 for (var animation : keyframeAnimations) {
                     if (animation.extraData.get("name") instanceof String text) {
                         String name = PlayerAnimationRegistry.serializeTextToString(text).toLowerCase(Locale.ENGLISH);
-                        output.computeIfAbsent(resourcelocation1, k -> Maps.newHashMap()).put(name, animation);
+                        output.computeIfAbsent(resourcelocation, k -> Maps.newHashMap()).put(name, animation);
                     }
                 }
             } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {

@@ -117,7 +117,7 @@ public class FirstPersonRenderGunEvent {
             // 在渲染之前，先更新动画，让动画数据写入模型
             animationStateMachine.processContextIfExist(context -> {
                 context.setCurrentGunItem(stack);
-                context.setPartialTicks(event.getPartialTick());
+                context.setPartialTicks(event.getPartialTicks());
             });
             animationStateMachine.update();
 

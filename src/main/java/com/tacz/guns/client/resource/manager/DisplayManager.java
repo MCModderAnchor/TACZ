@@ -6,7 +6,7 @@ import com.google.gson.JsonParseException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import com.tacz.guns.resource.manager.JsonDataManager;
-import net.minecraft.resources.FileToIdConverter;
+import com.tacz.guns.util.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;

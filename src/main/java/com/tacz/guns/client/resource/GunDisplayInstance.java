@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -64,7 +63,7 @@ public class GunDisplayInstance {
     private boolean showCrosshair = false;
     private @Nullable AmmoParticle particle;
     private float @Nullable [] tracerColor = null;
-    private EnumMap<FireMode, ControllableData> controllableData;
+    private Map<FireMode, ControllableData> controllableData;
     private AmmoCountStyle ammoCountStyle = AmmoCountStyle.NORMAL;
     private DamageStyle damageStyle = DamageStyle.PER_PROJECTILE;
 
@@ -417,7 +416,7 @@ public class GunDisplayInstance {
         return playerAnimator3rd;
     }
 
-    public EnumMap<FireMode, ControllableData> getControllableData() {
+    public Map<FireMode, ControllableData> getControllableData() {
         return controllableData;
     }
 

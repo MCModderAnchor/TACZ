@@ -5,7 +5,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.resource.CommonAssetsManager;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -44,7 +43,7 @@ public class ReloadCommand {
 //            }
 //        }
 //        GunMod.LOGGER.info("Model loading time: {} ms", time);
-        context.getSource().sendMessage(new TranslatableComponent("commands.tacz.reload.success", time), Util.NIL_UUID);
+        context.getSource().sendSuccess(new TranslatableComponent("commands.tacz.reload.success", time), true);
         return Command.SINGLE_SUCCESS;
     }
 
