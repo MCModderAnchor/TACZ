@@ -1,16 +1,16 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.client.animation.statemachine.AnimationStateMachine;
 import com.tacz.guns.api.event.common.GunFireSelectEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
-import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
+import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerFireSelect;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
@@ -37,21 +37,21 @@ public class LocalPlayerFireSelect {
         if (MinecraftForge.EVENT_BUS.post(new GunFireSelectEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
             return;
         }
-        ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+
+        TimelessAPI.getGunDisplay(mainhandItem).ifPresent(gunIndex -> {
             // 播放音效
             SoundPlayManager.playFireSelectSound(player, gunIndex);
             // 发送切换开火模式的数据包，通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerFireSelect());
             // 客户端切换开火模式
             if (iGun instanceof AbstractGunItem logicGun) {
-                logicGun.fireSelect(mainhandItem);
+                logicGun.fireSelect(null, mainhandItem);
             }
             AttachmentPropertyManager.postChangeEvent(player, mainhandItem);
             // 动画状态机转移状态
-            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            AnimationStateMachine<?> animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                animationStateMachine.onGunFireSelect();
+                animationStateMachine.trigger(GunAnimationConstant.INPUT_FIRE_SELECT);
             }
         });
     }

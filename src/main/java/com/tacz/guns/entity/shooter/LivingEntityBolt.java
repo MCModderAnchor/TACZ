@@ -1,11 +1,11 @@
 package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
@@ -14,11 +14,13 @@ public class LivingEntityBolt {
     private final ShooterDataHolder data;
     private final LivingEntityDrawGun draw;
     private final LivingEntityShoot shoot;
+    private final LivingEntity shooter;
 
-    public LivingEntityBolt(ShooterDataHolder data, LivingEntityDrawGun draw, LivingEntityShoot shoot) {
+    public LivingEntityBolt(ShooterDataHolder data, LivingEntity shooter, LivingEntityDrawGun draw, LivingEntityShoot shoot) {
         this.data = data;
         this.draw = draw;
         this.shoot = shoot;
+        this.shooter = shooter;
     }
 
     public void bolt() {
@@ -26,7 +28,7 @@ public class LivingEntityBolt {
             return;
         }
         ItemStack currentGunItem = data.currentGunItem.get();
-        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
+        if (!(currentGunItem.getItem() instanceof AbstractGunItem iGun)) {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(currentGunItem);
@@ -44,7 +46,7 @@ public class LivingEntityBolt {
                 return;
             }
             // 检查是否在拉栓
-            if (data.boltCoolDown >= 0) {
+            if (data.isBolting) {
                 return;
             }
             // 检查 bolt 类型是否是 manual action
@@ -61,41 +63,26 @@ public class LivingEntityBolt {
                 return;
             }
             data.boltTimestamp = System.currentTimeMillis();
-            // 将bolt cool down随便改为一个非 -1 的数值，以标记bolt进程开始
-            data.boltCoolDown = 0;
+            data.isBolting = iGun.startBolt(data, currentGunItem, shooter);
         });
     }
 
     public void tickBolt() {
         // bolt cool down 为 -1 时，代表拉栓逻辑进程没有开始，不需要tick
-        if (data.boltCoolDown == -1) {
+        if (!data.isBolting) {
             return;
         }
         if (data.currentGunItem == null) {
-            data.boltCoolDown = -1;
+            data.isBolting = false;
             return;
         }
         ItemStack currentGunItem = data.currentGunItem.get();
-        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
-            data.boltCoolDown = -1;
+        if (!(currentGunItem.getItem() instanceof AbstractGunItem iGun)) {
+            data.isBolting = false;
             return;
         }
         ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
-        data.boltCoolDown = gunIndex.map(index -> {
-            long coolDown = (long) (index.getGunData().getBoltActionTime() * 1000) - (System.currentTimeMillis() - data.boltTimestamp);
-            // 给 5 ms 的窗口时间，以平衡延迟
-            coolDown = coolDown - 5;
-            if (coolDown < 0) {
-                return 0L;
-            }
-            return coolDown;
-        }).orElse(-1L);
-        if (data.boltCoolDown == 0) {
-            if (iGun instanceof AbstractGunItem logicGun) {
-                logicGun.bolt(currentGunItem);
-            }
-            data.boltCoolDown = -1;
-        }
+        data.isBolting = gunIndex.map(index -> iGun.tickBolt(data, currentGunItem, shooter)).orElse(false);
     }
 }

@@ -1,7 +1,8 @@
 package com.tacz.guns.crafting;
 
 import com.google.gson.JsonObject;
-import com.tacz.guns.resource.CommonGunPackLoader;
+import com.tacz.guns.crafting.result.GunSmithTableResult;
+import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.pojo.data.recipe.TableRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +22,7 @@ public class GunSmithTableSerializer implements RecipeSerializer<GunSmithTableRe
     @Override
     @Nullable
     public GunSmithTableRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {
-        TableRecipe tableRecipe = CommonGunPackLoader.GSON.fromJson(jsonObject, TableRecipe.class);
+        TableRecipe tableRecipe = CommonAssetsManager.GSON.fromJson(jsonObject, TableRecipe.class);
         if (tableRecipe != null) {
             return new GunSmithTableRecipe(id, tableRecipe);
         }

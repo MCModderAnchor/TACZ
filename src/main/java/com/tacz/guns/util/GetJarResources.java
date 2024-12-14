@@ -3,6 +3,7 @@ package com.tacz.guns.util;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.tacz.guns.GunMod;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -131,7 +132,8 @@ public final class GetJarResources {
     private static void backupFiles(Path targetPath) throws IOException {
         // 创建子备份文件夹
         String dirName = targetPath.getFileName().toString();
-        Path backupPath = BACKUP_PATH.resolve(dirName);
+        Path resourcePacksPath = FMLPaths.GAMEDIR.get().resolve("tacz_backup");
+        Path backupPath = resourcePacksPath.resolve(dirName);
         if (!Files.isDirectory(backupPath)) {
             Files.createDirectories(backupPath);
         }

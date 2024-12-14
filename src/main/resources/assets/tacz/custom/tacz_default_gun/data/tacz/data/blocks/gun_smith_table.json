@@ -1,0 +1,5 @@
+{
+  // 配方过滤器，具体内容位于 data/<命名空间>/recipe_filters 下
+  // 如果没有指定，将使用默认过滤器 tacz:default
+  "filter": "tacz:default"
+}

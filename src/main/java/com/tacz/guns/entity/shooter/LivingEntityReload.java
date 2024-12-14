@@ -4,21 +4,15 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.event.common.GunReloadEvent;
-import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunReload;
-import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
-import com.tacz.guns.resource.pojo.data.gun.GunData;
-import com.tacz.guns.resource.pojo.data.gun.GunReloadData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
-
-import java.util.Optional;
 
 public class LivingEntityReload {
     private final LivingEntity shooter;
@@ -56,7 +50,7 @@ public class LivingEntityReload {
                 return;
             }
             // 检查是否在拉栓
-            if (data.boltCoolDown >= 0) {
+            if (data.isBolting) {
                 return;
             }
             // 检查弹药
@@ -78,80 +72,47 @@ public class LivingEntityReload {
                 data.reloadStateType = ReloadState.StateType.TACTICAL_RELOAD_FEEDING;
             }
             data.reloadTimestamp = System.currentTimeMillis();
+            // 调用枪械逻辑
+            if (!gunItem.startReload(data, currentGunItem, shooter)) {
+                data.reloadStateType = ReloadState.StateType.NOT_RELOADING;
+                data.reloadTimestamp = -1;
+            }
         });
     }
 
-    public ReloadState tickReloadState() {
-        // 初始化 tick 返回值
-        ReloadState reloadState = new ReloadState();
-        reloadState.setStateType(ReloadState.StateType.NOT_RELOADING);
-        reloadState.setCountDown(ReloadState.NOT_RELOADING_COUNTDOWN);
-        // 判断是否正在进行装填流程。如果没有则返回。
-        if (data.reloadTimestamp == -1 || data.currentGunItem == null) {
-            return reloadState;
-        }
-        if (!(data.currentGunItem.get().getItem() instanceof IGun iGun)) {
-            return reloadState;
+    public void cancelReload() {
+        if (data.currentGunItem == null) {
+            return;
         }
         ItemStack currentGunItem = data.currentGunItem.get();
-        // 获取当前枪械的 ReloadData。如果没有则返回。
-        ResourceLocation gunId = iGun.getGunId(currentGunItem);
-        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
-        if (gunIndexOptional.isEmpty()) {
-            return reloadState;
+        if (!(currentGunItem.getItem() instanceof AbstractGunItem gunItem)) {
+            return;
         }
-        GunData gunData = gunIndexOptional.get().getGunData();
-        GunReloadData reloadData = gunData.getReloadData();
-        // 计算新的 stateType 和 countDown
-        long countDown = ReloadState.NOT_RELOADING_COUNTDOWN;
-        ReloadState.StateType stateType = data.reloadStateType;
-        long progressTime = System.currentTimeMillis() - data.reloadTimestamp;
-        if (stateType.isReloadingEmpty()) {
-            long feedTime = (long) (reloadData.getFeed().getEmptyTime() * 1000);
-            long finishingTime = (long) (reloadData.getCooldown().getEmptyTime() * 1000);
-            if (progressTime < feedTime) {
-                stateType = ReloadState.StateType.EMPTY_RELOAD_FEEDING;
-                countDown = feedTime - progressTime;
-            } else if (progressTime < finishingTime) {
-                stateType = ReloadState.StateType.EMPTY_RELOAD_FINISHING;
-                countDown = finishingTime - progressTime;
-            } else {
-                stateType = ReloadState.StateType.NOT_RELOADING;
-                data.reloadTimestamp = -1;
-            }
-        } else if (stateType.isReloadingTactical()) {
-            long feedTime = (long) (reloadData.getFeed().getTacticalTime() * 1000);
-            long finishingTime = (long) (reloadData.getCooldown().getTacticalTime() * 1000);
-            if (progressTime < feedTime) {
-                stateType = ReloadState.StateType.TACTICAL_RELOAD_FEEDING;
-                countDown = feedTime - progressTime;
-            } else if (progressTime < finishingTime) {
-                stateType = ReloadState.StateType.TACTICAL_RELOAD_FINISHING;
-                countDown = finishingTime - progressTime;
-            } else {
-                stateType = ReloadState.StateType.NOT_RELOADING;
-                data.reloadTimestamp = -1;
+        // 检查是否在换弹
+        if (!data.reloadStateType.isReloading()) {
+            return;
+        }
+        gunItem.interruptReload(data, currentGunItem, shooter);
+    }
+
+    public ReloadState tickReloadState() {
+        ReloadState result = new ReloadState();
+        // 如果没有在换弹，直接返回
+        if (data.reloadTimestamp == -1) {
+            return result;
+        }
+        // 调用枪械逻辑
+        if (data.currentGunItem != null) {
+            ItemStack currentGunItem = data.currentGunItem.get();
+            if (currentGunItem != null && currentGunItem.getItem() instanceof AbstractGunItem abstractGunItem) {
+                 result = abstractGunItem.tickReload(data, currentGunItem, shooter);
             }
         }
-        if (data.reloadStateType == ReloadState.StateType.EMPTY_RELOAD_FEEDING) {
-            if (stateType == ReloadState.StateType.EMPTY_RELOAD_FINISHING) {
-                if (iGun instanceof AbstractGunItem abstractGunItem && data.currentGunItem != null) {
-                    abstractGunItem.doReload(shooter, currentGunItem, true);
-                }
-            }
+        // 将 tick 的结果保存到 data holder
+        data.reloadStateType = result.getStateType();
+        if (!result.getStateType().isReloading()) {
+            data.reloadTimestamp = -1;
         }
-        if (data.reloadStateType == ReloadState.StateType.TACTICAL_RELOAD_FEEDING) {
-            if (stateType == ReloadState.StateType.TACTICAL_RELOAD_FINISHING) {
-                if (iGun instanceof AbstractGunItem abstractGunItem && data.currentGunItem != null) {
-                    abstractGunItem.doReload(shooter, currentGunItem, false);
-                }
-            }
-        }
-        // 更新换弹状态缓存
-        data.reloadStateType = stateType;
-        // 返回 tick 结果
-        reloadState.setStateType(stateType);
-        reloadState.setCountDown(countDown);
-        return reloadState;
+        return result;
     }
 }

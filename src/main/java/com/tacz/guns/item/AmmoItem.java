@@ -5,7 +5,7 @@ import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.api.item.nbt.AmmoItemDataAccessor;
 import com.tacz.guns.client.renderer.item.AmmoItemRenderer;
-import com.tacz.guns.client.resource.ClientAssetManager;
+import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.resource.index.CommonAmmoIndex;
@@ -88,7 +88,7 @@ public class AmmoItem extends Item implements AmmoItemDataAccessor {
             }
         });
 
-        PackInfo packInfoObject = ClientAssetManager.INSTANCE.getPackInfo(ammoId);
+        PackInfo packInfoObject = ClientAssetsManager.INSTANCE.getPackInfo(ammoId);
         if (packInfoObject != null) {
             MutableComponent component = Component.translatable(packInfoObject.getName()).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC);
             components.add(component);

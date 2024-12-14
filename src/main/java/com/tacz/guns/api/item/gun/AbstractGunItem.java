@@ -2,16 +2,16 @@ package com.tacz.guns.api.item.gun;
 
 import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.entity.IGunOperator;
+import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.*;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.builder.AmmoItemBuilder;
 import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.client.renderer.item.GunItemRenderer;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.resource.index.CommonGunIndex;
-import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.FeedType;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.AllowAttachmentTagMatcher;
@@ -48,24 +48,50 @@ public abstract class AbstractGunItem extends Item implements IGun {
     }
 
     /**
-     * 拉栓完成时调用
+     * 开始拉栓时调用，返回 bolt 状态
+     * @return bolt 状态。ture 代表开始 bolt，false 则代表不开始。
      */
-    public abstract void bolt(ItemStack gunItem);
+    public abstract boolean startBolt(ShooterDataHolder dataHolder, ItemStack gunItem, LivingEntity shooter);
+
+    /**
+     * 拉栓 tick 时调用，返回是否仍在 bolt 状态
+     * @return 是否仍在 bolt 状态
+     */
+    public abstract boolean tickBolt(ShooterDataHolder dataHolder, ItemStack gunItem, LivingEntity shooter);
 
     /**
      * 射击时触发
      */
-    public abstract void shoot(ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, boolean tracer, LivingEntity shooter);
+    public abstract void shoot(ShooterDataHolder dataHolder, ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, LivingEntity shooter);
+
+    /**
+     * 开始换弹时调用
+     */
+    public abstract boolean startReload(ShooterDataHolder dataHolder, ItemStack gunItem, LivingEntity shooter);
+
+    /**
+     * 换弹时每个 tick 调用
+     * @return 如果返回的类型是 NOT_RELOADING 则下一个 tick 不再继续调用
+     */
+    public abstract ReloadState tickReload(ShooterDataHolder dataHolder, ItemStack gunItem, LivingEntity shooter);
+
+    /**
+     * 尝试打断换弹时调用
+     */
+    public abstract void interruptReload(ShooterDataHolder dataHolder, ItemStack gunItem, LivingEntity shooter);
 
     /**
      * 切换开火模式时调用
      */
-    public abstract void fireSelect(ItemStack gunItem);
-
-    public abstract void melee(LivingEntity user, ItemStack gunItem);
+    public abstract void fireSelect(ShooterDataHolder dataHolder, ItemStack gunItem);
 
     /**
-     * 换弹前的检查，用于检查背包是否有弹药等
+     * 近战时调用
+     */
+    public abstract void melee(ShooterDataHolder dataHolder, LivingEntity user, ItemStack gunItem);
+
+    /**
+     * 换弹前的检查，完成如下检查：枪内弹药是否已经填满？玩家背包是否有可用弹药？
      * @param shooter 准备换弹的实体
      * @param gunItem 枪械物品
      * @return 是否满足换弹条件
@@ -101,64 +127,14 @@ public abstract class AbstractGunItem extends Item implements IGun {
     }
 
     /**
-     * 执行换弹逻辑
-     * @param shooter 进行换弹的实体
+     * 将枪内的弹药全部退至背包（如果背包满了会丢到地上）。不会退枪膛内的弹药。
+     * 目前，仅更换弹匣配件时调用。
+     * @param player 玩家
      * @param gunItem 枪械物品
-     * @param loadBarrel 是否需要往枪管里填子弹
      */
-    public void doReload(LivingEntity shooter, ItemStack gunItem, boolean loadBarrel) {
-        ResourceLocation gunId = this.getGunId(gunItem);
-        CommonGunIndex gunIndex = TimelessAPI.getCommonGunIndex(gunId).orElse(null);
-        if (gunIndex == null) {
-            return;
-        }
-
-        int maxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(gunItem, gunIndex.getGunData());
-        int currentAmmoCount = getCurrentAmmoCount(gunItem);
-        int needAmmoCount = maxAmmoCount - currentAmmoCount;
-
-        int updatedAmmoCount = currentAmmoCount;
-        switch (gunIndex.getGunData().getReloadData().getType()) {
-            case MAGAZINE -> {
-                if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo()) {
-                    if (useDummyAmmo(gunItem)) {
-                        updatedAmmoCount += findAndExtractDummyAmmo(gunItem, needAmmoCount);
-                    } else {
-                        updatedAmmoCount += shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
-                                .map(cap -> findAndExtractInventoryAmmos(cap, gunItem, needAmmoCount))
-                                .orElse(0);
-                    }
-                } else {
-                    updatedAmmoCount = maxAmmoCount;
-                }
-            }
-            case FUEL -> {
-                if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo()) {
-                    if (useDummyAmmo(gunItem)) {
-                        if (findAndExtractDummyAmmo(gunItem, 1) > 0) {
-                            updatedAmmoCount = maxAmmoCount;
-                        }
-                    } else {
-                        if (shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
-                                .map(cap -> findAndExtractInventoryAmmos(cap, gunItem, 1))
-                                .orElse(0) > 0) {
-                            updatedAmmoCount = maxAmmoCount;
-                        }
-                    }
-                } else {
-                    updatedAmmoCount = maxAmmoCount;
-                }
-            }
-            default -> {
-                // 未实现
-            }
-        }
-
-        finishReload(gunItem, updatedAmmoCount, loadBarrel);
-    }
-
     @Override
     public void dropAllAmmo(Player player, ItemStack gunItem) {
+        //TODO 这里操作的对象不应该是 Player 而是 LivingEntity。此外枪膛内的子弹也要退
         int ammoCount = getCurrentAmmoCount(gunItem);
         if (ammoCount <= 0) {
             return;
@@ -205,7 +181,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
 
     /**
      * 枪械寻弹和扣除背包弹药逻辑
-     * @param itemHandler 目标实体的背包，该方法具有通用的实现，放在此处
+     * @param itemHandler 目标实体的背包
      * @param gunItem 枪械物品
      * @param needAmmoCount 需要的弹药(物品)数量
      * @return 寻找到的弹药(物品)数量
@@ -253,36 +229,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
     }
 
     /**
-     * 换弹完成时调用，用于更新枪械子弹数量，该方法具有通用的实现，放在此处
-     * @param gunItem 枪械物品
-     * @param ammoCount 填充的子弹数量
-     * @param loadBarrel 是否需要往枪管里填子弹
-     */
-
-    public void finishReload(ItemStack gunItem, int ammoCount, boolean loadBarrel) {
-        ResourceLocation gunId = getGunId(gunItem);
-        Bolt boltType = TimelessAPI.getCommonGunIndex(gunId).map(index -> index.getGunData().getBolt()).orElse(null);
-        this.setCurrentAmmoCount(gunItem, ammoCount);
-        if (loadBarrel && (boltType == Bolt.MANUAL_ACTION || boltType == Bolt.CLOSED_BOLT)) {
-            this.reduceCurrentAmmoCount(gunItem);
-            this.setBulletInBarrel(gunItem, true);
-        }
-    }
-
-    /**
-     * 换弹时触发枪械子弹更新时调用
-     *
-     * @param gunItem    枪械物品
-     * @param ammoCount  填充的子弹数量
-     * @param loadBarrel 是否需要往枪管里填子弹
-     */
-    @Deprecated
-    public void reloadAmmo(ItemStack gunItem, int ammoCount, boolean loadBarrel) {
-        throw new UnsupportedOperationException("this method is deprecated, please use ‘doReload’ instead");
-    }
-
-    /**
-     * 该方法具有通用的实现，放在此处
+     * 检查枪械是否允许安装指定的物品作为配件
      */
     @Override
     public boolean allowAttachment(ItemStack gun, ItemStack attachmentItem) {
@@ -297,7 +244,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
     }
 
     /**
-     * 该方法具有通用的实现，放在此处
+     * 检查枪械是否允许安装某种类型的配件
      */
     @Override
     public boolean allowAttachmentType(ItemStack gun, AttachmentType type) {
@@ -316,7 +263,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
     }
 
     /**
-     * 该方法具有通用的实现，放在此处
+     * 获取枪械的显示名称
      */
     @Override
     @Nonnull
@@ -331,7 +278,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
     }
 
     /**
-     * 该方法具有通用的实现，放在此处
+     * 获取某一类 TabType 的所有枪械物品的实例。用于填充创造物品栏和枪械制造台。
      */
     public static NonNullList<ItemStack> fillItemCategory(GunTabType type) {
         NonNullList<ItemStack> stacks = NonNullList.create();
@@ -354,16 +301,13 @@ public abstract class AbstractGunItem extends Item implements IGun {
     }
 
     /**
-     * 阻止玩家手臂挥动动画的播放
+     * 阻止玩家手臂挥动
      */
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         return true;
     }
 
-    /**
-     * 该方法具有通用的实现，放在此处
-     */
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
@@ -376,7 +320,7 @@ public abstract class AbstractGunItem extends Item implements IGun {
     }
 
     /**
-     * 该方法具有通用的实现，放在此处
+     * 获取在 Tooltip 中渲染的图片
      */
     @Override
     @Nonnull

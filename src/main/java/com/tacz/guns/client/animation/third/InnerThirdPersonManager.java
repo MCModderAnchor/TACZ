@@ -4,7 +4,7 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
@@ -17,6 +17,12 @@ public class InnerThirdPersonManager {
         // 游戏暂停时不进行动画计算，否则会 StackOverflow
         if (Minecraft.getInstance().isPaused()) {
             return;
+        }
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player == entityIn) {
+            if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+                PlayerAnimatorCompat.stopAllAnimation(entityIn, 0);
+                return;
+            }
         }
         if (entityIn instanceof IGunOperator operator) {
             ItemStack mainHandItem = entityIn.getMainHandItem();
@@ -31,18 +37,18 @@ public class InnerThirdPersonManager {
                 return;
             }
 
-            TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItem)).ifPresent(index -> {
-                if (PlayerAnimatorCompat.hasPlayerAnimator3rd(entityIn, index)) {
-                    PlayerAnimatorCompat.playAnimation(entityIn, index, limbSwingAmount);
+            TimelessAPI.getGunDisplay(mainHandItem).ifPresent(display -> {
+                if (PlayerAnimatorCompat.hasPlayerAnimator3rd(entityIn, display)) {
+                    PlayerAnimatorCompat.playAnimation(entityIn, display, limbSwingAmount);
                 } else {
-                    playVanillaAnimation(entityIn, rightArm, leftArm, body, head, operator, index);
+                    playVanillaAnimation(entityIn, rightArm, leftArm, body, head, operator, display);
                 }
             });
         }
     }
 
-    private static void playVanillaAnimation(LivingEntity entityIn, ModelPart rightArm, ModelPart leftArm, ModelPart body, ModelPart head, IGunOperator operator, ClientGunIndex index) {
-        String animation = index.getThirdPersonAnimation();
+    private static void playVanillaAnimation(LivingEntity entityIn, ModelPart rightArm, ModelPart leftArm, ModelPart body, ModelPart head, IGunOperator operator, GunDisplayInstance display) {
+        String animation = display.getThirdPersonAnimation();
         float aimingProgress = operator.getSynAimingProgress();
         if (aimingProgress <= 0) {
             ThirdPersonManager.getAnimation(animation).animateGunHold(entityIn, rightArm, leftArm, body, head);

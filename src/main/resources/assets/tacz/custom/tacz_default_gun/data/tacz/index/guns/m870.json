@@ -1,0 +1,9 @@
+{
+    "name": "tacz.gun.m870.name",
+    "display": "tacz:m870_display",
+    "data": "tacz:m870_data",
+    "tooltip": "tacz.gun.m870.desc",
+    "type": "shotgun",
+    "item_type": "modern_kinetic",
+    "sort": 1
+}

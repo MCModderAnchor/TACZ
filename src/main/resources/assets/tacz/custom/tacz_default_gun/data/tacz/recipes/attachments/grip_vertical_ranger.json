@@ -1,0 +1,21 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "forge:ingots/iron"
+      },
+      "count": 18
+    },
+    {
+      "item": {
+        "tag": "forge:leather"
+      },
+      "count": 6
+    }
+  ],
+  "result": {
+    "type": "attachment",
+    "id": "tacz:grip_vertical_ranger"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

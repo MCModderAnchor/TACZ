@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class PlayerHurtByGunEvent {
     @SubscribeEvent
-    public static void onPlayerHurtByGun(EntityHurtByGunEvent event) {
+    public static void onPlayerHurtByGun(EntityHurtByGunEvent.Post event) {
         LogicalSide logicalSide = event.getLogicalSide();
         if (logicalSide != LogicalSide.CLIENT) {
             return;

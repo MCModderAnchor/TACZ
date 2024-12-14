@@ -13,4 +13,8 @@ public class RegexFilter<T> implements IFilter<T> {
     public boolean test(T input) {
         return pattern.matcher(input.toString()).matches();
     }
+
+    public Pattern getPattern() {
+        return pattern;
+    }
 }

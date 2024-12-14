@@ -73,6 +73,7 @@ public final class GunModelConstant {
      * 抛壳起点定位组
      */
     public static final String SHELL_ORIGIN_NODE = "shell";
+    public static final String SHELL_ORIGIN_NODE_PREFIX = "shell_";
     /**
      * 枪口火焰定位组
      */

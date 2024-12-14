@@ -54,6 +54,10 @@ public enum ShootResult {
      */
     IS_SPRINTING,
     /**
+     * 网络波动导致射击失败
+     */
+    NETWORK_FAIL,
+    /**
      * Forge 事件原因取消
      */
     FORGE_EVENT_CANCEL

@@ -3,6 +3,7 @@ package com.tacz.guns.entity.shooter;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import net.minecraft.world.item.ItemStack;
+import org.luaj.vm2.LuaValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,10 +11,15 @@ import java.util.function.Supplier;
 
 public class ShooterDataHolder {
     /**
+     * 基时间戳，用于一些需要精密计算时间的场景。目前只有 shoot 使用。
+     */
+    public long baseTimestamp = System.currentTimeMillis();
+    /**
      * 射击时间戳，射击成功时更新，单位 ms。
      * 用于计算射击的冷却时间。
      */
     public long shootTimestamp = -1L;
+    public long lastShootTimestamp = -1L;
     /**
      * 近战时间戳，按下刺刀按键时更新，单位 ms
      * 用于计算射击的冷却时间
@@ -35,7 +41,7 @@ public class ShooterDataHolder {
      * 拉栓时间戳，在拉栓开始时更新，单位 ms。
      */
     public long boltTimestamp = -1;
-    public long boltCoolDown = -1;
+    public boolean isBolting = false;
     /**
      * 瞄准的进度，范围 0 ~ 1
      */
@@ -88,6 +94,11 @@ public class ShooterDataHolder {
      */
     public boolean isCrawling = false;
     /**
+     * 用于缓存 lua 脚本的数据
+     */
+    @Nullable
+    public LuaValue scriptData = null;
+    /**
      * 配件修改过的各种属性缓存
      */
     @Nullable
@@ -105,7 +116,8 @@ public class ShooterDataHolder {
         sprintTimestamp = -1;
         sprintTimeS = 0;
         boltTimestamp = -1;
-        boltCoolDown = -1;
+        isBolting = false;
         shootCount = 0;
+        scriptData = null;
     }
 }

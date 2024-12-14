@@ -24,7 +24,7 @@ public class ClientHitMark {
     public static float damageAmount = 0;
 
     @SubscribeEvent
-    public static void onEntityHurt(EntityHurtByGunEvent event) {
+    public static void onEntityHurt(EntityHurtByGunEvent.Post event) {
         LogicalSide logicalSide = event.getLogicalSide();
         if (logicalSide != LogicalSide.CLIENT) {
             return;
@@ -34,12 +34,13 @@ public class ClientHitMark {
         Entity hurtEntity = event.getHurtEntity();
         if (player != null && player.equals(attacker) && hurtEntity != null) {
             ResourceLocation gunId = event.getGunId();
+            ResourceLocation gunDisplayId = event.getGunDisplayId();
             RenderCrosshairEvent.markHitTimestamp();
             if (event.isHeadShot()) {
                 RenderCrosshairEvent.markHeadShotTimestamp();
-                TimelessAPI.getClientGunIndex(gunId).ifPresent(index -> SoundPlayManager.playHeadHitSound(player, index));
+                TimelessAPI.getGunDisplay(gunDisplayId, gunId).ifPresent(index -> SoundPlayManager.playHeadHitSound(player, index));
             } else {
-                TimelessAPI.getClientGunIndex(gunId).ifPresent(index -> SoundPlayManager.playFleshHitSound(player, index));
+                TimelessAPI.getGunDisplay(gunDisplayId, gunId).ifPresent(index -> SoundPlayManager.playFleshHitSound(player, index));
             }
 
             if (hurtEntity instanceof TargetMinecart) {
@@ -67,7 +68,7 @@ public class ClientHitMark {
         if (player != null && player.equals(attacker)) {
             RenderCrosshairEvent.markKillTimestamp();
             KillAmountOverlay.markTimestamp();
-            TimelessAPI.getClientGunIndex(event.getGunId()).ifPresent(index -> SoundPlayManager.playKillSound(player, index));
+            TimelessAPI.getGunDisplay(event.getGunDisplayId(), event.getGunId()).ifPresent(index -> SoundPlayManager.playKillSound(player, index));
             if (event.isHeadShot()) {
                 RenderCrosshairEvent.markHeadShotTimestamp();
             }

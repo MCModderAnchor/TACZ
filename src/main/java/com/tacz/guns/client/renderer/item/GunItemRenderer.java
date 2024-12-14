@@ -64,9 +64,8 @@ public class GunItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (!(stack.getItem() instanceof IGun iGun)) {
             return;
         }
-        ResourceLocation gunId = iGun.getGunId(stack);
         poseStack.pushPose();
-        TimelessAPI.getClientGunIndex(gunId).ifPresentOrElse(gunIndex -> {
+        TimelessAPI.getGunDisplay(stack).ifPresentOrElse(gunIndex -> {
             // 第一人称就不渲染了，交给别的地方
             if (transformType == FIRST_PERSON_LEFT_HAND || transformType == FIRST_PERSON_RIGHT_HAND) {
                 return;

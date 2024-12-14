@@ -1,0 +1,58 @@
+{
+  "model": "tacz:gun/sks_tactical_geo",
+  "texture": "tacz:gun/uv/sks_tactical",
+  "lod": {
+    "model": "tacz:gun/lod/sks_tactical",
+    "texture": "tacz:gun/lod/sks_tactical"
+  },
+  "hud": "tacz:gun/hud/sks_tactical",
+  "slot": "tacz:gun/slot/sks_tactical",
+  "animation": "tacz:sks_tactical",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1.0
+  },
+  "iron_zoom": 1.5,
+  "zoom_model_fov": 45,
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:sks/sks_shoot",
+    "shoot_3p": "tacz:sks/sks_shoot_3p",
+    "silence": "tacz:sks/sks_silence",
+    "silence_3p": "tacz:sks/sks_silence_3p",
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  "offhand_show": {
+    "pos": [0, 19, 4],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [0, 19, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

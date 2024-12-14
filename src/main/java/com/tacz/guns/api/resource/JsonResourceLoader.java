@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,9 +22,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * 用于从枪包读取json资源文件的抽象类
+ * 用于从枪包读取json资源文件的抽象类<br/>
+ * @deprecated 不再config路径读取资源，请使用新的资源加载器<br/>
+ * 仅保留供旧版资产转换器使用<br/>
  * @param <T> 资源数据类型
  */
+@Deprecated
+@ApiStatus.Internal
 public abstract class JsonResourceLoader<T> {
     private final Marker marker;
     private final Pattern pattern;

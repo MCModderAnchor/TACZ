@@ -1,0 +1,20 @@
+{
+  // 方块的显示名称，支持本地化
+  "name": "tacz.block.gun_smith_table",
+  // 方块效果文件
+  "display": "tacz:gun_smith_table",
+  // 方块参数文件
+  "data": "tacz:gun_smith_table",
+  // 方块文本提示
+  "tooltip": "tacz.gun.ak47.desc",
+  // 方块id，可选值：tacz:workbench_a, tacz:workbench_b, tacz:workbench_c
+  // 对应（长x高x宽）1x1x1，2x1x1，1x2x1
+  // 更改该字段无法影响已经放置的方块/物品，请谨慎修改
+  // tips:
+  // 此处的tacz:gun_smith_table等效于2x1x1，但是是为了兼容旧版本的内部保留字，枪包作者不应该使用
+  // 默认工作台的id在程序里锁定为tacz:gun_smith_table，本文件的此字段事实上是无效的
+  "id": "tacz:gun_smith_table",
+  // 排序数，决定了在创造模式标签页中的顺序
+  // 数字越小，优先级越高
+  "sort": 1
+}

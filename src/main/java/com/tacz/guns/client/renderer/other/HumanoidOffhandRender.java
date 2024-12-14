@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -33,8 +32,7 @@ public class HumanoidOffhandRender {
         if (iGun == null) {
             return;
         }
-        ResourceLocation gunId = iGun.getGunId(itemStack);
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(index -> {
+        TimelessAPI.getGunDisplay(itemStack).ifPresent(index -> {
             LayerGunShow offhandShow = index.getOffhandShow();
             renderGunItem(entity, matrixStack, buffer, packedLight, itemStack, offhandShow);
         });
@@ -62,9 +60,8 @@ public class HumanoidOffhandRender {
         if (iGun == null) {
             return;
         }
-        ResourceLocation gunId = iGun.getGunId(itemStack);
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(index -> {
-            var hotbarShow = index.getHotbarShow();
+        TimelessAPI.getGunDisplay(itemStack).ifPresent(display -> {
+            var hotbarShow = display.getHotbarShow();
             if (hotbarShow == null || hotbarShow.isEmpty()) {
                 return;
             }

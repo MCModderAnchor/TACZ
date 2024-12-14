@@ -10,10 +10,12 @@ import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
+import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.resource.pojo.display.gun.AmmoCountStyle;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.AttachmentDataUtils;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
@@ -56,12 +58,14 @@ public class GunHudOverlay implements IGuiOverlay {
             return;
         }
         ResourceLocation gunId = iGun.getGunId(stack);
-        ClientGunIndex gunIndex = TimelessAPI.getClientGunIndex(gunId).orElse(null);
-        if (gunIndex == null) {
+
+        GunData gunData = TimelessAPI.getClientGunIndex(gunId).map(ClientGunIndex::getGunData).orElse(null);
+        GunDisplayInstance display = TimelessAPI.getGunDisplay(stack).orElse(null);
+        if (gunData == null || display == null) {
             return;
         }
         // 当前枪械弹药数
-        int ammoCount = iGun.getCurrentAmmoCount(stack) + (iGun.hasBulletInBarrel(stack) && gunIndex.getGunData().getBolt() != Bolt.OPEN_BOLT ? 1 : 0);
+        int ammoCount = iGun.getCurrentAmmoCount(stack) + (iGun.hasBulletInBarrel(stack) && gunData.getBolt() != Bolt.OPEN_BOLT ? 1 : 0);
         int ammoCountColor;
         if (ammoCount < (cacheMaxAmmoCount * 0.25)) {
             // 红色
@@ -72,7 +76,7 @@ public class GunHudOverlay implements IGuiOverlay {
         }
 
         String currentAmmoCountText;
-        if (gunIndex.getAmmoCountStyle() == AmmoCountStyle.PERCENT) {
+        if (display.getAmmoCountStyle() == AmmoCountStyle.PERCENT) {
             // 百分比模式
             currentAmmoCountText = CURRENT_AMMO_FORMAT_PERCENT.format((float)ammoCount/(cacheMaxAmmoCount==0 ? 1f : cacheMaxAmmoCount));
         } else {
@@ -81,7 +85,7 @@ public class GunHudOverlay implements IGuiOverlay {
         }
 
         // 计算弹药数
-        handleCacheCount(player, stack, gunIndex, iGun);
+        handleCacheCount(player, stack, gunData, iGun);
 
         // 竖线
         GuiComponent.fill(poseStack, width - 75, height - 43, width - 74, height - 25, 0xFFFFFFFF);
@@ -121,8 +125,8 @@ public class GunHudOverlay implements IGuiOverlay {
         RenderSystem.defaultBlendFunc();
 
         // 获取图标
-        ResourceLocation hudTexture = gunIndex.getHUDTexture();
-        @Nullable ResourceLocation hudEmptyTexture = gunIndex.getHudEmptyTexture();
+        ResourceLocation hudTexture = display.getHUDTexture();
+        @Nullable ResourceLocation hudEmptyTexture = display.getHudEmptyTexture();
 
         if (ammoCount <= 0) {
             if (hudEmptyTexture == null) {
@@ -146,12 +150,12 @@ public class GunHudOverlay implements IGuiOverlay {
         GuiComponent.blit(poseStack, (int) (width - 68.5 + mc.font.width(currentAmmoCountText) * 1.5), height - 38, 0, 0, 10, 10, 10, 10);
     }
 
-    private static void handleCacheCount(LocalPlayer player, ItemStack stack, ClientGunIndex gunIndex, IGun iGun) {
+    private static void handleCacheCount(LocalPlayer player, ItemStack stack, GunData gunData, IGun iGun) {
         // 0.2 秒检查一次
         if ((System.currentTimeMillis() - checkAmmoTimestamp) > 200) {
             checkAmmoTimestamp = System.currentTimeMillis();
             // 当前枪械的总弹药数
-            cacheMaxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(stack, gunIndex.getGunData());
+            cacheMaxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(stack, gunData);
             // 玩家背包弹药数
             if (IGunOperator.fromLivingEntity(player).needCheckAmmo()) {
                 if (iGun.useDummyAmmo(stack)) {

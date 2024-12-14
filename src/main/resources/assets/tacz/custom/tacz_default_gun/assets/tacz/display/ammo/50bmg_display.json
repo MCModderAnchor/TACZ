@@ -1,0 +1,25 @@
+{
+  "slot": "tacz:ammo/slot/50bmg",
+  "tracer_color": "#FF4732",
+  "shell": {
+    "model": "tacz:shell/50bmg_shell",
+    "texture": "tacz:shell/50bmg_shell"
+  },
+  "particle": {
+    // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
+    "name": "mycelium",
+    // 生成的区域，默认为 0 0 0
+    "delta": [
+      0,
+      0,
+      0
+    ],
+    // 速度，默认为0，必须至少为 0
+    "speed": 0.0,
+    // 粒子存在时间，单位 tick，默认为 20 tick
+    "life_time": 50,
+    // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
+    "count": 75
+  }
+}
+    

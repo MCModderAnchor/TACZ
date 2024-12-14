@@ -118,6 +118,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private Vec3 originRenderOffset;
     // 发射的枪械 ID
     private ResourceLocation gunId;
+    // 枪械display ID
+    private ResourceLocation gunDisplayId;
     private float armorIgnore;
     private float headShot;
 
@@ -131,10 +133,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     }
 
     public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ItemStack gunItem, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
-        this(TYPE, worldIn, throwerIn, gunItem, ammoId, gunId, isTracerAmmo, gunData, bulletData);
+        this(TYPE, worldIn, throwerIn, gunItem, ammoId, gunId, DefaultAssets.DEFAULT_GUN_DISPLAY_ID, isTracerAmmo, gunData, bulletData);
     }
 
-    protected EntityKineticBullet(EntityType<? extends Projectile> type, Level worldIn, LivingEntity throwerIn, ItemStack gunItem, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
+    protected EntityKineticBullet(EntityType<? extends Projectile> type, Level worldIn, LivingEntity throwerIn, ItemStack gunItem,
+                                  ResourceLocation ammoId, ResourceLocation gunId, ResourceLocation gunDisplayId,
+                                  boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
         this(type, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         AttachmentCacheProperty cacheProperty = Objects.requireNonNull(IGunOperator.fromLivingEntity(throwerIn).getCacheProperty());
@@ -180,6 +184,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.startPos = this.position();
         this.isTracerAmmo = isTracerAmmo;
         this.gunId = gunId;
+        this.gunDisplayId = gunDisplayId;
     }
 
     @Override
@@ -193,7 +198,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.onBulletTick();
         // 粒子效果
         if (this.level.isClientSide) {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(this, this.gunId));
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(this));
         }
         // 子弹模型的旋转与抛物线
         Vec3 movement = this.getDeltaMovement();
@@ -331,7 +336,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         float damage = this.getDamage(result.getLocation());
         float headShotMultiplier = Math.max(this.headShot, 0);
         // 发布Pre事件
-        var preEvent = new EntityHurtByGunEvent.Pre(this, entity, attacker, this.gunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
+        var preEvent = new EntityHurtByGunEvent.Pre(this, entity, attacker, this.gunId, this.gunDisplayId, damage, headshot, headShotMultiplier, LogicalSide.SERVER);
         var cancelled = MinecraftForge.EVENT_BUS.post(preEvent);
         if (cancelled) {
             return;
@@ -386,11 +391,11 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 int attackerId = attacker == null ? 0 : attacker.getId();
                 // 如果生物死了
                 if (livingCore.isDeadOrDying()) {
-                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(this, livingCore, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
-                    NetworkHandler.sendToDimension(new ServerMessageGunKill(getId(),livingCore.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingCore);
+                    MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(this, livingCore, attacker, newGunId, gunDisplayId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
+                    NetworkHandler.sendToDimension(new ServerMessageGunKill(getId(),livingCore.getId(), attackerId, newGunId, gunDisplayId, damage, headshot, headShotMultiplier), livingCore);
                 } else {
-                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(this, livingCore, attacker, newGunId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
-                    NetworkHandler.sendToDimension(new ServerMessageGunHurt(getId(),livingCore.getId(), attackerId, newGunId, damage, headshot, headShotMultiplier), livingCore);
+                    MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(this, livingCore, attacker, newGunId, gunDisplayId, damage, headshot, headShotMultiplier, LogicalSide.SERVER));
+                    NetworkHandler.sendToDimension(new ServerMessageGunHurt(getId(),livingCore.getId(), attackerId, newGunId, gunDisplayId, damage, headshot, headShotMultiplier), livingCore);
                 }
             }
         }
@@ -416,7 +421,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         // 弹孔与点燃特效
         if (this.level instanceof ServerLevel serverLevel) {
-            BulletHoleOption bulletHoleOption = new BulletHoleOption(result.getDirection(), result.getBlockPos(), this.ammoId.toString(), this.gunId.toString());
+            BulletHoleOption bulletHoleOption = new BulletHoleOption(result.getDirection(), result.getBlockPos(), this.ammoId.toString(), this.gunId.toString(), this.gunDisplayId.toString());
             serverLevel.sendParticles(bulletHoleOption, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);
             if (this.igniteBlock) {
                 serverLevel.sendParticles(ParticleTypes.LAVA, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);
@@ -501,6 +506,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         buffer.writeInt(this.pierce);
         buffer.writeBoolean(this.isTracerAmmo);
         buffer.writeResourceLocation(this.gunId);
+        buffer.writeResourceLocation(this.gunDisplayId);
     }
 
     @Override
@@ -525,6 +531,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.pierce = additionalData.readInt();
         this.isTracerAmmo = additionalData.readBoolean();
         this.gunId = additionalData.readResourceLocation();
+        this.gunDisplayId = additionalData.readResourceLocation();
     }
 
     public ResourceLocation getAmmoId() {
@@ -533,6 +540,10 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
     public ResourceLocation getGunId() {
         return gunId;
+    }
+
+    public ResourceLocation getGunDisplayId() {
+        return gunDisplayId;
     }
 
     public boolean isTracerAmmo() {

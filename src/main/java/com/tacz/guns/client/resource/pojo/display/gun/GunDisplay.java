@@ -3,6 +3,7 @@ package com.tacz.guns.client.resource.pojo.display.gun;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.item.gun.FireMode;
+import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,13 +11,15 @@ import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class GunDisplay {
+public class GunDisplay implements IDisplay {
     @SerializedName("model")
     private ResourceLocation modelLocation;
     @SerializedName("texture")
     private ResourceLocation modelTexture;
     @SerializedName("iron_zoom")
     private float ironZoom = 1.2f;
+    @SerializedName("zoom_model_fov")
+    private float zoomModelFov = 70f;
     @Nullable
     @SerializedName("lod")
     private GunLod gunLod;
@@ -32,12 +35,21 @@ public class GunDisplay {
     @NotNull
     @SerializedName("ammo_count_style")
     private AmmoCountStyle ammoCountStyle = AmmoCountStyle.NORMAL;
+    @NotNull
+    @SerializedName("damage_style")
+    private DamageStyle damageStyle = DamageStyle.PER_PROJECTILE;
     @Nullable
     @SerializedName("third_person_animation")
     private String thirdPersonAnimation;
     @Nullable
     @SerializedName("animation")
     private ResourceLocation animationLocation;
+    @Nullable
+    @SerializedName("state_machine")
+    private ResourceLocation stateMachineLocation;
+    @Nullable
+    @SerializedName("state_machine_param")
+    private Map<String, Object> stateMachineParam = null;
     @Nullable
     @SerializedName("use_default_animation")
     private DefaultAnimation defaultAnimation;
@@ -105,6 +117,16 @@ public class GunDisplay {
     }
 
     @Nullable
+    public ResourceLocation getStateMachineLocation() {
+        return stateMachineLocation;
+    }
+
+    @Nullable
+    public Map<String, Object> getStateMachineParam() {
+        return stateMachineParam;
+    }
+
+    @Nullable
     public DefaultAnimation getDefaultAnimation() {
         return defaultAnimation;
     }
@@ -157,6 +179,10 @@ public class GunDisplay {
         return ironZoom;
     }
 
+    public float getZoomModelFov() {
+        return zoomModelFov;
+    }
+
     public Map<String, TextShow> getTextShows() {
         return textShows;
     }
@@ -171,5 +197,32 @@ public class GunDisplay {
 
     public @NotNull AmmoCountStyle getAmmoCountStyle() {
         return ammoCountStyle;
+    }
+
+    public @NotNull DamageStyle getDamageStyle() {
+        return damageStyle;
+    }
+
+
+    @Override
+    public void init() {
+        if (modelTexture != null) {
+            modelTexture = converter.idToFile(modelTexture);
+        }
+        if (hudTextureLocation != null) {
+            hudTextureLocation = converter.idToFile(hudTextureLocation);
+        }
+        if (hudEmptyTextureLocation != null) {
+            hudEmptyTextureLocation = converter.idToFile(hudEmptyTextureLocation);
+        }
+        if (slotTextureLocation != null) {
+            slotTextureLocation = converter.idToFile(slotTextureLocation);
+        }
+        if (gunLod != null && gunLod.modelTexture != null) {
+            gunLod.modelTexture = converter.idToFile(gunLod.modelTexture);
+        }
+        if (muzzleFlash != null && muzzleFlash.texture != null) {
+            muzzleFlash.texture = converter.idToFile(muzzleFlash.texture);
+        }
     }
 }

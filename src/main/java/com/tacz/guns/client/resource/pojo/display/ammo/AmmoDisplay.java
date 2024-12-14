@@ -1,11 +1,12 @@
 package com.tacz.guns.client.resource.pojo.display.ammo;
 
 import com.google.gson.annotations.SerializedName;
+import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class AmmoDisplay {
+public class AmmoDisplay implements IDisplay {
     @SerializedName("model")
     private ResourceLocation modelLocation;
 
@@ -70,5 +71,21 @@ public class AmmoDisplay {
     @Nullable
     public AmmoTransform getTransform() {
         return transform;
+    }
+
+    @Override
+    public void init() {
+        if (modelTexture != null) {
+            modelTexture = converter.idToFile(modelTexture);
+        }
+        if (slotTextureLocation != null) {
+            slotTextureLocation = converter.idToFile(slotTextureLocation);
+        }
+        if (ammoEntity != null && ammoEntity.modelTexture != null) {
+            ammoEntity.modelTexture = converter.idToFile(ammoEntity.modelTexture);
+        }
+        if (shellDisplay != null&& shellDisplay.modelTexture != null) {
+            shellDisplay.modelTexture = converter.idToFile(shellDisplay.modelTexture);
+        }
     }
 }

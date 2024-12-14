@@ -1,7 +1,7 @@
 package com.tacz.guns.compat.oculus.pbr;
 
-import com.tacz.guns.client.resource.texture.FilePackTexture;
-import com.tacz.guns.client.resource.texture.ZipPackTexture;
+import com.tacz.guns.client.resource_legacy.texture.FilePackTexture;
+import com.tacz.guns.client.resource_legacy.texture.ZipPackTexture;
 import net.coderbot.iris.texture.pbr.loader.PBRTextureLoaderRegistry;
 
 public class PBRRegister {

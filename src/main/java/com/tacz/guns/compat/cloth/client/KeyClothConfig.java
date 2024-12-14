@@ -1,5 +1,6 @@
 package com.tacz.guns.compat.cloth.client;
 
+import com.tacz.guns.compat.cloth.widget.OpenGunPackDirEntry;
 import com.tacz.guns.config.client.KeyConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -17,5 +18,7 @@ public class KeyClothConfig {
         key.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.key.hold_to_crawl"), KeyConfig.HOLD_TO_CRAWL.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.key.hold_to_crawl.desc"))
                 .setSaveConsumer(KeyConfig.HOLD_TO_CRAWL::set).build());
+
+        key.addEntry(new OpenGunPackDirEntry(Component.literal("test")));
     }
 }

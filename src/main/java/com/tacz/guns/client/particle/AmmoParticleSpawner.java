@@ -17,8 +17,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class AmmoParticleSpawner {
-    public static void addParticle(EntityKineticBullet bullet, ResourceLocation gunId) {
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+    public static void addParticle(EntityKineticBullet bullet) {
+        TimelessAPI.getGunDisplay(bullet.getGunDisplayId(), bullet.getGunId()).ifPresent(gunIndex -> {
             AmmoParticle gunParticle = gunIndex.getParticle();
             if (gunParticle == null) {
                 // 如果枪械没有粒子效果，那么调用子弹的

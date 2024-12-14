@@ -1,13 +1,13 @@
 package com.tacz.guns.compat.jei;
 
-import com.google.common.collect.Lists;
 import com.tacz.guns.GunMod;
-import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.gun.GunItemManager;
 import com.tacz.guns.compat.jei.category.AttachmentQueryCategory;
 import com.tacz.guns.compat.jei.category.GunSmithTableCategory;
 import com.tacz.guns.compat.jei.entry.AttachmentQueryEntry;
+import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.init.ModItems;
+import com.tacz.guns.init.ModRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -16,6 +16,9 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.server.ServerLifecycleHooks;
+
+import java.util.List;
 
 @JeiPlugin
 public class GunModPlugin implements IModPlugin {
@@ -29,7 +32,10 @@ public class GunModPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(GunSmithTableCategory.GUN_SMITH_TABLE, Lists.newArrayList(TimelessAPI.getAllRecipes().values()));
+        List<GunSmithTableRecipe> recipes = ServerLifecycleHooks.getCurrentServer()
+                .getRecipeManager().getAllRecipesFor(ModRecipe.GUN_SMITH_TABLE_CRAFTING.get());
+
+        registration.addRecipes(GunSmithTableCategory.GUN_SMITH_TABLE, recipes);
         registration.addRecipes(AttachmentQueryCategory.ATTACHMENT_QUERY, AttachmentQueryEntry.getAllAttachmentQueryEntries());
     }
 

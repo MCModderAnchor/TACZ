@@ -2,6 +2,8 @@ package com.tacz.guns.init;
 
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.resource.GunPackLoader;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,5 +34,10 @@ public final class CommonRegistry {
         event.getTypes().forEach(type -> {
             event.add(type, ModAttributes.BULLET_RESISTANCE.get());
         });
+    }
+
+    @SubscribeEvent
+    public static void onAddPackFinders(AddPackFindersEvent event) {
+        event.addRepositorySource(GunPackLoader.INSTANCE);
     }
 }

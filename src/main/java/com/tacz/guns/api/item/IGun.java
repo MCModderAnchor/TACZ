@@ -1,5 +1,6 @@
 package com.tacz.guns.api.item;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
@@ -8,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -102,13 +104,25 @@ public interface IGun {
     /**
      * 获取枪械 ID
      */
-    @Nonnull
+    @NotNull
     ResourceLocation getGunId(ItemStack gun);
 
     /**
      * 设置枪械 ID
      */
     void setGunId(ItemStack gun, @Nullable ResourceLocation gunId);
+
+    /**
+     * 获取枪械客户端效果 ID, 如果是默认皮肤将返回 {@link DefaultAssets#DEFAULT_GUN_DISPLAY_ID}<br/>
+     * 你应该使用 {@link com.tacz.guns.api.TimelessAPI#getGunDisplay(ItemStack)} 获取正确的客户端效果
+     */
+    @NotNull
+    ResourceLocation getGunDisplayId(ItemStack gun);
+
+    /**
+     * 设置枪械客户端效果 ID
+     */
+    void setGunDisplayId(ItemStack gun, @Nullable ResourceLocation displayId);
 
     /**
      * 获取输入的经验值对应的等级。
@@ -218,7 +232,7 @@ public interface IGun {
     /**
      * 获取枪械的配件 ID
      * <p>
-     * 如果不存在，返回 DefaultAssets.EMPTY_ATTACHMENT_ID;
+     * 如果不存在，返回 {@link DefaultAssets#EMPTY_ATTACHMENT_ID};
      */
     @Nonnull
     ResourceLocation getAttachmentId(ItemStack gun, AttachmentType type);

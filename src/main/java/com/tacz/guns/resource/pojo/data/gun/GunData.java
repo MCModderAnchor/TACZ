@@ -12,6 +12,7 @@ import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -51,6 +52,9 @@ public class GunData {
 
     @SerializedName("bolt_action_time")
     private float boltActionTime = 0;
+
+    @SerializedName("bolt_feed_time")
+    private float boltFeedTime = -1;
 
     @SerializedName("reload")
     private GunReloadData reloadData = new GunReloadData();
@@ -94,6 +98,12 @@ public class GunData {
     @SerializedName("builtin_attachments")
     private Map<AttachmentType, ResourceLocation> builtInAttachments = Maps.newHashMap();
 
+    @SerializedName("script")
+    private ResourceLocation script = null;
+
+    @SerializedName("script_param")
+    private Map<String, Object> scriptParam = null;
+
     public ResourceLocation getAmmoId() {
         return ammoId;
     }
@@ -110,7 +120,7 @@ public class GunData {
         return bolt;
     }
 
-    @Deprecated
+    @ApiStatus.Internal
     public int getRoundsPerMinute() {
         return roundsPerMinute;
     }
@@ -150,6 +160,10 @@ public class GunData {
 
     public float getBoltActionTime() {
         return boltActionTime;
+    }
+
+    public float getBoltFeedTime() {
+        return boltFeedTime;
     }
 
     public GunReloadData getReloadData() {
@@ -223,6 +237,16 @@ public class GunData {
 
     public Map<ResourceLocation, AttachmentData> getExclusiveAttachments() {
         return exclusiveAttachments;
+    }
+
+    @Nullable
+    public ResourceLocation getScript() {
+        return script;
+    }
+
+    @Nullable
+    public Map<String, Object> getScriptParam() {
+        return scriptParam;
     }
 
     /**

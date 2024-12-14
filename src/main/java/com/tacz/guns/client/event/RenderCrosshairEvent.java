@@ -6,11 +6,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.client.animation.statemachine.AnimationStateContext;
+import com.tacz.guns.api.client.animation.statemachine.AnimationStateMachine;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import com.tacz.guns.client.renderer.crosshair.CrosshairType;
 import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
@@ -70,12 +71,12 @@ public class RenderCrosshairEvent {
             }
             // 播放的动画需要隐藏准心时，取消准心渲染
             ItemStack stack = player.getMainHandItem();
-            if (!(stack.getItem() instanceof IGun iGun)) {
+            if (!(stack.getItem() instanceof IGun)) {
                 return;
             }
-            ResourceLocation gunId = iGun.getGunId(stack);
+
             IClientPlayerGunOperator playerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
-            TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+            TimelessAPI.getGunDisplay(stack).ifPresent(gunIndex -> {
                 // 瞄准快要完成时，取消准心渲染
                 if (playerGunOperator.getClientAimingProgress(event.getPartialTick()) > 0.9) {
                     // 枪包可以强制显示准星
@@ -88,8 +89,9 @@ public class RenderCrosshairEvent {
                     }
                 }
 
-                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                if (!animationStateMachine.shouldHideCrossHair()) {
+                AnimationStateMachine<?> animationStateMachine = gunIndex.getAnimationStateMachine();
+                AnimationStateContext context = animationStateMachine.getContext();
+                if (context == null || !context.shouldHideCrossHair()) {
                     renderCrosshair(event.getPoseStack(), event.getWindow());
                 }
             });

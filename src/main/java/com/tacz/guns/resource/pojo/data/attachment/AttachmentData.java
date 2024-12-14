@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.modifier.JsonProperty;
-import com.tacz.guns.resource.pojo.data.gun.MoveSpeed;
 
 import javax.annotation.Nullable;
 import java.util.Map;

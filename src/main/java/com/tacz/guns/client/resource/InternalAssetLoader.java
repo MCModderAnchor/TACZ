@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+// 这个理论上已经不需要了
 public class InternalAssetLoader {
     // 曳光弹模型
     public static final ResourceLocation DEFAULT_BULLET_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/entity/basic_bullet.png");
@@ -67,14 +67,14 @@ public class InternalAssetLoader {
         try (InputStream inputStream = Minecraft.getInstance().getResourceManager().open(resourceLocation)) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             JsonObject json = JsonParser.parseReader(bufferedReader).getAsJsonObject();
-            return ClientGunPackLoader.GSON.fromJson(json, BedrockAnimationFile.class);
+            return ClientAssetsManager.GSON.fromJson(json, BedrockAnimationFile.class);
         } catch (IOException | JsonSyntaxException | JsonIOException e) {
             throw new RuntimeException(e);
         }
     }
     private static void loadBedrockModels(ResourceLocation location) {
         try (InputStream stream = Minecraft.getInstance().getResourceManager().open(location)) {
-            BedrockModelPOJO pojo = ClientGunPackLoader.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
+            BedrockModelPOJO pojo = ClientAssetsManager.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), BedrockModelPOJO.class);
             BEDROCK_MODELS.put(location, new BedrockModel(pojo, BedrockVersion.NEW));
         } catch (IOException | JsonSyntaxException | JsonIOException e) {
             e.fillInStackTrace();

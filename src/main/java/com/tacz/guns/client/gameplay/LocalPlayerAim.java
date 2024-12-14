@@ -2,7 +2,6 @@ package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerAim;
@@ -42,17 +41,6 @@ public class LocalPlayerAim {
 
     public boolean isAim() {
         return data.clientIsAiming;
-    }
-
-    public boolean cancelSprint(LocalPlayer player, boolean pSprinting) {
-        IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
-        boolean isAiming = gunOperator.getSynIsAiming();
-        ReloadState.StateType reloadStateType = gunOperator.getSynReloadState().getStateType();
-        if (isAiming || (reloadStateType.isReloading() && !reloadStateType.isReloadFinishing())) {
-            return false;
-        } else {
-            return pSprinting;
-        }
     }
 
     public void tickAimingProgress() {

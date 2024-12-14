@@ -1,7 +1,7 @@
 package com.tacz.guns.network.message;
 
-import com.tacz.guns.client.resource.ClientReloadManager;
-import com.tacz.guns.resource.network.CommonGunPackNetwork;
+import com.tacz.guns.client.resource.ClientIndexManager;
+import com.tacz.guns.resource.network.CommonNetworkCache;
 import com.tacz.guns.resource.network.DataType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -9,24 +9,28 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 
 public class ServerMessageSyncGunPack {
-    private final EnumMap<DataType, Map<ResourceLocation, String>> cache;
+    private final Map<DataType, Map<ResourceLocation, String>> cache;
 
-    public ServerMessageSyncGunPack(EnumMap<DataType, Map<ResourceLocation, String>> cache) {
+    public ServerMessageSyncGunPack(Map<DataType, Map<ResourceLocation, String>> cache) {
         this.cache = cache;
     }
 
     public static void encode(ServerMessageSyncGunPack message, FriendlyByteBuf buf) {
-        CommonGunPackNetwork.toNetwork(message.cache, buf);
+        buf.writeMap(message.getCache(), FriendlyByteBuf::writeEnum, (buf1, map) -> {
+            buf1.writeMap(map, FriendlyByteBuf::writeResourceLocation, FriendlyByteBuf::writeUtf);
+        });
     }
 
     public static ServerMessageSyncGunPack decode(FriendlyByteBuf buf) {
-        return new ServerMessageSyncGunPack(CommonGunPackNetwork.fromNetworkCache(buf));
+        var map = buf.readMap(buf1 -> buf1.readEnum(DataType.class), buf2 -> {
+            return buf2.readMap(FriendlyByteBuf::readResourceLocation, FriendlyByteBuf::readUtf);
+        });
+        return new ServerMessageSyncGunPack(map);
     }
 
     public static void handle(ServerMessageSyncGunPack message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -38,13 +42,14 @@ public class ServerMessageSyncGunPack {
     }
 
 
-    public EnumMap<DataType, Map<ResourceLocation, String>> getCache() {
+    public Map<DataType, Map<ResourceLocation, String>> getCache() {
         return cache;
     }
 
     @OnlyIn(Dist.CLIENT)
     private static void doSync(ServerMessageSyncGunPack message) {
-        ClientReloadManager.cacheAll(message);
-        ClientReloadManager.reloadAllPack();
+        CommonNetworkCache.INSTANCE.fromNetwork(message.cache);
+        // 通知客户端重新构建ClientIndex
+        ClientIndexManager.reload();
     }
 }

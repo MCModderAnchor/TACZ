@@ -1,6 +1,7 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.client.animation.statemachine.AnimationStateMachine;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
@@ -8,7 +9,8 @@ import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
-import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
+import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
+import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
@@ -71,6 +73,7 @@ public class LocalPlayerShoot {
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
         GunData gunData = gunIndex.getGunData();
+        GunDisplayInstance display = gunIndex.getDefaultDisplay();
         long coolDown = this.getCoolDown(iGun, mainhandItem, gunData);
         // 如果射击冷却大于等于 1 tick (即 50 ms)，则不允许开火
         if (coolDown >= 50) {
@@ -80,11 +83,16 @@ public class LocalPlayerShoot {
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
         // 检查是否正在换弹
         if (gunOperator.getSynReloadState().getStateType().isReloading()) {
+
             return ShootResult.IS_RELOADING;
         }
         // 检查是否正在切枪
         if (gunOperator.getSynDrawCoolDown() != 0) {
             return ShootResult.IS_DRAWING;
+        }
+        // 检查是否正在拉栓
+        if (gunOperator.getSynIsBolting()) {
+            return ShootResult.IS_BOLTING;
         }
         // 判断是否处于近战冷却时间
         if (gunOperator.getSynMeleeCoolDown() != 0) {
@@ -95,7 +103,7 @@ public class LocalPlayerShoot {
         boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem) && boltType != Bolt.OPEN_BOLT;
         int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (hasAmmoInBarrel ? 1 : 0);
         if (ammoCount < 1) {
-            SoundPlayManager.playDryFireSound(player, gunIndex);
+            SoundPlayManager.playDryFireSound(player, display);
             return ShootResult.NO_AMMO;
         }
         // 判断膛内子弹
@@ -115,13 +123,13 @@ public class LocalPlayerShoot {
         data.lockState(SHOOT_LOCKED_CONDITION);
         data.isShootRecorded = false;
         // 调用开火逻辑
-        this.doShoot(gunIndex, iGun, mainhandItem, gunData, coolDown);
+        this.doShoot(display, iGun, mainhandItem, gunData, coolDown);
         return ShootResult.SUCCESS;
     }
 
-    private void doShoot(ClientGunIndex gunIndex, IGun iGun, ItemStack mainhandItem, GunData gunData, long delay) {
+    private void doShoot(GunDisplayInstance display, IGun iGun, ItemStack mainhandItem, GunData gunData, long delay) {
         FireMode fireMode = iGun.getFireMode(mainhandItem);
-        Bolt boltType = gunIndex.getGunData().getBolt();
+        Bolt boltType = gunData.getBolt();
         // 获取余弹数
         boolean consumeAmmo = IGunOperator.fromLivingEntity(player).consumesAmmoOrNot();
         boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainhandItem) && boltType != Bolt.OPEN_BOLT;
@@ -150,31 +158,35 @@ public class LocalPlayerShoot {
                     return;
                 }
                 // 记录新的开火时间戳
+                data.clientLastShootTimestamp = data.clientShootTimestamp;
                 data.clientShootTimestamp = System.currentTimeMillis();
                 // 发送开火的数据包，通知服务器
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot());
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot(data.clientShootTimestamp - data.clientBaseTimestamp));
             }
-            // 触发击发事件
-            boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(player, mainhandItem, LogicalSide.CLIENT));
-            if (fire) {
-                // 动画和声音循环播放
-                GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-                if (animationStateMachine != null) {
-                    animationStateMachine.onGunShoot();
-                }
-                // 获取消音
-                final boolean useSilenceSound = this.useSilenceSound();
-                // 播放声音需要从异步线程上传到主线程执行。
-                Minecraft.getInstance().submitAsync(() -> {
-                    // 开火需要打断检视
-                    SoundPlayManager.stopPlayGunSound(gunIndex, SoundManager.INSPECT_SOUND);
-                    if (useSilenceSound) {
-                        SoundPlayManager.playSilenceSound(player, gunIndex);
-                    } else {
-                        SoundPlayManager.playShootSound(player, gunIndex);
+
+            // todo 需要检查
+            // 播放声音和状态机触发需要从异步线程上传到主线程执行，否则会引起cme
+            Minecraft.getInstance().submitAsync(() -> {
+                // 触发击发事件
+                boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(player, mainhandItem, LogicalSide.CLIENT));
+                if (fire) {
+                    // 动画和声音循环播放
+                    AnimationStateMachine<?> animationStateMachine = display.getAnimationStateMachine();
+                    if (animationStateMachine != null) {
+                        animationStateMachine.trigger(GunAnimationConstant.INPUT_SHOOT);
                     }
-                });
-            }
+                    // 获取消音
+                    final boolean useSilenceSound = this.useSilenceSound();
+                    // 开火需要打断检视
+                    SoundPlayManager.stopPlayGunSound(display, SoundManager.INSPECT_SOUND);
+                    if (useSilenceSound) {
+                        SoundPlayManager.playSilenceSound(player, display);
+                    } else {
+                        SoundPlayManager.playShootSound(player, display);
+                    }
+                }
+            });
+
             count.getAndIncrement();
         }, delay, period, TimeUnit.MILLISECONDS);
     }

@@ -2,7 +2,7 @@ package com.tacz.guns.resource.pojo.data.recipe;
 
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
-import com.tacz.guns.crafting.GunSmithTableResult;
+import com.tacz.guns.crafting.result.GunSmithTableResult;
 
 import java.util.List;
 

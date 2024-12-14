@@ -12,15 +12,27 @@ public class DiscreteTrackArray implements Iterable<Integer>{
     private final ArrayList<LinkedList<Integer>> tracks;
     private int modCount = 0;
 
-    public DiscreteTrackArray(int size) {
-        tracks = new ArrayList<>(size);
-        for(int i = 0; i < size; i++) {
+    public DiscreteTrackArray() {
+        tracks = new ArrayList<>();
+    }
+
+    public void ensureCapacity(int size) {
+        int cap = tracks.size();
+        for (int i = cap; i < size; i++) {
+            modCount++;
             tracks.add(null);
         }
     }
 
-    public DiscreteTrackArray() {
-        tracks = new ArrayList<>();
+    public void ensureTrackAmount(int index, int amount) {
+        if (index >= tracks.size()) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + tracks.size());
+        }
+        LinkedList<Integer> list = tracks.get(index);
+        int oldSize = list == null ? 0 : list.size();
+        for (int i = oldSize; i < amount; i++) {
+            assignNewTrack(index);
+        }
     }
 
     public int addTrackLine() {
@@ -42,7 +54,11 @@ public class DiscreteTrackArray implements Iterable<Integer>{
                     tracks.set(index, list);
                 }
         );
-        return top;
+        return top - 1;
+    }
+
+    public int getTrackLineSize() {
+        return tracks.size();
     }
 
     @UnmodifiableView

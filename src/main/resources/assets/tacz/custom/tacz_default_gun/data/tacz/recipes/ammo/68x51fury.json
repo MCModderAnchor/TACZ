@@ -1,0 +1,22 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "forge:ingots/copper"
+      },
+      "count": 15
+    },
+    {
+      "item": {
+        "tag": "forge:gunpowder"
+      },
+      "count": 5
+    }
+  ],
+  "result": {
+    "type": "ammo",
+    "id": "tacz:68x51fury",
+    "count": 40
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

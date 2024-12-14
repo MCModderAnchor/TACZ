@@ -23,21 +23,4 @@ public class ModRecipe {
         }
     });
 
-//    @SubscribeEvent
-//    public static void register(RegisterEvent event) {
-//        // todo 需要检查实现
-//        if(event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_TYPES)) {
-//            GUN_SMITH_TABLE_CRAFTING = register(event, GunMod.MOD_ID + ":gun_smith_table_crafting");
-//        }
-//    }
-//
-//    private static <T extends Recipe<?>> RecipeType<T> register(RegisterEvent event, final String key) {
-//        event.register(ForgeRegistries.Keys.RECIPE_TYPES, new ResourceLocation(key), () -> new RecipeType<T>(){
-//            @Override
-//            public String toString() {
-//                return key;
-//            }
-//        });
-//        return (RecipeType<T>) ForgeRegistries.RECIPE_TYPES.getValue(new ResourceLocation(key));
-//    }
 }

@@ -1,0 +1,21 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "forge:ingots/iron"
+      },
+      "count": 25
+    },
+    {
+      "item": {
+        "tag": "minecraft:logs"
+      },
+      "count": 12
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:m870"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

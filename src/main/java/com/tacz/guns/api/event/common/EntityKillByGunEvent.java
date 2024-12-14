@@ -16,16 +16,20 @@ public class EntityKillByGunEvent extends Event {
     private final @Nullable LivingEntity killedEntity;
     private final @Nullable LivingEntity attacker;
     private final ResourceLocation gunId;
+    private final ResourceLocation gunDisplayId;
     private final float baseDamage;
     private final boolean isHeadShot;
     private final float headshotMultiplier;
     private final LogicalSide logicalSide;
 
-    public EntityKillByGunEvent(Entity bullet, @Nullable LivingEntity hurtEntity, @Nullable LivingEntity attacker, ResourceLocation gunId, float baseDamage, boolean isHeadShot, float headshotMultiplier, LogicalSide logicalSide) {
+    public EntityKillByGunEvent(Entity bullet, @Nullable LivingEntity hurtEntity, @Nullable LivingEntity attacker,
+                                ResourceLocation gunId, ResourceLocation gunDisplayId, float baseDamage,
+                                boolean isHeadShot, float headshotMultiplier, LogicalSide logicalSide) {
         this.bullet = bullet;
         this.killedEntity = hurtEntity;
         this.attacker = attacker;
         this.gunId = gunId;
+        this.gunDisplayId = gunDisplayId;
         this.baseDamage = baseDamage;
         this.isHeadShot = isHeadShot;
         this.headshotMultiplier = headshotMultiplier;
@@ -67,5 +71,9 @@ public class EntityKillByGunEvent extends Event {
 
     public LogicalSide getLogicalSide() {
         return logicalSide;
+    }
+
+    public ResourceLocation getGunDisplayId() {
+        return gunDisplayId;
     }
 }

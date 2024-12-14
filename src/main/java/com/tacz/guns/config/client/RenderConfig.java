@@ -18,6 +18,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue DISABLE_INTERACT_HUD_TEXT;
     public static ForgeConfigSpec.IntValue DAMAGE_COUNTER_RESET_TIME;
     public static ForgeConfigSpec.BooleanValue DISABLE_MOVEMENT_ATTRIBUTE_FOV;
+    public static ForgeConfigSpec.BooleanValue ENABLE_TACZ_ID_IN_TOOLTIP;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -63,6 +64,9 @@ public class RenderConfig {
 
         builder.comment("Disable the fov effect from the movement speed attribute while holding a gun");
         DISABLE_MOVEMENT_ATTRIBUTE_FOV = builder.define("DisableMovementAttributeFov", true);
+
+        builder.comment("Enable the display of the TACZ ID in the tooltip when Advanced Tooltip is enabled");
+        ENABLE_TACZ_ID_IN_TOOLTIP = builder.define("EnableTaczIdInTooltip", true);
 
         builder.pop();
     }

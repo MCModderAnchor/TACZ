@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class MuzzleFlash {
     @SerializedName("texture")
-    private ResourceLocation texture = null;
+    protected ResourceLocation texture = null;
 
     @SerializedName("scale")
     private float scale = 1;

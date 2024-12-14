@@ -127,15 +127,21 @@ public class AnimationController {
     synchronized public void update() {
         // 如果有 updatingTrackArray，则按照 updatingTrackArray 指定的顺序更新，否则从低到高更新。
         if (updatingTrackArray != null) {
-            updatingTrackArray.forEach(this::updateByTrack);
+            updatingTrackArray.forEach(track -> this.updateByTrack(track, false));
         } else {
             for (int i = 0; i < currentRunners.size(); i++) {
-                updateByTrack(i);
+                updateByTrack(i, false);
             }
         }
     }
 
-    private void updateByTrack(int track) {
+    synchronized public void updateSoundOnly() {
+        for (int i = 0; i < currentRunners.size(); i++) {
+            updateByTrack(i, true);
+        }
+    }
+
+    private void updateByTrack(int track, boolean isSoundOnly) {
         if (track >= currentRunners.size()) {
             return;
         }
@@ -145,12 +151,20 @@ public class AnimationController {
             return;
         }
         //更新当前动画runner
-        if (runner.isRunning() || runner.isHolding() || runner.isTransitioning()) {
-            runner.update(blend);
+        if (runner.isRunning() || runner.isHolding() || runner.isPausing() || runner.isTransitioning()) {
+            if (isSoundOnly) {
+                runner.updateSoundOnly();
+            } else {
+                runner.update(blend);
+            }
         }
         //更新过渡目标动画runner，并且如果过渡已经完成，将其塞进currentRunners
         if (runner.getTransitionTo() != null) {
-            runner.getTransitionTo().update(blend);
+            if (isSoundOnly) {
+                runner.getTransitionTo().updateSoundOnly();
+            }else {
+                runner.getTransitionTo().update(blend);
+            }
             if (!runner.isTransitioning()) {
                 currentRunners.set(track, runner.getTransitionTo());
                 runner = runner.getTransitionTo();

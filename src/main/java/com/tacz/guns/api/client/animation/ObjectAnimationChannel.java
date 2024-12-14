@@ -55,6 +55,9 @@ public class ObjectAnimationChannel {
     }
 
     public float getEndTimeS() {
+        if (content.keyframeTimeS.length == 0) {
+            return 0;
+        }
         return content.keyframeTimeS[content.keyframeTimeS.length - 1];
     }
 

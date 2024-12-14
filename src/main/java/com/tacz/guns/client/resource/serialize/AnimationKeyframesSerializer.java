@@ -39,7 +39,13 @@ public class AnimationKeyframesSerializer implements JsonDeserializer<AnimationK
         if (json.isJsonObject()) {
             JsonObject jsonObject = json.getAsJsonObject();
             for (Map.Entry<String, JsonElement> entrySet : jsonObject.entrySet()) {
-                double time = Double.parseDouble(entrySet.getKey());
+                double time;
+                try {
+                    time = Double.parseDouble(entrySet.getKey());
+                } catch (NumberFormatException e) {
+                    GunMod.LOGGER.warn("Molang is not supported: \"{}\"", entrySet.getKey());
+                    return new AnimationKeyframes(keyframes);
+                }
                 AnimationKeyframes.Keyframe keyframe = readKeyFrames(entrySet.getValue());
                 keyframes.put(time, keyframe);
             }

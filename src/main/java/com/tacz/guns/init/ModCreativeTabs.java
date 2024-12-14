@@ -13,6 +13,7 @@ import com.tacz.guns.item.AmmoBoxItem;
 import com.tacz.guns.item.AmmoItem;
 import com.tacz.guns.item.AttachmentItem;
 import net.minecraft.core.NonNullList;
+import com.tacz.guns.item.GunSmithTableItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -31,6 +32,7 @@ public class ModCreativeTabs {
         addCreativeTabs("other", Component.translatable("itemGroup.tab.tacz.other"),
                 () -> ModItems.GUN_SMITH_TABLE.get().getDefaultInstance(),
                 output -> {
+            // TODO output.acceptAll(GunSmithTableItem.fillItemCategory()); 合并后检查
                     output.add(ModItems.GUN_SMITH_TABLE.get().getDefaultInstance());
                     output.add(ModItems.TARGET.get().getDefaultInstance());
                     output.add(ModItems.STATUE.get().getDefaultInstance());

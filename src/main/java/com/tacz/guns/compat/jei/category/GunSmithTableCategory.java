@@ -79,6 +79,7 @@ public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecip
     }
 
     @Override
+    @SuppressWarnings("removal")
     public IDrawable getBackground() {
         return bgDraw;
     }

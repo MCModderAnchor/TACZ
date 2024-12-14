@@ -2,13 +2,9 @@ package com.tacz.guns.client.event;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
-import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
-import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
-import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
@@ -23,40 +19,41 @@ public class TickAnimationEvent {
         if (player == null) {
             return;
         }
-        IClientPlayerGunOperator clientGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
         ItemStack mainhandItem = player.getMainHandItem();
-        if (!(mainhandItem.getItem() instanceof IGun iGun)) {
+        TimelessAPI.getGunDisplay(mainhandItem).ifPresent(gunIndex -> {
+            var animationStateMachine = gunIndex.getAnimationStateMachine();
+            if (!player.isMovingSlowly() && player.isSprinting()) {
+                // 如果玩家正在移动，播放移动动画，否则播放 idle 动画
+                animationStateMachine.trigger(GunAnimationConstant.INPUT_RUN);
+            } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
+                animationStateMachine.trigger(GunAnimationConstant.INPUT_WALK);
+            } else {
+                animationStateMachine.trigger(GunAnimationConstant.INPUT_IDLE);
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void tickAnimation(TickEvent.RenderTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
             return;
         }
-        ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
-            if (animationStateMachine == null) {
-                return;
-            }
-            animationStateMachine.setAiming(clientGunOperator.getClientAimingProgress(1) == 1f);
-            boolean isShooting = clientGunOperator.getClientShootCoolDown() > 0;
-
-            if (isShooting) {
-                // 如果玩家正在射击，只能处于 idle 状态
-                animationStateMachine.onShooterIdle();
-            } else if (!player.isMovingSlowly() && player.isSprinting()) {
-                // 如果玩家正在移动，播放移动动画，否则播放 idle 动画
-                animationStateMachine.setOnGround(player.isOnGround()).onShooterRun(player.walkDist);
-            } else if (!player.isMovingSlowly() && player.input.getMoveVector().length() > 0.01) {
-                animationStateMachine.setOnGround(player.isOnGround()).onShooterWalk(player.input, player.walkDist);
-            } else {
-                animationStateMachine.onShooterIdle();
-            }
-
-            Bolt boltType = gunIndex.getGunData().getBolt();
-            int ammoCount = iGun.getCurrentAmmoCount(mainhandItem) + (iGun.hasBulletInBarrel(mainhandItem) && boltType != Bolt.OPEN_BOLT ? 1 : 0);
-            if (ammoCount < 1) {
-                animationStateMachine.onGunCatchBolt();
-            } else {
-                animationStateMachine.onGunReleaseBolt();
-            }
-            animationStateMachine.onIdleHoldingPose();
+        if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+            return;
+        }
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        ItemStack mainhandItem = player.getMainHandItem();
+        TimelessAPI.getGunDisplay(mainhandItem).ifPresent(gunIndex -> {
+            // 更新状态机
+            var animationStateMachine = gunIndex.getAnimationStateMachine();
+            animationStateMachine.processContextIfExist(context -> {
+                context.setCurrentGunItem(mainhandItem);
+                context.setPartialTicks(Minecraft.getInstance().getFrameTime());
+            });
+            animationStateMachine.visualUpdate();
         });
     }
 }
