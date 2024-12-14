@@ -26,19 +26,15 @@ public class FileToIdConverter {
     }
 
     public ResourceLocation fileToId(ResourceLocation pFile) {
-        String pPath = pFile.getPath();
-        return new ResourceLocation(pFile.getNamespace(), pPath);
+        String s = pFile.getPath();
+        return new ResourceLocation(pFile.getNamespace(), s.substring(this.prefix.length() + 1, s.length() - this.extension.length()));
     }
 
     public Map<ResourceLocation, Resource> listMatchingResources(ResourceManager pResourceManager) {
-        return pResourceManager.listResources(this.prefix, (p_251986_) -> {
-            return p_251986_.getPath().endsWith(this.extension);
-        });
+        return pResourceManager.listResources(this.prefix, (p_251986_) -> p_251986_.getPath().endsWith(this.extension));
     }
 
     public Map<ResourceLocation, List<Resource>> listMatchingResourceStacks(ResourceManager pResourceManager) {
-        return pResourceManager.listResourceStacks(this.prefix, (p_248700_) -> {
-            return p_248700_.getPath().endsWith(this.extension);
-        });
+        return pResourceManager.listResourceStacks(this.prefix, (p_248700_) -> p_248700_.getPath().endsWith(this.extension));
     }
 }

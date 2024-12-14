@@ -33,7 +33,7 @@ public class PackConvertor {
     }
 
     private static void msg(CommandSourceStack source, Component component) {
-        source.sendSystemMessage(pre(component));
+        source.sendSuccess(pre(component), true);
     }
 
     public static void convert(CommandSourceStack source) {

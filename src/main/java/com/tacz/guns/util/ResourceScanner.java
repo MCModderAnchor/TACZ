@@ -11,7 +11,9 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 import java.util.Map;
@@ -34,16 +36,15 @@ public class ResourceScanner {
         Map<ResourceLocation, JsonElement> output = Maps.newHashMap();
         for(Map.Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(pResourceManager).entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();
-            ResourceLocation resourcelocation1 = filetoidconverter.fileToId(resourcelocation);
 
             try (Reader reader = entry.getValue().openAsReader()) {
                 JsonElement jsonelement = GsonHelper.fromJson(pGson, reader, JsonElement.class, true);
-                JsonElement jsonelement1 = output.put(resourcelocation1, jsonelement);
+                JsonElement jsonelement1 = output.put(resourcelocation, jsonelement);
                 if (jsonelement1 != null) {
-                    throw new IllegalStateException("Duplicate data file ignored with ID " + resourcelocation1);
+                    throw new IllegalStateException("Duplicate data file ignored with ID " + resourcelocation);
                 }
             } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
-                GunMod.LOGGER.error("Couldn't parse data file {} from {}", resourcelocation1, resourcelocation, jsonparseexception);
+                GunMod.LOGGER.error("Couldn't parse data file {}", resourcelocation, jsonparseexception);
             }
         }
         return output;
@@ -61,15 +62,14 @@ public class ResourceScanner {
         Map<ResourceLocation, List<JsonElement>> output = Maps.newHashMap();
         for(Map.Entry<ResourceLocation, List<Resource>> entry : filetoidconverter.listMatchingResourceStacks(pResourceManager).entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();
-            ResourceLocation resourcelocation1 = filetoidconverter.fileToId(resourcelocation);
 
             for (Resource resource : entry.getValue()) {
-                try (Reader reader = resource.openAsReader()) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.open()))) {
                     JsonElement jsonelement = GsonHelper.fromJson(pGson, reader, JsonElement.class, true);
-                    List<JsonElement> list = output.computeIfAbsent(resourcelocation1, k -> Lists.newArrayList());
+                    List<JsonElement> list = output.computeIfAbsent(resourcelocation, k -> Lists.newArrayList());
                     list.add(jsonelement);
                 } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
-                    GunMod.LOGGER.error("Couldn't parse data file {} from {}", resourcelocation1, resourcelocation, jsonparseexception);
+                    GunMod.LOGGER.error("Couldn't parse data file {}", resourcelocation, jsonparseexception);
                 }
             }
         }

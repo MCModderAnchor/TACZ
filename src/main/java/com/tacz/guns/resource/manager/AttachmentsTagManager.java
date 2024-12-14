@@ -11,7 +11,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.network.DataType;
 import com.tacz.guns.util.ResourceScanner;
-import net.minecraft.resources.FileToIdConverter;
+import com.tacz.guns.util.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -67,7 +67,7 @@ public class AttachmentsTagManager extends SimplePreparableReloadListener<Map<Re
             }
 
             if (id.getPath().startsWith("allow_attachments/") && id.getPath().length()>18) {
-                ResourceLocation gunId = id.withPath(id.getPath().substring(18));
+                ResourceLocation gunId = new ResourceLocation(id.getNamespace(), id.getPath().substring(18));
                 allow_attachments.computeIfAbsent(gunId, (v) -> Sets.newHashSet()).addAll(temp);
             } else {
                 tags.computeIfAbsent(id, (v) -> Sets.newHashSet()).addAll(temp);
@@ -80,7 +80,7 @@ public class AttachmentsTagManager extends SimplePreparableReloadListener<Map<Re
     }
 
     private List<String> parseJson(JsonElement element) {
-        return gson.fromJson(element, new TypeToken<>(){});
+        return gson.fromJson(element, new TypeToken<>(){}.getType());
     }
 
     @Override

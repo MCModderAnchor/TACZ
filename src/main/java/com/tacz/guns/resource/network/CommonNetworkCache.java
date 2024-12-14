@@ -153,9 +153,9 @@ public enum CommonNetworkCache implements ICommonResourceProvider {
 
     private void resolveAttachmentTags(Map<ResourceLocation, String> data) {
         for (Map.Entry<ResourceLocation, String> entry : data.entrySet()) {
-            List<String> tags = CommonAssetsManager.GSON.fromJson(entry.getValue(), new TypeToken<>(){});
+            List<String> tags = CommonAssetsManager.GSON.fromJson(entry.getValue(), new TypeToken<>(){}.getType());
             if (entry.getKey().getPath().startsWith("allow_attachments/") && entry.getKey().getPath().length()>18) {
-                ResourceLocation gunId = entry.getKey().withPath(entry.getKey().getPath().substring(18));
+                ResourceLocation gunId = new ResourceLocation(entry.getKey().getNamespace(), entry.getKey().getPath().substring(18));
                 allowAttachmentTags.computeIfAbsent(gunId, (v) -> new HashSet<>()).addAll(tags);
             } else {
                 attachmentTags.computeIfAbsent(entry.getKey(), (v) -> new HashSet<>()).addAll(tags);

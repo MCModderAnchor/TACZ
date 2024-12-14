@@ -36,8 +36,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -135,7 +135,7 @@ public class ModernKineticGunScriptAPI {
                 float pitch = pitchSupplier != null ? pitchSupplier.get() : shooter.getXRot();
                 float yaw = yawSupplier != null ? yawSupplier.get() : shooter.getYRot();
                 // 生成子弹
-                Level world = shooter.level();
+                Level world = shooter.getLevel();
                 ResourceLocation ammoId = gunData.getAmmoId();
                 for (int i = 0; i < bulletAmount; i++) {
                     boolean isTracer = bulletData.hasTracerAmmo() && gunOperator.nextBulletIsTracer(bulletData.getTracerCountInterval());

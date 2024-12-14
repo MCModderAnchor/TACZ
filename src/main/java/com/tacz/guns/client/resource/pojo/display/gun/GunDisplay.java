@@ -8,7 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.EnumMap;
 import java.util.Map;
 
 public class GunDisplay implements IDisplay {
@@ -81,7 +80,7 @@ public class GunDisplay implements IDisplay {
     @SerializedName("show_crosshair")
     private boolean showCrosshair = false;
     @SerializedName("controllable")
-    private EnumMap<FireMode, ControllableData> controllableData = Maps.newEnumMap(FireMode.class);
+    private Map<FireMode, ControllableData> controllableData = Maps.newHashMap();
 
     public ResourceLocation getModelLocation() {
         return modelLocation;
@@ -191,7 +190,7 @@ public class GunDisplay implements IDisplay {
         return showCrosshair;
     }
 
-    public EnumMap<FireMode, ControllableData> getControllableData() {
+    public Map<FireMode, ControllableData> getControllableData() {
         return controllableData;
     }
 

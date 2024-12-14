@@ -35,11 +35,10 @@ public class SoundAssetsManager extends SimplePreparableReloadListener<Map<Resou
         Map<ResourceLocation, SoundData> output = Maps.newHashMap();
         for(Map.Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(pResourceManager).entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();
-            ResourceLocation resourcelocation1 = filetoidconverter.fileToId(resourcelocation);
 
             try (InputStream stream = entry.getValue().open(); OggAudioStream audioStream = new OggAudioStream(stream)) {
                 ByteBuffer bytebuffer = audioStream.readAll();
-                output.put(resourcelocation1, new SoundData(bytebuffer, audioStream.getFormat()));
+                output.put(resourcelocation, new SoundData(bytebuffer, audioStream.getFormat()));
             } catch (IOException exception) {
                 GunMod.LOGGER.warn(MARKER, "Failed to read sound file: {}", resourcelocation);
                 exception.printStackTrace();

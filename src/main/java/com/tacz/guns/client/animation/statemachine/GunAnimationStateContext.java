@@ -291,7 +291,7 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
      * @return 玩家是否接触地面
      */
     public boolean isOnGround() {
-        return processCameraEntity(Entity::onGround).orElse(false);
+        return processCameraEntity(Entity::isOnGround).orElse(false);
     }
 
     /**

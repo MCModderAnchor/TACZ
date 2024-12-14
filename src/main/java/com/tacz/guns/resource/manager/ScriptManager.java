@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonParseException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.vmlib.LuaLibrary;
-import net.minecraft.resources.FileToIdConverter;
+import com.tacz.guns.util.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -62,8 +62,7 @@ public class ScriptManager extends SimplePreparableReloadListener< List<Map.Entr
         pObject.forEach(entry -> scriptMap.put(entry.getKey(), entry.getValue().get()));
     }
 
-    private Map.Entry<String, Supplier<LuaTable>> wrapLoadingFunction(ResourceLocation rawResourceLocation, Resource resource) {
-        ResourceLocation resourceLocation = filetoidconverter.fileToId(rawResourceLocation);
+    private Map.Entry<String, Supplier<LuaTable>> wrapLoadingFunction(ResourceLocation resourceLocation, Resource resource) {
         String moduleName = getModuleName(resourceLocation);
         return new AbstractMap.SimpleEntry<>(moduleName, new Supplier<>() {
             private LuaTable loaded = null;
