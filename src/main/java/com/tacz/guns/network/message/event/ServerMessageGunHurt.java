@@ -21,15 +21,18 @@ public class ServerMessageGunHurt {
     private final int hurtEntityId;
     private final int attackerId;
     private final ResourceLocation gunId;
+    private final ResourceLocation gunDisplayId;
     private final float amount;
     private final boolean isHeadShot;
     private final float headshotMultiplier;
 
-    public ServerMessageGunHurt(int bulletId, int hurtEntityId, int attackerId, ResourceLocation gunId, float amount, boolean isHeadShot, float headshotMultiplier) {
+    public ServerMessageGunHurt(int bulletId, int hurtEntityId, int attackerId, ResourceLocation gunId, ResourceLocation gunDisplayId,
+                                float amount, boolean isHeadShot, float headshotMultiplier) {
         this.bulletId = bulletId;
         this.hurtEntityId = hurtEntityId;
         this.attackerId = attackerId;
         this.gunId = gunId;
+        this.gunDisplayId = gunDisplayId;
         this.amount = amount;
         this.isHeadShot = isHeadShot;
         this.headshotMultiplier = headshotMultiplier;
@@ -40,6 +43,7 @@ public class ServerMessageGunHurt {
         buf.writeInt(message.hurtEntityId);
         buf.writeInt(message.attackerId);
         buf.writeResourceLocation(message.gunId);
+        buf.writeResourceLocation(message.gunDisplayId);
         buf.writeFloat(message.amount);
         buf.writeBoolean(message.isHeadShot);
         buf.writeFloat(message.headshotMultiplier);
@@ -50,10 +54,11 @@ public class ServerMessageGunHurt {
         int hurtEntityId = buf.readInt();
         int attackerId = buf.readInt();
         ResourceLocation gunId = buf.readResourceLocation();
+        ResourceLocation gunDisplayId = buf.readResourceLocation();
         float amount = buf.readFloat();
         boolean isHeadShot = buf.readBoolean();
         float headshotMultiplier = buf.readFloat();
-        return new ServerMessageGunHurt(bulletId, hurtEntityId, attackerId, gunId, amount, isHeadShot, headshotMultiplier);
+        return new ServerMessageGunHurt(bulletId, hurtEntityId, attackerId, gunId, gunDisplayId, amount, isHeadShot, headshotMultiplier);
     }
 
     public static void handle(ServerMessageGunHurt message, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -73,6 +78,6 @@ public class ServerMessageGunHurt {
         @Nullable Entity bullet = level.getEntity(message.bulletId);
         @Nullable Entity hurtEntity = level.getEntity(message.hurtEntityId);
         @Nullable LivingEntity attacker = level.getEntity(message.attackerId) instanceof LivingEntity livingEntity ? livingEntity : null;
-        MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(bullet, hurtEntity, attacker, message.gunId, message.amount, message.isHeadShot, message.headshotMultiplier, LogicalSide.CLIENT));
+        MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(bullet, hurtEntity, attacker, message.gunId, message.gunDisplayId, message.amount, message.isHeadShot, message.headshotMultiplier, LogicalSide.CLIENT));
     }
 }

@@ -8,8 +8,8 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
+import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
-import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.config.client.ZoomConfig;
 import com.tacz.guns.util.math.MathUtil;
 import net.minecraft.client.Minecraft;
@@ -42,8 +42,7 @@ public class MouseHandlerMixin {
         float zoomLevel = 1;
         if (DefaultAssets.isEmptyAttachmentId(scopeId)) {
             // 缩放倍率
-            ResourceLocation gunId = iGun.getGunId(mainHandItem);
-            zoomLevel = TimelessAPI.getClientGunIndex(gunId).map(ClientGunIndex::getIronZoom).orElse(1f);
+            zoomLevel = TimelessAPI.getGunDisplay(mainHandItem).map(GunDisplayInstance::getIronZoom).orElse(1f);
         } else {
             Optional<ClientAttachmentIndex> optional = TimelessAPI.getClientAttachmentIndex(scopeId);
             if (optional.isPresent()) {

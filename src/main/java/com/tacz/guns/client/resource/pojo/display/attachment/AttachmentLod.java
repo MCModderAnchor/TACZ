@@ -7,7 +7,7 @@ public class AttachmentLod {
     @SerializedName("model")
     private ResourceLocation modelLocation;
     @SerializedName("texture")
-    private ResourceLocation modelTexture;
+    protected ResourceLocation modelTexture;
 
     public ResourceLocation getModelLocation() {
         return modelLocation;

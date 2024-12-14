@@ -1,0 +1,18 @@
+{
+  "slot": "tacz:attachment/slot/scope_retro_2x",
+  "model": "tacz:attachment/scope_retro_2x_geo",
+  "texture": "tacz:attachment/uv/scope_retro_2x",
+  "lod": {
+    "model": "tacz:attachment/lod/scope_retro_2x",
+    "texture": "tacz:attachment/lod/scope_retro_2x"
+  },
+  "zoom": [
+    3.25
+  ],
+  "scope": true,
+  "fov": 35.0,
+  "sounds": {
+    "install": "tacz:attachments/scope_general_d",
+    "uninstall": "tacz:attachments/scope_general_d"
+  }
+}

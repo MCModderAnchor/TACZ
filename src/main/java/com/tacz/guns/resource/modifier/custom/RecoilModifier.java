@@ -2,7 +2,7 @@ package com.tacz.guns.resource.modifier.custom;
 
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.modifier.*;
-import com.tacz.guns.resource.CommonGunPackLoader;
+import com.tacz.guns.resource_legacy.CommonGunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.attachment.Modifier;

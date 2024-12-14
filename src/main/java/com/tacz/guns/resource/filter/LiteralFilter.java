@@ -15,6 +15,10 @@ public class LiteralFilter<T> implements IFilter<T> {
         return set.contains(input);
     }
 
+    public Set<T> getSet() {
+        return set;
+    }
+
     public static class Builder<T> {
         private final Set<T> entries = new HashSet<>();
 

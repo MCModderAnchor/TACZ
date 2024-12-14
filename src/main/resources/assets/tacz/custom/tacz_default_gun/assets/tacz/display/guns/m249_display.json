@@ -1,0 +1,58 @@
+{
+  "model": "tacz:gun/m249_geo",
+  "texture": "tacz:gun/uv/m249",
+  "hud": "tacz:gun/hud/m249",
+  "slot": "tacz:gun/slot/m249",
+  "animation": "tacz:m249",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "state_machine": "tacz:m249_state_machine",
+  "lod": {
+    "model": "tacz:gun/lod/m249",
+    "texture": "tacz:gun/lod/m249"
+  },
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.75
+  },
+  "shell": {
+    "initial_velocity": [3, -0.5, 0.25],
+    "random_velocity": [3, 0.5, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -3000, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:m249/m249_shoot",
+    "shoot_3p": "tacz:m249/m249_shoot_3p",
+    "reload_empty": "tacz:m249/m249_reload_empty",
+    "reload_tactical": "tacz:m249/m249_reload_tactical",
+    "inspect": "tacz:m249/m249_inspect",
+    "inspect_empty": "tacz:m249/m249_inspect_empty",
+    "draw": "tacz:m249/m249_draw",
+    "put_away": "tacz:m249/m249_put_away",
+    "silence": "tacz:m249/m249_silence",
+    "silence_3p": "tacz:m249/m249_silence_3p",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  "offhand_show": {
+    "pos": [0, 18, 5],
+    "rotate": [-20, 0, 30],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-4, 24, 4],
+      "rotate": [-90, -5, -90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

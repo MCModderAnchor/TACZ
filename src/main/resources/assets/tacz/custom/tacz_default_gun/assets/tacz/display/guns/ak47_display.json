@@ -1,0 +1,179 @@
+{
+  // 默认的模型，在包目录下的 models 文件夹中寻找，不可为空
+  "model": "tacz:gun/ak47_geo",
+  // 默认材质，不可为空
+  "texture": "tacz:gun/uv/ak47",
+  // 低模
+  "lod": {
+    "model": "tacz:gun/lod/ak47",
+    "texture": "tacz:gun/lod/ak47"
+  },
+  // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空，若为空，则对应位置不会渲染
+  "hud": "tacz:gun/hud/ak47",
+  // GUI/HUD 界面的 2D 材质，在包目录下的 textures 文件夹中寻找，可为空
+  // 若为空，则对应位置渲染改为：上述 hud + 代码着成红色
+  // "hud_empty": "tacz:gun/hud/ak47_empty",
+  // 背包/快捷栏等容器中槽位显示的 2D 材质，在包目录下的 textures 文件夹中寻找，不建议为空
+  "slot": "tacz:gun/slot/ak47",
+  // 弹药计量样式，可选值：”normal“(显示实际值)、”percent“(显示百分比)，默认为”normal“
+  "ammo_count_style": "normal",
+  // tooltip的伤害显示样式，可选值：”total“(总伤害)、”per_projectile“(单发弹丸伤害x弹丸数量)，默认为”per_projectile“
+  "damage_style": "per_projectile",
+  // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空
+  "animation": "tacz:ak47",
+  // 状态机脚本，位于 assets/{命名空间}/scripts
+  "state_machine": "tacz:default_state_machine",
+  // 指定使用缺省动画，可为空。如果上文指定的动画文件里缺少某个动画，如 draw 动画，则会从缺省动画拷贝。
+  // 值可为 rifle、pistol
+  "use_default_animation": "rifle",
+  // 第三人称动画，硬编码，只能选择已有类型，默认只有 default
+  "third_person_animation": "default",
+  // 第三人称动画，安装 player animator 模组后才会显示
+  "player_animator_3rd": "tacz:rifle_default.player_animation",
+  // 显示准星，默认情况下瞄准会隐藏准星，将其设置为 true 则不会
+  "show_crosshair": false,
+  // 调整各个视角下模型的变换参数，可为空
+  "transform": {
+    // 暂时只有缩放需要在这里指定，旋转和位移使用模型内定位组。
+    // 可以为空，若为空，则不缩放模型。
+    "scale": {
+      // 第三人称手部
+      "thirdperson": [0.6, 0.6, 0.6],
+      // 地面实体
+      "ground": [0.6, 0.6, 0.6],
+      // 展示框
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.75
+  },
+  // 机瞄的放大倍数，默认 1.2
+  "iron_zoom": 1.33,
+  // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
+  "zoom_model_fov": 45,
+  // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
+  "shell": {
+    // 抛壳的初速度
+    "initial_velocity": [5, 2, 1],
+    // 抛壳随机变化的运动速度
+    "random_velocity": [1, 1, 0.25],
+    // 抛壳的加速度
+    "acceleration": [0.0, -10, 0.0],
+    // 抛壳的三轴角速度
+    "angular_velocity": [360, -1200, 90],
+    // 抛壳渲染存活时间，单位为秒
+    "living_time": 1.0
+  },
+  // 子弹相关渲染参数。ammo display 里也有，但是会被这里的参数覆盖掉
+  "ammo": {
+    // 曳光弹颜色，没有则为 #FFFFFF，没有此字段时，会调用 ammo 的相关字段
+    // 严格遵循 RGB 颜色代码
+    "tracer_color": "#FF8888"
+    // 粒子效果，部分参数和原版指令完全一致，具体可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E5%91%BD%E4%BB%A4/particle
+    // 没有此字段时，会调用 ammo 的相关字段
+    //    "particle": {
+    //      // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
+    //      "name": "campfire_signal_smoke",
+    //      // 生成的区域，默认为 0 0 0
+    //      "delta": [
+    //        0,
+    //        0,
+    //        0
+    //      ],
+    //      // 速度，默认为0，必须至少为 0
+    //      "speed": 0,
+    //      // 粒子存在时间，单位 tick，默认为 20 tick
+    //      "life_time": 50,
+    //      // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
+    //      "count": 5
+    //    }
+  },
+  // 枪械音效，在包目录下 sounds 文件夹内寻找，不建议为空
+  "sounds": {
+    "shoot": "tacz:ak47/ak47_shoot",
+    "shoot_3p": "tacz:ak47/ak47_shoot_3p",
+    "reload_empty": "tacz:ak47/ak47_reload_empty",
+    "reload_tactical": "tacz:ak47/ak47_reload_tactical",
+    "inspect": "tacz:ak47/ak47_inspect",
+    "inspect_empty": "tacz:ak47/ak47_inspect_empty",
+    "draw": "tacz:ak47/ak47_draw",
+    "put_away": "tacz:ak47/ak47_put_away",
+    "silence": "tacz:ak47/ak47_silence",
+    "silence_3p": "tacz:ak47/ak47_silence_3p",
+    // 下面四个音效可以不写，模组会自动添加默认音效
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill",
+    // 近战音效，默认就会添加
+    "melee_bayonet": "tacz:melee_bayonet/melee_bayonet_01",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_02"
+  },
+  // 副手枪械显示
+  "offhand_show": {
+    // 位置，和基岩版的数值显示一致
+    // 默认是 [-2, 20, 3.5]
+    "pos": [1, 20, 3.5],
+    // 旋转，单位为角度，默认就是 [0, 0, -30]
+    "rotate": [0, 0, 60],
+    // 缩放，默认就是 [0.6, 0.6, 0.6]
+    "scale": [0.5, 0.5, 0.5]
+  },
+  // 快捷栏枪械显示
+  // 没有此字段，不显示快捷栏枪械
+  "hotbar_show": {
+    // 快捷栏索引，默认是 0-8，共九个，但是实际上除去主手，只能显示八个
+    // 没有的，则不会显示
+    "0": {
+      "pos": [-1, 20, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  },
+  // 枪械模型上的文本显示
+  "text_show": {
+    // 作用的组名，该组的旋转点决定文本的位置和朝向
+    "ammo_count_text_show_pos": {
+      // 文本缩放，默认大小对于 BlockBench 里的 1
+      "scale": 1,
+      // 对齐方式：right，center，left
+      "align": "center",
+      // 阴影
+      "shadow": false,
+      // 文本颜色
+      "color": "#FFFFFF",
+      // 亮度：1-15
+      "light": 15,
+      // 本地化，且支持PlaceholderAPI 风格的占位符
+      // 目前仅支持两个：%player_name% %ammo_count%
+      "text": "text_show.tacz.ak47.ammo_count"
+    }
+  },
+  // controllable 模组支持，用于调节手柄的震动强度
+  "controllable": {
+    // 开火模式
+    "semi": {
+      // 低频马达，也就是手柄左侧那个马达，个头较小
+      // 范围 0-1，1 震动最大
+      "low_frequency": 0.25,
+      // 高频马达，也就是手柄右侧那个马达，个头较大
+      "high_frequency": 0.5,
+      // 震动时长，单位 ms
+      "time": 100
+    },
+    "auto": {
+      "low_frequency": 0.15,
+      "high_frequency": 0.25,
+      "time": 80
+    },
+    "burst": {
+      "low_frequency": 0.25,
+      "high_frequency": 0.5,
+      "time": 100
+    }
+  }
+}

@@ -7,12 +7,12 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
-import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.model.SlotModel;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
+import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.pojo.display.gun.MuzzleFlash;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
@@ -52,18 +52,16 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
         muzzleFlashRandomRotate = (float) (Math.random() * 360);
     }
 
-    private static void renderMuzzleFlash(ResourceLocation gunId, PoseStack poseStack, BedrockModel bedrockModel, long time) {
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            MuzzleFlash muzzleFlash = gunIndex.getMuzzleFlash();
-            if (muzzleFlash == null) {
-                return;
-            }
-            if (muzzleFlashStartMark) {
-                muzzleFlashNormal = poseStack.last().normal().copy();
-                muzzleFlashPose = poseStack.last().pose().copy();
-            }
-            bedrockModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) -> doRender(light, overlay, muzzleFlash, time));
-        });
+    private static void renderMuzzleFlash(GunDisplayInstance display, PoseStack poseStack, BedrockModel bedrockModel, long time) {
+        MuzzleFlash muzzleFlash = display.getMuzzleFlash();
+        if (muzzleFlash == null) {
+            return;
+        }
+        if (muzzleFlashStartMark) {
+            muzzleFlashNormal = new Matrix3f(poseStack.last().normal());
+            muzzleFlashPose = new Matrix4f(poseStack.last().pose());
+        }
+        bedrockModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) -> doRender(light, overlay, muzzleFlash, time));
     }
 
     private static void doRender(int light, int overlay, MuzzleFlash muzzleFlash, long time) {
@@ -117,27 +115,25 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
             return;
         }
         ItemStack currentGunItem = bedrockGunModel.getCurrentGunItem();
-        IGun iGun = IGun.getIGunOrNull(currentGunItem);
-        if (iGun == null) {
-            return;
-        }
-        ResourceLocation gunId = iGun.getGunId(currentGunItem);
-        ItemStack muzzleAttachment = bedrockGunModel.getCurrentAttachmentItem().get(AttachmentType.MUZZLE);
-        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(muzzleAttachment);
-        if (iAttachment != null) {
-            ResourceLocation attachmentId = iAttachment.getAttachmentId(muzzleAttachment);
-            TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> {
-                var modifier = index.getData().getModifier();
-                if (modifier.containsKey(SilenceModifier.ID) && modifier.get(SilenceModifier.ID).getValue() instanceof Pair<?, ?> pair) {
-                    // 如果安装了消音器，则不渲染枪口火光
-                    if (((Pair<Integer, Boolean>) pair).right()) {
-                        return;
+
+        TimelessAPI.getGunDisplay(currentGunItem).ifPresent(display -> {
+            ItemStack muzzleAttachment = bedrockGunModel.getCurrentAttachmentItem().get(AttachmentType.MUZZLE);
+            IAttachment iAttachment = IAttachment.getIAttachmentOrNull(muzzleAttachment);
+            if (iAttachment != null) {
+                ResourceLocation attachmentId = iAttachment.getAttachmentId(muzzleAttachment);
+                TimelessAPI.getCommonAttachmentIndex(attachmentId).ifPresent(index -> {
+                    var modifier = index.getData().getModifier();
+                    if (modifier.containsKey(SilenceModifier.ID) && modifier.get(SilenceModifier.ID).getValue() instanceof Pair<?, ?> pair) {
+                        // 如果安装了消音器，则不渲染枪口火光
+                        if (((Pair<Integer, Boolean>) pair).right()) {
+                            return;
+                        }
                     }
-                }
-                renderMuzzleFlash(gunId, poseStack, bedrockGunModel, time);
-            });
-        } else {
-            renderMuzzleFlash(gunId, poseStack, bedrockGunModel, time);
-        }
+                    renderMuzzleFlash(display, poseStack, bedrockGunModel, time);
+                });
+            } else {
+                renderMuzzleFlash(display, poseStack, bedrockGunModel, time);
+            }
+        });
     }
 }

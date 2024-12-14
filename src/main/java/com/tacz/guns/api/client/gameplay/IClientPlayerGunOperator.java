@@ -1,6 +1,7 @@
 package com.tacz.guns.api.client.gameplay;
 
 import com.tacz.guns.api.entity.ShootResult;
+import com.tacz.guns.client.gameplay.LocalPlayerDataHolder;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -75,6 +76,8 @@ public interface IClientPlayerGunOperator {
      * 是否爬行
      */
     boolean isCrawl();
+
+    LocalPlayerDataHolder getDataHolder();
 
     /**
      * 客户端瞄准进度

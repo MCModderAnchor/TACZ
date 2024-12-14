@@ -1,11 +1,8 @@
 package com.tacz.guns.event;
 
-import com.tacz.guns.client.download.ClientGunPackDownloadManager;
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import com.tacz.guns.config.util.InteractKeyConfigRead;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
@@ -34,7 +31,7 @@ public class LoadingConfigEvent {
         if (CONFIG_NAME.equals(fileName)) {
             HeadShotAABBConfigRead.init();
             InteractKeyConfigRead.init();
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientGunPackDownloadManager::downloadClientGunPack);
+//            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientGunPackDownloadManager::downloadClientGunPack);
         }
     }
 }

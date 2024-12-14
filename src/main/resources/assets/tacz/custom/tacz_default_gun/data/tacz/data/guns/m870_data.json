@@ -1,0 +1,115 @@
+{
+  "ammo": "tacz:12g",
+  "ammo_amount": 5,
+  "extended_mag_ammo_amount": [
+    6,
+    7,
+    8
+  ],
+  "bolt": "manual_action",
+  "rpm": 180,
+  "bullet": {
+    "life": 0.6,
+    "bullet_amount": 9,
+    "damage": 36,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.25,
+      "head_shot_multiplier": 1.33,
+      "damage_adjust": [
+        {"distance": 18, "damage": 36},
+        {"distance": 32, "damage": 27},
+        {"distance": "infinite", "damage": 18}
+      ]
+    },
+    "speed": 150,
+    "gravity": 0.15,
+    "knockback": 0.15,
+    "friction": 0.05,
+    "ignite": false,
+    "pierce": 1
+  },
+  "reload": {
+    "type": "magazine",
+    // 在 m870 的脚本逻辑中：
+    // feed.empty 表示 reload_intro_empty 的时长
+    // feed.tactical 表示 reload_intro 的时长
+    // cooldown.empty 表示 reload_loop 的时长
+    // cooldown.tactical 表示 reload_end 的时长
+    // M870读取的是Script中的内容，reload弃用
+    "feed": {
+      "empty": 2.13,
+      "tactical": 0.67
+    },
+    "cooldown": {
+      "empty": 0.67,
+      "tactical": 0.23
+    }
+  },
+  "draw_time": 0.25,
+  "put_away_time": 0.45,
+  // 这里的 bolt_action_time 没作用，因为脚本里重写了 bolt 方法作为示范。请用底下 script_param 中的 bolt_time 和 bolt_feed_time。
+  //"bolt_action_time": 0.55,
+  //"bolt_feed_time": 0.3,
+  "aim_time": 0.15,
+  "sprint_time": 0.13,
+  "weight": 3.2,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.2,
+    "reload": 0
+  },
+  "fire_mode": [
+    "semi"
+  ],
+ "recoil": {
+    "pitch": [
+      {"time": 0, "value": [5.5, 5.5]},
+      {"time": 0.1, "value": [4.5, 4.5]},
+      {"time": 0.13, "value": [5, 5]},
+      {"time": 0.4, "value": [-0.5, -0.5]},
+      {"time": 0.53, "value": [0.25, 0.25]},
+      {"time": 0.65, "value": [0, 0]},
+      {"time": 0.7, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-1.75, -1.75]},
+      {"time": 0.1, "value": [-1.5, -1.5]},
+      {"time": 0.5, "value": [0.15, 0.15]},
+      {"time": 0.65, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 3.65,
+    "move": 3.7,
+    "sneak": 3.65,
+    "lie": 3.65,
+    "aim": 3.5
+  },
+  "melee": {
+    "distance": 1.25,
+    "cooldown": 0.7,
+    "default": {
+      "animation_type": "melee_stock",
+      "distance": 1,
+      "range_angle": 30,
+      "damage": 2,
+      "knockback": 0.6,
+      "prep": 0.1
+    }
+  },
+  "script": "tacz:m870_gun_logic",
+  "script_param": {
+    "bolt_time": 0.55,
+    "bolt_feed_time": 0.3,
+    "intro_empty": 2.13,
+    "intro": 0.23,
+    "loop": 0.67,
+    "ending": 0.17,
+    "intro_empty_feed": 1.35,
+    "loop_feed": 0.25
+  },
+  "allow_attachment_types": [
+    "extended_mag"
+  ]
+}

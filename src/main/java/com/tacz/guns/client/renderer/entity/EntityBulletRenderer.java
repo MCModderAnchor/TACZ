@@ -5,8 +5,8 @@ import com.mojang.math.Vector3f;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
+import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.InternalAssetLoader;
-import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.entity.EntityKineticBullet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -40,11 +40,12 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
     @Override
     public void render(EntityKineticBullet bullet, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         ResourceLocation gunId = bullet.getGunId();
-        Optional<ClientGunIndex> optionalClientGunIndex = TimelessAPI.getClientGunIndex(gunId);
-        if (optionalClientGunIndex.isEmpty()) {
+        ResourceLocation gunDisplayId = bullet.getGunDisplayId();
+        Optional<GunDisplayInstance> display = TimelessAPI.getGunDisplay(gunDisplayId, gunId);
+        if (display.isEmpty()) {
             return;
         }
-        float @Nullable [] tracerColor = bullet.getTracerColorOverride().orElseGet(optionalClientGunIndex.get()::getTracerColor);
+        float @Nullable [] tracerColor = bullet.getTracerColorOverride().orElse(display.get().getTracerColor());
         ResourceLocation ammoId = bullet.getAmmoId();
         TimelessAPI.getClientAmmoIndex(ammoId).ifPresent(ammoIndex -> {
             BedrockAmmoModel ammoEntityModel = ammoIndex.getAmmoEntityModel();

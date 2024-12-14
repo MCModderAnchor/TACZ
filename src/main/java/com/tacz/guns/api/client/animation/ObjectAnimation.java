@@ -1,7 +1,5 @@
 package com.tacz.guns.api.client.animation;
 
-import net.minecraft.client.Minecraft;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
@@ -99,15 +97,11 @@ public class ObjectAnimation {
     /**
      * 触发所有监听器，通知它们更新相关数值
      */
-    public void update(boolean blend, float fromTimeNs, float toTimeNs) {
+    public void update(boolean blend, float timeNs) {
         for (List<ObjectAnimationChannel> channels : channels.values()) {
             for (ObjectAnimationChannel channel : channels) {
-                channel.update(fromTimeNs / 1e9f, blend);
+                channel.update(timeNs / 1e9f, blend);
             }
-        }
-        if (Minecraft.getInstance().player != null && soundChannel != null) {
-            // 现在动画仅第一人称使用，暂时这么填，应急。
-            soundChannel.playSound(fromTimeNs / 1e9, toTimeNs / 1e9, Minecraft.getInstance().player, 16, 1, 1);
         }
     }
 

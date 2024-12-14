@@ -34,7 +34,7 @@ public class PlayerAnimatorLoader {
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
                 ResourceLocation registryName = new ResourceLocation(namespace, path);
-                PlayerAnimatorAssetManager.INSTANCE.putAnimation(registryName, stream);
+                PlayerAnimatorAssetManager.get().putAnimation(registryName, stream);
                 return true;
             } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                 GunMod.LOGGER.warn(MARKER, "Failed to read player animator file: {}, entry: {}", zipFile, entry);
@@ -49,7 +49,7 @@ public class PlayerAnimatorLoader {
         if (Files.isDirectory(playerAnimatorPath)) {
             TacPathVisitor visitor = new TacPathVisitor(playerAnimatorPath.toFile(), root.getName(), ".json", (id, file) -> {
                 try (InputStream stream = Files.newInputStream(file)) {
-                    PlayerAnimatorAssetManager.INSTANCE.putAnimation(id, stream);
+                    PlayerAnimatorAssetManager.get().putAnimation(id, stream);
                 } catch (IOException | JsonSyntaxException | JsonIOException exception) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read player animator file: {}", file);
                     exception.printStackTrace();

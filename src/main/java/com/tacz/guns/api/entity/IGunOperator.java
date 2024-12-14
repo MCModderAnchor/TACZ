@@ -1,5 +1,6 @@
 package com.tacz.guns.api.entity;
 
+import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +34,7 @@ public interface IGunOperator {
     /**
      * 获取从服务端同步的手动换弹的冷却
      */
-    long getSynBoltCoolDown();
+    boolean getSynIsBolting();
 
     /**
      * 获取从服务端同步的换弹状态
@@ -79,6 +80,11 @@ public interface IGunOperator {
     void reload();
 
     /**
+     * 服务端取消换弹逻辑
+     */
+    void cancelReload();
+
+    /**
      * 服务端切换开火模式的逻辑
      */
     void fireSelect();
@@ -103,6 +109,16 @@ public interface IGunOperator {
     ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw);
 
     /**
+     * 从实体的位置，向指定的方向开枪。计算冷却的时候使用指定的 timestamp
+     *
+     * @param pitch 开火方向的俯仰角(即 xRot )
+     * @param yaw   开火方向的偏航角(即 yRot )
+     * @param timestamp 指定的时间戳，为偏移时间戳（相对于 base timestamp 的时间戳）
+     * @return 本次射击的结果
+     */
+    ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp);
+
+    /**
      * 服务端，该操作者是否受弹药数影响
      *
      * @return 如果为 false，那么开火时不会检查弹药，无论是玩家背包内还是枪械内的
@@ -115,6 +131,14 @@ public interface IGunOperator {
      * @return 如果为 false，那么开火不会消耗枪械弹药
      */
     boolean consumesAmmoOrNot();
+
+    /**
+     * 根据情况返回玩家应当处于的冲刺状态，在玩家切换冲刺状态的时候调用。
+     * 这里的逻辑应该严格与客户端端对应，如果不对应，会出现客户端表现和服务端不符的情况。
+     * （例如客户端的视觉效果是玩家在冲刺，而服务端玩家实际上没有冲刺）
+     * @see com.tacz.guns.client.gameplay.LocalPlayerSprint#getProcessedSprintStatus
+     */
+    boolean getProcessedSprintStatus(boolean sprint);
 
     /**
      * 服务端，应用瞄准的逻辑
@@ -144,4 +168,13 @@ public interface IGunOperator {
      */
     @Nullable
     AttachmentCacheProperty getCacheProperty();
+
+    ShooterDataHolder getDataHolder();
+
+    /**
+     * 曳光弹计数器自增 1，并根据传入的曳光弹间隔计算当前子弹是否为曳光弹。
+     * @param tracerCountInterval 曳光弹间隔
+     * @return 是否为曳光弹
+     */
+    boolean nextBulletIsTracer(int tracerCountInterval);
 }

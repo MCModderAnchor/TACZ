@@ -7,8 +7,8 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.api.item.gun.FireMode;
+import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
-import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -30,6 +30,8 @@ public interface GunItemDataAccessor extends IGun {
     String GUN_DUMMY_AMMO = "DummyAmmo";
     String GUN_MAX_DUMMY_AMMO = "MaxDummyAmmo";
     String GUN_ATTACHMENT_LOCK = "AttachmentLock";
+
+    String GUN_DISPLAY_ID_TAG = "GunDisplayId";
 
     @Override
     default boolean useDummyAmmo(ItemStack gun) {
@@ -112,6 +114,25 @@ public interface GunItemDataAccessor extends IGun {
         CompoundTag nbt = gun.getOrCreateTag();
         if (gunId != null) {
             nbt.putString(GUN_ID_TAG, gunId.toString());
+        }
+    }
+
+    @Override
+    @NotNull
+    default ResourceLocation getGunDisplayId(ItemStack gun) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (nbt.contains(GUN_DISPLAY_ID_TAG, Tag.TAG_STRING)) {
+            ResourceLocation gunDisplayId = ResourceLocation.tryParse(nbt.getString(GUN_DISPLAY_ID_TAG));
+            return Objects.requireNonNullElse(gunDisplayId, DefaultAssets.DEFAULT_GUN_DISPLAY_ID);
+        }
+        return DefaultAssets.DEFAULT_GUN_DISPLAY_ID;
+    }
+
+    @Override
+    default void setGunDisplayId(ItemStack gun, ResourceLocation displayId) {
+        CompoundTag nbt = gun.getOrCreateTag();
+        if (displayId != null) {
+            nbt.putString(GUN_DISPLAY_ID_TAG, displayId.toString());
         }
     }
 
@@ -314,8 +335,7 @@ public interface GunItemDataAccessor extends IGun {
                 zoom = zooms[zoomNumber % zooms.length];
             }
         } else {
-            ResourceLocation gunId = this.getGunId(gunItem);
-            zoom = TimelessAPI.getClientGunIndex(gunId).map(ClientGunIndex::getIronZoom).orElse(1f);
+            zoom = TimelessAPI.getGunDisplay(gunItem).map(GunDisplayInstance::getIronZoom).orElse(1f);
         }
         return zoom;
     }

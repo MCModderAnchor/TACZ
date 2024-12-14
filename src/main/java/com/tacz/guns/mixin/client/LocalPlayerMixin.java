@@ -27,10 +27,12 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     private final @Unique LocalPlayerInspect tac$inspect = new LocalPlayerInspect(tac$data, tac$player);
     private final @Unique LocalPlayerReload tac$reload = new LocalPlayerReload(tac$data, tac$player);
     private final @Unique LocalPlayerShoot tac$shoot = new LocalPlayerShoot(tac$data, tac$player);
+    private final @Unique LocalPlayerSprint tac$sprint = new LocalPlayerSprint(tac$data, tac$player);
 
     @Unique
     @Override
     public ShootResult shoot() {
+        tac$reload.cancelReload();
         return tac$shoot.shoot();
     }
 
@@ -79,6 +81,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     }
 
     @Override
+    public LocalPlayerDataHolder getDataHolder() {
+        return tac$data;
+    }
+
+    @Override
     public void crawl(boolean isCrawl) {
         tac$crawl.crawl(isCrawl);
     }
@@ -103,12 +110,16 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
             tac$crawl.tickCrawl();
             tac$data.tickStateLock();
             tac$bolt.tickAutoBolt();
+            player.setSprinting(tac$sprint.getProcessedSprintStatus(player.isSprinting()));
         }
     }
 
     @WrapOperation(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setSprinting(Z)V"))
     public void swapSprintStatus(LocalPlayer player, boolean sprinting, Operation<Void> original) {
-        original.call(player, this.tac$aim.cancelSprint(player, sprinting));
+        if (sprinting) { // 用原始的输入尝试打断换弹
+            tac$reload.cancelReload();
+        }
+        original.call(player, tac$sprint.getProcessedSprintStatus(sprinting));
     }
 
     @Inject(method = "respawn", at = @At("RETURN"))

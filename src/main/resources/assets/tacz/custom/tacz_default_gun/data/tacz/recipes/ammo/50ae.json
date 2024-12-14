@@ -1,0 +1,28 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "forge:ingots/copper"
+      },
+      "count": 30
+    },
+    {
+      "item": {
+        "tag": "forge:gunpowder"
+      },
+      "count": 7
+    },
+    {
+      "item": {
+        "tag": "forge:gems/lapis"
+      },
+      "count": 5
+    }
+  ],
+  "result": {
+    "type": "ammo",
+    "id": "tacz:50ae",
+    "count": 36
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

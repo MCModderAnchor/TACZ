@@ -2,12 +2,13 @@ package com.tacz.guns.client.resource.pojo.display.attachment;
 
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
+import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class AttachmentDisplay {
+public class AttachmentDisplay implements IDisplay {
     @SerializedName("slot")
     private ResourceLocation slotTextureLocation;
 
@@ -89,5 +90,18 @@ public class AttachmentDisplay {
 
     public Map<String, ResourceLocation> getSounds() {
         return sounds;
+    }
+
+    @Override
+    public void init() {
+        if (slotTextureLocation != null) {
+            slotTextureLocation = converter.idToFile(slotTextureLocation);
+        }
+        if (texture != null) {
+            texture = converter.idToFile(texture);
+        }
+        if (attachmentLod != null && attachmentLod.modelTexture != null) {
+            attachmentLod.modelTexture = converter.idToFile(attachmentLod.modelTexture);
+        }
     }
 }

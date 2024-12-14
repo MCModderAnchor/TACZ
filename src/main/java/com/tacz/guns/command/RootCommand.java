@@ -18,6 +18,7 @@ public class RootCommand {
         root.then(OverwriteCommand.get());
         root.then(ReloadCommand.get());
         root.then(HideTooltipPartCommand.get());
+        root.then(ConvertCommand.get());
         dispatcher.register(root);
     }
 }

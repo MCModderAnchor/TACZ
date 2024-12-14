@@ -1,0 +1,63 @@
+{
+  "model": "tacz:gun/m107_geo",
+  "texture": "tacz:gun/uv/m107",
+  "lod": {
+    "model": "tacz:gun/lod/m107",
+    "texture": "tacz:gun/lod/m107"
+  },
+  "hud": "tacz:gun/hud/m107",
+  "slot": "tacz:gun/slot/m107",
+  "animation": "tacz:m107",
+  "use_default_animation": "rifle",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 2
+  },
+  // 机瞄的放大倍数，默认 1.2
+  "iron_zoom": 1.5,
+  // 机瞄模型缩放fov，默认70
+  "zoom_model_fov": 60,
+  "shell": {
+    "initial_velocity": [6.5, 1, -2.5],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [240, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:m107/m107_shoot",
+    "shoot_3p": "tacz:m107/m107_shoot_3p",
+    "silence": "tacz:m107/m107_silence",
+    "silence_3p": "tacz:m107/m107_silence_3p",
+    "draw": "tacz:m107/m107_draw",
+    "put_away": "tacz:m107/m107_put_away",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  "offhand_show": {
+    "pos": [0, 20, 4],
+    "rotate": [0, 0, 30],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-4, 24, 3],
+      "rotate": [-90, -5, -90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  },
+  "controllable": {
+    "semi": {
+      "low_frequency": 1,
+      "high_frequency": 1,
+      "time": 200
+    }
+  }
+}

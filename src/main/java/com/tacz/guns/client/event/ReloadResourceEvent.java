@@ -1,6 +1,5 @@
 package com.tacz.guns.client.event;
 
-import com.tacz.guns.client.resource.ClientReloadManager;
 import com.tacz.guns.client.resource.InternalAssetLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,7 +16,7 @@ public class ReloadResourceEvent {
         if (BLOCK_ATLAS_TEXTURE.equals(event.getAtlas().location())) {
             // InternalAssetLoader 需要加载一些默认的动画、模型，需要先于枪包加载。
             InternalAssetLoader.onResourceReload();
-            ClientReloadManager.reloadAllPack();
+//            ClientReloadManager.reloadAllPack();
         }
     }
 }

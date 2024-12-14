@@ -1,14 +1,17 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.client.animation.statemachine.AnimationStateMachine;
+import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
+import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
+import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerBoltGun;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class LocalPlayerBolt {
@@ -32,10 +35,14 @@ public class LocalPlayerBolt {
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
             return;
         }
-        ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+        GunData gunData = TimelessAPI.getClientGunIndex(iGun.getGunId(mainhandItem)).map(ClientGunIndex::getGunData).orElse(null);
+        if (gunData == null) {
+            return;
+        }
+
+        TimelessAPI.getGunDisplay(mainhandItem).ifPresent(display -> {
             // 检查 bolt 类型是否是 manual action
-            Bolt boltType = gunIndex.getGunData().getBolt();
+            Bolt boltType = gunData.getBolt();
             if (boltType != Bolt.MANUAL_ACTION) {
                 return;
             }
@@ -48,15 +55,15 @@ public class LocalPlayerBolt {
                 return;
             }
             // 锁上状态锁
-            data.lockState(operator -> operator.getSynBoltCoolDown() >= 0);
+            data.lockState(IGunOperator::getSynIsBolting);
             data.isBolting = true;
             // 发包通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerBoltGun());
             // 播放动画和音效
-            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            AnimationStateMachine<?> animationStateMachine = display.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                SoundPlayManager.playBoltSound(player, gunIndex);
-                animationStateMachine.onGunBolt();
+                SoundPlayManager.playBoltSound(player, display);
+                animationStateMachine.trigger(GunAnimationConstant.INPUT_BOLT);
             }
         });
     }

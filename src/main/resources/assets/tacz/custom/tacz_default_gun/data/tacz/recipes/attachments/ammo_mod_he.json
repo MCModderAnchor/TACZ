@@ -1,0 +1,20 @@
+{
+  "materials": [
+    {
+      "item": {
+        "item": "minecraft:crying_obsidian"
+      },
+      "count": 3
+    },
+    {
+      "item": {
+        "item": "minecraft:end_crystal"
+      }
+    }
+  ],
+  "result": {
+    "type": "attachment",
+    "id": "tacz:ammo_mod_he"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

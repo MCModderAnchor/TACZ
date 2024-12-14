@@ -1,0 +1,71 @@
+{
+  "model": "tacz:gun/m870_geo",
+  "texture": "tacz:gun/uv/m870",
+  "lod": {
+    "model": "tacz:gun/lod/m870",
+    "texture": "tacz:gun/lod/m870"
+  },
+  "hud": "tacz:gun/hud/m870",
+  "slot": "tacz:gun/slot/m870",
+  "ammo_count_style": "normal",
+  "damage_style": "total",
+  "animation": "tacz:m870",
+  "state_machine": "tacz:m870_state_machine",
+  "state_machine_param": {
+    "bolt_shell_ejecting_time": 0.17,
+    "intro_shell_ejecting_time": 0.4
+  },
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "player_animator_3rd": "tacz:rifle_default.player_animation",
+  "show_crosshair": false,
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1.2
+  },
+  "iron_zoom": 1.2,
+  "shell": {
+    "initial_velocity": [5, 0.5, 1],
+    "random_velocity": [1, 0.5, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -960, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "draw": "tacz:m870/m870_draw",
+    "shoot": "tacz:m870/m870_shoot",
+    "shoot_3p": "tacz:m870/m870_shoot_3p",
+    "silence": "tacz:m870/m870_silence",
+    "silence_3p": "tacz:m870/m870_silence_3p",
+    "put_away": "tacz:m870/m870_put_away",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  // 副手枪械显示
+  "offhand_show": {
+    "pos": [1, 20, 3.5],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-1, 20, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  },
+  "controllable": {
+    "semi": {
+      "low_frequency": 0.25,
+      "high_frequency": 0.5,
+      "time": 100
+    }
+  }
+}

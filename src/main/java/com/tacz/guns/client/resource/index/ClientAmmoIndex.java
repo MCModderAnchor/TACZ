@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.tacz.guns.client.model.BedrockAmmoModel;
-import com.tacz.guns.client.resource.ClientAssetManager;
+import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.display.ammo.*;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
@@ -70,7 +70,7 @@ public class ClientAmmoIndex {
         ResourceLocation pojoDisplay = ammoIndexPOJO.getDisplay();
         Preconditions.checkArgument(pojoDisplay != null, "index object missing display field");
 
-        AmmoDisplay display = ClientAssetManager.INSTANCE.getAmmoDisplay(pojoDisplay);
+        AmmoDisplay display = ClientAssetsManager.INSTANCE.getAmmoDisplay(pojoDisplay);
         Preconditions.checkArgument(display != null, "there is no corresponding display file");
         return display;
     }
@@ -81,7 +81,7 @@ public class ClientAmmoIndex {
         if (modelLocation == null) {
             return;
         }
-        BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(modelLocation);
+        BedrockModelPOJO modelPOJO = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(modelLocation);
         Preconditions.checkArgument(modelPOJO != null, "there is no corresponding model file");
         // 检查材质
         index.modelTextureLocation = display.getModelTexture();
@@ -105,7 +105,7 @@ public class ClientAmmoIndex {
         if (ammoEntity != null && ammoEntity.getModelLocation() != null && ammoEntity.getModelTexture() != null) {
             index.ammoEntityTextureLocation = ammoEntity.getModelTexture();
             ResourceLocation modelLocation = ammoEntity.getModelLocation();
-            BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(modelLocation);
+            BedrockModelPOJO modelPOJO = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(modelLocation);
             if (modelPOJO == null) {
                 return;
             }
@@ -125,7 +125,7 @@ public class ClientAmmoIndex {
         if (shellDisplay != null && shellDisplay.getModelLocation() != null && shellDisplay.getModelTexture() != null) {
             index.shellTextureLocation = shellDisplay.getModelTexture();
             ResourceLocation modelLocation = shellDisplay.getModelLocation();
-            BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(modelLocation);
+            BedrockModelPOJO modelPOJO = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(modelLocation);
             if (modelPOJO == null) {
                 return;
             }

@@ -2,7 +2,7 @@ package com.tacz.guns.resource.index;
 
 import com.google.common.base.Preconditions;
 import com.tacz.guns.api.item.attachment.AttachmentType;
-import com.tacz.guns.resource.CommonAssetManager;
+import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.resources.ResourceLocation;
@@ -15,11 +15,11 @@ public class CommonAttachmentIndex {
     private CommonAttachmentIndex() {
     }
 
-    public static CommonAttachmentIndex getInstance(ResourceLocation id, AttachmentIndexPOJO attachmentIndexPOJO) throws IllegalArgumentException {
+    public static CommonAttachmentIndex getInstance(AttachmentIndexPOJO attachmentIndexPOJO) throws IllegalArgumentException {
         CommonAttachmentIndex index = new CommonAttachmentIndex();
         index.pojo = attachmentIndexPOJO;
         checkIndex(attachmentIndexPOJO, index);
-        checkData(id, attachmentIndexPOJO, index);
+        checkData(attachmentIndexPOJO, index);
         return index;
     }
 
@@ -29,10 +29,10 @@ public class CommonAttachmentIndex {
         index.type = attachmentIndexPOJO.getType();
     }
 
-    private static void checkData(ResourceLocation id, AttachmentIndexPOJO attachmentIndexPOJO, CommonAttachmentIndex index) {
+    private static void checkData(AttachmentIndexPOJO attachmentIndexPOJO, CommonAttachmentIndex index) {
         ResourceLocation pojoData = attachmentIndexPOJO.getData();
         Preconditions.checkArgument(pojoData != null, "index object missing pojoData field");
-        AttachmentData data = CommonAssetManager.INSTANCE.getAttachmentData(pojoData);
+        AttachmentData data = CommonAssetsManager.get().getAttachmentData(pojoData);
         Preconditions.checkArgument(data != null, "there is no corresponding data file");
         index.data = data;
     }

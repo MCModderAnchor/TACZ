@@ -21,7 +21,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 /**
  * Author: Forked from MrCrayfish, continued by Timeless devs
@@ -33,7 +40,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
     private int vOffset;
     private float textureDensity;
 
-    public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos, String ammoId, String gunId) {
+    public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos, String ammoId, String gunId, String gunDisplayId) {
         super(world, x, y, z);
         this.setSprite(this.getSprite(pos));
         this.direction = direction;
@@ -43,12 +50,11 @@ public class BulletHoleParticle extends TextureSheetParticle {
         this.gravity = 0.0F;
         this.quadSize = 0.05F;
 
-        // 如果方块是空气，则立即移除粒子
         BlockState state = world.getBlockState(pos);
-        if (world.getBlockState(pos).isAir() || state.is(ModBlocks.TARGET.get())) {
+        if (state.is(ModBlocks.TARGET.get()) || shouldRemove()) {
             this.remove();
         }
-        TimelessAPI.getClientGunIndex(new ResourceLocation(gunId)).ifPresent(gunIndex -> {
+        TimelessAPI.getGunDisplay(new ResourceLocation(gunDisplayId), new ResourceLocation(gunId)).ifPresent(gunIndex -> {
             float[] gunTracerColor = gunIndex.getTracerColor();
             if (gunTracerColor != null) {
                 this.rCol = gunTracerColor[0];
@@ -116,7 +122,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
     @Override
     public void tick() {
         super.tick();
-        if (this.level.getBlockState(this.pos).isAir()) {
+        if (shouldRemove()) {
             this.remove();
         }
     }
@@ -173,5 +179,36 @@ public class BulletHoleParticle extends TextureSheetParticle {
     @Override
     public ParticleRenderType getRenderType() {
         return ParticleRenderType.TERRAIN_SHEET;
+    }
+
+    private boolean shouldRemove() {
+        final BlockState blockState = this.level.getBlockState(this.pos);
+        if (blockState.isAir()) {
+            return true;
+        } else {
+            // 阻止弹孔在与方块不构成有效附着时继续渲染
+            VoxelShape shape = blockState.getCollisionShape(this.level, this.pos);
+            if (shape.isEmpty()) {
+                return true;
+            }
+            AABB baseBlockBoundingBox = shape.bounds();
+            AABB blockBoundingBox = baseBlockBoundingBox.move(this.pos);
+            boolean intersects = blockBoundingBox.intersects(
+                    this.x - 0.1, this.y - 0.1, this.z - 0.1,
+                    this.x + 0.1, this.y + 0.1, this.z + 0.1);
+            return !intersects;
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static class Provider implements ParticleProvider<BulletHoleOption> {
+        public Provider() {
+        }
+
+        @Override
+        public BulletHoleParticle createParticle(@NotNull BulletHoleOption option, @NotNull ClientLevel world, double x, double y, double z, double pXSpeed, double pYSpeed, double pZSpeed) {
+            BulletHoleParticle particle = new BulletHoleParticle(world, x, y, z, option.getDirection(), option.getPos(), option.getAmmoId(), option.getGunId(), option.getGunDisplayId());
+            return particle;
+        }
     }
 }

@@ -2,11 +2,12 @@ package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.animation.statemachine.GunAnimationStateMachine;
+import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
+import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.resource.pojo.data.gun.GunData;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class LocalPlayerInspect {
@@ -28,9 +29,12 @@ public class LocalPlayerInspect {
         if (data.clientStateLock) {
             return;
         }
-        ResourceLocation gunId = iGun.getGunId(mainhandItem);
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
-            Bolt boltType = gunIndex.getGunData().getBolt();
+        GunData gunData = TimelessAPI.getClientGunIndex(iGun.getGunId(mainhandItem)).map(ClientGunIndex::getGunData).orElse(null);
+        if (gunData == null) {
+            return;
+        }
+        TimelessAPI.getGunDisplay(mainhandItem).ifPresent(gunIndex -> {
+            Bolt boltType = gunData.getBolt();
             boolean noAmmo;
             if (boltType == Bolt.OPEN_BOLT) {
                 noAmmo = iGun.getCurrentAmmoCount(mainhandItem) <= 0;
@@ -40,9 +44,9 @@ public class LocalPlayerInspect {
             // 触发 inspect，停止播放声音
             SoundPlayManager.stopPlayGunSound();
             SoundPlayManager.playInspectSound(player, gunIndex, noAmmo);
-            GunAnimationStateMachine animationStateMachine = gunIndex.getAnimationStateMachine();
+            var animationStateMachine = gunIndex.getAnimationStateMachine();
             if (animationStateMachine != null) {
-                animationStateMachine.setNoAmmo(noAmmo).onGunInspect();
+                animationStateMachine.trigger(GunAnimationConstant.INPUT_INSPECT);
             }
         });
     }

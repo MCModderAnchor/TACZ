@@ -5,6 +5,7 @@ import com.tacz.guns.api.client.animation.AnimationController;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -43,24 +44,39 @@ public class AnimationStateMachine<T extends AnimationStateContext> {
      * 每一次每一次渲染模型之前调用。
      * 会同时更新状态列表中的所有状态，并更新动画控制器。
      *
-     * @throws IllegalStateException 若状态机在初始化之前调用此方法，抛出异常。
      * @see AnimationState#update(AnimationStateContext)
      * @see AnimationController#update()
      */
     public void update() {
-        checkNullPointer();
-        currentStates.forEach(state -> state.update(context));
+        if (context != null && currentStates != null) {
+            currentStates.forEach(state -> state.update(context));
+        }
         animationController.update();
+    }
+
+    /**
+     * 非第一人称渲染时调用调用，不会讲动画数据写入模型，但是仍会更新状态
+     * 也会播放声音
+     *
+     * @see AnimationState#update(AnimationStateContext)
+     * @see AnimationController#updateSoundOnly()
+     */
+    public void visualUpdate() {
+        if (context != null && currentStates != null) {
+            currentStates.forEach(state -> state.update(context));
+        }
+        animationController.updateSoundOnly();
     }
 
     /**
      * 对状态机进行一次输入，可能触发状态转移。
      *
      * @param condition 输入
-     * @throws IllegalStateException 若状态机在初始化之前调用此方法，抛出异常。
      */
     public void trigger(String condition) {
-        checkNullPointer();
+        if (context == null || currentStates == null) {
+            return;
+        }
         // 迭代状态列表，如果需要状态转移，则将转移后的状态替换进列表
         ListIterator<AnimationState<T>> iterator = currentStates.listIterator();
         while (iterator.hasNext()) {
@@ -127,13 +143,24 @@ public class AnimationStateMachine<T extends AnimationStateContext> {
         return context;
     }
 
+    public void processContextIfExist(Consumer<T> consumer) {
+        if (context != null) {
+            consumer.accept(context);
+        }
+    }
+
     /**
      * 设置状态机的上下文。在状态机进行其他操作之前，务必调用此方法将 context 初始化。
+     * 在状态机 initialize 执行之后，无法执行本方法，必须先调用 exit 方法退出状态机.
+     * 这么做是因为需要确保状态机在一个运行周期内使用的 context 是唯一的。
      */
     public void setContext(@Nonnull T context) {
         AnimationStateMachine<?> stateMachine = context.getStateMachine();
         if (stateMachine != null && stateMachine != this) {
             throw new IllegalStateException("Context is already used");
+        }
+        if (currentStates != null) {
+            throw new IllegalStateException("State machine is already initialized, call exit() first");
         }
         if (this.context != null) {
             this.context.setStateMachine(null);

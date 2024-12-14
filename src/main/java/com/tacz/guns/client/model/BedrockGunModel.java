@@ -10,7 +10,6 @@ import com.tacz.guns.api.client.animation.ObjectAnimationChannel;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
-import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tacz.guns.client.model.functional.*;
@@ -19,7 +18,6 @@ import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
-import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -39,6 +37,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     protected final EnumMap<AttachmentType, List<BedrockPart>> refitAttachmentViewPath = Maps.newEnumMap(AttachmentType.class);
     private final EnumMap<AttachmentType, ItemStack> currentAttachmentItem = Maps.newEnumMap(AttachmentType.class);
     private final Set<String> adapterToRender = Sets.newHashSet();
+    private final ArrayList<ShellRender> shellRenderList = new ArrayList<>();
 
     // 第一人称机瞄摄像机定位组的路径
     protected @Nullable List<BedrockPart> ironSightPath;
@@ -77,8 +76,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         this.setFunctionalRenderer(RIGHTHAND_POS_NODE, bedrockPart -> new RightHandRender(this));
         // 枪口火焰
         this.setFunctionalRenderer(MUZZLE_FLASH_ORIGIN_NODE, bedrockPart -> new MuzzleFlashRender(this));
-        // 抛壳
-        this.setFunctionalRenderer(SHELL_ORIGIN_NODE, bedrockPart -> new ShellRender(this));
         // 枪管内的子弹，用于闭膛待机枪械
         this.setFunctionalRenderer(BULLET_IN_BARREL, bedrockPart -> ammoHiddenRender(bedrockPart, iGun -> iGun.hasBulletInBarrel(currentGunItem)));
         // 弹匣内子弹
@@ -111,6 +108,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         this.cacheOtherPath();
         // 缓存改装 UI 下各个配件的特写视角定位组
         this.cacheRefitAttachmentViewPath();
+        // 缓存抛壳窗
+        this.cacheShellOriginNodes();
         // 准备各个配件的渲染
         this.allAttachmentRender();
         // 配件转接口渲染
@@ -136,6 +135,18 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             }
             String nodeName = REFIT_VIEW_PREFIX + type.name().toLowerCase() + REFIT_VIEW_SUFFIX;
             refitAttachmentViewPath.put(type, getPath(modelMap.get(nodeName)));
+        }
+    }
+
+    private void cacheShellOriginNodes() {
+        ModelRendererWrapper rendererWrapper = modelMap.get(SHELL_ORIGIN_NODE);
+        int i = 1;
+        while (rendererWrapper != null) {
+            ShellRender shellRender = new ShellRender(this);
+            this.setFunctionalRenderer(rendererWrapper.getModelRenderer().name, bedrockPart -> shellRender);
+            shellRenderList.add(shellRender);
+            rendererWrapper = modelMap.get(SHELL_ORIGIN_NODE_PREFIX + i);
+            i++;
         }
     }
 
@@ -383,6 +394,14 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     public List<BedrockPart> getRefitAttachmentViewPath(AttachmentType type) {
         return refitAttachmentViewPath.get(type);
+    }
+
+    @Nullable
+    public ShellRender getShellRender(int index) {
+        if (index < 0 || index >= shellRenderList.size()) {
+            return null;
+        }
+        return shellRenderList.get(index);
     }
 
     @Nullable

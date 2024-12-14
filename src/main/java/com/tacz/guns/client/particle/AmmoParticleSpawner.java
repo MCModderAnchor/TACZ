@@ -9,6 +9,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,8 +19,8 @@ import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public class AmmoParticleSpawner {
-    public static void addParticle(EntityKineticBullet bullet, ResourceLocation gunId) {
-        TimelessAPI.getClientGunIndex(gunId).ifPresent(gunIndex -> {
+    public static void addParticle(EntityKineticBullet bullet) {
+        TimelessAPI.getGunDisplay(bullet.getGunDisplayId(), bullet.getGunId()).ifPresent(gunIndex -> {
             AmmoParticle gunParticle = gunIndex.getParticle();
             if (gunParticle == null) {
                 // 如果枪械没有粒子效果，那么调用子弹的

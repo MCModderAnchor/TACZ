@@ -3,13 +3,12 @@ package com.tacz.guns.client.resource.index;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
-import com.tacz.guns.client.resource.ClientAssetManager;
+import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentLod;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
-import com.tacz.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
-import com.tacz.guns.resource.CommonAssetManager;
+import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -51,7 +50,7 @@ public class ClientAttachmentIndex {
         checkSlotTexture(display, index);
         checkTextureAndModel(display, index);
         checkLod(display, index);
-        checkSkins(registryName, index);
+//        checkSkins(registryName, index);
         checkSounds(display, index);
         return index;
     }
@@ -65,7 +64,7 @@ public class ClientAttachmentIndex {
     private static AttachmentDisplay checkDisplay(AttachmentIndexPOJO indexPOJO, ClientAttachmentIndex index) {
         ResourceLocation pojoDisplay = indexPOJO.getDisplay();
         Preconditions.checkArgument(pojoDisplay != null, "index object missing display field");
-        AttachmentDisplay display = ClientAssetManager.INSTANCE.getAttachmentDisplay(pojoDisplay);
+        AttachmentDisplay display = ClientAssetsManager.INSTANCE.getAttachmentDisplay(pojoDisplay);
         Preconditions.checkArgument(display != null, "there is no corresponding display file");
         Preconditions.checkArgument(display.getFov() > 0, "fov must > 0");
         index.fov = display.getFov();
@@ -87,7 +86,7 @@ public class ClientAttachmentIndex {
     private static void checkData(AttachmentIndexPOJO indexPOJO, ClientAttachmentIndex index) {
         ResourceLocation dataId = indexPOJO.getData();
         Preconditions.checkArgument(dataId != null, "index object missing pojoData field");
-        AttachmentData data = CommonAssetManager.INSTANCE.getAttachmentData(dataId);
+        AttachmentData data = CommonAssetsManager.get().getAttachmentData(dataId);
         Preconditions.checkArgument(data != null, "there is no corresponding data file");
         // 剩下的不需要校验了，Common的读取逻辑中已经校验过了
         index.data = data;
@@ -106,12 +105,38 @@ public class ClientAttachmentIndex {
 
     private static void checkTextureAndModel(AttachmentDisplay display, ClientAttachmentIndex index) {
         // 不检查模型/材质是否为 null，模型/材质可以为 null
-        index.attachmentModel = ClientAssetManager.INSTANCE.getOrLoadAttachmentModel(display.getModel());
+        index.attachmentModel = getOrLoadAttachmentModel(display.getModel());
         if (index.attachmentModel != null) {
             index.attachmentModel.setIsScope(display.isScope());
             index.attachmentModel.setIsSight(display.isSight());
         }
         index.modelTexture = display.getTexture();
+    }
+
+    @Nullable
+    public static BedrockAttachmentModel getOrLoadAttachmentModel(@Nullable ResourceLocation modelLocation) {
+        if (modelLocation == null) {
+            return null;
+        }
+        BedrockModelPOJO modelPOJO = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(modelLocation);
+        if (modelPOJO == null) {
+            return null;
+        }
+        return getAttachmentModel(modelPOJO);
+    }
+
+    @Nullable
+    public static BedrockAttachmentModel getAttachmentModel(BedrockModelPOJO modelPOJO) {
+        BedrockAttachmentModel attachmentModel = null;
+        // 先判断是不是 1.10.0 版本基岩版模型文件
+        if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
+            attachmentModel = new BedrockAttachmentModel(modelPOJO, BedrockVersion.LEGACY);
+        }
+        // 判定是不是 1.12.0 版本基岩版模型文件
+        if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
+            attachmentModel = new BedrockAttachmentModel(modelPOJO, BedrockVersion.NEW);
+        }
+        return attachmentModel;
     }
 
     private static void checkLod(AttachmentDisplay display, ClientAttachmentIndex index) {
@@ -124,7 +149,7 @@ public class ClientAttachmentIndex {
             if (texture == null) {
                 return;
             }
-            BedrockModelPOJO modelPOJO = ClientAssetManager.INSTANCE.getModels(gunLod.getModelLocation());
+            BedrockModelPOJO modelPOJO = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(gunLod.getModelLocation());
             if (modelPOJO == null) {
                 return;
             }
@@ -141,15 +166,15 @@ public class ClientAttachmentIndex {
         }
     }
 
-    private static void checkSkins(ResourceLocation registryName, ClientAttachmentIndex index) {
-        Map<ResourceLocation, AttachmentSkin> skins = ClientAssetManager.INSTANCE.getAttachmentSkins(registryName);
-        if (skins != null) {
-            for (Map.Entry<ResourceLocation, AttachmentSkin> entry : skins.entrySet()) {
-                ClientAttachmentSkinIndex skinIndex = ClientAttachmentSkinIndex.getInstance(entry.getValue());
-                index.skinIndexMap.put(entry.getKey(), skinIndex);
-            }
-        }
-    }
+//    private static void checkSkins(ResourceLocation registryName, ClientAttachmentIndex index) {
+//        Map<ResourceLocation, AttachmentSkin> skins = ClientAssetManager.INSTANCE.getAttachmentSkins(registryName);
+//        if (skins != null) {
+//            for (Map.Entry<ResourceLocation, AttachmentSkin> entry : skins.entrySet()) {
+//                ClientAttachmentSkinIndex skinIndex = ClientAttachmentSkinIndex.getInstance(entry.getValue());
+//                index.skinIndexMap.put(entry.getKey(), skinIndex);
+//            }
+//        }
+//    }
 
     private static void checkSounds(AttachmentDisplay display, ClientAttachmentIndex index) {
         Map<String, ResourceLocation> displaySounds = display.getSounds();

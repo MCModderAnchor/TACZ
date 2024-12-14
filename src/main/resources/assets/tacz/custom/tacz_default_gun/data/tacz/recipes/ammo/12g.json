@@ -1,0 +1,28 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "forge:ingots/copper"
+      },
+      "count": 15
+    },
+    {
+      "item": {
+        "tag": "forge:gunpowder"
+      },
+      "count": 6
+    },
+    {
+      "item": {
+        "tag": "forge:nuggets/iron"
+      },
+      "count": 18
+    }
+  ],
+  "result": {
+    "type": "ammo",
+    "id": "tacz:12g",
+    "count": 18
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

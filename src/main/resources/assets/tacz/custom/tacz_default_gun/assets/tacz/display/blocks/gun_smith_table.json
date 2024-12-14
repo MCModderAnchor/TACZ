@@ -1,0 +1,43 @@
+{
+  // 方块的模型，在包目录下的 models 文件夹中寻找，不可为空
+  "model": "tacz:block/gun_smith_table",
+  // 默认材质，不可为空
+  "texture": "tacz:block/uv/gun_smith_table",
+  "transforms": {
+    "thirdperson_righthand": {
+      "rotation": [0, 90, 0],
+      "translation": [0, 0.25, -2],
+      "scale": [0.24, 0.24, 0.24]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 90, 0],
+      "translation": [0, 0.25, 2],
+      "scale": [0.24, 0.24, 0.24]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 90, 0],
+      "scale": [0.25, 0.25, 0.25]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 90, 0],
+      "translation": [0, 0, 4],
+      "scale": [0.25, 0.25, 0.25]
+    },
+    "ground": {
+      "translation": [2, 2, 0],
+      "scale": [0.25, 0.25, 0.25]
+    },
+    "gui": {
+      "rotation": [15, -145, 0],
+      "translation": [-2.5, -3.75, 0],
+      "scale": [0.4, 0.4, 0.4]
+    },
+    "head": {
+      "translation": [8, 3.75, 0]
+    },
+    "fixed": {
+      "translation": [4, -4, -3.5],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

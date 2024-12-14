@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 
 public class LocalPlayerDataHolder {
     public static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(2);
+    public long clientBaseTimestamp = -1L;
     /**
      * 上一个 tick 的瞄准进度，用于插值，范围 0 ~ 1
      */
@@ -25,9 +26,10 @@ public class LocalPlayerDataHolder {
      */
     private final LocalPlayer player;
     /**
-     * 与延迟射击有关的几个变量
+     * 与射击有关的几个变量
      */
     public volatile long clientShootTimestamp = -1L;
+    public volatile long clientLastShootTimestamp = -1L;
     public volatile boolean isShootRecorded = true;
     /**
      * 这个状态锁表示：任意时刻，正在进行的枪械操作只能为一个。
@@ -104,7 +106,7 @@ public class LocalPlayerDataHolder {
         if (gunOperator.getSynDrawCoolDown() > 0) {
             return;
         }
-        if (gunOperator.getSynBoltCoolDown() >= 0) {
+        if (gunOperator.getSynIsBolting()) {
             return;
         }
         if (gunOperator.getSynMeleeCoolDown() > 0) {

@@ -2,7 +2,6 @@ package com.tacz.guns.client.resource.index;
 
 import com.google.common.base.Preconditions;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
-import com.tacz.guns.client.resource.ClientAssetManager;
 import com.tacz.guns.client.resource.pojo.skin.attachment.AttachmentSkin;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +36,7 @@ public class ClientAttachmentSkinIndex {
         // 检查模型
         ResourceLocation modelLocation = skinPojo.getModel();
         Preconditions.checkArgument(modelLocation != null, "display object missing model field");
-        index.model = ClientAssetManager.INSTANCE.getOrLoadAttachmentModel(modelLocation);
+        index.model = ClientAttachmentIndex.getOrLoadAttachmentModel(modelLocation);
         Preconditions.checkArgument(index.model != null, "there is no model data in the model file");
         // 检查默认材质
         ResourceLocation textureLocation = skinPojo.getTexture();

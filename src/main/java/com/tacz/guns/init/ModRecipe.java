@@ -24,17 +24,4 @@ public class ModRecipe {
         }
     });
 
-//    @SubscribeEvent
-//    public static void register(RegistryEvent.Register<RecipeSerializer<?>> event) {
-//        GUN_SMITH_TABLE_CRAFTING = register(GunMod.MOD_ID + ":gun_smith_table_crafting");
-//    }
-//
-//    private static <T extends Recipe<?>> RecipeType<T> register(final String key) {
-//        return Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(key), new RecipeType<T>() {
-//            @Override
-//            public String toString() {
-//                return key;
-//            }
-//        });
-//    }
 }
