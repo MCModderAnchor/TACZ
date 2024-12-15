@@ -1,8 +1,11 @@
 package com.tacz.guns.resource.network;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.modifier.JsonProperty;
 import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.ICommonResourceProvider;
 import com.tacz.guns.resource.filter.RecipeFilter;
@@ -10,6 +13,7 @@ import com.tacz.guns.resource.index.CommonAmmoIndex;
 import com.tacz.guns.resource.index.CommonAttachmentIndex;
 import com.tacz.guns.resource.index.CommonBlockIndex;
 import com.tacz.guns.resource.index.CommonGunIndex;
+import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.block.BlockData;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
@@ -151,6 +155,31 @@ public enum CommonNetworkCache implements ICommonResourceProvider {
         return CommonAssetsManager.GSON.fromJson(json, dataClass);
     }
 
+    private AttachmentData parseAttachmentData(String json) {
+        AttachmentData data = CommonAssetsManager.GSON.fromJson(json, AttachmentData.class);
+        JsonElement element = CommonAssetsManager.GSON.fromJson(json, JsonElement.class);
+        if (data != null) {
+            // 序列化注册的配件属性修改
+            AttachmentPropertyManager.getModifiers().forEach((key, value) -> {
+                if (!element.isJsonObject()) {
+                    return;
+                }
+                JsonObject jsonObject = element.getAsJsonObject();
+                if (jsonObject.has(key)) {
+                    JsonProperty<?> property = value.readJson(json);
+                    property.initComponents();
+                    data.addModifier(key, property);
+                } else if (jsonObject.has(value.getOptionalFields())) {
+                    // 为了兼容旧版本，读取可选字段名
+                    JsonProperty<?> property = value.readJson(json);
+                    property.initComponents();
+                    data.addModifier(key, property);
+                }
+            });
+        }
+        return data;
+    }
+
     private void resolveAttachmentTags(Map<ResourceLocation, String> data) {
         for (Map.Entry<ResourceLocation, String> entry : data.entrySet()) {
             List<String> tags = CommonAssetsManager.GSON.fromJson(entry.getValue(), new TypeToken<>(){}.getType());
@@ -171,7 +200,7 @@ public enum CommonNetworkCache implements ICommonResourceProvider {
                     case GUN_DATA -> gunData.put(entry.getKey(), parse(entry.getValue(), GunData.class));
                     case GUN_INDEX -> gunIndex.put(entry.getKey(), parse(entry.getValue(), CommonGunIndex.class));
                     case AMMO_INDEX -> ammoIndex.put(entry.getKey(), parse(entry.getValue(), CommonAmmoIndex.class));
-                    case ATTACHMENT_DATA -> attachmentData.put(entry.getKey(), parse(entry.getValue(), AttachmentData.class));
+                    case ATTACHMENT_DATA -> attachmentData.put(entry.getKey(), parseAttachmentData(entry.getValue()));
                     case ATTACHMENT_INDEX -> attachmentIndex.put(entry.getKey(), parse(entry.getValue(), CommonAttachmentIndex.class));
                     case ATTACHMENT_TAGS -> resolveAttachmentTags(data);
                     case BLOCK_INDEX -> blockIndex.put(entry.getKey(), parse(entry.getValue(), CommonBlockIndex.class));
