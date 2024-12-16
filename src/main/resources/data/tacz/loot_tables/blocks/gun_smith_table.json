@@ -16,7 +16,7 @@
               "condition": "minecraft:block_state_property",
               "block": "tacz:gun_smith_table",
               "properties": {
-                "part": "head"
+                "part": "foot"
               }
             }
           ],
