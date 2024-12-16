@@ -74,6 +74,11 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     }
 
     @Override
+    public void aimReset(boolean noToServerPacket) {
+        tac$aim.reset(noToServerPacket);
+    }
+
+    @Override
     public boolean isCrawl() {
         return tac$crawl.isCrawling();
     }

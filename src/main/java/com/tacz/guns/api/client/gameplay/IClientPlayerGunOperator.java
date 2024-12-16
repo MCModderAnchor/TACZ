@@ -59,7 +59,7 @@ public interface IClientPlayerGunOperator {
     /**
      * 重置瞄准状态
      */
-    void aimReset();
+    void aimReset(boolean noToServerPacket);
 
     /**
      * 客户端爬行

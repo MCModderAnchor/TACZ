@@ -32,7 +32,7 @@ public final class ServerMessagePlayerAimReset {
             context.enqueueWork(() -> {
                 LocalPlayer player = Minecraft.getInstance().player;
                 if (player != null) {
-                    IClientPlayerGunOperator.fromLocalPlayer(player).aimReset();
+                    IClientPlayerGunOperator.fromLocalPlayer(player).aimReset(true);
                 }
             });
         }
