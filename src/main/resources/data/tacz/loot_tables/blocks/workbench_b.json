@@ -32,7 +32,7 @@
               "condition": "minecraft:block_state_property",
               "block": "tacz:workbench_b",
               "properties": {
-                "part": "head"
+                "part": "foot"
               }
             }
           ],
