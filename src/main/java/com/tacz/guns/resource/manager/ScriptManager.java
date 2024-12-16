@@ -62,7 +62,8 @@ public class ScriptManager extends SimplePreparableReloadListener< List<Map.Entr
         pObject.forEach(entry -> scriptMap.put(entry.getKey(), entry.getValue().get()));
     }
 
-    private Map.Entry<String, Supplier<LuaTable>> wrapLoadingFunction(ResourceLocation resourceLocation, Resource resource) {
+    private Map.Entry<String, Supplier<LuaTable>> wrapLoadingFunction(ResourceLocation rawResourceLocation, Resource resource) {
+        ResourceLocation resourceLocation = filetoidconverter.fileToId(rawResourceLocation);
         String moduleName = getModuleName(resourceLocation);
         return new AbstractMap.SimpleEntry<>(moduleName, new Supplier<>() {
             private LuaTable loaded = null;

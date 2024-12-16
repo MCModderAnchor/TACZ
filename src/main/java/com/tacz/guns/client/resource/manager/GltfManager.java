@@ -33,11 +33,12 @@ public class GltfManager extends SimplePreparableReloadListener<Map<ResourceLoca
         Map<ResourceLocation, AnimationStructure> output = Maps.newHashMap();
         for(Map.Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(pResourceManager).entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();
+            ResourceLocation resourcelocation1 = filetoidconverter.fileToId(resourcelocation);
 
             try (Reader reader = entry.getValue().openAsReader()) {
                 RawAnimationStructure rawStructure = ClientAssetsManager.GSON.fromJson(reader, RawAnimationStructure.class);
                 AnimationStructure animationStructure = new AnimationStructure(rawStructure);
-                output.put(resourcelocation, animationStructure);
+                output.put(resourcelocation1, animationStructure);
             } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
                 GunMod.LOGGER.warn(MARKER, "Failed to read gltf animation file: {}", resourcelocation);
             }
