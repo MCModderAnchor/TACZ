@@ -22,6 +22,14 @@ public class LocalPlayerAim {
         this.player = player;
     }
 
+    public void reset(boolean noToServerPacket) {
+        data.clientIsAiming = false;
+        data.clientAimingProgress = 0;
+        if (!noToServerPacket) {
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(false));
+        }
+    }
+
     public void aim(boolean isAim) {
         // 暂定为主手
         ItemStack mainhandItem = player.getMainHandItem();

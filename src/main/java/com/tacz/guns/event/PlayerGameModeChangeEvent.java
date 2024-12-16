@@ -1,7 +1,7 @@
 package com.tacz.guns.event;
 
 import com.tacz.guns.network.NetworkHandler;
-import com.tacz.guns.network.message.ServerMessagePlayerAim;
+import com.tacz.guns.network.message.ServerMessagePlayerAimReset;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -20,7 +20,7 @@ public class PlayerGameModeChangeEvent {
         if (newGameType == GameType.SPECTATOR) {
             Player who = event.getEntity();
             if (!who.level().isClientSide) {
-                NetworkHandler.sendToClientPlayer(new ServerMessagePlayerAim(false), who);
+                NetworkHandler.sendToClientPlayer(ServerMessagePlayerAimReset.INSTANCE, who);
             }
         }
     }

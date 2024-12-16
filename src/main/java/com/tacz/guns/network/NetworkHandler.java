@@ -92,7 +92,7 @@ public class NetworkHandler {
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunShoot.class, ServerMessageGunShoot::encode, ServerMessageGunShoot::decode, ServerMessageGunShoot::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessagePlayerAim.class, ServerMessagePlayerAim::encode, ServerMessagePlayerAim::decode, ServerMessagePlayerAim::handle,
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessagePlayerAimReset.class, ServerMessagePlayerAimReset::encode, ServerMessagePlayerAimReset::decode, ServerMessagePlayerAimReset::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
         registerAcknowledge();

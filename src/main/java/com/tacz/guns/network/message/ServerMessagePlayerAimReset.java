@@ -1,37 +1,38 @@
 package com.tacz.guns.network.message;
 
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
-import com.tacz.guns.api.entity.IGunOperator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ServerMessagePlayerAim {
-    private final boolean isAim;
+public final class ServerMessagePlayerAimReset {
+    public static final ServerMessagePlayerAimReset INSTANCE;
 
-    public ServerMessagePlayerAim(boolean isAim) {
-        this.isAim = isAim;
+    static {
+        // noinspection InstantiationOfUtilityClass
+        INSTANCE = new ServerMessagePlayerAimReset();
     }
 
-    public static void encode(ServerMessagePlayerAim message, FriendlyByteBuf buf) {
-        buf.writeBoolean(message.isAim);
+    private ServerMessagePlayerAimReset() {
     }
 
-    public static ServerMessagePlayerAim decode(FriendlyByteBuf buf) {
-        return new ServerMessagePlayerAim(buf.readBoolean());
+    public static void encode(ServerMessagePlayerAimReset message, FriendlyByteBuf buf) {
     }
 
-    public static void handle(ServerMessagePlayerAim message, Supplier<NetworkEvent.Context> contextSupplier) {
+    public static ServerMessagePlayerAimReset decode(FriendlyByteBuf buf) {
+        return INSTANCE;
+    }
+
+    public static void handle(ServerMessagePlayerAimReset message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide().isClient()) {
             context.enqueueWork(() -> {
                 LocalPlayer player = Minecraft.getInstance().player;
                 if (player != null) {
-                    IClientPlayerGunOperator.fromLocalPlayer(player).aim(message.isAim);
+                    IClientPlayerGunOperator.fromLocalPlayer(player).aimReset();
                 }
             });
         }

@@ -57,6 +57,11 @@ public interface IClientPlayerGunOperator {
     void aim(boolean isAim);
 
     /**
+     * 重置瞄准状态
+     */
+    void aimReset();
+
+    /**
      * 客户端爬行
      */
     void crawl(boolean isCrawl);
