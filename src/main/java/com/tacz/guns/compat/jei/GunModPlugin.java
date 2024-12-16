@@ -15,8 +15,9 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.minecraft.world.item.crafting.RecipeManager;
 
 import java.util.List;
 
@@ -32,8 +33,9 @@ public class GunModPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        List<GunSmithTableRecipe> recipes = ServerLifecycleHooks.getCurrentServer()
-                .getRecipeManager().getAllRecipesFor(ModRecipe.GUN_SMITH_TABLE_CRAFTING.get());
+        if(Minecraft.getInstance().level==null) return;
+        RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
+        List<GunSmithTableRecipe> recipes = recipeManager.getAllRecipesFor(ModRecipe.GUN_SMITH_TABLE_CRAFTING.get());
 
         registration.addRecipes(GunSmithTableCategory.GUN_SMITH_TABLE, recipes);
         registration.addRecipes(AttachmentQueryCategory.ATTACHMENT_QUERY, AttachmentQueryEntry.getAllAttachmentQueryEntries());
