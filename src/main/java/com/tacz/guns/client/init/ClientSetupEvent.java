@@ -9,6 +9,7 @@ import com.tacz.guns.client.input.*;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.tooltip.ClientAmmoBoxTooltip;
 import com.tacz.guns.client.tooltip.ClientAttachmentItemTooltip;
+import com.tacz.guns.client.tooltip.ClientBlockItemTooltip;
 import com.tacz.guns.client.tooltip.ClientGunTooltip;
 import com.tacz.guns.compat.controllable.ControllableCompat;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
@@ -16,6 +17,7 @@ import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
+import com.tacz.guns.inventory.tooltip.BlockItemTooltip;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.item.AmmoBoxItem;
 import net.minecraft.client.Minecraft;
@@ -55,6 +57,7 @@ public class ClientSetupEvent {
         event.register(GunTooltip.class, ClientGunTooltip::new);
         event.register(AmmoBoxTooltip.class, ClientAmmoBoxTooltip::new);
         event.register(AttachmentItemTooltip.class, ClientAttachmentItemTooltip::new);
+        event.register(BlockItemTooltip.class, ClientBlockItemTooltip::new);
     }
 
     @SubscribeEvent
