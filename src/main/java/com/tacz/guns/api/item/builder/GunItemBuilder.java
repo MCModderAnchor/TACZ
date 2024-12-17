@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.EnumMap;
+import java.util.Map;
 
 public final class GunItemBuilder {
     private int count = 1;
@@ -20,7 +20,7 @@ public final class GunItemBuilder {
     private ResourceLocation gunId;
     private FireMode fireMode = FireMode.UNKNOWN;
     private boolean bulletInBarrel = false;
-    private EnumMap<AttachmentType, ResourceLocation> attachments = Maps.newEnumMap(AttachmentType.class);
+    private Map<AttachmentType, ResourceLocation> attachments = Maps.newHashMap();
 
     private GunItemBuilder() {
     }
@@ -59,7 +59,7 @@ public final class GunItemBuilder {
         return this;
     }
 
-    public GunItemBuilder putAllAttachment(EnumMap<AttachmentType, ResourceLocation> attachments) {
+    public GunItemBuilder putAllAttachment(Map<AttachmentType, ResourceLocation> attachments) {
         this.attachments = attachments;
         return this;
     }

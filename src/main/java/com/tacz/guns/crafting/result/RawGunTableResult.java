@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -66,7 +67,7 @@ public class RawGunTableResult {
 
     private GunSmithTableResult getGunStack() {
         int ammoCount;
-        EnumMap<AttachmentType, ResourceLocation> attachments;
+        Map<AttachmentType, ResourceLocation> attachments;
         if (extraData != null) {
             ammoCount = Math.max(0, extraData.getAmmoCount());
             attachments = extraData.getAttachments();
