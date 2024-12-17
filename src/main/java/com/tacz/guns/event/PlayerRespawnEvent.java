@@ -3,6 +3,7 @@ package com.tacz.guns.event;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.config.common.GunConfig;
 import com.tacz.guns.item.ModernKineticGunScriptAPI;
+import com.tacz.guns.resource.pojo.data.gun.FeedType;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,10 +23,16 @@ public class PlayerRespawnEvent {
             api.setItemStack(itemStack);
             api.setShooter(player);
 
+            // 针对燃料类型特殊处理
+            var isFuel = api.getGunIndex().getGunData().getReloadData().getType() == FeedType.FUEL;
             int needAmmoCount = api.getNeededAmmoAmount();
-            // 仅在非创造模式消耗背包内弹药
-            int consumedAmount = player.isCreative() ? needAmmoCount : api.consumeAmmoFromPlayer(needAmmoCount);
-            api.putAmmoInMagazine(consumedAmount);
+
+            if (player.isCreative()) {
+                api.putAmmoInMagazine(needAmmoCount);
+            } else {
+                int consumedAmount = api.consumeAmmoFromPlayer(isFuel ? 1 : needAmmoCount);
+                api.putAmmoInMagazine(isFuel ? (needAmmoCount * consumedAmount) : consumedAmount);
+            }
         });
     }
 }
