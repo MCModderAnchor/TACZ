@@ -35,12 +35,10 @@ public class GunSmithTableResult {
     }
 
     public ItemStack getResult() {
-        init();
         return result;
     }
 
     public String getGroup() {
-        init();
         return group;
     }
 }

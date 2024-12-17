@@ -6,7 +6,9 @@ import com.google.gson.GsonBuilder;
 import com.tacz.guns.api.vmlib.LuaGunLogicConstant;
 import com.tacz.guns.api.vmlib.LuaLibrary;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
+import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.crafting.result.GunSmithTableResult;
+import com.tacz.guns.init.ModRecipe;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageSyncGunPack;
 import com.tacz.guns.resource.filter.RecipeFilter;
@@ -28,9 +30,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -212,25 +216,28 @@ public class CommonAssetsManager implements ICommonResourceProvider {
     public static void onReload(AddReloadListenerEvent event) {
         INSTANCE = new CommonAssetsManager();
         INSTANCE.reloadAndRegister(event::addListener);
+        INSTANCE.recipeManager = event.getServerResources().getRecipeManager();
     }
+
+    public RecipeManager recipeManager;
 
     /**
      * 这个事件理论上会在server resource已经完成重载和传输到客户端之前触发<br/>
      * 尝试根据common data初始化延迟加载的配方
      * @param event
      */
-//    @SubscribeEvent
-//    public static void onReload(TagsUpdatedEvent event) {
-//        if (event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD){
-//            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-//            if (server != null) {
-//                List<GunSmithTableRecipe> recipes = server.getRecipeManager().getAllRecipesFor(ModRecipe.GUN_SMITH_TABLE_CRAFTING.get());
-//                for (GunSmithTableRecipe recipe : recipes) {
-//                    recipe.init();
-//                }
-//            }
-//        }
-//    }
+    @SubscribeEvent
+    public static void onReload(TagsUpdatedEvent event) {
+        if (event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD){
+            if (getInstance() !=null && getInstance().recipeManager != null) {
+                List<GunSmithTableRecipe> recipes = getInstance().recipeManager.getAllRecipesFor(ModRecipe.GUN_SMITH_TABLE_CRAFTING.get());
+                for (GunSmithTableRecipe recipe : recipes) {
+                    recipe.init();
+                }
+            }
+        }
+    }
+
 
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
