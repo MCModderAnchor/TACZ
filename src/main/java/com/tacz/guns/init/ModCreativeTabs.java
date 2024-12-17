@@ -33,8 +33,7 @@ public class ModCreativeTabs {
         addCreativeTabs("other", new TranslatableComponent("itemGroup.tab.tacz.other"),
                 () -> ModItems.GUN_SMITH_TABLE.get().getDefaultInstance(),
                 output -> {
-            // TODO output.acceptAll(GunSmithTableItem.fillItemCategory()); 合并后检查
-                    output.add(ModItems.GUN_SMITH_TABLE.get().getDefaultInstance());
+                    output.addAll(GunSmithTableItem.fillItemCategory());
                     output.add(ModItems.TARGET.get().getDefaultInstance());
                     output.add(ModItems.STATUE.get().getDefaultInstance());
                     output.add(ModItems.TARGET_MINECART.get().getDefaultInstance());
