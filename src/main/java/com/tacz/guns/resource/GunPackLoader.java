@@ -55,14 +55,16 @@ public enum GunPackLoader implements RepositorySource {
     private boolean firstLoad = true;
 
     @Override
-    public void loadPacks(Consumer<Pack> pOnLoad, Pack.PackConstructor pInfoFactory) {
-        Pack extensionsPack = discoverExtensions(pInfoFactory);
+    public void loadPacks(@NotNull Consumer<Pack> pOnLoad, Pack.@NotNull PackConstructor pInfoFactory) {
+        List<Pack> extensionsPack = discoverExtensions(pInfoFactory);
         if (extensionsPack != null) {
-            pOnLoad.accept(extensionsPack);
+            for (Pack pack : extensionsPack) {
+                pOnLoad.accept(pack);
+            }
         }
     }
 
-    public Pack discoverExtensions(Pack.PackConstructor pInfoFactory) {
+    public List<Pack> discoverExtensions(Pack.PackConstructor pInfoFactory) {
         Path resourcePacksPath = FMLPaths.GAMEDIR.get().resolve("tacz");
         File folder = resourcePacksPath.toFile();
         if (!folder.isDirectory()) {
@@ -88,7 +90,7 @@ public enum GunPackLoader implements RepositorySource {
         }
 
         List<GunPack> gunPacks = scanExtensions(resourcePacksPath);
-        List<PathPackResources> extensionPacks = new ArrayList<>();
+        List<Pack> extensionPacks = new ArrayList<>();
 
         for(GunPack gunPack : gunPacks) {
             PathPackResources packResources = new PathPackResources(gunPack.name, gunPack.path) {
@@ -108,25 +110,18 @@ public enum GunPackLoader implements RepositorySource {
                     return super.getResource(name);
                 }
 
-            };
-            extensionPacks.add(packResources);
-        }
-
-
-        return Pack.create("tacz_resources", true, () -> {
-            return new DelegatingPackResources("tacz_resources", "TACZ Resources", new PackMetadataSection(Component.translatable("tacz.resources.modresources"),
-                    SharedConstants.getCurrentVersion().getPackVersion(packType)), extensionPacks) {
-                public InputStream getRootResource(String fileName) throws IOException {
-                    if (fileName.equals("pack.png")) {
-                        Path logoPath = getModIcon("tacz");
-                        if (logoPath != null) {
-                            return Files.newInputStream(logoPath);
-                        }
-                    }
-                    return null;
+                @Override
+                public boolean isHidden() {
+                    return true;
                 }
             };
-        }, pInfoFactory, Pack.Position.BOTTOM, PackSource.BUILT_IN);
+            extensionPacks.add(Pack.create("tacz_pack/"+gunPack.name(), true, () -> {
+                return new DelegatingPackResources(gunPack.name(), "TACZ Resources", new PackMetadataSection(Component.translatable("tacz.resources.modresources"),
+                        SharedConstants.getCurrentVersion().getPackVersion(packType)), List.of(packResources));
+            }, pInfoFactory, Pack.Position.BOTTOM, PackSource.BUILT_IN));
+        }
+
+        return extensionPacks;
     }
 
     public static @Nullable Path getModIcon(String modId) {

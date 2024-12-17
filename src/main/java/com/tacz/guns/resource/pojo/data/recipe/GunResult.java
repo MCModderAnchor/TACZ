@@ -6,19 +6,20 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 public class GunResult {
     @SerializedName("ammo_count")
     private int ammoCount = 0;
 
     @SerializedName("attachments")
-    private EnumMap<AttachmentType, ResourceLocation> attachments = Maps.newEnumMap(AttachmentType.class);
+    private Map<AttachmentType, ResourceLocation> attachments = Maps.newHashMap();
 
     public int getAmmoCount() {
         return ammoCount;
     }
 
-    public EnumMap<AttachmentType, ResourceLocation> getAttachments() {
+    public Map<AttachmentType, ResourceLocation> getAttachments() {
         return attachments;
     }
 }
