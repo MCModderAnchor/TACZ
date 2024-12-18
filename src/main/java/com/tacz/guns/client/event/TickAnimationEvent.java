@@ -22,6 +22,11 @@ public class TickAnimationEvent {
         ItemStack mainhandItem = player.getMainHandItem();
         TimelessAPI.getGunDisplay(mainhandItem).ifPresent(gunIndex -> {
             var animationStateMachine = gunIndex.getAnimationStateMachine();
+            // 群组服切世界导致的特殊 BUG 处理，正常情况不会遇到此问题
+            if (player.input == null) {
+                animationStateMachine.trigger(GunAnimationConstant.INPUT_IDLE);
+                return;
+            }
             if (!player.isMovingSlowly() && player.isSprinting()) {
                 // 如果玩家正在移动，播放移动动画，否则播放 idle 动画
                 animationStateMachine.trigger(GunAnimationConstant.INPUT_RUN);
