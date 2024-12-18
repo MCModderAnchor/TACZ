@@ -15,7 +15,7 @@ public class PlayerRespawnEvent {
         // 重生自动换弹
         if (!GunConfig.AUTO_RELOAD_WHEN_RESPAWN.get()) return;
 
-        var player = event.getEntity();
+        var player = event.getPlayer();
         player.getInventory().items.forEach(itemStack -> {
             if (!(itemStack.getItem() instanceof IGun)) return;
 
