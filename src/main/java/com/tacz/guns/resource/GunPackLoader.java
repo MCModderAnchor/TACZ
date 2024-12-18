@@ -117,7 +117,12 @@ public enum GunPackLoader implements RepositorySource {
             };
             extensionPacks.add(Pack.create("tacz_pack/"+gunPack.name(), true, () -> {
                 return new DelegatingResourcePack(gunPack.name(), "TACZ Resources", new PackMetadataSection(new TranslatableComponent("tacz.resources.modresources"),
-                        SharedConstants.getCurrentVersion().getPackVersion(packType)), List.of(packResources));
+                        SharedConstants.getCurrentVersion().getPackVersion(packType)), List.of(packResources)) {
+                    @Override
+                    public boolean isHidden() {
+                        return true;
+                    }
+                };
             }, pInfoFactory, Pack.Position.BOTTOM, PackSource.BUILT_IN));
         }
 
