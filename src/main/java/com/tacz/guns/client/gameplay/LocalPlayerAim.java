@@ -24,7 +24,7 @@ public class LocalPlayerAim {
 
     public void reset(boolean noToServerPacket) {
         data.clientIsAiming = false;
-        data.clientAimingProgress = 0;
+        resetData();
         if (!noToServerPacket) {
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAim(false));
         }
@@ -67,8 +67,7 @@ public class LocalPlayerAim {
         ItemStack mainhandItem = player.getMainHandItem();
         // 如果主手物品不是枪械，则取消瞄准状态并将 aimingProgress 归零，返回。
         if (!(mainhandItem.getItem() instanceof IGun iGun)) {
-            data.clientAimingProgress = 0;
-            LocalPlayerDataHolder.oldAimingProgress = 0;
+            resetData();
             return;
         }
         // 如果正在收枪，则不能瞄准
@@ -83,6 +82,11 @@ public class LocalPlayerAim {
             data.clientAimingProgress = 0;
             LocalPlayerDataHolder.oldAimingProgress = 0;
         });
+    }
+
+    private void resetData() {
+        data.clientAimingProgress = 0;
+        LocalPlayerDataHolder.oldAimingProgress = 0;
     }
 
     private void aimProgressCalculate(float alphaProgress) {
