@@ -2488,6 +2488,16 @@
 					"pivot": [0, 11.25, -13.525]
 				},
 				{
+					"name": "muzzle_pos",
+					"parent": "positioning2",
+					"pivot": [0, 11.25, -11.525]
+				},
+				{
+					"name": "muzzle_flash",
+					"parent": "positioning2",
+					"pivot": [0, 11.25, -11.775]
+				},
+				{
 					"name": "shell",
 					"parent": "positioning2",
 					"pivot": [-0.15, 11.9375, -4.4]
@@ -2506,16 +2516,6 @@
 					"name": "scope_pos",
 					"parent": "positioning2",
 					"pivot": [0, 13.8125, 0.725]
-				},
-				{
-					"name": "muzzle_pos",
-					"parent": "positioning2",
-					"pivot": [0, 11.25, -11.525]
-				},
-				{
-					"name": "muzzle_flash",
-					"parent": "positioning2",
-					"pivot": [0, 11.25, -11.775]
 				},
 				{
 					"name": "attachment_adapter",
