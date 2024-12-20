@@ -19,9 +19,7 @@ public class PlayerGameModeChangeEvent {
         GameType newGameType = event.getNewGameMode();
         if (newGameType == GameType.SPECTATOR) {
             Player who = event.getEntity();
-            if (!who.level().isClientSide) {
-                NetworkHandler.sendToClientPlayer(ServerMessagePlayerAimReset.INSTANCE, who);
-            }
+            NetworkHandler.sendToClientPlayer(ServerMessagePlayerAimReset.INSTANCE, who);
         }
     }
 }
