@@ -93,7 +93,7 @@ public class AimKey {
         if (!(player instanceof IClientPlayerGunOperator operator)) {
             return;
         }
-        if (operator.isAim() && !isInGame()) {
+        if (operator.isAim() && (!isInGame() || player.isSpectator())) {
             IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
         }
     }
