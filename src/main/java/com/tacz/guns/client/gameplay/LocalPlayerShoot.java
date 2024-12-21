@@ -68,12 +68,12 @@ public class LocalPlayerShoot {
         }
         ResourceLocation gunId = iGun.getGunId(mainhandItem);
         Optional<ClientGunIndex> gunIndexOptional = TimelessAPI.getClientGunIndex(gunId);
-        if (gunIndexOptional.isEmpty()) {
+        GunDisplayInstance display = TimelessAPI.getGunDisplay(mainhandItem).orElse(null);
+        if (gunIndexOptional.isEmpty() || display == null) {
             return ShootResult.ID_NOT_EXIST;
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
         GunData gunData = gunIndex.getGunData();
-        GunDisplayInstance display = gunIndex.getDefaultDisplay();
         long coolDown = this.getCoolDown(iGun, mainhandItem, gunData);
         // 如果射击冷却大于等于 1 tick (即 50 ms)，则不允许开火
         if (coolDown >= 50) {
