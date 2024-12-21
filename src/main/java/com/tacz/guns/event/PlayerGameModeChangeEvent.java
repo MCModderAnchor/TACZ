@@ -1,25 +1,30 @@
 package com.tacz.guns.event;
 
-import com.tacz.guns.network.NetworkHandler;
-import com.tacz.guns.network.message.ServerMessagePlayerAimReset;
-import net.minecraft.world.entity.player.Player;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.level.GameType;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+@OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber
 public class PlayerGameModeChangeEvent {
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onGameModeChange(PlayerEvent.PlayerChangeGameModeEvent event) {
+    public static void onGameModeChange(ClientPlayerChangeGameTypeEvent event) {
         if (event.isCanceled()) {
             return;
         }
-        GameType newGameType = event.getNewGameMode();
+        GameType newGameType = event.getNewGameType();
         if (newGameType == GameType.SPECTATOR) {
-            Player who = event.getEntity();
-            NetworkHandler.sendToClientPlayer(ServerMessagePlayerAimReset.INSTANCE, who);
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).aimReset(false);
+            }
         }
     }
 }
