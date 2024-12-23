@@ -31,6 +31,9 @@ public final class TimelessAPI {
     public static Optional<GunDisplayInstance> getGunDisplay(ItemStack stack) {
         if (stack.getItem() instanceof IGun iGun) {
             ResourceLocation gunId = iGun.getGunId(stack);
+            if (getCommonGunIndex(gunId).isEmpty()) {
+                return Optional.empty();
+            }
             ResourceLocation displayId = iGun.getGunDisplayId(stack);
             if (displayId.equals(DefaultAssets.DEFAULT_GUN_DISPLAY_ID)) {
                 return getClientGunIndex(gunId).map(ClientGunIndex::getDefaultDisplay);
