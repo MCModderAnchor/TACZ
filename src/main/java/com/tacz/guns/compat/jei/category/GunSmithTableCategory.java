@@ -1,9 +1,7 @@
 package com.tacz.guns.compat.jei.category;
 
-import com.tacz.guns.GunMod;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
-import com.tacz.guns.init.ModItems;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -21,16 +19,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecipe> {
-    public static final RecipeType<GunSmithTableRecipe> GUN_SMITH_TABLE = RecipeType.create(GunMod.MOD_ID, "gun_smith_table", GunSmithTableRecipe.class);
-    private static final Component TITLE = Component.translatable("block.tacz.gun_smith_table");
+    private final Component title;
     private final IDrawableStatic bgDraw;
     private final IDrawable slotDraw;
     private final IDrawable iconDraw;
+    private final RecipeType<GunSmithTableRecipe> type;
 
-    public GunSmithTableCategory(IGuiHelper guiHelper) {
+    public GunSmithTableCategory(IGuiHelper guiHelper, ItemStack icon, RecipeType<GunSmithTableRecipe> type, Component title) {
         this.bgDraw = guiHelper.createBlankDrawable(160, 40);
         this.slotDraw = guiHelper.getSlotDrawable();
-        this.iconDraw = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, ModItems.GUN_SMITH_TABLE.get().getDefaultInstance());
+        this.iconDraw = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, icon);
+        this.type = type;
+        this.title = title;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecip
 
     @Override
     public Component getTitle() {
-        return TITLE;
+        return title;
     }
 
     @Override
@@ -91,6 +91,6 @@ public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecip
 
     @Override
     public RecipeType<GunSmithTableRecipe> getRecipeType() {
-        return GUN_SMITH_TABLE;
+        return type;
     }
 }
