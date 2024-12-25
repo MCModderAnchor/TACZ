@@ -12,6 +12,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
@@ -87,6 +88,18 @@ public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecip
     @Override
     public IDrawable getIcon() {
         return iconDraw;
+    }
+
+    @Override
+    @SuppressWarnings("removal")
+    public ResourceLocation getUid() {
+        return type.getUid();
+    }
+
+    @Override
+    @SuppressWarnings("removal")
+    public Class<? extends GunSmithTableRecipe> getRecipeClass() {
+        return type.getRecipeClass();
     }
 
     @Override
