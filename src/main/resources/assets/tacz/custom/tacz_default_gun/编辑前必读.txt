@@ -1,5 +1,0 @@
-给任何想要编辑此默认枪包的人：
-如果您想更改 tacz 的默认软件包，应将 .minecraft/tacz（枪包文件夹）中的
-配置文件 “tacz-pre.toml”内的“DefaultPackDebug”选项设为 “true”，否则每次启动游戏时，内容都会将被覆盖。
-
-如果您编辑的内容不小心被覆盖，您可以在.minecraft/tacz_backup中找到旧的被覆盖前的备份文件
