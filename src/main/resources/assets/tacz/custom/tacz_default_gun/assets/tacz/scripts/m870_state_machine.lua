@@ -20,10 +20,26 @@ local function get_ejection_time(context)
     end
     return ejection_time
 end
+
+local function runInspectAnimation(context)
+    local track = context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK)
+    if (not context:hasBulletInBarrel() and context:getAmmoCount() <= 0) then
+        context:runAnimation("inspect_empty", track, false, PLAY_ONCE_STOP, 0.2)
+    elseif (context:getAmmoCount() <= 0) then
+        context:runAnimation("inspect_01", track, false, PLAY_ONCE_STOP, 0.2)
+    else
+        context:runAnimation("inspect", track, false, PLAY_ONCE_STOP, 0.2)
+    end
+end
+
 -- 重写 idle 状态的 transition 函数，将输入 INPUT_RELOAD 重定向到新定义的 reload_state 状态
 function idle_state.transition(this, context, input)
     if (input == INPUT_RELOAD) then
         return this.main_track_states.reload
+    end
+    if (input == INPUT_INSPECT) then
+        runInspectAnimation(context)
+        return this.main_track_states.inspect
     end
     return main_track_states.idle.transition(this, context, input)
 end
