@@ -170,7 +170,7 @@ public enum GunPackLoader implements RepositorySource {
     private static GunPack fromDirPath(Path path) throws IOException {
         Path packInfoFilePath = path.resolve("gunpack.meta.json");
         try (InputStream stream = Files.newInputStream(packInfoFilePath)) {
-            PackMeta info = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), PackMeta.class);
+            PackMeta info = CommonAssetsManager.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), PackMeta.class);
 
             if (info == null) {
                 GunMod.LOGGER.warn(MARKER, "Failed to read info json: {}", packInfoFilePath);
@@ -199,7 +199,7 @@ public enum GunPackLoader implements RepositorySource {
             }
 
             try (InputStream stream = zipFile.getInputStream(extDescriptorEntry)) {
-                PackMeta info = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), PackMeta.class);
+                PackMeta info = CommonAssetsManager.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), PackMeta.class);
 
                 if (info == null) {
                     GunMod.LOGGER.warn(MARKER, "Failed to read info json: {}", path);
