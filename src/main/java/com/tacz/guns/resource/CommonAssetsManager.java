@@ -214,8 +214,9 @@ public class CommonAssetsManager implements ICommonResourceProvider {
 
     @SubscribeEvent
     public static void onReload(AddReloadListenerEvent event) {
-        INSTANCE = new CommonAssetsManager();
-        INSTANCE.reloadAndRegister(event::addListener);
+        var commonAssetsManager = new CommonAssetsManager();
+        commonAssetsManager.reloadAndRegister(event::addListener);
+        INSTANCE = commonAssetsManager;
         INSTANCE.recipeManager = event.getServerResources().getRecipeManager();
     }
 
