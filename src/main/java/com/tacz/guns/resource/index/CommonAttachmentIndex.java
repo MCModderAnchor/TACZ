@@ -6,11 +6,13 @@ import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class CommonAttachmentIndex {
     private AttachmentData data;
     private AttachmentType type;
     private AttachmentIndexPOJO pojo;
+    private int sort;
 
     private CommonAttachmentIndex() {
     }
@@ -27,6 +29,7 @@ public class CommonAttachmentIndex {
         Preconditions.checkArgument(attachmentIndexPOJO != null, "index object file is empty");
         Preconditions.checkArgument(attachmentIndexPOJO.getType() != null, "attachment type must be nonnull.");
         index.type = attachmentIndexPOJO.getType();
+        index.sort = Mth.clamp(attachmentIndexPOJO.getSort(), 0, 65536);
     }
 
     private static void checkData(AttachmentIndexPOJO attachmentIndexPOJO, CommonAttachmentIndex index) {
@@ -47,5 +50,9 @@ public class CommonAttachmentIndex {
 
     public AttachmentIndexPOJO getPojo() {
         return pojo;
+    }
+
+    public int getSort() {
+        return sort;
     }
 }

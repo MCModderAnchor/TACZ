@@ -44,7 +44,7 @@ public class ModCreativeTabs {
                 output -> output.addAll(AmmoItem.fillItemCategory()));
 
         addCreativeTabs("scope", Component.translatable("tacz.type.scope.name"),
-                () -> AttachmentItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "sight_sro_dot")).build(),
+                () -> AttachmentItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "scope_acog_ta31")).build(),
                 output -> output.addAll(AttachmentItem.fillItemCategory(AttachmentType.SCOPE)));
 
         addCreativeTabs("muzzle", Component.translatable("tacz.type.muzzle.name"),

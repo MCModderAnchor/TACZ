@@ -22,6 +22,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -42,10 +44,14 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
         return super.getName(stack);
     }
 
+    private static Comparator<Map.Entry<ResourceLocation, CommonAttachmentIndex>> idNameSort() {
+        return Comparator.comparingInt(m -> m.getValue().getSort());
+    }
+
     @OnlyIn(Dist.CLIENT)
     public static NonNullList<ItemStack> fillItemCategory(AttachmentType type) {
         NonNullList<ItemStack> stacks = NonNullList.create();
-        TimelessAPI.getAllCommonAttachmentIndex().forEach(entry -> {
+        TimelessAPI.getAllCommonAttachmentIndex().stream().sorted(idNameSort()).forEach(entry -> {
             if (entry.getValue().getPojo().isHidden()) {
                 return;
             }
