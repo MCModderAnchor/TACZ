@@ -1,5 +1,6 @@
 package com.tacz.guns.item;
 
+import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -9,9 +10,11 @@ import com.tacz.guns.client.renderer.item.AttachmentItemRenderer;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
 import com.tacz.guns.resource.index.CommonAttachmentIndex;
+import com.tacz.guns.util.TagFixHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -20,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
@@ -89,5 +93,16 @@ public class AttachmentItem extends Item implements AttachmentItemDataAccessor {
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         return Optional.of(new AttachmentItemTooltip(this.getAttachmentId(stack), this.getType(stack)));
+    }
+
+    @Override
+    public void verifyTagAfterLoad(@NotNull CompoundTag tag) {
+        ResourceLocation rl = AttachmentItemDataAccessor.getAttachmentIdFromTag(tag);
+        if (!rl.equals(DefaultAssets.EMPTY_ATTACHMENT_ID)) {
+            ResourceLocation fixed = TagFixHelper.fix(rl);
+            if (!rl.equals(fixed)) {
+                tag.putString(ATTACHMENT_ID_TAG, fixed.toString());
+            }
+        }
     }
 }
