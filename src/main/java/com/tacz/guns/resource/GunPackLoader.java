@@ -45,9 +45,6 @@ import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.tacz.guns.client.resource.ClientAssetsManager.GSON;
-
-
 public enum GunPackLoader implements RepositorySource {
     INSTANCE;
     private static final Marker MARKER = MarkerManager.getMarker("GunPackFinder");
