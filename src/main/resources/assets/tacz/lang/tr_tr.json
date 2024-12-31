@@ -27,7 +27,7 @@
   "message.tacz.converter.pack.start": "Dönüştürmeyi başlat: %s",
   "message.tacz.converter.pack.exist": "Hedef dosya zaten var, pas geçiliyor...",
   "message.tacz.converter.pack.finish": "Dönüştürme tamamlandı %s!",
-  "message.tacz.converter.pack.failed": " %s dönüştürülemedi, daha fazla detay için logları kontrol edin. Pas geçiliyor.",
+  "message.tacz.converter.pack.failed": "%s dönüştürülemedi, daha fazla detay için logları kontrol edin. Pas geçiliyor...",
   "message.tacz.converter.pack.folder": "Klasör format paketi %s dönüştürülemiyor, eğer dönüştürmek istiyorsanız lütfen önce zipleyin. Pas geçiliyor...",
   "message.tacz.converter.finish": "Dönüştürme tamamlandı! Toplam süre: %d ms. Başarılı: %d. Pas geçildi: %d. Başarısız: %d. Değişimlerin etkili olması için lütfen §c§lOYUNU YENİDEN BAŞLATIN§r!",
   "key.tacz.reload.desc": "Yeniden Doldur",
