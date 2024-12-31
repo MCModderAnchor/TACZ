@@ -82,11 +82,11 @@
   "tacz.gun.aug.desc": "가장 유명한 불펍소총의 대명사, AUG입니다.",
   "tacz.gun.m700.desc": "이 제품은 '유해 조수 사냥용' 소총입니다. 용도 외 사용 금지!",
   "tacz.gun.m107.desc": "예의범절을 지키며 적들을 소멸시키십시오!",
-  "tacz.gun.m1911.desc": "영원한 클래식, 또 다시 필수품을 발명할 필요가 있을까요?",
+  "tacz.gun.m1911.desc": "미합중국 육군의 제식 권총, 낭만이 넘치는 영원한 클래식 이죠.",
   "tacz.gun.type_81.desc": "'AK-47'? 아니죠, '81-1식 자동 보총'입니다.",
   "tacz.gun.qbz_95.desc": "대륙의 야심찬 불펍식 자동 소총입니다.",
   "tacz.gun.p90.desc": "적들의 방탄복 위에 웃는 얼굴을 그려줍시다",
-  "tacz.gun.m870.desc": "넌 방을 잘못 골랐어!",
+  "tacz.gun.m870.desc": "기본에 충실한 샷건의 대명사.",
   "tacz.ammo.9mm.name": "§a9mm 탄약",
   "tacz.ammo.12g.name": "§912게이지 산탄",
   "tacz.ammo.30_06.name": "§b.30-06 스프링필드 탄약",
@@ -164,5 +164,5 @@
   "tacz.attachment.oem_stock_tactical.name": "공장제 전술 개머리판",
   "tacz.block.gun_smith_table": "TaCZ 총기 작업대",
   "config.tacz.client.render.enable_tooltip_id": "툴팁에서 ID 보이기",
-  "config.tacz.client.render.enable_tooltip_id.desc": "고급 툴팁이 켜져 있을 때 아이템 툴팁에 총/탄약/부속품 ID를 표시합니다."
+  "config.tacz.client.render.enable_tooltip_id.desc": "고급 도구 설명이 켜져 있을 때 아이템 툴팁에 총/탄약/부속품 ID를 표시합니다."
 }
