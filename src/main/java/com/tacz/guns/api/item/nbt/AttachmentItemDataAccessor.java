@@ -16,12 +16,17 @@ public interface AttachmentItemDataAccessor extends IAttachment {
     String SKIN_ID_TAG = "Skin";
     String ZOOM_NUMBER_TAG = "ZoomNumber";
 
+    // 仅检查给定的 CompoundTag 是否具有配件 ID ，不校验其是否存在
+    static boolean isAttachmentLike(CompoundTag tag) {
+        return tag.contains(ATTACHMENT_ID_TAG, Tag.TAG_STRING);
+    }
+
     @Nonnull
     static ResourceLocation getAttachmentIdFromTag(@Nullable CompoundTag nbt) {
         if (nbt == null) {
             return DefaultAssets.EMPTY_ATTACHMENT_ID;
         }
-        if (nbt.contains(ATTACHMENT_ID_TAG, Tag.TAG_STRING)) {
+        if (isAttachmentLike(nbt)) {
             ResourceLocation attachmentId = ResourceLocation.tryParse(nbt.getString(ATTACHMENT_ID_TAG));
             return Objects.requireNonNullElse(attachmentId, DefaultAssets.EMPTY_ATTACHMENT_ID);
         }
