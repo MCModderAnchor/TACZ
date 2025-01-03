@@ -59,7 +59,7 @@
   "tacz.gun.db_short.desc": "Aunque no tiene el tamaño adecuado, hace su trabajo.",
   "tacz.gun.deagle_golden.desc": "Brillante y carismático.",
   "tacz.gun.deagle.desc": "Puede destruir todo, incluso tus muñecas.",
-  "tacz.gun.glock_17.desc": "Ejerza sus derechos de la Segunda Enmienda.",
+  "tacz.gun.glock_17.desc": "Ejerce tus derechos de la Segunda Enmienda.",
   "tacz.gun.hk_g3.desc": "El otro brazo del mundo libre.",
   "tacz.gun.hk_mp5a5.desc": "Es como acariciar a un gato que ronronea.",
   "tacz.gun.m4a1.desc": "El amor, esposa y amante de los soldados.",
@@ -163,6 +163,6 @@
   "tacz.attachment.oem_stock_light.name": "Culata ligera de fábrica",
   "tacz.attachment.oem_stock_tactical.name": "Culata táctica de fábrica",
   "tacz.block.gun_smith_table": "Estación de armas TaCZ",
-  "config.tacz.client.render.enable_tooltip_id": "Display Ids in Tooltip",
+  "config.tacz.client.render.enable_tooltip_id": "Mostrar Ids en la descripción",
   "config.tacz.client.render.enable_tooltip_id.desc": "Muestra el ID del Arma/Municion/Accesorio en la descripción del elemento cuando la descripción avanzada está activada."
 }
