@@ -14,7 +14,7 @@
   "message.tacz.fire_select.fail": "Mode tembak tidak diketahui, tidak bisa menembak",
   "key.category.tacz": "Senjata Timeless & Classics: Zero",
   "message.tacz.target_minecart.hit": "Kerusakan: %s Jarak: %s",
-  "message.tacz.pre": "§a§l[TACZ]§r ",
+  "message.tacz.pre": "",
   "message.tacz.convert_from_legacy.intro": "TACZ telah mengolah format gun pack, format gun pack yang lama tidak berlaku dan tidak digunakan lagi.",
   "message.tacz.convert_from_legacy.intro2": "Untuk gun pack yang lama, kamu harus mengkonversi untuk melanjutkan penggunaan paket.",
   "message.tacz.convert_from_legacy": "Cari versi gun pack yang lawas. Apakah kamu ingin mengkonversi nya sekarang?",
