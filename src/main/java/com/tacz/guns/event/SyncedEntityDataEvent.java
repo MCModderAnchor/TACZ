@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public final class SyncedEntityDataEvent {
     @SubscribeEvent
     public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (SyncedEntityData.instance().hasSyncedDataKey(event.getObject().getClass())) {
+        if (SyncedEntityData.instance().hasSyncedDataKey(event.getObject())) {
             DataHolderCapabilityProvider provider = new DataHolderCapabilityProvider();
             event.addCapability(new ResourceLocation(GunMod.MOD_ID, "synced_entity_data"), provider);
             // Don't add invalidate to server player since it's persistent
