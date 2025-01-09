@@ -9,13 +9,13 @@ import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.fml.util.thread.EffectiveSide;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -30,8 +30,8 @@ public class SyncedEntityData {
     private final Set<SyncedClassKey<?>> registeredClassKeys = new HashSet<>();
     private final Object2ObjectMap<ResourceLocation, SyncedClassKey<?>> idToClassKey = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<String, SyncedClassKey<?>> classNameToClassKey = new Object2ObjectOpenHashMap<>();
-    private final Object2BooleanMap<String> clientClassNameCapabilityCache = new Object2BooleanOpenHashMap<>();
-    private final Object2BooleanMap<String> serverClassNameCapabilityCache = new Object2BooleanOpenHashMap<>();
+    private final Map<String, Boolean> clientClassNameCapabilityCache = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> serverClassNameCapabilityCache = new ConcurrentHashMap<>();
 
     private final Set<SyncedDataKey<?, ?>> registeredDataKeys = new HashSet<>();
     private final Reference2ObjectMap<SyncedClassKey<?>, HashMap<ResourceLocation, SyncedDataKey<?, ?>>> classToKeys = new Reference2ObjectOpenHashMap<>();
@@ -155,24 +155,50 @@ public class SyncedEntityData {
         return entity.getCapability(DataHolderCapabilityProvider.CAPABILITY, null).resolve().orElse(null);
     }
 
-    public boolean hasSyncedDataKey(Class<? extends Entity> entityClass) {
-        // Gets the class name capability cache for the effective side.
-        // This is needed to avoid concurrency issue due to client and server threads;
-        // fast util does not support concurrent maps.
-        Object2BooleanMap<String> cache = EffectiveSide.get().isClient() ? this.clientClassNameCapabilityCache : this.serverClassNameCapabilityCache;
-        // It's possible that the entity doesn't have a key, but it's superclass or subsequent does have a synced data key.
-        // In order to prevent checking this every time we attach the capability, a simple one time check can be performed then cache the result.
-        return cache.computeIfAbsent(entityClass.getName(), c -> {
+//    public boolean hasSyncedDataKey(Class<? extends Entity> entityClass) {
+//        // Gets the class name capability cache for the effective side.
+//        // This is needed to avoid concurrency issue due to client and server threads;
+//        // fast util does not support concurrent maps.
+//        Object2BooleanMap<String> cache = EffectiveSide.get().isClient() ? this.clientClassNameCapabilityCache : this.serverClassNameCapabilityCache;
+//        // It's possible that the entity doesn't have a key, but it's superclass or subsequent does have a synced data key.
+//        // In order to prevent checking this every time we attach the capability, a simple one time check can be performed then cache the result.
+//        return cache.computeIfAbsent(entityClass.getName(), c -> {
+//            Class<?> targetClass = entityClass;
+//            // Should be good enough
+//            while (!targetClass.isAssignableFrom(Entity.class)) {
+//                if (this.classNameToClassKey.containsKey(targetClass.getName())) {
+//                    return true;
+//                }
+//                targetClass = targetClass.getSuperclass();
+//            }
+//            return false;
+//        });
+//    }
+
+    public boolean hasSyncedDataKey(Entity entity)
+    {
+        /* It's possible that the entity doesn't have a key, but it's superclass or subsequent does
+         * have a synced data key. In order to prevent checking this every time we attach the
+         * capability, a simple one time check can be performed then cache the result. */
+        Class<? extends Entity> entityClass = entity.getClass();
+        return this.getClassNameCapabilityCache(entity.level.isClientSide).computeIfAbsent(entityClass.getName(), c ->
+        {
             Class<?> targetClass = entityClass;
-            // Should be good enough
-            while (!targetClass.isAssignableFrom(Entity.class)) {
-                if (this.classNameToClassKey.containsKey(targetClass.getName())) {
+            while(!targetClass.isAssignableFrom(Entity.class)) // Should be good enough
+            {
+                if(this.classNameToClassKey.containsKey(targetClass.getName()))
+                {
                     return true;
                 }
                 targetClass = targetClass.getSuperclass();
             }
             return false;
         });
+    }
+
+    private Map<String, Boolean> getClassNameCapabilityCache(boolean client)
+    {
+        return client ? this.clientClassNameCapabilityCache : this.serverClassNameCapabilityCache;
     }
 
     public boolean updateMappings(ServerMessageSyncedEntityDataMapping message) {
