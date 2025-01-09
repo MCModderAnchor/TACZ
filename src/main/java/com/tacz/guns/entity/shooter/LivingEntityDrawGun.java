@@ -26,10 +26,6 @@ public class LivingEntityDrawGun {
     }
 
     public void draw(Supplier<ItemStack> gunItemSupplier) {
-        // 如果不是 tacz 内容则取消行为
-        if (!(gunItemSupplier.get().getItem() instanceof IGun)) {
-            return;
-        }
         // 重置各个状态
         data.initialData();
         // 更新切枪时间戳
