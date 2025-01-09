@@ -118,7 +118,7 @@ public class ModernKineticGunScriptAPI {
                 return false;
             }
             // 如果武器变了，取消射击
-            if (!shooter.getMainHandItem().equals(itemStack)) {
+            if (!shooter.getMainHandItem().equals(itemStack) || shooter.getMainHandItem().isEmpty()) {
                 return false;
             }
             // 触发击发事件
