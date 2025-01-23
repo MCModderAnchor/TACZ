@@ -16,7 +16,7 @@
   "message.tacz.target_minecart.hit": "Daño: %s Distancia: %s",
   "message.tacz.pre": "§a§l[TACZ]§r ",
   "message.tacz.convert_from_legacy.intro": "TACZ ha actualizado el formato del paquete de armas, el formato del paquete de armas antiguo está obsoleto y ya no se utiliza.",
-  "message.tacz.convert_from_legacy.intro2": "For old version gun packs, you need convert them for continues use.",
+  "message.tacz.convert_from_legacy.intro2": "",
   "message.tacz.convert_from_legacy": "Find old version gun packs. Do you want to convert them now?",
   "message.tacz.convert_from_legacy.hint": "You can also use command §c§n/tacz convert§r, it will attempt to convert all old gun packs in the old directory at any time.",
   "message.tacz.convert_from_legacy.button": "[Pulsa para convertir]",
