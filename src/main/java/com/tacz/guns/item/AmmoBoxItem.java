@@ -254,6 +254,9 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        if (GunTooltipPart.hideFlagsPresent(stack)) {
+            return Optional.empty();
+        }
         if (!(stack.getItem() instanceof IAmmoBox iAmmoBox)) {
             return Optional.empty();
         }
@@ -271,6 +274,9 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> components, TooltipFlag isAdvanced) {
+        if (GunTooltipPart.hideFlagsPresent(stack)) {
+            return;
+        }
         if (isAllTypeCreative(stack)) {
             components.add(Component.translatable("tooltip.tacz.ammo_box.usage.all_type_creative").withStyle(ChatFormatting.GOLD));
             return;

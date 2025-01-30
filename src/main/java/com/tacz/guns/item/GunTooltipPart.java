@@ -18,6 +18,10 @@ public enum GunTooltipPart {
         return this.mask;
     }
 
+    public static boolean hideFlagsPresent(ItemStack stack) {
+        return getHideFlags(stack) != 0;
+    }
+
     public static int getHideFlags(ItemStack stack) {
         CompoundTag tag = stack.getTag();
         if (tag != null && tag.contains("HideFlags", Tag.TAG_ANY_NUMERIC)) {

@@ -11,6 +11,7 @@ import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
+import com.tacz.guns.item.GunTooltipPart;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
     private static final Cache<ResourceLocation, List<ItemStack>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.SECONDS).build();
+    private final ItemStack itemStack;
     private final ResourceLocation attachmentId;
     private final List<Component> components = Lists.newArrayList();
     private final MutableComponent tips = Component.translatable("tooltip.tacz.attachment.yaw.shift");
@@ -42,6 +44,7 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
     private List<ItemStack> showGuns = Lists.newArrayList();
 
     public ClientAttachmentItemTooltip(AttachmentItemTooltip tooltip) {
+        this.itemStack = tooltip.getItemStack();
         this.attachmentId = tooltip.getAttachmentId();
         this.addText(tooltip.getType());
         this.getShowGuns();
@@ -72,6 +75,9 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
+        if (shouldNotRender()) {
+            return 0;
+        }
         if (!Screen.hasShiftDown()) {
             return components.size() * 10 + 28;
         }
@@ -80,6 +86,9 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
 
     @Override
     public int getWidth(Font font) {
+        if (shouldNotRender()) {
+            return 0;
+        }
         int[] width = new int[]{0};
         if (packInfo != null) {
             width[0] = Math.max(width[0], font.width(packInfo) + 4);
@@ -98,6 +107,9 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
 
     @Override
     public void renderText(Font font, int pX, int pY, Matrix4f matrix4f, MultiBufferSource.BufferSource bufferSource) {
+        if (shouldNotRender()) {
+            return;
+        }
         int yOffset = pY;
         for (Component component : this.components) {
             font.drawInBatch(component, pX, yOffset, 0xffaa00, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
@@ -117,7 +129,7 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
 
     @Override
     public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics gui) {
-        if (!Screen.hasShiftDown()) {
+        if (!Screen.hasShiftDown() || shouldNotRender()) {
             return;
         }
         int minY = components.size() * 10 + 3;
@@ -180,5 +192,9 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                 components.addAll(result);
             });
         });
+    }
+
+    private boolean shouldNotRender() {
+        return GunTooltipPart.hideFlagsPresent(itemStack);
     }
 }
