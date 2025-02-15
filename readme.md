@@ -22,7 +22,7 @@
     <a href="https://tacwiki.mcma.club/zh/">Wiki</a>
 </p>
 
-Timeless and Classics Guns Zero is a gun mod for Minecraft Forge 1.20.1.
+Timeless and Classics Guns Zero is a gun mod for Minecraft Fabric 1.21.4.
 
 ## Notice
 
