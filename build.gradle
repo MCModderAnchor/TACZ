@@ -7,9 +7,8 @@ FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"))
 buildscript {
     repositories {
         maven { url = "https://plugins.gradle.org/m2/" }
-        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://mvnrepository.com/repos/fabricmc' }
         maven { url = 'https://maven.parchmentmc.org' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         maven {
             // 阿里云镜像，方便国内开发
             url = uri("https://maven.aliyun.com/repository/public/")
@@ -18,25 +17,22 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath group: 'net.gradle', name: 'Gradle', version: '5.1.+', changing: true
+        '
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'net.gradle'
 apply plugin: 'eclipse'
-apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 
 //version = "1.0.4"
 // 版本号，正式发布需要修改这一行
-version = FORMAT.format(new Date())
+version = "1.0.4"
 group = "com.tacz"
-archivesBaseName = "tacz-1.20.1"
+archivesBaseName = "tacz-1.21.4"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 mixin {
     add sourceSets.main, "tacz.refmap.json"
@@ -56,8 +52,8 @@ minecraft {
             jvmArgs "-XX:+AllowEnhancedClassRedefinition"
             // 每个启动单独区分文件夹
             workingDirectory project.file('run/client_a')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'fabric.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'fabric.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             mods {
@@ -82,8 +78,8 @@ minecraft {
         server {
             workingDirectory project.file('run/server')
             property 'mixin.env.disableRefMap', 'true'
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'fabric.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'fabric.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
@@ -96,8 +92,8 @@ minecraft {
         data {
             workingDirectory project.file('run/data')
             property 'mixin.env.disableRefMap', 'true'
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'fabric.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'fabric.logging.console.level', 'debug'
             args '--mod', 'tacz', '--all', '--output', file('src/generated/resources/')
             mods {
                 tacz {
@@ -157,7 +153,7 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${forge_version}"
+    minecraft "net.fabricmc:fabric:${fabric_version}"
 
     // Apache Commons Math 库，用于进行一些插值运算
     minecraftLibrary(jarJar('org.apache.commons:commons-math3:3.6.1')) {
@@ -198,22 +194,14 @@ dependencies {
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
 
     compileOnly fg.deobf("curse.maven:embeddium-908741:${embeddedt_id}")
-    // 同时兼容两个版本
-    compileOnly fg.deobf('libs:oculus_legacy:mc1.20.1-1.6.13')
-    compileOnly fg.deobf('libs:oculus:mc1.20.1-1.7.0')
+    // 同时兼容两个版
+    compileOnly fg.deobf('libs:oculus:mc1.21.4-1.7.0')
 
     runtimeOnly fg.deobf("curse.maven:carry-on-274259:${carry_on_id}")
 
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animation_lib}")
 
-    // 引入 MixinExtras 以解决一些棘手的 Mixin 冲突问题（比如 @Redirect 不能嵌套）
-    // 如果未来有迁移到 Fabric / NeoForge 的计划，请注意这两个框架都已自带 MixinExtras，无需自行打包。
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.6"))
-    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.3.6")) {
-        jarJar.ranged(it, "[0.3.6,)")
-    }
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-}
+    /
 
 jar {
     // 打包时，给 manifest 文件写入一些有用信息
