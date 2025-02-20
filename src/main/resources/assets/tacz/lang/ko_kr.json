@@ -82,7 +82,7 @@
   "gui.tacz.gun_refit.property_diagrams.yaw": "수평 반동",
   "gui.tacz.gun_refit.property_diagrams.ads": "정조준",
   "gui.tacz.gun_refit.property_diagrams.armor_ignore": "장갑 관통력",
-  "gui.tacz.gun_refit.property_diagrams.head_shot": "헤드샷 피해량",
+  "gui.tacz.gun_refit.property_diagrams.head_shot": "헤드샷 피해량 계수",
   "gui.tacz.gun_refit.property_diagrams.knockback": "넉백",
   "gui.tacz.gun_refit.property_diagrams.pierce": "관통력",
   "gui.tacz.gun_refit.property_diagrams.sprint_time": "달리기 시간",
