@@ -19,12 +19,12 @@
   "message.tacz.convert_from_legacy.intro2": "8",
   "message.tacz.convert_from_legacy": "Find old version gun packs. Do you want to convert them now?",
   "message.tacz.convert_from_legacy.hint": "You can also use command §c§n/tacz convert§r, it will attempt to convert all old gun packs in the old directory at any time.",
-  "message.tacz.convert_from_legacy.button": "[Click Me To Convert]",
+  "message.tacz.convert_from_legacy.button": "klikatu konbertitzeko",
   "message.tacz.convert_from_legacy.hover": "Click to convert old gun packs in the old directory",
   "message.tacz.convert_from_legacy.hide": "If you don't want to see this message any more, please rename the old gun pack folder.",
   "message.tacz.converter.init_failed": "Failed to init gun pack directory, check the log for more details.",
   "message.tacz.converter.start": "Start to convert old gun packs... §c§lPLEASE DO NOT INTERRUPT THE GAME!!!§r",
-  "message.tacz.converter.pack.start": "Start converting: %s",
+  "message.tacz.converter.pack.start": "Hazi konbertitzen: %s",
   "message.tacz.converter.pack.exist": "Target file already exists, skip...",
   "message.tacz.converter.pack.finish": "Complete convert %s!",
   "message.tacz.converter.pack.failed": "Failed to convert %s, check the log for more details, skip...",
@@ -241,6 +241,6 @@
   "death.attack.tacz.bullet": "%1$sjaurti zuen%2$s",
   "death.attack.tacz.bullet.item": "%1$s jaurti zuen %2$serabiltzen%3$s",
   "tacz.resources.modresources": "TACZ Gunpacks Resources",
-  "config.tacz.client.render.enable_tooltip_id": "Display TACZ ID",
-  "config.tacz.client.render.enable_tooltip_id.desc": "Display the gun/ammo/attachment id in item tooltip when advanced tooltip(F3+H) is on."
+  "config.tacz.client.render.enable_tooltip_id": "Erakutzi TACZ ID",
+  "config.tacz.client.render.enable_tooltip_id.desc": "Erakutzi armak/munizioa/osagarria item id tooltip Aurreratua activatuta dagoenean(F3+H)."
 }
