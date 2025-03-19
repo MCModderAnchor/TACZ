@@ -242,5 +242,5 @@
   "death.attack.tacz.bullet.item": "%1$s ถูกยิงโดย %2$s โดยใช้ %3$s",
   "tacz.resources.modresources": "แพ็คทรัพยากรอาวุธ TACZ",
   "config.tacz.client.render.enable_tooltip_id": "แสดง TACZ ID",
-  "config.tacz.client.render.enable_tooltip_id.desc": "แสดง ID ปืน/กระสุน/ของแต่งปืน"
+  "config.tacz.client.render.enable_tooltip_id.desc": "แสดง ID ปืน/กระสุน/ของแต่งปืน ในคำแนะนำเครื่องมือขั้นสูง (F3+H) เมื่อคำแนะนำเครื่องมือขั้นสูงถูกเปิดใช้งาน"
 }
