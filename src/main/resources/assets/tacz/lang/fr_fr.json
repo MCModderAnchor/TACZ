@@ -140,7 +140,7 @@
   "tooltip.tacz.attachment.pierce.decrease": "- Pierce",
   "tooltip.tacz.attachment.ammo_speed.increase": "+ Ammo Speed",
   "tooltip.tacz.attachment.ammo_speed.decrease": "- Ammo Speed",
-  "tooltip.tacz.attachment.damage.increase": "+ Damage",
+  "tooltip.tacz.attachment.damage.increase": "",
   "tooltip.tacz.attachment.damage.decrease": "- Damage",
   "tooltip.tacz.attachment.effective_range.increase": "+ Effective Range",
   "tooltip.tacz.attachment.effective_range.decrease": "- Effective Range",
