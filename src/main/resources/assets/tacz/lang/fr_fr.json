@@ -140,7 +140,7 @@
   "tooltip.tacz.attachment.pierce.decrease": "- pénétration",
   "tooltip.tacz.attachment.ammo_speed.increase": "+ vitesse des balles",
   "tooltip.tacz.attachment.ammo_speed.decrease": "- vitesse des balles",
-  "tooltip.tacz.attachment.damage.increase": "",
+  "tooltip.tacz.attachment.damage.increase": "+ Dégâts",
   "tooltip.tacz.attachment.damage.decrease": "- Dégâts",
   "tooltip.tacz.attachment.effective_range.increase": "+ Portée",
   "tooltip.tacz.attachment.effective_range.decrease": "- Portée",
@@ -201,7 +201,7 @@
   "config.tacz.client.render.disable_interact_hud_text": "Désactiver le texte d'interaction de l'Hud",
   "config.tacz.client.render.disable_interact_hud_text.desc": "Désactiver le texte d'interaction du Hud au centre de l'écran",
   "config.tacz.client.render.disable_movement_fov.desc": "Désactive tous les effets de la vision quand vous tenez une arme.",
-  "config.tacz.client.render.disable_movement_fov": "Disable Speed Fov Effect",
+  "config.tacz.client.render.disable_movement_fov": "Désactive l'effet visuel du sprint.",
   "config.tacz.client.zoom": "Zoomer",
   "config.tacz.client.zoom.screen_distance_coefficient": "Coefficient de Distance de l’Écran",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Coefficient de distance de l'écran pour zoomer, en utilisant la norme MDV, par défaut MDV133",
@@ -240,7 +240,7 @@
   "config.tacz.common.other.target_sound_distance.desc": "La distance maximale à laquelle le son des cibles est audible (cible et minecart avec cible)",
   "death.attack.tacz.bullet": "%1$s a été abattu par %2$s",
   "death.attack.tacz.bullet.item": "%1$s a été abattu par %2$s à l'aide d'un %3$s",
-  "tacz.resources.modresources": "TACZ Gunpacks Resources",
-  "config.tacz.client.render.enable_tooltip_id": "Display TACZ ID",
-  "config.tacz.client.render.enable_tooltip_id.desc": "Display the gun/ammo/attachment id in item tooltip when advanced tooltip(F3+H) is on."
+  "tacz.resources.modresources": "Ressources du mod TACZ",
+  "config.tacz.client.render.enable_tooltip_id": "Afficher l'ID de TACZ",
+  "config.tacz.client.render.enable_tooltip_id.desc": "Afficher les ID des armes/munitions/attachements dans le tooltip quand le tooltip avancé est activé (F3+H)."
 }
