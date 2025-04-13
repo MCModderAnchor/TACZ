@@ -238,8 +238,8 @@
   "config.tacz.common.other.default_pack_debug.desc": "활성화한 경우, /tacz reload 커맨드가 config 폴더 내의 기본 모델 파일을 덮어쓰지 않습니다",
   "config.tacz.common.other.target_sound_distance": "타겟 소리 거리",
   "config.tacz.common.other.target_sound_distance.desc": "타겟과 마인카트 타겟의 최대 소리 렌더링 거리를 설정합니다",
-  "death.attack.tacz.bullet": "%1$s이(가) %2$s에게 피격당했습니다",
-  "death.attack.tacz.bullet.item": "%1$s이(가) %3$s을(를) 사용한 %2$s에게 피격당했습니다",
+  "death.attack.tacz.bullet": "%1$s이(가) %2$s에게 사살당했습니다",
+  "death.attack.tacz.bullet.item": "%1$s이(가) %3$s을(를) 사용한 %2$s에게 사살당했습니다",
   "tacz.resources.modresources": "TACZ 총 팩 리소스들",
   "config.tacz.client.render.enable_tooltip_id": "TACZ ID 보이기",
   "config.tacz.client.render.enable_tooltip_id.desc": "고급 툴팁(F3+H)이 켜져 있을 때 아이템 툴팁에 총/탄약/부속품 ID를 표시합니다."
