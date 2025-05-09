@@ -264,7 +264,7 @@
   "death.attack.tacz.bullet": "%1$s ditembak oleh %2$s",
   "death.attack.tacz.bullet.item": "%1$s ditembak oleh %2$s menggunakan %3$s",
   "tacz.resources.modresources": "TACZ Gunpacks Resources",
-  "config.tacz.client.render.enable_tooltip_id": "",
+  "config.tacz.client.render.enable_tooltip_id": "Tampilkan ID TACZ",
   "config.tacz.client.render.enable_tooltip_id.desc": "Tampilkan senjata/amunisi/aksesoris id di deskripsi item saat deskripsi lanjutan(F3+H) diaktifkan.",
   "tooltip.tacz.attachment.laser.color": "Warna Laser: %s",
   "config.tacz.client.render.laser_fadeout": "Efek Memudar Laser",
