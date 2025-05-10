@@ -191,7 +191,7 @@
   "config.tacz.client.key.hold_to_crawl": "Удерживать для ползания",
   "config.tacz.client.key.hold_to_crawl.desc": "Если Вы хотите удерживать кнопку ползания, чтобы ползти, выбирайте \"Да\"",
   "config.tacz.client.key.auto_reload": "Автоматическая перезарядка",
-  "config.tacz.client.key.auto_reload.desc": "Пытается автоматически перезарядиться, когда заканчиваются патроны",
+  "config.tacz.client.key.auto_reload.desc": "Попробуй автоматически перезарядиться, когда заканчиваются патроны",
   "config.tacz.client.render": "Прорисовка",
   "config.tacz.client.render.gun_lod_render_distance": "Дальность прорисовки LOD оружия",
   "config.tacz.client.render.gun_lod_render_distance.desc": "Как далеко будут видны LOD на модели оружия (0 - видны на любом расстоянии)",
