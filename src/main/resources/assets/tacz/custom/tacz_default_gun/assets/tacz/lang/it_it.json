@@ -206,7 +206,12 @@
   "tacz.attachment.stock_moe.name": "Calcio Magpul MOE",
   "tacz.attachment.stock_ripstock.name": "Calcio CMMG RipStock",
   "tacz.attachment.stock_m4ss.name": "Calcio M4SS",
-  "tacz.block.gun_smith_table.name": "Banco dell'armaiolo TaCZ",
+  "tacz.block.gun_smith_table.name": "TaCZ Gun Smith Table",
+  "tacz.block.ammo_workbench.name": "TaCZ Ammo Assembly Table",
+  "tacz.block.attachment_workbench.name": "TaCZ Attachment Table",
+  "tacz.block.gun_smith_table.desc": "Where it all began",
+  "tacz.block.ammo_workbench.desc": "Gunpowder Glitter",
+  "tacz.block.attachment_workbench.desc": "Gilding the lily",
   "config.tacz.client.render.enable_tooltip_id": "Mostra gli ID nei suggerimenti",
   "config.tacz.client.render.enable_tooltip_id.desc": "Mostra l'ID di armi/munizioni/modifiche nei suggerimenti quando i suggerimenti avanzati sono attivati."
 }
