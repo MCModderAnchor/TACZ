@@ -206,7 +206,12 @@
   "tacz.attachment.stock_moe.name": "Magpul MOE ストック",
   "tacz.attachment.stock_ripstock.name": "CMMG Ripstock ストック",
   "tacz.attachment.stock_m4ss.name": "M4SSストック",
-  "tacz.block.gun_smith_table.name": "TaCZガンスミステーブル",
+  "tacz.block.gun_smith_table.name": "TaCZ Gun Smith Table",
+  "tacz.block.ammo_workbench.name": "TaCZ Ammo Assembly Table",
+  "tacz.block.attachment_workbench.name": "TaCZ Attachment Table",
+  "tacz.block.gun_smith_table.desc": "Where it all began",
+  "tacz.block.ammo_workbench.desc": "Gunpowder Glitter",
+  "tacz.block.attachment_workbench.desc": "Gilding the lily",
   "config.tacz.client.render.enable_tooltip_id": "アイテム情報にIDを表示する",
   "config.tacz.client.render.enable_tooltip_id.desc": "高度な情報を表示がオンの時、銃/弾薬/アタッチメントのIDをアイテム情報に加える"
 }
