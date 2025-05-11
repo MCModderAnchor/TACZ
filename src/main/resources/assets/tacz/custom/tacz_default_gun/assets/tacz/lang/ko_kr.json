@@ -206,7 +206,12 @@
   "tacz.attachment.stock_moe.name": "맥풀 MOE 개머리판",
   "tacz.attachment.stock_ripstock.name": "CMMG 립스톡 개머리판",
   "tacz.attachment.stock_m4ss.name": "M4SS 개머리판",
-  "tacz.block.gun_smith_table.name": "TaCZ 총기 작업대",
+  "tacz.block.gun_smith_table.name": "TaCZ Gun Smith Table",
+  "tacz.block.ammo_workbench.name": "TaCZ Ammo Assembly Table",
+  "tacz.block.attachment_workbench.name": "TaCZ Attachment Table",
+  "tacz.block.gun_smith_table.desc": "Where it all began",
+  "tacz.block.ammo_workbench.desc": "Gunpowder Glitter",
+  "tacz.block.attachment_workbench.desc": "Gilding the lily",
   "config.tacz.client.render.enable_tooltip_id": "툴팁에서 ID 보이기",
   "config.tacz.client.render.enable_tooltip_id.desc": "고급 도구 설명이 켜져 있을 때 아이템 툴팁에 총/탄약/부속품 ID를 표시합니다."
 }
