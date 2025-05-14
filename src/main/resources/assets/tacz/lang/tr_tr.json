@@ -260,7 +260,7 @@
   "config.tacz.common.other.target_sound_distance": "Hedef Ses Uzaklığı",
   "config.tacz.common.other.target_sound_distance.desc": "Hedef vurulduğu zaman geri dönen sesin maksimum uzaklığı, vagon tipi dahil",
   "config.tacz.common.other.enable_table_filter": "Default Gunsmith Table Recipe Limit",
-  "config.tacz.common.other.enable_table_filter.desc": "Enable the recipe limit of default gunsmith table or not",
+  "config.tacz.common.other.enable_table_filter.desc": "Varsayılan Silah Yapım Masası İçin Tarif Sınırını Etkinleştir Veya Etkinleştirme",
   "death.attack.tacz.bullet": "%1$s, %2$s tarafından vurularak öldürüldü",
   "death.attack.tacz.bullet.item": "%1$s, %2$s tarafından %3$s ile vurularak öldürüldü",
   "tacz.resources.modresources": "TACZ Silah Paketleri Kaynakları",
