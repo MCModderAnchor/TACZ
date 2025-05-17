@@ -210,7 +210,7 @@
   "tacz.block.ammo_workbench.name": "TaCZ 彈藥組裝台",
   "tacz.block.attachment_workbench.name": "TaCZ 配件改裝台",
   "tacz.block.gun_smith_table.desc": "一切的起始",
-  "tacz.block.ammo_workbench.desc": "Gunpowder Glitter",
+  "tacz.block.ammo_workbench.desc": "火花閃爍",
   "tacz.block.attachment_workbench.desc": "精益求精",
   "config.tacz.client.render.enable_tooltip_id": "在物品資訊中顯示ID",
   "config.tacz.client.render.enable_tooltip_id.desc": "當顯示詳細物品資訊功能開啟時，顯示槍枝/彈藥/配件ID"
