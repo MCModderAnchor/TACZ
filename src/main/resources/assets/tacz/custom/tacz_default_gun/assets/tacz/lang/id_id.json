@@ -206,12 +206,12 @@
   "tacz.attachment.stock_moe.name": "Popor Magpul MOE",
   "tacz.attachment.stock_ripstock.name": "Popor CMMG RipStock",
   "tacz.attachment.stock_m4ss.name": "Popor M4SS",
-  "tacz.block.gun_smith_table.name": "TaCZ Gun Smith Table",
-  "tacz.block.ammo_workbench.name": "TaCZ Ammo Assembly Table",
-  "tacz.block.attachment_workbench.name": "TaCZ Attachment Table",
-  "tacz.block.gun_smith_table.desc": "Where it all began",
-  "tacz.block.ammo_workbench.desc": "Gunpowder Glitter",
-  "tacz.block.attachment_workbench.desc": "Gilding the lily",
+  "tacz.block.gun_smith_table.name": "Meja Senjata TaCZ",
+  "tacz.block.ammo_workbench.name": "Meja Perakitan Amunisi TaCZ",
+  "tacz.block.attachment_workbench.name": "Meja Aksesoris TaCZ",
+  "tacz.block.gun_smith_table.desc": "Tempat semuanya dimulai",
+  "tacz.block.ammo_workbench.desc": "Bubuk Mesiu Berkilap",
+  "tacz.block.attachment_workbench.desc": "Memperindah yang sudah indah",
   "config.tacz.client.render.enable_tooltip_id": "Tampilkan ID di Deskripsi",
   "config.tacz.client.render.enable_tooltip_id.desc": "Tampilkan senjata/amunisi/aksesoris id di deskripsi item saat deskripsi lanjutan diaktifkan."
 }
