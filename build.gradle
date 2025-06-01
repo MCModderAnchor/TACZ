@@ -150,14 +150,19 @@ repositories {
         }
     }
     maven {
-        // saps.dev Maven (KubeJS and Rhino)
-        url = "https://maven.saps.dev/minecraft"
+        // latvian.dev Maven (KubeJS and Rhino)
+        url "https://maven.latvian.dev/releases"
         content {
             includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
         }
     }
     maven {
         url 'https://jitpack.io'
+        content {
+            includeGroup "com.github.rtyley"
+            includeGroup "com.github.FiguraMC.luaj"
+        }
     }
     maven {
         name "KosmX's maven"
