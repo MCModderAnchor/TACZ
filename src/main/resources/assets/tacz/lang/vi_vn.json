@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Đạn có thể gây cháy các khối hay không",
   "config.tacz.common.ammo.ignite_entity": "Gây cháy thực thể",
   "config.tacz.common.ammo.ignite_entity.desc": "Đạn có thể gây cháy các thực thể hay không",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Khác",
   "config.tacz.common.other.default_pack_debug": "Dò lỗi Gói Mặc Định",
   "config.tacz.common.other.default_pack_debug.desc": "Khi bật, lệnh reload sẽ không ghi đè lên mô hình mặc định trong thiết lập",
