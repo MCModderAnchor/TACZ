@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Чи набої можуть запалювати блок",
   "config.tacz.common.ammo.ignite_entity": "Запалити істоту",
   "config.tacz.common.ammo.ignite_entity.desc": "Чи можуть набої запалювати сутність",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Інше",
   "config.tacz.common.other.default_pack_debug": "Пак за замовчуванням",
   "config.tacz.common.other.default_pack_debug.desc": "Якщо увімкнено, команда перезавантаження не буде перезаписувати файл моделі за замовчуванням у розділі config",
