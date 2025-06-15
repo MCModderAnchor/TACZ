@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Могут ли патроны поджигать блоки",
   "config.tacz.common.ammo.ignite_entity": "Поджигание сущностей",
   "config.tacz.common.ammo.ignite_entity.desc": "Могут ли патроны поджигать сущностей",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Другое",
   "config.tacz.common.other.default_pack_debug": "Отладка стандартного пака",
   "config.tacz.common.other.default_pack_debug.desc": "Если включено, команда перезагрузки не будет перезаписывать стандартные модели в конфиге",
