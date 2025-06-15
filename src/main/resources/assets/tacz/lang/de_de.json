@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Ob Munition den Block entzünden kann",
   "config.tacz.common.ammo.ignite_entity": "Entität entzünden",
   "config.tacz.common.ammo.ignite_entity.desc": "Ob Munition die Entität entzünden kann",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Andere",
   "config.tacz.common.other.default_pack_debug": "Standard Pack Debug",
   "config.tacz.common.other.default_pack_debug.desc": "Wenn aktiviert, überschreibt der Nachladebefehl nicht die Standardmodelldatei unter der Konfiguration",
