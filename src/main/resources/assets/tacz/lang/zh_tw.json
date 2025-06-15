@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "彈藥是否可以點燃方塊",
   "config.tacz.common.ammo.ignite_entity": "點燃實體",
   "config.tacz.common.ammo.ignite_entity.desc": "彈藥是否可以點燃實體",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "其他",
   "config.tacz.common.other.default_pack_debug": "預設包調試",
   "config.tacz.common.other.default_pack_debug.desc": "啟用後，reload指令不會覆蓋config的預設模型文件",
