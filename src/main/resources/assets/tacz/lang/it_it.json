@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Se una determinata munizione può incendiare un blocco",
   "config.tacz.common.ammo.ignite_entity": "Incendia Entità",
   "config.tacz.common.ammo.ignite_entity.desc": "Se una determinata munizione può incendiare un'entità",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Altro",
   "config.tacz.common.other.default_pack_debug": "Debug pacchetto predefinito",
   "config.tacz.common.other.default_pack_debug.desc": "Quando abilitato, il comando di ricarica non sovrascriverà il file del modello predefinito nella sezione di configurazione",
