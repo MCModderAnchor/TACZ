@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Si la munició pot incendiar un bloc o no",
   "config.tacz.common.ammo.ignite_entity": "Incendiar una entitat",
   "config.tacz.common.ammo.ignite_entity.desc": "Si la munició pot incendiar l'entitat o no",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Altres",
   "config.tacz.common.other.default_pack_debug": "Paquet Debug estàndard",
   "config.tacz.common.other.default_pack_debug.desc": "Quan està activat, el comandament de recàrrega no sobreescriurà el model estàndard de l'arxiu sota configuració",
