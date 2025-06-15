@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Czy amunicja może podpalić blok",
   "config.tacz.common.ammo.ignite_entity": "Podpal Postacie",
   "config.tacz.common.ammo.ignite_entity.desc": "Czy amunicja może podpalić postacie",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Inne",
   "config.tacz.common.other.default_pack_debug": "Podstawowa Paczka Debugowania",
   "config.tacz.common.other.default_pack_debug.desc": "Kiedy włączone, komenda przeładowania nie nadpisze podstawowego modelu pliku pod konfiguracją",
