@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Si las balas pueden prender bloques en fuego o no",
   "config.tacz.common.ammo.ignite_entity": "Prender entidades en fuego",
   "config.tacz.common.ammo.ignite_entity.desc": "Si las balas pueden prender entidades en fuego o no",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Otro",
   "config.tacz.common.other.default_pack_debug": "Paquete debug por defecto",
   "config.tacz.common.other.default_pack_debug.desc": "Cuando está habilitado, el comando de recarga no sobreescribirá el modelo predeterminado bajo la configuración",
