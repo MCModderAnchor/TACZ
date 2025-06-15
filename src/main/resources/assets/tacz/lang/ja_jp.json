@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "弾丸がブロックに引火させるかを設定できます。",
   "config.tacz.common.ammo.ignite_entity": "エンティティに引火させる",
   "config.tacz.common.ammo.ignite_entity.desc": "弾丸がエンティティに引火させるかを設定できます。",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "その他",
   "config.tacz.common.other.default_pack_debug": "デフォルトパック - デバッグ",
   "config.tacz.common.other.default_pack_debug.desc": "この設定を有効化した場合、reloadコマンドはデフォルトのモデルファイルを上書きしなくなります。",
