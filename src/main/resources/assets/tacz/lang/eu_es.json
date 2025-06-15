@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Munizio batek blokeari sua eman badezake",
   "config.tacz.common.ammo.ignite_entity": "Sua eman entitateari",
   "config.tacz.common.ammo.ignite_entity.desc": "Munizio batek entitatea sua eman badezake",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Beste",
   "config.tacz.common.other.default_pack_debug": "Paketearen lehenetsia araztu",
   "config.tacz.common.other.default_pack_debug.desc": "Pistuta dagoenean, birkargatu komandoak ez du eredu-fitxategi lehenetsia modeloa konfigurazioan",
