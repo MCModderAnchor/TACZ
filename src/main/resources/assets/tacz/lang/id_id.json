@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Apakah amunisi dapat menyalakan blok",
   "config.tacz.common.ammo.ignite_entity": "Menyalakan Entitas",
   "config.tacz.common.ammo.ignite_entity.desc": "Apakah amunisi dapat membakar entitas",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Lainnya",
   "config.tacz.common.other.default_pack_debug": "Debug Paket Bawaan",
   "config.tacz.common.other.default_pack_debug.desc": "Jika aktif, perintah muat ulang tidak akan menimpa file model bawaan di bawah konfig",
