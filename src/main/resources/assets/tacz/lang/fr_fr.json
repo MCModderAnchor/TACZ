@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Si une munition peut enflammer le bloc",
   "config.tacz.common.ammo.ignite_entity": "Enflammer l'Entité",
   "config.tacz.common.ammo.ignite_entity.desc": "Si une munition peut enflammer l'entité",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Autre",
   "config.tacz.common.other.default_pack_debug": "Débogage par défaut du pack",
   "config.tacz.common.other.default_pack_debug.desc": "Lorsque cette option est activée, la commande reload n'écrasera pas le fichier modèle par défaut sous la configuration",
