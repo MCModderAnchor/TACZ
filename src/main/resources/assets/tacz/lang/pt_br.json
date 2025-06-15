@@ -260,6 +260,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Se munição pode atear blocos",
   "config.tacz.common.ammo.ignite_entity": "Atear entidades",
   "config.tacz.common.ammo.ignite_entity.desc": "Se munição pode atear entidades",
+  "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
+  "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Outros",
   "config.tacz.common.other.default_pack_debug": "Depuração de Pacotes Padrão",
   "config.tacz.common.other.default_pack_debug.desc": "Quando ativado, o comando de recarregar não substituirá o arquivo modelo padrão sob configuração",
