@@ -14,7 +14,7 @@
   "commands.tacz.reload.overwrite_command.off": "§a§l●§rVocê pode usar o comando §c§n/tacz overwrite true§r para ativar a sobreescrição.",
   "commands.tacz.config.default_table_limit.enabled": ".",
   "commands.tacz.config.default_table_limit.disabled": "",
-  "commands.tacz.config.server_shoot_network_check.enabled": "§a§l[TACZ]§r Server-side shoot network check is enabled.",
+  "commands.tacz.config.server_shoot_network_check.enabled": "",
   "commands.tacz.config.server_shoot_network_check.disabled": "§a§l[TACZ]§r Server-side shoot network check is disabled.",
   "commands.tacz.config.server_shoot_cooldown_check.enabled": "§a§l[TACZ]§r Server-side shoot cooldown check is enabled.",
   "commands.tacz.config.server_shoot_cooldown_check.disabled": "§a§l[TACZ]§r Server-side shoot cooldown check is disabled.\n §6WARNING: Close this will disable the shoot cooldown check in server-side at all, which may lead to potential for cheating. Only consider to close this when you can't shoot at all often.",
