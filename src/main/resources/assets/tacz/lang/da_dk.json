@@ -29,7 +29,7 @@
   "message.tacz.convert_from_legacy.button": "[Klik Mig For At Konvertere]",
   "message.tacz.convert_from_legacy.hover": "Klik for at konvertere gamle våbenpakker i den gamle mappe",
   "message.tacz.convert_from_legacy.hide": "Hvis du ikke ønsker at se denne meddelelse igen, så omdøb venligst den gamle våbenpakkemappe.",
-  "message.tacz.converter.init_failed": "Failed to init gun pack directory, check the log for more details.",
+  "message.tacz.converter.init_failed": "",
   "message.tacz.converter.start": "Start to convert old gun packs... §c§lPLEASE DO NOT INTERRUPT THE GAME!!!§r",
   "message.tacz.converter.pack.start": "Start converting: %s",
   "message.tacz.converter.pack.exist": "Target file already exists, skip...",
