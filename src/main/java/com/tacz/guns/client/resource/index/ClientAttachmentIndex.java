@@ -2,6 +2,7 @@ package com.tacz.guns.client.resource.index;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
@@ -14,8 +15,11 @@ import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.util.ColorHex;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -72,15 +76,27 @@ public class ClientAttachmentIndex {
         Preconditions.checkArgument(pojoDisplay != null, "index object missing display field");
         AttachmentDisplay display = ClientAssetsManager.INSTANCE.getAttachmentDisplay(pojoDisplay);
         Preconditions.checkArgument(display != null, "there is no corresponding display file");
+
+        /**
+         * 优先使用"views_fov"列表，缺失则使用"fov"
+         * 各项需大于0F
+         * {@link com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay}
+         */
         index.viewsFov = display.getViewsFov();
-        if (index.viewsFov == null) {
-            Preconditions.checkArgument(display.getFov() > 0, "fov must > 0");
-            index.viewsFov = new float[]{display.getFov()};
-        } else {
+        if (index.viewsFov != null) {
             for(float fov : index.viewsFov) {
                 Preconditions.checkArgument(fov > 0, "fov must > 0");
             }
+        } else {
+            Preconditions.checkArgument(display.getFov() > 0, "fov must > 0");
+            index.viewsFov = new float[]{display.getFov()};
         }
+
+        /**
+         * "zoom"列表
+         * 各项需不小于1.0F
+         * {@link com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay}
+         */
         index.zoom = display.getZoom();
         if (index.zoom != null) {
             for (int i = 0; i < index.zoom.length; i++) {
@@ -89,20 +105,73 @@ public class ClientAttachmentIndex {
                 }
             }
         }
+
+        /**
+         * "views"int列表，默认为"views": [1]
+         * 各项需不小于1
+         * {@link com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay}
+         *
+         * 仅在1处使用{@link com.tacz.guns.client.event.FirstPersonRenderGunEvent#applyFirstPersonPositioningTransform}
+         * "views"int列表各项使用为viewIndex = views[zoomNumber % views.length] - 1;
+         * zoomNumber在没tag的时候返回0，第一次调用实际值为0，暂不清楚先zoom还是先读取zoomNumber
+         * zoomNumber第一次zoom后实际使用值为1，且仅在一处被设置{@link com.tacz.guns.entity.shooter.LivingEntityAim#zoom}
+         * 既然索引减1，那就表明能处理viewIndex为-1的情况
+         * viewIndex是先获取views里的int，再减1，而views里的int已经在此处 if (index.views[i] < 1) throw new IllegalArgumentException("view index must >= 1");
+         * 所以实际viewIndex已经在配置文件的检查里保证了最小为0（不会让List抛异常）
+         * List<BedrockPart> scopeViewPath = attachmentModel.getScopeViewPath(currentViewIndex == -1 ? viewIndex : currentViewIndex); {@link com.tacz.guns.client.model.BedrockAttachmentModel#getScopeViewPath}
+         * return scopeViewPaths.get(viewIndex >= scopeViewPaths.size() ? 0 : viewIndex);
+         *
+         * 从模型读取分组"scope_view"下读取 {@link com.tacz.guns.client.model.BedrockAttachmentModel#BedrockAttachmentModel}
+         * "views"int列表内的值对应模型分组scope_view，scope_view2，scope_view3...
+         * 1 -> scope_view
+         * 2 -> scope_view2
+         * 3 -> scope_view3
+         * List<List<BedrockPart>> scopeViewPaths = {scope_view, scope_view2, scope_view3... }
+         */
         index.views = display.getViews();
-        if (index.views == null) {
-            index.views = new int[]{1};
-        } else {
+        if (index.views != null) {
             for (int i = 0; i < index.views.length; i++) {
+                /**
+                 * 此处不小于1的检查为{@link com.tacz.guns.client.model.BedrockAttachmentModel#getScopeViewPath}的隐式依赖
+                 */
                 if (index.views[i] < 1) {
                     throw new IllegalArgumentException("view index must >= 1");
                 }
             }
+        } else {
+            index.views = new int[]{1};
         }
+
+        /**
+         * "scope"和"sight"形成一个组合{@link com.tacz.guns.client.model.BedrockGunModel#render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay)}
+         *
+         * {@link com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay}
+         */
         index.isScope = display.isScope();
         index.isSight = display.isSight();
+
+        /**
+         * "adapter"字符串，装备配件后显示该名称分组下的模型
+         * {@link com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay}
+         */
         index.adapterNodeName = display.getAdapterNodeName();
+
+        /**
+         * "show_muzzle"使装备枪口后不隐藏分组"muzzle_default"
+         * {@link com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay}
+         */
         index.showMuzzle = display.isShowMuzzle();
+
+        /**
+         * "laser"JsonObject，激光瞄准器参数，不提供着弹点预测的同时还默认提供PUBG特色“消音器穿墙”，废物激光剑
+         * "default_color"
+         * "can_edit"
+         * "length"
+         * "width"
+         * "third_person_length"
+         * "third_person_width"
+         * {@link com.tacz.guns.client.resource.pojo.display.LaserConfig}
+         */
         index.laserConfig = display.getLaserConfig();
         return display;
     }

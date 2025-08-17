@@ -42,6 +42,10 @@ public class LivingEntityAim {
         CompoundTag scopeTag = iGun.getAttachmentTag(currentGunItem, AttachmentType.SCOPE);
         if (!DefaultAssets.isEmptyAttachmentId(scopeId) && scopeTag != null) {
             TimelessAPI.getCommonAttachmentIndex(scopeId).ifPresent(index -> {
+                /**
+                 * {@link com.tacz.guns.client.resource.index.ClientAttachmentIndex#checkDisplay}
+                 * 在没有tag的时候默认为0，但是每次使用都++zoomNumber，所以zoomNumber实际从1开始
+                 */
                 int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
                 ++zoomNumber;
                 // 避免上溢变成负的

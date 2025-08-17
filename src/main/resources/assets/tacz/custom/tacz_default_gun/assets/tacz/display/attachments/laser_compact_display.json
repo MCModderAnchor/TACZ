@@ -20,6 +20,9 @@
     // 激光的长度（因为是渐变，末端可能实际完全看不见）laser length
     "length": 2,
     // 激光的宽度 laser width
-    "width": 0.008
+    "width": 0.008,
+    // 去掉鸡肋的激光剑
+    "third_person_length": 0,
+    "third_person_width": 0
   }
 }

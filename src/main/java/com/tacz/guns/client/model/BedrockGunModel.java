@@ -290,12 +290,19 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             if (iAttachment != null) {
                 Optional<ClientAttachmentIndex> attachmentIndex = TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(attachmentItem));
                 attachmentIndex.ifPresent(index -> {
+                    /**
+                     * "scope"和"sight"均手动设置为true
+                     * 仅"scope"为true
+                     * 仅"sight"为true：无额外处理
+                     */
                     if (index.isScope() && index.isSight()) { // 组合镜
                         RenderHelper.enableItemEntityStencilTest();
                         RenderSystem.stencilFunc(GL11.GL_GREATER, 127, 0xFF);
                     } else if (index.isScope()) { // 长筒镜
                         RenderHelper.enableItemEntityStencilTest();
                         RenderSystem.stencilFunc(GL11.GL_EQUAL, 0, 0xFF);
+                    } else { // 红点、全息、侧瞄
+                        ;
                     }
                 });
             }

@@ -165,10 +165,14 @@ public class FirstPersonRenderGunEvent {
                 Optional<ClientAttachmentIndex> indexOptional = TimelessAPI.getClientAttachmentIndex(scopeId);
                 if (indexOptional.isPresent()) {
                     BedrockAttachmentModel attachmentModel = indexOptional.get().getAttachmentModel();
+                    /**
+                     * {@link com.tacz.guns.client.resource.index.ClientAttachmentIndex#checkDisplay}
+                     */
                     int[] views = indexOptional.get().getViews();
+
                     viewIndex = views[zoomNumber % views.length] - 1;
                     if (attachmentModel != null) {
-                        List<BedrockPart> scopeViewPath = attachmentModel.getScopeViewPath(currentViewIndex == -1 ? viewIndex : currentViewIndex);
+                        List<BedrockPart> scopeViewPath = attachmentModel.getScopeViewPath(currentViewIndex == -1 ? viewIndex : currentViewIndex); // -1表示正在切换，直接用新的
                         if (scopeViewPath != null) {
                             aimingNodePath.addAll(scopeViewPath);
                         }

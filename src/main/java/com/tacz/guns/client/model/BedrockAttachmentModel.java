@@ -63,13 +63,25 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         isScopeOcular = new ArrayList<>();
         divisionNodePaths = new ArrayList<>();
         laserBeamPaths = new ArrayList<>();
+
+        /**
+         * {@link com.tacz.guns.client.resource.index.ClientAttachmentIndex#checkDisplay}
+         * 按如下顺序命名：
+         * scope_view
+         * scope_view_2
+         * scope_view_3
+         * scope_view_4
+         * ...
+         * scope_view_n
+         */
         // 初始化 view 的 node path
         List<BedrockPart> path = getPath(modelMap.get(SCOPE_VIEW_NODE));
         int i = 2;
         while (path != null) {
-            scopeViewPaths.add(path);
-            path = getPath(modelMap.get(SCOPE_VIEW_NODE + '_' + i++));
+            scopeViewPaths.add(path); // 第一次是无后缀（scope_view），兼容老的命名
+            path = getPath(modelMap.get(SCOPE_VIEW_NODE + '_' + i++)); // 第二次开始是scope_view_2
         }
+
         // 初始化 ocular 的 node path
         String ocularRegex = "^(" + OCULAR_NODE + "|" + OCULAR_SIGHT_NODE + "|" + OCULAR_SCOPE_NODE + ")(_(\\d+))?$";
         Pattern ocularPattern = Pattern.compile(ocularRegex);
@@ -110,14 +122,17 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     @Nullable
-    public List<BedrockPart> getScopeViewPath(int viewSwitchCount) {
+    public List<BedrockPart> getScopeViewPath(int viewIndex) {
+        /**
+         * {@link com.tacz.guns.client.resource.index.ClientAttachmentIndex#checkDisplay}
+         */
         if (scopeViewPaths.isEmpty()) {
             return null;
         }
-        if (viewSwitchCount >= scopeViewPaths.size()) {
-            return scopeViewPaths.get(0);
-        }
-        return scopeViewPaths.get(viewSwitchCount);
+        /**
+         * viewIndex隐式依赖{@link com.tacz.guns.client.resource.index.ClientAttachmentIndex#checkDisplay}的检查，使得其不会为-1
+         */
+        return scopeViewPaths.get(viewIndex >= scopeViewPaths.size() ? 0 : viewIndex);
     }
 
     public void setIsScope(boolean isScope) {
