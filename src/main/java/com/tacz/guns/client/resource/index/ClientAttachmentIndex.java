@@ -3,6 +3,7 @@ package com.tacz.guns.client.resource.index;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.tacz.guns.GunMod;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
@@ -114,6 +115,7 @@ public class ClientAttachmentIndex {
          * 仅在1处使用{@link com.tacz.guns.client.event.FirstPersonRenderGunEvent#applyFirstPersonPositioningTransform}
          * "views"int列表各项使用为viewIndex = views[zoomNumber % views.length] - 1;
          * zoomNumber在没tag的时候返回0，第一次调用实际值为0，暂不清楚先zoom还是先读取zoomNumber
+         * 每次按切换瞄准镜倍率，zoomNumber都加1
          * zoomNumber第一次zoom后实际使用值为1，且仅在一处被设置{@link com.tacz.guns.entity.shooter.LivingEntityAim#zoom}
          * 既然索引减1，那就表明能处理viewIndex为-1的情况
          * viewIndex是先获取views里的int，再减1，而views里的int已经在此处 if (index.views[i] < 1) throw new IllegalArgumentException("view index must >= 1");
@@ -144,8 +146,25 @@ public class ClientAttachmentIndex {
 
         /**
          * "scope"和"sight"形成一个组合{@link com.tacz.guns.client.model.BedrockGunModel#render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay)}
-         *
          * {@link com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay}
+         *
+         * {@link com.tacz.guns.client.model.BedrockAttachmentModel#BedrockAttachmentModel}
+         * 准心division
+             * 1 -> division
+             * 2 -> division_2
+             * 3 -> division_3
+         * 高倍镜本体组名: scope_body
+         * 高倍镜视野前的环组名: ocular_ring
+         * 镜片组名: 以 ocular 或 ocular_sight 或 ocular_scope开头，后面可带下划线+数字
+             * 读取完的结果自动按后缀排序
+             * ocular 或 ocular_1 只能存在其一，否则会冲突
+             * ocular_2
+             * ocular_sight_3
+             * ocular_scope_n
+             * ocular，ocular_sight，ocular_scope共享后缀的排序，例如ocular_sight_2和ocular_scope_2只能用其一
+             * ocular和ocular_sight无区别
+             * ocular_scope影响此处分支 {@link BedrockAttachmentModel#renderOcularAndDivision}
+         * ocular和division分组的数量需小于128 {@link com.tacz.guns.client.model.BedrockAttachmentModel#renderOcularAndDivision}
          */
         index.isScope = display.isScope();
         index.isSight = display.isSight();
@@ -171,6 +190,11 @@ public class ClientAttachmentIndex {
          * "third_person_length"
          * "third_person_width"
          * {@link com.tacz.guns.client.resource.pojo.display.LaserConfig}
+         *
+         * {@link com.tacz.guns.client.model.BedrockAttachmentModel#BedrockAttachmentModel}
+         * 激光剑组名：以laser_beam开头，后面可带下划线+数字
+         * 读取完的结果不自动排序，且顺序不定且无关紧要，实际会使用相同配置全部渲染
+         * 带后缀和不带后缀的可同时存在，且可重复
          */
         index.laserConfig = display.getLaserConfig();
         return display;

@@ -51,8 +51,10 @@ public class BedrockModel {
         }
         // 应用发光
         for (ModelRendererWrapper rendererWrapper : modelMap.values()) {
-            if (rendererWrapper.getModelRenderer().name != null && rendererWrapper.getModelRenderer().name.endsWith("_illuminated")) {
-                rendererWrapper.getModelRenderer().illuminated = true;
+            BedrockPart modelRenderer = rendererWrapper.getModelRenderer();
+            String name = modelRenderer.name;
+            if (name != null && name.endsWith("_illuminated")) {
+                modelRenderer.illuminated = true;
             }
         }
     }

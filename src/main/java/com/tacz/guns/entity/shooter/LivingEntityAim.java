@@ -45,6 +45,7 @@ public class LivingEntityAim {
                 /**
                  * {@link com.tacz.guns.client.resource.index.ClientAttachmentIndex#checkDisplay}
                  * 在没有tag的时候默认为0，但是每次使用都++zoomNumber，所以zoomNumber实际从1开始
+                 * 每次按切换瞄准镜倍率，zoomNumber都加1
                  */
                 int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
                 ++zoomNumber;

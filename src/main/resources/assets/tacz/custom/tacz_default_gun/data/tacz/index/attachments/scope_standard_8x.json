@@ -1,7 +1,7 @@
 {
   "name": "tacz.attachment.scope_standard_8x.name",
-  "display": "tacz:scope_scout_display",
-  "data": "tacz:scope_scout_data",
+  "display": "tacz:scope_standard_8x_display",
+  "data": "tacz:scope_standard_8x_data",
   "type": "scope",
   "sort": 100
 }

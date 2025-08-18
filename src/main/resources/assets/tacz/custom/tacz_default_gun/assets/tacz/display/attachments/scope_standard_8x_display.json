@@ -7,16 +7,16 @@
     "texture": "tacz:attachment/lod/scope_standard_8x"
   },
   "zoom": [
-    5.0,
-    10.0
+    8.0,
+    1.25
   ],
   "views": [
     1,
-    1
+    2
   ],
   "views_fov": [
     20.0,
-    20.0
+    60.0
   ],
   // 模型上的文本显示
   "text_show": {
@@ -39,6 +39,7 @@
   },
   // 组合镜需要将两个选项都设为 true
   "scope": true,
+  "sight": true,
   // 组合镜不需要这个
   //"fov": 20.0,
   "sounds": {
