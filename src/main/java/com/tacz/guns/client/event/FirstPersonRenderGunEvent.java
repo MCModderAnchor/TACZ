@@ -134,8 +134,8 @@ public class FirstPersonRenderGunEvent {
         applyJumpingSway(model, partialTicks);
     }
 
-    private static int tempLogCount = 0;
-    private static ItemStack tempLastLotItem = null;
+//    private static int tempLogCount = 0;
+//    private static ItemStack tempLastLotItem = null;
     /**
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。会在几个摄像机定位之间插值。
      */
@@ -173,19 +173,19 @@ public class FirstPersonRenderGunEvent {
                     int[] views = indexOptional.get().getViews();
                     viewIndex = views[zoomNumber % views.length] - 1;
 
-                    if (tempLastLotItem != stack) { // 切换物品位置或从箱子放进拿出就能重置
-                        tempLogCount = 0;
-                        tempLastLotItem = stack;
-                    }
-                    if (tempLogCount < 3) {
-                        tempLogCount++;
-                        GunMod.LOGGER.debug(tempLogCount == 1 ? "+------------------" : "+------");
-                        GunMod.LOGGER.debug("tempLogCount:{}", tempLogCount);
-                        for (int i=0; i<views.length; i++)
-                            GunMod.LOGGER.debug("views[{}] = {}", i, views[i]);
-                        GunMod.LOGGER.debug("zoomNumber={}, views.length={}, zoomNumber%views.length={}", zoomNumber, views.length, zoomNumber%views.length);
-                        GunMod.LOGGER.debug("currentViewIndex={}, input viewIndex={}", currentViewIndex, currentViewIndex == -1 ? viewIndex : currentViewIndex);
-                    }
+//                    if (tempLastLotItem != stack) { // 切换物品位置或从箱子放进拿出就能重置
+//                        tempLogCount = 0;
+//                        tempLastLotItem = stack;
+//                    }
+//                    if (tempLogCount < 3) {
+//                        tempLogCount++;
+//                        GunMod.LOGGER.debug(tempLogCount == 1 ? "+------------------" : "+------");
+//                        GunMod.LOGGER.debug("tempLogCount:{}", tempLogCount);
+//                        for (int i=0; i<views.length; i++)
+//                            GunMod.LOGGER.debug("views[{}] = {}", i, views[i]);
+//                        GunMod.LOGGER.debug("zoomNumber={}, views.length={}, zoomNumber%views.length={}", zoomNumber, views.length, zoomNumber%views.length);
+//                        GunMod.LOGGER.debug("currentViewIndex={}, input viewIndex={}", currentViewIndex, currentViewIndex == -1 ? viewIndex : currentViewIndex);
+//                    }
 
                     if (attachmentModel != null) {
                         List<BedrockPart> scopeViewPath = attachmentModel.getScopeViewPath(currentViewIndex == -1 ? viewIndex : currentViewIndex); // -1表示正在切换，直接用新的

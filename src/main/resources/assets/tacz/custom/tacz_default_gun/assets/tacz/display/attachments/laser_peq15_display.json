@@ -13,8 +13,5 @@
     "can_edit": true,
     // 激光的长度（因为是渐变，末端可能实际完全看不见）
     "length": 75
-    // 去掉鸡肋的激光剑
-    "third_person_length": 0,
-    "third_person_width": 0
   }
 }

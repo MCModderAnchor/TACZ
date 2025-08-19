@@ -21,8 +21,8 @@
     "length": 2,
     // 激光的宽度 laser width
     "width": 0.008,
-    // 去掉鸡肋的激光剑
-    "third_person_length": 0,
-    "third_person_width": 0
+    // 第三人称镭射
+    "third_person_length": 2,
+    "third_person_width": 0.008
   }
 }

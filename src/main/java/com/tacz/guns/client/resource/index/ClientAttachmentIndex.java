@@ -165,6 +165,7 @@ public class ClientAttachmentIndex {
              * ocular和ocular_sight无区别
              * ocular_scope影响此处分支 {@link BedrockAttachmentModel#renderOcularAndDivision}
          * ocular和division分组的数量需小于128 {@link com.tacz.guns.client.model.BedrockAttachmentModel#renderOcularAndDivision}
+         * ocular_scope不居中会有影响，但默认设置已经避免这个问题 {@link com.tacz.guns.client.model.BedrockAttachmentModel#renderOcularAndDivision}
          */
         index.isScope = display.isScope();
         index.isSight = display.isSight();
@@ -240,6 +241,8 @@ public class ClientAttachmentIndex {
         if (index.attachmentModel != null) {
             index.attachmentModel.setIsScope(display.isScope());
             index.attachmentModel.setIsSight(display.isSight());
+            // 确定好倍镜类型后，自动更正仅scope:true但是没把ocular更新成ocular_scope的配件
+            index.attachmentModel.setScopeCompat(display.doScopeCompatibility());
         }
         index.modelTexture = display.getTexture();
     }

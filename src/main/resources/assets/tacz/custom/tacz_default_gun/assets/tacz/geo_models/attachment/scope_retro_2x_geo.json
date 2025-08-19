@@ -815,7 +815,12 @@
 					]
 				},
 				{
-					"name": "ocular",
+					"name": "oculars",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "ocular_scope_1",
+					"parent": "oculars",
 					"pivot": [0, 1.75, -4.375],
 					"cubes": [
 						{
