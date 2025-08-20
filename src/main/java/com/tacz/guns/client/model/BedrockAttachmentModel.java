@@ -57,6 +57,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     private boolean isScope = false;
     private boolean isSight = false;
     private boolean scopeCompat = true;
+    private boolean forceOcularCenter = false;
     private float scopeViewRadiusModifier = 1;
 
     public BedrockAttachmentModel(BedrockModelPOJO pojo, BedrockVersion version) {
@@ -212,6 +213,10 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         if (this.scopeCompat) {
             compatibleCheck();
         }
+    }
+
+    public void setOcularCenter(boolean ocularCenter) {
+        this.forceOcularCenter = ocularCenter;
     }
 
     public void compatibleCheck() {
@@ -388,9 +393,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
             /**
              * {@link com.tacz.guns.client.resource.index.ClientAttachmentIndex#checkDisplay}
-             * ocular_scope枢轴点不居中会影响此处计算，现版本默认不会产生影响
+             * ocular_scope枢轴点不居中会影响此处计算，可在配置里设置成不需要居中（遮罩效果不同）
              */
-            Vector3f ocularCenter = scopeCompat ? new Vector3f(0) : getBedrockPartCenter(matrixStack, ocularNodePaths.get(i));
+            Vector3f ocularCenter = this.forceOcularCenter ? new Vector3f(0) : getBedrockPartCenter(matrixStack, ocularNodePaths.get(i));
             // GunMod.LOGGER.debug("Ocular Center: x={}, y={}, z={}", ocularCenter.x(), ocularCenter.y(), ocularCenter.z());
 
             float centerX = ocularCenter.x() * 16 * 90;

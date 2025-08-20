@@ -243,6 +243,7 @@ public class ClientAttachmentIndex {
             index.attachmentModel.setIsSight(display.isSight());
             // 确定好倍镜类型后，自动更正仅scope:true但是没把ocular更新成ocular_scope的配件
             index.attachmentModel.setScopeCompat(display.doScopeCompatibility());
+            index.attachmentModel.setOcularCenter(display.doOcularCenter());
         }
         index.modelTexture = display.getTexture();
     }

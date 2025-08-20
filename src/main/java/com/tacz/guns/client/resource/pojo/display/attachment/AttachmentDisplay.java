@@ -54,6 +54,9 @@ public class AttachmentDisplay implements IDisplay {
     @SerializedName("scope_compatibility")
     private boolean doScopeCompat = true;
 
+    @SerializedName("ocular_center")
+    private boolean ocularCenter = false;
+
     @SerializedName("fov")
     private float fov = 70;
 
@@ -114,6 +117,10 @@ public class AttachmentDisplay implements IDisplay {
 
     public boolean doScopeCompatibility() {
         return doScopeCompat;
+    }
+
+    public boolean doOcularCenter() {
+        return ocularCenter;
     }
 
     public float getFov() {
