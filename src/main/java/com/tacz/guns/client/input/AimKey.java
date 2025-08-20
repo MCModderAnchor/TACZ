@@ -67,8 +67,15 @@ public class AimKey {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        boolean press = GLFW.glfwGetMouseButton(mc.getWindow().getWindow(), AimKey.AIM_KEY.getKey().getValue()) == GLFW.GLFW_PRESS;
-        press = press || GLFW.glfwGetKey(mc.getWindow().getWindow(), AimKey.AIM_KEY.getKey().getValue()) == GLFW.GLFW_PRESS;
+        boolean press = false;
+        if(AimKey.AIM_KEY.getKey().getValue()<0) {
+            return;
+        }
+        if (AimKey.AIM_KEY.getKey().getValue() >= GLFW.GLFW_KEY_SPACE) {
+            press = press || GLFW.glfwGetKey(mc.getWindow().getWindow(), AimKey.AIM_KEY.getKey().getValue()) == GLFW.GLFW_PRESS;
+        } else {
+            press = GLFW.glfwGetMouseButton(mc.getWindow().getWindow(), AimKey.AIM_KEY.getKey().getValue()) == GLFW.GLFW_PRESS;
+        }
         if (InputExtraCheck.isInGame()) {
             LocalPlayer player = mc.player;
             if (player == null || player.isSpectator()) {
