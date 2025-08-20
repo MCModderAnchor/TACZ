@@ -54,6 +54,43 @@ public class AimKey {
         }
     }
 
+    /**
+     * 该监听器能正确处理 按住瞄准模式 下的
+     * 1.预输入（典型：按住瞄准切换武器后，能保持瞄准状态）
+     * 2.键盘按键输入
+     * 
+     * 建议将按下切换瞄准也支持 键盘按键输入
+     * */
+    @SubscribeEvent
+    public static void onAimHoldingPreInput(ClientTickEvent event) {
+        if (!KeyConfig.HOLD_TO_AIM.get()) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        boolean press = GLFW.glfwGetMouseButton(mc.getWindow().getWindow(), AimKey.AIM_KEY.getKey().getValue()) == GLFW.GLFW_PRESS;
+        press = press || GLFW.glfwGetKey(mc.getWindow().getWindow(), AimKey.AIM_KEY.getKey().getValue()) == GLFW.GLFW_PRESS;
+        if (InputExtraCheck.isInGame()) {
+            LocalPlayer player = mc.player;
+            if (player == null || player.isSpectator()) {
+                return;
+            }
+            if (!(player instanceof IClientPlayerGunOperator operator)) {
+                return;
+            }
+            if (operator.isAim() && press) {
+                return;
+            }
+            if (!operator.isAim()) {
+                if (!press) {
+                    return;
+                }
+            }
+            if (IGun.mainHandHoldGun(player)) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).aim(press);
+            }
+        }
+    }
+
     public static boolean onAimControllerPress(boolean isPress) {
         if (!isInGame()) {
             return false;
