@@ -82,9 +82,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
          */
         // 初始化 view 的 node path
         List<BedrockPart> path = getPath(modelMap.get(SCOPE_VIEW_NODE));
-        if (path == null) {
-            path = getPath(modelMap.get(SCOPE_VIEW_NODE + "_1"));
-        }
         int i = 2;
         while (path != null) {
             scopeViewPaths.add(path); // 第一次是无后缀（scope_view），兼容老的命名
@@ -145,9 +142,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         // 初始化 division 的 node path
         ModelRendererWrapper divisionModel = modelMap.get(DIVISION_NODE);
         path = getPath(modelMap.get(DIVISION_NODE));
-        if (path == null) {
-            path = getPath(modelMap.get(DIVISION_NODE + "_1"));
-        }
         i = 2;
         while (path != null) {
             divisionNodePaths.add(path);
