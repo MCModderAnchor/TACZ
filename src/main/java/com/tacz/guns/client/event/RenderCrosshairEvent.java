@@ -23,13 +23,16 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
+import net.minecraftforge.fml.ModList;
+import com.xtracr.realcamera.util.CrosshairUtil;
+import com.xtracr.realcamera.RealCameraCore;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class RenderCrosshairEvent {
@@ -127,7 +130,19 @@ public class RenderCrosshairEvent {
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.setShaderColor(1F, 1F, 1F, 0.9f);
         float x = width / 2f - 8;
-        float y = height / 2f - 8;
+        float y = height / 2f - 8; 
+        //判断RC是否加载，用于适配动态准星
+        if(ModList.get().isLoaded("realcamera")){   
+        float baseX = x + (float) CrosshairUtil.offset.x();
+        float baseY = y - (float) CrosshairUtil.offset.y();
+        IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(Minecraft.getInstance().player);
+        if(operator == null) return;
+        float AimingProgress = operator.getClientAimingProgress(Minecraft.getInstance().getFrameTime());
+
+        if(RealCameraCore.isActive() && AimingProgress ==0){
+            graphics.blit(location, (int) baseX, (int) baseY, 0, 0, 16, 16, 16, 16);
+            return;
+        }}
         graphics.blit(location, (int) x, (int) y, 0, 0, 16, 16, 16, 16);
     }
 

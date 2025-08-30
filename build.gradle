@@ -30,7 +30,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 
-version = "1.1.6-hotfix"
+version = "1.1.7"
 // 版本号，正式发布需要修改这一行
 //version = FORMAT.format(new Date())
 group = "com.tacz"
@@ -217,6 +217,10 @@ dependencies {
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
 
     compileOnly fg.deobf("curse.maven:embeddium-908741:${embeddedt_id}")
+
+    // 真实相机，用于兼容动态准星
+    implementation ("curse.maven:real-camera-851574:${real_camera_id}")
+
     // 同时兼容两个版本
     compileOnly fg.deobf('libs:oculus_legacy:mc1.20.1-1.6.13')
     compileOnly fg.deobf('libs:oculus:mc1.20.1-1.7.0')
