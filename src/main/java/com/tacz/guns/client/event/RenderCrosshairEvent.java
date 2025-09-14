@@ -13,6 +13,7 @@ import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import com.tacz.guns.client.renderer.crosshair.CrosshairType;
+import com.tacz.guns.compat.realcamera.RealCameraCompatHolder;
 import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
@@ -128,6 +129,15 @@ public class RenderCrosshairEvent {
         RenderSystem.setShaderColor(1F, 1F, 1F, 0.9f);
         float x = width / 2f - 8;
         float y = height / 2f - 8;
+        if (RealCameraCompatHolder.hasMod()) {
+            IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(Minecraft.getInstance().player);
+            if(operator != null){
+                float AimingProgress = operator.getClientAimingProgress(Minecraft.getInstance().getFrameTime());
+                if(AimingProgress == 0) {
+                    x = RealCameraCompatHolder.getCompatCrosshairX(x);
+                    y = RealCameraCompatHolder.getCompatCrosshairY(y);
+            }}
+        }
         graphics.blit(location, (int) x, (int) y, 0, 0, 16, 16, 16, 16);
     }
 

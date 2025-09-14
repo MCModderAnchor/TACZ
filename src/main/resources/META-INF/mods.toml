@@ -36,3 +36,10 @@ side = "CLIENT"
 
 [modproperties.tacz]
 catalogueItemIcon = "tacz:gun_smith_table"
+
+[[dependencies.tacz]]
+modId = "realcamera"
+mandatory = false
+versionRange = "[0.7.0-beta,)"
+ordering = "NONE"
+side = "CLIENT"
