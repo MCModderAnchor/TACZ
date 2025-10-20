@@ -16,4 +16,8 @@ public final class ShoulderSurfingCompat {
         }
         return false;
     }
+
+    public static boolean isInstalled() {
+        return INSTALLED;
+    }
 }

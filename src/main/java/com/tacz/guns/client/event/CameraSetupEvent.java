@@ -1,5 +1,7 @@
 package com.tacz.guns.client.event;
 
+import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfingCamera;
+import com.github.exopandora.shouldersurfing.api.client.ShoulderSurfing;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
@@ -16,6 +18,7 @@ import com.tacz.guns.api.modifier.ParameterizedCachePair;
 import com.tacz.guns.client.renderer.item.AnimateGeoItemRenderer;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.RecoilModifier;
@@ -211,12 +214,22 @@ public class CameraSetupEvent {
         long timeTotal = System.currentTimeMillis() - shootTimeStamp;
         if (pitchSplineFunction != null && pitchSplineFunction.isValidPoint(timeTotal)) {
             double value = pitchSplineFunction.value(timeTotal);
-            player.setXRot(player.getXRot() - (float) (value - xRotO));
+            if (ShoulderSurfingCompat.isInstalled() && ShoulderSurfing.getInstance().isShoulderSurfing()) {
+                IShoulderSurfingCamera camera = ShoulderSurfing.getInstance().getCamera();
+                camera.setXRot(camera.getXRot() - (float) (value - xRotO));
+            } else {
+                player.setXRot(player.getXRot() - (float) (value - xRotO));
+            }
             xRotO = value;
         }
         if (yawSplineFunction != null && yawSplineFunction.isValidPoint(timeTotal)) {
             double value = yawSplineFunction.value(timeTotal);
-            player.setYRot(player.getYRot() - (float) (value - yRotO));
+            if (ShoulderSurfingCompat.isInstalled() && ShoulderSurfing.getInstance().isShoulderSurfing()) {
+                IShoulderSurfingCamera camera = ShoulderSurfing.getInstance().getCamera();
+                camera.setYRot(camera.getYRot() - (float) (value - yRotO));
+            } else {
+                player.setYRot(player.getYRot() - (float) (value - yRotO));
+            }
             yRotO = value;
         }
     }
