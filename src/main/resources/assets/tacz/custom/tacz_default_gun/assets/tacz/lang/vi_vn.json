@@ -213,7 +213,7 @@
   "tacz.block.gun_smith_table.name": "Bàn Chế Tạo Súng TaCZ",
   "tacz.block.ammo_workbench.name": "Bàn Lắp Ráp Đạn TaCZ",
   "tacz.block.attachment_workbench.name": "Bàn Chế Tạo Phụ Kiện TaCZ",
-  "tacz.block.gun_smith_table.desc": "Where it all began",
+  "tacz.block.gun_smith_table.desc": "Khởi đầu của vạn vật",
   "tacz.block.ammo_workbench.desc": "Gunpowder Glitter",
   "tacz.block.attachment_workbench.desc": "Gilding the lily",
   "config.tacz.client.render.enable_tooltip_id": "Hiển thị ID trong Tooltip",
