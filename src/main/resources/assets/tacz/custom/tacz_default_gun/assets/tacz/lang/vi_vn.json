@@ -214,8 +214,8 @@
   "tacz.block.ammo_workbench.name": "Bàn Lắp Ráp Đạn TaCZ",
   "tacz.block.attachment_workbench.name": "Bàn Chế Tạo Phụ Kiện TaCZ",
   "tacz.block.gun_smith_table.desc": "Khởi đầu của vạn vật",
-  "tacz.block.ammo_workbench.desc": "Gunpowder Glitter",
-  "tacz.block.attachment_workbench.desc": "Gilding the lily",
+  "tacz.block.ammo_workbench.desc": "Ánh loá thuốc súng",
+  "tacz.block.attachment_workbench.desc": "Họa xà thiêm túc",
   "config.tacz.client.render.enable_tooltip_id": "Hiển thị ID trong Tooltip",
   "config.tacz.client.render.enable_tooltip_id.desc": "Hiển thị ID của súng/đạn/phụ kiện trong tooltip khi tổ hợp F3+H được bật."
 }
