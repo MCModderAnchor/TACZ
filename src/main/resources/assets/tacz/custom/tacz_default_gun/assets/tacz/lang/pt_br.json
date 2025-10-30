@@ -100,7 +100,7 @@
   "tacz.gun.springfield1873.desc": "A pobreza não encolhe a arma.",
   "tacz.gun.spr15hb.desc": "Onde há vontade, há uma arma.",
   "tacz.gun.g36k.desc": "Polímero, rapaz!",
-  "tacz.gun.timeless50.desc": "Let it all start from zero again. \n§eTaCZ 1st Anniversary",
+  "tacz.gun.timeless50.desc": "Vamos começar do zero.\n§e1º aniversário",
   "tacz.ammo.9mm.name": "§aBala 9×19mm",
   "tacz.ammo.12g.name": "§9Cartucho de calibre 12",
   "tacz.ammo.30_06.name": "§bBala .30-06 Springfield",
@@ -214,7 +214,7 @@
   "tacz.block.ammo_workbench.name": "TaCZ Ammo Assembly Table",
   "tacz.block.attachment_workbench.name": "TaCZ Attachment Table",
   "tacz.block.gun_smith_table.desc": "Where it all began",
-  "tacz.block.ammo_workbench.desc": "Gunpowder Glitter",
+  "tacz.block.ammo_workbench.desc": "Fogo de artifício",
   "tacz.block.attachment_workbench.desc": "Gilding the lily",
   "config.tacz.client.render.enable_tooltip_id": "Exibir Ids na descrição",
   "config.tacz.client.render.enable_tooltip_id.desc": "Exibir a Id da arma/munição/acessório na descrição do item quando descrição avançada estiver ativo."
