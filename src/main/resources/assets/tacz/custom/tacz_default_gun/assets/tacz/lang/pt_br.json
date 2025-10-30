@@ -213,7 +213,7 @@
   "tacz.block.gun_smith_table.name": "TaCZ Gun Smith Table",
   "tacz.block.ammo_workbench.name": "TaCZ Ammo Assembly Table",
   "tacz.block.attachment_workbench.name": "TaCZ Attachment Table",
-  "tacz.block.gun_smith_table.desc": "Where it all began",
+  "tacz.block.gun_smith_table.desc": "Onde tudo começou",
   "tacz.block.ammo_workbench.desc": "Fogo de artifício",
   "tacz.block.attachment_workbench.desc": "Gilding the lily",
   "config.tacz.client.render.enable_tooltip_id": "Exibir Ids na descrição",
