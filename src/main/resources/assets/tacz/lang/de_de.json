@@ -4,7 +4,7 @@
   "toast.tacz.sub.damage_up": "Waffen werden tödlicher",
   "toast.tacz.sub.final_level": "Mensch und Gewehr werden eines",
   "tooltip.tacz.gun.level": "Stufe: ",
-  "tooltip.tacz.gun.inventory_mode": "Verwende Inv. Munition",
+  "tooltip.tacz.gun.inventory_mode": "Verwende unsichtbare Munition",
   "custom.tacz.error.no_name": "Fehler: Kein Name",
   "commands.tacz.reload.success": "§a§l[TACZ]§r alle Pakete sind neu geladen, Zeit: %.3f ms",
   "commands.tacz.reload.overwrite_on": "§a§l●§r Jetzt da die Überscheiben-Konfiguration aktiviert ist, §6werden alle Änderungen um TACZ Standard Waffen Pack §zurückgesetzt!",
