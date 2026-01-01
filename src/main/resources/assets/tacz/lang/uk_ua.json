@@ -227,6 +227,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "Вимикає взаємодію з текстом інтерфейсу у центрі екрану",
   "config.tacz.client.render.disable_movement_fov.desc": "Вимикає ефект швидкості, коли зброя в руках.",
   "config.tacz.client.render.disable_movement_fov": "Вимкнути ефекти швидкості, що впливають на поле зору",
+  "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
+  "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.zoom": "Приближення",
   "config.tacz.client.zoom.screen_distance_coefficient": "Коефіцієнт дистанції екрану",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Коефіцієнт дистанції для приближення, використовуючи MDV, за стандартом MDV133",
