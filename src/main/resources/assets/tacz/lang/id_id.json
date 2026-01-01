@@ -227,6 +227,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "Nonaktifkan interaksi teks hud di tengah layar",
   "config.tacz.client.render.disable_movement_fov.desc": "Nonaktifkan semua efek fov dari atribut kecepatan gerak saat memegang senjata.",
   "config.tacz.client.render.disable_movement_fov": "Menonaktifkan Efek Kecepatan Fov",
+  "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
+  "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.zoom": "Perbesar",
   "config.tacz.client.zoom.screen_distance_coefficient": "Koefisien Jarak Layar",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Koefisien jarak layar untuk memperbesar, menggunakan MDV standar, bawaan adalah MDV133",
