@@ -227,6 +227,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "不顯示持槍時與物件互動時會顯示的提示文字",
   "config.tacz.client.render.disable_movement_fov.desc": "持槍時，不顯示任何受移動速度影響的視野變化效果",
   "config.tacz.client.render.disable_movement_fov": "關閉移動速度的視野變化效果",
+  "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
+  "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.zoom": "倍鏡焦距",
   "config.tacz.client.zoom.screen_distance_coefficient": "屏距係數",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "縮放的螢幕距離係數，採用MDV標準，預設為MDV133",
