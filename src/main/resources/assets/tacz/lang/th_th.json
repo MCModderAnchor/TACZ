@@ -227,6 +227,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "ปิดใช้งาน HUD ข้อความโต้ตอบที่อยู่ตรงกลางหน้าจอ",
   "config.tacz.client.render.disable_movement_fov.desc": "ปิดใช้งานเอฟเฟ็กต์ FOV ทั้งหมดจากคุณสมบัติความเร็วในการเคลื่อนที่ในขณะที่ถือปืน",
   "config.tacz.client.render.disable_movement_fov": "ปิดความเร็วเอฟเฟ็กต์ FOV",
+  "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
+  "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.zoom": "ซูม",
   "config.tacz.client.zoom.screen_distance_coefficient": "ค่าสัมประสิทธิ์ระยะห่างจากหน้าจอ",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "ค่าค่าตัวแปลระยะหน้าจอสำหรับการซูม โดยใช้มาตรฐาน MDV ค่าเริ่มต้นคือ MDV133",
