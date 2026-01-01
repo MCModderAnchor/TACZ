@@ -227,6 +227,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "Ekranın ortasındaki etkileşime geç HUD yazısını devre dışı bırakır",
   "config.tacz.client.render.disable_movement_fov.desc": "Silah tutarken hareket hızından kaynaklanan tüm görüş alanı efekti devre dışı bırakılır.",
   "config.tacz.client.render.disable_movement_fov": "Hızdan kaynaklanan görüş alanı efektini devre dışı bırak",
+  "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
+  "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.zoom": "Yakınlaştırma",
   "config.tacz.client.zoom.screen_distance_coefficient": "Ekran Mesafe Katsayısı",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Yakınlaştırma için ekran mesafe katsayısı; MDV standardı kullanılır, varsayılan değer MDV133",
