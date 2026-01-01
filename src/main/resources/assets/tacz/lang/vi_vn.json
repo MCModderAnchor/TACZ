@@ -227,6 +227,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "Tắt HUD \"Tương Tác\" ở giữa màn hình",
   "config.tacz.client.render.disable_movement_fov.desc": "Tắt TẤT CẢ hiệu ứng FOV từ Tốc Chạy khi cầm súng.",
   "config.tacz.client.render.disable_movement_fov": "Tắt hiệu ứng Tăng Fov cùng Tốc Chạy",
+  "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
+  "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.zoom": "Thu Phóng",
   "config.tacz.client.zoom.screen_distance_coefficient": "Tỉ lệ khoảng cách màn hình",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Tỉ lệ khoảng cách màn hình để thu phóng, sử dụng chuẩn MDV, mặc định là MDV133",
