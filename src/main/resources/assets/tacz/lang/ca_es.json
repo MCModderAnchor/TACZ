@@ -227,6 +227,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "Desactivar la interacció del text HUD en el centre de la pantalla",
   "config.tacz.client.render.disable_movement_fov.desc": "Desactivar tots els efectes de camp de visió de la velocitat de moviment amb una arma a la mà.",
   "config.tacz.client.render.disable_movement_fov": "Desactivar efectes de velocitat en el camp de visió",
+  "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
+  "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.zoom": "Zoom",
   "config.tacz.client.zoom.screen_distance_coefficient": "Coeficient de la distància de la pantalla",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Coeficient de la distància entre la pantalla amb zoom utilitzant el MDV estàndard, per defecte és MDV133",
