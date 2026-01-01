@@ -227,6 +227,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "Desaktibatu interakzio-hud testua pantailaren erdian",
   "config.tacz.client.render.disable_movement_fov.desc": "Desgaitu fov efektu guztiak mugimendu-abiadura atribututik pistola bat eskuan hartuta.",
   "config.tacz.client.render.disable_movement_fov": "Desgaitu Abiadura Fov efektua",
+  "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
+  "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.zoom": "Zoom",
   "config.tacz.client.zoom.screen_distance_coefficient": "Pantailaren Distantzia Koefizientea",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Pantailaren distantzia koefizientea zooma, MDV estandarra erabiliz, lehenetsia MDV133 da",
