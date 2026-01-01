@@ -227,6 +227,8 @@
   "config.tacz.client.render.disable_interact_hud_text.desc": "画面の中央に表示されるHUDテキストを無効にできます。",
   "config.tacz.client.render.disable_movement_fov.desc": "銃を構えている間、移動速度による視野角変動を無効化",
   "config.tacz.client.render.disable_movement_fov": "移動速度によるFoVエフェクトを無効にする。",
+  "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
+  "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.zoom": "ズーム",
   "config.tacz.client.zoom.screen_distance_coefficient": "画面の距離係数",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "MDV 標準を使用したズームの画面距離係数、既定値は MDV133",
