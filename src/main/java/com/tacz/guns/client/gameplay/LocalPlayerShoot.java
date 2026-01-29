@@ -139,6 +139,7 @@ public class LocalPlayerShoot {
         data.isShootRecorded = false;
         // 调用开火逻辑
         this.doShoot(display, iGun, mainHandItem, gunData, coolDown);
+        RenderCrosshairEvent.shootSpread();
         return ShootResult.SUCCESS;
     }
 
