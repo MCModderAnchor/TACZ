@@ -10,6 +10,7 @@ import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
+import com.tacz.guns.client.event.RenderCrosshairEvent;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
@@ -139,6 +140,7 @@ public class LocalPlayerShoot {
         data.isShootRecorded = false;
         // 调用开火逻辑
         this.doShoot(display, iGun, mainHandItem, gunData, coolDown);
+        RenderCrosshairEvent.shootSpread();
         return ShootResult.SUCCESS;
     }
 

@@ -7,6 +7,13 @@ import com.tacz.guns.api.item.IGun;
 public class ShoulderSurfingPlugin implements IShoulderSurfingPlugin {
 	@Override
 	public void register(IShoulderSurfingRegistrar registrar) {
-		registrar.registerAdaptiveItemCallback(itemStack -> itemStack.getItem() instanceof IGun);
+		registrar.registerAdaptiveItemCallback(
+				itemStack -> {
+					if (!(itemStack.getItem() instanceof IGun)) {
+						return false;
+					}
+					return ShoulderSurfingCompatInner.isAiming();
+				}
+		);
 	}
 }

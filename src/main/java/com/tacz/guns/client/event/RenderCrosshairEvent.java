@@ -14,6 +14,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import com.tacz.guns.client.renderer.crosshair.CrosshairType;
 import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
+import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompatInner;
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -30,6 +31,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Optional;
+
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class RenderCrosshairEvent {
@@ -39,12 +42,20 @@ public class RenderCrosshairEvent {
     private static long hitTimestamp = -1L;
     private static long killTimestamp = -1L;
     private static long headShotTimestamp = -1L;
+    private static int shootSpread = 0;
+    private static int maxShootSpread = 20;
 
     /**
      * 当玩家手上拿着枪时，播放特定动画、或瞄准时需要隐藏准心
      */
     @SubscribeEvent(receiveCanceled = true)
     public static void onRenderOverlay(RenderGuiOverlayEvent.Pre event) {
+        if (get().filter(IClientPlayerGunOperator::isAim).isPresent()) {
+            maxShootSpread = 5;
+        } else {
+            maxShootSpread = 20;
+        }
+
         if (event.getOverlay().id().equals(VanillaGuiOverlay.CROSSHAIR.id())) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) {
@@ -60,15 +71,18 @@ public class RenderCrosshairEvent {
             // 换弹进行时取消准心渲染
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
             if (reloadState.getStateType().isReloading()) {
+                shootSpreadReset();
                 return;
             }
             // 打开枪械改装界面的时候，取消准心渲染
             if (isRefitScreen) {
+                shootSpreadReset();
                 return;
             }
             // 播放的动画需要隐藏准心时，取消准心渲染
             ItemStack stack = player.getMainHandItem();
             if (!(stack.getItem() instanceof IGun)) {
+                shootSpreadReset();
                 return;
             }
 
@@ -128,7 +142,64 @@ public class RenderCrosshairEvent {
         RenderSystem.setShaderColor(1F, 1F, 1F, 0.9f);
         float x = width / 2f - 8;
         float y = height / 2f - 8;
-        graphics.blit(location, (int) x, (int) y, 0, 0, 16, 16, 16, 16);
+//        graphics.blit(location, (int) x, (int) y, 0, 0, 16, 16, 16, 16);
+
+        if (RenderConfig.CROSSHAIR_TYPE.get().name().contains("CROSS")) {
+            // center
+            graphics.blit(location, (int) (x + 7), (int) (y + 7), 7, 7, 3, 3, 16, 16);
+            // up
+            graphics.blit(location, (int) (x + 7), (int) (y - shootSpread), 7, 0, 3, 7, 16, 16);
+            // down
+            graphics.blit(location, (int) (x + 7), (int) (y + 9 + shootSpread), 7, 9, 3, 7, 16, 16);
+            // left
+            graphics.blit(location, (int) (x - shootSpread), (int) (y + 7), 0, 7, 7, 3, 16, 16);
+            // right
+            graphics.blit(location, (int) (x + 9 + shootSpread), (int) (y + 7), 9, 7, 7, 3, 16, 16);
+        } else if (RenderConfig.CROSSHAIR_TYPE.get().name().contains("SQUARE_1") || RenderConfig.CROSSHAIR_TYPE.get().name().contains("SQUARE_2") || RenderConfig.CROSSHAIR_TYPE.get().name().contains("LINE_3")) {
+            // center
+            graphics.blit(location, (int) (x + 7), (int) (y + 7), 7, 7, 3, 3, 16, 16);
+            // left
+            graphics.blit(location, (int) (x - shootSpread), (int) y, 0, 0, 7, 16, 16, 16);
+            // right
+            graphics.blit(location, (int) (x + 9 + shootSpread), (int) y, 9, 0, 7, 16, 16, 16);
+        } else if (RenderConfig.CROSSHAIR_TYPE.get().name().contains("SQUARE_3") || RenderConfig.CROSSHAIR_TYPE.get().name().contains("SQUARE_4")) {
+            // center
+            graphics.blit(location, (int) (x + 7), (int) (y + 7), 7, 7, 3, 3, 16, 16);
+            // up-left
+            graphics.blit(location, (int) (x - shootSpread / 1.414), (int) (y - (shootSpread / 1.414)), 0, 0, 7, 7, 16, 16);
+            // up-right
+            graphics.blit(location, (int) (x + 9 + shootSpread / 1.414), (int) (y - shootSpread / 1.414), 9, 0, 7, 7, 16, 16);
+            // down-left
+            graphics.blit(location, (int) (x - shootSpread / 1.414), (int) (y + 9 + shootSpread / 1.414), 0, 9, 7, 7, 16, 16);
+            // down-right
+            graphics.blit(location, (int) (x + 9 + shootSpread / 1.414), (int) (y + 9 + shootSpread / 1.414), 9, 9, 7, 7, 16, 16);
+        } else if (RenderConfig.CROSSHAIR_TYPE.get().name().contains("SQUARE_5") || RenderConfig.CROSSHAIR_TYPE.get().name().contains("SQUARE_6")) {
+            // center
+            graphics.blit(location, (int) (x + 7), (int) (y + 7), 7, 7, 3, 3, 16, 16);
+            // up
+            graphics.blit(location, (int) (x + 7), (int) (y - shootSpread), 7, 0, 3, 7, 16, 16);
+            // down
+            graphics.blit(location, (int) (x + 7), (int) (y + 9 + shootSpread), 7, 9, 3, 7, 16, 16);
+            // left
+            graphics.blit(location, (int) (x - shootSpread), (int) (y + 7), 0, 7, 7, 3, 16, 16);
+            // right
+            graphics.blit(location, (int) (x + 9 + shootSpread), (int) (y + 7), 9, 7, 7, 3, 16, 16);
+        } else if (RenderConfig.CROSSHAIR_TYPE.get().name().contains("TRIDENT")) {
+            // center
+            graphics.blit(location, (int) (x + 7), (int) (y + 7), 7, 7, 3, 3, 16, 16);
+            // up-left
+            graphics.blit(location, (int) (x - shootSpread * 0.866), (int) (y - shootSpread * 0.5), 0, 0, 7, 7, 16, 16);
+            // up-right
+            graphics.blit(location, (int) (x + 9 + shootSpread * 0.866), (int) (y - shootSpread * 0.5), 9, 0, 7, 7, 16, 16);
+            // down
+            graphics.blit(location, (int) (x + 7), (int) (y + 9 + shootSpread), 7, 9, 3, 7, 16, 16);
+        } else {
+            graphics.blit(location, (int) x, (int) y, 0, 0, 16, 16, 16, 16);
+        }
+
+        if (shootSpread > 0) {
+            shootSpread--;
+        }
     }
 
     private static void renderHitMarker(GuiGraphics graphics, Window window) {
@@ -179,5 +250,24 @@ public class RenderCrosshairEvent {
 
     public static void markHeadShotTimestamp() {
         RenderCrosshairEvent.headShotTimestamp = System.currentTimeMillis();
+    }
+
+    public static void shootSpread() {
+        if (RenderCrosshairEvent.shootSpread < maxShootSpread) {
+            if (ShoulderSurfingCompatInner.isAiming()) {
+                RenderCrosshairEvent.shootSpread += 2;
+            } else {
+                RenderCrosshairEvent.shootSpread += 10;
+            }
+        }
+    }
+
+    public static void shootSpreadReset() {
+        RenderCrosshairEvent.shootSpread = 0;
+    }
+
+    private static Optional<IClientPlayerGunOperator> get() {
+        return Optional.ofNullable(Minecraft.getInstance().player)
+                .map(IClientPlayerGunOperator::fromLocalPlayer);
     }
 }
