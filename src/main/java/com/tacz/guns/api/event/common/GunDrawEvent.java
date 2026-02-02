@@ -6,7 +6,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
- * 生物开始更换枪械弹药时触发的事件。
+ * 生物开始切换枪械时触发的事件。
  */
 public class GunDrawEvent extends Event implements KubeJSGunEventPoster<GunDrawEvent>{
     private final LivingEntity entity;
