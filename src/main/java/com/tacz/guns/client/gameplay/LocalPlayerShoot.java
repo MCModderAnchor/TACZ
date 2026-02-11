@@ -1,5 +1,6 @@
 package com.tacz.guns.client.gameplay;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.animation.statemachine.AnimationStateMachine;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
@@ -15,12 +16,15 @@ import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerShoot;
+import com.tacz.guns.network.message.ClientMessagePlayerShootBegin;
+import com.tacz.guns.network.message.ClientMessagePlayerShootEnd;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.sound.SoundManager;
+import com.tacz.guns.util.ShootBus;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -30,6 +34,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,6 +45,13 @@ public class LocalPlayerShoot {
     private static final Predicate<IGunOperator> SHOOT_LOCKED_CONDITION = operator -> operator.getSynShootCoolDown() > 0;
     private final LocalPlayerDataHolder data;
     private final LocalPlayer player;
+    private static final ScheduledExecutorService SHOOT_SCHEDULER =
+            Executors.newSingleThreadScheduledExecutor(r -> {
+                Thread t = new Thread(r, "Gun-AutoShoot-Scheduler");
+                t.setDaemon(true);
+                return t;
+            });
+    private ScheduledFuture<?> shootTask;
 
     public LocalPlayerShoot(LocalPlayerDataHolder data, LocalPlayer player) {
         this.data = data;
@@ -144,6 +157,40 @@ public class LocalPlayerShoot {
 
     private void doShoot(GunDisplayInstance display, IGun iGun, ItemStack mainHandItem, GunData gunData, long delay) {
         FireMode fireMode = iGun.getFireMode(mainHandItem);
+        if(fireMode == FireMode.AUTO) {
+            data.isShootRecorded = true;
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShootBegin(data.clientShootTimestamp - data.clientBaseTimestamp));
+            int rpm = iGun.getRPM(this.player.getMainHandItem());
+            double roundsPerSecond = rpm / 60.0;
+            long intervalNanos = (long) (1_000_000_000.0 / roundsPerSecond);
+            ScheduledFuture<?> task = SHOOT_SCHEDULER.scheduleAtFixedRate(
+                    () -> {
+                        Minecraft.getInstance().submitAsync(() -> {
+                            // 触发击发事件
+                            boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(player, mainHandItem, LogicalSide.CLIENT));
+                            if (fire) {
+                                // 动画和声音循环播放
+                                AnimationStateMachine<?> animationStateMachine = display.getAnimationStateMachine();
+                                if (animationStateMachine != null) {
+                                    animationStateMachine.trigger(GunAnimationConstant.INPUT_SHOOT);
+                                }
+                                // 获取消音
+                                final boolean useSilenceSound = this.useSilenceSound();
+                                // 开火需要打断检视
+                                SoundPlayManager.stopPlayGunSound(display, SoundManager.INSPECT_SOUND);
+                                if (useSilenceSound) {
+                                    SoundPlayManager.playSilenceSound(player, display, gunData);
+                                } else {
+                                    SoundPlayManager.playShootSound(player, display, gunData);
+                                }
+                            }
+                        });
+                    },
+                    0, intervalNanos, TimeUnit.NANOSECONDS
+            );
+            shootTask = task;
+            return;
+        }
         Bolt boltType = gunData.getBolt();
         // 获取余弹数
         boolean consumeAmmo = IGunOperator.fromLivingEntity(player).consumesAmmoOrNot();
@@ -216,7 +263,14 @@ public class LocalPlayerShoot {
             count.getAndIncrement();
         }, delay, period, TimeUnit.MILLISECONDS);
     }
-
+    public boolean stopFullAuto() {
+        data.isShootRecorded = true;
+        if(shootTask != null) {
+            shootTask.cancel(true);
+        }
+        NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShootEnd(data.clientShootTimestamp - data.clientBaseTimestamp));
+        return true;
+    }
     private boolean useSilenceSound() {
         AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity(player).getCacheProperty();
         if (cacheProperty != null) {

@@ -97,7 +97,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     }
 
     @Override
-    public void shoot(ShooterDataHolder dataHolder, ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, LivingEntity shooter) {
+    public void shoot(ShooterDataHolder dataHolder, ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, LivingEntity shooter, int count) {
         ModernKineticGunScriptAPI api = new ModernKineticGunScriptAPI();
         api.setItemStack(gunItem);
         api.setShooter(shooter);
@@ -114,7 +114,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
                 .map(script -> checkFunction(script.get("shoot")))
                 .ifPresentOrElse(
                         func -> func.call(CoerceJavaToLua.coerce(api)),
-                        ()   -> api.shootOnce(api.isShootingNeedConsumeAmmo()));
+                        ()   -> api.shootOnce(api.isShootingNeedConsumeAmmo(), count));
     }
 
     @Override

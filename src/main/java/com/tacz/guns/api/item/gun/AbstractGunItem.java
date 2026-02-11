@@ -62,7 +62,7 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
     /**
      * 射击时触发
      */
-    public abstract void shoot(ShooterDataHolder dataHolder, ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, LivingEntity shooter);
+    public abstract void shoot(ShooterDataHolder dataHolder, ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, LivingEntity shooter, int count);
 
     /**
      * 开始换弹时调用

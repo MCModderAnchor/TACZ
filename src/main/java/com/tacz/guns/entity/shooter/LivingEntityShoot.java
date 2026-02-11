@@ -1,5 +1,6 @@
 package com.tacz.guns.entity.shooter;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
@@ -13,6 +14,7 @@ import com.tacz.guns.network.message.ServerMessageSyncBaseTimestamp;
 import com.tacz.guns.network.message.event.ServerMessageGunShoot;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.util.ShootBus;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,20 +27,31 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class LivingEntityShoot {
     private final LivingEntity shooter;
     private final ShooterDataHolder data;
     private final LivingEntityDrawGun draw;
-
+    private static final ScheduledExecutorService SHOOT_SCHEDULER =
+            Executors.newSingleThreadScheduledExecutor(r -> {
+                Thread t = new Thread(r, "Gun-AutoShoot-Scheduler");
+                t.setDaemon(true);
+                return t;
+            });
+    private ScheduledFuture<?> shootTask;
     public LivingEntityShoot(LivingEntity shooter, ShooterDataHolder data, LivingEntityDrawGun draw) {
         this.shooter = shooter;
         this.data = data;
         this.draw = draw;
     }
 
-    public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp) {
+    public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp, int count, boolean fromServer) {
         if (data.currentGunItem == null) {
             return ShootResult.NOT_DRAW;
         }
@@ -63,7 +76,7 @@ public class LivingEntityShoot {
                 return ShootResult.COOL_DOWN;
             }
         }
-        if (SyncConfig.SERVER_SHOOT_NETWORK_V.get()) {
+        if (SyncConfig.SERVER_SHOOT_NETWORK_V.get() && !fromServer) {
             // 根据 tick time 和 允许的网络延迟波动 计算 时间戳的接受窗口
             MinecraftServer server = Objects.requireNonNull(shooter.getServer());
             double tickTime = Math.max(server.tickTimes[server.getTickCount() % 100] * 1.0E-6D, 50);
@@ -138,11 +151,28 @@ public class LivingEntityShoot {
         data.shootTimestamp = timestamp;
         // 执行枪械射击逻辑
         if (iGun instanceof AbstractGunItem logicGun) {
-            logicGun.shoot(data, currentGunItem, pitch, yaw, shooter);
+            logicGun.shoot(data, currentGunItem, pitch, yaw, shooter, count);
         }
         return ShootResult.SUCCESS;
     }
-
+    public boolean startFullAuto(long timestamp) {
+        UUID playerUuid = this.shooter.getUUID();
+        if(this.shooter.getMainHandItem().getItem() instanceof IGun iGun) {
+            int rpm = iGun.getRPM(this.shooter.getMainHandItem());
+            double roundsPerSecond = rpm / 60.0;
+            long intervalNanos = (long) (1_000_000_000.0 / roundsPerSecond);
+            ScheduledFuture<?> task = SHOOT_SCHEDULER.scheduleAtFixedRate(
+                    () -> ShootBus.addShot(playerUuid),
+                    0, intervalNanos, TimeUnit.NANOSECONDS
+            );
+            shootTask = task;
+            return true;
+        }
+        return false;
+    }
+    public boolean stopFullAuto(long timestamp) {
+        return shootTask.cancel(true);
+    }
     /**
      * 以当前时间戳查询射击冷却。返回值一般不会超过枪械的射击间隔
      * @return 射击冷却

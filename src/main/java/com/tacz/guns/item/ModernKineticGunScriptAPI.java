@@ -1,5 +1,6 @@
 package com.tacz.guns.item;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.GunProperties;
 import com.tacz.guns.api.GunProperty;
@@ -8,6 +9,7 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
+import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
@@ -98,7 +100,7 @@ public class ModernKineticGunScriptAPI {
      * 执行一次完整的射击逻辑，会考虑玩家的状态(是否在瞄准、是否在移动、是否在匍匐等)、配件数值影响、多弹丸散射、连发，播放开火音效、
      * @param consumeAmmo 本次射击是否消耗弹药
      */
-    public void shootOnce(boolean consumeAmmo){
+    public void shootOnce(boolean consumeAmmo, int count) {
         GunData gunData = gunIndex.getGunData();
         BulletData bulletData = gunIndex.getBulletData();
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(shooter);
@@ -143,6 +145,7 @@ public class ModernKineticGunScriptAPI {
         long period = modifyProperty(GunProperties.RuntimeOnly.BURST_SHOOT_INTERVAL, Long.class, fireMode == FireMode.BURST ? gunData.getBurstShootInterval() : 1);
 
         CycleTaskHelper.addCycleTask(() -> {
+            int bulletCount = count;
             // 如果射击者死亡，取消射击
             if (shooter.isDeadOrDying()) {
                 return false;
@@ -155,9 +158,24 @@ public class ModernKineticGunScriptAPI {
             boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(shooter, itemStack, LogicalSide.SERVER));
             if (fire) {
                 NetworkHandler.sendToTrackingEntity(new ServerMessageGunFire(shooter.getId(), itemStack), shooter);
+                {
+                    IGun gun = IGun.getIGunOrNull(shooter.getMainHandItem());
+                    GunMod.LOGGER.info("{} {}", gun.getCurrentAmmoCount(shooter.getMainHandItem()), bulletCount);
+                    if (gun.getCurrentAmmoCount(shooter.getMainHandItem()) < bulletCount) {
+                        GunMod.LOGGER.warn("FUCK!!!!");
+                    }
+                }
                 // 削减弹药
                 if (consumeAmmo) {
-                    if (!this.reduceAmmoOnce()) {
+                    int i = bulletCount;
+                    while (i > 0) {
+                        if (!this.reduceAmmoOnce()) {
+                            bulletCount -= i;
+                            break;
+                        }
+                        i-=1;
+                    }
+                    if(bulletCount <= 0) {
                         return false;
                     }
                 }
@@ -179,7 +197,7 @@ public class ModernKineticGunScriptAPI {
                 for (int i = 0; i < bulletAmount; i++) {
                     boolean isTracer = bulletData.hasTracerAmmo() && gunOperator.nextBulletIsTracer(bulletData.getTracerCountInterval());
                     EntityKineticBullet bullet = new EntityKineticBullet(world, shooter, itemStack, ammoId, gunId,
-                            gunDisplayId, isTracer, gunData, bulletData);
+                            gunDisplayId, isTracer, gunData, bulletData, bulletCount);
                     bullet.applyShotgunDamageSpread(bulletAmount);
                     abstractGunItem.doBulletSpread(dataHolder, itemStack, shooter, bullet, i, processedSpeed,
                             inaccuracy, pitch, yaw);

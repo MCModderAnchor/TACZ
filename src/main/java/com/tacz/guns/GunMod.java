@@ -8,6 +8,7 @@ import com.tacz.guns.config.ServerConfig;
 import com.tacz.guns.init.*;
 import com.tacz.guns.resource.GunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
+import com.tacz.guns.util.ShootBus;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -56,6 +57,7 @@ public class GunMod {
 
         registerDefaultExtraGunPack();
         AttachmentPropertyManager.registerModifier();
+        ShootBus shootBus = new ShootBus();
     }
 
     private static void registerDefaultExtraGunPack() {

@@ -140,7 +140,24 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     @Override
     public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp) {
-        return tacz$shoot.shoot(pitch, yaw, timestamp);
+        return this.shoot(pitch, yaw, timestamp, 1, false);
+    }
+    @Unique
+    @Override
+    public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp, int count, boolean source) {
+        return tacz$shoot.shoot(pitch, yaw, timestamp, count, source);
+    }
+
+    @Unique
+    @Override
+    public boolean startFullAuto(long timestamp) {
+        return tacz$shoot.startFullAuto(timestamp);
+    }
+
+    @Unique
+    @Override
+    public boolean stopFullAuto(long timestamp) {
+        return tacz$shoot.stopFullAuto(timestamp);
     }
 
     @Unique

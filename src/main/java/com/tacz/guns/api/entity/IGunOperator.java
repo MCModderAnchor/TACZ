@@ -118,6 +118,12 @@ public interface IGunOperator {
      */
     ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp);
 
+    ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp, int count, boolean source);
+
+    boolean startFullAuto(long timestamp);
+
+    boolean stopFullAuto(long timestamp);
+
     /**
      * 服务端，该操作者是否受弹药数影响
      *

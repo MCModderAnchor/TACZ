@@ -27,6 +27,8 @@ public interface IClientPlayerGunOperator {
      */
     ShootResult shoot();
 
+    boolean stopFullAuto();
+
     /**
      * 执行客户端切枪逻辑。
      */
