@@ -150,14 +150,14 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
 
     @Unique
     @Override
-    public boolean startFullAuto(long timestamp) {
-        return tacz$shoot.startFullAuto(timestamp);
+    public void startFullAuto(long timestamp) {
+        tacz$shoot.startFullAuto(timestamp);
     }
 
     @Unique
     @Override
-    public boolean stopFullAuto(long timestamp) {
-        return tacz$shoot.stopFullAuto(timestamp);
+    public void stopFullAuto() {
+        tacz$shoot.stopFullAuto();
     }
 
     @Unique

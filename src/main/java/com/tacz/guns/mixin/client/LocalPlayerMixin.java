@@ -38,8 +38,8 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
 
     @Unique
     @Override
-    public boolean stopFullAuto() {
-        return tac$shoot.stopFullAuto();
+    public void stopFullAuto() {
+        tac$shoot.stopFullAuto();
     }
 
     @Unique

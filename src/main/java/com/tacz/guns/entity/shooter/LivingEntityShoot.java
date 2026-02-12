@@ -10,6 +10,7 @@ import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.ServerMessageGunStop;
 import com.tacz.guns.network.message.ServerMessageSyncBaseTimestamp;
 import com.tacz.guns.network.message.event.ServerMessageGunShoot;
 import com.tacz.guns.resource.index.CommonGunIndex;
@@ -19,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -77,7 +79,7 @@ public class LivingEntityShoot {
             }
         }
         if (SyncConfig.SERVER_SHOOT_NETWORK_V.get() && !fromServer) {
-            // 根据 tick time 和 允许的网络延迟波动 计算 时间戳的接受窗口
+            // 根据 tick time 和 允许的网络延迟波动 计算 时间戳的接受窗口 如果来自服务器则无需计算窗口可直接使用
             MinecraftServer server = Objects.requireNonNull(shooter.getServer());
             double tickTime = Math.max(server.tickTimes[server.getTickCount() % 100] * 1.0E-6D, 50);
             long alpha = System.currentTimeMillis() - data.baseTimestamp - timestamp;
@@ -153,6 +155,11 @@ public class LivingEntityShoot {
         if (iGun instanceof AbstractGunItem logicGun) {
             logicGun.shoot(data, currentGunItem, pitch, yaw, shooter, count);
         }
+        if(((IGun)shooter.getMainHandItem().getItem()).getFireMode(shooter.getMainHandItem()) == FireMode.AUTO &&
+                ((IGun)shooter.getMainHandItem().getItem()).getCurrentAmmoCount(shooter.getMainHandItem()) <= 0 &&
+                !((IGun)shooter.getMainHandItem().getItem()).hasBulletInBarrel(shooter.getMainHandItem())) {
+            NetworkHandler.sendToClientPlayer(new ServerMessageGunStop(shooter.getId()), (Player) shooter);
+        }
         return ShootResult.SUCCESS;
     }
     public boolean startFullAuto(long timestamp) {
@@ -170,7 +177,7 @@ public class LivingEntityShoot {
         }
         return false;
     }
-    public boolean stopFullAuto(long timestamp) {
+    public boolean stopFullAuto() {
         return shootTask.cancel(true);
     }
     /**

@@ -8,9 +8,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class ClientMessagePlayerShootBegin {
-    /**
-     * 这里的 timestamp 应该是基于 base timestamp 的相对值
-     */
+
     private long timestamp;
 
     public ClientMessagePlayerShootBegin() {

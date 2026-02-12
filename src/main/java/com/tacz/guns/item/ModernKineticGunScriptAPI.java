@@ -21,6 +21,7 @@ import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunFire;
+import com.tacz.guns.network.message.ServerMessageGunStop;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
@@ -32,11 +33,13 @@ import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fml.LogicalSide;
+import org.antlr.v4.parse.ANTLRParser;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
@@ -158,13 +161,6 @@ public class ModernKineticGunScriptAPI {
             boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(shooter, itemStack, LogicalSide.SERVER));
             if (fire) {
                 NetworkHandler.sendToTrackingEntity(new ServerMessageGunFire(shooter.getId(), itemStack), shooter);
-                {
-                    IGun gun = IGun.getIGunOrNull(shooter.getMainHandItem());
-                    GunMod.LOGGER.info("{} {}", gun.getCurrentAmmoCount(shooter.getMainHandItem()), bulletCount);
-                    if (gun.getCurrentAmmoCount(shooter.getMainHandItem()) < bulletCount) {
-                        GunMod.LOGGER.warn("FUCK!!!!");
-                    }
-                }
                 // 削减弹药
                 if (consumeAmmo) {
                     int i = bulletCount;

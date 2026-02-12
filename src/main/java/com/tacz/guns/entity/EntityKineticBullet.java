@@ -331,7 +331,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 //判断是否需要更新实体列表
                 boolean entityDestroyed = false;
                 //对于本实体包含的每一发子弹进行一次判定
-                for(int i = 0; i < bulletCount; i++) {
+                int count = bulletCount;
+                for(int i = 0; i < count; i++) {
                     if(entityDestroyed) {
                         // 子弹的击中检测，穿透为 1 或者爆炸类弹药限制为一个实体穿透判定
                         if (this.pierce <= 1 || this.explosion) {
@@ -372,9 +373,9 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                         if (this.pierce < 1 || this.explosion) {
                             // 子弹已经穿透所有实体，结束子弹的飞行
                             this.bulletCount--;
+                            //减少子弹数量，如果已全部消耗则清除自身
                             if(this.bulletCount == 0)
                                 this.discard();
-                            return;
                         }
                     }
                 }
@@ -615,7 +616,6 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         parts.core().invulnerableTime = 0;
         // 穿甲伤害
         parts.hitPart().hurt(source2, damage * armorDamagePercent);
-        GunMod.LOGGER.info("{}",damage * normalDamagePercent + damage * normalDamagePercent);
     }
 
     @Override

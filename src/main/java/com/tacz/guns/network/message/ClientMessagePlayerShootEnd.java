@@ -8,9 +8,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class ClientMessagePlayerShootEnd {
-    /**
-     * 这里的 timestamp 应该是基于 base timestamp 的相对值
-     */
+
     private long timestamp;
 
     public ClientMessagePlayerShootEnd() {
@@ -36,7 +34,7 @@ public class ClientMessagePlayerShootEnd {
                 if (entity == null) {
                     return;
                 }
-                IGunOperator.fromLivingEntity(entity).stopFullAuto(message.timestamp);
+                IGunOperator.fromLivingEntity(entity).stopFullAuto();
             });
         }
         context.setPacketHandled(true);

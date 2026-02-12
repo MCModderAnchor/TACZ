@@ -29,7 +29,6 @@ public class GunMod {
      * 默认模型包文件夹
      */
     public static final String DEFAULT_GUN_PACK_NAME = "tacz_default_gun";
-
     public GunMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.init());
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.init());
