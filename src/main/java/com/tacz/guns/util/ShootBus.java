@@ -16,7 +16,7 @@ import java.util.UUID;
 import static com.tacz.guns.util.InputExtraCheck.isInGame;
 
 /**
- * 增加了一条专门用于处理高频射击的线
+ * 增加了一条专门用于处理全自动射击的线
  */
 @Mod.EventBusSubscriber(modid = GunMod.MOD_ID)
 public class ShootBus {
@@ -35,7 +35,7 @@ public class ShootBus {
 
     /**
      * 射击一发子弹（只记录）
-     * @param playerUUID 设计者的UUID
+     * @param playerUUID 射击者的UUID
      */
     public static void addShot(UUID playerUUID) {
         ShootBus.getInstance().counter.addTo(playerUUID, 1);
