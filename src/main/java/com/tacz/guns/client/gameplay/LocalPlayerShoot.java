@@ -157,7 +157,7 @@ public class LocalPlayerShoot {
 
     private void doShoot(GunDisplayInstance display, IGun iGun, ItemStack mainHandItem, GunData gunData, long delay) {
         FireMode fireMode = iGun.getFireMode(mainHandItem);
-        //如果是全自动则按照射速应用后坐力，知道松开射击键或弹药耗尽由服务器调用stopFullAuto()
+        //如果是全自动则按照射速应用后坐力，直到松开射击键或弹药耗尽由服务器调用stopFullAuto()
         if(fireMode == FireMode.AUTO) {
             data.isShootRecorded = true;
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShootBegin(data.clientShootTimestamp - data.clientBaseTimestamp));

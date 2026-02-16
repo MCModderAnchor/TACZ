@@ -125,10 +125,10 @@ public interface IGunOperator {
      * @param yaw   开火方向的偏航角(即 yRot )
      * @param timestamp 指定的时间戳，为偏移时间戳（相对于 base timestamp 的时间戳）
      * @param count 包含的弹药数
-     * @param source true为来自服务器，false为来自客户端
+     * @param fromServer true为来自服务器，false为来自客户端
      * @return 本次射击的结果
      */
-    ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp, int count, boolean source);
+    ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp, int count, boolean fromServer);
 
     /**
      * 开始全自动射击

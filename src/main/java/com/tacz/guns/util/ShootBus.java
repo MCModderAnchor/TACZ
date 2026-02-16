@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -16,29 +17,22 @@ import java.util.UUID;
 import static com.tacz.guns.util.InputExtraCheck.isInGame;
 
 /**
- * 增加了一条专门用于处理全自动射击的线
+ * 增加了一个专门用于处理全自动射击的类
  */
 @Mod.EventBusSubscriber(modid = GunMod.MOD_ID)
 public class ShootBus {
-    private static ShootBus instance;
-    private final Object2IntOpenHashMap<UUID> counter = new Object2IntOpenHashMap<>();
-
-    public ShootBus() {
-        if (instance == null) {
-            instance = this;
-        }
-        counter.defaultReturnValue(0); // 未找到时返回 0，而非 null
+    private static final Object2IntOpenHashMap<UUID> SHOT_COUNTER = new Object2IntOpenHashMap<>();
+    static {
+        SHOT_COUNTER.defaultReturnValue(0);
     }
-    public static ShootBus getInstance() {
-        return instance;
-    }
+    private ShootBus() {}
 
     /**
      * 射击一发子弹（只记录）
      * @param playerUUID 射击者的UUID
      */
     public static void addShot(UUID playerUUID) {
-        ShootBus.getInstance().counter.addTo(playerUUID, 1);
+        ShootBus.SHOT_COUNTER.addTo(playerUUID, 1);
     }
     @SubscribeEvent
     /**
@@ -48,13 +42,16 @@ public class ShootBus {
         if (event.phase != TickEvent.Phase.END && !isInGame()) {
             return;
         }
-        Iterator<Object2IntMap.Entry<UUID>> it = ShootBus.getInstance().counter.object2IntEntrySet().iterator();
+        Iterator<Object2IntMap.Entry<UUID>> it = ShootBus.SHOT_COUNTER.object2IntEntrySet().iterator();
         while (it.hasNext()) {
             Object2IntMap.Entry<UUID> entry = it.next();
             UUID playerUUID = entry.getKey();
             int bulletCount = entry.getIntValue();
             ServerPlayer player = event.getServer().getPlayerList().getPlayer(playerUUID);
-            if (player == null) continue;
+            if (player == null) {
+                it.remove();
+                continue;
+            }
             IGunOperator shooter = IGunOperator.fromLivingEntity(player);
             ShooterDataHolder data = shooter.getDataHolder();
             // 射击
@@ -63,5 +60,10 @@ public class ShootBus {
             it.remove();
         }
     }
-
+    @SubscribeEvent
+    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            SHOT_COUNTER.removeInt(serverPlayer.getUUID());
+        }
+    }
 }

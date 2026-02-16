@@ -56,7 +56,6 @@ public class GunMod {
 
         registerDefaultExtraGunPack();
         AttachmentPropertyManager.registerModifier();
-        ShootBus shootBus = new ShootBus();
     }
 
     private static void registerDefaultExtraGunPack() {
