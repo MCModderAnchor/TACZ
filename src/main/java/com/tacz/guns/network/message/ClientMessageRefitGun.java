@@ -1,5 +1,6 @@
 package com.tacz.guns.network.message;
 
+import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.network.NetworkHandler;
@@ -46,14 +47,24 @@ public class ClientMessageRefitGun {
                 ItemStack gunItem = inventory.getItem(message.gunSlotIndex);
                 IGun iGun = IGun.getIGunOrNull(gunItem);
                 if (iGun != null) {
+                    // 服务端校验配件锁
+                    if (iGun.hasAttachmentLock(gunItem)) {
+                        return;
+                    }
                     if (iGun.allowAttachment(gunItem, attachmentItem)) {
-                        ItemStack oldAttachmentItem = iGun.getAttachment(gunItem, message.attachmentType);
+                        // 使用配件物品自身的真实类型，而非客户端传入的 attachmentType
+                        IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+                        if (iAttachment == null) {
+                            return;
+                        }
+                        AttachmentType realType = iAttachment.getType(attachmentItem);
+                        ItemStack oldAttachmentItem = iGun.getAttachment(gunItem, realType);
                         iGun.installAttachment(gunItem, attachmentItem);
                         // 刷新配件数据
                         AttachmentPropertyManager.postChangeEvent(player, gunItem);
                         inventory.setItem(message.attachmentSlotIndex, oldAttachmentItem);
                         // 如果卸载的是扩容弹匣，吐出所有子弹
-                        if (message.attachmentType == AttachmentType.EXTENDED_MAG) {
+                        if (realType == AttachmentType.EXTENDED_MAG) {
                             iGun.dropAllAmmo(player, gunItem);
                         }
                         player.inventoryMenu.broadcastChanges();
