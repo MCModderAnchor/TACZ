@@ -52,9 +52,11 @@ public class LivingEntityShoot {
             return ShootResult.ID_NOT_EXIST;
         }
         CommonGunIndex gunIndex = gunIndexOptional.get();
+        // 使用服务端时间戳计算冷却，防止客户端伪造时间戳绕过射速限制
+        long serverTimestamp = System.currentTimeMillis() - data.baseTimestamp;
         if (SyncConfig.SERVER_SHOOT_COOLDOWN_V.get()) {
             // 判断射击是否正在冷却
-            long coolDown = getShootCoolDown(timestamp);
+            long coolDown = getShootCoolDown(serverTimestamp);
             if (coolDown == -1) {
                 // 一般来说不太可能为 -1，原因未知
                 return ShootResult.UNKNOWN_FAIL;
@@ -135,7 +137,7 @@ public class LivingEntityShoot {
         NetworkHandler.sendToTrackingEntity(new ServerMessageGunShoot(shooter.getId(), currentGunItem), shooter);
         data.lastShootTimestamp = data.shootTimestamp;
         data.heatTimestamp = System.currentTimeMillis();
-        data.shootTimestamp = timestamp;
+        data.shootTimestamp = serverTimestamp;
         // 执行枪械射击逻辑
         if (iGun instanceof AbstractGunItem logicGun) {
             logicGun.shoot(data, currentGunItem, pitch, yaw, shooter);
