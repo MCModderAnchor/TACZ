@@ -1,21 +1,30 @@
 package com.tacz.guns.client.sound;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.config.common.GunConfig;
+import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.init.ModSounds;
+import com.tacz.guns.network.message.ServerMessageEnvironmentSound;
 import com.tacz.guns.network.message.ServerMessageSound;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.sound.SoundManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +42,8 @@ public class SoundPlayManager {
      * 临时缓存，用于停止播放的
      */
     private static GunSoundInstance tmpSoundInstance = null;
+
+    private static final float SOUND_SPEED = 344.6f;
 
     public static GunSoundInstance playClientSound(Entity entity, @Nullable ResourceLocation name, float volume, float pitch, int distance, boolean mono) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -171,5 +182,63 @@ public class SoundPlayManager {
                 playClientSound(livingEntity, soundId, message.getVolume(), message.getPitch(), message.getDistance());
             }
         });
+    }
+
+    public static void playMessageEnvironmentSound(ServerMessageEnvironmentSound message) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null || message.getRegistrySoundName() == null) {
+            return;
+        }
+        SoundEvent sEvent = ModSounds.getSoundByName(message.getRegistrySoundName()).get();
+        Minecraft minecraft = Minecraft.getInstance();
+
+        float delayInSeconds = message.getDistance() / SOUND_SPEED;
+        float delayInTicks = delayInSeconds * 20.0F;
+
+        SimpleSoundInstance instance1 = new SimpleSoundInstance(
+                sEvent.getLocation(),
+                SoundSource.PLAYERS,
+                message.getVolume(),
+                message.getPitch(),
+                RandomSource.create(6541),
+                false,
+                0,
+                SoundInstance.Attenuation.NONE,
+                message.getEntityBlockPos().getX(),
+                message.getEntityBlockPos().getY(),
+                message.getEntityBlockPos().getZ(),
+                false
+        );
+        minecraft.getSoundManager().playDelayed(instance1, Math.round(delayInTicks));
+    }
+
+    public static void playBulletFlyingBySoundIfClose(EntityKineticBullet bullet, Vec3 lastBulletPos, Vec3 bulletPos) {
+        LocalPlayer self = Minecraft.getInstance().player;
+        if (self != null && !bullet.ownedBy(self)) {
+            Vec3 playerPos = self.position();
+            Vec3 u = bulletPos.subtract(lastBulletPos);
+            Vec3 v = playerPos.subtract(lastBulletPos);
+
+            double lengthSqr = u.lengthSqr();
+            double t = v.dot(u) / lengthSqr;
+
+            t = Math.max(Math.min(1.0D, t), 0.0D);
+
+            Vec3 w = lastBulletPos.add(u.scale(t));
+
+            if (playerPos.distanceTo(w) < 6.0) {
+                SimpleSoundInstance instance = new SimpleSoundInstance(
+                        ModSounds.BULLET_FLYING_BY.get(),
+                        SoundSource.PLAYERS,
+                        1.0F,
+                        0.9F + self.getRandom().nextFloat() * 0.6F,
+                        self.getRandom(),
+                        w.x(),
+                        w.y(),
+                        w.z()
+                );
+                Minecraft.getInstance().getSoundManager().play(instance);
+            }
+        }
     }
 }

@@ -18,5 +18,27 @@
       "tacz:block/target_block_hit/target_block_hit_6",
       "tacz:block/target_block_hit/target_block_hit_7"
     ]
+  },
+  "bullet_reflection": {
+    "subtitle": "subtitle.tacz.bullet_reflection",
+    "sounds": [
+      "tacz:gun_env/bullet_reflection"
+    ]
+  },
+  "bullet_flying_by": {
+    "subtitle": "subtitle.tacz.bullet_flying_by",
+    "sounds": [
+      { "name" : "tacz:gun_env/bullet_flying_by_1", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_2", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_3", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_4", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_5", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_6", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_7", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_8", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_9", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_10", "weight" : 1},
+      { "name" : "tacz:gun_env/bullet_flying_by_11", "weight" : 1}
+    ]
   }
 }

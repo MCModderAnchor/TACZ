@@ -5,6 +5,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.GunProperties;
 import com.tacz.guns.api.GunProperty;
+import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ITargetEntity;
 import com.tacz.guns.api.entity.KnockBackModifier;
@@ -13,11 +14,16 @@ import com.tacz.guns.api.event.common.EntityKillByGunEvent;
 import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
+import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.init.ModDamageTypes;
+import com.tacz.guns.init.ModSounds;
+import com.tacz.guns.item.ModernKineticGunItem;
 import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.ServerMessageEnvironmentSound;
+import com.tacz.guns.network.message.ServerMessageSound;
 import com.tacz.guns.network.message.event.ServerMessageGunHurt;
 import com.tacz.guns.network.message.event.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
@@ -32,6 +38,7 @@ import com.tacz.guns.util.EntityUtil;
 import com.tacz.guns.util.ExplodeUtil;
 import com.tacz.guns.util.TacHitResult;
 import com.tacz.guns.util.block.BlockRayTrace;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -41,6 +48,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -56,6 +64,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -65,6 +74,7 @@ import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -74,6 +84,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.tacz.guns.api.GunProperties.RuntimeOnly.*;
 import static com.tacz.guns.api.event.common.GunDamageSourcePart.ARMOR_PIERCING;
@@ -238,9 +249,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.onBulletTick();
         // 粒子效果
         if (this.level().isClientSide) {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AmmoParticleSpawner.addParticle(this));
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                AmmoParticleSpawner.addParticle(this);
+            });
         }
         // 子弹模型的旋转与抛物线
+        Vec3 lastBulletPos = position();
         Vec3 movement = this.getDeltaMovement();
         double x = movement.x;
         double y = movement.y;
@@ -261,6 +275,14 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         double nextPosY = this.getY() + y;
         double nextPosZ = this.getZ() + z;
         this.setPos(nextPosX, nextPosY, nextPosZ);
+        Vec3 newBulletPos = position();
+
+        if (this.level().isClientSide) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                SoundPlayManager.playBulletFlyingBySoundIfClose(this, lastBulletPos, newBulletPos);
+            });
+        }
+
         float friction = this.friction;
         float gravity = this.gravity;
         // 子弹入水后的调整
@@ -359,10 +381,72 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
 
         this.setDeltaMovement(vec3.x, vec3.y, vec3.z);
         double d0 = vec3.horizontalDistance();
-        this.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180F / (float)Math.PI)));
-        this.setXRot((float)(Mth.atan2(vec3.y, d0) * (double)(180F / (float)Math.PI)));
+        this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI)));
+        this.setXRot((float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI)));
         this.yRotO = this.getYRot();
         this.xRotO = this.getXRot();
+        playReflectionSound();
+    }
+
+    @Override
+    public void shoot(double pX, double pY, double pZ, float pVelocity, float pInaccuracy) {
+        super.shoot(pX, pY, pZ, pVelocity, pInaccuracy);
+        playReflectionSound();
+    }
+
+    private void playReflectionSound() {
+        if (!level().isClientSide()) {
+            if (this.gunId != null) {
+                TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
+
+                    AttachmentCacheProperty cacheProperty = IGunOperator.fromLivingEntity((LivingEntity) getOwner()).getCacheProperty();
+                    if (cacheProperty != null) {
+                        it.unimi.dsi.fastutil.Pair<Integer, Boolean> silence = cacheProperty.getCache(SilenceModifier.ID);
+                        if (!silence.right()) {
+                            int reverbRadius;
+                            float pitch;
+                            switch (index.getType()) {
+                                case "pistol":
+                                case "smg":
+                                    pitch = 1.1F + random.nextFloat() * 0.2F;
+                                    reverbRadius = 384;
+                                    break;
+                                case "rifle":
+                                case "mg":
+                                    pitch = 0.9F + random.nextFloat() * 0.2F;
+                                    reverbRadius = 512;
+                                    break;
+                                case "sniper":
+                                case "shotgun":
+                                    pitch = 0.7F + random.nextFloat() * 0.2F;
+                                    reverbRadius = 768;
+                                    break;
+                                default:
+                                    return;
+                            }
+
+                            final int finalReverbRadius = reverbRadius;
+                            List<ServerPlayer> serverPlayers = ((ServerLevel) this.level()).getPlayers(
+                                    player -> {
+                                        int distance = (int) player.distanceTo(this);
+                                        return distance > 32 && distance <= finalReverbRadius;
+                                    }
+                            );
+
+                            serverPlayers.stream()
+                                    .collect(Collectors.toMap(
+                                            player -> player,
+                                            player -> player.distanceTo(this)
+                                    )).forEach((player, distance) -> {
+                                        float linearVolume = (distance / finalReverbRadius);
+                                        float volume = (float) Math.pow(10, (-60 * linearVolume) / 20) * 1.8F;
+                                        NetworkHandler.sendToClientPlayer(new ServerMessageEnvironmentSound(blockPosition(), "bullet_reflection", volume, pitch, Math.round(distance)), player);
+                                    });
+                        }
+                    }
+                });
+            }
+        }
     }
 
     public void shootFromRotation(Entity pShooter, float pX, float pY, float pZ, float pVelocity, Vector2d vector2d) {
@@ -545,7 +629,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     }
 
     /**
-     * @return Pair<非穿甲伤害源，穿甲伤害源>
+     * @return Pair<非穿甲伤害源 ， 穿甲伤害源>
      */
     private Pair<DamageSource, DamageSource> createDamageSources(MaybeMultipartEntity parts) {
         DamageSource source1, source2;
