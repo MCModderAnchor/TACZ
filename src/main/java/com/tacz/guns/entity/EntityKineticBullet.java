@@ -16,14 +16,12 @@ import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.config.common.AmmoConfig;
+import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.init.ModDamageTypes;
-import com.tacz.guns.init.ModSounds;
-import com.tacz.guns.item.ModernKineticGunItem;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageEnvironmentSound;
-import com.tacz.guns.network.message.ServerMessageSound;
 import com.tacz.guns.network.message.event.ServerMessageGunHurt;
 import com.tacz.guns.network.message.event.ServerMessageGunKill;
 import com.tacz.guns.particles.BulletHoleOption;
@@ -38,7 +36,6 @@ import com.tacz.guns.util.EntityUtil;
 import com.tacz.guns.util.ExplodeUtil;
 import com.tacz.guns.util.TacHitResult;
 import com.tacz.guns.util.block.BlockRayTrace;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -64,7 +61,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -74,7 +70,6 @@ import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -385,13 +380,17 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.setXRot((float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI)));
         this.yRotO = this.getYRot();
         this.xRotO = this.getXRot();
-        playReflectionSound();
+        if (OtherConfig.BULLET_REFLECTION_FACTOR.get() > 0) {
+            playReflectionSound();
+        }
     }
 
     @Override
     public void shoot(double pX, double pY, double pZ, float pVelocity, float pInaccuracy) {
         super.shoot(pX, pY, pZ, pVelocity, pInaccuracy);
-        playReflectionSound();
+        if (OtherConfig.BULLET_REFLECTION_FACTOR.get() > 0) {
+            playReflectionSound();
+        }
     }
 
     private void playReflectionSound() {
@@ -409,23 +408,23 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                                 case "pistol":
                                 case "smg":
                                     pitch = 1.1F + random.nextFloat() * 0.2F;
-                                    reverbRadius = 384;
+                                    reverbRadius = 256;
                                     break;
                                 case "rifle":
-                                case "mg":
+                                case "shotgun":
                                     pitch = 0.9F + random.nextFloat() * 0.2F;
-                                    reverbRadius = 512;
+                                    reverbRadius = 384;
                                     break;
                                 case "sniper":
-                                case "shotgun":
+                                case "mg":
                                     pitch = 0.7F + random.nextFloat() * 0.2F;
-                                    reverbRadius = 768;
+                                    reverbRadius = 512;
                                     break;
                                 default:
                                     return;
                             }
 
-                            final int finalReverbRadius = reverbRadius;
+                            final int finalReverbRadius = Math.round((float) (reverbRadius * OtherConfig.BULLET_REFLECTION_FACTOR.get()));
                             List<ServerPlayer> serverPlayers = ((ServerLevel) this.level()).getPlayers(
                                     player -> {
                                         int distance = (int) player.distanceTo(this);

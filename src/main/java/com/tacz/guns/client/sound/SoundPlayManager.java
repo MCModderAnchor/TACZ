@@ -1,10 +1,10 @@
 package com.tacz.guns.client.sound;
 
-import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.config.common.GunConfig;
+import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.init.ModSounds;
 import com.tacz.guns.network.message.ServerMessageEnvironmentSound;
@@ -23,7 +23,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -214,7 +213,7 @@ public class SoundPlayManager {
 
     public static void playBulletFlyingBySoundIfClose(EntityKineticBullet bullet, Vec3 lastBulletPos, Vec3 bulletPos) {
         LocalPlayer self = Minecraft.getInstance().player;
-        if (self != null && !bullet.ownedBy(self)) {
+        if (self != null && !bullet.ownedBy(self) && OtherConfig.BULLET_WHIZZ.get() > 0) {
             Vec3 playerPos = self.position();
             Vec3 u = bulletPos.subtract(lastBulletPos);
             Vec3 v = playerPos.subtract(lastBulletPos);
@@ -226,7 +225,7 @@ public class SoundPlayManager {
 
             Vec3 w = lastBulletPos.add(u.scale(t));
 
-            if (playerPos.distanceTo(w) < 6.0) {
+            if (playerPos.distanceTo(w) <= OtherConfig.BULLET_WHIZZ.get()) {
                 SimpleSoundInstance instance = new SimpleSoundInstance(
                         ModSounds.BULLET_FLYING_BY.get(),
                         SoundSource.PLAYERS,

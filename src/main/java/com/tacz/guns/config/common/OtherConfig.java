@@ -8,6 +8,8 @@ public class OtherConfig {
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_OFFSET;
     public static ForgeConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_LATENCY_MAX_SAVE_MS;
+    public static ForgeConfigSpec.DoubleValue BULLET_REFLECTION_FACTOR;
+    public static ForgeConfigSpec.DoubleValue BULLET_WHIZZ;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("other");
@@ -18,6 +20,15 @@ public class OtherConfig {
 
         builder.comment("The farthest sound distance of the target, including minecarts type");
         TARGET_SOUND_DISTANCE = builder.defineInRange("TargetSoundDistance", 128, 0, Integer.MAX_VALUE);
+
+        builder.comment("This value is a scale factor for the distance from which players will hear or not hear a reflected sound.");
+        builder.comment("By default (1.0), players hear shots at a distance between 256 and 512 blocks, depending on the gun type (256 for pistols and SMGs, 384 for shotguns and rifles, 512 for sniper rifles and machine guns).");
+        builder.comment("You can disable this feature by setting this to 0");
+        BULLET_REFLECTION_FACTOR = builder.defineInRange("BulletReflectionFactor", 1.0, 0.0, Double.MAX_VALUE);
+
+        builder.comment("This value is the the distance from which players will hear or not hear a whizz sound when a bullet pass by.");
+        builder.comment("You can disable this feature by setting this to 0");
+        BULLET_WHIZZ = builder.defineInRange("BulletWhizz", 5.0, 0.0, Double.MAX_VALUE);
 
         serverConfig(builder);
 
