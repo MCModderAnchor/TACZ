@@ -18,5 +18,27 @@
       "tacz:block/target_block_hit/target_block_hit_6",
       "tacz:block/target_block_hit/target_block_hit_7"
     ]
+  },
+  "bullet_reflection": {
+    "subtitle": "subtitle.tacz.bullet_reflection",
+    "sounds": [
+      "tacz:gun_env/bullet_reflection"
+    ]
+  },
+  "bullet_flying_by": {
+    "subtitle": "subtitle.tacz.bullet_flying_by",
+    "sounds": [
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_1",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_2",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_3",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_4",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_5",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_6",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_7",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_8",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_9",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_10",
+      "tacz:gun_env/bullet_flying_by/bullet_flying_by_11"
+    ]
   }
 }
