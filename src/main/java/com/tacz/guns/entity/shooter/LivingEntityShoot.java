@@ -9,6 +9,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.config.sync.SyncConfig;
+import com.tacz.guns.item.ModernKineticGunScriptAPI;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageGunStop;
 import com.tacz.guns.network.message.ServerMessageSyncBaseTimestamp;
@@ -155,10 +156,15 @@ public class LivingEntityShoot {
         if (iGun instanceof AbstractGunItem logicGun) {
             logicGun.shoot(data, currentGunItem, pitch, yaw, shooter, count);
         }
-        if(((IGun)shooter.getMainHandItem().getItem()).getFireMode(shooter.getMainHandItem()) == FireMode.AUTO &&
-                ((IGun)shooter.getMainHandItem().getItem()).getCurrentAmmoCount(shooter.getMainHandItem()) <= 0 &&
-                !((IGun)shooter.getMainHandItem().getItem()).hasBulletInBarrel(shooter.getMainHandItem())) {
-            NetworkHandler.sendToClientPlayer(new ServerMessageGunStop(shooter.getId()), (Player) shooter);
+        if(((IGun)shooter.getMainHandItem().getItem()).getFireMode(shooter.getMainHandItem()) == FireMode.AUTO) {
+            ModernKineticGunScriptAPI api = new ModernKineticGunScriptAPI();
+            api.setItemStack(currentGunItem);
+            api.setShooter(shooter);
+            api.setDataHolder(data);
+            api.setPitchSupplier(pitch);
+            api.setYawSupplier(yaw);
+            if(!api.reduceAmmoOnce(true))
+                NetworkHandler.sendToClientPlayer(new ServerMessageGunStop(shooter.getId()), (Player) shooter);
         }
         return ShootResult.SUCCESS;
     }

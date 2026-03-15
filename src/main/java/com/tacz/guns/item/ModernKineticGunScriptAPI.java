@@ -166,7 +166,7 @@ public class ModernKineticGunScriptAPI {
                     int i = bulletCount;
                     while (i > 0) {
                         if (!this.reduceAmmoOnce()) {
-                            bulletCount -= i;
+                            bulletCount = 0;
                             break;
                         }
                         i-=1;
@@ -231,13 +231,22 @@ public class ModernKineticGunScriptAPI {
             abstractGunItem.setOverheatLocked(itemStack, true);
         }
     }
-
     /**
      * 让枪械内的子弹减少一发。会遵从栓动、闭膛待击和开膛待机的规律，消耗枪管内子弹或者弹匣内子弹。
-     * 如果没有可以消耗的子弹，这个方法会返回 false。例如栓动步枪，虽然弹匣内有子弹，但是在 bolt 之前枪管内没有子弹，那么就会返回 false，
+     *
      * @return 是否成功减少子弹。
      */
     public boolean reduceAmmoOnce() {
+        return  reduceAmmoOnce(false);
+    }
+    /**
+     * 让枪械内的子弹减少一发。会遵从栓动、闭膛待击和开膛待机的规律，消耗枪管内子弹或者弹匣内子弹。
+     *
+     * @param simulate 如果为 {@code true}，则仅测试是否可以消耗子弹，不实际修改数量；
+     *                 如果为 {@code false}，则真实消耗子弹。
+     * @return 是否成功减少子弹（或是否可以减少）。
+     */
+    public boolean reduceAmmoOnce(boolean simulate) {
         Bolt boltType = TimelessAPI.getCommonGunIndex(abstractGunItem.getGunId(itemStack))
                 .map(index -> index.getGunData().getBolt())
                 .orElse(null);
@@ -267,7 +276,7 @@ public class ModernKineticGunScriptAPI {
             if (!noAmmo) {
                 // 如果背包直读则背包内射击后弹药 - 1
                 if (useInventoryAmmo()) {
-                    return consumeAmmoFromPlayer(1) == 1;
+                    return consumeAmmoFromPlayer(1, simulate) == 1;
                 }
                 // 如果非背包直读则弹匣内子弹 - 1
                 abstractGunItem.reduceCurrentAmmoCount(itemStack);
@@ -278,7 +287,9 @@ public class ModernKineticGunScriptAPI {
                 return false;
             }
             // 没有弹匣内的子弹则消耗枪膛内的子弹
-            abstractGunItem.setBulletInBarrel(itemStack, false);
+            if(!simulate) {
+                abstractGunItem.setBulletInBarrel(itemStack, false);
+            }
             return true;
         }
         // 开膛逻辑
@@ -289,15 +300,18 @@ public class ModernKineticGunScriptAPI {
             }
             // 如果背包直读则背包内射击后弹药 - 1
             if (useInventoryAmmo()) {
-                return consumeAmmoFromPlayer(1) == 1;
+                return consumeAmmoFromPlayer(1, simulate) == 1;
             }
             // 如果非背包直读则弹匣内子弹 - 1
-            abstractGunItem.reduceCurrentAmmoCount(itemStack);
+            if(!simulate) {
+                abstractGunItem.reduceCurrentAmmoCount(itemStack);
+            }
             return true;
         }
         // 非三种已知 Bolt 类型 (目前不会出现)，默认返回 false
         return false;
     }
+
 
     /**
      * 获取从开始换弹到现在经历的时间，单位为 ms
@@ -462,7 +476,6 @@ public class ModernKineticGunScriptAPI {
     public int getMagExtentLevel() {
         return AttachmentDataUtils.getMagExtendLevel(itemStack, gunIndex.getGunData());
     }
-
     /**
      * 尽可能多地从玩家身上 (或者虚拟备弹) 消耗掉弹药，返回消耗的数量
      *
@@ -470,6 +483,17 @@ public class ModernKineticGunScriptAPI {
      * @return 实际消耗的弹药数量
      */
     public int consumeAmmoFromPlayer(int neededAmount) {
+        return consumeAmmoFromPlayer(neededAmount, false);
+    }
+    /**
+     * 尽可能多地从玩家身上 (或者虚拟备弹) 消耗掉弹药，返回消耗的数量
+     *
+     * @param neededAmount 需要的弹药数量
+     * @param simulate 如果为 {@code true}，则仅测试是否可以消耗子弹，不实际修改数量；
+     *                 如果为 {@code false}，则真实消耗子弹。
+     * @return 实际消耗的弹药数量
+     */
+    public int consumeAmmoFromPlayer(int neededAmount, boolean simulate) {
         // 如果处于背包直读并且创造模式不消耗的情况
         if (useInventoryAmmo() && !isReloadingNeedConsumeAmmo()) {
             return neededAmount;
@@ -478,7 +502,7 @@ public class ModernKineticGunScriptAPI {
             return abstractGunItem.findAndExtractDummyAmmo(itemStack, neededAmount);
         } else {
             return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
-                    .map(cap -> abstractGunItem.findAndExtractInventoryAmmo(cap, itemStack, neededAmount))
+                    .map(cap -> abstractGunItem.findAndExtractInventoryAmmo(cap, itemStack, 1, true))
                     .orElse(0);
         }
     }

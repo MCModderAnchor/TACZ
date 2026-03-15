@@ -71,7 +71,7 @@ public class ShootKey {
                     }
                     pushDown = true;
                 }
-            } else {
+            } else if(pushDown) {
                 operator.stopFullAuto();
                 pushDown = false;
                 lastTimeShootSuccess = false;
