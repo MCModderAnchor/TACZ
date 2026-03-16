@@ -241,6 +241,12 @@ dependencies {
         jarJar.ranged(it, "[0.3.6,)")
     }
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation 'it.unimi.dsi:fastutil:8.5.18'
+    /*
+    implementation(jarJar('it.unimi.dsi:fastutil:8.5.18')) {
+        jarJar.ranged(it, '[8.5,9.0)')
+    }*/
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 jar {

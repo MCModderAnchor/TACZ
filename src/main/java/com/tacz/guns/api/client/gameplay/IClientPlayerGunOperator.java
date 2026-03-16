@@ -28,6 +28,11 @@ public interface IClientPlayerGunOperator {
     ShootResult shoot();
 
     /**
+     * 停止全自动射击
+     */
+    void stopFullAuto();
+
+    /**
      * 执行客户端切枪逻辑。
      */
     void draw(ItemStack lastItem);

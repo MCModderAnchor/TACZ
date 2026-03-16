@@ -128,6 +128,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     private boolean explosionKnockback = false;
     private boolean explosionDestroyBlock = false;
     private float damageModifier = 1;
+    //子弹数量（将多发子弹压入同一个实体内处理，实现超过1200的射速）
+    private int bulletCount = 1;
     // 穿透数
     private int pierce = 1;
     // 初始位置
@@ -155,17 +157,21 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     }
 
     public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ItemStack gunItem, ResourceLocation ammoId, ResourceLocation gunId,
-                               ResourceLocation gunDisplayId, boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
-        this(TYPE, worldIn, throwerIn, gunItem, ammoId, gunId, gunDisplayId, isTracerAmmo, gunData, bulletData);
+                                    ResourceLocation gunDisplayId, boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
+        this(TYPE, worldIn, throwerIn, gunItem, ammoId, gunId, gunDisplayId, isTracerAmmo, gunData, bulletData, 1);
+    }
+    public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ItemStack gunItem, ResourceLocation ammoId, ResourceLocation gunId,
+                               ResourceLocation gunDisplayId, boolean isTracerAmmo, GunData gunData, BulletData bulletData, int bulletCount) {
+        this(TYPE, worldIn, throwerIn, gunItem, ammoId, gunId, gunDisplayId, isTracerAmmo, gunData, bulletData, bulletCount);
     }
 
     public EntityKineticBullet(Level worldIn, LivingEntity throwerIn, ItemStack gunItem, ResourceLocation ammoId, ResourceLocation gunId, boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
-        this(TYPE, worldIn, throwerIn, gunItem, ammoId, gunId, DefaultAssets.DEFAULT_GUN_DISPLAY_ID, isTracerAmmo, gunData, bulletData);
+        this(TYPE, worldIn, throwerIn, gunItem, ammoId, gunId, DefaultAssets.DEFAULT_GUN_DISPLAY_ID, isTracerAmmo, gunData, bulletData, 1);
     }
 
     protected EntityKineticBullet(EntityType<? extends Projectile> type, Level worldIn, LivingEntity throwerIn, ItemStack gunItem,
                                   ResourceLocation ammoId, ResourceLocation gunId, ResourceLocation gunDisplayId,
-                                  boolean isTracerAmmo, GunData gunData, BulletData bulletData) {
+                                  boolean isTracerAmmo, GunData gunData, BulletData bulletData, int bulletCount) {
         this(type, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         // gunId 提前赋值，以让 modifyProperty 可以在构造函数中运行
@@ -190,6 +196,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         this.igniteBlock = modifyProperty(IGNITE_BLOCK, Boolean.class, bulletData.getIgnite().isIgniteBlock() || ignite.isIgniteBlock());
         this.damageAmount = cacheProperty.getCache(DamageModifier.ID);
         this.distanceAmount = modifyProperty(GunProperties.EFFECTIVE_RANGE, Float.class, cacheProperty.getCache(GunProperties.EFFECTIVE_RANGE));
+        this.bulletCount = bulletCount;
         int pierce = modifyProperty(GunProperties.PIERCE, Integer.class, cacheProperty.getCache(GunProperties.PIERCE));
         this.pierce = Mth.clamp(pierce, 1, Integer.MAX_VALUE);
         ExplosionData explosionData = Objects.requireNonNullElse(cacheProperty.getCache(ExplosionModifier.ID), DEFAULT_EXPLOSION_DATA);
@@ -321,27 +328,55 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             }
             // 当子弹击中实体时，进行被命中的实体读取
             if (hitEntities != null && !hitEntities.isEmpty()) {
-                EntityResult[] hitEntityResult = hitEntities.toArray(new EntityResult[0]);
-                // 对被命中的实体进行排序，按照距离子弹发射位置的距离进行升序排序
-                for (int i = 0; (i < this.pierce || i < 1) && i < (hitEntityResult.length - 1); i++) {
-                    int k = i;
-                    for (int j = i + 1; j < hitEntityResult.length; j++) {
-                        if (hitEntityResult[j].hitVec.distanceTo(startVec) < hitEntityResult[k].hitVec.distanceTo(startVec)) {
-                            k = j;
+                //判断是否需要更新实体列表
+                boolean entityDestroyed = false;
+                //对于本实体包含的每一发子弹进行一次判定
+                int count = bulletCount;
+                for(int i = 0; i < count; i++) {
+                    if(entityDestroyed) {
+                        // 子弹的击中检测，穿透为 1 或者爆炸类弹药限制为一个实体穿透判定
+                        if (this.pierce <= 1 || this.explosion) {
+                            EntityResult entityResult = EntityUtil.findEntityOnPath(this, startVec, endVec);
+                            // 将单个命中是实体创建为单个内容的 list
+                            if (entityResult != null) {
+                                hitEntities = Collections.singletonList(entityResult);
+                            }
+                        } else {
+                            hitEntities = EntityUtil.findEntitiesOnPath(this, startVec, endVec);
+                        }
+                        //判断是否还有实体
+                        if (hitEntities.isEmpty()) {
+                            break;
                         }
                     }
-                    EntityResult t = hitEntityResult[i];
-                    hitEntityResult[i] = hitEntityResult[k];
-                    hitEntityResult[k] = t;
-                }
-                for (EntityResult entityResult : hitEntityResult) {
-                    result = new TacHitResult(entityResult);
-                    this.onHitEntity((TacHitResult) result, startVec, endVec);
-                    this.pierce--;
-                    if (this.pierce < 1 || this.explosion) {
-                        // 子弹已经穿透所有实体，结束子弹的飞行
-                        this.discard();
-                        return;
+                    EntityResult[] hitEntityResult = hitEntities.toArray(new EntityResult[0]);
+                    // 对被命中的实体进行排序，按照距离子弹发射位置的距离进行升序排序
+                    for (int j = 0; (i < this.pierce || j < 1) && j < (hitEntityResult.length - 1); j++) {
+                        int l = j;
+                        for (int k = j + 1; k < hitEntityResult.length; k++) {
+                            if (hitEntityResult[k].hitVec.distanceTo(startVec) < hitEntityResult[l].hitVec.distanceTo(startVec)) {
+                                l = k;
+                            }
+                        }
+                        EntityResult t = hitEntityResult[j];
+                        hitEntityResult[j] = hitEntityResult[l];
+                        hitEntityResult[l] = t;
+                    }
+                    for (EntityResult entityResult : hitEntityResult) {
+                        result = new TacHitResult(entityResult);
+                        String hitResult = this.onHitEntity((TacHitResult) result, startVec, endVec);
+                        if(Objects.equals(hitResult, "DEAD")) {
+                            entityDestroyed = true;
+                        }
+
+                        this.pierce--;
+                        if (this.pierce < 1 || this.explosion) {
+                            // 子弹已经穿透所有实体，结束子弹的飞行
+                            this.bulletCount--;
+                            //减少子弹数量，如果已全部消耗则清除自身
+                            if(this.bulletCount == 0)
+                                this.discard();
+                        }
                     }
                 }
             }
@@ -383,12 +418,12 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
     }
 
-    protected void onHitEntity(TacHitResult result, Vec3 startVec, Vec3 endVec) {
+    protected String onHitEntity(TacHitResult result, Vec3 startVec, Vec3 endVec) {
         if (result.getEntity() instanceof ITargetEntity targetEntity) {
             DamageSource source = this.damageSources().thrown(this, this.getOwner());
             targetEntity.onProjectileHit(this, result, source, this.getDamage(result.getLocation()));
             // 打靶直接返回
-            return;
+            return "SHOT_TARGET";
         }
         // 获取Pre事件必要的信息
         Entity entity = result.getEntity();
@@ -403,7 +438,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         var preEvent = new EntityHurtByGunEvent.Pre(this, entity, attacker, this.gunId, this.gunDisplayId, damage, sources, headshot, headShotMultiplier, LogicalSide.SERVER);
         var cancelled = MinecraftForge.EVENT_BUS.post(preEvent);
         if (cancelled) {
-            return;
+            return "CANCELLED";
         }
         // 刷新由Pre事件修改后的参数
         entity = preEvent.getHurtEntity();
@@ -416,7 +451,7 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         headshot = preEvent.isHeadShot();
         headShotMultiplier = preEvent.getHeadshotMultiplier();
         if (entity == null) {
-            return;
+            return "NOT_HIT";
         }
         // 点燃
         if (this.igniteEntity && AmmoConfig.IGNITE_ENTITY.get()) {
@@ -459,12 +494,15 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
                 if (livingCore.isDeadOrDying()) {
                     MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(this, livingCore, attacker, newGunId, gunDisplayId, damage, sources, headshot, headShotMultiplier, LogicalSide.SERVER));
                     NetworkHandler.sendToDimension(new ServerMessageGunKill(getId(), livingCore.getId(), attackerId, newGunId, gunDisplayId, damage, headshot, headShotMultiplier), livingCore);
+                    return "DEAD";
                 } else {
                     MinecraftForge.EVENT_BUS.post(new EntityHurtByGunEvent.Post(this, livingCore, attacker, newGunId, gunDisplayId, damage, sources, headshot, headShotMultiplier, LogicalSide.SERVER));
                     NetworkHandler.sendToDimension(new ServerMessageGunHurt(getId(), livingCore.getId(), attackerId, newGunId, gunDisplayId, damage, headshot, headShotMultiplier), livingCore);
+                    return "ALIVE";
                 }
             }
         }
+        return "UNKNOWN";
     }
 
     protected void onHitBlock(BlockHitResult result, Vec3 startVec, Vec3 endVec) {

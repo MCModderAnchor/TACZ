@@ -119,6 +119,29 @@ public interface IGunOperator {
     ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp);
 
     /**
+     * 从实体的位置，向指定的方向开枪。计算冷却的时候使用指定的 timestamp。指定包含的弹药数和射击发起的来源
+     *
+     * @param pitch 开火方向的俯仰角(即 xRot )
+     * @param yaw   开火方向的偏航角(即 yRot )
+     * @param timestamp 指定的时间戳，为偏移时间戳（相对于 base timestamp 的时间戳）
+     * @param count 包含的弹药数
+     * @param fromServer true为来自服务器，false为来自客户端
+     * @return 本次射击的结果
+     */
+    ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp, int count, boolean fromServer);
+
+    /**
+     * 开始全自动射击
+     * @param timestamp 开始的时间戳
+     */
+    void startFullAuto(long timestamp);
+
+    /**
+     * 停止全自动射击
+     */
+    void stopFullAuto();
+
+    /**
      * 服务端，该操作者是否受弹药数影响
      *
      * @return 如果为 false，那么开火时不会检查弹药，无论是玩家背包内还是枪械内的

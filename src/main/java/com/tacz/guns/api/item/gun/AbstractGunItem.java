@@ -62,7 +62,7 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
     /**
      * 射击时触发
      */
-    public abstract void shoot(ShooterDataHolder dataHolder, ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, LivingEntity shooter);
+    public abstract void shoot(ShooterDataHolder dataHolder, ItemStack gunItem, Supplier<Float> pitch, Supplier<Float> yaw, LivingEntity shooter, int count);
 
     /**
      * 开始换弹时调用
@@ -227,21 +227,25 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
     public int findAndExtractInventoryAmmos(IItemHandler itemHandler, ItemStack gunItem, int needAmmoCount) {
         return findAndExtractInventoryAmmo(itemHandler, gunItem, needAmmoCount);
     }
-
+    public int findAndExtractInventoryAmmo(IItemHandler itemHandler, ItemStack gunItem, int needAmmoCount) {
+        return findAndExtractInventoryAmmo(itemHandler, gunItem,  needAmmoCount, false);
+    }
     /**
      * 枪械寻弹和扣除背包弹药逻辑
      * @param itemHandler 目标实体的背包
      * @param gunItem 枪械物品
      * @param needAmmoCount 需要的弹药 (物品) 数量
+     * @param simulate 如果为 {@code true}，则仅测试是否可以消耗子弹，不实际修改数量；
+     *                 如果为 {@code false}，则真实消耗子弹。
      * @return 寻找到的弹药 (物品) 数量
      */
-    public int findAndExtractInventoryAmmo(IItemHandler itemHandler, ItemStack gunItem, int needAmmoCount) {
+    public int findAndExtractInventoryAmmo(IItemHandler itemHandler, ItemStack gunItem, int needAmmoCount, boolean simulate) {
         int cnt = needAmmoCount;
         // 背包检查
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack checkAmmoStack = itemHandler.getStackInSlot(i);
             if (checkAmmoStack.getItem() instanceof IAmmo iAmmo && iAmmo.isAmmoOfGun(gunItem, checkAmmoStack)) {
-                ItemStack extractItem = itemHandler.extractItem(i, cnt, false);
+                ItemStack extractItem = itemHandler.extractItem(i, cnt, simulate);
                 cnt = cnt - extractItem.getCount();
                 if (cnt <= 0) {
                     break;
@@ -251,9 +255,11 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
                 int boxAmmoCount = iAmmoBox.getAmmoCount(checkAmmoStack);
                 int extractCount = Math.min(boxAmmoCount, cnt);
                 int remainCount = boxAmmoCount - extractCount;
-                iAmmoBox.setAmmoCount(checkAmmoStack, remainCount);
-                if (remainCount <= 0) {
-                    iAmmoBox.setAmmoId(checkAmmoStack, DefaultAssets.EMPTY_AMMO_ID);
+                if (!simulate) {
+                    iAmmoBox.setAmmoCount(checkAmmoStack, remainCount);
+                    if (remainCount <= 0) {
+                        iAmmoBox.setAmmoId(checkAmmoStack, DefaultAssets.EMPTY_AMMO_ID);
+                    }
                 }
                 cnt = cnt - extractCount;
                 if (cnt <= 0) {

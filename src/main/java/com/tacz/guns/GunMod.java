@@ -8,6 +8,7 @@ import com.tacz.guns.config.ServerConfig;
 import com.tacz.guns.init.*;
 import com.tacz.guns.resource.GunPackLoader;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
+import com.tacz.guns.util.ShootBus;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -28,7 +29,6 @@ public class GunMod {
      * 默认模型包文件夹
      */
     public static final String DEFAULT_GUN_PACK_NAME = "tacz_default_gun";
-
     public GunMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.init());
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.init());

@@ -8,15 +8,19 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.config.sync.SyncConfig;
+import com.tacz.guns.item.ModernKineticGunScriptAPI;
 import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.ServerMessageGunStop;
 import com.tacz.guns.network.message.ServerMessageSyncBaseTimestamp;
 import com.tacz.guns.network.message.event.ServerMessageGunShoot;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.util.ShootBus;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -25,20 +29,30 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.function.Supplier;
 
 public class LivingEntityShoot {
     private final LivingEntity shooter;
     private final ShooterDataHolder data;
     private final LivingEntityDrawGun draw;
-
+    private static final ScheduledExecutorService SHOOT_SCHEDULER =
+            Executors.newSingleThreadScheduledExecutor(r -> {
+                Thread t = new Thread(r, "Gun-AutoShoot-Scheduler");
+                t.setDaemon(true);
+                return t;
+            });
+    private ScheduledFuture<?> shootTask;
     public LivingEntityShoot(LivingEntity shooter, ShooterDataHolder data, LivingEntityDrawGun draw) {
         this.shooter = shooter;
         this.data = data;
         this.draw = draw;
     }
 
-    public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp) {
+    public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp, int count, boolean fromServer) {
         if (data.currentGunItem == null) {
             return ShootResult.NOT_DRAW;
         }
@@ -63,8 +77,8 @@ public class LivingEntityShoot {
                 return ShootResult.COOL_DOWN;
             }
         }
-        if (SyncConfig.SERVER_SHOOT_NETWORK_V.get()) {
-            // 根据 tick time 和 允许的网络延迟波动 计算 时间戳的接受窗口
+        if (SyncConfig.SERVER_SHOOT_NETWORK_V.get() && !fromServer) {
+            // 根据 tick time 和 允许的网络延迟波动 计算 时间戳的接受窗口 如果来自服务器则无需计算窗口可直接使用
             MinecraftServer server = Objects.requireNonNull(shooter.getServer());
             double tickTime = Math.max(server.tickTimes[server.getTickCount() % 100] * 1.0E-6D, 50);
             long alpha = System.currentTimeMillis() - data.baseTimestamp - timestamp;
@@ -138,11 +152,33 @@ public class LivingEntityShoot {
         data.shootTimestamp = timestamp;
         // 执行枪械射击逻辑
         if (iGun instanceof AbstractGunItem logicGun) {
-            logicGun.shoot(data, currentGunItem, pitch, yaw, shooter);
+            logicGun.shoot(data, currentGunItem, pitch, yaw, shooter, count);
+        }
+        if(((IGun)shooter.getMainHandItem().getItem()).getFireMode(shooter.getMainHandItem()) == FireMode.AUTO) {
+            ModernKineticGunScriptAPI api = new ModernKineticGunScriptAPI();
+            api.setItemStack(currentGunItem);
+            api.setShooter(shooter);
+            api.setDataHolder(data);
+            api.setPitchSupplier(pitch);
+            api.setYawSupplier(yaw);
+            if(!api.reduceAmmoOnce(true))
+                NetworkHandler.sendToClientPlayer(new ServerMessageGunStop(shooter.getId()), (Player) shooter);
         }
         return ShootResult.SUCCESS;
     }
-
+    public boolean startFullAuto(long timestamp) {
+        UUID playerUuid = this.shooter.getUUID();
+        if(this.shooter.getMainHandItem().getItem() instanceof IGun iGun) {
+            int rpm = iGun.getRPM(this.shooter.getMainHandItem());
+            ShootBus.beginShot(playerUuid, rpm);
+            return true;
+        }
+        return false;
+    }
+    public void stopFullAuto() {
+        UUID playerUuid = this.shooter.getUUID();
+        ShootBus.endShot(playerUuid);
+    }
     /**
      * 以当前时间戳查询射击冷却。返回值一般不会超过枪械的射击间隔
      * @return 射击冷却

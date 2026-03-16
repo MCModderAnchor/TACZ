@@ -28,6 +28,7 @@ import static com.tacz.guns.util.InputExtraCheck.isInGame;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class ShootKey {
+    public static boolean pushDown = false;
     public static final KeyMapping SHOOT_KEY = new KeyMapping("key.tacz.shoot.desc",
             KeyConflictContext.IN_GAME,
             KeyModifier.NONE,
@@ -63,10 +64,16 @@ public class ShootKey {
                     // 非全自动情况，禁止连续开火
                     return;
                 }
-                if (operator.shoot() == ShootResult.SUCCESS) {
-                    lastTimeShootSuccess = true;
+                //开始全自动射击
+                if(fireMode == FireMode.AUTO && !pushDown) {
+                    if (operator.shoot() == ShootResult.SUCCESS) {
+                        lastTimeShootSuccess = true;
+                    }
+                    pushDown = true;
                 }
-            } else {
+            } else if(pushDown) {
+                operator.stopFullAuto();
+                pushDown = false;
                 lastTimeShootSuccess = false;
             }
         }
