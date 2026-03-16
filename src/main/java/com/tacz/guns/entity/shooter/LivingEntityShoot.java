@@ -1,6 +1,5 @@
 package com.tacz.guns.entity.shooter;
 
-import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
@@ -34,7 +33,6 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class LivingEntityShoot {
@@ -172,19 +170,14 @@ public class LivingEntityShoot {
         UUID playerUuid = this.shooter.getUUID();
         if(this.shooter.getMainHandItem().getItem() instanceof IGun iGun) {
             int rpm = iGun.getRPM(this.shooter.getMainHandItem());
-            double roundsPerSecond = rpm / 60.0;
-            long intervalNanos = (long) (1_000_000_000.0 / roundsPerSecond);
-            ScheduledFuture<?> task = SHOOT_SCHEDULER.scheduleAtFixedRate(
-                    () -> ShootBus.addShot(playerUuid),
-                    0, intervalNanos, TimeUnit.NANOSECONDS
-            );
-            shootTask = task;
+            ShootBus.beginShot(playerUuid, rpm);
             return true;
         }
         return false;
     }
-    public boolean stopFullAuto() {
-        return shootTask.cancel(true);
+    public void stopFullAuto() {
+        UUID playerUuid = this.shooter.getUUID();
+        ShootBus.endShot(playerUuid);
     }
     /**
      * 以当前时间戳查询射击冷却。返回值一般不会超过枪械的射击间隔

@@ -104,6 +104,7 @@ public class ModernKineticGunScriptAPI {
      * @param consumeAmmo 本次射击是否消耗弹药
      */
     public void shootOnce(boolean consumeAmmo, int count) {
+        GunMod.LOGGER.info("{}", count);
         GunData gunData = gunIndex.getGunData();
         BulletData bulletData = gunIndex.getBulletData();
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(shooter);
@@ -279,7 +280,9 @@ public class ModernKineticGunScriptAPI {
                     return consumeAmmoFromPlayer(1, simulate) == 1;
                 }
                 // 如果非背包直读则弹匣内子弹 - 1
-                abstractGunItem.reduceCurrentAmmoCount(itemStack);
+                if(!simulate) {
+                    abstractGunItem.reduceCurrentAmmoCount(itemStack);
+                }
                 return true;
             }
             // 没有膛内子弹无法射击
