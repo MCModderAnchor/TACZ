@@ -34,6 +34,12 @@ public class EntityUtil {
                 if (owner != null && entity.isPassengerOfSameVehicle(owner)) {
                     continue;
                 }
+                // 修复：同一队伍且关闭友军伤害时，子弹应穿过队友（与原版箭矢行为一致）
+                if (owner != null && entity.getTeam() != null && owner.getTeam() != null && 
+                    entity.getTeam().getName().equals(owner.getTeam().getName()) && 
+                    !entity.getTeam().isAllowFriendlyFire()) {
+                    continue;
+                }
                 EntityKineticBullet.EntityResult result = getHitResult(bulletEntity, entity, startVec, endVec);
                 if (result == null) {
                     continue;
@@ -61,6 +67,12 @@ public class EntityUtil {
         for (Entity entity : entities) {
             if (!entity.equals(owner)) {
                 if (owner != null && entity.equals(owner.getVehicle())) {
+                    continue;
+                }
+                // 修复：同一队伍且关闭友军伤害时，子弹应穿过队友（与原版箭矢行为一致）
+                if (owner != null && entity.getTeam() != null && owner.getTeam() != null && 
+                    entity.getTeam().getName().equals(owner.getTeam().getName()) && 
+                    !entity.getTeam().isAllowFriendlyFire()) {
                     continue;
                 }
                 EntityKineticBullet.EntityResult result = getHitResult(bulletEntity, entity, startVec, endVec);
