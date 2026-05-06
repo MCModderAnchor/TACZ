@@ -238,7 +238,7 @@
   "config.tacz.client.sound": "소리",
   "config.tacz.client.sound.hit_sound_concurrency_limit": "명중 소리 동시 처리 제한",
   "config.tacz.client.sound.hit_sound_concurrency_limit.desc": "동일한 엔티티 및 소리 ID에 대해 동시 재생 가능한 명중 효과음의 최대 수입니다. 0으로 설정 시 제한이 해제됩니다.",
-  "config.tacz.client.sound.default_sound_concurrency_limit": "Default Sound Concurrency Limit",
+  "config.tacz.client.sound.default_sound_concurrency_limit": "기본 소리 동시 처리 제한",
   "config.tacz.client.sound.default_sound_concurrency_limit.desc": "Max active normal gun sounds for the same entity and sound id. 0 disables this limit.",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit": "High Frequency Sound Concurrency Limit",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit.desc": "Max active high-frequency gun sounds, such as shooting and animation keyframe sounds, for the same entity and sound id. 0 disables this limit.",
