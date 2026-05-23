@@ -13,6 +13,7 @@ import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
+import com.tacz.guns.entity.shooter.LivingEntityShoot;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerShoot;
 import com.tacz.guns.resource.index.CommonGunIndex;
@@ -281,8 +282,10 @@ public class LocalPlayerShoot {
                 // 记录新的开火时间戳
                 data.clientLastShootTimestamp = data.clientShootTimestamp;
                 data.clientShootTimestamp = System.currentTimeMillis();
-                // 发送开火的数据包，通知服务器
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot(data.clientShootTimestamp - data.clientBaseTimestamp, chargeProgress));
+                // AUTO 模式由服务端 tick 驱动射击，不发送 per-bullet 包
+                if (!LivingEntityShoot.isAutoShootMode(fireMode, iGun, mainHandItem)) {
+                    NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot(data.clientShootTimestamp - data.clientBaseTimestamp, chargeProgress));
+                }
             }
 
             // todo 需要检查

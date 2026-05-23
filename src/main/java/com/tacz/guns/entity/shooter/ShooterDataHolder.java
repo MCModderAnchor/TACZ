@@ -102,6 +102,10 @@ public class ShooterDataHolder {
 
     public long heatTimestamp = -1;
     /**
+     * 是否正在自动射击（服务端 tick 驱动）
+     */
+    public volatile boolean isAutoShooting = false;
+    /**
      * 配件修改过的各种属性缓存
      */
     @Nullable
@@ -124,5 +128,6 @@ public class ShooterDataHolder {
         chargeProgress = 0f;
         scriptData = null;
         heatTimestamp = -1;
+        isAutoShooting = false;
     }
 }

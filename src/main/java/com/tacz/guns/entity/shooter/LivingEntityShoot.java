@@ -13,6 +13,7 @@ import com.tacz.guns.network.message.ServerMessageSyncBaseTimestamp;
 import com.tacz.guns.network.message.event.ServerMessageGunShoot;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.resource.pojo.data.gun.BurstData;
 import com.tacz.guns.resource.pojo.data.gun.ChargeData;
 import com.tacz.guns.resource.pojo.data.gun.ChargeType;
 import net.minecraft.resources.ResourceLocation;
@@ -279,5 +280,61 @@ public class LivingEntityShoot {
             shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
                     .map(cap -> abstractGunItem.findAndExtractInventoryAmmo(cap, itemStack, neededAmount));
         }
+    }
+
+    public void tickAutoShoot(Supplier<Float> pitch, Supplier<Float> yaw) {
+        if (!data.isAutoShooting) {
+            return;
+        }
+        if (data.currentGunItem == null) {
+            data.isAutoShooting = false;
+            return;
+        }
+        ItemStack currentGunItem = data.currentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
+            data.isAutoShooting = false;
+            return;
+        }
+        FireMode fireMode = iGun.getFireMode(currentGunItem);
+        if (!isAutoShootMode(fireMode, iGun, currentGunItem)) {
+            data.isAutoShooting = false;
+            return;
+        }
+        // 额外 5ms 容差补偿 tick 抖动，避免高射速武器丢失射击
+        // 此检查仅在 auto-shoot 路径中执行，不影响非 auto 武器
+        if (getShootCoolDown() > 5) {
+            return;
+        }
+        long timestamp = System.currentTimeMillis() - data.baseTimestamp;
+        ShootResult result = shoot(pitch, yaw, timestamp);
+        switch (result) {
+            case SUCCESS:
+            case COOL_DOWN:
+            case IS_SPRINTING:
+            case IS_DRAWING:
+            case IS_BOLTING:
+            case IS_MELEE:
+            case NETWORK_FAIL:
+                break;
+            default:
+                data.isAutoShooting = false;
+                break;
+        }
+    }
+
+    public static boolean isAutoShootMode(FireMode fireMode, IGun iGun, ItemStack gunItem) {
+        if (fireMode == FireMode.AUTO) {
+            return true;
+        }
+        if (fireMode == FireMode.BURST) {
+            ResourceLocation gunId = iGun.getGunId(gunItem);
+            return TimelessAPI.getCommonGunIndex(gunId)
+                    .map(index -> {
+                        BurstData burstData = index.getGunData().getBurstData();
+                        return burstData != null && burstData.isContinuousShoot();
+                    })
+                    .orElse(false);
+        }
+        return false;
     }
 }
