@@ -1,0 +1,10 @@
+{
+  "slot": "tacz:attachment/slot/stock_heavy_ctr",
+  "model": "tacz:attachment/stock_heavy_ctr_geo",
+  "texture": "tacz:attachment/uv/stock_heavy_ctr",
+  "adapter": "ar_stock_adapter",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

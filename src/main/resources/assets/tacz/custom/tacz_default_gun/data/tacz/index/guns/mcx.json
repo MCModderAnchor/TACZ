@@ -1,0 +1,8 @@
+{
+  "name": "tacz.gun.mcx.name",
+  "display": "tacz:mcx_display",
+  "data": "tacz:mcx_data",
+  "type": "rifle",
+  "tooltip": "tacz.gun.mcx.desc",
+  "sort": 9
+}

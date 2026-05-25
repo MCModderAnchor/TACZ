@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.stock_heavy_ctr.name",
+  "display": "tacz:stock_heavy_ctr_display",
+  "data": "tacz:stock_heavy_ctr_data",
+  "type": "stock",
+  "sort": 10
+}
