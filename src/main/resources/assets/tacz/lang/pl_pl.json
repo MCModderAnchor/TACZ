@@ -242,6 +242,8 @@
   "config.tacz.client.sound.default_sound_concurrency_limit.desc": "Maksymalna liczba aktywnych dźwięków broni dla tego samego obiektu i id dźwięku. 0 wyłącza ten limit.",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit": "Limit Współbieżności Dźwięków Wysokiej Częstotliwości",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit.desc": "Maksymalne aktywne dźwięki o wysokiej częstotliwości, takie jak strzelanie i dźwięki klatkowe animacji, dla tego samego obiektu i id dźwięku. 0 wyłącza ten limit.",
+  "config.tacz.client.sound.first_person_animation_sound_tracking": "First-person Animation Sound Tracking",
+  "config.tacz.client.sound.first_person_animation_sound_tracking.desc": "Use a non-relative entity-tracking world sound source for first-person animation keyframe sounds. This can improve compatibility with physical sound mods, but may introduce slight stereo drift while moving.",
   "config.tacz.client.zoom": "Przybliż",
   "config.tacz.client.zoom.screen_distance_coefficient": "Współczynnik odległości ekranu",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Współczynik odległości ekranu dla przybliżenia, używając MDV standard, podstawowy jest MDV133",
