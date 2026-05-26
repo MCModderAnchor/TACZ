@@ -12,6 +12,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.DoubleValue HIT_MARKET_START_POSITION;
     public static ForgeConfigSpec.BooleanValue HEAD_SHOT_DEBUG_HITBOX;
     public static ForgeConfigSpec.BooleanValue GUN_HUD_ENABLE;
+    public static ForgeConfigSpec.BooleanValue AIMLESS_ZOOM_ENABLE;
     public static ForgeConfigSpec.BooleanValue KILL_AMOUNT_ENABLE;
     public static ForgeConfigSpec.DoubleValue KILL_AMOUNT_DURATION_SECOND;
     public static ForgeConfigSpec.IntValue TARGET_RENDER_DISTANCE;
@@ -49,6 +50,9 @@ public class RenderConfig {
 
         builder.comment("Whether or not to display the gun's HUD");
         GUN_HUD_ENABLE = builder.define("GunHUDEnable", true);
+
+        builder.comment("Whether or not to allow a change of zoom if pressing a button without aiming");
+        AIMLESS_ZOOM_ENABLE = builder.define("AimlessZoomEnable", true);
 
         builder.comment("Whether or not to display the kill amount");
         KILL_AMOUNT_ENABLE = builder.define("KillAmountEnable", true);

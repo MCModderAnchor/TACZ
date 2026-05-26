@@ -2,10 +2,7 @@ package com.tacz.guns.client.init;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
-import com.tacz.guns.client.gui.overlay.GunHudOverlay;
-import com.tacz.guns.client.gui.overlay.HeatBarOverlay;
-import com.tacz.guns.client.gui.overlay.InteractKeyTextOverlay;
-import com.tacz.guns.client.gui.overlay.KillAmountOverlay;
+import com.tacz.guns.client.gui.overlay.*;
 import com.tacz.guns.client.input.*;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.tooltip.ClientAmmoBoxTooltip;
@@ -68,6 +65,7 @@ public class ClientSetupEvent {
         event.registerAboveAll("tac_gun_hud_overlay", new GunHudOverlay());
         event.registerAboveAll("tac_heat_bar", new HeatBarOverlay());
         event.registerAboveAll("tac_kill_amount_overlay", new KillAmountOverlay());
+        event.registerAboveAll("tac_aimless_zoom", new AimlessZoomOverlay());
         event.registerAbove(CROSSHAIR.id(), "tac_interact_key_overlay", new InteractKeyTextOverlay());
 
     }
