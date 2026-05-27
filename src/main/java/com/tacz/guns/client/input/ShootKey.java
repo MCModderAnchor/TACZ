@@ -89,9 +89,12 @@ public class ShootKey {
                     NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAutoShoot(false));
                     autoShootSent = false;
                 }
+                // 非全自动：上一发成功后不再主动蓄力，但仍需调用 chargeShoot 驱动蓄力衰减
                 boolean shouldCharge = isShootDown && !lastTimeShootSuccess;
                 if (operator.chargeShoot(shouldCharge)) {
                     LocalPlayerSprint.stopSprint = true;
+                    // HOLD 蓄力武器松开扳机时，若剩余蓄力仍超过阈值，chargeShoot(false) 也会返回 true
+                    // 此处阻止已成功开火后的重复射击
                     if (lastTimeShootSuccess) {
                         return;
                     }
