@@ -1,6 +1,10 @@
 package com.tacz.guns.config.common;
 
+import net.minecraft.Util;
 import net.minecraftforge.common.ForgeConfigSpec;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OtherConfig {
     public static ForgeConfigSpec.BooleanValue DEFAULT_PACK_DEBUG;
@@ -8,6 +12,7 @@ public class OtherConfig {
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_OFFSET;
     public static ForgeConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
     public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_LATENCY_MAX_SAVE_MS;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> PACK_UPGRADE_BLACKLIST;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("other");
@@ -18,6 +23,11 @@ public class OtherConfig {
 
         builder.comment("The farthest sound distance of the target, including minecarts type");
         TARGET_SOUND_DISTANCE = builder.defineInRange("TargetSoundDistance", 128, 0, Integer.MAX_VALUE);
+
+        builder.comment("The pack names in the list will be ignored during legacy pack upgrade");
+        PACK_UPGRADE_BLACKLIST = builder.defineList("PackUpgradeBlackList",
+                Util.make(new ArrayList<>(), list -> list.add("tacz_default_gun")),
+                String.class::isInstance);
 
         serverConfig(builder);
 
