@@ -1592,19 +1592,16 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "p24_pi_golf17_reload_rasie"
+					"effect": "tacz:glock_17/glock17_reload_start"
 				},
-				"0.4167": {
-					"effect": "p24_pi_golf17_reload_mag_out"
+				"0.4833": {
+					"effect": "tacz:glock_17/glock17_reload_magout"
 				},
-				"0.8167": {
-					"effect": "p24_pi_golf17_reload_mag_hit"
+				"0.8667": {
+					"effect": "tacz:glock_17/glock17_reload_magin"
 				},
-				"1.0": {
-					"effect": "p24_pi_golf17_reload_mag_in"
-				},
-				"1.3": {
-					"effect": "p24_pi_golf17_reload_end"
+				"1.3167": {
+					"effect": "tacz:glock_17/glock17_reload_end"
 				}
 			}
 		},
@@ -2057,6 +2054,20 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:glock_17/glock17_reload_start"
+				},
+				"0.5667": {
+					"effect": "tacz:glock_17/glock17_reload_magout"
+				},
+				"1.05": {
+					"effect": "tacz:glock_17/glock17_reload_magin"
+				},
+				"1.7": {
+					"effect": "tacz:glock_17/glock17_reload_end"
 				}
 			}
 		},
@@ -3449,31 +3460,16 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "p24_pi_golf17_reload_empty_raise"
+					"effect": "tacz:glock_17/glock17_reload_empty_magout"
 				},
-				"0.1833": {
-					"effect": "p24_pi_golf17_reload_slide_release_press"
+				"0.8667": {
+					"effect": "tacz:glock_17/glock17_reload_empty_magin"
 				},
-				"0.2333": {
-					"effect": "p24_pi_golf17_reload_empty_mag_out"
+				"1.5": {
+					"effect": "tacz:glock_17/glock17_reload_empty_charge"
 				},
-				"0.7833": {
-					"effect": "p24_pi_golf17_inspect_empty_mag_mvmnt"
-				},
-				"0.8333": {
-					"effect": "iw8_phys_mag_drop_pi_poly_dirt_02"
-				},
-				"0.9167": {
-					"effect": "p24_pi_golf17_reload_empty_mag_in"
-				},
-				"1.45": {
-					"effect": "p24_pi_golf17_inspect_empty_slide_grab"
-				},
-				"1.5333": {
-					"effect": "p24_pi_golf17_reload_empty_slide_charge"
-				},
-				"1.8167": {
-					"effect": "p24_pi_golf17_reload_empty_end"
+				"1.9667": {
+					"effect": "tacz:glock_17/glock17_reload_empty_end"
 				}
 			}
 		},
@@ -4083,6 +4079,23 @@
 				},
 				"bullet_in_mag2": {
 					"scale": 0
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:glock_17/glock17_reload_empty_magout"
+				},
+				"0.7": {
+					"effect": "tacz:glock_17/glock17_reload_empty_magin"
+				},
+				"1.35": {
+					"effect": "tacz:glock_17/glock17_reload_maghit"
+				},
+				"1.7667": {
+					"effect": "tacz:glock_17/glock17_reload_empty_charge"
+				},
+				"2.25": {
+					"effect": "tacz:glock_17/glock17_reload_empty_end"
 				}
 			}
 		},
@@ -9592,43 +9605,37 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "p24_pi_golf17_inspect_raise"
+					"effect": "tacz:glock_17/glock17_inspect_raise"
 				},
 				"2.4333": {
-					"effect": "p24_pi_golf17_inspect_turn"
+					"effect": "tacz:glock_17/glock17_inspect_turn"
 				},
 				"4.1167": {
-					"effect": "p24_pi_golf17_idle_active_move2"
+					"effect": "tacz:glock_17/glock17_inspect_tilt"
 				},
 				"5.5833": {
-					"effect": "p24_pi_golf17_reload_turn"
+					"effect": "tacz:glock_17/glock17_inspect_rattle"
 				},
 				"5.9": {
-					"effect": "p24_pi_golf17_inspect_mag_out"
+					"effect": "tacz:glock_17/glock17_inspect_magout"
 				},
 				"6.9167": {
-					"effect": "p24_pi_golf17_inspect_empty_mag_mvmnt"
-				},
-				"7.8667": {
-					"effect": "p24_pi_golf17_inspect_mag_hit"
+					"effect": "tacz:glock_17/glock17_inspect_magcheck"
 				},
 				"8.2333": {
-					"effect": "p24_pi_golf17_inspect_mag_in"
-				},
-				"8.6333": {
-					"effect": "p24_pi_golf17_stockskel_reload_empty_fast_xmaglrg_rotate"
+					"effect": "tacz:glock_17/glock17_inspect_magin"
 				},
 				"9.0333": {
-					"effect": "p24_pi_golf17_inspect_slide_pull"
+					"effect": "tacz:glock_17/glock17_inspect_rackcheck"
 				},
 				"9.6667": {
-					"effect": "p24_pi_golf17_inspect_slide_release"
+					"effect": "tacz:glock_17/glock17_inspect_rackon"
 				},
-				"10.0833": {
-					"effect": "p24_pi_golf17_inspect_smack_butt"
+				"10.2": {
+					"effect": "tacz:glock_17/glock17_inspect_rackhit"
 				},
 				"10.5167": {
-					"effect": "p24_pi_golf17_inspect_end"
+					"effect": "tacz:glock_17/glock17_inspect_end"
 				}
 			}
 		},
@@ -15739,43 +15746,40 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "p24_pi_golf17_inspect_raise"
+					"effect": "tacz:glock_17/glock17_inspect_empty_start"
 				},
 				"2.4333": {
-					"effect": "p24_pi_golf17_inspect_turn"
+					"effect": "tacz:glock_17/glock17_inspect_empty_turn"
 				},
 				"4.1167": {
-					"effect": "p24_pi_golf17_idle_active_move2"
+					"effect": "tacz:glock_17/glock17_inspect_empty_move"
 				},
 				"5.5833": {
-					"effect": "p24_pi_golf17_reload_turn"
+					"effect": "tacz:glock_17/glock17_inspect_empty_rattle"
 				},
 				"5.9167": {
-					"effect": "p24_pi_golf17_inspect_mag_out"
+					"effect": "tacz:glock_17/glock17_inspect_magout"
 				},
 				"6.9167": {
-					"effect": "p24_pi_golf17_inspect_empty_mag_mvmnt"
+					"effect": "tacz:glock_17/glock17_inspect_magcheck"
 				},
-				"8.2": {
-					"effect": "p24_pi_golf17_inspect_mag_in"
+				"8.1333": {
+					"effect": "tacz:glock_17/glock17_inspect_empty_magtoss"
 				},
 				"8.6333": {
-					"effect": "p24_pi_golf17_stockskel_reload_empty_fast_xmaglrg_rotate"
-				},
-				"9.45": {
-					"effect": "p24_pi_golf17_inspect_empty_turn"
+					"effect": "tacz:glock_17/glock17_inspect_empty_rackcheck"
 				},
 				"9.9333": {
-					"effect": "p24_pi_golf17_inspect_empty_mag_grab2"
+					"effect": "tacz:glock_17/glock17_inspect_empty_magback"
 				},
-				"10.2": {
-					"effect": "p24_pi_golf17_inspect_end"
+				"10.2333": {
+					"effect": "tacz:glock_17/glock17_inspect_magin"
 				},
 				"10.9167": {
-					"effect": "p24_pi_golf17_inspect_empty_slide_charge"
+					"effect": "tacz:glock_17/glock17_inspect_rackcheck"
 				},
 				"11.4333": {
-					"effect": "p24_pi_golf17_inspect_empty_end"
+					"effect": "tacz:glock_17/glock17_inspect_end"
 				}
 			}
 		},

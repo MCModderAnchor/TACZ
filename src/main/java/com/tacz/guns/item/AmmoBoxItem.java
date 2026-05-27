@@ -122,19 +122,23 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
                 if (boxAmmoCount <= 0) {
                     return false;
                 }
-                TimelessAPI.getCommonAmmoIndex(boxAmmoId).ifPresent(index -> {
+                return TimelessAPI.getCommonAmmoIndex(boxAmmoId).map(index -> {
                     int takeCount = Math.min(index.getStackSize(), boxAmmoCount);
                     ItemStack takeAmmo = AmmoItemBuilder.create().setId(boxAmmoId).setCount(takeCount).build();
-                    slot.safeInsert(takeAmmo);
+                    ItemStack remainingAmmo = slot.safeInsert(takeAmmo);
+                    int insertedCount = takeCount - remainingAmmo.getCount();
+                    if (insertedCount <= 0) {
+                        return false;
+                    }
 
-                    int remainCount = boxAmmoCount - takeCount;
+                    int remainCount = boxAmmoCount - insertedCount;
                     this.setAmmoCount(ammoBox, remainCount);
                     if (remainCount <= 0) {
                         this.setAmmoId(ammoBox, DefaultAssets.EMPTY_AMMO_ID);
                     }
                     this.playRemoveOneSound(player);
-                });
-                return true;
+                    return true;
+                }).orElse(false);
             }
 
             // 如果是子弹

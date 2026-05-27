@@ -17,7 +17,7 @@
     "type": "ammo",
     "group": "ifp_rifle_cartridges",
     "id": "tacz:792x57",
-    "count": 24
+    "count": 48
   },
   "type": "tacz:gun_smith_table_crafting"
 }

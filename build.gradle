@@ -30,7 +30,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 
-version = "1.1.8"
+version = "1.1.8-hotfix"
 // 版本号，正式发布需要修改这一行
 //version = FORMAT.format(new Date())
 group = "com.tacz"
@@ -235,6 +235,8 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:carry-on-274259:${carry_on_id}")
 
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animation_lib}")
+
+    runtimeOnly fg.deobf("curse.maven:sound-physics-remastered-535489:7032235")
 
     // kubejs开发环境引入
     compileOnly fg.deobf("dev.latvian.mods:kubejs-forge:${kubejs_version}")

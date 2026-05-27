@@ -17,7 +17,7 @@
     "type": "ammo",
     "group": "lc_specialized",
     "id": "tacz:30_06",
-    "count": 24
+    "count": 32
   },
   "type": "tacz:gun_smith_table_crafting"
 }

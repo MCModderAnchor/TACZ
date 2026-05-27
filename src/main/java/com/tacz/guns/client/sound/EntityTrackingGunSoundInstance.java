@@ -38,7 +38,7 @@ public class EntityTrackingGunSoundInstance extends GunSoundInstance implements 
             return;
         }
         this.x = entity.getX();
-        this.y = entity.getY();
+        this.y = entity.getEyeY();
         this.z = entity.getZ();
     }
 

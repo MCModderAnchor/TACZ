@@ -242,6 +242,8 @@
   "config.tacz.client.sound.default_sound_concurrency_limit.desc": "Max active normal gun sounds for the same entity and sound id. 0 disables this limit.",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit": "High Frequency Sound Concurrency Limit",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit.desc": "Max active high-frequency gun sounds, such as shooting and animation keyframe sounds, for the same entity and sound id. 0 disables this limit.",
+  "config.tacz.client.sound.first_person_animation_sound_tracking": "First-person Animation Sound Tracking",
+  "config.tacz.client.sound.first_person_animation_sound_tracking.desc": "Use a non-relative entity-tracking world sound source for first-person animation keyframe sounds. This can improve compatibility with physical sound mods, but may introduce slight stereo drift while moving.",
   "config.tacz.client.zoom": "Zoom",
   "config.tacz.client.zoom.screen_distance_coefficient": "Screen Distance Coefficient",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Screen distance coefficient for zoom, using MDV standard, default is MDV133",

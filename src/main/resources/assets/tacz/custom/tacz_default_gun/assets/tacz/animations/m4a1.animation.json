@@ -1089,19 +1089,16 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "p01_ar_mike4_raise"
+					"effect": "tacz:m4a1/m4a1_reload_tactical_start"
 				},
 				"0.8667": {
-					"effect": "p01_ar_mike4_reload_magout"
+					"effect": "tacz:m4a1/m4a1_reload_tactical_magout"
 				},
-				"1.2333": {
-					"effect": "p01_ar_mike4_reload_maghit"
-				},
-				"1.3": {
-					"effect": "p01_ar_mike4_reload_magin"
+				"1.2667": {
+					"effect": "tacz:m4a1/m4a1_reload_tactical_magin"
 				},
 				"1.7667": {
-					"effect": "p01_ar_mike4_reload_end"
+					"effect": "tacz:m4a1/m4a1_reload_tactical_end"
 				}
 			}
 		},
@@ -1631,6 +1628,23 @@
 						"0.8333": {"pre": [0, 0, 0], "post": [1, 1, 1]},
 						"0.875": [1, 1, 1]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:m4a1/m4a1_reload_tactical_start"
+				},
+				"0.2917": {
+					"effect": "tacz:m4a1/m4a1_reload_tactical_magout"
+				},
+				"1.3333": {
+					"effect": "tacz:m4a1/m4a1_reload_tactical_magin"
+				},
+				"1.7917": {
+					"effect": "tacz:m4a1/m4a1_reload_tactical_maghit"
+				},
+				"2.2083": {
+					"effect": "tacz:m4a1/m4a1_reload_tactical_end"
 				}
 			}
 		},
@@ -2361,28 +2375,22 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "p01_ar_mike4_reload_lift"
+					"effect": "tacz:m4a1/m4a1_reload_empty_raise"
 				},
-				"0.3": {
-					"effect": "p01_ar_mike4_reload_empty_magout"
+				"0.5": {
+					"effect": "tacz:m4a1/m4a1_reload_empty_magout"
 				},
-				"0.4": {
-					"effect": "p01_ar_mike4_reload_empty_rotate"
+				"0.9": {
+					"effect": "tacz:m4a1/m4a1_reload_empty_maghit"
 				},
-				"0.7667": {
-					"effect": "iw8_phys_mag_drop_ar_metal_dirt_03"
-				},
-				"1.0667": {
-					"effect": "p01_ar_mike4_reload_empty_maghit"
-				},
-				"1.3333": {
-					"effect": "p01_ar_mike4_reload_empty_magin"
+				"1.2333": {
+					"effect": "tacz:m4a1/m4a1_reload_empty_magin"
 				},
 				"1.8333": {
-					"effect": "p01_ar_mike4_reload_empty_end"
+					"effect": "tacz:m4a1/m4a1_reload_empty_charge"
 				},
-				"1.8667": {
-					"effect": "p01_ar_mike4_reload_empty_charge"
+				"2.0667": {
+					"effect": "tacz:m4a1/m4a1_reload_empty_end"
 				}
 			}
 		},
@@ -2909,6 +2917,29 @@
 						"1.25": {"pre": [0, 0, 0], "post": [1, 1, 1]},
 						"1.2917": [1, 1, 1]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0833": {
+					"effect": "tacz:m4a1/m4a1_reload_empty_xmag_start"
+				},
+				"0.5": {
+					"effect": "tacz:m4a1/m4a1_reload_tactical_start"
+				},
+				"0.75": {
+					"effect": "tacz:m4a1/m4a1_reload_tactical_magout"
+				},
+				"1.625": {
+					"effect": "tacz:m4a1/m4a1_reload_empty_maghit"
+				},
+				"1.7917": {
+					"effect": "tacz:m4a1/m4a1_reload_empty_magin"
+				},
+				"2.25": {
+					"effect": "tacz:m4a1/m4a1_reload_empty_charge"
+				},
+				"2.5": {
+					"effect": "tacz:m4a1/m4a1_reload_empty_end"
 				}
 			}
 		},
@@ -4994,38 +5025,38 @@
 				}
 			},
 			"sound_effects": {
-				"0.1": {
-					"effect": "p01_ar_mike4_inspect_lift"
+				"0.0": {
+					"effect": "tacz:m4a1/m4a1_inspect_lift"
 				},
-				"1.3": {
-					"effect": "p01_ar_mike4_reload_empty_rattle"
+				"1.0333": {
+					"effect": "tacz:m4a1/m4a1_inspect_empty_rattle"
 				},
 				"3.2333": {
-					"effect": "p01_ar_mike4_drop"
+					"effect": "tacz:m4a1/m4a1_inspect_empty_drop"
 				},
 				"4.1333": {
-					"effect": "p01_ar_mike4_reload_magout"
+					"effect": "tacz:m4a1/m4a1_inspect_magout"
 				},
 				"5.2667": {
-					"effect": "p01_ar_mike4_inspect_maghit"
+					"effect": "tacz:m4a1/m4a1_inspect_magin"
 				},
-				"5.4667": {
-					"effect": "p01_ar_mike4_inspect_magin"
+				"6.0": {
+					"effect": "tacz:m4a1/m4a1_inspect_rotate"
 				},
-				"6.0333": {
-					"effect": "p01_ar_mike4_inspect_boltpull"
+				"6.3333": {
+					"effect": "tacz:m4a1/m4a1_inspect_rackon"
 				},
 				"7.0667": {
-					"effect": "p01_ar_mike4_inspect_boltclose"
+					"effect": "tacz:m4a1/m4a1_inspect_rackrelase"
 				},
 				"7.3667": {
-					"effect": "p01_ar_mike4_hybrid01_off_arm"
+					"effect": "tacz:m4a1/m4a1_inspect_armup"
 				},
-				"7.6333": {
-					"effect": "p01_ar_mike4_inspect_end"
+				"7.7667": {
+					"effect": "tacz:m4a1/m4a1_inspect_butthit"
 				},
-				"7.8333": {
-					"effect": "p01_ar_mike4_inspect_hit"
+				"8.2": {
+					"effect": "tacz:m4a1/m4a1_inspect_end"
 				}
 			}
 		},
@@ -5122,7 +5153,7 @@
 			}
 		},
 		"inspect_empty": {
-			"animation_length": 10.1667,
+			"animation_length": 10.2,
 			"bones": {
 				"bullet_in_mag": {
 					"scale": 0
@@ -7857,41 +7888,38 @@
 				}
 			},
 			"sound_effects": {
-				"0.1": {
-					"effect": "p01_ar_mike4_inspect_lift"
+				"0.0": {
+					"effect": "tacz:m4a1/m4a1_inspect_lift"
 				},
-				"1.3": {
-					"effect": "p01_ar_mike4_reload_empty_rattle"
+				"1.2333": {
+					"effect": "tacz:m4a1/m4a1_inspect_empty_rattle"
 				},
 				"3.2333": {
-					"effect": "p01_ar_mike4_drop"
+					"effect": "tacz:m4a1/m4a1_inspect_empty_drop"
 				},
 				"4.1333": {
-					"effect": "p01_ar_mike4_reload_magout"
+					"effect": "tacz:m4a1/m4a1_inspect_magout"
 				},
-				"5.0667": {
-					"effect": "p01_ar_mike4_reload_empty_fast_xmag_rattle"
+				"5.0": {
+					"effect": "tacz:m4a1/m4a1_inspect_empty_rotate"
 				},
 				"5.7": {
-					"effect": "p01_ar_mike4_inspect_empty_charge"
+					"effect": "tacz:m4a1/m4a1_inspect_empty_rackcheck"
 				},
-				"6.9667": {
-					"effect": "p01_ar_mike4_reload_empty_fast_xmag_lift"
+				"6.9": {
+					"effect": "tacz:m4a1/m4a1_inspect_empty_turn"
 				},
-				"7.3333": {
-					"effect": "p01_ar_mike4_inspect_maghit"
+				"7.4333": {
+					"effect": "tacz:m4a1/m4a1_inspect_magin"
 				},
-				"7.6": {
-					"effect": "p01_ar_mike4_inspect_magin"
+				"8.0": {
+					"effect": "tacz:m4a1/m4a1_inspect_empty_mvmt"
 				},
-				"8.1667": {
-					"effect": "p01_ar_mike4_reload_empty_lift"
-				},
-				"8.5667": {
-					"effect": "p01_ar_mike4_inspect_empty_rack"
+				"8.6333": {
+					"effect": "tacz:m4a1/m4a1_inspect_empty_rackon"
 				},
 				"9.2667": {
-					"effect": "p01_ar_mike4_reload_empty_end"
+					"effect": "tacz:m4a1/m4a1_inspect_empty_end"
 				}
 			}
 		},

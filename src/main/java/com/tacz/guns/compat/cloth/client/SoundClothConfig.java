@@ -21,5 +21,9 @@ public class SoundClothConfig {
         sound.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.client.sound.high_frequency_sound_concurrency_limit"), SoundConfig.HIGH_FREQUENCY_SOUND_CONCURRENCY_LIMIT.get())
                 .setMin(0).setMax(128).setDefaultValue(4).setTooltip(Component.translatable("config.tacz.client.sound.high_frequency_sound_concurrency_limit.desc"))
                 .setSaveConsumer(SoundConfig.HIGH_FREQUENCY_SOUND_CONCURRENCY_LIMIT::set).build());
+
+        sound.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.sound.first_person_animation_sound_tracking"), SoundConfig.FIRST_PERSON_ANIMATION_SOUND_TRACKING.get())
+                .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.client.sound.first_person_animation_sound_tracking.desc"))
+                .setSaveConsumer(SoundConfig.FIRST_PERSON_ANIMATION_SOUND_TRACKING::set).build());
     }
 }

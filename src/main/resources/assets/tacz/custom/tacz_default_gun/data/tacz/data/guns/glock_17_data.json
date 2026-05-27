@@ -1,7 +1,7 @@
 {
   "ammo": "tacz:9mm",
   "rpm": 400,
-  //"script": "tacz:xmag_reload_logic",
+  "script": "tacz:xmag_reload_logic",
   "script_param": {
     "reload_feed": 1.05,
     "reload_cooldown": 1.5,

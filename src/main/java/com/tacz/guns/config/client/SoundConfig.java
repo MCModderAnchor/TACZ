@@ -6,6 +6,7 @@ public class SoundConfig {
     public static ForgeConfigSpec.IntValue HIT_SOUND_CONCURRENCY_LIMIT;
     public static ForgeConfigSpec.IntValue DEFAULT_SOUND_CONCURRENCY_LIMIT;
     public static ForgeConfigSpec.IntValue HIGH_FREQUENCY_SOUND_CONCURRENCY_LIMIT;
+    public static ForgeConfigSpec.BooleanValue FIRST_PERSON_ANIMATION_SOUND_TRACKING;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("sound");
@@ -18,6 +19,9 @@ public class SoundConfig {
 
         builder.comment("Max active high-frequency gun sounds, such as shooting and animation keyframe sounds, for the same entity and sound id. 0 disables this limit.");
         HIGH_FREQUENCY_SOUND_CONCURRENCY_LIMIT = builder.defineInRange("HighFrequencySoundConcurrencyLimit", 4, 0, 128);
+
+        builder.comment("Use a non-relative entity-tracking world sound source for first-person animation keyframe sounds. This can improve compatibility with physical sound mods, but may introduce slight stereo drift while moving.");
+        FIRST_PERSON_ANIMATION_SOUND_TRACKING = builder.define("FirstPersonAnimationSoundTracking", false);
 
         builder.pop();
     }

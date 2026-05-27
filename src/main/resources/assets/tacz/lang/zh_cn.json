@@ -66,6 +66,8 @@
   "config.tacz.client.sound.default_sound_concurrency_limit.desc": "同一实体、同一音效 ID 同时保留的普通枪械音效数量。0 表示关闭此限制。",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit": "高频音效并发限制",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit.desc": "同一实体、同一音效 ID 同时保留的高频枪械音效数量，例如射击和动画关键帧音效。0 表示关闭此限制。",
+  "config.tacz.client.sound.first_person_animation_sound_tracking": "第一人称动画音效实体跟随",
+  "config.tacz.client.sound.first_person_animation_sound_tracking.desc": "使用非 relative 的实体跟随世界音源播放第一人称动画关键帧音效。\n可提升与物理声效类 Mod 的兼容性，但移动时可能产生轻微左右偏移。",
   "config.tacz.client.zoom": "缩放",
   "config.tacz.client.zoom.screen_distance_coefficient": "荧幕距离系数",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "缩放时的荧幕距离系数，使用 MDV 标准，默认为 MDV133",

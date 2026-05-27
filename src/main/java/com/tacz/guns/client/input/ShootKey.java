@@ -89,9 +89,10 @@ public class ShootKey {
                     NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAutoShoot(false));
                     autoShootSent = false;
                 }
-                if (operator.chargeShoot(isShootDown)) {
+                boolean shouldCharge = isShootDown && !lastTimeShootSuccess;
+                if (operator.chargeShoot(shouldCharge)) {
                     LocalPlayerSprint.stopSprint = true;
-                    if (fireMode != FireMode.AUTO && !isBurstAuto && lastTimeShootSuccess) {
+                    if (lastTimeShootSuccess) {
                         return;
                     }
                     if (operator.shoot() == ShootResult.SUCCESS) {

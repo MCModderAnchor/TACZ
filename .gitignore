@@ -48,3 +48,6 @@ forge*changelog.txt
 /tools/HprofResourceAnalyzer$StringObjectInfo.class
 /tools/HprofResourceAnalyzer.class
 /tools/HprofResourceAnalyzer.java
+/.narrafork/project.db
+/.narrafork/project.db-shm
+/.narrafork/project.db-wal
