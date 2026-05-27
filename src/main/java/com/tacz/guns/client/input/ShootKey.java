@@ -9,6 +9,9 @@ import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.gameplay.LocalPlayerSprint;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.compat.controllable.ControllableCompat;
+import com.tacz.guns.entity.shooter.LivingEntityShoot;
+import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.ClientMessagePlayerAutoShoot;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -35,6 +38,7 @@ public class ShootKey {
             "key.category.tacz");
     private static boolean lastTimeShootSuccess = false;
     private static boolean controllerShootDown = false;
+    private static boolean autoShootSent = false;
 
     @SubscribeEvent
     public static void autoShoot(TickEvent.ClientTickEvent event) {
@@ -54,26 +58,62 @@ public class ShootKey {
             boolean isBurstAuto = fireMode == FireMode.BURST && TimelessAPI.getCommonGunIndex(iGun.getGunId(mainHandItem))
                     .map(index -> index.getGunData().getBurstData().isContinuousShoot())
                     .orElse(false);
+            boolean isAutoMode = LivingEntityShoot.isAutoShootMode(fireMode, iGun, mainHandItem);
             IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
             boolean isShootDown = SHOOT_KEY.isDown() || controllerShootDown;
-            boolean canContinuouslyShoot = fireMode == FireMode.AUTO || isBurstAuto;
-            boolean shouldCharge = isShootDown && (canContinuouslyShoot || !lastTimeShootSuccess);
-            if (operator.chargeShoot(shouldCharge)) {
-                LocalPlayerSprint.stopSprint = true;
-                if (!canContinuouslyShoot && lastTimeShootSuccess) {
-                    // 非全自动情况，禁止连续开火，也不应在按住上一枪扳机时继续蓄力
-                    return;
+
+            if (isAutoMode) {
+                if (operator.chargeShoot(isShootDown)) {
+                    LocalPlayerSprint.stopSprint = true;
+                    if (operator.shoot() == ShootResult.SUCCESS) {
+                        if (!autoShootSent) {
+                            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAutoShoot(true));
+                            autoShootSent = true;
+                        }
+                        lastTimeShootSuccess = true;
+                        ControllableCompat.onGunShoot(mainHandItem, fireMode);
+                    }
                 }
-                if (operator.shoot() == ShootResult.SUCCESS) {
-                    lastTimeShootSuccess = true;
-                    ControllableCompat.onGunShoot(mainHandItem, fireMode);
+                if (isShootDown) {
+                    LocalPlayerSprint.stopSprint = true;
+                } else {
+                    if (autoShootSent) {
+                        NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAutoShoot(false));
+                        autoShootSent = false;
+                    }
+                    lastTimeShootSuccess = false;
+                    SoundPlayManager.resetDryFireSound();
+                }
+            } else {
+                if (autoShootSent) {
+                    NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAutoShoot(false));
+                    autoShootSent = false;
+                }
+                // 非全自动：上一发成功后不再主动蓄力，但仍需调用 chargeShoot 驱动蓄力衰减
+                boolean shouldCharge = isShootDown && !lastTimeShootSuccess;
+                if (operator.chargeShoot(shouldCharge)) {
+                    LocalPlayerSprint.stopSprint = true;
+                    // HOLD 蓄力武器松开扳机时，若剩余蓄力仍超过阈值，chargeShoot(false) 也会返回 true
+                    // 此处阻止已成功开火后的重复射击
+                    if (lastTimeShootSuccess) {
+                        return;
+                    }
+                    if (operator.shoot() == ShootResult.SUCCESS) {
+                        lastTimeShootSuccess = true;
+                        ControllableCompat.onGunShoot(mainHandItem, fireMode);
+                    }
+                }
+                if (isShootDown) {
+                    LocalPlayerSprint.stopSprint = true;
+                } else {
+                    lastTimeShootSuccess = false;
+                    SoundPlayManager.resetDryFireSound();
                 }
             }
-            if (isShootDown) {
-                LocalPlayerSprint.stopSprint = true;
-            } else {
-                lastTimeShootSuccess = false;
-                SoundPlayManager.resetDryFireSound();
+        } else {
+            if (autoShootSent) {
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerAutoShoot(false));
+                autoShootSent = false;
             }
         }
     }
