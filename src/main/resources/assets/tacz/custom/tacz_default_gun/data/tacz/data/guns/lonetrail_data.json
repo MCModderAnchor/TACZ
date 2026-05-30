@@ -42,7 +42,6 @@
   "put_away_time": 0.45,
   "aim_time": 0.25,
   "sprint_time": 0.15,
-  "bolt_action_time": 2.5,
   "weight": 2.5,
   "movement_speed": {
     // 默认修正

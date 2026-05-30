@@ -1,13 +1,13 @@
 {
-  "model": "tacz:gun/mcx_geo",
-  "texture": "tacz:gun/uv/mcx",
+  "model": "tacz:gun/mcx_spear_lt_geo",
+  "texture": "tacz:gun/uv/mcx_spear_lt",
   "lod": {
-    "model": "tacz:gun/lod/mcx",
-    "texture": "tacz:gun/lod/mcx"
+    "model": "tacz:gun/lod/mcx_spear_lt",
+    "texture": "tacz:gun/lod/mcx_spear_lt"
   },
-  "hud": "tacz:gun/hud/mcx",
-  "slot": "tacz:gun/slot/mcx",
-  "animation": "tacz:mcx",
+  "hud": "tacz:gun/hud/mcx_spear_lt",
+  "slot": "tacz:gun/slot/mcx_spear_lt",
+  "animation": "tacz:mcx_spear_lt",
   //"state_machine": "tacz:hk416d_state_machine",
   "use_default_animation": "rifle",
   "third_person_animation": "default",

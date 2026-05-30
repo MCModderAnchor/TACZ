@@ -80,6 +80,10 @@
   "tacz.gun.hk_mk23.name": "MK23 进攻手枪",
   "tacz.gun.taurus500.name": "金牛座 \"狂暴猎手\" 手炮",
   "tacz.gun.m9a4.name": "伯莱塔 M9A4 手枪",
+  "tacz.gun.mcx_spear_lt.name": "MCX Spear lt 突击步枪",
+  "tacz.gun.hcar.name": "HCAR 战斗步枪",
+  "tacz.gun.tec_9.name": "TEC 9 自动手枪",
+  "tacz.gun.svd.name": "SVD 狙击步枪",
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
   "tacz.gun.ai_awp.desc": "精确毋庸置疑",
@@ -135,7 +139,10 @@
   "tacz.gun.taurus500.desc": "开枪和挨枪子儿都一样遭罪",
   "tacz.gun.hk_mk23.desc": "卡车下的老朋友，影子摩西的回音。",
   "tacz.gun.m9a4.desc": "披萨的颜色并不能带来什么提升，但至少让你开枪前看起来很有型",
-
+  "tacz.gun.mcx_spear_lt.desc": "请输入文本",
+  "tacz.gun.hcar.desc": "请输入文本",
+  "tacz.gun.tec_9.desc": "请输入文本",
+  "tacz.gun.svd.desc": "请输入文本",
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",
   "tacz.ammo.12g.name": "§912 号口径霰弹",

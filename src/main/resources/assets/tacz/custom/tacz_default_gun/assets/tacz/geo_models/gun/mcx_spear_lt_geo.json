@@ -14263,7 +14263,7 @@
 				{
 					"name": "grip_pos",
 					"parent": "positioning2",
-					"pivot": [0, 7.6306, -13.75]
+					"pivot": [0, 7.6306, -16.25]
 				},
 				{
 					"name": "shell",
@@ -14326,12 +14326,12 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 12.03125, 3]
+					"pivot": [0, 12.03125, 5]
 				},
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [4, 12, 7]
+					"pivot": [3, 12.25, 5.25]
 				},
 				{
 					"name": "refit_view",
@@ -14377,7 +14377,7 @@
 				},
 				{
 					"name": "camera",
-					"pivot": [4, 12, 6]
+					"pivot": [3, 12.25, 5.25]
 				}
 			]
 		}

@@ -7,7 +7,7 @@
     25
   ],
   "bolt": "closed_bolt",
-  "rpm": 450,
+  "rpm": 280,
   //"script": "tacz:xmag_reload_logic",
   "script_param": {
     "reload_feed": 1.6,
@@ -30,21 +30,21 @@
   "bullet": {
     "life": 0.8,
     "bullet_amount": 1,
-    "damage": 11,
+    "damage": 18,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.25,
-      "head_shot_multiplier": 2,
+      "armor_ignore": 0.55,
+      "head_shot_multiplier": 1.8,
       "damage_adjust": [
-        {"distance": 55, "damage": 11},
-        {"distance": 110, "damage": 9},
-        {"distance": "infinite", "damage": 7}
+        {"distance": 50, "damage": 18},
+        {"distance": 70, "damage": 14},
+        {"distance": "infinite", "damage": 10}
       ]
     },
-    "speed": 300,
+    "speed": 320,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.0125,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 1
   },
@@ -63,30 +63,32 @@
   "put_away_time": 0.75,
   "aim_time": 0.2,
   "sprint_time": 0.22,
-  "weight": 3.85,
+  "weight": 4,
   "movement_speed": {
     "base": 0.0,
-    "aim": -0.2,
-    "reload": -0.1
+    "aim": -0.5,
+    "reload": -0.2
   },
-  "crawl_recoil_multiplier": 0.5,
+  "crawl_recoil_multiplier": 0.25,
   "fire_mode": [
     "semi"
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [1.25, 1.25]},
-      {"time": 0.25, "value": [1.25, 1.25]},
-      {"time": 0.5, "value": [-0.225, -0.225]},
-      {"time": 0.6, "value": [0, 0]},
-      {"time": 0.8, "value": [0, 0]}
+      {"time": 0, "value": [2, 2]},
+      {"time": 0.05, "value": [2.15, 2.15]},
+      {"time": 0.17, "value": [1.95, 1.95]},
+      {"time": 0.25, "value": [-0.15, -0.05]},
+      {"time": 0.4, "value": [0, 0]},
+      {"time": 0.45, "value": [0.1, 0.15]},
+      {"time": 0.6, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.5, -0.5]},
-      {"time": 0.06, "value": [0.5, 0.5]},
-      {"time": 0.13, "value": [-0.25, -0.25]},
-      {"time": 0.21, "value": [0.1, 0.1]},
-      {"time": 0.33, "value": [0, 0]},
+      {"time": 0, "value": [-0.25, 0.25]},
+      {"time": 0.07, "value": [-0.3, 0.3]},
+      {"time": 0.17, "value": [-0.25, 0.25]},
+      {"time": 0.25, "value": [-0.1, 0.1]},
+      {"time": 0.45, "value": [0, 0]},
       {"time": 0.7, "value": [0, 0]}
     ]
   },

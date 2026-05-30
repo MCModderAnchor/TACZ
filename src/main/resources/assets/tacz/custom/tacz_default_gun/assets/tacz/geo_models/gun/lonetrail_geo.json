@@ -3909,14 +3909,14 @@
 					"pivot": [-5.875, 5.53128, 13.84758]
 				},
 				{
-					"name": "bullet_in_barrel",
+					"name": "bullet_in_chamber",
 					"parent": "rh_and_bullet",
 					"pivot": [0.00863, 8.1477, 6.37481],
 					"rotation": [90, 0, 0]
 				},
 				{
 					"name": "round_shell",
-					"parent": "bullet_in_barrel",
+					"parent": "bullet_in_chamber",
 					"pivot": [0, -1.875, 8],
 					"cubes": [
 						{
@@ -4270,7 +4270,7 @@
 				},
 				{
 					"name": "head",
-					"parent": "bullet_in_barrel",
+					"parent": "bullet_in_chamber",
 					"pivot": [0.00395, 1.99982, 7.87101],
 					"cubes": [
 						{
