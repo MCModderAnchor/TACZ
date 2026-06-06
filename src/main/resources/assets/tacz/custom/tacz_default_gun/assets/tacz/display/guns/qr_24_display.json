@@ -1,0 +1,51 @@
+{
+  "model": "tacz:gun/qr_24_geo",
+  "texture": "tacz:gun/uv/qr_24",
+  "hud": "tacz:gun/hud/qr_24",
+  "slot": "tacz:gun/slot/qr_24",
+  "animation": "tacz:qr_24",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.75
+  },
+  "iron_zoom": 1.33,
+  "zoom_model_fov": 48,
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:qr24/qr24_shoot",
+    "shoot_3p": "tacz:qr24/qr24_shoot_3p",
+    "draw": "tacz:qr24/qr24_draw",
+    "put_away": "tacz:qr24/qr24_put_away",
+    "silence": "tacz:qr24/qr24_silence",
+    "silence_3p": "tacz:qr24/qr24_silence_3p",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_02"
+  },
+  "offhand_show": {
+    "pos": [1, 19, 4],
+    "rotate": [0, 0, 50],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-1, 19, 3],
+      "rotate": [-180, 0, 130],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

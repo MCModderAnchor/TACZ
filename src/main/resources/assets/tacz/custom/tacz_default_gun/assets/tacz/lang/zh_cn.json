@@ -84,6 +84,7 @@
   "tacz.gun.hcar.name": "HCAR 战斗步枪",
   "tacz.gun.tec_9.name": "TEC 9 自动手枪",
   "tacz.gun.svd.name": "SVD 狙击步枪",
+  "tacz.gun.qr_24.name": "QR-24 先进战斗步枪",
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
   "tacz.gun.ai_awp.desc": "精确毋庸置疑",
@@ -143,6 +144,7 @@
   "tacz.gun.hcar.desc": "请输入文本",
   "tacz.gun.tec_9.desc": "请输入文本",
   "tacz.gun.svd.desc": "请输入文本",
+  "tacz.gun.qr_24.desc":"请输入文本",
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",
   "tacz.ammo.12g.name": "§912 号口径霰弹",
