@@ -1,0 +1,20 @@
+{
+  "slot": "tacz:attachment/slot/scope_pso_1",
+  "model": "tacz:attachment/scope_pso_1_geo",
+  "texture": "tacz:attachment/uv/scope_pso_1",
+  "zoom": [
+    4
+  ],
+  "views": [
+    2
+  ],
+  "views_fov": [
+    10.0
+  ],
+  "show_mount": false,
+  "scope": true,
+  "sounds": {
+    "install": "tacz:attachments/scope_general_d",
+    "uninstall": "tacz:attachments/scope_general_d"
+  }
+}
