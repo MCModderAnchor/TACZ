@@ -17,6 +17,9 @@
       "fixed": [1.2, 1.2, 1.2]
     }
   },
+  "iron_zoom": 1.2,
+  "model_fov": 60,
+  "zoom_model_fov": 60,
   "sounds": {
     "reload_empty": "tacz:m320/m320_reload_empty",
     "inspect": "tacz:m320/m320_inspect",

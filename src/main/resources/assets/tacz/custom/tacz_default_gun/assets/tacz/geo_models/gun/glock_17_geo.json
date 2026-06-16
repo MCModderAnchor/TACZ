@@ -3725,7 +3725,7 @@
 				},
 				{
 					"name": "idle_view",
-					"pivot": [0.85, 9, 14]
+					"pivot": [0.85, 9, 15]
 				},
 				{
 					"name": "positioning",

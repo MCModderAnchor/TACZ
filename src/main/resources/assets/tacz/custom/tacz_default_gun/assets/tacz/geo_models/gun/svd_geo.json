@@ -8090,7 +8090,7 @@
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [3.5, 13.5, 15]
+					"pivot": [3.5, 13.5, 16]
 				},
 				{
 					"name": "refit_view",

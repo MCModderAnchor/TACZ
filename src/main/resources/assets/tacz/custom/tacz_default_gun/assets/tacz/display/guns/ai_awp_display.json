@@ -26,6 +26,7 @@
   },
   // 机瞄的放大倍数，默认 1.2
   "iron_zoom": 1.5,
+  "model_fov": 60,
   // 机瞄模型缩放fov，默认70
   "zoom_model_fov": 35,
   "shell": {

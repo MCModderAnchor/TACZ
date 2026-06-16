@@ -5076,7 +5076,7 @@
 				},
 				{
 					"name": "idle_view",
-					"pivot": [1.6, 7.5, 9]
+					"pivot": [1.6, 7.5, 10]
 				},
 				{
 					"name": "positioning",

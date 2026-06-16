@@ -33,6 +33,7 @@
     "scale": 1.2
   },
   "iron_zoom": 1.5,
+  "model_fov": 60,
   "zoom_model_fov": 50,
   "shell": {
     "initial_velocity": [5, 2, 1],

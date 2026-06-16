@@ -7977,7 +7977,7 @@
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [2.21875, 9.0125, 14.5125]
+					"pivot": [2.21875, 9.0125, 15.5125]
 				},
 				{
 					"name": "refit_view",

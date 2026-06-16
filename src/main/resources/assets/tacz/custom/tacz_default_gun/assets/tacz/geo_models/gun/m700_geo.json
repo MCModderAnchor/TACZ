@@ -4422,7 +4422,7 @@
 				{
 					"name": "idle_view",
 					"parent": "views",
-					"pivot": [3, 10.5, 16]
+					"pivot": [3, 10.5, 17]
 				},
 				{
 					"name": "refit_view",

@@ -6530,7 +6530,7 @@
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [2.5, 12.5, 15],
+					"pivot": [2.5, 12.5, 16],
 					"rotation": [0, 0, -2.5]
 				},
 				{

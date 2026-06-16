@@ -29,6 +29,7 @@
     "scale": 0.65
   },
   "iron_zoom": 1.67,
+  "model_fov": 60,
   "zoom_model_fov": 55,
   "sounds": {
     "draw": "tacz:m1911/m1911_draw",

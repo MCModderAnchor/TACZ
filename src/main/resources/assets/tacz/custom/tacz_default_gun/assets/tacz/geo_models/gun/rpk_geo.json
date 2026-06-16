@@ -9817,7 +9817,7 @@
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [24, 7, -2],
+					"pivot": [36, 7, -2],
 					"rotation": [0, 89.9, 0]
 				},
 				{
@@ -9847,12 +9847,12 @@
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [2, 11.75, 13]
+					"pivot": [2.75, 11.75, 14]
 				},
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 10.91875, 10.15]
+					"pivot": [0, 10.91875, 12]
 				},
 				{
 					"name": "cover2",

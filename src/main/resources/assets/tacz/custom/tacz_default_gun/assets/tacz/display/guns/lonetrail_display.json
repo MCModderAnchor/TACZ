@@ -40,6 +40,7 @@
     }
   },
   "iron_zoom": 1.5,
+  "model_fov": 60,
   "zoom_model_fov": 55,
   "sounds": {
     "draw": "tacz:lonetrail/breach_draw",

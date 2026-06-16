@@ -6122,14 +6122,19 @@
 					"pivot": [0, 0, 0]
 				},
 				{
+					"name": "idle_view",
+					"parent": "view",
+					"pivot": [2.5, 12, 17.5]
+				},
+				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 10.92188, 9.5]
+					"pivot": [0, 10.92188, 15]
 				},
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [23, 9, 0],
+					"pivot": [24, 9, 0],
 					"rotation": [0, 89.9, 0]
 				},
 				{
@@ -6143,11 +6148,6 @@
 					"parent": "view",
 					"pivot": [12, 9, -26],
 					"rotation": [0, 120, 0]
-				},
-				{
-					"name": "idle_view",
-					"parent": "view",
-					"pivot": [2.39375, 12.175, 15.2125]
 				}
 			]
 		}

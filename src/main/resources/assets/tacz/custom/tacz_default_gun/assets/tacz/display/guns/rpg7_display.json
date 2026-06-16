@@ -16,6 +16,9 @@
       "fixed": [1.5, 1.5, 1.5]
     }
   },
+  "iron_zoom": 1.2,
+  "model_fov": 60,
+  "zoom_model_fov": 60,
   "sounds": {
     "reload_empty": "tacz:rpg7/rpg7_reload",
     "inspect": "tacz:rpg7/rpg7_inspect",

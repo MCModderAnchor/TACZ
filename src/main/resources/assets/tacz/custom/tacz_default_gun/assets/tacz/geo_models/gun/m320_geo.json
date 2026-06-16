@@ -3119,7 +3119,7 @@
 				{
 					"name": "idle_view",
 					"parent": "views",
-					"pivot": [3, 15, 10]
+					"pivot": [3, 15, 11]
 				},
 				{
 					"name": "iron_view",
