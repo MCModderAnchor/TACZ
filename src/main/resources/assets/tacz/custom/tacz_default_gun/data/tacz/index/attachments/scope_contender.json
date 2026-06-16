@@ -3,5 +3,5 @@
   "display": "tacz:scope_contender_display",
   "data": "tacz:scope_contender_data",
   "type": "scope",
-  "sort": 1000
+  "sort": 100
 }

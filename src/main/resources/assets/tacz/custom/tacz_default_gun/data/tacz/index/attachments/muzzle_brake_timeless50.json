@@ -2,5 +2,6 @@
   "name": "tacz.attachment.muzzle_brake_timeless50.name",
   "display": "tacz:muzzle_brake_timeless50_display",
   "data": "tacz:muzzle_brake_timeless50_data",
-  "type": "muzzle"
+  "type": "muzzle",
+  "sort": 1
 }

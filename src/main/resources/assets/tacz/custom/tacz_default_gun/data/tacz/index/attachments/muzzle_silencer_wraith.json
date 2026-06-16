@@ -2,5 +2,6 @@
   "name": "tacz.attachment.muzzle_silencer_wraith.name",
   "display": "tacz:muzzle_silencer_wraith_display",
   "data": "tacz:muzzle_silencer_wraith_data",
-  "type": "muzzle"
+  "type": "muzzle",
+  "sort": 4
 }

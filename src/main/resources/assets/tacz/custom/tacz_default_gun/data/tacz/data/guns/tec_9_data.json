@@ -23,22 +23,22 @@
   "bullet": {
     "life": 0.8,
     "bullet_amount": 1,
-    "damage": 6,
+    "damage": 6.5,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.2,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
-        {"distance": 13, "damage": 6},
-        {"distance": 26, "damage": 4.5},
-        {"distance": 35, "damage": 3.5},
+        {"distance": 13, "damage": 6.5},
+        {"distance": 26, "damage": 5.5},
+        {"distance": 35, "damage": 4.5},
         {"distance": "infinite", "damage": 3}
       ]
     },
-    "speed": 180,
+    "speed": 200,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.02,
+    "friction": 0.01,
     "ignite": false,
     "pierce": 1
   },

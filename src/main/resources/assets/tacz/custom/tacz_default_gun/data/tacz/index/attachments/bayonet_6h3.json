@@ -2,5 +2,6 @@
   "name": "tacz.attachment.bayonet_6h3.name",
   "display": "tacz:bayonet_6h3_display",
   "data": "tacz:bayonet_6h3_data",
-  "type": "muzzle"
+  "type": "muzzle",
+  "sort": 6
 }

@@ -2,5 +2,6 @@
   "name": "tacz.attachment.muzzle_brake_mastiff_sg.name",
   "display": "tacz:muzzle_brake_mastiff_sg_display",
   "data": "tacz:muzzle_brake_mastiff_sg_data",
-  "type": "muzzle"
+  "type": "muzzle",
+  "sort": 1
 }
