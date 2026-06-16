@@ -91,6 +91,7 @@ public class GunDisplayInstance {
     private LayerGunShow offhandShow = new LayerGunShow();
     private @Nullable Int2ObjectArrayMap<LayerGunShow> hotbarShow;
     private float ironZoom;
+    private float modelFov;
     private float zoomModelFov;
     private boolean showCrosshair = false;
     private @Nullable AmmoParticle particle;
@@ -363,6 +364,7 @@ public class GunDisplayInstance {
         checkMuzzleFlash(display);
         checkLayerGunShow(display);
         checkIronZoom(display);
+        checkModelFov(display);
         checkZoomModelFov(display);
         thirdPersonAnimation = StringUtils.defaultIfBlank(display.getThirdPersonAnimation(), "empty");
         if (display.getPlayerAnimator3rd() != null) {
@@ -384,9 +386,16 @@ public class GunDisplayInstance {
         }
     }
 
+    private void checkModelFov(GunDisplay display) {
+        modelFov = display.getModelFov();
+        if (modelFov <= 0) {
+            modelFov = 70;
+        }
+    }
+
     private void checkZoomModelFov(GunDisplay display) {
         zoomModelFov = display.getZoomModelFov();
-        if (zoomModelFov > 70) {
+        if (zoomModelFov <= 0) {
             zoomModelFov = 70;
         }
     }
@@ -726,6 +735,10 @@ public class GunDisplayInstance {
 
     public float getIronZoom() {
         return ironZoom;
+    }
+
+    public float getModelFov() {
+        return modelFov;
     }
 
     public float getZoomModelFov() {

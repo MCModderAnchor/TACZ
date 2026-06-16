@@ -136,28 +136,32 @@ public class CameraSetupEvent {
             if (scopeItemId.equals(DefaultAssets.EMPTY_ATTACHMENT_ID)) {
                 scopeItemId = iGun.getBuiltInAttachmentId(stack, AttachmentType.SCOPE);
             }
+            Optional<GunDisplayInstance> gunDisplay = TimelessAPI.getGunDisplay(stack);
+            float modelFov = gunDisplay
+                    .map(GunDisplayInstance::getModelFov)
+                    .orElse((float) event.getFOV());
             CompoundTag scopeTag = iGun.getAttachmentTag(stack, AttachmentType.SCOPE);
             int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
-            // 尝试使用配件fov修改，若无则尝试使用枪械本身fov修改，否则维持不变
+            // 常驻状态使用枪械本身 model_fov；开镜状态优先使用配件 fov，若无则使用枪械本身 zoom_model_fov。
             float modifiedFov = TimelessAPI.getClientAttachmentIndex(scopeItemId)
                     .map(index -> {
                         float[] viewsFov = index.getViewsFov();
                         return viewsFov[zoomNumber % viewsFov.length];
                     })
                     .orElse(
-                        TimelessAPI.getGunDisplay(stack)
-                                .map(GunDisplayInstance::getZoomModelFov)
-                                .orElse((float) event.getFOV())
+                            gunDisplay
+                                    .map(GunDisplayInstance::getZoomModelFov)
+                                    .orElse(modelFov)
                     );
             if (livingEntity instanceof LocalPlayer localPlayer) {
                 IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
                 float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
-                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, (float) event.getFOV(), modifiedFov));
+                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, modelFov, modifiedFov));
                 event.setFOV(fov);
             } else {
                 IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
                 float aimingProgress = gunOperator.getSynAimingProgress();
-                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, (float) event.getFOV(), modifiedFov));
+                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, modelFov, modifiedFov));
                 event.setFOV(fov);
             }
         }
