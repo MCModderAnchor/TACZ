@@ -23,6 +23,7 @@ import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.block.BlockData;
 import com.tacz.guns.resource.pojo.data.block.TabConfig;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage;
+import com.tacz.guns.resource.pojo.data.gun.BuiltInAttachment;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.Ignite;
 import com.tacz.guns.resource.pojo.data.loot.LootTableInjection;
@@ -57,6 +58,7 @@ public class CommonAssetsManager implements ICommonResourceProvider {
             .registerTypeAdapter(Pair.class, new PairSerializer())
             .registerTypeAdapter(GunSmithTableIngredient.class, new GunSmithTableIngredientSerializer())
             .registerTypeAdapter(GunSmithTableResult.class, new GunSmithTableResultSerializer())
+            .registerTypeAdapter(BuiltInAttachment.class, new BuiltInAttachmentSerializer())
             .registerTypeAdapter(ExtraDamage.DistanceDamagePair.class, new DistanceDamagePairSerializer())
             .registerTypeAdapter(Vec3.class, new Vec3Serializer())
             .registerTypeAdapter(Ignite.class, new IgniteSerializer())
@@ -85,7 +87,7 @@ public class CommonAssetsManager implements ICommonResourceProvider {
 
     public void reloadAndRegister(Consumer<PreparableReloadListener> register) {
         // 这里会顺序重载，所以需要把index这种依赖data的放在后面
-        gunData = register(new CommonDataManager<>(DataType.GUN_DATA, GunData.class, GSON, "data/guns", "GunDataLoader"));
+        gunData = register(new GunDataManager());
         attachmentData = register(new AttachmentDataManager());
         attachmentsTagManager = register(new AttachmentsTagManager());
         recipeFilterManager = register(new RecipeFilterManager());

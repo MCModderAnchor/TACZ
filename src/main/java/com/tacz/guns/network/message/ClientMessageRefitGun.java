@@ -5,6 +5,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
+import com.tacz.guns.util.VirtualOemAttachment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -62,7 +63,7 @@ public class ClientMessageRefitGun {
                         iGun.installAttachment(gunItem, attachmentItem);
                         // 刷新配件数据
                         AttachmentPropertyManager.postChangeEvent(player, gunItem);
-                        inventory.setItem(message.attachmentSlotIndex, oldAttachmentItem);
+                        inventory.setItem(message.attachmentSlotIndex, VirtualOemAttachment.isMarked(oldAttachmentItem) ? ItemStack.EMPTY : oldAttachmentItem);
                         // 如果卸载的是扩容弹匣，吐出所有子弹
                         if (realType == AttachmentType.EXTENDED_MAG) {
                             iGun.dropAllAmmo(player, gunItem);

@@ -3,5 +3,6 @@
   "display": "tacz:oem_stock_heavy_display",
   "data": "tacz:oem_stock_heavy_data",
   "type": "stock",
-  "sort": 1
+  "sort": 1,
+  "hidden": true
 }

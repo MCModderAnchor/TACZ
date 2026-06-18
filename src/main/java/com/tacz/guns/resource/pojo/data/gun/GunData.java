@@ -112,7 +112,7 @@ public class GunData {
     private float weight = 0f;
 
     @SerializedName("builtin_attachments")
-    private Map<AttachmentType, ResourceLocation> builtInAttachments = Maps.newHashMap();
+    private Map<AttachmentType, BuiltInAttachment> builtInAttachments = Maps.newHashMap();
 
     @SerializedName("script")
     private ResourceLocation script = null;
@@ -278,7 +278,7 @@ public class GunData {
         return allowAttachments;
     }
 
-    public Map<AttachmentType, ResourceLocation> getBuiltInAttachments() {
+    public Map<AttachmentType, BuiltInAttachment> getBuiltInAttachments() {
         return builtInAttachments;
     }
 

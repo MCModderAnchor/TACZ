@@ -38,6 +38,7 @@
     }
   },
   // 组合镜需要将两个选项都设为 true
+  "idle_scope_height_adjust": 0.75,
   "scope": true,
   // 组合镜不需要这个
   //"fov": 20.0,

@@ -7531,7 +7531,7 @@
 					"pivot": [0, 8, 13.86]
 				},
 				{
-					"name": "oem_stock_light",
+					"name": "oem_stock_removed",
 					"parent": "attachment_adapter",
 					"pivot": [0, 2, 8.875],
 					"cubes": [

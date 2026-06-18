@@ -8577,13 +8577,13 @@
 					]
 				},
 				{
-					"name": "oem_stock_light",
+					"name": "oem_stock_unfolded",
 					"parent": "attachment_adapter",
 					"pivot": [0, -17, 0]
 				},
 				{
 					"name": "base2",
-					"parent": "oem_stock_light",
+					"parent": "oem_stock_unfolded",
 					"pivot": [8, -12, -8],
 					"cubes": [
 						{
@@ -9149,7 +9149,7 @@
 				},
 				{
 					"name": "stock2",
-					"parent": "oem_stock_light",
+					"parent": "oem_stock_unfolded",
 					"pivot": [8, -11.9375, -8.75]
 				},
 				{

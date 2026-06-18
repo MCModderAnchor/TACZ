@@ -43,6 +43,11 @@ public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyTyp
     }
 
     @Override
+    public List<String> getOptionalFieldList() {
+        return List.of("inaccuracy_addend", "aim_inaccuracy", "sneak_inaccuracy", "lie_inaccuracy");
+    }
+
+    @Override
     @SuppressWarnings("deprecation")
     public JsonProperty<Map<InaccuracyType, Modifier>> readJson(String json) {
         Data data = CommonAssetsManager.GSON.fromJson(json, Data.class);

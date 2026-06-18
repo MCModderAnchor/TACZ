@@ -56,6 +56,7 @@
   ],
   "allow_attachment_types": [
     "scope",
+    "stock",
     "muzzle",
     "extended_mag"
   ],
@@ -103,6 +104,14 @@
       "knockback": 0.4,
       // 前摇时长，单位：秒
       "prep": 0.1
+    }
+  },
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_unfolded"
+      ],
+      "default_attached": "tacz:oem_stock_unfolded"
     }
   }
 }

@@ -127,6 +127,15 @@
     "muzzle",
     "extended_mag"
   ],
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_tactical",
+        "tacz:oem_stock_heavy"
+      ],
+      "default_attached": "tacz:oem_stock_heavy"
+    }
+  },
   "exclusive_attachments": {
   }
 }

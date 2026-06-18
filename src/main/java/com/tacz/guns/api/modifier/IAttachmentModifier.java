@@ -33,6 +33,14 @@ public interface IAttachmentModifier<T, K> {
         return StringUtils.EMPTY;
     }
 
+    default List<String> getOptionalFieldList() {
+        String optionalField = getOptionalFields();
+        if (StringUtils.isEmpty(optionalField)) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(optionalField);
+    }
+
     /**
      * 从 Json 读取数据
      *

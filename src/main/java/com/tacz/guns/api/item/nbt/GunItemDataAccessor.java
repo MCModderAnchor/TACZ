@@ -249,7 +249,10 @@ public interface GunItemDataAccessor extends IGun {
         if (index != null){
             var builtin = index.getGunData().getBuiltInAttachments();
             if (builtin.containsKey(type)) {
-                return AttachmentItemBuilder.create().setId(builtin.get(type)).build();
+                ResourceLocation attachmentId = builtin.get(type).getDisplayAttachment();
+                if (attachmentId != null) {
+                    return AttachmentItemBuilder.create().setId(attachmentId).build();
+                }
             }
         }
         return ItemStack.EMPTY;
@@ -280,7 +283,10 @@ public interface GunItemDataAccessor extends IGun {
         if (index != null){
             var builtin = index.getGunData().getBuiltInAttachments();
             if (builtin.containsKey(type)) {
-                return builtin.get(type);
+                ResourceLocation attachmentId = builtin.get(type).getDisplayAttachment();
+                if (attachmentId != null) {
+                    return attachmentId;
+                }
             }
         }
         return DefaultAssets.EMPTY_ATTACHMENT_ID;

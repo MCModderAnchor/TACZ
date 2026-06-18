@@ -61,6 +61,9 @@ public class AttachmentDisplay implements IDisplay {
     @Nullable
     private float[] viewsFov;
 
+    @SerializedName("idle_scope_height_adjust")
+    private float idleScopeHeightAdjust = 0;
+
     @SerializedName("sounds")
     private Map<String, ResourceLocation> sounds = Maps.newHashMap();
 
@@ -123,6 +126,10 @@ public class AttachmentDisplay implements IDisplay {
     @Nullable
     public float[] getViewsFov() {
         return viewsFov;
+    }
+
+    public float getIdleScopeHeightAdjust() {
+        return idleScopeHeightAdjust;
     }
 
     public Map<String, ResourceLocation> getSounds() {

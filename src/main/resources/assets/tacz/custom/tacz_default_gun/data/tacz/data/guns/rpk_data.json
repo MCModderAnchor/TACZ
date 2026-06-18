@@ -172,6 +172,16 @@
     "extended_mag"
   ],
   // 专属的配件属性
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_light",
+        "tacz:oem_stock_tactical",
+        "tacz:oem_stock_heavy"
+      ],
+      "default_attached": "tacz:oem_stock_heavy"
+    }
+  },
   "exclusive_attachments": {
   }
 }

@@ -122,5 +122,14 @@
       "knockback": 0.4,
       "prep": 0.1
     }
+  },
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_tactical",
+        "tacz:oem_stock_heavy"
+      ],
+      "default_attached": "tacz:oem_stock_tactical"
+    }
   }
 }

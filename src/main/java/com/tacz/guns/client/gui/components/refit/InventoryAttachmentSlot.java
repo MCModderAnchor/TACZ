@@ -14,18 +14,30 @@ import java.util.function.Consumer;
 public class InventoryAttachmentSlot extends Button implements IStackTooltip {
     private final int slotIndex;
     private final Inventory inventory;
+    private final ItemStack displayStack;
 
     public InventoryAttachmentSlot(int pX, int pY, int slotIndex, Inventory inventory, Button.OnPress onPress) {
+        this(pX, pY, slotIndex, inventory, ItemStack.EMPTY, onPress);
+    }
+
+    public InventoryAttachmentSlot(int pX, int pY, ItemStack displayStack, Inventory inventory, Button.OnPress onPress) {
+        this(pX, pY, -1, inventory, displayStack, onPress);
+    }
+
+    private InventoryAttachmentSlot(int pX, int pY, int slotIndex, Inventory inventory, ItemStack displayStack, Button.OnPress onPress) {
         super(pX, pY, 18, 18, Component.empty(), onPress, DEFAULT_NARRATION);
         this.slotIndex = slotIndex;
         this.inventory = inventory;
+        this.displayStack = displayStack;
     }
 
     @Override
     public void renderTooltip(Consumer<ItemStack> consumer) {
-        if (this.isHoveredOrFocused() && 0 <= this.slotIndex && this.slotIndex < this.inventory.getContainerSize()) {
-            ItemStack item = this.inventory.getItem(slotIndex);
-            consumer.accept(item);
+        if (this.isHoveredOrFocused()) {
+            ItemStack item = getItemStack();
+            if (!item.isEmpty()) {
+                consumer.accept(item);
+            }
         }
     }
 
@@ -40,7 +52,7 @@ public class InventoryAttachmentSlot extends Button implements IStackTooltip {
         } else {
             graphics.blit(GunRefitScreen.SLOT_TEXTURE, x + 1, y + 1, 1, 1, width - 2, height - 2, 18, 18);
         }
-        graphics.renderItem(inventory.getItem(slotIndex), x + 1, y + 1);
+        graphics.renderItem(getItemStack(), x + 1, y + 1);
 
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
@@ -48,5 +60,15 @@ public class InventoryAttachmentSlot extends Button implements IStackTooltip {
 
     public int getSlotIndex() {
         return slotIndex;
+    }
+
+    public ItemStack getItemStack() {
+        if (!displayStack.isEmpty()) {
+            return displayStack;
+        }
+        if (0 <= this.slotIndex && this.slotIndex < this.inventory.getContainerSize()) {
+            return this.inventory.getItem(slotIndex);
+        }
+        return ItemStack.EMPTY;
     }
 }

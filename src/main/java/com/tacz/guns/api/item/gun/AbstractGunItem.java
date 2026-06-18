@@ -16,6 +16,7 @@ import com.tacz.guns.resource.pojo.data.gun.FeedType;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.AllowAttachmentTagMatcher;
 import com.tacz.guns.util.AttachmentDataUtils;
+import com.tacz.guns.util.DefaultGunAttachments;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -343,6 +344,7 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
                         .setAmmoCount(gunData.getAmmoAmount())
                         .setHeatData(gunData.hasHeatData())
                         .setAmmoInBarrel(true)
+                        .putAllVirtualAttachment(DefaultGunAttachments.defaults(entry.getKey()))
                         .build();
                 stacks.add(itemStack);
             }

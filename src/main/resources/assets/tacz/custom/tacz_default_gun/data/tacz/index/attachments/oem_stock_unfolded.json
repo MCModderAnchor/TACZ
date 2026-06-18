@@ -1,0 +1,8 @@
+{
+  "name": "tacz.attachment.oem_stock_unfolded.name",
+  "display": "tacz:oem_stock_unfolded_display",
+  "data": "tacz:oem_stock_unfolded_data",
+  "type": "stock",
+  "sort": 1,
+  "hidden": true
+}

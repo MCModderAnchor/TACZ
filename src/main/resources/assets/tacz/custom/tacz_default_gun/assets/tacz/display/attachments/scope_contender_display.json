@@ -15,6 +15,7 @@
   "views_fov": [
     35
   ],
+  "idle_scope_height_adjust": 0.0,
   "scope": true,
   "sounds": {
     "install": "tacz:attachments/scope_general_d",

@@ -47,6 +47,7 @@
       "text": "AMMO"
     }
   },
+  "idle_scope_height_adjust": 1.25,
   "scope": true,
   "sight": true,
   "sounds": {

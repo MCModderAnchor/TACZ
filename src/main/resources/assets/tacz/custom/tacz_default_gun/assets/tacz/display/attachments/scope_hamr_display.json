@@ -18,6 +18,7 @@
     50.0,
     60.0
   ],
+  "idle_scope_height_adjust": 0.75,
   "scope": true,
   "sight": true,
   "sounds": {

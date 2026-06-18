@@ -42,6 +42,7 @@ public class ClientAttachmentIndex {
     private float[] viewsFov;
     private float @Nullable [] zoom;
     private int [] views;
+    private float idleScopeHeightAdjust;
     private boolean isScope;
     private boolean isSight;
     private boolean showMuzzle;
@@ -113,6 +114,7 @@ public class ClientAttachmentIndex {
         }
         index.isScope = display.isScope();
         index.isSight = display.isSight();
+        index.idleScopeHeightAdjust = display.getIdleScopeHeightAdjust();
         index.adapterNodeName = display.getAdapterNodeName();
         index.showMuzzle = display.isShowMuzzle();
         index.showMount = display.isShowMount();
@@ -338,6 +340,10 @@ public class ClientAttachmentIndex {
 
     public int[] getViews() {
         return views;
+    }
+
+    public float getIdleScopeHeightAdjust() {
+        return idleScopeHeightAdjust;
     }
 
     public AttachmentData getData() {

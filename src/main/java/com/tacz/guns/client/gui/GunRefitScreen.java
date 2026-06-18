@@ -6,6 +6,7 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.client.animation.screen.RefitTransform;
 import com.tacz.guns.client.gui.components.FlatColorButton;
 import com.tacz.guns.client.gui.components.refit.*;
@@ -13,10 +14,12 @@ import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.ClientMessageInstallVirtualAttachment;
 import com.tacz.guns.network.message.ClientMessageLaserColor;
 import com.tacz.guns.network.message.ClientMessageRefitGun;
 import com.tacz.guns.network.message.ClientMessageUnloadAttachment;
 import com.tacz.guns.sound.SoundManager;
+import com.tacz.guns.util.VirtualOemAttachment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -27,7 +30,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class GunRefitScreen extends Screen {
@@ -139,14 +148,17 @@ public class GunRefitScreen extends Screen {
         int count = 0;
         int currentY = startY;
         Inventory inventory = player.getInventory();
+        ItemStack gunItem = player.getMainHandItem();
+        IGun iGun = IGun.getIGunOrNull(gunItem);
+        Set<ResourceLocation> displayedAttachmentIds = new HashSet<>();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack inventoryItem = inventory.getItem(i);
             IAttachment attachment = IAttachment.getIAttachmentOrNull(inventoryItem);
-            IGun iGun = IGun.getIGunOrNull(player.getMainHandItem());
             if (attachment != null && iGun != null && attachment.getType(inventoryItem) == RefitTransform.getCurrentTransformType()) {
-                if (!iGun.allowAttachment(player.getMainHandItem(), inventoryItem)) {
+                if (!iGun.allowAttachment(gunItem, inventoryItem)) {
                     continue;
                 }
+                displayedAttachmentIds.add(attachment.getAttachmentId(inventoryItem));
                 count++;
                 if (count <= pageStart) {
                     continue;
@@ -158,6 +170,30 @@ public class GunRefitScreen extends Screen {
                     int slotIndex = ((InventoryAttachmentSlot) b).getSlotIndex();
                     SoundPlayManager.playerRefitSound(inventory.getItem(slotIndex), player, SoundManager.INSTALL_SOUND);
                     ClientMessageRefitGun message = new ClientMessageRefitGun(slotIndex, inventory.selected, RefitTransform.getCurrentTransformType());
+                    NetworkHandler.CHANNEL.sendToServer(message);
+                });
+                this.addRenderableWidget(button);
+                currentY = currentY + SLOT_SIZE;
+            }
+        }
+        if (iGun != null) {
+            List<ItemStack> virtualOemAttachments = getVirtualOemAttachments(gunItem, iGun, RefitTransform.getCurrentTransformType(), displayedAttachmentIds);
+            for (ItemStack virtualAttachment : virtualOemAttachments) {
+                count++;
+                if (count <= pageStart) {
+                    continue;
+                }
+                if (count > pageStart + INVENTORY_ATTACHMENT_SLOT_COUNT) {
+                    continue;
+                }
+                InventoryAttachmentSlot button = new InventoryAttachmentSlot(startX, currentY, virtualAttachment, inventory, b -> {
+                    ItemStack attachmentStack = ((InventoryAttachmentSlot) b).getItemStack();
+                    IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
+                    if (attachment == null) {
+                        return;
+                    }
+                    SoundPlayManager.playerRefitSound(attachmentStack, player, SoundManager.INSTALL_SOUND);
+                    ClientMessageInstallVirtualAttachment message = new ClientMessageInstallVirtualAttachment(inventory.selected, RefitTransform.getCurrentTransformType(), attachment.getAttachmentId(attachmentStack));
                     NetworkHandler.CHANNEL.sendToServer(message);
                 });
                 this.addRenderableWidget(button);
@@ -240,7 +276,7 @@ public class GunRefitScreen extends Screen {
                     ItemStack attachmentItem = button.getAttachmentItem();
                     if (!attachmentItem.isEmpty()) {
                         int freeSlot = inventory.getFreeSlot();
-                        if (freeSlot != -1) {
+                        if (freeSlot != -1 || VirtualOemAttachment.isMarked(attachmentItem)) {
                             SoundPlayManager.playerRefitSound(attachmentItem, player, SoundManager.UNINSTALL_SOUND);
                             ClientMessageUnloadAttachment message = new ClientMessageUnloadAttachment(inventory.selected, RefitTransform.getCurrentTransformType());
                             NetworkHandler.CHANNEL.sendToServer(message);
@@ -287,5 +323,20 @@ public class GunRefitScreen extends Screen {
     private void switchHideButton() {
         HIDE_GUN_PROPERTY_DIAGRAMS = !HIDE_GUN_PROPERTY_DIAGRAMS;
         this.init();
+    }
+
+    private static List<ItemStack> getVirtualOemAttachments(ItemStack gunItem, IGun iGun, AttachmentType type, Set<ResourceLocation> excludedAttachmentIds) {
+        ResourceLocation currentAttachmentId = iGun.getAttachmentId(gunItem, type);
+        return TimelessAPI.getAllCommonAttachmentIndex().stream()
+                .filter(entry -> entry.getValue().getType() == type)
+                .filter(entry -> VirtualOemAttachment.isAllowedVirtualOem(iGun.getGunId(gunItem), entry.getKey(), type))
+                .filter(entry -> VirtualOemAttachment.shouldShowIcon(iGun.getGunId(gunItem), entry.getKey(), type))
+                .filter(entry -> !excludedAttachmentIds.contains(entry.getKey()))
+                .sorted(Comparator.comparingInt(entry -> entry.getValue().getSort()))
+                .map(entry -> Pair.of(entry.getKey(), AttachmentItemBuilder.create().setId(entry.getKey()).build()))
+                .filter(pair -> !pair.getKey().equals(currentAttachmentId))
+                .filter(pair -> iGun.allowAttachment(gunItem, pair.getValue()))
+                .map(Pair::getValue)
+                .toList();
     }
 }

@@ -30,6 +30,14 @@ public class RefitTransform {
         currentTransformType = AttachmentType.NONE;
     }
 
+    public static boolean isActive() {
+        return Minecraft.getInstance().screen instanceof GunRefitScreen || refitScreenOpeningProgress > 0;
+    }
+
+    public static boolean shouldSuppressMouseTurn() {
+        return !(Minecraft.getInstance().screen instanceof GunRefitScreen) && refitScreenOpeningProgress > 0;
+    }
+
     public static float getOpeningProgress() {
         return refitScreenOpeningProgress;
     }

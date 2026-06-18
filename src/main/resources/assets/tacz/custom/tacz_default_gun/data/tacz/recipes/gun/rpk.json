@@ -27,10 +27,7 @@
   ],
   "result": {
     "type": "gun",
-    "id": "tacz:rpk",
-    "attachments": {
-      "stock": "tacz:oem_stock_heavy"
-    }
+    "id": "tacz:rpk"
   },
   "type": "tacz:gun_smith_table_crafting"
 }

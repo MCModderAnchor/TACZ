@@ -18,6 +18,7 @@
     40.0,
     60.0
   ],
+  "idle_scope_height_adjust": 0.75,
   "scope": true,
   "sounds": {
     "install": "tacz:attachments/scope_general_d",

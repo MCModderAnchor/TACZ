@@ -151,6 +151,7 @@ public class FirstPersonRenderGunEvent {
         if (scopeId.equals(DefaultAssets.EMPTY_ATTACHMENT_ID)) {
             scopeId = iGun.getBuiltInAttachmentId(stack, AttachmentType.SCOPE);
         }
+        Optional<ClientAttachmentIndex> scopeIndexOptional = DefaultAssets.isEmptyAttachmentId(scopeId) ? Optional.empty() : TimelessAPI.getClientAttachmentIndex(scopeId);
         CompoundTag scopeTag = iGun.getAttachmentTag(stack, AttachmentType.SCOPE);
         int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
         int viewIndex = 1;
@@ -162,10 +163,10 @@ public class FirstPersonRenderGunEvent {
             List<BedrockPart> scopeNodePath = model.getScopePosPath();
             if (scopeNodePath != null) {
                 aimingNodePath = new ArrayList<>(scopeNodePath);
-                Optional<ClientAttachmentIndex> indexOptional = TimelessAPI.getClientAttachmentIndex(scopeId);
-                if (indexOptional.isPresent()) {
-                    BedrockAttachmentModel attachmentModel = indexOptional.get().getAttachmentModel();
-                    int[] views = indexOptional.get().getViews();
+                if (scopeIndexOptional.isPresent()) {
+                    ClientAttachmentIndex scopeIndex = scopeIndexOptional.get();
+                    BedrockAttachmentModel attachmentModel = scopeIndex.getAttachmentModel();
+                    int[] views = scopeIndex.getViews();
                     viewIndex = views[zoomNumber % views.length] - 1;
                     if (attachmentModel != null) {
                         List<BedrockPart> scopeViewPath = attachmentModel.getScopeViewPath(currentViewIndex == -1 ? viewIndex : currentViewIndex);
@@ -194,7 +195,9 @@ public class FirstPersonRenderGunEvent {
             currentViewIndex = viewIndex;
         }
         // 应用瞄准变换
-        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(idleNodePath), transformMatrix, (1 - refitScreenOpeningProgress));
+        float idleScopeHeightAdjust = scopeIndexOptional.map(ClientAttachmentIndex::getIdleScopeHeightAdjust).orElse(0f) / 16.0f;
+        Matrix4f idleViewMatrix = getPositioningNodeInverse(idleNodePath);
+        MathUtil.applyMatrixLerp(transformMatrix, idleViewMatrix, transformMatrix, (1 - refitScreenOpeningProgress));
         MathUtil.applyMatrixLerp(transformMatrix, aimingViewMatrix, transformMatrix, (1 - refitScreenOpeningProgress) * aimingProgress);
         // 应用改装界面开启时的定位
         float refitTransformProgress = (float) Easing.easeOutCubic(RefitTransform.getTransformProgress());
@@ -202,8 +205,11 @@ public class FirstPersonRenderGunEvent {
         AttachmentType currentType = RefitTransform.getCurrentTransformType();
         List<BedrockPart> fromNode = model.getRefitAttachmentViewPath(oldType);
         List<BedrockPart> toNode = model.getRefitAttachmentViewPath(currentType);
-        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(fromNode), transformMatrix, refitScreenOpeningProgress);
-        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(toNode), transformMatrix, refitScreenOpeningProgress * refitTransformProgress);
+        Matrix4f fromViewMatrix = getPositioningNodeInverse(fromNode);
+        Matrix4f toViewMatrix = getPositioningNodeInverse(toNode);
+        MathUtil.applyMatrixLerp(transformMatrix, fromViewMatrix, transformMatrix, refitScreenOpeningProgress);
+        MathUtil.applyMatrixLerp(transformMatrix, toViewMatrix, transformMatrix, refitScreenOpeningProgress * refitTransformProgress);
+        transformMatrix.m31(transformMatrix.m31() + idleScopeHeightAdjust * (1 - aimingProgress));
         // 应用变换到 PoseStack
         poseStack.translate(0, 1.5f, 0);
         poseStack.mulPoseMatrix(transformMatrix);

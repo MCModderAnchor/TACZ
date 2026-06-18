@@ -61,6 +61,14 @@
     "stock",
     "extended_mag"
   ],
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_tactical"
+      ],
+      "default_attached": "tacz:oem_stock_tactical"
+    }
+  },
   "exclusive_attachments": {
     "tacz:oem_stock_tactical": {
       "weight": 2.0,

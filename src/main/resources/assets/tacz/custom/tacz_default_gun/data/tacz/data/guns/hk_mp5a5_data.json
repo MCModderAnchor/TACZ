@@ -135,5 +135,15 @@
       // 前摇时长，单位：秒
       "prep": 0.1
     }
+  },
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_unfolded",
+        "tacz:oem_stock_tactical",
+        "tacz:oem_stock_heavy"
+      ],
+      "default_attached": "tacz:oem_stock_unfolded"
+    }
   }
 }

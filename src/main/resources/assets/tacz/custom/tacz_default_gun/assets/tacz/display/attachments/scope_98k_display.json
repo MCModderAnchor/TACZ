@@ -9,6 +9,7 @@
   "zoom": [
     4.25
   ],
+  "idle_scope_height_adjust": 0.0,
   "scope": true,
   "fov": 30,
   "sounds": {
