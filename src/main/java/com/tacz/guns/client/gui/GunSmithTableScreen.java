@@ -50,12 +50,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraftforge.common.CreativeModeTabRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -517,6 +520,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
         this.renderables.stream().filter(w -> w instanceof ResultButton)
                 .forEach(w -> ((ResultButton) w).renderTooltips(stack -> graphics.renderTooltip(font, stack, mouseX, mouseY)));
+        this.renderIngredientTooltip(graphics, mouseX, mouseY);
     }
 
     private void renderPackInfo(GuiGraphics gui, GunSmithTableRecipe recipe) {
@@ -636,6 +640,50 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 poseStack.popPose();
             }
         }
+    }
+
+    private void renderIngredientTooltip(GuiGraphics gui, int mouseX, int mouseY) {
+        if (this.selectedRecipe == null) {
+            return;
+        }
+        List<GunSmithTableIngredient> inputs = this.selectedRecipe.getInputs();
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 2; j++) {
+                int index = i * 2 + j;
+                if (index >= inputs.size()) {
+                    return;
+                }
+                int offsetX = leftPos + 254 + 45 * j;
+                int offsetY = topPos + 62 + 17 * i;
+                if (mouseX < offsetX || mouseX >= offsetX + 16 || mouseY < offsetY || mouseY >= offsetY + 16) {
+                    continue;
+                }
+
+                ItemStack[] items = inputs.get(index).getIngredient().getItems();
+                if (items.length == 0) {
+                    return;
+                }
+                int itemIndex = ((int) (System.currentTimeMillis() / 1_000)) % items.length;
+                ItemStack item = items[itemIndex];
+                if (!item.isEmpty()) {
+                    gui.renderComponentTooltip(font, getIngredientTooltip(item), mouseX, mouseY, item);
+                }
+                return;
+            }
+        }
+    }
+
+    private List<Component> getIngredientTooltip(ItemStack item) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        TooltipFlag tooltipFlag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
+        List<Component> tooltip = new ArrayList<>(item.getTooltipLines(player, tooltipFlag));
+        for (CreativeModeTab tab : CreativeModeTabRegistry.getSortedCreativeModeTabs()) {
+            if (!tab.hasSearchBar() && tab.contains(item)) {
+                tooltip.add(Math.min(1, tooltip.size()), tab.getDisplayName().copy().withStyle(ChatFormatting.BLUE));
+                break;
+            }
+        }
+        return tooltip;
     }
 
     @SuppressWarnings("deprecation")
