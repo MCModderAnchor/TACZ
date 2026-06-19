@@ -35,7 +35,7 @@ public class HangingTargetRenderer extends EntityRenderer<HangingTargetEntity> {
         double lerpZ = Mth.lerp((double)partialTicks, entity.zOld, entity.getZ());
         Vec3 lerpPos = new Vec3(lerpX, lerpY, lerpZ);
 
-        // ✨ 核心修正 2：只计算绕 X 轴（前后摆动）的角度，旋转轴彻底固定，再也不会乱转了！
+        // ✨ 核心修正 2：只计算绕 X 轴（前后摆动）的角度，旋转轴彻底固定，再也不会乱转了
         Vec3 fromPivot = lerpPos.subtract(pivot);
         double degreesX = Math.toDegrees(Math.atan2(fromPivot.z, -fromPivot.y));
 
