@@ -78,7 +78,8 @@
     "extended_mag",
     "scope",
     "muzzle",
-    "stock"
+    "stock",
+    "laser"
   ],
   "recoil": {
     "pitch": [

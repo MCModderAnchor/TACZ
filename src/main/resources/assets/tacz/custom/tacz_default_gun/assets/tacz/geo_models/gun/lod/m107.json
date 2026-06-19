@@ -23,7 +23,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0, 9, 0],
+					"pivot": [0, 6.98438, 13.0625],
 					"rotation": [0, 90, 0]
 				},
 				{
