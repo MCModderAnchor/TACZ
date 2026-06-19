@@ -31,6 +31,8 @@ public class ModCreativeTabs {
                 output.accept(ModItems.TARGET.get());
                 output.accept(ModItems.STATUE.get());
                 output.accept(ModItems.TARGET_MINECART.get());
+                // 找到往 TaCZ 物品栏（比如选枪或者选配件的栏目）里塞物品的地方，加上这行：
+                output.accept(ModItems.HANGING_TARGET.get());
                 AmmoBoxItem.fillItemCategory(output);
             }).build());
 

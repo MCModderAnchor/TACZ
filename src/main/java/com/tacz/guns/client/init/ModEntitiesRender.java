@@ -16,6 +16,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import com.tacz.guns.entity.HangingTargetEntity;
+import com.tacz.guns.client.renderer.entity.HangingTargetRenderer;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEntitiesRender {
@@ -23,6 +25,7 @@ public class ModEntitiesRender {
     public static void onEntityRenderers(EntityRenderersEvent.RegisterRenderers evt) {
         EntityRenderers.register(EntityKineticBullet.TYPE, EntityBulletRenderer::new);
         EntityRenderers.register(TargetMinecart.TYPE, TargetMinecartRenderer::new);
+        EntityRenderers.register(HangingTargetEntity.TYPE, HangingTargetRenderer::new);
         BlockEntityRenderers.register(GunSmithTableBlockEntity.TYPE, GunSmithTableRenderer::new);
         BlockEntityRenderers.register(TargetBlockEntity.TYPE, TargetRenderer::new);
         BlockEntityRenderers.register(StatueBlockEntity.TYPE, StatueRenderer::new);

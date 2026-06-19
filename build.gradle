@@ -54,7 +54,7 @@ minecraft {
         client {
             // 使用 JetBrainsRuntime 时需要的参数，否则无法热重载
             // 如果你使用别的 JDK，那么可以删除这一行
-            jvmArgs "-XX:+AllowEnhancedClassRedefinition"
+            //jvmArgs "-XX:+AllowEnhancedClassRedefinition"
             jvmArgs "-Xmx4096M", "-Xms4096M"
             // 每个启动单独区分文件夹
             workingDirectory project.file('run/client_a')

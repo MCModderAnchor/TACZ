@@ -34,6 +34,10 @@ public class ModItems {
     public static RegistryObject<Item> AMMO_BOX = ITEMS.register("ammo_box", AmmoBoxItem::new);
     public static RegistryObject<Item> TARGET_MINECART = ITEMS.register("target_minecart", TargetMinecartItem::new);
 
+    // 悬挂标靶
+    public static final RegistryObject<Item> HANGING_TARGET = ITEMS.register("hanging_target",
+            () -> new HangingTargetItem(new Item.Properties().stacksTo(16))); // 顺便限制一下一组最多带16个
+
     @SubscribeEvent
     public static void onItemRegister(RegisterEvent event) {
         if (event.getRegistryKey().equals(ForgeRegistries.ITEMS.getRegistryKey())) {
