@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "tacz:block/glow_gun_pegboard" },
+    "facing=east": { "model": "tacz:block/glow_gun_pegboard", "y": 90 },
+    "facing=south": { "model": "tacz:block/glow_gun_pegboard", "y": 180 },
+    "facing=west": { "model": "tacz:block/glow_gun_pegboard", "y": 270 }
+  }
+}

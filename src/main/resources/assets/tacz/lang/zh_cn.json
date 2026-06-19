@@ -1,6 +1,8 @@
 {
   "block.tacz.statue": "石像",
   "block.tacz.target": "人形标靶",
+  "block.tacz.gun_pegboard": "洞洞板",
+  "block.tacz.glow_gun_pegboard": "发光洞洞板",
   "block.tacz.gun_smith_table": "枪械工作台",
   "commands.tacz.reload.backup": "§a§l●§r You can find the overwritten files in the §c§nconfig/tacz/backup§r folder",
   "commands.tacz.reload.overwrite_command.off": "§a§l●§r 你可以使用指令 §c§n/tacz overwrite true§r 来启用覆盖功能。",

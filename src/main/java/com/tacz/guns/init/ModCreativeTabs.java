@@ -30,6 +30,8 @@ public class ModCreativeTabs {
                 output.acceptAll(GunSmithTableItem.fillItemCategory());
                 output.accept(ModItems.TARGET.get());
                 output.accept(ModItems.STATUE.get());
+                output.accept(ModItems.GUN_PEGBOARD.get());
+                output.accept(ModItems.GLOW_GUN_PEGBOARD.get());
                 output.accept(ModItems.TARGET_MINECART.get());
                 AmmoBoxItem.fillItemCategory(output);
             }).build());

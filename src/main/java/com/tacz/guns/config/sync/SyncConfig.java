@@ -11,6 +11,8 @@ public class SyncConfig {
     public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_WHITELIST_ENTITIES;
     public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_BLOCKS;
     public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_ENTITIES;
+    public static ForgeConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_WHITELIST_ITEMS;
+    public static ForgeConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_BLACKLIST_ITEMS;
     public static ForgeConfigSpec.BooleanValue ENABLE_TABLE_FILTER;
     public static ForgeConfigSpec.BooleanValue SERVER_SHOOT_NETWORK_V;
     public static ForgeConfigSpec.BooleanValue SERVER_SHOOT_COOLDOWN_V;
@@ -32,6 +34,7 @@ public class SyncConfig {
 
     public static void init(ForgeConfigSpec.Builder builder) {
         interactKey(builder);
+        gunPegboard(builder);
         baseMultiplier(builder);
         misc(builder);
     }
@@ -50,6 +53,18 @@ public class SyncConfig {
 
         builder.comment("These blacklist entities can be interacted with when the interact key is pressed");
         INTERACT_KEY_BLACKLIST_ENTITIES = builder.define("InteractKeyBlacklistEntities", Lists.newArrayList());
+
+        builder.pop();
+    }
+
+    private static void gunPegboard(ForgeConfigSpec.Builder builder) {
+        builder.push("gun_pegboard");
+
+        builder.comment("Extra item ids allowed on the gun pegboard, in addition to TACZ guns, attachments, ammo, and ammo boxes");
+        GUN_PEGBOARD_WHITELIST_ITEMS = builder.define("GunPegboardWhitelistItems", Lists.newArrayList());
+
+        builder.comment("Item ids denied on the gun pegboard. This list takes priority over the default allowed TACZ item types and whitelist");
+        GUN_PEGBOARD_BLACKLIST_ITEMS = builder.define("GunPegboardBlacklistItems", Lists.newArrayList());
 
         builder.pop();
     }

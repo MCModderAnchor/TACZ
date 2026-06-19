@@ -1,6 +1,7 @@
 package com.tacz.guns.event;
 
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
+import com.tacz.guns.config.util.GunPegboardItemConfigRead;
 import com.tacz.guns.config.util.InteractKeyConfigRead;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,6 +20,7 @@ public class LoadingConfigEvent {
         if (CONFIG_NAME.equals(fileName)) {
             HeadShotAABBConfigRead.init();
             InteractKeyConfigRead.init();
+            GunPegboardItemConfigRead.init();
         }
     }
 
@@ -31,6 +33,7 @@ public class LoadingConfigEvent {
         if (CONFIG_NAME.equals(fileName)) {
             HeadShotAABBConfigRead.init();
             InteractKeyConfigRead.init();
+            GunPegboardItemConfigRead.init();
 //            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientGunPackDownloadManager::downloadClientGunPack);
         }
     }
