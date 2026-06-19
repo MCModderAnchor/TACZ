@@ -22,6 +22,7 @@ eclipse
 run
 test
 logs
+runclient-logs/
 .luarc.json
 
 # Files from Forge MDK

@@ -107,6 +107,7 @@
       "prep": 0.1
     }
   },
+  "can_slide": false,
   "allow_attachment_types": [
     "extended_mag",
     "scope",

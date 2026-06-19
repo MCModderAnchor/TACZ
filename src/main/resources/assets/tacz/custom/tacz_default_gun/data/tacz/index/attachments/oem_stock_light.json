@@ -4,5 +4,5 @@
   "data": "tacz:oem_stock_light_data",
   "type": "stock",
   "sort": 1,
-  "hidden": true
+  "hidden": false
 }

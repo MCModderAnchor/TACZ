@@ -103,6 +103,7 @@
       {"time": 0.5, "value": [0, 0]}
     ]
   },
+  "can_slide": false,
   "inaccuracy": {
     "stand": 3,
     "move": 3.5,
