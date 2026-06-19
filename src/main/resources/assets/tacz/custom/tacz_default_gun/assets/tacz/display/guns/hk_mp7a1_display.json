@@ -1,0 +1,51 @@
+{
+  "model": "tacz:gun/hk_mp7a1_geo",
+  "texture": "tacz:gun/uv/hk_mp7a1",
+  "lod": {
+    "model": "tacz:gun/lod/hk_mp7a1",
+    "texture": "tacz:gun/lod/hk_mp7a1"
+  },
+  "hud": "tacz:gun/hud/hk_mp7a1",
+  "slot": "tacz:gun/slot/hk_mp7a1",
+  "animation": "tacz:hk_mp7a1",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "state_machine": "tacz:hk_mp7a1_state_machine",
+  "show_crosshair": false,
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.7
+  },
+  "iron_zoom": 1.33,
+  "zoom_model_fov": 50,
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [2, 2, 0.5],
+    "acceleration": [0.0, -15, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "shoot": "tacz:hk_mp7a1/hk_mp7a1_shoot",
+    "shoot_3p": "tacz:hk_mp7a1/hk_mp7a1_shoot_3p"
+  },
+  "offhand_show": {
+    "pos": [1, 20, 4],
+    "rotate": [0, 0, 45],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [1, 16, -2],
+      "rotate": [0, 0, 20],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}
