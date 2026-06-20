@@ -5,6 +5,21 @@
   "shell": {
     "model": "tacz:shell/46x30_shell",
     "texture": "tacz:shell/46x30_shell"
-  }
+  },
+  "hit_surface_particles": [
+    {
+      "name": "minecraft:cloud",
+      "count": 2,
+      "count_range": [1, 3],
+      "life_time": 8,
+      "color": "#8A8175",
+      "scale": 0.8,
+      "surface_offset": 0.045,
+      "random_offset": 0.018,
+      "normal_speed": 0.15,
+      "random_speed": 0.02,
+      "spread_angle": 15
+    }
+  ]
 }
     

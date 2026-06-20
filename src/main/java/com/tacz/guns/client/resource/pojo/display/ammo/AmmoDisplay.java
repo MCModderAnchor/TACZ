@@ -5,6 +5,7 @@ import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class AmmoDisplay implements IDisplay {
     @SerializedName("model")
@@ -28,6 +29,17 @@ public class AmmoDisplay implements IDisplay {
     @Nullable
     @SerializedName("particle")
     private AmmoParticle particle;
+
+    @Nullable
+    @SerializedName("hit_surface_particles")
+    private List<HitSurfaceParticle> hitSurfaceParticles;
+
+    @Nullable
+    @SerializedName("hit_block_particle_count")
+    private Integer hitBlockParticleCount;
+
+    @SerializedName("enable_bullet_hole")
+    private boolean bulletHoleEnabled = true;
 
     @SerializedName("tracer_color")
     private String tracerColor = "0xFFFFFF";
@@ -62,6 +74,20 @@ public class AmmoDisplay implements IDisplay {
     @Nullable
     public AmmoParticle getParticle() {
         return particle;
+    }
+
+    @Nullable
+    public List<HitSurfaceParticle> getHitSurfaceParticles() {
+        return hitSurfaceParticles;
+    }
+
+    @Nullable
+    public Integer getHitBlockParticleCount() {
+        return hitBlockParticleCount;
+    }
+
+    public boolean isBulletHoleEnabled() {
+        return bulletHoleEnabled;
     }
 
     public String getTracerColor() {

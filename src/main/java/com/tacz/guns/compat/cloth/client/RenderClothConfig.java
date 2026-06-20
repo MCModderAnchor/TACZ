@@ -34,6 +34,18 @@ public class RenderClothConfig {
                 .setMin(0).setMax(1).setDefaultValue(0.98).setTooltip(Component.translatable("config.tacz.client.render.bullet_hole_particle_fade_threshold.desc"))
                 .setSaveConsumer(RenderConfig.BULLET_HOLE_PARTICLE_FADE_THRESHOLD::set).build());
 
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.hit_particle_enable"), RenderConfig.HIT_PARTICLE_ENABLE.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.hit_particle_enable.desc"))
+                .setSaveConsumer(RenderConfig.HIT_PARTICLE_ENABLE::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.hit_extra_particle_enable"), RenderConfig.HIT_EXTRA_PARTICLE_ENABLE.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.hit_extra_particle_enable.desc"))
+                .setSaveConsumer(RenderConfig.HIT_EXTRA_PARTICLE_ENABLE::set).build());
+
+        render.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.client.render.hit_particle_max_distance"), RenderConfig.HIT_PARTICLE_MAX_DISTANCE.get())
+                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(64).setTooltip(Component.translatable("config.tacz.client.render.hit_particle_max_distance.desc"))
+                .setSaveConsumer(RenderConfig.HIT_PARTICLE_MAX_DISTANCE::set).build());
+
         render.addEntry(entryBuilder.startDropdownMenu(Component.translatable("config.tacz.client.render.crosshair_type"),
                         CrosshairDropdown.of(RenderConfig.CROSSHAIR_TYPE.get()), CrosshairDropdown.of())
                 .setSelections(Arrays.stream(CrosshairType.values()).sorted().sorted(Comparator.comparing(CrosshairType::name)).collect(Collectors.toCollection(LinkedHashSet::new)))

@@ -47,7 +47,32 @@
     "life_time": 20,
     // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
     "count": 100
-    }
+    },
+    "hit_surface_particles": [
+      {
+        "name": "minecraft:cloud",
+        "count_range": [2, 4],
+        "life_time": 10,
+        "color": "#8A8175",
+        "scale": 0.8,
+        "surface_offset": 0.045,
+        "random_offset": 0.018,
+        "normal_speed": 0.15,
+        "random_speed": 0.02,
+        "spread_angle": 15
+      },
+      {
+        "name": "minecraft:campfire_cosy_smoke",
+        "count": 2,
+        "life_time": 35,
+        "scale": 0.9,
+        "surface_offset": 0.055,
+        "random_offset": 0.025,
+        "normal_speed": 0.035,
+        "random_speed": 0.02,
+        "spread_angle": 45
+      }
+    ]
   },
   // 机瞄的放大倍数，默认 1.2
   "iron_zoom": 1.5,

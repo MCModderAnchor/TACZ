@@ -20,7 +20,24 @@
   // 曳光弹颜色，没有则为 #FFFFFF
   // 严格遵循 RGB 颜色代码
   "tracer_color": "#FF9999",
-  // 调整各个视角下模型的变换参数，可为空
+  // 是否在命中方块时生成弹孔贴花。没有该字段时默认为 true；枪械 display 的 ammo.enable_bullet_hole 可以覆盖该值。
+  "enable_bullet_hole": true,
+  // 命中方块表面时额外播放的粒子效果。AK47 使用该弹药，可用于调试正式命中扬尘效果。  // 调整各个视角下模型的变换参数，可为空
+  "hit_surface_particles": [
+    {
+      "name": "minecraft:cloud",
+      "count": 5,
+      "count_range": [1, 3],
+      "life_time": 8,
+      "color": "#8A8175",
+      "scale": 0.8,
+      "surface_offset": 0.045,
+      "random_offset": 0.018,
+      "normal_speed": 0.15,
+      "random_speed": 0.02,
+      "spread_angle": 15
+    }
+  ],
   "transform": {
     // 暂时只有缩放需要在这里指定，旋转和位移使用模型内定位组。
     // 可以为空，若为空，则不缩放模型。

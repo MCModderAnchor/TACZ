@@ -7,6 +7,21 @@
     "texture": "tacz:shell/12g_shell"
   },
   "tracer_color": "#FF3030",
+  "hit_block_particle_count": 1,
+  "hit_surface_particles": [
+    {
+      "name": "minecraft:cloud",
+      "count": 1,
+      "life_time": 8,
+      "color": "#8A8175",
+      "scale": 0.6,
+      "surface_offset": 0.045,
+      "random_offset": 0.018,
+      "normal_speed": 0.1,
+      "random_speed": 0.02,
+      "spread_angle": 15
+    }
+  ],
   "transform": {
     "scale": {
       "thirdperson": [

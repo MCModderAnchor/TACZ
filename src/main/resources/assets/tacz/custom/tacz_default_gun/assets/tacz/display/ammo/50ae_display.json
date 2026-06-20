@@ -7,6 +7,21 @@
     "texture": "tacz:shell/50ae_shell"
   },
   "tracer_color": "#FF9999",
+  "hit_surface_particles": [
+    {
+      "name": "minecraft:cloud",
+      "count": 5,
+      "count_range": [1, 3],
+      "life_time": 8,
+      "color": "#8A8175",
+      "scale": 0.6,
+      "surface_offset": 0.045,
+      "random_offset": 0.018,
+      "normal_speed": 0.1,
+      "random_speed": 0.02,
+      "spread_angle": 15
+    }
+  ],
   "transform": {
     "scale": {
       // 第三人称手部

@@ -4,6 +4,50 @@
     "model": "tacz:shell/500mag_shell",
     "texture": "tacz:shell/500mag_shell"
   },
-  "tracer_color": "#FF9999"
+  "particle": {
+    // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
+    "name": "mycelium",
+    // 生成的区域，默认为 0 0 0
+    "delta": [
+      0,
+      0,
+      0
+    ],
+    // 速度，默认为0，必须至少为 0
+    "speed": 0.0,
+    // 粒子存在时间，单位 tick，默认为 20 tick
+    "life_time": 50,
+    // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
+    "count": 25
+  },
+  "tracer_color": "#FF9999",
+  "hit_block_particle_count": 5,
+  "hit_surface_particles": [
+    {
+      "name": "minecraft:cloud",
+      "count": 3,
+      "count_range": [3, 5],
+      "life_time": 13,
+      "color": "#8A8175",
+      "scale": 1,
+      "surface_offset": 0.055,
+      "random_offset": 0.025,
+      "normal_speed": 0.16,
+      "random_speed": 0.03,
+      "spread_angle": 18
+    },
+    {
+      "name": "minecraft:campfire_cosy_smoke",
+      "count": 3,
+      "count_range": [2, 4],
+      "life_time": 50,
+      "scale": 1,
+      "surface_offset": 0.06,
+      "random_offset": 0.035,
+      "normal_speed": 0.03,
+      "random_speed": 0.02,
+      "spread_angle": 45
+    }
+  ]
 }
     

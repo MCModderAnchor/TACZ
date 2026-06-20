@@ -4,6 +4,34 @@
     "model": "tacz:shell/50ae_shell",
     "texture": "tacz:shell/50ae_shell"
   },
-  "tracer_color": "#FF9999"
+  "tracer_color": "#FF9999",
+  "hit_block_particle_count": 5,
+  "hit_surface_particles": [
+    {
+      "name": "minecraft:cloud",
+      "count": 7,
+      "count_range": [5, 9],
+      "life_time": 13,
+      "color": "#8A8175",
+      "scale": 1.15,
+      "surface_offset": 0.055,
+      "random_offset": 0.025,
+      "normal_speed": 0.16,
+      "random_speed": 0.03,
+      "spread_angle": 18
+    },
+    {
+      "name": "minecraft:campfire_cosy_smoke",
+      "count": 6,
+      "count_range": [5, 7],
+      "life_time": 50,
+      "scale": 1.1,
+      "surface_offset": 0.06,
+      "random_offset": 0.035,
+      "normal_speed": 0.04,
+      "random_speed": 0.02,
+      "spread_angle": 45
+    }
+  ]
 }
     

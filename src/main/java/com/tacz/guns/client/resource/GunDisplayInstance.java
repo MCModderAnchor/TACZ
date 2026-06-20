@@ -19,6 +19,7 @@ import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoParticle;
+import com.tacz.guns.client.resource.pojo.display.ammo.HitSurfaceParticle;
 import com.tacz.guns.client.resource.pojo.display.gun.*;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
@@ -95,6 +96,8 @@ public class GunDisplayInstance {
     private float zoomModelFov;
     private boolean showCrosshair = false;
     private @Nullable AmmoParticle particle;
+    private @Nullable List<HitSurfaceParticle> hitSurfaceParticles;
+    private @Nullable Boolean bulletHoleEnabled;
     private float @Nullable [] tracerColor = null;
     private EnumMap<FireMode, ControllableData> controllableData = new EnumMap<>(FireMode.class);
     private AmmoCountStyle ammoCountStyle = AmmoCountStyle.NORMAL;
@@ -621,6 +624,8 @@ public class GunDisplayInstance {
                 e.fillInStackTrace();
             }
         }
+        hitSurfaceParticles = displayGunAmmo.getHitSurfaceParticles();
+        bulletHoleEnabled = displayGunAmmo.getBulletHoleEnabled();
     }
 
     private void checkMuzzleFlash(GunDisplay display) {
@@ -717,6 +722,16 @@ public class GunDisplayInstance {
     @Nullable
     public AmmoParticle getParticle() {
         return particle;
+    }
+
+    @Nullable
+    public List<HitSurfaceParticle> getHitSurfaceParticles() {
+        return hitSurfaceParticles;
+    }
+
+    @Nullable
+    public Boolean getBulletHoleEnabled() {
+        return bulletHoleEnabled;
     }
 
     @Nullable

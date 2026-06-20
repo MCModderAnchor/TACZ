@@ -72,7 +72,31 @@
   "ammo": {
     // 曳光弹颜色，没有则为 #FFFFFF，没有此字段时，会调用 ammo 的相关字段
     // 严格遵循 RGB 颜色代码
-    "tracer_color": "#FF8888"
+    "tracer_color": "#FF8888",
+    // 是否覆盖 ammo display 的弹孔贴花开关。没有该字段时，会调用 ammo 的 enable_bullet_hole。
+    "enable_bullet_hole": true
+    // 命中方块表面时额外播放的粒子效果。取消注释后可用 AK47 测试火焰和烟雾命中特效。
+    //    ,"hit_surface_particles": [
+    //      {
+    //        "name": "minecraft:flame",
+    //        "count": 10,
+    //        "life_time": 12,
+    //        "surface_offset": 0.04,
+    //        "random_offset": 0.015,
+    //        "normal_speed": 0.07,
+    //        "random_speed": 0.025,
+    //        "spread_angle": 30
+    //      },
+    //      {
+    //        "name": "minecraft:smoke",
+    //        "count": 4,
+    //        "life_time": 24,
+    //        "surface_offset": 0.04,
+    //        "normal_speed": 0.025,
+    //        "random_speed": 0.02,
+    //        "spread_angle": 45
+    //      }
+    //    ]
     // 粒子效果，部分参数和原版指令完全一致，具体可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E5%91%BD%E4%BB%A4/particle
     // 没有此字段时，会调用 ammo 的相关字段
     //    "particle": {

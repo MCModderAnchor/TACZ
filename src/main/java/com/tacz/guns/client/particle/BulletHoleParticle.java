@@ -39,8 +39,9 @@ public class BulletHoleParticle extends TextureSheetParticle {
     private int uOffset;
     private int vOffset;
     private float textureDensity;
+    private boolean validAttachment = true;
 
-    public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos, String ammoId, String gunId, String gunDisplayId) {
+    public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos, String ammoId, String gunId, String gunDisplayId, boolean incendiary) {
         super(world, x, y, z);
         this.setSprite(this.getSprite(pos));
         this.direction = direction;
@@ -51,8 +52,10 @@ public class BulletHoleParticle extends TextureSheetParticle {
         this.quadSize = 0.05F;
 
         BlockState state = world.getBlockState(pos);
-        if (state.is(ModBlocks.TARGET.get()) || shouldRemove()) {
-            this.remove();
+        if (state.is(ModBlocks.TARGET.get()) || shouldRemove() || !isBulletHoleEnabled(ammoId, gunId, gunDisplayId)) {
+            this.validAttachment = false;
+            this.lifetime = 1;
+            this.alpha = 0.0F;
         }
         TimelessAPI.getGunDisplay(new ResourceLocation(gunDisplayId), new ResourceLocation(gunId)).ifPresent(gunIndex -> {
             float[] gunTracerColor = gunIndex.getTracerColor();
@@ -70,6 +73,20 @@ public class BulletHoleParticle extends TextureSheetParticle {
             }
         });
         this.alpha = 0.9F;
+    }
+
+    public static boolean isBulletHoleEnabled(String ammoId, String gunId, String gunDisplayId) {
+        try {
+            var gunDisplay = TimelessAPI.getGunDisplay(new ResourceLocation(gunDisplayId), new ResourceLocation(gunId));
+            if (gunDisplay.isPresent() && gunDisplay.get().getBulletHoleEnabled() != null) {
+                return gunDisplay.get().getBulletHoleEnabled();
+            }
+            return TimelessAPI.getClientAmmoIndex(new ResourceLocation(ammoId))
+                    .map(ammoIndex -> ammoIndex.isBulletHoleEnabled())
+                    .orElse(true);
+        } catch (Exception ignored) {
+            return true;
+        }
     }
 
     private int getLifetimeFromConfig(ClientLevel world) {
@@ -122,6 +139,10 @@ public class BulletHoleParticle extends TextureSheetParticle {
     @Override
     public void tick() {
         super.tick();
+        if (!this.validAttachment) {
+            this.remove();
+            return;
+        }
         if (shouldRemove()) {
             this.remove();
         }
@@ -129,6 +150,9 @@ public class BulletHoleParticle extends TextureSheetParticle {
 
     @Override
     public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+        if (!this.validAttachment) {
+            return;
+        }
         Vec3 view = renderInfo.getPosition();
         float particleX = (float) (Mth.lerp(partialTicks, this.xo, this.x) - view.x());
         float particleY = (float) (Mth.lerp(partialTicks, this.yo, this.y) - view.y());
@@ -208,8 +232,9 @@ public class BulletHoleParticle extends TextureSheetParticle {
 
         @Override
         public BulletHoleParticle createParticle(@NotNull BulletHoleOption option, @NotNull ClientLevel world, double x, double y, double z, double pXSpeed, double pYSpeed, double pZSpeed) {
-            BulletHoleParticle particle = new BulletHoleParticle(world, x, y, z, option.getDirection(), option.getPos(), option.getAmmoId(), option.getGunId(), option.getGunDisplayId());
+            BulletHoleParticle particle = new BulletHoleParticle(world, x, y, z, option.getDirection(), option.getPos(), option.getAmmoId(), option.getGunId(), option.getGunDisplayId(), option.isIncendiary());
             return particle;
         }
     }
+
 }

@@ -18,9 +18,9 @@ import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.init.ModDamageTypes;
 import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.ServerMessageBulletHitBlock;
 import com.tacz.guns.network.message.event.ServerMessageGunHurt;
 import com.tacz.guns.network.message.event.ServerMessageGunKill;
-import com.tacz.guns.particles.BulletHoleOption;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.DamageModifier;
 import com.tacz.guns.resource.modifier.custom.ExplosionModifier;
@@ -43,6 +43,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -68,6 +69,7 @@ import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -496,8 +498,8 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         // 弹孔与点燃特效
         if (this.level() instanceof ServerLevel serverLevel) {
-            BulletHoleOption bulletHoleOption = new BulletHoleOption(result.getDirection(), result.getBlockPos(), this.ammoId.toString(), this.gunId.toString(), this.gunDisplayId.toString());
-            serverLevel.sendParticles(bulletHoleOption, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);
+            ServerMessageBulletHitBlock message = new ServerMessageBulletHitBlock(hitVec, result.getDirection(), result.getBlockPos(), this.ammoId.toString(), this.gunId.toString(), this.gunDisplayId.toString(), this.igniteEntity);
+            sendBulletHitBlockEffect(serverLevel, message, hitVec, this.getOwner());
             if (this.igniteBlock) {
                 serverLevel.sendParticles(ParticleTypes.LAVA, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);
             }
@@ -511,6 +513,17 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
             }
         }
         this.discard();
+    }
+
+    private static void sendBulletHitBlockEffect(ServerLevel serverLevel, ServerMessageBulletHitBlock message, Vec3 hitVec, @Nullable Entity owner) {
+        int maxDistance = SyncConfig.BULLET_HIT_BLOCK_EFFECT_SEND_DISTANCE.get();
+        double maxDistanceSqr = (double) maxDistance * (double) maxDistance;
+        for (ServerPlayer player : serverLevel.players()) {
+            if (maxDistance > 0 && player != owner && player.distanceToSqr(hitVec) > maxDistanceSqr) {
+                continue;
+            }
+            NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), message);
+        }
     }
 
     // 根据距离进行伤害衰减设计

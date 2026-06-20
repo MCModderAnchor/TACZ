@@ -11,6 +11,7 @@ import java.nio.file.Path;
 
 public class PreLoadConfig {
     private static ForgeConfigSpec spec;
+    private static PreLoadModConfig loadedConfig;
     public static ForgeConfigSpec.BooleanValue override;
 
     static {
@@ -38,6 +39,13 @@ public class PreLoadConfig {
         final CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
         config.setConfigData(configData);
         config.fireEvent(IConfigEvent.loading(config));
+        loadedConfig = config;
         config.save();
+    }
+
+    public static void save() {
+        if (loadedConfig != null) {
+            loadedConfig.save();
+        }
     }
 }

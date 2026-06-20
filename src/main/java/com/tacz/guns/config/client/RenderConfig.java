@@ -8,6 +8,9 @@ public class RenderConfig {
     public static ForgeConfigSpec.IntValue GUN_LOD_RENDER_DISTANCE;
     public static ForgeConfigSpec.IntValue BULLET_HOLE_PARTICLE_LIFE;
     public static ForgeConfigSpec.DoubleValue BULLET_HOLE_PARTICLE_FADE_THRESHOLD;
+    public static ForgeConfigSpec.BooleanValue HIT_PARTICLE_ENABLE;
+    public static ForgeConfigSpec.BooleanValue HIT_EXTRA_PARTICLE_ENABLE;
+    public static ForgeConfigSpec.IntValue HIT_PARTICLE_MAX_DISTANCE;
     public static ForgeConfigSpec.EnumValue<CrosshairType> CROSSHAIR_TYPE;
     public static ForgeConfigSpec.DoubleValue HIT_MARKET_START_POSITION;
     public static ForgeConfigSpec.BooleanValue HEAD_SHOT_DEBUG_HITBOX;
@@ -37,6 +40,15 @@ public class RenderConfig {
 
         builder.comment("The threshold for fading out when rendering bullet hole particles");
         BULLET_HOLE_PARTICLE_FADE_THRESHOLD = builder.defineInRange("BulletHoleParticleFadeThreshold", 0.98, 0, 1);
+
+        builder.comment("Whether or not to spawn extra hit particles when bullets leave bullet holes");
+        HIT_PARTICLE_ENABLE = builder.define("HitParticleEnable", true);
+
+        builder.comment("Whether or not to spawn display-configured extra hit particles. Disabling this keeps the basic block hit particles.");
+        HIT_EXTRA_PARTICLE_ENABLE = builder.define("HitExtraParticleEnable", true);
+
+        builder.comment("The farthest distance to spawn extra hit particles, 0 means always spawn");
+        HIT_PARTICLE_MAX_DISTANCE = builder.defineInRange("HitParticleMaxDistance", 64, 0, Integer.MAX_VALUE);
 
         builder.comment("The crosshair when holding a gun");
         CROSSHAIR_TYPE = builder.defineEnum("CrosshairType", CrosshairType.DOT_1);

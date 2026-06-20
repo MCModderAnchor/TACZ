@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.tacz.guns.compat.ar.ARCompat;
-import com.tacz.guns.compat.optifine.OptifineCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -20,6 +19,8 @@ import org.lwjgl.opengl.GL30;
 
 @OnlyIn(Dist.CLIENT)
 public final class RenderHelper {
+    private static final boolean IS_OPTIFINE_INSTALLED = isClassFound("net.optifine.Config");
+
     public static void blit(PoseStack poseStack, float x, float y, float uOffset, float vOffset, float pWidth, float height, float textureWidth, float textureHeight) {
         blit(poseStack, x, y, pWidth, height, uOffset, vOffset, pWidth, height, textureWidth, textureHeight);
     }
@@ -45,7 +46,7 @@ public final class RenderHelper {
 
     public static void enableItemEntityStencilTest() {
         RenderSystem.assertOnRenderThread();
-        if (OptifineCompat.isOptifineInstalled()) {
+        if (IS_OPTIFINE_INSTALLED) {
             // 以下代码用于应对 使用 optifine 的场景
             int depthTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME);
             int stencilTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
@@ -68,6 +69,15 @@ public final class RenderHelper {
     public static void disableItemEntityStencilTest() {
         RenderSystem.assertOnRenderThread();
         GL11.glDisable(GL11.GL_STENCIL_TEST);
+    }
+
+    private static boolean isClassFound(String className) {
+        try {
+            Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight) {

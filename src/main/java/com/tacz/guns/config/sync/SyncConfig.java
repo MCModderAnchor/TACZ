@@ -14,6 +14,7 @@ public class SyncConfig {
     public static ForgeConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_WHITELIST_ITEMS;
     public static ForgeConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_BLACKLIST_ITEMS;
     public static ForgeConfigSpec.BooleanValue ENABLE_TABLE_FILTER;
+    public static ForgeConfigSpec.IntValue BULLET_HIT_BLOCK_EFFECT_SEND_DISTANCE;
     public static ForgeConfigSpec.BooleanValue SERVER_SHOOT_NETWORK_V;
     public static ForgeConfigSpec.BooleanValue SERVER_SHOOT_COOLDOWN_V;
 
@@ -105,6 +106,9 @@ public class SyncConfig {
 
         builder.comment("Enable the recipe limit of default gunsmith table or not");
         ENABLE_TABLE_FILTER = builder.define("EnableDefaultGunSmithTableFilter", true);
+
+        builder.comment("The farthest distance for the server to send bullet hit block effect packets, 0 means no limit");
+        BULLET_HIT_BLOCK_EFFECT_SEND_DISTANCE = builder.defineInRange("BulletHitBlockEffectSendDistance", 128, 0, Integer.MAX_VALUE);
 
         builder.comment("[Debug Option] Do server-side network check while shooting or not");
         SERVER_SHOOT_NETWORK_V = builder.define("ServerShootNetworkCheck", true);
