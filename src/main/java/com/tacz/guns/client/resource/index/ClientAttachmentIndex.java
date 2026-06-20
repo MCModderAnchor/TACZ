@@ -47,6 +47,8 @@ public class ClientAttachmentIndex {
     private boolean isSight;
     private boolean showMuzzle;
     private boolean showMount;
+    private boolean hasRangefinder;
+    private boolean hasImpactPrediction;
     private @Nullable String adapterNodeName;
     private @Nullable String tooltipKey;
     private Map<String, ResourceLocation> sounds;
@@ -118,6 +120,9 @@ public class ClientAttachmentIndex {
         index.adapterNodeName = display.getAdapterNodeName();
         index.showMuzzle = display.isShowMuzzle();
         index.showMount = display.isShowMount();
+        index.hasRangefinder = display.getTextShows().values().stream().anyMatch(textShow -> textShow.getRangefinder() != null);
+        index.hasImpactPrediction = display.getTextShows().values().stream()
+                .anyMatch(textShow -> textShow.getRangefinder() != null && textShow.getRangefinder().isShowImpactPrediction());
         index.laserConfig = display.getLaserConfig();
         return display;
     }
@@ -375,6 +380,14 @@ public class ClientAttachmentIndex {
 
     public boolean isShowMount() {
         return showMount;
+    }
+
+    public boolean hasRangefinder() {
+        return hasRangefinder;
+    }
+
+    public boolean hasImpactPrediction() {
+        return hasImpactPrediction;
     }
 
     public Map<String, ResourceLocation> getSounds() {

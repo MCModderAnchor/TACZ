@@ -6,6 +6,7 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tacz.guns.client.model.functional.BeamRenderer;
+import com.tacz.guns.client.model.functional.RangefinderImpactPredictionRender;
 import com.tacz.guns.client.model.functional.TextShowRender;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
@@ -41,6 +42,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     private static final String OCULAR_NODE = "ocular";
     private static final String OCULAR_SIGHT_NODE = "ocular_sight";
     private static final String OCULAR_SCOPE_NODE = "ocular_scope";
+    private static final String RANGEFINDER_IMPACT_PREDICTION_NODE = "rangefinder_impact_prediction_pos";
     private static final Pattern LASER_BEAM_PATTERN = Pattern.compile("^laser_beam(_(\\d+))?$");
 
     protected List<List<BedrockPart>> scopeViewPaths;
@@ -148,6 +150,11 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     public void setTextShowList(Map<String, TextShow> textShowList) {
         textShowList.forEach((name, textShow) -> this.setFunctionalRenderer(name,
                 bedrockPart -> new TextShowRender(this, textShow, currentGunItem)));
+        boolean hasRangefinder = textShowList.values().stream().anyMatch(textShow -> textShow.getRangefinder() != null);
+        if (hasRangefinder && modelMap.containsKey(RANGEFINDER_IMPACT_PREDICTION_NODE)) {
+            this.setFunctionalRenderer(RANGEFINDER_IMPACT_PREDICTION_NODE,
+                    bedrockPart -> new RangefinderImpactPredictionRender(this));
+        }
     }
 
     public void render(@Nullable ItemStack attachmentItem, ItemStack currentGunItem, PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {

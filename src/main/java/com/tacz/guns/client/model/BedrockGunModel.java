@@ -35,6 +35,8 @@ import java.util.function.Predicate;
 import static com.tacz.guns.client.model.GunModelConstant.*;
 
 public class BedrockGunModel extends BedrockAnimatedModel {
+    private static final String RANGEFINDER_IMPACT_PREDICTION_NODE = "rangefinder_impact_prediction_pos";
+
     protected final EnumMap<AttachmentType, List<BedrockPart>> refitAttachmentViewPath = Maps.newEnumMap(AttachmentType.class);
     private final EnumMap<AttachmentType, ItemStack> currentAttachmentItem = Maps.newEnumMap(AttachmentType.class);
     private final Set<String> adapterToRender = Sets.newHashSet();
@@ -241,6 +243,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
      */
     public void setTextShowList(Map<String, TextShow> textShowList) {
         textShowList.forEach((name, textShow) -> this.setFunctionalRenderer(name, bedrockPart -> new TextShowRender(this, textShow, currentGunItem)));
+        boolean hasRangefinder = textShowList.values().stream().anyMatch(textShow -> textShow.getRangefinder() != null);
+        if (hasRangefinder && modelMap.containsKey(RANGEFINDER_IMPACT_PREDICTION_NODE)) {
+            this.setFunctionalRenderer(RANGEFINDER_IMPACT_PREDICTION_NODE,
+                    bedrockPart -> new RangefinderImpactPredictionRender(this));
+        }
     }
 
     public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {

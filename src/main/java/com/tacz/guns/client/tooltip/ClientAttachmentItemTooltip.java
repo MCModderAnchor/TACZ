@@ -187,6 +187,13 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                 }
             }
 
+            if (index.hasRangefinder()) {
+                components.add(Component.translatable("tooltip.tacz.attachment.rangefinder").withStyle(ChatFormatting.AQUA));
+            }
+            if (index.hasImpactPrediction()) {
+                components.add(Component.translatable("tooltip.tacz.attachment.fire_control").withStyle(ChatFormatting.GOLD));
+            }
+
             if (type == AttachmentType.EXTENDED_MAG) {
                 int magLevel = data.getExtendedMagLevel();
                 if (magLevel == 1) {

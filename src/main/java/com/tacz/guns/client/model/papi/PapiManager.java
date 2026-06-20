@@ -17,6 +17,7 @@ public final class PapiManager {
     static {
         addPapi(PlayerNamePapi.NAME, new PlayerNamePapi());
         addPapi(AmmoCountPapi.NAME, new AmmoCountPapi());
+        addPapi(RangefinderPapi.NAME, new RangefinderPapi());
     }
 
     public static void addPapi(String textKey, Function<ItemStack, String> function) {
@@ -28,6 +29,9 @@ public final class PapiManager {
         String text = I18n.language.getOrDefault(textKey);
         for (var entry : PAPI.entrySet()) {
             String placeholder = entry.getKey();
+            if (!text.contains(placeholder)) {
+                continue;
+            }
             String data = entry.getValue().apply(stack);
             text = text.replace(placeholder, data);
         }

@@ -21,6 +21,11 @@
 					"pivot": [-0.75, 1.625, 2]
 				},
 				{
+					"name": "rangefinder_text_show_pos",
+					"parent": "scope_body",
+					"pivot": [-0.75, 2, 2]
+				},
+				{
 					"name": "custom_text_ammo",
 					"parent": "scope_body",
 					"pivot": [-0.625, 1.625, 2]
@@ -4475,6 +4480,11 @@
 				{
 					"name": "divisions",
 					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "rangefinder_impact_prediction_pos",
+					"parent": "divisions",
+					"pivot": [0, 2.0625, -183.75]
 				},
 				{
 					"name": "division_2",
