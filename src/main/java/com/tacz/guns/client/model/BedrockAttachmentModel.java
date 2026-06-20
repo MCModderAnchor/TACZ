@@ -158,6 +158,10 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     public void render(@Nullable ItemStack attachmentItem, ItemStack currentGunItem, PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+        render(attachmentItem, currentGunItem, matrixStack, transformType, renderType, light, overlay, 1.0F);
+    }
+
+    public void render(@Nullable ItemStack attachmentItem, ItemStack currentGunItem, PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float alpha) {
         this.currentGunItem = currentGunItem;
         this.attachmentItem = attachmentItem;
         if (transformType.firstPerson()) {
@@ -170,10 +174,10 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             }
         } else {
             if (scopeBodyPath != null) {
-                renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+                renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath, alpha);
             }
             if (ocularRingPath != null) {
-                renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
+                renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath, alpha);
             }
         }
         if (!isScope && !isSight && laserBeamPaths != null) {
@@ -181,7 +185,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
                 BeamRenderer.renderLaserBeam(attachmentItem, matrixStack, transformType, entry);
             }
         }
-        super.render(matrixStack, transformType, renderType, light, overlay);
+        super.render(matrixStack, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, alpha);
         if ((isScope || isSight) && laserBeamPaths != null) {
             for (var entry : laserBeamPaths) {
                 BeamRenderer.renderLaserBeam(attachmentItem, matrixStack, transformType, entry);
@@ -201,6 +205,11 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     private void renderTempPart(PoseStack poseStack, ItemDisplayContext transformType, RenderType renderType,
                                 int light, int overlay, @Nonnull List<BedrockPart> path) {
+        renderTempPart(poseStack, transformType, renderType, light, overlay, path, 1.0F);
+    }
+
+    private void renderTempPart(PoseStack poseStack, ItemDisplayContext transformType, RenderType renderType,
+                                int light, int overlay, @Nonnull List<BedrockPart> path, float alpha) {
         poseStack.pushPose();
         for (int i = 0; i < path.size() - 1; ++i) {
             path.get(i).translateAndRotateAndScale(poseStack);
@@ -209,7 +218,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         part.visible = true;
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
-        part.render(poseStack, transformType, vertexConsumer, light, overlay);
+        part.render(poseStack, transformType, vertexConsumer, light, overlay, 1.0F, 1.0F, 1.0F, alpha);
         if (!OculusCompat.endBatch(bufferSource)) {
             bufferSource.endBatch(renderType);
         }

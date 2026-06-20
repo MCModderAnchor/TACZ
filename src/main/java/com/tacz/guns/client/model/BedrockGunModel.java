@@ -251,6 +251,10 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     }
 
     public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+        render(matrixStack, gunItem, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha) {
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {
             return;
@@ -290,7 +294,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             BeamRenderer.renderLaserBeam(gunItem, matrixStack, transformType, laserBeamPaths);
         }
 
-		if (ARCompat.shouldAccelerate()) {
+		if (alpha >= 1.0F && ARCompat.shouldAccelerate()) {
 			renderAccelerated(matrixStack, gunItem, transformType, renderType, light, overlay);
 			return;
 		}
@@ -320,7 +324,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             }
         }
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-        super.render(matrixStack, transformType, renderType, light, overlay);
+        super.render(matrixStack, transformType, renderType, light, overlay, red, green, blue, alpha);
         RenderHelper.disableItemEntityStencilTest();
         RenderSystem.clearStencil(0);
         RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);

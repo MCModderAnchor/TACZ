@@ -41,7 +41,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                     poseStack.translate(0.5, 1.5, 0.5);
                     poseStack.mulPose(Axis.ZN.rotationDegrees(180));
                     VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
-                    SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
                     return;
                 }
                 poseStack.translate(0.5, 2, 0.5);
@@ -56,7 +56,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.translate(0.5, 1.5, 0.5);
                 poseStack.mulPose(Axis.ZN.rotationDegrees(180));
                 VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
-                SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
             });
             poseStack.popPose();
         }
@@ -74,8 +74,9 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                 model = lodModel.getLeft();
                 texture = lodModel.getRight();
             }
-            RenderType renderType = RenderType.entityCutout(texture);
-            model.render(null, null, poseStack, transformType, renderType, pPackedLight, pPackedOverlay);
+            float alpha = ItemPreviewRenderContext.alpha();
+            RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
+            model.render(null, null, poseStack, transformType, renderType, pPackedLight, pPackedOverlay, alpha);
         }
         // 否则，以 GUI 形式渲染
         else {
@@ -85,7 +86,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.mulPose(Axis.YP.rotationDegrees(90));
             }
             VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
-            SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+            SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
         }
     }
 }
