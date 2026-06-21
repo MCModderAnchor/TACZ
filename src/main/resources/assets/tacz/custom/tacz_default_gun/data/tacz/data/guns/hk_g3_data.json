@@ -142,11 +142,11 @@
   "builtin_attachments": {
     "stock": {
       "attachments": [
-        "tacz:oem_stock_removed",
         "tacz:oem_stock_tactical",
+        "tacz:oem_stock_light",
         "tacz:oem_stock_heavy"
       ],
-      "default_attached": "tacz:oem_stock_removed"
+      "default_attached": "tacz:oem_stock_tactical"
     }
   },
   "exclusive_attachments": {

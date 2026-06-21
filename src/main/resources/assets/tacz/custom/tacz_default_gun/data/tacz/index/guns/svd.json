@@ -3,6 +3,6 @@
   "display": "tacz:svd_display",
   "data": "tacz:svd_data",
   "tooltip": "tacz.gun.svd.desc",
-  "type": "rifle",
-  "sort": 20
+  "type": "sniper",
+  "sort": 7
 }

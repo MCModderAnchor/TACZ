@@ -31,22 +31,22 @@
   ],
   "script": "tacz:xmag_reload_logic",
   "script_param": {
-    "reload_feed": 1.4,
+    "reload_feed": 1.27,
     "reload_cooldown": 2.0,
-    "reload_xmag_1_feed": 1.4,
+    "reload_xmag_1_feed": 1.27,
     "reload_xmag_1_cooldown": 2.0,
-    "reload_xmag_2_feed": 1.4,
+    "reload_xmag_2_feed": 1.27,
     "reload_xmag_2_cooldown": 2.0,
-    "reload_xmag_3_feed": 1.7,
-    "reload_xmag_3_cooldown": 2.3,
-    "empty_feed": 1.6,
+    "reload_xmag_3_feed": 1.63,
+    "reload_xmag_3_cooldown": 2.5,
+    "empty_feed": 2.07,
     "empty_cooldown": 2.6,
-    "empty_xmag_1_feed": 1.6,
+    "empty_xmag_1_feed": 2.07,
     "empty_xmag_1_cooldown": 2.6,
-    "empty_xmag_2_feed": 1.6,
+    "empty_xmag_2_feed": 2.07,
     "empty_xmag_2_cooldown": 2.6,
-    "empty_xmag_3_feed": 2.2,
-    "empty_xmag_3_cooldown": 3.5
+    "empty_xmag_3_feed": 2.8,
+    "empty_xmag_3_cooldown": 3.6
   },
   "bolt": "closed_bolt",
   "reload": {
@@ -84,6 +84,7 @@
   "allow_attachment_types": [
     "scope",
     "muzzle",
+    "stock",
     "extended_mag",
     "laser"
   ],
@@ -119,6 +120,14 @@
       "damage": 1,
       "knockback": 0.4,
       "prep": 0.1
+    }
+  },
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_unfolded"
+      ],
+      "default_attached": "tacz:oem_stock_unfolded"
     }
   }
 }
