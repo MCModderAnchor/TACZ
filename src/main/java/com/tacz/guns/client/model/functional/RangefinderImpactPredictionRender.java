@@ -1,14 +1,18 @@
 package com.tacz.guns.client.model.functional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.resource.pojo.display.gun.RangefinderManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -21,6 +25,7 @@ public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
     private static final float FALLBACK_MODEL_PROJECTION_HALF_HEIGHT = 80.0f;
     private static final float HALF_SIZE = 3.0f;
     private static final float LINE_WIDTH = 1.0f;
+    private static final int FULL_BRIGHT = LightTexture.pack(15, 15);
 
     private final BedrockModel bedrockModel;
 
@@ -45,7 +50,7 @@ public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
             poseStack2.scale(MODEL_TEXT_SCALE, -MODEL_TEXT_SCALE, -MODEL_TEXT_SCALE);
 
             MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-            RenderType renderType = RenderType.lightning();
+            RenderType renderType = ImpactPredictionRenderState.getBox();
             VertexConsumer consumer = bufferSource.getBuffer(renderType);
             float yOffset = getCalibratedYOffset(poseStack2.last().pose());
             renderBox(consumer, poseStack2.last().pose(), yOffset, RangefinderManager.getImpactPredictionColor(), RangefinderManager.getImpactPredictionScale());
@@ -98,9 +103,37 @@ public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
 
     private static void quad(VertexConsumer consumer, Matrix4f pose, float minX, float minY, float maxX, float maxY,
                              int r, int g, int b, int a) {
-        consumer.vertex(pose, minX, minY, 0.0f).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, minX, maxY, 0.0f).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, maxX, maxY, 0.0f).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, maxX, minY, 0.0f).color(r, g, b, a).endVertex();
+        consumer.vertex(pose, minX, minY, 0.0f).color(r, g, b, a).uv(0.0f, 0.0f).uv2(FULL_BRIGHT).endVertex();
+        consumer.vertex(pose, minX, maxY, 0.0f).color(r, g, b, a).uv(0.0f, 1.0f).uv2(FULL_BRIGHT).endVertex();
+        consumer.vertex(pose, maxX, maxY, 0.0f).color(r, g, b, a).uv(1.0f, 1.0f).uv2(FULL_BRIGHT).endVertex();
+        consumer.vertex(pose, maxX, minY, 0.0f).color(r, g, b, a).uv(1.0f, 0.0f).uv2(FULL_BRIGHT).endVertex();
+    }
+
+    private static class ImpactPredictionRenderState extends RenderStateShard {
+        private static final RenderType BOX = RenderType.create(
+                "tacz_rangefinder_impact_prediction",
+                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
+                VertexFormat.Mode.QUADS,
+                256,
+                true,
+                true,
+                RenderType.CompositeState.builder()
+                        .setShaderState(POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+                        .setLayeringState(VIEW_OFFSET_Z_LAYERING)
+                        .setTransparencyState(BeamRenderer.LaserBeamRenderState.LIGHTNING_ADDITIVE_TRANSPARENCY)
+                        .setOutputState(ITEM_ENTITY_TARGET)
+                        .setLightmapState(LIGHTMAP)
+                        .setWriteMaskState(COLOR_DEPTH_WRITE)
+                        .setCullState(NO_CULL)
+                        .setTextureState(new TextureStateShard(BeamRenderer.LASER_BEAM_TEXTURE, false, false))
+                        .createCompositeState(false));
+
+        private ImpactPredictionRenderState(String name, Runnable setupState, Runnable clearState) {
+            super(name, setupState, clearState);
+        }
+
+        private static RenderType getBox() {
+            return BOX;
+        }
     }
 }
