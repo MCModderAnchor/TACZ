@@ -23,6 +23,7 @@ import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.SecondOrderDynamics;
 import net.minecraft.client.Minecraft;
@@ -108,12 +109,14 @@ public class CameraSetupEvent {
             if (livingEntity instanceof LocalPlayer localPlayer) {
                 IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
                 float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
-                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
+                float fovProgress = (float) Easing.easeInExpo(aimingProgress);
+                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * fovProgress, event.getFOV()));
                 event.setFOV(fov);
             } else {
                 IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
                 float aimingProgress = gunOperator.getSynAimingProgress();
-                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
+                float fovProgress = (float) Easing.easeInExpo(aimingProgress);
+                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * fovProgress, event.getFOV()));
                 event.setFOV(fov);
             }
         }
@@ -156,12 +159,14 @@ public class CameraSetupEvent {
             if (livingEntity instanceof LocalPlayer localPlayer) {
                 IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
                 float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
-                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, modelFov, modifiedFov));
+                float fovProgress = (float) Easing.easeInExpo(aimingProgress);
+                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(fovProgress, modelFov, modifiedFov));
                 event.setFOV(fov);
             } else {
                 IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
                 float aimingProgress = gunOperator.getSynAimingProgress();
-                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, modelFov, modifiedFov));
+                float fovProgress = (float) Easing.easeInExpo(aimingProgress);
+                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(fovProgress, modelFov, modifiedFov));
                 event.setFOV(fov);
             }
         }

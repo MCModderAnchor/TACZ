@@ -12,6 +12,7 @@ import com.tacz.guns.resource.pojo.data.gun.BulletData;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.HitboxHelper;
 import com.tacz.guns.util.block.BlockRayTrace;
+import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -220,8 +221,9 @@ public final class RangefinderManager {
     private static float getCurrentFov(LocalPlayer player, ItemStack stack, IGun iGun) {
         float configuredFov = Minecraft.getInstance().options.fov().get().floatValue();
         float aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getFrameTime());
+        float fovProgress = (float) Easing.easeInExpo(aimingProgress);
         float zoom = iGun.getAimingZoom(stack);
-        return (float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, configuredFov);
+        return (float) MathUtil.magnificationToFov(1 + (zoom - 1) * fovProgress, configuredFov);
     }
 
     private static double calculateDrop(double distance, double lookY, float speedPerTick, float gravity, float friction) {
