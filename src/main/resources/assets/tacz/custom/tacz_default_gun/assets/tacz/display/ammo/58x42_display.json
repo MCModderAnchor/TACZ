@@ -21,6 +21,25 @@
       "random_speed": 0.02,
       "spread_angle": 15
     }
-  ]
+  ],
+  "transform": {
+    "scale": {
+      "thirdperson": [
+        0.4,
+        0.4,
+        0.4
+      ],
+      "ground": [
+        0.4,
+        0.4,
+        0.4
+      ],
+      "fixed": [
+        0.75,
+        0.75,
+        0.75
+      ]
+    }
+  }
 }
     
