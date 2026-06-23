@@ -1,0 +1,8 @@
+{
+  "name": "tacz.attachment.oem_side_cover.name",
+  "display": "tacz:oem_side_cover_display",
+  "data": "tacz:oem_side_cover_data",
+  "type": "laser",
+  "sort": 1,
+  "hidden": false
+}

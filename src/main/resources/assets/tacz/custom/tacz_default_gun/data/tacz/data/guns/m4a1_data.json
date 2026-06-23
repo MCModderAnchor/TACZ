@@ -172,6 +172,30 @@
     "muzzle",
     "extended_mag"
   ],
+  "builtin_attachments": {
+    "scope": {
+      "attachments": [
+        "tacz:oem_sight_1",
+        "tacz:oem_sight_2"
+      ]
+    },
+    "laser": {
+      "attachments": [
+        "tacz:oem_side_cover"
+      ]
+    },
+    "grip": {
+      "attachments": [
+        "tacz:oem_grip_cover"
+      ]
+    },
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_tactical"
+      ],
+      "default_attached": "tacz:oem_stock_tactical"
+    }
+  },
   "exclusive_attachments": {
   }
 }

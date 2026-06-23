@@ -1,0 +1,8 @@
+{
+  "name": "tacz.attachment.oem_grip_cover.name",
+  "display": "tacz:oem_grip_cover_display",
+  "data": "tacz:oem_grip_cover_data",
+  "type": "grip",
+  "sort": 1,
+  "hidden": false
+}
