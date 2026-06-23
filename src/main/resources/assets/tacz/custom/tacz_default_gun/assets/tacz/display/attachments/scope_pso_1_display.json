@@ -11,6 +11,7 @@
   "views_fov": [
     20.0
   ],
+  "idle_scope_height_adjust": 0.25,
   "show_mount": false,
   "scope": true,
   "sounds": {
