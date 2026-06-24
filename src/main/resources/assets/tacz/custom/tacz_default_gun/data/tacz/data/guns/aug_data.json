@@ -7,7 +7,7 @@
     50
   ],
   "bolt": "closed_bolt",
-  "rpm": 710,
+  "rpm": 750,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
@@ -15,11 +15,11 @@
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.25,
-      "head_shot_multiplier": 1.5,
+      "head_shot_multiplier": 1.50,
       "damage_adjust": [
-        {"distance": 28, "damage": 7},
-        {"distance": 65, "damage": 6},
-        {"distance": "infinite", "damage": 5}
+        {"distance":28,"damage":7},
+        {"distance":65,"damage":6},
+        {"distance":"infinite","damage":5}
       ]
     },
     "speed": 295,

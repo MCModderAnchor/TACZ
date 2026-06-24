@@ -4,5 +4,5 @@
   "data": "tacz:oem_sight_1_data",
   "type": "scope",
   "sort": 1,
-  "hidden": false
+  "hidden": true
 }

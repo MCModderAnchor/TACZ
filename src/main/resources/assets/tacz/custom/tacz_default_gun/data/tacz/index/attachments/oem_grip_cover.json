@@ -4,5 +4,5 @@
   "data": "tacz:oem_grip_cover_data",
   "type": "grip",
   "sort": 1,
-  "hidden": false
+  "hidden": true
 }

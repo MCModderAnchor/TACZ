@@ -4,6 +4,9 @@
   "texture": "tacz:gun/uv/m4a1",
   "sight": true,
   "fov": 50.0,
+  "zoom": [
+    1.33
+  ],
   "sounds": {
     "install": "tacz:attachments/scope_general_c",
     "uninstall": "tacz:attachments/scope_general_c"
