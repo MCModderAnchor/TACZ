@@ -105,6 +105,8 @@ public class NetworkHandler {
 
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageLaserColor.class, ClientMessageLaserColor::encode, ClientMessageLaserColor::decode, ClientMessageLaserColor::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageAmmoStorageInteract.class, ClientMessageAmmoStorageInteract::encode, ClientMessageAmmoStorageInteract::decode, ClientMessageAmmoStorageInteract::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
 
         registerAcknowledge();
         registerHandshakeMessage(ServerMessageSyncedEntityDataMapping.class, null);

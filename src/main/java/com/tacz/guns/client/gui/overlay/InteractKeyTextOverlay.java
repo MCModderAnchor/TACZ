@@ -4,6 +4,7 @@ import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.block.AbstractGunSmithTableBlock;
+import com.tacz.guns.block.AmmoStorageBlock;
 import com.tacz.guns.block.GunDisplayCaseBlock;
 import com.tacz.guns.block.GunDisplayCaseSlotHelper;
 import com.tacz.guns.block.entity.GunDisplayCaseBlockEntity;
@@ -61,14 +62,19 @@ public class InteractKeyTextOverlay implements IGuiOverlay {
             renderDisplayCaseText(graphics, width, height, blockHitResult, player, mc, block);
             return;
         }
+        if (block.getBlock() instanceof AmmoStorageBlock && IGun.mainHandHoldGun(player)) {
+            renderText(graphics, width, height, mc.font, InteractKey.INTERACT_KEY.getTranslatedKeyMessage().getString(),
+                    Component.translatable("gui.tacz.interact_key.text.ammo_storage_pickup"));
+            return;
+        }
         if (InteractKeyConfigRead.canInteractBlock(block)) {
             boolean mainHandHoldGun = IGun.mainHandHoldGun(player);
             boolean hasGunSmithTableFilterItem = hasGunSmithTableFilterItem(block, player);
             boolean willFilterByHand = RenderConfig.AUTO_SELECT_GUN_SMITH_TABLE_FILTER.get() && hasGunSmithTableFilterItem;
             if (mainHandHoldGun) {
-                renderText(graphics, width, height, mc.font, InteractKey.INTERACT_KEY.getTranslatedKeyMessage().getString(), willFilterByHand);
+                renderText(graphics, width, height, mc.font, InteractKey.INTERACT_KEY.getTranslatedKeyMessage().getString(), willFilterByHand ? Component.translatable("gui.tacz.interact_key.text.gun_smith_table_filter") : null);
             } else if (hasGunSmithTableFilterItem) {
-                renderText(graphics, width, height, mc.font, mc.options.keyUse.getTranslatedKeyMessage().getString(), willFilterByHand);
+                renderText(graphics, width, height, mc.font, mc.options.keyUse.getTranslatedKeyMessage().getString(), willFilterByHand ? Component.translatable("gui.tacz.interact_key.text.gun_smith_table_filter") : null);
             }
         }
     }
@@ -94,7 +100,7 @@ public class InteractKeyTextOverlay implements IGuiOverlay {
         }
         Entity entity = entityHitResult.getEntity();
         if (InteractKeyConfigRead.canInteractEntity(entity)) {
-            renderText(graphics, width, height, mc.font, InteractKey.INTERACT_KEY.getTranslatedKeyMessage().getString(), false);
+            renderText(graphics, width, height, mc.font, InteractKey.INTERACT_KEY.getTranslatedKeyMessage().getString(), null);
         }
     }
 
@@ -107,12 +113,11 @@ public class InteractKeyTextOverlay implements IGuiOverlay {
         return item instanceof IGun || item instanceof IAttachment || item instanceof IAmmo;
     }
 
-    private static void renderText(GuiGraphics graphics, int width, int height, Font font, String keyName, boolean willFilterByHand) {
+    private static void renderText(GuiGraphics graphics, int width, int height, Font font, String keyName, Component subtitle) {
         Component title = Component.translatable("gui.tacz.interact_key.text.desc", StringUtils.capitalize(keyName));
         graphics.drawString(font, title, (int) ((width - font.width(title)) / 2.0f), (int) (height / 2.0f - 25), ChatFormatting.YELLOW.getColor(), false);
-        if (willFilterByHand) {
-            Component filter = Component.translatable("gui.tacz.interact_key.text.gun_smith_table_filter");
-            graphics.drawString(font, filter, (int) ((width - font.width(filter)) / 2.0f), (int) (height / 2.0f - 14), ChatFormatting.GRAY.getColor(), false);
+        if (subtitle != null) {
+            graphics.drawString(font, subtitle, (int) ((width - font.width(subtitle)) / 2.0f), (int) (height / 2.0f - 14), ChatFormatting.GRAY.getColor(), false);
         }
     }
 }

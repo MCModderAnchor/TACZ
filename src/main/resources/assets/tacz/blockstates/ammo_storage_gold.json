@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "tacz:block/ammo_storage_gold"
+    },
+    "facing=east": {
+      "model": "tacz:block/ammo_storage_gold",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "tacz:block/ammo_storage_gold",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "tacz:block/ammo_storage_gold",
+      "y": 270
+    }
+  }
+}

@@ -32,6 +32,9 @@ public class ModCreativeTabs {
                 output.accept(ModItems.STATUE.get());
                 output.accept(ModItems.GUN_PEGBOARD.get());
                 output.accept(ModItems.GLOW_GUN_PEGBOARD.get());
+                output.accept(ModItems.AMMO_STORAGE.get());
+                output.accept(ModItems.AMMO_STORAGE_GOLD.get());
+                output.accept(ModItems.AMMO_STORAGE_DIAMOND.get());
                 output.accept(ModItems.GUN_DISPLAY_CASE.get());
                 output.accept(ModItems.TARGET_MINECART.get());
                 AmmoBoxItem.fillItemCategory(output);

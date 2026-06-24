@@ -2,9 +2,12 @@ package com.tacz.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.block.AmmoStorageBlock;
 import com.tacz.guns.block.GunDisplayCaseBlock;
 import com.tacz.guns.client.event.GunDisplayCaseClientInteractionEvent;
 import com.tacz.guns.config.util.InteractKeyConfigRead;
+import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.ClientMessageAmmoStorageInteract;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -102,6 +105,10 @@ public class InteractKey {
         BlockState block = player.level().getBlockState(blockPos);
         if (block.getBlock() instanceof GunDisplayCaseBlock) {
             GunDisplayCaseClientInteractionEvent.showHintForTarget(mc, true);
+        }
+        if (block.getBlock() instanceof AmmoStorageBlock) {
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessageAmmoStorageInteract(blockPos));
+            return;
         }
         if (InteractKeyConfigRead.canInteractBlock(block)) {
             mc.startUseItem();
