@@ -6,6 +6,7 @@ import com.tacz.guns.client.gui.overlay.GunHudOverlay;
 import com.tacz.guns.client.gui.overlay.HeatBarOverlay;
 import com.tacz.guns.client.gui.overlay.InteractKeyTextOverlay;
 import com.tacz.guns.client.gui.overlay.KillAmountOverlay;
+import com.tacz.guns.client.gui.overlay.DisplayCaseLockHintOverlay;
 import com.tacz.guns.client.input.*;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.tooltip.ClientAmmoBoxTooltip;
@@ -16,6 +17,7 @@ import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.compat.controllable.ControllableCompat;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
+import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
@@ -23,6 +25,8 @@ import com.tacz.guns.inventory.tooltip.BlockItemTooltip;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.item.AmmoBoxItem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
@@ -69,6 +73,7 @@ public class ClientSetupEvent {
         event.registerAboveAll("tac_heat_bar", new HeatBarOverlay());
         event.registerAboveAll("tac_kill_amount_overlay", new KillAmountOverlay());
         event.registerAbove(CROSSHAIR.id(), "tac_interact_key_overlay", new InteractKeyTextOverlay());
+        event.registerAbove(CROSSHAIR.id(), "tac_display_case_lock_hint", new DisplayCaseLockHintOverlay());
 
     }
 
@@ -83,6 +88,8 @@ public class ClientSetupEvent {
         // 注册变种
         // noinspection deprecation
         event.enqueueWork(() -> ItemProperties.register(ModItems.AMMO_BOX.get(), AmmoBoxItem.PROPERTY_NAME, AmmoBoxItem::getStatue));
+
+        event.enqueueWork(() -> ItemBlockRenderTypes.setRenderLayer(ModBlocks.GUN_DISPLAY_CASE.get(), RenderType.cutout()));
 
         // 初始化自己的枪包下载器
 //        event.enqueueWork(ClientGunPackDownloadManager::init);

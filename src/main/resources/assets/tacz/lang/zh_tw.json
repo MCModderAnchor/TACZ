@@ -58,6 +58,9 @@
   "painting.tacz.blood_strike_2.author": "血戰突擊",
   "block.tacz.target": "人形目標",
   "block.tacz.statue": "石像",
+  "block.tacz.gun_display_case": "槍械展示櫃",
+  "item.tacz.gun_display_case": "槍械展示櫃",
+  "tooltip.tacz.gun_display_case": "可用於展示您的私人收藏，且非常安全。",
   "block.tacz.gun_smith_table": "槍匠工作桌",
   "item.tacz.ammo_box.iron": "鐵製彈藥箱",
   "item.tacz.ammo_box.gold": "黃金彈藥箱",
@@ -291,5 +294,7 @@
   "config.tacz.client.render.enable_tooltip_id.desc": "當顯示詳細物品資訊功能(F3+H)開啟時，顯示槍枝/彈藥/配件 ID",
   "tooltip.tacz.attachment.laser.color": "雷射指示器光束顏色：%s",
   "config.tacz.client.render.laser_fadeout": "雷射光束漸淡效果",
-  "config.tacz.client.render.laser_fadeout.desc": "決定是否啟用雷射光束漸淡效果。\n關閉此功能或許能夠在啟用部分光影時提升雷射指示器的效能。"
+  "config.tacz.client.render.laser_fadeout.desc": "決定是否啟用雷射光束漸淡效果。\n關閉此功能或許能夠在啟用部分光影時提升雷射指示器的效能。",
+  "gui.tacz.display_case.locked_hint": "已上鎖。[%s] 解鎖。",
+  "gui.tacz.display_case.unlocked_hint": "已解鎖。[%s] 上鎖。"
 }

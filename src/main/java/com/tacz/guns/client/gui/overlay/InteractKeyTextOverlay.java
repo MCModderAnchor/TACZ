@@ -4,8 +4,12 @@ import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.block.AbstractGunSmithTableBlock;
+import com.tacz.guns.block.GunDisplayCaseBlock;
+import com.tacz.guns.block.GunDisplayCaseSlotHelper;
+import com.tacz.guns.block.entity.GunDisplayCaseBlockEntity;
 import com.tacz.guns.client.input.InteractKey;
 import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.config.util.GunPegboardItemConfigRead;
 import com.tacz.guns.config.util.InteractKeyConfigRead;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -53,6 +57,10 @@ public class InteractKeyTextOverlay implements IGuiOverlay {
     private static void renderBlockText(GuiGraphics graphics, int width, int height, BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc) {
         BlockPos blockPos = blockHitResult.getBlockPos();
         BlockState block = player.level().getBlockState(blockPos);
+        if (block.getBlock() instanceof GunDisplayCaseBlock) {
+            renderDisplayCaseText(graphics, width, height, blockHitResult, player, mc, block);
+            return;
+        }
         if (InteractKeyConfigRead.canInteractBlock(block)) {
             boolean mainHandHoldGun = IGun.mainHandHoldGun(player);
             boolean hasGunSmithTableFilterItem = hasGunSmithTableFilterItem(block, player);
@@ -62,6 +70,21 @@ public class InteractKeyTextOverlay implements IGuiOverlay {
             } else if (hasGunSmithTableFilterItem) {
                 renderText(graphics, width, height, mc.font, mc.options.keyUse.getTranslatedKeyMessage().getString(), willFilterByHand);
             }
+        }
+    }
+
+    private static void renderDisplayCaseText(GuiGraphics graphics, int width, int height, BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc, BlockState block) {
+        if (!IGun.mainHandHoldGun(player) || block.getValue(GunDisplayCaseBlock.LOCKED)) {
+            return;
+        }
+        int slot = GunDisplayCaseSlotHelper.getSlot(block, blockHitResult.getBlockPos(), blockHitResult.getLocation());
+        if (slot < 0 || !(player.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof GunDisplayCaseBlockEntity displayCase)) {
+            return;
+        }
+        boolean occupied = !displayCase.getItem(slot).isEmpty();
+        boolean canPlaceHeld = GunPegboardItemConfigRead.canPlace(player.getMainHandItem());
+        if (occupied || canPlaceHeld) {
+            renderText(graphics, width, height, mc.font, InteractKey.INTERACT_KEY.getTranslatedKeyMessage().getString(), false);
         }
     }
 

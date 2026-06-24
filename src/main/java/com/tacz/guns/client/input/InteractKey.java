@@ -2,6 +2,8 @@ package com.tacz.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.block.GunDisplayCaseBlock;
+import com.tacz.guns.client.event.GunDisplayCaseClientInteractionEvent;
 import com.tacz.guns.config.util.InteractKeyConfigRead;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -98,6 +100,9 @@ public class InteractKey {
     private static void interactBlock(BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc) {
         BlockPos blockPos = blockHitResult.getBlockPos();
         BlockState block = player.level().getBlockState(blockPos);
+        if (block.getBlock() instanceof GunDisplayCaseBlock) {
+            GunDisplayCaseClientInteractionEvent.showHintForTarget(mc, true);
+        }
         if (InteractKeyConfigRead.canInteractBlock(block)) {
             mc.startUseItem();
         }

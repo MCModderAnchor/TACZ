@@ -4,7 +4,7 @@
 	"texture_size": [64, 64],
 	"textures": {
 		"0": "tacz:block/glow_pegboard",
-		"particle": "tacz:block/glow_pegboard"
+		"particle": "minecraft:block/iron_block"
 	},
 	"elements": [
 		{

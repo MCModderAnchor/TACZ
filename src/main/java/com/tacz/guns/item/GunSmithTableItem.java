@@ -49,7 +49,11 @@ public class GunSmithTableItem extends BlockItem implements BlockItemDataAccesso
     public static NonNullList<ItemStack> fillItemCategory() {
         NonNullList<ItemStack> stacks = NonNullList.create();
         TimelessAPI.getAllCommonBlockIndex().forEach((blockIndex) -> {
-            ItemStack stack = BlockItemBuilder.create(blockIndex.getValue().getBlock()).setId(blockIndex.getKey()).build();
+            BlockItem blockItem = blockIndex.getValue().getBlock();
+            if (!(blockItem instanceof GunSmithTableItem)) {
+                return;
+            }
+            ItemStack stack = BlockItemBuilder.create(blockItem).setId(blockIndex.getKey()).build();
             stacks.add(stack);
         });
         return stacks;

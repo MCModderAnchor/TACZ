@@ -3,14 +3,22 @@ package com.tacz.guns.init;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.item.gun.GunItemManager;
 import com.tacz.guns.item.*;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModItems {
@@ -33,6 +41,12 @@ public class ModItems {
     public static RegistryObject<Item> STATUE = ITEMS.register("statue", () -> new BlockItem(ModBlocks.STATUE.get(), new Item.Properties()));
     public static RegistryObject<Item> GUN_PEGBOARD = ITEMS.register("gun_pegboard", () -> new BlockItem(ModBlocks.GUN_PEGBOARD.get(), new Item.Properties()));
     public static RegistryObject<Item> GLOW_GUN_PEGBOARD = ITEMS.register("glow_gun_pegboard", () -> new BlockItem(ModBlocks.GLOW_GUN_PEGBOARD.get(), new Item.Properties()));
+    public static RegistryObject<Item> GUN_DISPLAY_CASE = ITEMS.register("gun_display_case", () -> new BlockItem(ModBlocks.GUN_DISPLAY_CASE.get(), new Item.Properties()) {
+        @Override
+        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+            tooltip.add(Component.translatable("tooltip.tacz.gun_display_case").withStyle(ChatFormatting.GRAY));
+        }
+    });
     public static RegistryObject<Item> AMMO_BOX = ITEMS.register("ammo_box", AmmoBoxItem::new);
     public static RegistryObject<Item> TARGET_MINECART = ITEMS.register("target_minecart", TargetMinecartItem::new);
 
