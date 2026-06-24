@@ -49,14 +49,14 @@
     "shoot_3p": "tacz:springfield1873/springfield1873_shoot_3p"
   },
   "offhand_show": {
-    "pos": [0, 20, 4],
-    "rotate": [0, 0, 60],
+    "pos": [6, 16, 3],
+    "rotate": [-90, -5, -90],
     "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [0, 20, 3],
-      "rotate": [-180, 0, 120],
+      "pos": [-4, 16, 3],
+      "rotate": [-90, -5, -90],
       "scale": [0.5, 0.5, 0.5]
     }
   }

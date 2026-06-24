@@ -46,13 +46,13 @@
     "melee_stock": "tacz:melee_stock/melee_stock_01"
   },
   "offhand_show": {
-    "pos": [1, 19, 4],
+    "pos": [-3, 19, 4],
     "rotate": [0, 0, 30],
     "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [1, 16, -2],
+      "pos": [-3, 16, -2],
     "rotate": [0, 0, 20],
     "scale": [0.5, 0.5, 0.5]
     }

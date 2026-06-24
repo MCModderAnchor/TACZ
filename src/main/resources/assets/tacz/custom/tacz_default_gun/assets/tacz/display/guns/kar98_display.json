@@ -62,13 +62,13 @@
     "shoot_3p": "tacz:kar98/kar98_shoot_3p"
   },
   "offhand_show": {
-    "pos": [-2, 20, 4],
-    "rotate": [0, 0, 45],
+    "pos": [6, 18, 3],
+    "rotate": [-90, -5, -90],
     "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [-4, 26, 3],
+      "pos": [-4, 18, 3],
       "rotate": [-90, -5, -90],
       "scale": [0.5, 0.5, 0.5]
     }
