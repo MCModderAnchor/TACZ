@@ -15,6 +15,7 @@ import com.tacz.guns.api.client.animation.statemachine.LuaStateMachineFactory;
 import com.tacz.guns.api.client.other.GunModelTypeManager;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateContext;
+import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
@@ -88,6 +89,8 @@ public class GunDisplayInstance {
     private @Nullable ResourceLocation hudEmptyTexture;
 
     private @Nullable ShellEjection shellEjection;
+    private @Nullable BedrockAmmoModel shellModel;
+    private @Nullable ResourceLocation shellTextureLocation;
     private @Nullable MuzzleFlash muzzleFlash;
     private LayerGunShow offhandShow = new LayerGunShow();
     private @Nullable Int2ObjectArrayMap<LayerGunShow> hotbarShow;
@@ -248,6 +251,7 @@ public class GunDisplayInstance {
                 return;
             }
             checkTextureAndModel(display);
+            checkShellModel(display);
             checkTextShow(display);
             modelLoaded = true;
         }
@@ -601,6 +605,24 @@ public class GunDisplayInstance {
         shellEjection = display.getShellEjection();
     }
 
+    private void checkShellModel(GunDisplay display) {
+        ShellEjection shell = display.getShellEjection();
+        if (shell == null || shell.getModelLocation() == null || shell.getModelTexture() == null) {
+            return;
+        }
+        shellTextureLocation = shell.getModelTexture();
+        BedrockModelPOJO modelPOJO = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(shell.getModelLocation());
+        if (modelPOJO == null) {
+            return;
+        }
+        if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
+            shellModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.LEGACY);
+        }
+        if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
+            shellModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.NEW);
+        }
+    }
+
     private void checkGunAmmo(GunDisplay display) {
         GunAmmo displayGunAmmo = display.getGunAmmo();
         if (displayGunAmmo == null) {
@@ -713,6 +735,18 @@ public class GunDisplayInstance {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
+    }
+
+    @Nullable
+    public BedrockAmmoModel getShellModel() {
+        ensureModelLoaded();
+        return shellModel;
+    }
+
+    @Nullable
+    public ResourceLocation getShellTextureLocation() {
+        ensureModelLoaded();
+        return shellTextureLocation;
     }
 
     public float @Nullable [] getTracerColor() {

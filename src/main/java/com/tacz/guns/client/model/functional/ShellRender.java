@@ -51,37 +51,40 @@ public class ShellRender implements IFunctionalRenderer {
             SHELL_QUEUE.clear();
             return;
         }
-        TimelessAPI.getClientAmmoIndex(gunData.getAmmoId()).ifPresent(ammoIndex -> {
-            BedrockAmmoModel model = ammoIndex.getShellModel();
-            if (model == null) {
+        BedrockAmmoModel model = display.getShellModel();
+        ResourceLocation location = display.getShellTextureLocation();
+        if (model == null || location == null) {
+            var ammoIndex = TimelessAPI.getClientAmmoIndex(gunData.getAmmoId()).orElse(null);
+            if (ammoIndex == null) {
                 return;
             }
-            ResourceLocation location = ammoIndex.getShellTextureLocation();
-            if (location == null) {
-                return;
+            model = ammoIndex.getShellModel();
+            location = ammoIndex.getShellTextureLocation();
+        }
+        if (model == null || location == null) {
+            return;
+        }
+        BedrockAmmoModel shellModel = model;
+        ResourceLocation shellTexture = location;
+        long lifeTime = (long) (shellEjection.getLivingTime() * 1000);
+
+        checkShellQueue(lifeTime);
+
+        Vector3f initialVelocity = shellEjection.getInitialVelocity();
+        Vector3f acceleration = shellEjection.getAcceleration();
+        Vector3f angularVelocity = shellEjection.getAngularVelocity();
+
+        // 缓存一下 PoseStack
+        for (Data data : SHELL_QUEUE) {
+            if (data.normal == null && data.pose == null) {
+                data.normal = new Matrix3f(poseStack.last().normal());
+                data.pose = new Matrix4f(poseStack.last().pose());
             }
-            long lifeTime = (long) (shellEjection.getLivingTime() * 1000);
+        }
 
-            // 检查有没有需要踢出去的队列
-            checkShellQueue(lifeTime);
-
-            // 各种参数的获取
-            Vector3f initialVelocity = shellEjection.getInitialVelocity();
-            Vector3f acceleration = shellEjection.getAcceleration();
-            Vector3f angularVelocity = shellEjection.getAngularVelocity();
-
-            // 缓存一下 PoseStack
-            for (Data data : SHELL_QUEUE) {
-                if (data.normal == null && data.pose == null) {
-                    data.normal = new Matrix3f(poseStack.last().normal());
-                    data.pose = new Matrix4f(poseStack.last().pose());
-                }
-            }
-
-            // 渲染抛壳
-            gunModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) ->{
-                SHELL_QUEUE.forEach(data -> renderSingleShell(transformType1, light, overlay, data, initialVelocity, acceleration, angularVelocity, model, location));
-            });
+        // 渲染抛壳
+        gunModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) ->{
+            SHELL_QUEUE.forEach(data -> renderSingleShell(transformType1, light, overlay, data, initialVelocity, acceleration, angularVelocity, shellModel, shellTexture));
         });
     }
 
