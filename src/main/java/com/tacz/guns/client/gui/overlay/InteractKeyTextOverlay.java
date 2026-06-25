@@ -90,7 +90,7 @@ public class InteractKeyTextOverlay implements IGuiOverlay {
         boolean occupied = !displayCase.getItem(slot).isEmpty();
         boolean canPlaceHeld = GunPegboardItemConfigRead.canPlace(player.getMainHandItem());
         if (occupied || canPlaceHeld) {
-            renderText(graphics, width, height, mc.font, InteractKey.INTERACT_KEY.getTranslatedKeyMessage().getString(), false);
+            renderText(graphics, width, height, mc.font, InteractKey.INTERACT_KEY.getTranslatedKeyMessage().getString(), null);
         }
     }
 
