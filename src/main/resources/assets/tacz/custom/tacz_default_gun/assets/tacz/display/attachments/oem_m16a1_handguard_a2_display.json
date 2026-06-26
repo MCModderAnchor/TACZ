@@ -1,0 +1,8 @@
+{
+  "slot": "tacz:attachment/slot/oem_handguard_assault",
+  "adapter": "oem_handguard_a2",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_b",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

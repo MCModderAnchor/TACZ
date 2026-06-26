@@ -2,12 +2,12 @@
   "ammo": "tacz:556x45",
   "ammo_amount": 20,
   "extended_mag_ammo_amount": [
-    24,
-    27,
-    30
+    30,
+    40,
+    50
   ],
   "bolt": "closed_bolt",
-  "rpm": 750,
+  "rpm": 720,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
@@ -107,8 +107,16 @@
   "allow_attachment_types": [
     "muzzle",
     "extended_mag",
-    "scope"
+    "scope",
+    "grip"
   ],
+  "builtin_attachments": {
+    "grip": {
+      "attachments": [
+        "tacz:oem_m16a1_handguard_a2"
+      ]
+    }
+  },
   "exclusive_attachments": {
   }
 }
