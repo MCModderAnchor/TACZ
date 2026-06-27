@@ -45,28 +45,28 @@
       "color": "#ffffff",
       "light": 15,
       "text": "AMMO"
-    },
-    "rangefinder_text_show_pos": {
-      // 测距仪示例：在 text 中使用 %rangefinder% 后，rangefinder 配置才会参与刷新。
-      "scale": 0.09375,
-      "align": "left",
-      "shadow": false,
-      "color": "#00ffff",
-      "light": 15,
-      "text": "%rangefinder% m",
-      "rangefinder": {
-        // 最大测距距离，单位为 Minecraft 原生距离单位。小于 0 会回退到 512，允许 0。
-        "max_distance": 512,
-        // 每 N tick 刷新一次。小于等于 0 会回退到 2。
-        "refresh_tick": 2,
-        // 仅在测距命中实体时，在 HUD 中绘制基于 ammo_speed/gravity/friction 的 Y 轴落点预测空心点。
-        "show_impact_prediction": true,
-        // 落点预测空心点颜色，默认 #ffffff；支持 "#00ffff" 或 "00ffff"。
-        "impact_prediction_color": "#00ffff",
-        // 落点预测框大小倍率，默认 1；小于等于 0 会回退到 1。
-        "impact_prediction_scale": 1.0
-      }
     }
+    // "rangefinder_text_show_pos": {
+      // 测距仪示例：在 text 中使用 %rangefinder% 后，rangefinder 配置才会参与刷新。
+    //   "scale": 0.09375,
+    //   "align": "left",
+    //   "shadow": false,
+    //   "color": "#00ffff",
+    //   "light": 15,
+    //   "text": "%rangefinder% m",
+    //   "rangefinder": {
+        // 最大测距距离，单位为 Minecraft 原生距离单位。小于 0 会回退到 512，允许 0。
+    //     "max_distance": 512,
+        // 每 N tick 刷新一次。小于等于 0 会回退到 2。
+    //     "refresh_tick": 2,
+        // 仅在测距命中实体时，在 HUD 中绘制基于 ammo_speed/gravity/friction 的 Y 轴落点预测空心点。
+    //     "show_impact_prediction": true,
+        // 落点预测空心点颜色，默认 #ffffff；支持 "#00ffff" 或 "00ffff"。
+    //     "impact_prediction_color": "#00ffff",
+        // 落点预测框大小倍率，默认 1；小于等于 0 会回退到 1。
+    //     "impact_prediction_scale": 1.0
+    //   }
+    // }
   },
   "idle_scope_height_adjust": 1.25,
   "scope": true,

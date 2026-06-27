@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 public final class RangefinderManager {
     private static final String MISS_TEXT = "---";
     private static final double ENTITY_XZ_EXPAND = 0.25;
-    private static final double ENTITY_Y_EXPAND = 3.0;
+    private static final double ENTITY_Y_EXPAND = 8.0;
     private static final Predicate<Entity> RANGEFINDER_TARGETS = entity -> entity != null && entity.isPickable() && !entity.isSpectator() && entity.isAlive();
 
     private static Rangefinder currentConfig = null;

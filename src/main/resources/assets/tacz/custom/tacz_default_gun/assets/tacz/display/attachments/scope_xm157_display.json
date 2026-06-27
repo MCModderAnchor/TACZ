@@ -1,0 +1,45 @@
+{
+  "slot": "tacz:attachment/slot/scope_xm157_slot",
+  "model": "tacz:attachment/scope_xm157_geo",
+  "texture": "tacz:attachment/uv/scope_xm157",
+  "lod": {
+    "model": "tacz:attachment/lod/scope_xm157",
+    "texture": "tacz:attachment/lod/scope_xm157"
+  },
+  "zoom": [
+    4.25,
+    8.25
+  ],
+  "views": [
+    1,
+    1
+  ],
+  "views_fov": [
+    45.0,
+    25.0
+  ],
+  "text_show": {
+    "rangefinder_text_show_pos": {
+      "scale": 0.1,
+      "align": "right",
+      "shadow": false,
+      "color": "#ffff00",
+      "light": 15,
+      "text": "%rangefinder% M",
+      "rangefinder": {
+        "max_distance": 512,
+        "refresh_tick": 2,
+        "show_impact_prediction": true,
+        "impact_prediction_color": "#ffff00",
+        "impact_prediction_scale": 1.0
+      }
+    }
+  },
+  "idle_scope_height_adjust": 0.75,
+  "scope": true,
+  "sight": true,
+  "sounds": {
+    "install": "tacz:attachments/scope_general_c",
+    "uninstall": "tacz:attachments/scope_general_c"
+  }
+}

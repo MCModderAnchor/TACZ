@@ -189,6 +189,8 @@
   "tacz.attachment.scope_vudu.name": "§6Vudu 1-6x Scope",
   "tacz.attachment.scope_hamr.name": "§5HAMR 3x Scope",
   "tacz.attachment.scope_mk5hd.name": "§6Mark 5 HD 5-25x Scope",
+  "tacz.attachment.scope_xm157.name": "§bXM157 4-8x Fire Control Optic",
+  "tacz.attachment.scope_xm157.desc": "Advanced rangefinding fire-control optic jointly developed by RDSL & U.C.O\nProvides precise ballistic impact prediction",
   "tacz.attachment.scope_1873_6x.name":"§5Vintage Springfield Scope",
   "tacz.attachment.scope_contender.name": "§5Contender 4x Scope",
   "tacz.attachment.scope_qmk152.name": "§5QMK-152 3x White Light Sight",
