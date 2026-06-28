@@ -133,6 +133,20 @@
     "extended_mag",
     "laser"
   ],
+  "builtin_attachments": {
+    "laser": {
+      "attachments": [
+        "tacz:oem_side_cover"
+      ],
+      "default_attached": "tacz:oem_side_cover"
+    },
+    "grip": {
+      "attachments": [
+        "tacz:oem_grip_cover"
+      ],
+      "default_attached": "tacz:oem_grip_cover"
+    }
+  },
   "exclusive_attachments": {
     "tacz:scope_standard_8x": {
       "weight": 2.0,

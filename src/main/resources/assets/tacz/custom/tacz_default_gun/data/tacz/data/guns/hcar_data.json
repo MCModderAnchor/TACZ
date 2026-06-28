@@ -8,7 +8,7 @@
   ],
   "can_slide": false,
   "bolt": "closed_bolt",
-  "rpm": 325,
+  "rpm": 350,
   "script": "tacz:xmag_reload_logic",
   "script_param": {
     "reload_feed": 2.07,
@@ -43,7 +43,7 @@
         {"distance": "infinite", "damage": 10}
       ]
     },
-    "speed": 325,
+    "speed": 350,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.02,
@@ -92,10 +92,10 @@
   },
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [1.1, 1.2]},
-      {"time": 0.05, "value": [1.15, 1.25]},
+      {"time": 0, "value": [1.35, 1.35]},
+      {"time": 0.05, "value": [1.35, 1.45]},
       {"time": 0.12, "value": [0.85, 0.85]},
-      {"time": 0.25, "value": [-0.15, -0.1]},
+      {"time": 0.25, "value": [-0.1, -0.1]},
       {"time": 0.5, "value": [0, 0]},
       {"time": 0.7, "value": [0.15, 0.25]},
       {"time": 0.9, "value": [0, 0]}

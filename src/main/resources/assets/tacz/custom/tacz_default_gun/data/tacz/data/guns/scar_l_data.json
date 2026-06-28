@@ -36,9 +36,9 @@
       "armor_ignore": 0.25,
       "head_shot_multiplier": 1.75,
       "damage_adjust": [
-        {"distance": 30, "damage": 7.5},
-        {"distance": 70, "damage": 6},
-        {"distance": "infinite", "damage": 5}
+        {"distance":30,"damage":7.5},
+        {"distance":55,"damage":6},
+        {"distance":"infinite","damage":5}
       ]
     },
     "speed": 290,
@@ -133,6 +133,20 @@
     "extended_mag",
     "laser"
   ],
+  "builtin_attachments": {
+    "laser": {
+      "attachments": [
+        "tacz:oem_side_cover"
+      ],
+      "default_attached": "tacz:oem_side_cover"
+    },
+    "grip": {
+      "attachments": [
+        "tacz:oem_grip_cover"
+      ],
+      "default_attached": "tacz:oem_grip_cover"
+    }
+  },
   "exclusive_attachments": {
   }
 }
