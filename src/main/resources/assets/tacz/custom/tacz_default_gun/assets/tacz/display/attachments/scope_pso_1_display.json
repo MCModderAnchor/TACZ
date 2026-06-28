@@ -3,15 +3,15 @@
   "model": "tacz:attachment/scope_pso_1_geo",
   "texture": "tacz:attachment/uv/scope_pso_1",
   "zoom": [
-    4
+    4.5
   ],
   "views": [
     2
   ],
   "views_fov": [
-    20.0
+    13.0
   ],
-  "idle_scope_height_adjust": 0.25,
+  "idle_scope_height_adjust": 1,
   "show_mount": false,
   "scope": true,
   "sounds": {

@@ -8741,9 +8741,14 @@
 					"pivot": [0, 11.48438, 5.57188]
 				},
 				{
+					"name": "muzzle_pos",
+					"parent": "positioning2",
+					"pivot": [0, 9.223, -32.5625]
+				},
+				{
 					"name": "constraint",
 					"parent": "svd",
-					"pivot": [0, 11.525, -8.1]
+					"pivot": [0, 11.2125, -7.1]
 				},
 				{
 					"name": "camera",
@@ -8776,35 +8781,35 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 11.18751, 13.5]
+					"pivot": [0, 11.18751, 14.5]
 				},
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [3.5, 13.5, 16]
+					"pivot": [4, 12.5, 17]
 				},
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [27, 9, -6],
-					"rotation": [0, 90, 0]
+					"pivot": [48, 9, -6],
+					"rotation": [0, 89.9, 0]
 				},
 				{
 					"name": "refit_scope_view",
 					"parent": "view",
-					"pivot": [10.925, 11.3, -1.875],
+					"pivot": [24, 11.3, -6.875],
 					"rotation": [0, 120, 0]
 				},
 				{
 					"name": "refit_extended_mag_view",
 					"parent": "view",
-					"pivot": [12, 0, -1],
-					"rotation": [0, 90, 30]
+					"pivot": [24, 0, -1],
+					"rotation": [0, 90, 15]
 				},
 				{
 					"name": "refit_muzzle_view",
 					"parent": "view",
-					"pivot": [12, 9, -40],
+					"pivot": [24, 9, -43],
 					"rotation": [0, 120, 0]
 				}
 			]

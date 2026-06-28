@@ -9465,7 +9465,7 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 11.125, 15.5]
+					"pivot": [0, 11.125, 17.5]
 				},
 				{
 					"name": "idle_view",
@@ -9475,43 +9475,43 @@
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [23, 9, 0],
+					"pivot": [32, 9, 0],
 					"rotation": [0, 89.9, 0]
 				},
 				{
 					"name": "refit_extended_mag_view",
 					"parent": "view",
-					"pivot": [12, 0, 1],
-					"rotation": [0, 90, 30]
+					"pivot": [24, 0, 1],
+					"rotation": [0, 90, 15]
 				},
 				{
 					"name": "refit_muzzle_view",
 					"parent": "view",
-					"pivot": [12, 10.25, -28],
+					"pivot": [24, 10.25, -32],
 					"rotation": [0, 120, 0]
 				},
 				{
 					"name": "refit_scope_view",
 					"parent": "view",
-					"pivot": [8, 12.5, 10.3],
+					"pivot": [24, 12.5, 10.3],
 					"rotation": [0, 70, 0]
 				},
 				{
 					"name": "refit_laser_view",
 					"parent": "view",
-					"pivot": [12, 13.75, -23],
+					"pivot": [20, 13.75, -28],
 					"rotation": [15, 135, 0]
 				},
 				{
 					"name": "refit_grip_view",
 					"parent": "view",
-					"pivot": [9.375, 6.375, -8.3125],
+					"pivot": [24, 6.375, -8.3125],
 					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "refit_stock_view",
 					"parent": "view",
-					"pivot": [16, 10.25, 12],
+					"pivot": [24, 10.25, 12],
 					"rotation": [0, 90, 0]
 				},
 				{

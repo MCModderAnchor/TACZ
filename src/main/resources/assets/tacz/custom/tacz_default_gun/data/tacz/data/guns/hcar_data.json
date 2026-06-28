@@ -8,7 +8,7 @@
   ],
   "can_slide": false,
   "bolt": "closed_bolt",
-  "rpm": 550,
+  "rpm": 325,
   "script": "tacz:xmag_reload_logic",
   "script_param": {
     "reload_feed": 2.07,
@@ -31,24 +31,24 @@
   "bullet": {
     "life": 1.0,
     "bullet_amount": 1,
-    "damage": 16,
+    "damage": 18,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.4,
-      "head_shot_multiplier": 2.0,
+      "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 20, "damage": 16},
-        {"distance": 35, "damage": 13.5},
-        {"distance": 45, "damage": 11},
-        {"distance": "infinite", "damage": 9}
+        {"distance": 32, "damage": 18},
+        {"distance": 64, "damage": 15},
+        {"distance": 96, "damage": 12},
+        {"distance": "infinite", "damage": 10}
       ]
     },
-    "speed": 260,
+    "speed": 325,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.015,
+    "friction": 0.02,
     "ignite": false,
-    "pierce": 1
+    "pierce": 2
   },
   "reload": {
     "type": "magazine",
@@ -63,7 +63,7 @@
   },
   "draw_time": 0.57,
   "put_away_time": 0.7,
-  "aim_time": 0.25,
+  "aim_time": 0.21,
   "sprint_time": 0.25,
   "weight": 5.3,
   "movement_speed": {
@@ -73,9 +73,23 @@
   },
   "crawl_recoil_multiplier": 0.25,
   "fire_mode": [
-    "semi",
-    "auto"
+    "auto",
+    "burst"
   ],
+  "burst_data": {
+    "continuous_shoot": true,
+    "count": 1,
+    "bpm": 480,
+    "min_interval": 0.125
+  },
+  "fire_mode_adjust": {
+    "burst": {
+      // 加算，全自动模式的开火数值调整，如无调整可不写
+      "damage": -2,
+      "head_shot_multiplier": -0.25,
+      "aim_inaccuracy": 0.05
+    }
+  },
   "recoil": {
     "pitch": [
       {"time": 0, "value": [1.1, 1.2]},
@@ -87,8 +101,7 @@
       {"time": 0.9, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-1.15, 0.75]},
-      {"time": 0.05, "value": [-0.85, 0.45]},
+      {"time": 0, "value": [-0.5, 0.5]},
       {"time": 0.25, "value": [0, 0]}
     ]
   },
@@ -129,6 +142,14 @@
     "laser",
     "stock"
   ],
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:stock_heavy_ctr"
+      ],
+      "default_attached": "tacz:stock_heavy_ctr"
+    }
+  },
   "exclusive_attachments": {
   }
 }

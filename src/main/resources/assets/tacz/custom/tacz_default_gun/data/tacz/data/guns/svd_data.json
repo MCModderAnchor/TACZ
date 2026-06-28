@@ -7,7 +7,7 @@
     20
   ],
   "bolt": "closed_bolt",
-  "rpm": 300,
+  "rpm":120,
   "script": "tacz:xmag_reload_logic",
   "script_param": {
     "reload_feed": 1.75,
@@ -30,23 +30,39 @@
   "bullet": {
     "life": 0.8,
     "bullet_amount": 1,
-    "damage": 18,
+    "damage":18,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.55,
       "head_shot_multiplier": 1.8,
       "damage_adjust": [
-        {"distance": 50, "damage": 18},
-        {"distance": 70, "damage": 14},
+        {"distance": 64, "damage": 18},
+        {"distance": 96, "damage": 16},
         {"distance": "infinite", "damage": 10}
       ]
     },
-    "speed": 320,
+    "particle": {
+      // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
+      "name": "mycelium",
+      // 生成的区域，默认为 0 0 0
+      "delta": [
+        0,
+        0,
+        0
+      ],
+      // 速度，默认为0，必须至少为 0
+      "speed": 0.0,
+      // 粒子存在时间，单位 tick，默认为 20 tick
+      "life_time": 60,
+      // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
+      "count": 25
+    },
+    "speed": 415,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.015,
+    "friction": 0.025,
     "ignite": false,
-    "pierce": 1
+    "pierce": 2
   },
   "reload": {
     "type": "magazine",
@@ -128,6 +144,14 @@
     "muzzle",
     "extended_mag"
   ],
+  "builtin_attachments": {
+    "scope": {
+      "attachments": [
+        "tacz:scope_pso_1"
+      ],
+      "default_attached": "tacz:scope_pso_1"
+    }
+  },
   "exclusive_attachments": {
   }
 }

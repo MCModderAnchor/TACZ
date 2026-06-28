@@ -82,9 +82,9 @@ public class EffectiveRangeModifier implements IAttachmentModifier<Modifier, Flo
         double modifierPercent = Math.min(modifier / 100.0, 1);
 
         String titleKey = "gui.tacz.gun_refit.property_diagrams.effective_range";
-        String positivelyString = String.format("%.1fm §a(+%.1f)", effectiveRange, modifier);
-        String negativelyString = String.format("%.1fm §c(%.1f)", effectiveRange, modifier);
-        String defaultString = String.format("%.1fm", effectiveRange);
+        String positivelyString = String.format("%.1fm §a(+%.1f)", modifiedDistance, modifier);
+        String negativelyString = String.format("%.1fm §c(%.1f)", modifiedDistance, modifier);
+        String defaultString = String.format("%.1fm", modifiedDistance);
         boolean positivelyBetter = true;
 
         DiagramsData diagramsData = new DiagramsData(percent, modifierPercent, modifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);

@@ -7,6 +7,7 @@ import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.modifier.CacheValue;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.api.modifier.JsonProperty;
+import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
@@ -68,17 +69,22 @@ public class AmmoSpeedModifier implements IAttachmentModifier<Modifier, Float> {
         }
         float modifiedAmmoSpeed = cacheProperty.<Float>getCache(AmmoSpeedModifier.ID);
         float ammoSpeedModifier = modifiedAmmoSpeed - ammoSpeed;
+        float globalSpeedModifier = AmmoConfig.GLOBAL_BULLET_SPEED_MODIFIER.get().floatValue();
+        float displayAmmoSpeed = ammoSpeed * globalSpeedModifier;
+        float displayModifiedAmmoSpeed = modifiedAmmoSpeed * globalSpeedModifier;
+        float displayAmmoSpeedModifier = ammoSpeedModifier * globalSpeedModifier;
+        float displayAmmoSpeedMax = 600.0f * globalSpeedModifier;
 
-        double ammoSpeedPercent = Math.min(ammoSpeed / 600.0, 1);
-        double ammoSpeedModifierPercent = Math.min(ammoSpeedModifier / 600.0, 1);
+        double ammoSpeedPercent = Math.min(displayAmmoSpeed / displayAmmoSpeedMax, 1);
+        double ammoSpeedModifierPercent = Math.min(displayAmmoSpeedModifier / displayAmmoSpeedMax, 1);
 
         String titleKey = "gui.tacz.gun_refit.property_diagrams.ammo_speed";
-        String positivelyString = String.format("%dm/s §a(+%d)", Math.round(modifiedAmmoSpeed), Math.round(ammoSpeedModifier));
-        String negativelyString = String.format("%dm/s §c(%d)", Math.round(modifiedAmmoSpeed), Math.round(ammoSpeedModifier));
-        String defaultString = String.format("%dm/s", Math.round(modifiedAmmoSpeed));
+        String positivelyString = String.format("%dm/s §a(+%d)", Math.round(displayModifiedAmmoSpeed), Math.round(displayAmmoSpeedModifier));
+        String negativelyString = String.format("%dm/s §c(%d)", Math.round(displayModifiedAmmoSpeed), Math.round(displayAmmoSpeedModifier));
+        String defaultString = String.format("%dm/s", Math.round(displayModifiedAmmoSpeed));
         boolean positivelyBetter = true;
 
-        DiagramsData diagramsData = new DiagramsData(ammoSpeedPercent, ammoSpeedModifierPercent, ammoSpeedModifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);
+        DiagramsData diagramsData = new DiagramsData(ammoSpeedPercent, ammoSpeedModifierPercent, displayAmmoSpeedModifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);
         return Collections.singletonList(diagramsData);
     }
 

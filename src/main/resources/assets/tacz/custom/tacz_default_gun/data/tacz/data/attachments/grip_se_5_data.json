@@ -1,8 +1,5 @@
 {
   "weight": 0.09,
-  "ads": {
-    "multiplier": 0.85
-  },
   "recoil": {
     "pitch": {
       "multiplier": 0.93

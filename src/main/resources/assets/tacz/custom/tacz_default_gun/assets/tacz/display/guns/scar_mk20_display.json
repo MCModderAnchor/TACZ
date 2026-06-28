@@ -20,7 +20,7 @@
   },
   "muzzle_flash": {
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 1.125
+    "scale": 1.25
   },
   "iron_zoom": 1.33,
   "model_fov": 60,
@@ -31,6 +31,41 @@
     "acceleration": [0.0, -10, 0.0],
     "angular_velocity": [360, -1200, 90],
     "living_time": 1.0
+  },
+  "ammo": {
+    // 曳光弹颜色，没有则为 #FFFFFF，没有此字段时，会调用 ammo 的相关字段
+    // 严格遵循 RGB 颜色代码
+    "tracer_color": "#FF8888",
+    // 是否覆盖 ammo display 的弹孔贴花开关。没有该字段时，会调用 ammo 的 enable_bullet_hole。
+    //"enable_bullet_hole": true,
+    // 命中方块表面时额外播放的粒子效果。取消注释后可用 AK47 测试火焰和烟雾命中特效。
+    "hit_surface_particles": [
+      {
+        "name": "minecraft:cloud",
+        "count": 5,
+        "count_range": [4, 6],
+        "life_time": 13,
+        "color": "#8A8175",
+        "scale": 1.15,
+        "surface_offset": 0.055,
+        "random_offset": 0.025,
+        "normal_speed": 0.16,
+        "random_speed": 0.03,
+        "spread_angle": 18
+      },
+      {
+        "name": "minecraft:campfire_cosy_smoke",
+        "count": 3,
+        "count_range": [2, 5],
+        "life_time": 60,
+        "scale": 1.1,
+        "surface_offset": 0.06,
+        "random_offset": 0.035,
+        "normal_speed": 0.04,
+        "random_speed": 0.02,
+        "spread_angle": 45
+      }
+    ]
   },
   "sounds": {
     "shoot": "tacz:scar_h/scar_h_shoot",

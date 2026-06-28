@@ -57,8 +57,8 @@ public class RpmModifier implements IAttachmentModifier<Modifier, Integer> {
         IGun iGun = Objects.requireNonNull(IGun.getIGunOrNull(gunItem));
         FireMode fireMode = iGun.getFireMode(gunItem);
 
-        int rpm = gunData.getRoundsPerMinute(fireMode);
-        int modifiedValue = cacheProperty.<Integer>getCache(RpmModifier.ID);
+        int rpm = getDisplayRpm(gunData, fireMode, cacheProperty, false);
+        int modifiedValue = getDisplayRpm(gunData, fireMode, cacheProperty, true);
         int rpmModifier = modifiedValue - rpm;
 
         double rpmPercent = Math.min(rpm / 1200.0, 1);
@@ -72,6 +72,13 @@ public class RpmModifier implements IAttachmentModifier<Modifier, Integer> {
 
         DiagramsData diagramsData = new DiagramsData(rpmPercent, rpmModifierPercent, rpmModifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);
         return Collections.singletonList(diagramsData);
+    }
+
+    private static int getDisplayRpm(GunData gunData, FireMode fireMode, AttachmentCacheProperty cacheProperty, boolean modified) {
+        if (fireMode == FireMode.BURST) {
+            return Math.max(gunData.getBurstData().getBpm(), 1);
+        }
+        return modified ? cacheProperty.<Integer>getCache(RpmModifier.ID) : gunData.getRoundsPerMinute(fireMode);
     }
 
     @Override
