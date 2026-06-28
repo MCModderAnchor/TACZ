@@ -2,6 +2,8 @@
 -- 注意！require 取得的内容不应该被修改，应仅调用
 local default = require("tacz_default_state_machine")
 local STATIC_TRACK_LINE = default.STATIC_TRACK_LINE
+local BLENDING_TRACK_LINE = default.BLENDING_TRACK_LINE
+local SLIDE_TRACK = default.SLIDE_TRACK
 local MAIN_TRACK = default.MAIN_TRACK
 local main_track_states = default.main_track_states
 local static_track_top = default.static_track_top
@@ -105,6 +107,8 @@ function idle_state.transition(this, context, input)
         context:setAnimationProgress(track, 1, true)
         -- 将动画进度向前拨动 {put_away_time}
         context:adjustAnimationProgress(track, -put_away_time, false)
+        this.main_track_states.final.isfinal = 1
+        -- 丢枪后转到最终态
         return this.main_track_states.final
     end
     if (input == INPUT_INSPECT) then
@@ -114,19 +118,80 @@ function idle_state.transition(this, context, input)
     return main_track_states.idle.transition(this, context, input)
 end
 
+local crawl_states = {
+    draw = {},
+    normal = {},
+    crawl = {},
+    played_animation = 0
+}
 
+function crawl_states.normal.transition(this, context, input)
+    -- 趴下时切到趴下状态
+    if (context:isCrawl()) then
+        return this.crawl_states.crawl
+    end
+end
+
+function crawl_states.crawl.entry(this, context)
+    -- 重置主轨道动画标志位
+    crawl_states.played_animation = 0
+end
+
+function crawl_states.crawl.update(this, context)
+    -- 主轨道正在播放动画 且 趴下轨道无动画 时播放脚架单独展开
+    if ((not context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))) and context:isStopped(context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK))) then
+        context:runAnimation("crawl_bipod", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_HOLD, 0.5)
+        crawl_states.played_animation = 1
+    end
+    -- 主轨道无动画 且 趴下轨道无动画 时播放趴下的起手式
+    if (context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK)) and context:isStopped(context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK))) then
+        context:runAnimation("crawl_start", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_HOLD, 0.5)
+    end
+    -- 主轨道无动画 且 趴下轨道被挂起（其实就是起手式播放完了） 时播放趴下的持续动作
+    if (context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK)) and context:isHolding(context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK))) then
+        -- 主轨道没有播放过动画 持续播放趴下动作
+        if (crawl_states.played_animation == 0) then
+            context:runAnimation("crawl", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_HOLD, 0.4)
+            --主轨道播放过动画 用单独的手臂归为动画回到趴下状态并重置标志位
+        elseif (crawl_states.played_animation == 1) then
+            context:runAnimation("crawl_handup", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_HOLD, 0.4)
+            crawl_states.played_animation = 0
+        end
+    end
+    -- 主轨道正在播放动画 且 趴下轨道被挂起 时将趴下的叠加层清除掉并将标志位置1
+    if ((not context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))) and context:isHolding(context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK))) then
+        if (crawl_states.played_animation == 0) then
+            context:runAnimation("crawl_handdown", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_HOLD, 0.4)
+            crawl_states.played_animation = 1
+        end
+    end
+end
+
+function crawl_states.crawl.transition(this, context, input)
+    if(not context:isCrawl() or this.main_track_states.final.isfinal == 1) then
+        if (not context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))) then
+            context:runAnimation("crawl_bipod_end", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_STOP, 0.2)
+        else
+            context:runAnimation("crawl_end", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_STOP, 0.2)
+        end
+        print("exit")
+        return this.crawl_states.normal
+    end
+end
 
 -- 用元表的方式继承默认状态机的属性
 local M = setmetatable({
     main_track_states = setmetatable({
-        idle = idle_state
+        idle = idle_state,
+        inspect = inspect_state
     }, {__index = main_track_states}),
     FIRE_MODE_TRACK = FIRE_MODE_TRACK,
     SWITCH_MODE_TRACK = SWITCH_MODE_TRACK,
     INPUT_MODE_SEMI = "input_mode_semi",
     INPUT_MODE_BURST = "input_mode_burst",
     INPUT_MODE_AUTO = "input_mode_auto",
-    INPUT_MODE_DRAW = "input_mode_draw"
+    INPUT_MODE_DRAW = "input_mode_draw",
+    crawl_states = crawl_states
 }, {__index = default})
 function M:initialize(context)
     default.initialize(self, context)
@@ -140,7 +205,8 @@ function M:states()
         self.gun_kick_state,
         self.movement_track_states.idle,
         self.ADS_states.normal,
-        self.slide_states.normal
+        self.slide_states.normal,
+        self.crawl_states.normal
     }
 end
 -- 导出状态机
