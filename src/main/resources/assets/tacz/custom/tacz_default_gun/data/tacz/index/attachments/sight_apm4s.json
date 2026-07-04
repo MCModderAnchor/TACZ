@@ -1,0 +1,8 @@
+{
+  "hidden": false,
+  "name": "tacz.attachment.sight_apm4s.name",
+  "display": "tacz:sight_apm4s_display",
+  "data": "tacz:sight_apm4s_data",
+  "type": "scope",
+  "sort": 20
+}

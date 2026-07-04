@@ -9,7 +9,7 @@
     "texture": "tacz:attachment/lod/sight_exp3"
   },
   "zoom": [
-    2
+    1.5
   ],
   // 如果配件是瞄具，且为筒状放大瞄具，此选项应为true
   "scope": false,
