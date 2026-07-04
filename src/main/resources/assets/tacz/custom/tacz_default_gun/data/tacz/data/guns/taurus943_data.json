@@ -8,11 +8,11 @@
     "damage": 6,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.25,
-      "head_shot_multiplier": 1.5,
+      "armor_ignore": 0.0,
+      "head_shot_multiplier": 2.0,
       "damage_adjust": [
-        {"distance": 15, "damage": 6},
-        {"distance": 25, "damage": 4.5},
+        {"distance": 16, "damage": 6},
+        {"distance": 25, "damage": 5},
         {"distance": 30, "damage": 3},
         {"distance": "infinite", "damage": 3}
       ]
@@ -20,7 +20,7 @@
     "speed": 135,
     "gravity": 0.125,
     "knockback": 0.005,
-    "friction": 0.03,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 1,
     "explosion": {
@@ -65,9 +65,9 @@
       // 蓄力模式为delay时，此值无效（始终重置为0）
       "decrease_on_fire": 0.3,
       // 最大蓄力进度
-      "max_charge": 0.3,
+      "max_charge": 0.2,
       // 开火阈值，蓄力至少进度达到此值时允许开火(仅hold模式生效)
-      "fire_threshold": 0.3,
+      "fire_threshold": 0.2,
       // 在射击冷却期间，是否可以进行蓄力
       "charge_during_cooldown": false
     }
@@ -105,10 +105,10 @@
   },
   "can_slide": false,
   "inaccuracy": {
-    "stand": 3,
-    "move": 3.5,
-    "sneak": 1.25,
-    "lie": 1.5,
+    "stand": 1.25,
+    "move": 1.5,
+    "sneak": 0.5,
+    "lie": 0.5,
     "aim": 0.1
   }
 }

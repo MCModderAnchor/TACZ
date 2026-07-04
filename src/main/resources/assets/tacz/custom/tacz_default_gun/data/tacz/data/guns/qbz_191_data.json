@@ -41,7 +41,7 @@
         {"distance": "infinite", "damage": 4.5}
       ]
     },
-    "speed": 290,
+    "speed": 325,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.02,
