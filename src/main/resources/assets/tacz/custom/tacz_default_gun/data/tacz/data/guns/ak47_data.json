@@ -62,7 +62,7 @@
         {"distance": "infinite", "damage": 6}
       ]
     },
-    // 速度 m/s
+    // 速度 m/s，但游戏内全局弹速乘2，所以游戏内数据为此处的两倍
     "speed": 250,
     // 重力
     "gravity": 0.15,

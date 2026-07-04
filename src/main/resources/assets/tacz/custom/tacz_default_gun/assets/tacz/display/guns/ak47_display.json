@@ -57,8 +57,9 @@
   "zoom_model_fov": 45,
   // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
   "shell": {
-    // "model": "tacz:shell/50bmg_shell",
-    // "texture": "tacz:shell/50bmg_shell",
+    // 抛壳模型，会覆盖掉ammo的抛壳模型，不填默认调用ammo的抛壳模型
+     //"model": "tacz:gun/lod/m4a1",
+     //"texture": "tacz:gun/lod/m4a1",
     // 抛壳的初速度
     "initial_velocity": [5, 2, 1],
     // 抛壳随机变化的运动速度

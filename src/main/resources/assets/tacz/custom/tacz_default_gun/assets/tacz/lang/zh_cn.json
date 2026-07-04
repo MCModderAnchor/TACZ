@@ -88,6 +88,7 @@
   "tacz.gun.mrad.name": "MRAD 狙击步枪",
   "tacz.gun.hk_mp7a1.name": "MP7A1 冲锋枪",
   "tacz.gun.scar_mk20.name": "SCAR-MK20 精确射手步枪",
+  "tacz.gun.ak74m.name": "AK-74M 突击步枪",
 
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
@@ -152,6 +153,7 @@
   "tacz.gun.mrad.desc": "请输入文本",
   "tacz.gun.hk_mp7a1.desc": "请输入文本",
   "tacz.gun.scar_mk20.desc": "请输入文本",
+  "tacz.gun.ak74m.desc": "请输入文本",
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",
   "tacz.ammo.12g.name": "§912 号口径霰弹",

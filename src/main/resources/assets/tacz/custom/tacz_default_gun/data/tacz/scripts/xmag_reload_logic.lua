@@ -58,9 +58,12 @@ local function finishReload(api, is_tactical)
         api:putAmmoInMagazine(needAmmoCount)
     end
     if not is_tactical then
-        local i = api:removeAmmoFromMagazine(1);
-        if i ~= 0 then
-            api:setAmmoInBarrel(true)
+        -- 开膛待击枪械不需要向枪膛内上弹，跳过
+        if api:getBoltByInt() ~= 3 then
+            local i = api:removeAmmoFromMagazine(1);
+            if i ~= 0 then
+                api:setAmmoInBarrel(true)
+            end
         end
     end
 end

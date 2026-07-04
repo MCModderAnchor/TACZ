@@ -1,0 +1,8 @@
+{
+    "name": "tacz.gun.ak74m.name",
+    "display": "tacz:ak74m_display",
+    "data": "tacz:ak74m_data",
+    "tooltip": "tacz.gun.ak74m.desc",
+    "type": "rifle",
+    "sort": 1
+}
