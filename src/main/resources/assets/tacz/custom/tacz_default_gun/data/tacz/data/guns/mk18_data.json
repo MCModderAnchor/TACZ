@@ -125,6 +125,16 @@
     "extended_mag"
   ],
   "builtin_attachments": {
+    "laser": {
+      "attachments": [
+        "tacz:oem_side_cover"
+      ]
+    },
+    "grip": {
+      "attachments": [
+        "tacz:oem_grip_cover"
+      ]
+    },
     "stock": {
       "attachments": [
         "tacz:oem_stock_tactical"
@@ -133,5 +143,30 @@
     }
   },
   "exclusive_attachments": {
+    "tacz:oem_stock_tactical": {
+      "weight": 0.5,
+      "ads": {
+        "addend": 0.015
+      },
+      "aim_inaccuracy": {
+        "multiplier": 0.9
+      },
+      "recoil": {
+        "pitch": {
+          "multiplier": 0.75
+        },
+        "yaw": {
+          "multiplier": 0.75
+        }
+      },
+      "melee": {
+        "distance": 2,
+        "range_angle": 40,
+        "cooldown": 0.4,
+        "damage": 5,
+        "knockback": 0.8,
+        "prep": 0.1
+      }
+    }
   }
 }
