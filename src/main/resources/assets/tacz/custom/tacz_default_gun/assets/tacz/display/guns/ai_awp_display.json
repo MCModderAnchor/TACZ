@@ -8,7 +8,7 @@
   "hud": "tacz:gun/hud/ai_awp",
   "slot": "tacz:gun/slot/ai_awp",
   "animation": "tacz:ai_awp",
-  "state_machine": "tacz:manual_action_state_machine",
+  "state_machine": "tacz:ai_awp_state_machine",
   "state_machine_param": {
     "bolt_shell_ejecting_time": 0.4
   },

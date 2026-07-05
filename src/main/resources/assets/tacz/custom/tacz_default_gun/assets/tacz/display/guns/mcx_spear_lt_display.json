@@ -8,7 +8,7 @@
   "hud": "tacz:gun/hud/mcx_spear_lt",
   "slot": "tacz:gun/slot/mcx_spear_lt",
   "animation": "tacz:mcx_spear_lt",
-  "state_machine": "tacz:hk416d_state_machine",
+  "state_machine": "tacz:mcx_spear_lt_state_machine",
   "use_default_animation": "rifle",
   "third_person_animation": "default",
   "transform": {

@@ -9,7 +9,7 @@
   "slot": "tacz:gun/slot/m95",
   "animation": "tacz:m95",
   "use_default_animation": "rifle",
-  "state_machine": "tacz:manual_action_state_machine",
+  "state_machine": "tacz:m95_state_machine",
   "state_machine_param": {
     "bolt_shell_ejecting_time": 0.5
   },

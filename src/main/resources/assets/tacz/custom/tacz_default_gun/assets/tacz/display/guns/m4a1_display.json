@@ -26,6 +26,8 @@
   "model_fov": 60,
   "zoom_model_fov": 50,
   "shell": {
+    //"model": "tacz:gun/lod/ak47",
+    //"texture": "tacz:gun/lod/ak47",
     "initial_velocity": [5, 2, 1],
     "random_velocity": [1, 1, 0.25],
     "acceleration": [0.0, -10, 0.0],

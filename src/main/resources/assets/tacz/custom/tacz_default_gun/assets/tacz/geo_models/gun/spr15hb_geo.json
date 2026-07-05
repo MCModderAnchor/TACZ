@@ -1230,12 +1230,12 @@
 				{
 					"name": "lefthand",
 					"parent": "mag_and_lefthand",
-					"pivot": [-6, 19, 9]
+					"pivot": [-6, 19, 8]
 				},
 				{
 					"name": "lefthand_pos",
 					"parent": "lefthand",
-					"pivot": [0, 8, 9],
+					"pivot": [0, 8, 8],
 					"cubes": [
 						{
 							"origin": [-8, 8, 6],
@@ -2594,7 +2594,7 @@
 				{
 					"name": "l",
 					"parent": "bipod",
-					"pivot": [0.82856, 10.92063, -17.4375],
+					"pivot": [0.98481, 7.23313, -12.25],
 					"cubes": [
 						{
 							"origin": [0.82856, 6.88938, -13],
@@ -2901,7 +2901,7 @@
 				{
 					"name": "r",
 					"parent": "bipod",
-					"pivot": [0.82856, 10.92063, -17.4375],
+					"pivot": [-0.99956, 7.23313, -12.25],
 					"cubes": [
 						{
 							"origin": [-1.07856, 6.88938, -13],
@@ -11980,12 +11980,12 @@
 				{
 					"name": "righthand",
 					"parent": "gun_and_righthand",
-					"pivot": [6, 19, 9]
+					"pivot": [6, 19, 8]
 				},
 				{
 					"name": "righthand_pos",
 					"parent": "righthand",
-					"pivot": [0, 8, 9],
+					"pivot": [0, 8, 8],
 					"cubes": [
 						{
 							"origin": [4, 8, 6],

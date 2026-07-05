@@ -8,6 +8,7 @@
   "hud": "tacz:gun/hud/mk14",
   "slot": "tacz:gun/slot/mk14",
   "animation": "tacz:mk14",
+  "state_machine": "tacz:mk14_state_machine",
   "use_default_animation": "rifle",
   "third_person_animation": "default",
   "transform": {

@@ -6,6 +6,7 @@
     15,
     20
   ],
+  "can_slide": false,
   "bolt": "closed_bolt",
   "rpm": 180,
   "script": "tacz:xmag_reload_logic",
@@ -76,7 +77,7 @@
     "aim": -0.2,
     "reload": -0.1
   },
-  "crawl_recoil_multiplier": 0.5,
+  "crawl_recoil_multiplier": 0.25,
   "fire_mode": [
     "semi"
   ],

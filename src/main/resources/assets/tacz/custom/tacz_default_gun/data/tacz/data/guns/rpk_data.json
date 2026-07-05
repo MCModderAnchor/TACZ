@@ -9,10 +9,30 @@
     60,
     75
   ],
+  "can_slide": false,
   // 枪栓类型：开膛待机（open_bolt）、闭膛待击（closed_bolt）、手动上膛（manual_action)
   "bolt": "closed_bolt",
   // 每分钟射出弹药量，最大不应超过 1200
   "rpm": 630,
+  "script": "tacz:xmag_reload_logic",
+  "script_param": {
+    "reload_feed": 1.95,
+    "reload_cooldown": 2.77,
+    "empty_feed": 2.95,
+    "empty_cooldown": 3.69,
+    "reload_xmag_1_feed": 2.03,
+    "reload_xmag_1_cooldown": 3.12,
+    "empty_xmag_1_feed": 3.43,
+    "empty_xmag_1_cooldown": 4.20,
+    "reload_xmag_2_feed": 2.03,
+    "reload_xmag_2_cooldown": 3.12,
+    "empty_xmag_2_feed": 3.43,
+    "empty_xmag_2_cooldown": 4.20,
+    "reload_xmag_3_feed": 2.03,
+    "reload_xmag_3_cooldown": 3.12,
+    "empty_xmag_3_feed": 3.43,
+    "empty_xmag_3_cooldown": 4.20
+  },
   // 子弹实体属性
   "bullet": {
     // 寿命，单位秒

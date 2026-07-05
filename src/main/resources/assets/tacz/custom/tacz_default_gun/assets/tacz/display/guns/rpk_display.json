@@ -18,7 +18,7 @@
   // 调用的动画名，会在包目录下的 animations 文件夹中寻找，不建议为空
   "animation": "tacz:rpk",
   // 状态机脚本，位于 assets/{命名空间}/scripts
-  "state_machine": "tacz:default_state_machine",
+  "state_machine": "tacz:rpk_state_machine",
   // 指定使用缺省动画，可为空。如果上文指定的动画文件里缺少某个动画，如 draw 动画，则会从缺省动画拷贝。
   // 值可为 rifle、pistol
   "use_default_animation": "rifle",
