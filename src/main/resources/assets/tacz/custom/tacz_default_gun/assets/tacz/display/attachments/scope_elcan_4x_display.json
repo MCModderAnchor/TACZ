@@ -15,8 +15,8 @@
     2
   ],
   "views_fov": [
-    40.0,
-    60.0
+    35.0,
+    55.0
   ],
   "idle_scope_height_adjust": 0.75,
   "scope": true,

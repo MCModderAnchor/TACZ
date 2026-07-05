@@ -3976,7 +3976,7 @@
 				{
 					"name": "scope_view",
 					"parent": "views",
-					"pivot": [0, 1.875, 8.5]
+					"pivot": [0, 1.875, 9.5]
 				}
 			]
 		}
