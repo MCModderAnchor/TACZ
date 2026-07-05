@@ -2,9 +2,9 @@
   "ammo": "tacz:338",
   "ammo_amount": 10,
   "extended_mag_ammo_amount": [
-    12,
-    15,
-    20
+    10,
+    10,
+    10
   ],
   "can_slide": false,
   "bolt": "manual_action",
@@ -12,15 +12,15 @@
   "bullet": {
     "life": 1.1,
     "bullet_amount": 1,
-    "damage": 75,
+    "damage": 45,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.75,
       "head_shot_multiplier": 2.5,
       "damage_adjust": [
-        {"distance": 75, "damage": 75},
-        {"distance": 150, "damage": 65},
-        {"distance": "infinite", "damage": 50}
+        {"distance": 96, "damage": 45},
+        {"distance": 180, "damage": 40},
+        {"distance": "infinite", "damage": 35}
       ]
     },
     "speed": 575,
@@ -28,11 +28,11 @@
     "knockback": 0,
     "friction": 0.015,
     "ignite": false,
-    "pierce": 4,
+    "pierce": 3,
     "explosion": {
       "explode": false,
       "damage": 60,
-      "radius": 1.25,
+      "radius": 1.5,
       "knockback": true,
       "delay": 1
     }
@@ -119,9 +119,24 @@
   "allow_attachment_types": [
     "scope",
     "extended_mag",
-    "muzzle"
+    "muzzle",
+    "laser"
   ],
   "exclusive_attachments": {
-   
+    "tacz:laser_lopro": {
+      "weight": 1,
+      "ads": {
+        "addend": -0.05
+      },
+      "aim_inaccuracy": {
+        "multiplier": 0.1
+      },
+      "inaccuracy": {
+        "multiplier": 0.5
+      },
+      "sneak_inaccuracy": {
+        "multiplier": 0.5
+      }
+    }
   }
 }

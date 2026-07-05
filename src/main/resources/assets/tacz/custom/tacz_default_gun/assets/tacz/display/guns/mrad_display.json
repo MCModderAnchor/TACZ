@@ -28,7 +28,7 @@
   "iron_zoom": 1.5,
   "model_fov": 60,
   // 机瞄模型缩放fov，默认70
-  "zoom_model_fov": 33,
+  "zoom_model_fov": 35,
   "shell": {
     "initial_velocity": [8, 2, -7],
     "random_velocity": [2, 1, 0.5],
