@@ -2,9 +2,9 @@
   "ammo": "tacz:545x39",
   "ammo_amount": 30,
   "extended_mag_ammo_amount": [
-    34,
-    37,
-    40
+    40,
+    50,
+    60
   ],
   "script": "tacz:xmag_reload_logic",
   "script_param": {
