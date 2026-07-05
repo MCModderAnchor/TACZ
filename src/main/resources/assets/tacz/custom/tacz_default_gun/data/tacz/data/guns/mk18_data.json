@@ -61,7 +61,7 @@
   },
   "draw_time": 0.3,
   "put_away_time": 0.43,
-  "aim_time": 0.14,
+  "aim_time": 0.13,
   "sprint_time": 0.18,
   "weight": 3.5,
   "movement_speed": {
@@ -87,9 +87,9 @@
     ]
   },
   "inaccuracy": {
-    "stand": 5,
-    "move": 5.5,
-    "sneak": 2.75,
+    "stand": 4.5,
+    "move": 5,
+    "sneak": 2.5,
     "lie": 1.5,
     "aim": 0.1
   },
