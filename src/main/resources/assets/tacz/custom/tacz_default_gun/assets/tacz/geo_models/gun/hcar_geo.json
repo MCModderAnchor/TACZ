@@ -28,7 +28,7 @@
 				{
 					"name": "constraint",
 					"parent": "default_gun",
-					"pivot": [0, 13.5, 5]
+					"pivot": [0, 13.5, 0]
 				},
 				{
 					"name": "gas_lock",

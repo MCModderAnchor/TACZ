@@ -123,8 +123,8 @@ end
 
 -- 此处为开火模式轨道的状态,专门为快慢机动画服务,兼容其他动作,可按需求添加三种射击模式(semi、burst、auto)
 local fire_mode_state = {
-    -- 半自动状态
-    semi = {},
+    -- 连射状态
+    burst = {},
     -- 全自动状态
     auto = {},
     -- 掏枪状态
@@ -137,9 +137,9 @@ end
 
 function fire_mode_state.draw.transition(this, context,input)
     if (input == this.INPUT_MODE_DRAW) then
-        if (context:getFireMode() == SEMI) then
-            context:runAnimation("static_semi", context:getTrack(STATIC_TRACK_LINE, FIRE_MODE_TRACK), true, PLAY_ONCE_HOLD, 0)
-            return fire_mode_state.semi
+        if (context:getFireMode() == BURST) then
+            context:runAnimation("static_burst", context:getTrack(STATIC_TRACK_LINE, FIRE_MODE_TRACK), true, PLAY_ONCE_HOLD, 0)
+            return fire_mode_state.burst
         elseif (context:getFireMode() == AUTO) then
             context:runAnimation("static_auto", context:getTrack(STATIC_TRACK_LINE, FIRE_MODE_TRACK), true, PLAY_ONCE_HOLD, 0)
             return fire_mode_state.auto
@@ -147,11 +147,11 @@ function fire_mode_state.draw.transition(this, context,input)
     end
 end
 -- 注意!后面关于每个开火模式对应状态之间的切换,需要按照data里填写的顺序进行转换
-function fire_mode_state.semi.update(this, context)
+function fire_mode_state.burst.update(this, context)
     -- 当进入特定开火模式的状态时,挂起动画
     local track = context:getTrack(STATIC_TRACK_LINE, FIRE_MODE_TRACK)
     if (context:isHolding(track)) then
-        context:runAnimation("static_semi", track, true, PLAY_ONCE_HOLD, 0)
+        context:runAnimation("static_burst", track, true, PLAY_ONCE_HOLD, 0)
     end
     -- 为特定开火模式定义输入状态
     if (context:getFireMode() == AUTO) then
@@ -159,7 +159,7 @@ function fire_mode_state.semi.update(this, context)
     end
 end
 -- 当检测到对应输入状态时播放对应快慢机动画
-function fire_mode_state.semi.transition(this, context,input)
+function fire_mode_state.burst.transition(this, context,input)
     if(input == this.INPUT_MODE_AUTO)then
         context:runAnimation("switch_auto", context:getTrack(STATIC_TRACK_LINE, SWITCH_MODE_TRACK), false, PLAY_ONCE_STOP, 0)
         return fire_mode_state.auto
@@ -181,15 +181,15 @@ function fire_mode_state.auto.update(this, context)
     if (context:isHolding(track)) then
         context:runAnimation("static_auto", track, true, PLAY_ONCE_HOLD, 0)
     end
-    if (context:getFireMode() == SEMI) then
-        context:trigger(this.INPUT_MODE_SEMI)
+    if (context:getFireMode() == BURST) then
+        context:trigger(this.INPUT_MODE_BURST)
     end
 end
 
 function fire_mode_state.auto.transition(this, context,input)
-    if(input == this.INPUT_MODE_SEMI)then
-        context:runAnimation("switch_semi", context:getTrack(STATIC_TRACK_LINE, SWITCH_MODE_TRACK), false, PLAY_ONCE_STOP, 0)
-        return fire_mode_state.semi
+    if(input == this.INPUT_MODE_BURST)then
+        context:runAnimation("switch_burst", context:getTrack(STATIC_TRACK_LINE, SWITCH_MODE_TRACK), false, PLAY_ONCE_STOP, 0)
+        return fire_mode_state.burst
     end
     if(input == INPUT_SHOOT)then
         context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, SWITCH_MODE_TRACK))

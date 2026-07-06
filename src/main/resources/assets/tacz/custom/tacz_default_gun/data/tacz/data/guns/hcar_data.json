@@ -122,7 +122,7 @@
     // 默认近战数据，会被配件的数据替换掉
     "default": {
       // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
-      "animation_type": "melee_stock",
+      "animation_type": "melee_push",
       // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
       "distance": 0,
       // 刺刀范围角度

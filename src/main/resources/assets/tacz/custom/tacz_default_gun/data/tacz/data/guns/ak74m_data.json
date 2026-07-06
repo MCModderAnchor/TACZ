@@ -89,7 +89,7 @@
       {"time": 0.6, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.23, 0.18]},
+      {"time": 0, "value": [-0.18, 0.13]},
       {"time": 0.35, "value": [0, 0]}
     ]
   },
@@ -105,7 +105,7 @@
     "distance": 1,
     "cooldown": 0.7,
     "default": {
-      "animation_type": "melee_push",
+      "animation_type": "melee_stock",
       "distance": 1,
       "range_angle": 40,
       "cooldown": 0,

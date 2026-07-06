@@ -8748,7 +8748,7 @@
 				{
 					"name": "constraint",
 					"parent": "svd",
-					"pivot": [0, 11.2125, -7.1]
+					"pivot": [0, 11.2125, -17.1]
 				},
 				{
 					"name": "camera",
