@@ -14687,7 +14687,7 @@
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [23, 9, 0],
+					"pivot": [26, 9, -4],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -14743,7 +14743,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1, 8.75, -1],
+					"pivot": [1, 8, 3.28125],
 					"rotation": [0, 90, 0]
 				},
 				{

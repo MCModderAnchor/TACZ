@@ -36,7 +36,7 @@
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.20,
-      "head_shot_multiplier": 1.50,
+      "head_shot_multiplier": 1.75,
       "damage_adjust": [
         {"distance": 30, "damage": 8},
         {"distance": 60, "damage": 6.5},
@@ -73,8 +73,8 @@
   "weight": 3.4,
   "movement_speed": {
     "base": 0.0,
-    "aim": -0.2,
-    "reload": -0.15
+    "aim": -0.15,
+    "reload": -0.1
   },
   "fire_mode": [
     "auto",
@@ -95,11 +95,11 @@
   },
   "hurt_bob_tweak_multiplier": 0.05,
   "inaccuracy": {
-    "stand": 4,
+    "stand": 4.25,
     "move": 5,
     "sneak": 2.5,
     "lie": 1.5,
-    "aim": 0.15
+    "aim": 0.10
   },
   "melee": {
     "distance": 1,
