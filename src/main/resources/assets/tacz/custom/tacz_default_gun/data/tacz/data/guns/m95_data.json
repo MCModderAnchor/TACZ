@@ -6,6 +6,7 @@
     8,
     10
   ],
+  "can_slide": false,
   "bolt": "manual_action",
   "rpm": 151,
   "recoil_push": {
