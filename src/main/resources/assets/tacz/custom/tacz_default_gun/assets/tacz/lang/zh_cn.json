@@ -245,12 +245,14 @@
   "tacz.attachment.ammo_mod_hp.name": "§e空尖弹",
   "tacz.attachment.ammo_mod_i.name": "§e燃烧弹",
   "tacz.attachment.ammo_mod_slug.name": "§e独头弹",
+  "tacz.attachment.ammo_mod_overpressure_recoil.name": "§b超压反冲弹",
 
   "tacz.attachment.ammo_mod_fmj.desc": "全金属外壳弹头 \n提高对护甲的穿透力，但降低子弹后效",
   "tacz.attachment.ammo_mod_he.desc": "高爆填充弹头 \n降低直击伤害和穿甲能力，但爆炸威力巨大 \n也会将霰弹变为独头弹",
   "tacz.attachment.ammo_mod_hp.desc": "中空弹头 \n提高对无护甲目标的伤害，但降低护甲穿透能力和弹道性能",
   "tacz.attachment.ammo_mod_i.desc": "铝热填充弹头 \n点燃目标，但降低护甲穿透能力",
   "tacz.attachment.ammo_mod_slug.desc": "装有单颗巨大弹丸的霰弹 \n将整个霰弹发射药的能量集中于一身 \n适合狩猎大型目标",
+  "tacz.attachment.ammo_mod_overpressure_recoil.desc": "装填非法超高压发射药的霰弹 \n别管枪膛里塞了什么，只要扣扳机 \n就能同时把自己和敌人送上天",
 
   "tacz.attachment.grip_magpul_afg_2.name": "塔伦 AFG2 阻手",
   "tacz.attachment.grip_vertical_talon.name": "塔伦 SG2 前握把",

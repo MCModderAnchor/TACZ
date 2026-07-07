@@ -21,17 +21,23 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunFire;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
+import com.tacz.guns.resource.modifier.custom.RecoilPushModifier;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.CycleTaskHelper;
 import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fml.LogicalSide;
@@ -179,6 +185,7 @@ public class ModernKineticGunScriptAPI {
                 // 获取射击方向（pitch 和 yaw）
                 float pitch = pitchSupplier != null ? pitchSupplier.get() : shooter.getXRot();
                 float yaw = yawSupplier != null ? yawSupplier.get() : shooter.getYRot();
+                applyRecoilPush(cacheProperty, bulletAmount, pitch, yaw);
                 // 生成子弹
                 Level world = shooter.level();
                 ResourceLocation ammoId = gunData.getAmmoId();
@@ -200,6 +207,26 @@ public class ModernKineticGunScriptAPI {
             }
             return true;
         }, period, cycles);
+    }
+
+    private void applyRecoilPush(AttachmentCacheProperty cacheProperty, int bulletAmount, float pitch, float yaw) {
+        GunRecoilPushData recoilPush = cacheProperty.getCache(RecoilPushModifier.ID);
+        if (recoilPush == null) {
+            return;
+        }
+        if (!(shooter instanceof Player player) || player.isPassenger()) {
+            return;
+        }
+        boolean onGround = player.onGround() || (!player.isSwimming() && player.getPose() == Pose.SWIMMING);
+        double strength = recoilPush.getFinalStrength(onGround, bulletAmount);
+        if (strength <= 0.0D) {
+            return;
+        }
+        Vec3 push = Vec3.directionFromRotation(pitch, yaw).scale(-strength);
+        player.setDeltaMovement(player.getDeltaMovement().add(push));
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(serverPlayer));
+        }
     }
 
     private <T> T modifyProperty(GunProperty<?> property, Class<T> type, T value) {

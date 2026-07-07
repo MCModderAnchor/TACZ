@@ -44,6 +44,10 @@ public class GunData {
     @SerializedName("rpm")
     private int roundsPerMinute = 300;
 
+    @SerializedName("recoil_push")
+    @Nullable
+    private GunRecoilPushData recoilPushData = null;
+
     @SerializedName("bullet")
     private BulletData bulletData = new BulletData();
 
@@ -170,6 +174,11 @@ public class GunData {
             return 300;
         }
         return rpm;
+    }
+
+    @Nullable
+    public GunRecoilPushData getRecoilPushData() {
+        return recoilPushData;
     }
 
     public BulletData getBulletData() {

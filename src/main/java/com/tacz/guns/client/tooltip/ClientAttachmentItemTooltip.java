@@ -12,7 +12,9 @@ import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
+import com.tacz.guns.resource.modifier.custom.RecoilPushModifier;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tacz.guns.resource.pojo.data.gun.GunRecoilPushData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -161,6 +163,11 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                 String text = I18n.get(tooltipKey);
                 String[] split = text.split("\n");
                 Arrays.stream(split).forEach(s -> components.add(Component.literal(s).withStyle(ChatFormatting.GRAY)));
+            }
+
+            if (data.getModifier().get(RecoilPushModifier.ID) != null
+                    && data.getModifier().get(RecoilPushModifier.ID).getValue() instanceof GunRecoilPushData) {
+                components.add(Component.translatable("tooltip.tacz.attachment.recoil_push").withStyle(ChatFormatting.AQUA));
             }
 
             if (attachment.getItem() instanceof IAttachment iAttachment) {

@@ -122,6 +122,8 @@ public class GunProperties {
     @ValueModifiableAtRuntime(Integer.class)
     public static final GunProperty<Integer>                                    PIERCE              = GunProperty.of("pierce", Integer.class);
 
+    public static final GunProperty<GunRecoilPushData>                          RECOIL_PUSH         = GunProperty.of("recoil_push", GunRecoilPushData.class);
+
     public static final GunProperty<ParameterizedCachePair<Float, Float>>       RECOIL              = GunProperty.of("recoil", new TypeToken<>() {});
     public static final GunProperty<Integer>                                    ROUNDS_PER_MINUTE   = GunProperty.of("rpm", Integer.class);
 

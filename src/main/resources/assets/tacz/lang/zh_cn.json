@@ -268,6 +268,7 @@
   "tooltip.tacz.attachment.effective_range.decrease": "- 优势射程",
   "tooltip.tacz.attachment.effective_range.increase": "+ 优势射程",
   "tooltip.tacz.attachment.explosion": "+ 爆炸",
+  "tooltip.tacz.attachment.recoil_push": "+ 后坐力推进",
   "tooltip.tacz.attachment.extended_mag": "扩容弹匣",
   "tooltip.tacz.attachment.extended_mag_level_1": "弹药容量 I",
   "tooltip.tacz.attachment.extended_mag_level_2": "弹药容量 II",

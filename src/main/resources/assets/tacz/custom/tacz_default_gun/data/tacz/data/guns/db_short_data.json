@@ -5,18 +5,18 @@
   "bullet": {
     "life": 0.3,
     "bullet_amount": 16,
-    "damage": 24,
+    "damage": 32,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.33,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
-        {"distance": 5, "damage": 24},
-        {"distance": 9, "damage": 18},
-        {"distance": "infinite", "damage": 12}
+        {"distance": 5, "damage": 32},
+        {"distance": 9, "damage": 24},
+        {"distance": "infinite", "damage": 16}
       ]
     },
-    "speed": 120,
+    "speed": 130,
     "gravity": 0.15,
     "knockback": 0.875,
     "friction": 0.05,
@@ -39,7 +39,7 @@
   "draw_time": 0.27,
   "put_away_time": 0.203,
   "aim_time": 0.1,
-  "sprint_time": 0.075,
+  "sprint_time": 0.025,
   "weight": 2.1,
   "movement_speed": {
     "base": 0.0,
@@ -78,6 +78,31 @@
       "recoil_modifier": {
         "pitch": -0.3,
         "yaw": -0.2
+      }
+    },
+    "tacz:ammo_mod_overpressure_recoil": {
+      "inaccuracy": {
+        "multiplier": 1.5
+      },
+      "aim_inaccuracy": {
+        "multiplier": 1.5
+      },
+      "recoil": {
+        "pitch": {
+          "multiplier": 1.25
+        }
+      },
+      "damage": {
+        "multiplier": 1.5
+      },
+      "knockback": {
+        "multiplier": 2.0
+      },
+      "recoil_push": {
+        "ground_strength": 0.02,
+        "air_strength": 0.1,
+        "per_projectile": true,
+        "projectile_multiplier": 0.35
       }
     }
   },

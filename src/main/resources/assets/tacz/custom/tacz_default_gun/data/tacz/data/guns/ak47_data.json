@@ -37,6 +37,13 @@
   "bolt": "closed_bolt",
   // 每分钟射出弹药量，最大不应超过 1200
   "rpm": 600,
+  // 开火时对射手施加的后坐力推动
+  // "recoil_push": {
+  //   "ground_strength": 0.25,
+  //   "air_strength": 1.2,
+  //   "per_projectile": false,
+  //   "projectile_multiplier": 1.0
+  // },
   // 子弹实体属性
   "bullet": {
     // 寿命，单位秒

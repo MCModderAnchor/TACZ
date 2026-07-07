@@ -39,6 +39,7 @@ public class AttachmentPropertyManager {
         MODIFIERS.put(InaccuracyModifier.ID, new InaccuracyModifier());
         MODIFIERS.put(KnockbackModifier.ID, new KnockbackModifier());
         MODIFIERS.put(PierceModifier.ID, new PierceModifier());
+        MODIFIERS.put(RecoilPushModifier.ID, new RecoilPushModifier());
         MODIFIERS.put(RecoilModifier.ID, new RecoilModifier());
         MODIFIERS.put(RpmModifier.ID, new RpmModifier());
         MODIFIERS.put(SilenceModifier.ID, new SilenceModifier());

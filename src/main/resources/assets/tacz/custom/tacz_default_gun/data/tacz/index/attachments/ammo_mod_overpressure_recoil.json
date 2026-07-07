@@ -1,0 +1,8 @@
+{
+  "name": "tacz.attachment.ammo_mod_overpressure_recoil.name",
+  "display": "tacz:ammo_mod_overpressure_recoil_display",
+  "data": "tacz:ammo_mod_overpressure_recoil_data",
+  "tooltip": "tacz.attachment.ammo_mod_overpressure_recoil.desc",
+  "type": "extended_mag",
+  "sort": 1000
+}

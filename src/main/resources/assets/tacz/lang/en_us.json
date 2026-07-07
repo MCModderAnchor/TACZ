@@ -201,6 +201,7 @@
   "tooltip.tacz.attachment.ignite.entity": "+ Ignite Entity",
   "tooltip.tacz.attachment.ignite.block": "+ Ignite Block",
   "tooltip.tacz.attachment.explosion": "+ Explosion",
+  "tooltip.tacz.attachment.recoil_push": "+ Recoil Propulsion",
   "tooltip.tacz.attachment.rangefinder": "+ Rangefinder",
   "tooltip.tacz.attachment.fire_control": "+ Fire Control",
   "tooltip.tacz.attachment.yaw.shift": "Press [Shift] to see the support guns",
