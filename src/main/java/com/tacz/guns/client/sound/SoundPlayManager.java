@@ -51,7 +51,8 @@ public class SoundPlayManager {
 
     @Nullable
     public static GunSoundInstance playClientSound(Entity entity, @Nullable ResourceLocation name, float volume, float pitch, int distance, boolean mono) {
-        return playClientSound(entity, name, volume, pitch, distance, mono, SoundConfig.DEFAULT_SOUND_CONCURRENCY_LIMIT.get(), true, false);
+        boolean trackFirstPerson = SoundConfig.FIRST_PERSON_ANIMATION_SOUND_TRACKING.get();
+        return playClientSound(entity, name, volume, pitch, distance, mono, SoundConfig.DEFAULT_SOUND_CONCURRENCY_LIMIT.get(), trackFirstPerson, true);
     }
 
     @Nullable
@@ -214,7 +215,7 @@ public class SoundPlayManager {
             if (SoundManager.SHOOT_3P_SOUND.equals(soundName) || SoundManager.SILENCE_3P_SOUND.equals(soundName)) {
                 playClientSound(livingEntity, soundId, message.getVolume(), message.getPitch(), message.getDistance(), true, SoundConfig.HIGH_FREQUENCY_SOUND_CONCURRENCY_LIMIT.get(), true, false);
             } else {
-                playClientSound(livingEntity, soundId, message.getVolume(), message.getPitch(), message.getDistance());
+                playClientSound(livingEntity, soundId, message.getVolume(), message.getPitch(), message.getDistance(), true, SoundConfig.DEFAULT_SOUND_CONCURRENCY_LIMIT.get(), true, false);
             }
         });
     }
