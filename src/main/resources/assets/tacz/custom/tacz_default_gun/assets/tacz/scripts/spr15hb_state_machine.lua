@@ -264,7 +264,6 @@ function crawl_states.crawl.transition(this, context, input)
         else
             context:runAnimation("crawl_end", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_STOP, 0.2)
         end
-        print("exit")
         return this.crawl_states.normal
     end
 end

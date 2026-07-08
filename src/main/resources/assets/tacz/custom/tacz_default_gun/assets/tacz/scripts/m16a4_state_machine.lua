@@ -7,8 +7,7 @@ local function isEaster()
     local flag = math.random(1, 1000)
     -- 改下面一行的数字决定概率，概率是千分之 x
     if (flag <= 100) then
-        return true,
-        print('eastertrue')
+        return true
     end
     return false
 end

@@ -46,6 +46,14 @@ local function runInspectAnimation(context)
     end
 end
 
+local crawl_states = {
+    draw = {},
+    normal = {},
+    crawl = {},
+    played_animation = 0,
+    is_bolting = false
+}
+
 function idle_state.transition(this, context, input)
     if (input == INPUT_RELOAD) then
         runReloadAnimation(context)
@@ -71,15 +79,12 @@ function idle_state.transition(this, context, input)
         runInspectAnimation(context)
         return inspect_state
     end
+    if (input == INPUT_BOLT) then
+        -- 标记为 bolt，趴下时手臂不归位
+        crawl_states.is_bolting = true
+    end
     return main_track_states.idle.transition(this, context, input)
 end
-
-local crawl_states = {
-    draw = {},
-    normal = {},
-    crawl = {},
-    played_animation = 0
-}
 
 function crawl_states.normal.transition(this, context, input)
     -- 趴下时切到趴下状态
@@ -89,8 +94,9 @@ function crawl_states.normal.transition(this, context, input)
 end
 
 function crawl_states.crawl.entry(this, context)
-    -- 重置主轨道动画标志位
+    -- 重置动画与 bolt 标志位
     crawl_states.played_animation = 0
+    crawl_states.is_bolting = false
 end
 
 function crawl_states.crawl.update(this, context)
@@ -108,6 +114,10 @@ function crawl_states.crawl.update(this, context)
         -- 主轨道没有播放过动画 持续播放趴下动作
         if (crawl_states.played_animation == 0) then
             context:runAnimation("crawl", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_HOLD, 0.4)
+            -- bolt 结束，手臂本就在趴下态，只需清标志
+            if (crawl_states.is_bolting) then
+                crawl_states.is_bolting = false
+            end
             --主轨道播放过动画 用单独的手臂归为动画回到趴下状态并重置标志位
         elseif (crawl_states.played_animation == 1) then
             context:runAnimation("crawl_handup", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_HOLD, 0.4)
@@ -116,7 +126,7 @@ function crawl_states.crawl.update(this, context)
     end
     -- 主轨道正在播放动画 且 趴下轨道被挂起 时将趴下的叠加层清除掉并将标志位置1
     if ((not context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))) and context:isHolding(context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK))) then
-        if (crawl_states.played_animation == 0) then
+        if (crawl_states.played_animation == 0 and not crawl_states.is_bolting) then
             context:runAnimation("crawl_handdown", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_HOLD, 0.4)
             crawl_states.played_animation = 1
         end
@@ -130,7 +140,7 @@ function crawl_states.crawl.transition(this, context, input)
         else
             context:runAnimation("crawl_end", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_STOP, 0.2)
         end
-        print("exit")
+        crawl_states.is_bolting = false
         return this.crawl_states.normal
     end
 end

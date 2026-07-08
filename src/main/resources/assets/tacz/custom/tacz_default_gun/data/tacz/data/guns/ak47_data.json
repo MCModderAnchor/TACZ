@@ -356,7 +356,7 @@
   //"script_param": {
   //  "bolt_time": 0.5
   //},
-  // 为特定的配件指派属性(功能已损坏待修复)
+  // 为特定的配件指派属性
   //"exclusive_attachments": {
     // 配件 ID，后面的数据和配件的 data 部分结构完全一致
     //"tacz:scope_standard_8x": {
