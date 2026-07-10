@@ -1,0 +1,8 @@
+{
+  "name": "tacz.gun.pkm.name",
+  "display": "tacz:pkm_display",
+  "data": "tacz:pkm_data",
+  "tooltip": "tacz.gun.pkm.desc",
+  "type": "mg",
+  "sort": 4
+}

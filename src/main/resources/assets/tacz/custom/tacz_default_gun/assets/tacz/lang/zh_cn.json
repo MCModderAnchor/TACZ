@@ -90,6 +90,7 @@
   "tacz.gun.hk_mp7a1.name": "MP7A1 冲锋枪",
   "tacz.gun.scar_mk20.name": "SCAR-MK20 精确射手步枪",
   "tacz.gun.ak74m.name": "AK-74M 突击步枪",
+  "tacz.gun.pkm.name": "PKM 通用机枪",
 
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
@@ -156,6 +157,7 @@
   "tacz.gun.hk_mp7a1.desc": "用它在头盔上画个哭脸",
   "tacz.gun.scar_mk20.desc": "贵的东西唯一缺点，就是贵——现在它更精准了",
   "tacz.gun.ak74m.desc": "从雨林到海湾，再到雪原",
+  "tacz.gun.pkm.desc": "请输入文本",
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",
   "tacz.ammo.12g.name": "§912 号口径霰弹",
@@ -310,6 +312,7 @@
   "tacz.attachment.stock_m4ss.name": "M4SS 战术枪托",
   "tacz.attachment.stock_heavy_spas_12.name": "弗兰基 重型枪托",
   "tacz.attachment.stock_tactical_spas_12.name": "弗兰基 战术枪托",
+  "tacz.attachment.stock_heavy_ctr.name": "CTR重型枪托",
 
   "tacz.block.gun_smith_table.name": "TaCZ枪械工作台",
   "tacz.block.ammo_workbench.name": "TaCZ弹药装配台",
