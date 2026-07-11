@@ -1711,7 +1711,7 @@
 				{
 					"name": "constraint",
 					"parent": "m4",
-					"pivot": [0, 12.525, -18.625]
+					"pivot": [0, 12.525, -10]
 				},
 				{
 					"name": "m4_body",
@@ -15538,12 +15538,13 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 12.65433, 6]
+					"pivot": [0, 12.65433, 8]
 				},
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [3.25, 13.40625, 7.8]
+					"pivot": [3.25, 13.25, 8],
+					"rotation": [0, 0, -3]
 				},
 				{
 					"name": "refit_view",

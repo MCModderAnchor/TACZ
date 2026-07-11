@@ -8,7 +8,7 @@
     "addend": 0.25
   },
   "effective_range": {
-    "multiplier": 1.15
+    "multiplier": 1.5
   },
   "aim_inaccuracy": {
     "multiplier": 0.75

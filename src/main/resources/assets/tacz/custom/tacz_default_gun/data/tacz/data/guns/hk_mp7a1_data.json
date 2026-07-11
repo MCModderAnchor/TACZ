@@ -7,7 +7,7 @@
     "damage": 6,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.7,
+      "armor_ignore": 0.75,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
         {"distance": 18, "damage": 6},
@@ -16,7 +16,7 @@
         {"distance": "infinite", "damage": 3.5}
       ]
     },
-    "speed": 180,
+    "speed": 360,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.02,
@@ -61,7 +61,7 @@
     }
   },
   "draw_time": 0.32,
-  "put_away_time": 0.35,
+  "put_away_time": 0.3,
   "sprint_time": 0.12,
   "aim_time": 0.1,
   "weight": 2.5,

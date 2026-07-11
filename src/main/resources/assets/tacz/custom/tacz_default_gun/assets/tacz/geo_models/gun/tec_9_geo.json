@@ -3762,7 +3762,7 @@
 				{
 					"name": "constraint",
 					"parent": "tec_9",
-					"pivot": [0, 10.91161, -1]
+					"pivot": [0, 10.91161, -3]
 				},
 				{
 					"name": "additional_magazine",
@@ -4745,19 +4745,19 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 10.89063, 10]
+					"pivot": [0, 10.89063, 15]
 				},
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [1.9754, 13.0644, 12.5],
+					"pivot": [1.9754, 12.8125, 12.5],
 					"rotation": [0, 0, -5]
 				},
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [20, 7.75, 0],
-					"rotation": [0, 90, 0]
+					"pivot": [24, 7.75, 0],
+					"rotation": [0, 89, 0]
 				},
 				{
 					"name": "refit_scope_view",

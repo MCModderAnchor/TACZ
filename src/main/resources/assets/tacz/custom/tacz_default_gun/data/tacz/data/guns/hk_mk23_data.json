@@ -111,7 +111,7 @@
       "speed": 0,
       "knockback": 0,
       "armor_ignore": 0,
-      "head_shot_multiplier": -0.25,
+      "head_shot_multiplier": -0.5,
       "aim_inaccuracy": 0.05,
       "other_inaccuracy": 0.5
     }

@@ -1,10 +1,10 @@
 {
   "weight": 0.25,
   "ads": {
-    "addend": 0.07
+    "addend": 0.1
   },
   "head_shot": {
-    "addend": 0.25
+    "addend": 0.5
   },
   "sneak_inaccuracy": {
     "multiplier": 0.35
