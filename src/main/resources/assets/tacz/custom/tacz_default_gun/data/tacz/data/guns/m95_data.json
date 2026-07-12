@@ -11,7 +11,9 @@
   "rpm": 151,
   "recoil_push": {
     "ground_strength": 0.25,
-    "air_strength": 0.25
+    "air_strength": 0.25,
+    "sneak_strength": 0.1,
+    "crawl_strength": 0.0
   },
   "bullet": {
     "life": 1.1,

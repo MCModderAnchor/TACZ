@@ -217,8 +217,10 @@ public class ModernKineticGunScriptAPI {
         if (!(shooter instanceof Player player) || player.isPassenger()) {
             return;
         }
-        boolean onGround = player.onGround() || (!player.isSwimming() && player.getPose() == Pose.SWIMMING);
-        double strength = recoilPush.getFinalStrength(onGround, bulletAmount);
+        boolean crawling = !player.isSwimming() && player.getPose() == Pose.SWIMMING;
+        boolean onGround = player.onGround() || crawling;
+        boolean sneaking = player.getPose() == Pose.CROUCHING;
+        double strength = recoilPush.getFinalStrength(onGround, sneaking, crawling, bulletAmount);
         if (strength <= 0.0D) {
             return;
         }

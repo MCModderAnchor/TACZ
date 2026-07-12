@@ -19,6 +19,8 @@
   "recoil_push": {
     "ground_strength": 0.02,
     "air_strength": 0.1,
+    "sneak_strength": 0.02,
+    "crawl_strength": 0.02,
     "per_projectile": true,
     "projectile_multiplier": 0.35
   }
