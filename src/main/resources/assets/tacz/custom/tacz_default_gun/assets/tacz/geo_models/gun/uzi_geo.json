@@ -3095,7 +3095,7 @@
 					"cubes": [
 						{
 							"origin": [-0.03125, 10.375, -5.8125],
-							"size": [0.0625, 0.1875, 0.0625],
+							"size": [0.0625, 0.21875, 0.0625],
 							"pivot": [0, 10.15625, -5.78125],
 							"rotation": [0, -45, 0],
 							"uv": {
@@ -4451,36 +4451,36 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 10.60625, 12.89375]
+					"pivot": [0, 10.60625, 15]
 				},
 				{
 					"name": "refit_extended_mag_view",
 					"parent": "view",
-					"pivot": [11.65, 0.7, 3],
+					"pivot": [20.65, 0.7, 3],
 					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [16.975, 6.825, 1],
+					"pivot": [24, 6.825, 3],
 					"rotation": [0, 89.9, 0]
 				},
 				{
 					"name": "refit_muzzle_view",
 					"parent": "view",
-					"pivot": [9, 8.825, -18],
+					"pivot": [16, 8.825, -18],
 					"rotation": [0, 120, 0]
 				},
 				{
 					"name": "refit_scope_view",
 					"parent": "view",
-					"pivot": [8.025, 11.675, 0.775],
+					"pivot": [16.025, 11.675, -2.225],
 					"rotation": [0, 117.5, 0]
 				},
 				{
 					"name": "refit_stock_view",
 					"parent": "view",
-					"pivot": [16, 9, 9],
+					"pivot": [24, 9, 9],
 					"rotation": [0, 90, 0]
 				},
 				{

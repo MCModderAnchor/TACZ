@@ -1,0 +1,8 @@
+{
+  "name": "tacz.attachment.oem_sight_hk.name",
+  "display": "tacz:oem_sight_hk_display",
+  "data": "tacz:oem_sight_hk_data",
+  "type": "scope",
+  "sort": 1,
+  "hidden": true
+}

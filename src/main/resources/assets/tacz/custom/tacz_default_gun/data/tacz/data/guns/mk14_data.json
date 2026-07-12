@@ -66,7 +66,7 @@
   "fire_mode_adjust": {
     "auto": {
       // 加算，全自动模式的开火数值调整，如无调整可不写
-      "damage": -5,
+      "damage": -3,
       "rpm": 380,
       "speed": -30,
       "knockback": 0,

@@ -8,7 +8,7 @@
   ],
   "can_slide": false,
   "bolt": "closed_bolt",
-  "rpm": 250,
+  "rpm": 275,
   "script": "tacz:xmag_reload_logic",
   "script_param": {
     "reload_feed": 1.2,
@@ -42,7 +42,7 @@
         {"distance": "infinite", "damage": 12}
       ]
     },
-    "speed": 450,
+    "speed": 375,
     "gravity": 0.2,
     "knockback": 0,
     "friction": 0.0125,

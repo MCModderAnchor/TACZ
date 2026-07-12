@@ -125,6 +125,13 @@
     "extended_mag",
     "laser"
   ],
+  "builtin_attachments": {
+    "scope": {
+      "attachments": [
+        "tacz:oem_sight_hk"
+      ]
+    }
+  },
   "exclusive_attachments": {
   }
 }

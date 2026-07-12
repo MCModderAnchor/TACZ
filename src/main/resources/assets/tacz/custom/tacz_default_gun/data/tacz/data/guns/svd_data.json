@@ -2,9 +2,9 @@
   "ammo": "tacz:762x54",
   "ammo_amount": 10,
   "extended_mag_ammo_amount": [
-    12,
-    15,
-    20
+    10,
+    10,
+    10
   ],
   "bolt": "closed_bolt",
   "rpm":120,
@@ -30,15 +30,15 @@
   "bullet": {
     "life": 0.8,
     "bullet_amount": 1,
-    "damage":18,
+    "damage":19,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.55,
-      "head_shot_multiplier": 1.8,
+      "armor_ignore": 0.25,
+      "head_shot_multiplier": 1.75,
       "damage_adjust": [
-        {"distance": 64, "damage": 18},
-        {"distance": 96, "damage": 16},
-        {"distance": "infinite", "damage": 10}
+        {"distance": 72, "damage": 19},
+        {"distance": 120, "damage": 17},
+        {"distance": "infinite", "damage": 12}
       ]
     },
     "particle": {
@@ -57,12 +57,19 @@
       // 粒子数量，当子弹速度过快时，可以增大此数量，能够填满子弹路径的空隙
       "count": 25
     },
-    "speed": 415,
+    "speed": 425,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.025,
     "ignite": false,
-    "pierce": 2
+    "pierce": 2,
+    "explosion": {
+      "explode": false,
+      "damage": 35,
+      "radius": 0.75,
+      "knockback": true,
+      "delay": 1
+    }
   },
   "reload": {
     "type": "magazine",
