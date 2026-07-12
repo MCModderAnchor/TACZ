@@ -38,10 +38,11 @@ public final class RangefinderManager {
     private static final String MISS_TEXT = "---";
     private static final double ENTITY_XZ_EXPAND = 0.25;
     private static final double ENTITY_Y_EXPAND = 8.0;
+    private static final long MILLIS_PER_TICK = 50L;
     private static final Predicate<Entity> RANGEFINDER_TARGETS = entity -> entity != null && entity.isPickable() && !entity.isSpectator() && entity.isAlive();
 
     private static Rangefinder currentConfig = null;
-    private static int lastTick = Integer.MIN_VALUE;
+    private static long lastUpdateTimestamp = 0L;
     private static int lastRefreshTick = 2;
     private static String text = MISS_TEXT;
     private static boolean hitEntity = false;
@@ -69,18 +70,18 @@ public final class RangefinderManager {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null || stack == null || stack.isEmpty()) {
+            lastUpdateTimestamp = 0L;
             clearResult();
             return MISS_TEXT;
         }
         int refreshTick = currentConfig.getRefreshTick();
-        if (player.tickCount == lastTick && refreshTick == lastRefreshTick) {
+        long now = System.currentTimeMillis();
+        if (lastUpdateTimestamp != 0L && now - lastUpdateTimestamp < refreshTick * MILLIS_PER_TICK && refreshTick == lastRefreshTick) {
             return text;
         }
-        if (lastTick == Integer.MIN_VALUE || player.tickCount - lastTick >= refreshTick || refreshTick != lastRefreshTick) {
-            lastTick = player.tickCount;
-            lastRefreshTick = refreshTick;
-            updateResult(player, stack, currentConfig);
-        }
+        lastUpdateTimestamp = now;
+        lastRefreshTick = refreshTick;
+        updateResult(player, stack, currentConfig);
         return text;
     }
 
@@ -89,11 +90,12 @@ public final class RangefinderManager {
             return false;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.player.tickCount - lastTick > lastRefreshTick + 1) {
+        LocalPlayer player = mc.player;
+        if (player == null || System.currentTimeMillis() - lastUpdateTimestamp > (lastRefreshTick + 1L) * MILLIS_PER_TICK) {
             showImpactPrediction = false;
             return false;
         }
-        if (!(mc.player instanceof IClientPlayerGunOperator operator) || operator.getClientAimingProgress(mc.getFrameTime()) < 0.9f) {
+        if (!(player instanceof IClientPlayerGunOperator operator) || operator.getClientAimingProgress(mc.getFrameTime()) < 0.9f) {
             showImpactPrediction = false;
             return false;
         }
