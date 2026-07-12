@@ -6,29 +6,29 @@
     200,
     250
   ],
-  "can_slide": true,
+  "can_slide": false,
   "bolt": "open_bolt",
   "rpm": 650,
   "bullet": {
     "life": 1.0,
     "bullet_amount": 1,
-    "damage": 12,
+    "damage": 13,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.4,
+      "armor_ignore": 0.45,
       "head_shot_multiplier": 1.6,
       "damage_adjust": [
-        {"distance": 40, "damage": 12},
-        {"distance": 80, "damage": 8},
-        {"distance": "infinite", "damage": 6}
+        {"distance": 45, "damage": 13},
+        {"distance": 90, "damage": 10},
+        {"distance": "infinite", "damage": 7.5}
       ]
     },
-    "speed": 280,
+    "speed": 300,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.015,
     "ignite": false,
-    "pierce": 1
+    "pierce": 2
   },
   "reload": {
     "type": "magazine",
@@ -43,12 +43,12 @@
   },
   "draw_time": 1.23,
   "put_away_time": 0.83,
-  "aim_time": 0.25,
-  "sprint_time": 0.25,
+  "aim_time": 0.3,
+  "sprint_time": 0.28,
   "weight": 7.75,
   "movement_speed": {
     "base": 0.0,
-    "aim": -0.25,
+    "aim": -0.3,
     "reload": -0.2
   },
   "crawl_recoil_multiplier": 0.1,
@@ -57,24 +57,24 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.65, 0.75]},
-      {"time": 0.05, "value": [0.7, 0.8]},
-      {"time": 0.18, "value": [0.6, 0.7]},
+      {"time": 0, "value": [1.0, 1.1]},
+      {"time": 0.05, "value": [1.15, 1.25]},
+      {"time": 0.18, "value": [0.95, 1.05]},
       {"time": 0.5, "value": [-0.15, -0.15]},
       {"time": 0.65, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.5, 0.3]},
-      {"time": 0.3, "value": [-0.5, 0.3]},
+      {"time": 0, "value": [-0.6, 0.4]},
+      {"time": 0.3, "value": [-0.6, 0.4]},
       {"time": 0.5, "value": [0, 0]}
     ]
   },
   "inaccuracy": {
-    "stand": 5.75,
-    "move": 5.5,
+    "stand": 6,
+    "move": 6.5,
     "sneak": 3,
-    "lie": 2,
-    "aim": 0.175
+    "lie": 1.5,
+    "aim": 0.2
   },
   // 近战相关
   "melee": {
@@ -101,7 +101,7 @@
   },
   "allow_attachment_types": [
     "muzzle",
-    "extended_mag",
+    "extended_mag"
   ],
   "exclusive_attachments": {
   }

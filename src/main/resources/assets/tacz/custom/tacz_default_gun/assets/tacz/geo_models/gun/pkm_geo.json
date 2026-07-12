@@ -10949,7 +10949,7 @@
 					"name": "refit_extended_mag_view",
 					"parent": "views",
 					"pivot": [-20, 10, -4],
-					"rotation": [-15, 72.5, 0]
+					"rotation": [15, -110, 0]
 				}
 			]
 		}

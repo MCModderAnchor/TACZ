@@ -1,11 +1,8 @@
 [
-  "tacz:oem_sight_1",
-  "tacz:oem_sight_2",
   "tacz:oem_side_cover",
   "tacz:oem_grip_cover",
   "tacz:oem_stock_tactical",
   "#tacz:scope_scope",
-  "#tacz:scope_sniper",
   "#tacz:scope_sight",
   "#tacz:scope_lowsight",
   "#tacz:muzzle",
