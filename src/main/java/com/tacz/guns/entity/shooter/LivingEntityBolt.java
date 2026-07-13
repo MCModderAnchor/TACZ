@@ -75,6 +75,9 @@ public class LivingEntityBolt {
             }
             data.boltTimestamp = System.currentTimeMillis();
             data.isBolting = iGun.startBolt(data, currentGunItem, shooter);
+            if (data.isBolting && gunIndex.getGunData().isForceAimExitOnBolt()) {
+                gunOperator.aim(false);
+            }
         });
     }
 

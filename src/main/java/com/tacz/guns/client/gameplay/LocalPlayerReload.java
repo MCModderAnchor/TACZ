@@ -1,6 +1,7 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.event.common.GunReloadEvent;
@@ -80,13 +81,18 @@ public class LocalPlayerReload {
             }
             // 锁上状态锁
             data.lockState(operator -> operator.getSynReloadState().getStateType().isReloading());
+            data.clientReloadStarting = true;
             data.chargeProgress = 0f;
             // 触发换弹事件
             if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
+                data.clientReloadStarting = false;
                 return;
             }
             // 发包通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
+            if (gunData.isForceAimExitOnReload()) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
+            }
             // 执行客户端 reload 相关内容
             this.doReload(gunItem, display, gunData, mainHandItem);
         });

@@ -1,6 +1,7 @@
 {
   "script": "tacz:db_short_gun_logic",
   "ammo": "tacz:12g",
+  "force_aim_exit_on_reload": true,
   "rpm": 150,
   "bullet": {
     "life": 0.3,

@@ -58,7 +58,8 @@ public class LivingEntityReload {
                 return;
             }
             // 检查弹药
-            if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !gunItem.canReload(shooter, currentGunItem)) {
+            IGunOperator gunOperator = IGunOperator.fromLivingEntity(shooter);
+            if (gunOperator.needCheckAmmo() && !gunItem.canReload(shooter, currentGunItem)) {
                 return;
             }
             // 触发装弹事件
@@ -80,6 +81,8 @@ public class LivingEntityReload {
             if (!gunItem.startReload(data, currentGunItem, shooter)) {
                 data.reloadStateType = ReloadState.StateType.NOT_RELOADING;
                 data.reloadTimestamp = -1;
+            } else if (gunIndex.getGunData().isForceAimExitOnReload()) {
+                gunOperator.aim(false);
             }
         });
     }

@@ -6,6 +6,7 @@
     6,
     6
   ],
+  "force_aim_exit_on_reload": true,
   "rpm": 200,
   "bullet": {
     "life": 0.85,

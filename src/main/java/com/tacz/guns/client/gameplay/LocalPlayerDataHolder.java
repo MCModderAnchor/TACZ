@@ -38,6 +38,7 @@ public class LocalPlayerDataHolder {
      * 主要用于防止客户端操作表现效果重复执行。
      */
     public volatile boolean clientStateLock = false;
+    public volatile boolean clientReloadStarting = false;
     /**
      * 用于标记 bolt 是否已经执行完成，防止因为客户端、服务端异步产生的数据不同步而造成的重复 bolt
      */
@@ -99,6 +100,7 @@ public class LocalPlayerDataHolder {
         }
         lockedCondition = null;
         if (reloadState.getStateType().isReloading()) {
+            clientReloadStarting = true;
             return;
         }
         long shootCoolDown = gunOperator.getSynShootCoolDown();
@@ -116,6 +118,7 @@ public class LocalPlayerDataHolder {
         }
         // 释放状态锁
         clientStateLock = false;
+        clientReloadStarting = false;
     }
 
     /**
@@ -133,6 +136,7 @@ public class LocalPlayerDataHolder {
         oldAimingProgress = 0;
         // 重置拉栓状态
         isBolting = false;
+        clientReloadStarting = false;
         // 打开状态锁
         clientStateLock = false;
     }

@@ -8,6 +8,7 @@
   ],
   "can_slide": false,
   "bolt": "open_bolt",
+  "force_aim_exit_on_reload": true,
   "rpm": 750,
   "bullet": {
     "life": 1.0,

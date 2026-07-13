@@ -1,5 +1,6 @@
 {
   "ammo": "tacz:12g",
+  "force_aim_exit_on_reload": true,
   "rpm": 100,
   "bullet": {
     "life": 0.5,

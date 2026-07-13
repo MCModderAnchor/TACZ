@@ -114,6 +114,7 @@ public class LocalPlayerDraw {
         LocalPlayerDataHolder.oldAimingProgress = 0;
         // 重置拉栓状态
         data.isBolting = false;
+        data.clientReloadStarting = false;
         // 更新切枪时间戳
         if (data.clientDrawTimestamp == -1) {
             data.clientDrawTimestamp = System.currentTimeMillis();

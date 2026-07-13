@@ -27,7 +27,29 @@ public class LivingEntityAim {
     }
 
     public void aim(boolean isAim) {
+        if (isAim && shouldBlockAim()) {
+            data.isAiming = false;
+            return;
+        }
         data.isAiming = isAim;
+    }
+
+    private boolean shouldBlockAim() {
+        if (data.currentGunItem == null) {
+            return false;
+        }
+        ItemStack currentGunItem = data.currentGunItem.get();
+        if (!(currentGunItem.getItem() instanceof IGun iGun)) {
+            return false;
+        }
+        ResourceLocation gunId = iGun.getGunId(currentGunItem);
+        Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
+        if (gunIndexOptional.isEmpty()) {
+            return false;
+        }
+        GunData gunData = gunIndexOptional.get().getGunData();
+        return (gunData.isForceAimExitOnReload() && data.reloadStateType.isReloading()) ||
+                (gunData.isForceAimExitOnBolt() && data.isBolting);
     }
 
     public void zoom() {
