@@ -19,7 +19,10 @@ import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.functional.MuzzleFlashRender;
 import com.tacz.guns.client.renderer.item.GunItemRendererWrapper;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
+import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
+import com.tacz.guns.client.resource.index.ClientSlotAdapterIndex;
 import com.tacz.guns.entity.EntityKineticBullet;
+import com.tacz.guns.util.SlotAdapterHelper;
 import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.PerlinNoise;
@@ -152,9 +155,12 @@ public class FirstPersonRenderGunEvent {
             scopeId = iGun.getBuiltInAttachmentId(stack, AttachmentType.SCOPE);
         }
         Optional<ClientAttachmentIndex> scopeIndexOptional = DefaultAssets.isEmptyAttachmentId(scopeId) ? Optional.empty() : TimelessAPI.getClientAttachmentIndex(scopeId);
+        Optional<ClientAttachmentVariantIndex> scopeVariantOptional = TimelessAPI.getClientAttachmentVariantIndex(iGun.getAttachment(stack, AttachmentType.SCOPE));
         CompoundTag scopeTag = iGun.getAttachmentTag(stack, AttachmentType.SCOPE);
         int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
         int viewIndex = 1;
+        Vector3f scopeMountOffset = null;
+        int mountOffsetInsertIndex = -1;
         if (DefaultAssets.isEmptyAttachmentId(scopeId)) {
             // 未安装瞄具，使用机瞄定位组
             aimingNodePath = model.getIronSightPath();
@@ -163,10 +169,16 @@ public class FirstPersonRenderGunEvent {
             List<BedrockPart> scopeNodePath = model.getScopePosPath();
             if (scopeNodePath != null) {
                 aimingNodePath = new ArrayList<>(scopeNodePath);
+                mountOffsetInsertIndex = scopeNodePath.size() - 1;
+                scopeMountOffset = getScopeMountOffset(stack, scopeId, scopeVariantOptional);
                 if (scopeIndexOptional.isPresent()) {
                     ClientAttachmentIndex scopeIndex = scopeIndexOptional.get();
-                    BedrockAttachmentModel attachmentModel = scopeIndex.getAttachmentModel();
-                    int[] views = scopeIndex.getViews();
+                    BedrockAttachmentModel attachmentModel = scopeVariantOptional
+                            .map(ClientAttachmentVariantIndex::getAttachmentModel)
+                            .orElseGet(scopeIndex::getAttachmentModel);
+                    int[] views = scopeVariantOptional
+                            .map(ClientAttachmentVariantIndex::getViews)
+                            .orElseGet(scopeIndex::getViews);
                     viewIndex = views[zoomNumber % views.length] - 1;
                     if (attachmentModel != null) {
                         List<BedrockPart> scopeViewPath = attachmentModel.getScopeViewPath(currentViewIndex == -1 ? viewIndex : currentViewIndex);
@@ -177,7 +189,7 @@ public class FirstPersonRenderGunEvent {
                 }
             }
         }
-        Matrix4f aimingViewMatrix = getPositioningNodeInverse(aimingNodePath);
+        Matrix4f aimingViewMatrix = getPositioningNodeInverse(aimingNodePath, scopeMountOffset, mountOffsetInsertIndex);
         // 执行两个 scope view 之间的插值
         if (currentViewIndex == -1) {
             currentViewIndex = viewIndex;
@@ -221,10 +233,18 @@ public class FirstPersonRenderGunEvent {
      */
     @Nonnull
     private static Matrix4f getPositioningNodeInverse(List<BedrockPart> nodePath) {
+        return getPositioningNodeInverse(nodePath, null, -1);
+    }
+
+    @Nonnull
+    private static Matrix4f getPositioningNodeInverse(List<BedrockPart> nodePath, Vector3f mountOffset, int mountOffsetInsertIndex) {
         Matrix4f matrix4f = new Matrix4f();
         matrix4f.identity();
         if (nodePath != null) {
             for (int i = nodePath.size() - 1; i >= 0; i--) {
+                if (mountOffset != null && i == mountOffsetInsertIndex) {
+                    matrix4f.translate(-mountOffset.x() / 16.0F, mountOffset.y() / 16.0F, -mountOffset.z() / 16.0F);
+                }
                 BedrockPart part = nodePath.get(i);
                 // 计算反向的旋转
                 matrix4f.rotate(Axis.XN.rotation(part.xRot));
@@ -239,6 +259,30 @@ public class FirstPersonRenderGunEvent {
             }
         }
         return matrix4f;
+    }
+
+    private static Vector3f getScopeMountOffset(ItemStack gunItem, ResourceLocation scopeId,
+                                                Optional<ClientAttachmentVariantIndex> scopeVariant) {
+        Vector3f combinedOffset = new Vector3f();
+        boolean hasOffset = false;
+
+        ResourceLocation adapterId = SlotAdapterHelper.getEffectiveSlotAdapter(gunItem, AttachmentType.SCOPE, scopeId);
+        if (adapterId != null) {
+            Vector3f adapterOffset = TimelessAPI.getClientSlotAdapterIndex(adapterId)
+                    .map(ClientSlotAdapterIndex::getMountOffset)
+                    .orElse(null);
+            if (adapterOffset != null) {
+                combinedOffset.add(adapterOffset);
+                hasOffset = true;
+            }
+        }
+
+        Vector3f variantOffset = scopeVariant.map(ClientAttachmentVariantIndex::getMountOffset).orElse(null);
+        if (variantOffset != null) {
+            combinedOffset.add(variantOffset);
+            hasOffset = true;
+        }
+        return hasOffset ? combinedOffset : null;
     }
 
     private static void applyShootSwayAndRotation(BedrockGunModel model, float aimingProgress) {

@@ -326,6 +326,9 @@
   "config.tacz.client.render.enable_tooltip_id": "Display TACZ ID",
   "config.tacz.client.render.enable_tooltip_id.desc": "Display the gun/ammo/attachment id in item tooltip when advanced tooltip(F3+H) is on.",
   "tooltip.tacz.attachment.laser.color": "Laser Color: %s",
+  "gui.tacz.refit.variant_default": "Standard",
+  "gui.tacz.refit.adapter_none": "No Adapter",
+  "gui.tacz.refit.adapter_requires_unload": "Unload the current attachment before changing this Adapter.",
   "config.tacz.client.render.laser_fadeout": "Laser Fadeout Effect",
   "config.tacz.client.render.laser_fadeout.desc": "Whether or not apply fadeout effect on the laser beam. Close this may improve laser performance under some shaders."
 }

@@ -1,0 +1,11 @@
+{
+  "model": "tacz:attachment/sight_deltapoint_rifle_geo",
+  "texture": "tacz:attachment/uv/sight_deltapoint_rifle",
+  "zoom": [
+    1.5
+  ],
+  "scope": false,
+  "sight": true,
+  "fov": 40.0,
+  "mode": "replace"
+}

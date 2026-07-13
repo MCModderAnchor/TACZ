@@ -7,5 +7,7 @@
   "#tacz:grip",
   "#tacz:ammo_mod_no_he",
   "#tacz:ar_laser",
-  "#tacz:pistol_laser"
+  "#tacz:pistol_laser",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

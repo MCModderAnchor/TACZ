@@ -8,6 +8,7 @@ import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.model.SlotModel;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
+import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
 import com.tacz.guns.util.RenderDistance;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -50,7 +51,8 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                 if (transformType == ItemDisplayContext.FIXED) {
                     poseStack.mulPose(Axis.YN.rotationDegrees(90f));
                 }
-                this.renderDefaultAttachment(transformType, poseStack, pBuffer, pPackedLight, pPackedOverlay, attachmentIndex);
+                ClientAttachmentVariantIndex variant = TimelessAPI.getClientAttachmentVariantIndex(stack).orElse(null);
+                this.renderDefaultAttachment(transformType, poseStack, pBuffer, pPackedLight, pPackedOverlay, attachmentIndex, variant);
             }, () -> {
                 // 没有这个 attachmentId，渲染黑紫材质以提醒
                 poseStack.translate(0.5, 1.5, 0.5);
@@ -62,9 +64,13 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
         }
     }
 
-    private void renderDefaultAttachment(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay, ClientAttachmentIndex attachmentIndex) {
+    private void renderDefaultAttachment(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay, ClientAttachmentIndex attachmentIndex, ClientAttachmentVariantIndex variant) {
         BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
         ResourceLocation texture = attachmentIndex.getModelTexture();
+        if (variant != null && variant.isReplaceMode() && variant.getAttachmentModel() != null && variant.getModelTexture() != null) {
+            model = variant.getAttachmentModel();
+            texture = variant.getModelTexture();
+        }
         // 有模型？正常渲染
         if (model != null && texture != null) {
             // 调用低模
@@ -88,5 +94,19 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
             VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
             SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
         }
+        if (variant != null && variant.isOverlayMode()) {
+            renderVariantOverlay(transformType, poseStack, pPackedLight, pPackedOverlay, variant);
+        }
+    }
+
+    private static void renderVariantOverlay(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, int pPackedLight, int pPackedOverlay, ClientAttachmentVariantIndex variant) {
+        BedrockAttachmentModel model = variant.getAttachmentModel();
+        ResourceLocation texture = variant.getModelTexture();
+        if (model == null || texture == null) {
+            return;
+        }
+        float alpha = ItemPreviewRenderContext.alpha();
+        RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
+        model.render(null, null, poseStack, transformType, renderType, pPackedLight, pPackedOverlay, alpha);
     }
 }

@@ -307,6 +307,11 @@
   "tacz.attachment.stock_heavy_spas_12.name": "Franchi Heavy Stock",
   "tacz.attachment.stock_tactical_spas_12.name": "Franchi Tactical Stock",
 
+  "tacz.variant.deltapoint_rifle.name": "Rifle Riser Mount",
+  "tacz.slot_adapter.riser_pistol_low.name": "Pistol Low Riser",
+  "tacz.slot_adapter.riser_pistol_high.name": "Pistol High Riser",
+  "tacz.slot_adapter.riser_rail_mid.name": "Rail Mid Riser",
+
   "tacz.block.gun_smith_table.name": "TaCZ Gun Smith Table",
   "tacz.block.ammo_workbench.name": "TaCZ Ammo Assembly Table",
   "tacz.block.attachment_workbench.name": "TaCZ Attachment Table",

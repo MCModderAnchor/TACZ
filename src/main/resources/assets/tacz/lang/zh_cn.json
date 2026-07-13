@@ -328,5 +328,9 @@
   "tooltip.tacz.page.previous": "上一页",
   "tooltip.tacz.refit.unload": "卸载",
   "tooltip.tacz.attachment.laser.color": "镭射颜色: %s",
+  "gui.tacz.refit.variant_default": "标准",
+  "gui.tacz.refit.adapter_none": "无适配器",
+  "gui.tacz.refit.adapter_requires_unload": "请先卸下当前配件再切换适配器",
+
   "tacz.resources.modresources": "永恒枪械工坊：Zero 枪包资源集"
 }

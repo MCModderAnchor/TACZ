@@ -1,0 +1,10 @@
+{
+  "name": "tacz.slot_adapter.riser_rail_mid.name",
+  "display": "tacz:riser_rail_mid_adapter_display",
+  "data": "tacz:riser_rail_mid_data",
+  "slot": "scope",
+  "allowed_attachments": [
+    "#tacz:scope_sight"
+  ],
+  "sort": 20
+}

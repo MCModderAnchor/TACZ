@@ -4,10 +4,10 @@ import com.tacz.guns.resource.CommonAssetsManager;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class AllowAttachmentTagMatcher {
     private static final String TAG_PREFIX = "#";
@@ -35,10 +35,8 @@ public final class AllowAttachmentTagMatcher {
         if (allowAttachmentTags == null || allowAttachmentTags.isEmpty()) {
             return false;
         }
-        // 开始遍历 allowAttachmentTags，寻找配件 id
-        AtomicBoolean searchSignal = new AtomicBoolean(false);
-        treeSearch(allowAttachmentTags, attachmentId, searchSignal);
-        return searchSignal.get();
+        // 按 allow_attachments 声明顺序遍历，原有布尔匹配语义不变
+        return treeSearch(allowAttachmentTags, attachmentId, new HashSet<>());
     }
 
     /**
@@ -64,33 +62,30 @@ public final class AllowAttachmentTagMatcher {
         if (tagContent == null || tagContent.isEmpty()) {
             return false;
         }
-        // 开始遍历内容集，寻找配件 id
-        AtomicBoolean searchSignal = new AtomicBoolean(false);
-        treeSearch(tagContent, attachmentId, searchSignal);
-        return searchSignal.get();
+        Set<ResourceLocation> visited = new HashSet<>();
+        visited.add(tag);
+        return treeSearch(tagContent, attachmentId, visited);
     }
 
-    private static void treeSearch(Set<String> tags, ResourceLocation attachmentId, AtomicBoolean searchSignal) {
-        // 开始遍历 tags，寻找配件 id
+    private static boolean treeSearch(Set<String> tags, ResourceLocation attachmentId, Set<ResourceLocation> visited) {
         for (String tag : tags) {
-            // 如果是 tag，则去 attachment tag 寻找我们的东西
             if (tag.startsWith(TAG_PREFIX)) {
-                ResourceLocation tagId = new ResourceLocation(tag.substring(TAG_PREFIX.length()));
-                Set<String> attachmentTags = CommonAssetsManager.get().getAttachmentTags(tagId);
-                // 如果检索的这个配件 tag 不为空，开始递归查找
-                if (attachmentTags != null && !attachmentTags.isEmpty()) {
-                    treeSearch(attachmentTags, attachmentId, searchSignal);
+                ResourceLocation tagId = ResourceLocation.tryParse(tag.substring(TAG_PREFIX.length()));
+                if (tagId == null || !visited.add(tagId)) {
+                    continue;
                 }
-            }
-            // 如果是配件 id，直接对比
-            else {
-                ResourceLocation matchAttachmentId = new ResourceLocation(tag);
+                Set<String> attachmentTags = CommonAssetsManager.get().getAttachmentTags(tagId);
+                if (attachmentTags != null && !attachmentTags.isEmpty() && treeSearch(attachmentTags, attachmentId, visited)) {
+                    return true;
+                }
+            } else {
+                ResourceLocation matchAttachmentId = ResourceLocation.tryParse(tag);
                 if (attachmentId.equals(matchAttachmentId)) {
-                    searchSignal.set(true);
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     public static void resetCache() {

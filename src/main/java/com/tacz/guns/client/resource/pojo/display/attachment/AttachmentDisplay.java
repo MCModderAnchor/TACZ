@@ -6,6 +6,7 @@ import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -66,6 +67,13 @@ public class AttachmentDisplay implements IDisplay {
 
     @SerializedName("sounds")
     private Map<String, ResourceLocation> sounds = Maps.newHashMap();
+
+    @SerializedName("mode")
+    private String variantMode = "replace";
+
+    @SerializedName("mount_offset")
+    @Nullable
+    private Vector3f mountOffset;
 
     public ResourceLocation getSlotTextureLocation() {
         return slotTextureLocation;
@@ -134,6 +142,15 @@ public class AttachmentDisplay implements IDisplay {
 
     public Map<String, ResourceLocation> getSounds() {
         return sounds;
+    }
+
+    public String getVariantMode() {
+        return variantMode == null ? "replace" : variantMode;
+    }
+
+    @Nullable
+    public Vector3f getMountOffset() {
+        return mountOffset;
     }
 
     @Nullable

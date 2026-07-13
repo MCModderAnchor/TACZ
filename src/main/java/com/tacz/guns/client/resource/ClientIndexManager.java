@@ -8,10 +8,7 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.resource.index.ClientAmmoIndex;
-import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
-import com.tacz.guns.client.resource.index.ClientBlockIndex;
-import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.client.resource.index.*;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.AmmoIndexPOJO;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
@@ -35,6 +32,8 @@ public class ClientIndexManager {
     public static final Map<ResourceLocation, ClientGunIndex> GUN_INDEX = Maps.newHashMap();
     public static final Map<ResourceLocation, ClientAmmoIndex> AMMO_INDEX = Maps.newHashMap();
     public static final Map<ResourceLocation, ClientAttachmentIndex> ATTACHMENT_INDEX = Maps.newHashMap();
+    public static final Map<ResourceLocation, ClientAttachmentVariantIndex> ATTACHMENT_VARIANT_INDEX = Maps.newHashMap();
+    public static final Map<ResourceLocation, ClientSlotAdapterIndex> SLOT_ADAPTER_INDEX = Maps.newHashMap();
     public static final Map<ResourceLocation, ClientBlockIndex> BLOCK_INDEX = Maps.newHashMap();
 
     public static void clear() {
@@ -42,6 +41,8 @@ public class ClientIndexManager {
         GUN_INDEX.clear();
         AMMO_INDEX.clear();
         ATTACHMENT_INDEX.clear();
+        ATTACHMENT_VARIANT_INDEX.clear();
+        SLOT_ADAPTER_INDEX.clear();
         BLOCK_INDEX.clear();
     }
 
@@ -52,6 +53,8 @@ public class ClientIndexManager {
         loadGunIndex();
         loadAmmoIndex();
         loadAttachmentIndex();
+        loadAttachmentVariantIndex();
+        loadSlotAdapterIndex();
         loadBlockIndex();
         warmUpInventoryModels();
 
@@ -121,6 +124,28 @@ public class ClientIndexManager {
         });
     }
 
+    public static void loadAttachmentVariantIndex() {
+        TimelessAPI.getAllCommonAttachmentVariantIndex().forEach(index -> {
+            ResourceLocation id = index.getKey();
+            try {
+                ATTACHMENT_VARIANT_INDEX.put(id, ClientAttachmentVariantIndex.getInstance(index.getValue()));
+            } catch (IllegalArgumentException exception) {
+                GunMod.LOGGER.warn("{} attachment variant index file read fail!", id, exception);
+            }
+        });
+    }
+
+    public static void loadSlotAdapterIndex() {
+        TimelessAPI.getAllCommonSlotAdapterIndex().forEach(index -> {
+            ResourceLocation id = index.getKey();
+            try {
+                SLOT_ADAPTER_INDEX.put(id, ClientSlotAdapterIndex.getInstance(index.getValue()));
+            } catch (IllegalArgumentException exception) {
+                GunMod.LOGGER.warn("{} slot adapter index file read fail!", id, exception);
+            }
+        });
+    }
+
     public static void loadBlockIndex() {
         TimelessAPI.getAllCommonBlockIndex().forEach(index -> {
             ResourceLocation id = index.getKey();
@@ -143,6 +168,14 @@ public class ClientIndexManager {
 
     public static Set<Map.Entry<ResourceLocation, ClientAttachmentIndex>> getAllAttachments() {
         return ATTACHMENT_INDEX.entrySet();
+    }
+
+    public static Set<Map.Entry<ResourceLocation, ClientAttachmentVariantIndex>> getAllAttachmentVariants() {
+        return ATTACHMENT_VARIANT_INDEX.entrySet();
+    }
+
+    public static Set<Map.Entry<ResourceLocation, ClientSlotAdapterIndex>> getAllSlotAdapters() {
+        return SLOT_ADAPTER_INDEX.entrySet();
     }
 
     public static Set<Map.Entry<ResourceLocation, ClientBlockIndex>> getAllBlocks() {
@@ -211,7 +244,9 @@ public class ClientIndexManager {
         }
         IAttachment attachment = IAttachment.getIAttachmentOrNull(stack);
         if (attachment != null) {
-            TimelessAPI.getClientAttachmentIndex(attachment.getAttachmentId(stack)).ifPresent(ClientAttachmentIndex::warmUp);
+            ResourceLocation attachmentId = attachment.getAttachmentId(stack);
+            TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(ClientAttachmentIndex::warmUp);
+            TimelessAPI.getClientAttachmentVariantIndex(stack).ifPresent(ClientAttachmentVariantIndex::warmUp);
             return;
         }
         IAmmo ammo = IAmmo.getIAmmoOrNull(stack);

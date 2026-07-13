@@ -8,5 +8,7 @@
   "#tacz:ammo_mod_no_he",
   "#tacz:ar_laser",
   "#tacz:pistol_laser",
-  "#tacz:scope_lowsight"
+  "#tacz:scope_lowsight",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

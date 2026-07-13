@@ -6,5 +6,7 @@
   "#tacz:oem_stock",
   "#tacz:stock",
   "#tacz:bayonet_ak",
-  "#tacz:ammo_mod_no_he"
+  "#tacz:ammo_mod_no_he",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

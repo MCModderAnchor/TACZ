@@ -9,6 +9,7 @@ import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
+import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -311,8 +312,9 @@ public interface GunItemDataAccessor extends IGun {
         if (iAttachment == null) {
             return;
         }
+        AttachmentType attachmentType = iAttachment.getType(attachment);
         CompoundTag nbt = gun.getOrCreateTag();
-        String key = GUN_ATTACHMENT_BASE + iAttachment.getType(attachment).name();
+        String key = GUN_ATTACHMENT_BASE + attachmentType.name();
         CompoundTag attachmentTag = new CompoundTag();
         attachment.save(attachmentTag);
         nbt.put(key, attachmentTag);
@@ -342,7 +344,10 @@ public interface GunItemDataAccessor extends IGun {
         if (!DefaultAssets.isEmptyAttachmentId(scopeId)) {
             CompoundTag attachmentTag = this.getAttachmentTag(gunItem, AttachmentType.SCOPE);
             int zoomNumber = builtin ? 0 : AttachmentItemDataAccessor.getZoomNumberFromTag(attachmentTag);
-            float[] zooms = TimelessAPI.getClientAttachmentIndex(scopeId).map(ClientAttachmentIndex::getZoom).orElse(null);
+            ResourceLocation resolvedScopeId = scopeId;
+            float[] zooms = TimelessAPI.getClientAttachmentVariantIndex(getAttachment(gunItem, AttachmentType.SCOPE))
+                    .map(ClientAttachmentVariantIndex::getZoom)
+                    .orElseGet(() -> TimelessAPI.getClientAttachmentIndex(resolvedScopeId).map(ClientAttachmentIndex::getZoom).orElse(null));
             if (zooms != null) {
                 zoom = zooms[zoomNumber % zooms.length];
             }

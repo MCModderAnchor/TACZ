@@ -5,5 +5,7 @@
   "#tacz:stock",
   "#tacz:grip",
   "#tacz:ammo_mod_no_he",
-  "#tacz:scope_lowsight"
+  "#tacz:scope_lowsight",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

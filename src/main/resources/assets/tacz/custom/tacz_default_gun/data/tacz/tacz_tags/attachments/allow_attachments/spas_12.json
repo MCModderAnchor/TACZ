@@ -5,5 +5,7 @@
   "#tacz:ammo_mod",
   "#tacz:ammo_mod_shotgun_exclusive",
   "#tacz:stock",
-  "#tacz:spas_12_stock"
+  "#tacz:spas_12_stock",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

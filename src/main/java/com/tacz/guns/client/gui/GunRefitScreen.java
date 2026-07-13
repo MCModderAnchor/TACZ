@@ -14,11 +14,12 @@ import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
-import com.tacz.guns.network.message.ClientMessageInstallVirtualAttachment;
-import com.tacz.guns.network.message.ClientMessageLaserColor;
-import com.tacz.guns.network.message.ClientMessageRefitGun;
-import com.tacz.guns.network.message.ClientMessageUnloadAttachment;
+import com.tacz.guns.network.message.*;
+import com.tacz.guns.resource.index.CommonAttachmentVariantIndex;
+import com.tacz.guns.resource.index.CommonSlotAdapterIndex;
 import com.tacz.guns.sound.SoundManager;
+import com.tacz.guns.util.SlotAdapterHelper;
+import com.tacz.guns.util.VariantHelper;
 import com.tacz.guns.util.VirtualOemAttachment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,10 +34,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class GunRefitScreen extends Screen {
@@ -47,10 +45,16 @@ public class GunRefitScreen extends Screen {
 
     public static final int ICON_UV_SIZE = 32;
     public static final int SLOT_SIZE = 18;
+    private static final int VARIANT_BUTTON_WIDTH = 78;
+    private static final int VARIANT_BUTTON_HEIGHT = 12;
+    private static final int VARIANT_BUTTON_SPACING = 1;
+    private static final int INVENTORY_ATTACHMENT_START_Y = 50;
+    private static final int INVENTORY_ATTACHMENT_ADAPTER_GAP = 4;
     private static final int INVENTORY_ATTACHMENT_SLOT_COUNT = 8;
     private static boolean HIDE_GUN_PROPERTY_DIAGRAMS = true;
 
     private int currentPage = 0;
+    private int inventoryAttachmentStartY = INVENTORY_ATTACHMENT_START_Y;
 
     public GunRefitScreen() {
         super(Component.literal("Gun Refit Screen"));
@@ -95,6 +99,7 @@ public class GunRefitScreen extends Screen {
     @Override
     public void init() {
         this.clearWidgets();
+        this.inventoryAttachmentStartY = INVENTORY_ATTACHMENT_START_Y;
         // 添加配件槽位
         this.addAttachmentTypeButtons();
         // 添加可选配件列表
@@ -143,7 +148,7 @@ public class GunRefitScreen extends Screen {
             return;
         }
         int startX = this.width - 30;
-        int startY = 50;
+        int startY = inventoryAttachmentStartY;
         int pageStart = currentPage * INVENTORY_ATTACHMENT_SLOT_COUNT;
         int count = 0;
         int currentY = startY;
@@ -285,8 +290,11 @@ public class GunRefitScreen extends Screen {
                         }
                     }
                 });
+                int nextY = startY + SLOT_SIZE + 2;
                 if (!button.getAttachmentItem().isEmpty()) {
                     this.addRenderableWidget(unloadButton);
+                    nextY = addVariantButtons(type, button.getAttachmentItem(), inventory,
+                            startX + SLOT_SIZE - VARIANT_BUTTON_WIDTH, startY + SLOT_SIZE + 14);
 
                     if (button.getAttachmentItem().getItem() instanceof IAttachment iAttachment) {
                         TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(button.getAttachmentItem()))
@@ -300,10 +308,104 @@ public class GunRefitScreen extends Screen {
                                     }});
                     }
                 }
+                int slotAdapterEndY = addSlotAdapterButtons(type, button.getAttachmentItem(), inventory,
+                        startX + SLOT_SIZE - VARIANT_BUTTON_WIDTH, nextY);
+                if (slotAdapterEndY > nextY) {
+                    inventoryAttachmentStartY = Math.max(inventoryAttachmentStartY, slotAdapterEndY + INVENTORY_ATTACHMENT_ADAPTER_GAP);
+                }
             }
             this.addRenderableWidget(button);
             startX = startX - SLOT_SIZE;
         }
+    }
+
+    private int addVariantButtons(AttachmentType type, ItemStack attachmentItem, Inventory inventory, int x, int y) {
+        if (!(attachmentItem.getItem() instanceof IAttachment attachment)) {
+            return y;
+        }
+        ResourceLocation attachmentId = attachment.getAttachmentId(attachmentItem);
+        List<Map.Entry<ResourceLocation, CommonAttachmentVariantIndex>> variants = TimelessAPI.getAllCommonAttachmentVariantIndex().stream()
+                .filter(entry -> entry.getValue().appliesTo(attachmentId))
+                .sorted(Comparator.comparingInt(entry -> entry.getValue().getSort()))
+                .toList();
+        if (variants.isEmpty()) {
+            return y;
+        }
+        ResourceLocation current = VariantHelper.getVariant(attachmentItem);
+        Component standardLabel = current == null
+                ? Component.literal("> ").append(Component.translatable("gui.tacz.refit.variant_default"))
+                : Component.translatable("gui.tacz.refit.variant_default");
+        this.addRenderableWidget(new FlatColorButton(x, y, VARIANT_BUTTON_WIDTH, VARIANT_BUTTON_HEIGHT, standardLabel, b -> {
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessageSetAttachmentVariant(inventory.selected, type, null));
+            this.init();
+        }));
+        int currentY = y + VARIANT_BUTTON_HEIGHT + VARIANT_BUTTON_SPACING;
+        for (Map.Entry<ResourceLocation, CommonAttachmentVariantIndex> entry : variants) {
+            ResourceLocation variantId = entry.getKey();
+            Component name = Component.translatable(entry.getValue().getPojo().getName());
+            Component label = variantId.equals(current) ? Component.literal("> ").append(name) : name;
+            this.addRenderableWidget(new FlatColorButton(x, currentY, VARIANT_BUTTON_WIDTH, VARIANT_BUTTON_HEIGHT, label, b -> {
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessageSetAttachmentVariant(inventory.selected, type, variantId));
+                this.init();
+            }));
+            currentY += VARIANT_BUTTON_HEIGHT + VARIANT_BUTTON_SPACING;
+        }
+        return currentY;
+    }
+
+    private int addSlotAdapterButtons(AttachmentType type, ItemStack attachmentItem, Inventory inventory, int x, int y) {
+        ItemStack gunItem = inventory.getItem(inventory.selected);
+        List<Map.Entry<ResourceLocation, CommonSlotAdapterIndex>> adapters = SlotAdapterHelper.getAvailableSlotAdapters(gunItem, type);
+        if (adapters.isEmpty()) {
+            return y;
+        }
+
+        ResourceLocation attachmentId = null;
+        if (!attachmentItem.isEmpty()) {
+            IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentItem);
+            if (attachment == null || attachment.getType(attachmentItem) != type) {
+                return y;
+            }
+            attachmentId = attachment.getAttachmentId(attachmentItem);
+        }
+
+        ResourceLocation current = SlotAdapterHelper.getSelectedAvailableSlotAdapter(gunItem, type);
+        ResourceLocation currentAttachmentId = attachmentId;
+        int currentY = y;
+
+        boolean noneSelected = current == null;
+        Component noneLabel = noneSelected
+                ? Component.literal("> ").append(Component.translatable("gui.tacz.refit.adapter_none"))
+                : Component.translatable("gui.tacz.refit.adapter_none");
+        FlatColorButton noneButton = new FlatColorButton(x, currentY, VARIANT_BUTTON_WIDTH, VARIANT_BUTTON_HEIGHT, noneLabel, b -> {
+            currentPage = 0;
+            NetworkHandler.CHANNEL.sendToServer(new ClientMessageSetSlotAdapter(inventory.selected, type, null));
+            this.init();
+        });
+        if (currentAttachmentId != null && !SlotAdapterHelper.allowsDirectAttachment(gunItem, currentAttachmentId)) {
+            noneButton.active = false;
+            noneButton.setTooltips(Component.translatable("gui.tacz.refit.adapter_requires_unload"));
+        }
+        this.addRenderableWidget(noneButton);
+        currentY += VARIANT_BUTTON_HEIGHT + VARIANT_BUTTON_SPACING;
+
+        for (Map.Entry<ResourceLocation, CommonSlotAdapterIndex> entry : adapters) {
+            ResourceLocation adapterId = entry.getKey();
+            Component name = Component.translatable(entry.getValue().getPojo().getName());
+            Component label = adapterId.equals(current) ? Component.literal("> ").append(name) : name;
+            FlatColorButton adapterButton = new FlatColorButton(x, currentY, VARIANT_BUTTON_WIDTH, VARIANT_BUTTON_HEIGHT, label, b -> {
+                currentPage = 0;
+                NetworkHandler.CHANNEL.sendToServer(new ClientMessageSetSlotAdapter(inventory.selected, type, adapterId));
+                this.init();
+            });
+            if (currentAttachmentId != null && !entry.getValue().allowsAttachment(currentAttachmentId)) {
+                adapterButton.active = false;
+                adapterButton.setTooltips(Component.translatable("gui.tacz.refit.adapter_requires_unload"));
+            }
+            this.addRenderableWidget(adapterButton);
+            currentY += VARIANT_BUTTON_HEIGHT + VARIANT_BUTTON_SPACING;
+        }
+        return currentY;
     }
 
     @Override

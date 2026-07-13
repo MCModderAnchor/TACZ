@@ -14,9 +14,9 @@ import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.FeedType;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
-import com.tacz.guns.util.AllowAttachmentTagMatcher;
 import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.DefaultGunAttachments;
+import com.tacz.guns.util.SlotAdapterHelper;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -286,9 +286,9 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
         IGun iGun = IGun.getIGunOrNull(gun);
         if (iGun != null && iAttachment != null) {
-            ResourceLocation gunId = iGun.getGunId(gun);
+            AttachmentType attachmentType = iAttachment.getType(attachmentItem);
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
-            return AllowAttachmentTagMatcher.match(gunId, attachmentId);
+            return SlotAdapterHelper.allowsAttachment(gun, attachmentType, attachmentId);
         }
         return false;
     }

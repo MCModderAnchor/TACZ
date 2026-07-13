@@ -10,7 +10,10 @@ import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.renderer.item.AttachmentItemRenderer;
 import com.tacz.guns.client.renderer.item.ItemPreviewRenderContext;
+import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
+import com.tacz.guns.client.resource.index.ClientSlotAdapterIndex;
 import com.tacz.guns.util.RenderDistance;
+import com.tacz.guns.util.SlotAdapterHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -21,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.util.EnumMap;
 
@@ -33,13 +37,36 @@ public class AttachmentRender implements IFunctionalRenderer {
         this.type = type;
     }
 
-    public static void renderAttachment(ItemStack attachmentItem, ItemStack gunItem, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
+    public static void renderAttachment(ItemStack attachmentItem, ItemStack gunItem, AttachmentType type, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
         poseStack.translate(0, -1.5, 0);
+        if (attachmentItem.isEmpty()) {
+            ClientSlotAdapterIndex slotAdapter = getSelectedSlotAdapter(gunItem, type);
+            if (slotAdapter != null) {
+                renderSlotAdapter(slotAdapter, gunItem, poseStack, transformType, light, overlay);
+            }
+            return;
+        }
         if (attachmentItem.getItem() instanceof IAttachment iAttachment) {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
             TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresentOrElse(attachmentIndex -> {
                 BedrockAttachmentModel model = attachmentIndex.getAttachmentModel();
                 ResourceLocation texture = attachmentIndex.getModelTexture();
+                ClientAttachmentVariantIndex variant = TimelessAPI.getClientAttachmentVariantIndex(attachmentItem).orElse(null);
+                if (variant != null && variant.isReplaceMode() && variant.getAttachmentModel() != null && variant.getModelTexture() != null) {
+                    model = variant.getAttachmentModel();
+                    texture = variant.getModelTexture();
+                }
+                ClientSlotAdapterIndex slotAdapter = getSlotAdapter(gunItem, type, attachmentId);
+                if (slotAdapter != null) {
+                    poseStack.pushPose();
+                    renderSlotAdapter(slotAdapter, gunItem, poseStack, transformType, light, overlay);
+                    poseStack.popPose();
+                    applyMountOffset(poseStack, slotAdapter.getMountOffset());
+                }
+                if (variant != null && variant.isOverlayMode()) {
+                    renderVariantOverlay(variant, attachmentItem, gunItem, poseStack, transformType, light, overlay);
+                    applyMountOffset(poseStack, variant.getMountOffset());
+                }
                 // 这里是枪械里的配件渲染，没有模型材质就不渲染
                 if (model != null && texture != null) {
                     // 调用低模
@@ -62,11 +89,51 @@ public class AttachmentRender implements IFunctionalRenderer {
         }
     }
 
+    private static ClientSlotAdapterIndex getSlotAdapter(ItemStack gunItem, AttachmentType type, ResourceLocation attachmentId) {
+        ResourceLocation adapterId = SlotAdapterHelper.getEffectiveSlotAdapter(gunItem, type, attachmentId);
+        return adapterId == null ? null : TimelessAPI.getClientSlotAdapterIndex(adapterId).orElse(null);
+    }
+
+    private static ClientSlotAdapterIndex getSelectedSlotAdapter(ItemStack gunItem, AttachmentType type) {
+        ResourceLocation adapterId = SlotAdapterHelper.getSelectedAvailableSlotAdapter(gunItem, type);
+        return adapterId == null ? null : TimelessAPI.getClientSlotAdapterIndex(adapterId).orElse(null);
+    }
+
+    private static void renderSlotAdapter(ClientSlotAdapterIndex adapter, ItemStack gunItem, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
+        BedrockAttachmentModel model = adapter.getAdapterModel();
+        ResourceLocation texture = adapter.getModelTexture();
+        if (model == null || texture == null) {
+            return;
+        }
+        float alpha = ItemPreviewRenderContext.alpha();
+        RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
+        model.render(ItemStack.EMPTY, gunItem, poseStack, transformType, renderType, light, overlay, alpha);
+    }
+
+    private static void applyMountOffset(PoseStack poseStack, Vector3f offset) {
+        if (offset != null) {
+            poseStack.translate(offset.x() / 16.0F, -offset.y() / 16.0F, offset.z() / 16.0F);
+        }
+    }
+
+    private static void renderVariantOverlay(ClientAttachmentVariantIndex variant, ItemStack attachmentItem, ItemStack gunItem, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
+        BedrockAttachmentModel model = variant.getAttachmentModel();
+        ResourceLocation texture = variant.getModelTexture();
+        if (model == null || texture == null) {
+            return;
+        }
+        float alpha = ItemPreviewRenderContext.alpha();
+        RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
+        model.render(attachmentItem, gunItem, poseStack, transformType, renderType, light, overlay, alpha);
+    }
+
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
         EnumMap<AttachmentType, ItemStack> currentAttachmentItem = bedrockGunModel.getCurrentAttachmentItem();
         ItemStack attachmentItem = currentAttachmentItem.get(type);
-        if (attachmentItem != null && !attachmentItem.isEmpty()) {
+        ItemStack gunItem = bedrockGunModel.getCurrentGunItem();
+        boolean hasSelectedAdapter = SlotAdapterHelper.getSelectedAvailableSlotAdapter(gunItem, type) != null;
+        if (attachmentItem != null && (!attachmentItem.isEmpty() || hasSelectedAdapter)) {
             Matrix3f normal = new Matrix3f(poseStack.last().normal());
             Matrix4f pose = new Matrix4f(poseStack.last().pose());
             //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染
@@ -75,7 +142,7 @@ public class AttachmentRender implements IFunctionalRenderer {
                 poseStack2.last().normal().mul(normal);
                 poseStack2.last().pose().mul(pose);
                 // 渲染配件
-                renderAttachment(attachmentItem, bedrockGunModel.getCurrentGunItem(), poseStack2, transformType, light, overlay);
+                renderAttachment(attachmentItem, gunItem, type, poseStack2, transformType, light, overlay);
             });
         }
     }

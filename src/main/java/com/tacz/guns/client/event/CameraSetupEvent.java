@@ -17,6 +17,7 @@ import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
 import com.tacz.guns.api.modifier.ParameterizedCachePair;
 import com.tacz.guns.client.renderer.item.AnimateGeoItemRenderer;
 import com.tacz.guns.client.resource.GunDisplayInstance;
+import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
 import com.tacz.guns.config.client.RenderConfig;
@@ -145,17 +146,24 @@ public class CameraSetupEvent {
                     .orElse((float) event.getFOV());
             CompoundTag scopeTag = iGun.getAttachmentTag(stack, AttachmentType.SCOPE);
             int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
+            Optional<ClientAttachmentVariantIndex> scopeVariant = TimelessAPI.getClientAttachmentVariantIndex(iGun.getAttachment(stack, AttachmentType.SCOPE));
+            ResourceLocation resolvedScopeItemId = scopeItemId;
             // 常驻状态使用枪械本身 model_fov；开镜状态优先使用配件 fov，若无则使用枪械本身 zoom_model_fov。
-            float modifiedFov = TimelessAPI.getClientAttachmentIndex(scopeItemId)
+            float modifiedFov = scopeVariant
                     .map(index -> {
                         float[] viewsFov = index.getViewsFov();
                         return viewsFov[zoomNumber % viewsFov.length];
                     })
-                    .orElse(
-                            gunDisplay
-                                    .map(GunDisplayInstance::getZoomModelFov)
-                                    .orElse(modelFov)
-                    );
+                    .orElseGet(() -> TimelessAPI.getClientAttachmentIndex(resolvedScopeItemId)
+                            .map(index -> {
+                                float[] viewsFov = index.getViewsFov();
+                                return viewsFov[zoomNumber % viewsFov.length];
+                            })
+                            .orElse(
+                                    gunDisplay
+                                            .map(GunDisplayInstance::getZoomModelFov)
+                                            .orElse(modelFov)
+                            ));
             if (livingEntity instanceof LocalPlayer localPlayer) {
                 IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
                 float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());

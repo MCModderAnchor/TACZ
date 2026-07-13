@@ -4,5 +4,7 @@
   "#tacz:extended_mag",
   "#tacz:oem_stock",
   "#tacz:stock",
-  "#tacz:ammo_mod"
+  "#tacz:ammo_mod",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

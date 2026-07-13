@@ -1,0 +1,9 @@
+{
+  "model": "tacz:attachment/riser_pistol_low_geo",
+  "texture": "tacz:attachment/uv/riser_pistol_low",
+  "mount_offset": [
+    0,
+    0.375,
+    0
+  ]
+}
