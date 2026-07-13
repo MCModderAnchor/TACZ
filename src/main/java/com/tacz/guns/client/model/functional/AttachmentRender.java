@@ -38,14 +38,10 @@ public class AttachmentRender implements IFunctionalRenderer {
     }
 
     public static void renderAttachment(ItemStack attachmentItem, ItemStack gunItem, AttachmentType type, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
-        poseStack.translate(0, -1.5, 0);
         if (attachmentItem.isEmpty()) {
-            ClientSlotAdapterIndex slotAdapter = getSelectedSlotAdapter(gunItem, type);
-            if (slotAdapter != null) {
-                renderSlotAdapter(slotAdapter, gunItem, poseStack, transformType, light, overlay);
-            }
             return;
         }
+        poseStack.translate(0, -1.5, 0);
         if (attachmentItem.getItem() instanceof IAttachment iAttachment) {
             ResourceLocation attachmentId = iAttachment.getAttachmentId(attachmentItem);
             TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresentOrElse(attachmentIndex -> {
@@ -94,11 +90,6 @@ public class AttachmentRender implements IFunctionalRenderer {
         return adapterId == null ? null : TimelessAPI.getClientSlotAdapterIndex(adapterId).orElse(null);
     }
 
-    private static ClientSlotAdapterIndex getSelectedSlotAdapter(ItemStack gunItem, AttachmentType type) {
-        ResourceLocation adapterId = SlotAdapterHelper.getSelectedAvailableSlotAdapter(gunItem, type);
-        return adapterId == null ? null : TimelessAPI.getClientSlotAdapterIndex(adapterId).orElse(null);
-    }
-
     private static void renderSlotAdapter(ClientSlotAdapterIndex adapter, ItemStack gunItem, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
         BedrockAttachmentModel model = adapter.getAdapterModel();
         ResourceLocation texture = adapter.getModelTexture();
@@ -131,9 +122,7 @@ public class AttachmentRender implements IFunctionalRenderer {
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
         EnumMap<AttachmentType, ItemStack> currentAttachmentItem = bedrockGunModel.getCurrentAttachmentItem();
         ItemStack attachmentItem = currentAttachmentItem.get(type);
-        ItemStack gunItem = bedrockGunModel.getCurrentGunItem();
-        boolean hasSelectedAdapter = SlotAdapterHelper.getSelectedAvailableSlotAdapter(gunItem, type) != null;
-        if (attachmentItem != null && (!attachmentItem.isEmpty() || hasSelectedAdapter)) {
+        if (attachmentItem != null && !attachmentItem.isEmpty()) {
             Matrix3f normal = new Matrix3f(poseStack.last().normal());
             Matrix4f pose = new Matrix4f(poseStack.last().pose());
             //和枪械模型共用顶点缓冲的都需要代理到渲染结束后渲染
@@ -142,7 +131,7 @@ public class AttachmentRender implements IFunctionalRenderer {
                 poseStack2.last().normal().mul(normal);
                 poseStack2.last().pose().mul(pose);
                 // 渲染配件
-                renderAttachment(attachmentItem, gunItem, type, poseStack2, transformType, light, overlay);
+                renderAttachment(attachmentItem, bedrockGunModel.getCurrentGunItem(), type, poseStack2, transformType, light, overlay);
             });
         }
     }

@@ -20,7 +20,6 @@ import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.util.RenderHelper;
-import com.tacz.guns.util.SlotAdapterHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -303,8 +302,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         // 镜子需要先渲染，写入模板值
         ItemStack attachmentItem = currentAttachmentItem.get(AttachmentType.SCOPE);
         IAttachment iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
-        boolean hasSelectedScopeAdapter = SlotAdapterHelper.getSelectedAvailableSlotAdapter(currentGunItem, AttachmentType.SCOPE) != null;
-        if (scopePosPath != null && attachmentItem != null && (!attachmentItem.isEmpty() || hasSelectedScopeAdapter)) {
+        if (scopePosPath != null && attachmentItem != null && !attachmentItem.isEmpty()) {
             matrixStack.pushPose();
             for (BedrockPart bedrockPart : scopePosPath) {
                 bedrockPart.translateAndRotateAndScale(matrixStack);
@@ -337,9 +335,8 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 		var attachmentItem = currentAttachmentItem.get(AttachmentType.SCOPE);
 		var iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
 		var useStencil = false;
-		boolean hasSelectedScopeAdapter = SlotAdapterHelper.getSelectedAvailableSlotAdapter(currentGunItem, AttachmentType.SCOPE) != null;
 
-		if (scopePosPath != null && attachmentItem != null && (!attachmentItem.isEmpty() || hasSelectedScopeAdapter)) {
+		if (scopePosPath != null && attachmentItem != null && !attachmentItem.isEmpty()) {
 			matrixStack.pushPose();
 
 			for (BedrockPart bedrockPart : scopePosPath) {
