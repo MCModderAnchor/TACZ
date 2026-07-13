@@ -91,6 +91,7 @@
   "tacz.gun.scar_mk20.name": "SCAR-MK20 精确射手步枪",
   "tacz.gun.ak74m.name": "AK-74M 突击步枪",
   "tacz.gun.pkm.name": "PKM 通用机枪",
+  "tacz.gun.hm50b.name": "HM50B .50口径反器材步枪",
 
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
@@ -158,6 +159,7 @@
   "tacz.gun.scar_mk20.desc": "精准是奢侈的代名词",
   "tacz.gun.ak74m.desc": "从雨林到海湾，再到雪原",
   "tacz.gun.pkm.desc": "请输入文本",
+  "tacz.gun.hm50b.desc": "请输入文本",
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",
   "tacz.ammo.12g.name": "§912 号口径霰弹",
