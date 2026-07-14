@@ -26,13 +26,13 @@
     "damage": 6,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.2,
+      "armor_ignore": 0.1,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
-        {"distance": 13, "damage": 6},
-        {"distance": 26, "damage": 5},
-        {"distance": 35, "damage": 4},
-        {"distance": "infinite", "damage": 3}
+        {"distance": 12, "damage": 6},
+        {"distance": 22, "damage": 5},
+        {"distance": 32, "damage": 4},
+        {"distance": "infinite", "damage": 2}
       ]
     },
     "speed": 180,
@@ -83,23 +83,23 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.25, 0.25]},
-      {"time": 0.1, "value": [0.25, 0.25]},
-      {"time": 0.3, "value": [-0.2, -0.2]},
+      {"time": 0, "value": [0.5, 0.5]},
+      {"time": 0.1, "value": [0.5, 0.5]},
+      {"time": 0.3, "value": [-0.25, -0.25]},
       {"time": 0.45, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.65, 0.5]},
-      {"time": 0.12, "value": [-0.65, 0.5]},
+      {"time": 0, "value": [-0.85, 0.7]},
+      {"time": 0.12, "value": [-0.85, 0.7]},
       {"time": 0.3, "value": [0, 0]}
     ]
   },
   "inaccuracy": {
-    "stand": 2.5,
-    "move": 3.25,
-    "sneak": 2,
-    "lie": 1,
-    "aim": 0.2
+    "stand": 3.5,
+    "move": 4.0,
+    "sneak": 2.5,
+    "lie": 1.5,
+    "aim": 0.22
   },
   "melee": {
     "distance": 1,
