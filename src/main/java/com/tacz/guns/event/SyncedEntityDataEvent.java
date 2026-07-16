@@ -100,6 +100,7 @@ public final class SyncedEntityDataEvent {
         }
         List<Entity> dirtyEntities = instance.getDirtyEntities();
         if (dirtyEntities.isEmpty()) {
+            instance.clearDirtyEntities();
             instance.setDirty(false);
             return;
         }
@@ -122,7 +123,7 @@ public final class SyncedEntityDataEvent {
             }
             holder.clean();
         }
-        dirtyEntities.clear();
+        instance.clearDirtyEntities();
         instance.setDirty(false);
     }
 }
