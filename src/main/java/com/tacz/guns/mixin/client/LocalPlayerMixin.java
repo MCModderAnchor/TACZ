@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.client.gameplay.*;
+import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -116,7 +117,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
 
     @WrapOperation(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;setSprinting(Z)V"))
     public void swapSprintStatus(LocalPlayer player, boolean sprinting, Operation<Void> original) {
-        if (sprinting) { // 用原始的输入尝试打断换弹
+        if (sprinting && !SyncConfig.ALLOW_RELOAD_WHILE_SPRINTING.get()) { // 用原始的输入尝试打断换弹
             tac$reload.cancelReload();
         }
         original.call(player, tac$sprint.getProcessedSprintStatus(sprinting));

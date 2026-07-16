@@ -2,6 +2,7 @@ package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
+import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.world.entity.LivingEntity;
 
 public class LivingEntitySprint {
@@ -17,7 +18,9 @@ public class LivingEntitySprint {
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(shooter);
         boolean isAiming = gunOperator.getSynIsAiming();
         ReloadState.StateType reloadStateType = gunOperator.getSynReloadState().getStateType();
-        if (isAiming || (reloadStateType.isReloading() && !reloadStateType.isReloadFinishing())) {
+        boolean reloadBlocksSprint = !SyncConfig.ALLOW_RELOAD_WHILE_SPRINTING.get()
+                && reloadStateType.isReloading() && !reloadStateType.isReloadFinishing();
+        if (isAiming || reloadBlocksSprint) {
             return false;
         } else {
             return sprint;

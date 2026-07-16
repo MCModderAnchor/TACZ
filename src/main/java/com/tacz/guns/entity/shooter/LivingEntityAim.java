@@ -7,6 +7,7 @@ import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
+import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.custom.AdsModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
@@ -92,7 +93,9 @@ public class LivingEntityAim {
     public void tickSprint() {
         IGunOperator operator = IGunOperator.fromLivingEntity(shooter);
         ReloadState reloadState = operator.getSynReloadState();
-        if (data.isAiming || (reloadState.getStateType().isReloading() && !reloadState.getStateType().isReloadFinishing())) {
+        boolean reloadBlocksSprint = !SyncConfig.ALLOW_RELOAD_WHILE_SPRINTING.get()
+                && reloadState.getStateType().isReloading() && !reloadState.getStateType().isReloadFinishing();
+        if (data.isAiming || reloadBlocksSprint) {
             shooter.setSprinting(false);
         }
         if (data.sprintTimestamp == -1) {

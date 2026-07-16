@@ -2,6 +2,7 @@ package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
+import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.client.player.LocalPlayer;
 
 public class LocalPlayerSprint {
@@ -26,7 +27,9 @@ public class LocalPlayerSprint {
         // （例如客户端的视觉效果是玩家在冲刺，而服务端玩家实际上没有冲刺）
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
         ReloadState.StateType reloadStateType = gunOperator.getSynReloadState().getStateType();
-        if (gunOperator.getSynIsAiming() || (reloadStateType.isReloading() && !reloadStateType.isReloadFinishing()) || stopSprint) {
+        boolean reloadBlocksSprint = !SyncConfig.ALLOW_RELOAD_WHILE_SPRINTING.get()
+                && reloadStateType.isReloading() && !reloadStateType.isReloadFinishing();
+        if (gunOperator.getSynIsAiming() || reloadBlocksSprint || stopSprint) {
             return false;
         } else {
             return sprinting;

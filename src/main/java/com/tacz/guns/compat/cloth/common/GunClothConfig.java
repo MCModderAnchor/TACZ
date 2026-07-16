@@ -1,6 +1,7 @@
 package com.tacz.guns.compat.cloth.common;
 
 import com.tacz.guns.config.common.GunConfig;
+import com.tacz.guns.config.sync.SyncConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -29,5 +30,9 @@ public class GunClothConfig {
         gun.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.gun.auto_reload_when_respawn"), GunConfig.AUTO_RELOAD_WHEN_RESPAWN.get())
                 .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.common.gun.auto_reload_when_respawn.desc"))
                 .setSaveConsumer(GunConfig.AUTO_RELOAD_WHEN_RESPAWN::set).build());
+
+        gun.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.gun.allow_reload_while_sprinting"), SyncConfig.ALLOW_RELOAD_WHILE_SPRINTING.get())
+                .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.common.gun.allow_reload_while_sprinting.desc"))
+                .setSaveConsumer(SyncConfig.ALLOW_RELOAD_WHILE_SPRINTING::set).build());
     }
 }

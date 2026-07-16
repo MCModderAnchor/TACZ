@@ -258,6 +258,8 @@
   "config.tacz.common.gun.creative_player_consume_ammo.desc": "玩家在創造模式下是否會消耗彈藥",
   "config.tacz.common.gun.auto_reload_when_respawn": "重生時自動重新裝填",
   "config.tacz.common.gun.auto_reload_when_respawn.desc": "自動重新裝填玩家背包中的所有槍支，在PVP伺服器會很有幫助",
+  "config.tacz.common.gun.allow_reload_while_sprinting": "疾跑時換彈",
+  "config.tacz.common.gun.allow_reload_while_sprinting.desc": "啟用後，換彈期間可以保持疾跑，開始疾跑也不會取消換彈",
   "config.tacz.common.ammo": "彈藥",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks": "爆炸性彈藥（如RPG-7的火箭）會摧毀方塊",
   "config.tacz.common.ammo.explosive_ammo_destroys_blocks.desc": "警告：具有爆炸性的彈藥可以破壞方塊",

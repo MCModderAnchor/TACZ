@@ -29,6 +29,8 @@ public class SyncConfig {
     public static ForgeConfigSpec.ConfigValue<List<List<String>>> CLIENT_GUN_PACK_DOWNLOAD_URLS;
     // 禁用趴下战术动作
     public static ForgeConfigSpec.BooleanValue ENABLE_CRAWL;
+    // 允许疾跑时换弹
+    public static ForgeConfigSpec.BooleanValue ALLOW_RELOAD_WHILE_SPRINTING;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         interactKey(builder);
@@ -87,6 +89,9 @@ public class SyncConfig {
 
         builder.comment("Whether or not players are allowed to use the crawl feature");
         ENABLE_CRAWL = builder.define("EnableCrawl", true);
+
+        builder.comment("Whether players can keep sprinting while reloading without canceling the reload");
+        ALLOW_RELOAD_WHILE_SPRINTING = builder.define("AllowReloadWhileSprinting", false);
 
         builder.comment("Enable the recipe limit of default gunsmith table or not");
         ENABLE_TABLE_FILTER = builder.define("EnableDefaultGunSmithTableFilter", true);
