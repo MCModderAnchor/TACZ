@@ -7,6 +7,7 @@ import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.animation.screen.RefitTransform;
+import com.tacz.guns.client.gameplay.LocalPlayerInspect;
 import com.tacz.guns.client.gui.components.FlatColorButton;
 import com.tacz.guns.client.gui.components.refit.*;
 import com.tacz.guns.client.resource.GunDisplayInstance;
@@ -45,6 +46,10 @@ public class GunRefitScreen extends Screen {
 
     public GunRefitScreen() {
         super(Component.literal("Gun Refit Screen"));
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            LocalPlayerInspect.cancelInspect(player);
+        }
         RefitTransform.init();
     }
 

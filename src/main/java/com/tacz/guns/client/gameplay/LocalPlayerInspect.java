@@ -4,10 +4,12 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
 import com.tacz.guns.client.renderer.item.AnimateGeoItemRenderer;
+import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.sound.SoundManager;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -55,5 +57,22 @@ public class LocalPlayerInspect {
                 animationStateMachine.trigger(GunAnimationConstant.INPUT_INSPECT);
             }
         });
+    }
+
+    public static void cancelInspect(LocalPlayer player) {
+        ItemStack mainHandItem = player.getMainHandItem();
+        if (!(mainHandItem.getItem() instanceof IGun)) {
+            return;
+        }
+        TimelessAPI.getGunDisplay(mainHandItem).ifPresent(LocalPlayerInspect::cancelInspect);
+    }
+
+    private static void cancelInspect(GunDisplayInstance display) {
+        var animationStateMachine = display.getAnimationStateMachine();
+        if (animationStateMachine != null) {
+            animationStateMachine.trigger(GunAnimationConstant.INPUT_INSPECT_RETREAT);
+        }
+        SoundPlayManager.stopPlayGunSound(display, SoundManager.INSPECT_SOUND);
+        SoundPlayManager.stopPlayGunSound(display, SoundManager.INSPECT_EMPTY_SOUND);
     }
 }
