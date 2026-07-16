@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "tacz.refmap.json",
   "mixins": [
+    "common.ForgeHooksMixin",
     "common.LivingEntityMixin",
     "common.ServerGamePacketListenerImplMixin",
     "common.ServerPlayerMixin",
