@@ -40,6 +40,7 @@ public class SyncedEntityData {
 
     private final AtomicInteger nextIdTracker = new AtomicInteger();
     private final List<Entity> dirtyEntities = new ArrayList<>();
+    private final Set<Entity> dirtyEntitySet = Collections.newSetFromMap(new IdentityHashMap<>());
     private boolean dirty = false;
 
     private SyncedEntityData() {
@@ -101,7 +102,9 @@ public class SyncedEntityData {
         if (holder != null && holder.set(entity, key, value)) {
             if (!entity.level().isClientSide()) {
                 this.dirty = true;
-                this.dirtyEntities.add(entity);
+                if (this.dirtyEntitySet.add(entity)) {
+                    this.dirtyEntities.add(entity);
+                }
             }
         }
     }
@@ -241,5 +244,10 @@ public class SyncedEntityData {
 
     public List<Entity> getDirtyEntities() {
         return dirtyEntities;
+    }
+
+    public void clearDirtyEntities() {
+        this.dirtyEntities.clear();
+        this.dirtyEntitySet.clear();
     }
 }

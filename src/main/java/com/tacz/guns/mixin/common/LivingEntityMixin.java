@@ -4,6 +4,7 @@ import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.KnockBackModifier;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.entity.ShootResult;
+import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.entity.shooter.*;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
@@ -11,6 +12,7 @@ import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
@@ -217,8 +219,9 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
 
     @Inject(method = "tick", at = @At(value = "RETURN"))
     private void onTickServerSide(CallbackInfo ci) {
-        // 仅在服务端调用
-        if (!level().isClientSide()) {
+        // 普通生物不需要执行完整的枪械状态机。
+        // 玩家始终保持激活；持枪或已被第三方初始化的生物也保持原有行为。
+        if (!level().isClientSide() && this.tacz$shouldTickGunLogic()) {
             // 完成各种 tick 任务
             ReloadState reloadState = this.tacz$reload.tickReloadState();
             this.tacz$aim.tickAimingProgress();
@@ -239,6 +242,13 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
             ModSyncedEntityData.IS_AIMING_KEY.setValue(tacz$shooter, this.tacz$data.isAiming);
             ModSyncedEntityData.SPRINT_TIME_KEY.setValue(tacz$shooter, this.tacz$data.sprintTimeS);
         }
+    }
+
+    @Unique
+    private boolean tacz$shouldTickGunLogic() {
+        return this.tacz$shooter instanceof Player
+                || this.tacz$data.currentGunItem != null
+                || this.tacz$shooter.getMainHandItem().getItem() instanceof IGun;
     }
 
     @Override
