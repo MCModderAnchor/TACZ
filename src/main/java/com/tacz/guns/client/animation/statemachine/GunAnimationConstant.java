@@ -10,6 +10,7 @@ public class GunAnimationConstant {
     public static final String INPUT_PUT_AWAY = "put_away";
     public static final String INPUT_FIRE_SELECT = "fire_select";
     public static final String INPUT_INSPECT = "inspect";
+    public static final String INPUT_INSPECT_RETREAT = "inspect_retreat";
     public static final String INPUT_BAYONET_MUZZLE = "bayonet_muzzle";
     public static final String INPUT_BAYONET_STOCK = "bayonet_stock";
     public static final String INPUT_BAYONET_PUSH = "bayonet_push";

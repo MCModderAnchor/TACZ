@@ -32,6 +32,7 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     @Override
     public ShootResult shoot() {
+        tac$inspect.cancelInspect();
         tac$reload.cancelReload();
         return tac$shoot.shoot();
     }
