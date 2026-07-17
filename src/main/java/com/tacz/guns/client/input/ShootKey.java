@@ -83,4 +83,8 @@ public class ShootKey {
         return false;
     }
 
+    public static boolean isShootDown() {
+        return SHOOT_KEY.isDown() || controllerShootDown;
+    }
+
 }
