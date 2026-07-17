@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class AnimationController {
@@ -52,20 +51,6 @@ public class AnimationController {
         }
         if (track < animationQueue.size()) {
             animationQueue.set(track, null);
-        }
-    }
-
-    public synchronized void removeAnimations(Predicate<String> namePredicate) {
-        for (int track = 0; track < currentRunners.size(); track++) {
-            ObjectAnimationRunner runner = currentRunners.get(track);
-            if (runner == null) {
-                continue;
-            }
-            ObjectAnimationRunner transitionTo = runner.getTransitionTo();
-            if (namePredicate.test(runner.getAnimation().name)
-                    || (transitionTo != null && namePredicate.test(transitionTo.getAnimation().name))) {
-                removeAnimation(track);
-            }
         }
     }
 

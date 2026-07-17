@@ -3,7 +3,6 @@ package com.tacz.guns.client.gameplay;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
-import com.tacz.guns.client.input.ShootKey;
 import com.tacz.guns.client.renderer.item.AnimateGeoItemRenderer;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
@@ -29,7 +28,7 @@ public class LocalPlayerInspect {
 
     public void inspect() {
         if (data.clientIsAiming || data.clientAimingProgress > 0
-                || Minecraft.getInstance().screen != null || ShootKey.isShootDown()) {
+                || Minecraft.getInstance().screen != null) {
             return;
         }
         // 暂定只有主手可以检视
@@ -82,8 +81,22 @@ public class LocalPlayerInspect {
     private static void cancelInspect(GunDisplayInstance display) {
         var animationStateMachine = display.getAnimationStateMachine();
         if (animationStateMachine != null) {
-            animationStateMachine.getAnimationController().removeAnimations(name ->
-                    name.toLowerCase(Locale.ROOT).contains(GunAnimationConstant.INPUT_INSPECT));
+            var controller = animationStateMachine.getAnimationController();
+            var tracks = controller.getUpdatingTrackArray();
+            if (tracks != null) {
+                for (int track : tracks) {
+                    var runner = controller.getAnimation(track);
+                    if (runner == null) {
+                        continue;
+                    }
+                    var transitionTo = runner.getTransitionTo();
+                    if (runner.getAnimation().name.toLowerCase(Locale.ROOT).contains(GunAnimationConstant.INPUT_INSPECT)
+                            || transitionTo != null && transitionTo.getAnimation().name.toLowerCase(Locale.ROOT)
+                            .contains(GunAnimationConstant.INPUT_INSPECT)) {
+                        controller.removeAnimation(track);
+                    }
+                }
+            }
             animationStateMachine.trigger(GunAnimationConstant.INPUT_INSPECT_RETREAT);
         }
         SoundPlayManager.stopPlayGunSound(display, SoundManager.INSPECT_SOUND);
