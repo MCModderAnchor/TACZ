@@ -30,6 +30,7 @@ import com.tacz.guns.resource.pojo.data.gun.ExplosionData;
 import com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.resource.pojo.data.gun.Ignite;
+import com.tacz.guns.util.BulletDamageContext;
 import com.tacz.guns.util.EntityUtil;
 import com.tacz.guns.util.ExplodeUtil;
 import com.tacz.guns.util.TacHitResult;
@@ -408,8 +409,16 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         float damage = this.getDamage(result.getLocation());
         float headShotMultiplier = Math.max(this.headShot, 0);
         // 发布Pre事件
-        var preEvent = new EntityHurtByGunEvent.Pre(this, entity, attacker, this.gunId, this.gunDisplayId, damage, sources, headshot, headShotMultiplier, LogicalSide.SERVER);
-        var cancelled = MinecraftForge.EVENT_BUS.post(preEvent);
+        LivingEntity eventAttacker = attacker;
+        Entity eventEntity = entity;
+        float eventDamage = damage;
+        Pair<DamageSource, DamageSource> eventSources = sources;
+        boolean eventHeadshot = headshot;
+        float eventHeadshotMultiplier = headShotMultiplier;
+        var preEvent = BulletDamageContext.runWithoutShooter(() -> new EntityHurtByGunEvent.Pre(
+                this, eventEntity, eventAttacker, this.gunId, this.gunDisplayId, eventDamage, eventSources,
+                eventHeadshot, eventHeadshotMultiplier, LogicalSide.SERVER));
+        var cancelled = BulletDamageContext.runWithoutShooter(() -> MinecraftForge.EVENT_BUS.post(preEvent));
         if (cancelled) {
             return;
         }

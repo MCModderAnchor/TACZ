@@ -1,5 +1,6 @@
 package com.tacz.guns.api.event.common;
 
+import com.tacz.guns.util.BulletDamageContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -124,7 +125,7 @@ public class EntityHurtByGunEvent extends Event implements KubeJSGunEventPoster<
 
     @Nullable
     public LivingEntity getAttacker() {
-        return attacker;
+        return BulletDamageContext.isShooterHidden() ? null : attacker;
     }
 
     public ResourceLocation getGunId() {
@@ -148,7 +149,11 @@ public class EntityHurtByGunEvent extends Event implements KubeJSGunEventPoster<
         if (logicalSide.isClient()) {
             throw new UnsupportedOperationException("DamageSource about gun hit is not available on client side!");
         }
-        return part == GunDamageSourcePart.ARMOR_PIERCING ? apPartDamageSource : nonApPartDamageSource;
+        DamageSource source = part == GunDamageSourcePart.ARMOR_PIERCING ? apPartDamageSource : nonApPartDamageSource;
+        if (source != null && BulletDamageContext.isShooterHidden()) {
+            return BulletDamageContext.withoutShooter(source);
+        }
+        return source;
     }
 
     public float getHeadshotMultiplier() {
