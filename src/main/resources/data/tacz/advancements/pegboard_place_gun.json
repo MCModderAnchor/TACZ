@@ -1,0 +1,37 @@
+{
+  "parent": "tacz:pegboard",
+  "display": {
+    "icon": {
+      "item": "tacz:gun_pegboard"
+    },
+    "title": {
+      "translate": "advancement.tacz.pegboard_place_gun.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.pegboard_place_gun.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "place": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": ["tacz:gun_pegboard", "tacz:glow_gun_pegboard"]
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": ["tacz:modern_kinetic_gun"]
+        }
+      }
+    }
+  }
+}

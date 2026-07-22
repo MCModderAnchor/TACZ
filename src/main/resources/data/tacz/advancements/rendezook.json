@@ -1,0 +1,37 @@
+{
+  "parent": "tacz:gunship",
+  "display": {
+    "icon": {
+      "item": "tacz:modern_kinetic_gun",
+      "nbt": "{GunId:\"tacz:rpg7\"}"
+    },
+    "title": {
+      "translate": "advancement.tacz.rendezook.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.rendezook.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "kill": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "player": {
+          "nbt": "{FallFlying: 1b}",
+          "equipment": {
+            "mainhand": {
+              "items": ["tacz:modern_kinetic_gun"],
+              "nbt": "{GunId:\"tacz:rpg7\"}"
+            }
+          }
+        },
+        "entity": {
+          "type": "minecraft:phantom"
+        }
+      }
+    }
+  }
+}

@@ -330,5 +330,74 @@
   "gui.tacz.refit.adapter_none": "No Adapter",
   "gui.tacz.refit.adapter_requires_unload": "Unload the current attachment before changing this Adapter.",
   "config.tacz.client.render.laser_fadeout": "Laser Fadeout Effect",
-  "config.tacz.client.render.laser_fadeout.desc": "Whether or not apply fadeout effect on the laser beam. Close this may improve laser performance under some shaders."
+  "config.tacz.client.render.laser_fadeout.desc": "Whether or not apply fadeout effect on the laser beam. Close this may improve laser performance under some shaders.",
+
+  "advancement.tacz.root.title": "TAC Zero",
+  "advancement.tacz.root.description": "Walk the path of the gunsmith",
+
+
+  "advancement.tacz.gun_smith_table.title": "Where It All Began",
+  "advancement.tacz.gun_smith_table.description": "Obtain the Gun Smith Table",
+  "advancement.tacz.craft_first_gun.title": "Lord of War",
+  "advancement.tacz.craft_first_gun.description": "Obtain any gun",
+  "advancement.tacz.times_changed.title": "Times Have Changed",
+  "advancement.tacz.times_changed.description": "Kill a monster with any firearm",
+
+  "advancement.tacz.sniper_showdown.title": "True Sniper Duel",
+  "advancement.tacz.sniper_showdown.description": "Kill a skeleton from over 100 meters with any firearm",
+  "advancement.tacz.hunt_showdown.title": "Hunt: Showdown",
+  "advancement.tacz.hunt_showdown.description": "Kill a mob from over 75 meters with a Springfield 1873",
+  "advancement.tacz.gunship.title": "Gunship",
+  "advancement.tacz.gunship.description": "Kill any mob with a firearm while gliding with an elytra",
+  "advancement.tacz.rendezook.title": "RendeZook",
+  "advancement.tacz.rendezook.description": "Kill a phantom with an RPG-7 while gliding with an elytra",
+  "advancement.tacz.dodge_this.title": "Dodge this！",
+  "advancement.tacz.dodge_this.description": "Kill an enderman with any firearm",
+  "advancement.tacz.invisible.title": "INVISIBLE",
+  "advancement.tacz.invisible.description": "Equip MK23 with two exclusive attachments and kill a monster",
+
+  "advancement.tacz.timeless_zero.title": "Let It All Begin From Zero, Once Again",
+  "advancement.tacz.timeless_zero.description": "Obtain the TaCZ first anniversary commemorative weapon",
+
+
+  "advancement.tacz.attachment_workbench.title": "Gilding the Lily",
+  "advancement.tacz.attachment_workbench.description": "Obtain the Attachment Table",
+  "advancement.tacz.craft_first_attachment.title": "Gunsmith",
+  "advancement.tacz.craft_first_attachment.description": "Obtain any attachment",
+
+  "advancement.tacz.full_assault.title": "Full Assault!",
+  "advancement.tacz.full_assault.description": "Fill all six attachment slots on a gun",
+
+
+  "advancement.tacz.ammo_workbench.title": "Gunpowder Glitter",
+  "advancement.tacz.ammo_workbench.description": "Obtain the Ammo Assembly Table",
+  "advancement.tacz.ammo_reserve.title": "Ammo Reserve",
+  "advancement.tacz.ammo_reserve.description": "Obtain any ammo box",
+  "advancement.tacz.bigger_ammo_reserve.title": "Bigger Ammo Reserve",
+  "advancement.tacz.bigger_ammo_reserve.description": "Obtain any ammo storage",
+
+
+  "advancement.tacz.arms_exhibition.title": "Arms Exhibition",
+  "advancement.tacz.arms_exhibition.description": "Obtain any gun display block",
+  "advancement.tacz.statue.title": "Statue",
+  "advancement.tacz.statue.description": "Obtain a statue",
+  "advancement.tacz.display_case.title": "Display Case",
+  "advancement.tacz.display_case.description": "Obtain a gun display case",
+  "advancement.tacz.pegboard.title": "Pegboard",
+  "advancement.tacz.pegboard.description": "Obtain a pegboard",
+
+  "advancement.tacz.faith_into_chamber.title": "When Faith Slides Into the Chamber",
+  "advancement.tacz.faith_into_chamber.description": "Place any gun on a statue",
+  "advancement.tacz.display_case_place_gun.title": "Safe Private Collection",
+  "advancement.tacz.display_case_place_gun.description": "Place any gun on a gun display case",
+  "advancement.tacz.pegboard_place_gun.title": "A Dazzling Display",
+  "advancement.tacz.pegboard_place_gun.description": "Place any gun on a pegboard",
+
+
+  "advancement.tacz.range_time.title": "Range Time",
+  "advancement.tacz.range_time.description": "Obtain any target",
+  "advancement.tacz.target.title": "Target",
+  "advancement.tacz.target.description": "Obtain a target",
+  "advancement.tacz.target_minecart.title": "Target Minecart",
+  "advancement.tacz.target_minecart.description": "Obtain a target minecart"
 }

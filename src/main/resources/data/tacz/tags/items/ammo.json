@@ -1,0 +1,31 @@
+{
+  "replace": false,
+  "values": [
+    "tacz:12g",
+    "tacz:22wmr",
+    "tacz:300blk",
+    "tacz:308",
+    "tacz:30_06",
+    "tacz:338",
+    "tacz:357mag",
+    "tacz:40mm",
+    "tacz:45_70",
+    "tacz:45acp",
+    "tacz:46x30",
+    "tacz:500mag",
+    "tacz:50ae",
+    "tacz:50bmg",
+    "tacz:545x39",
+    "tacz:556x45",
+    "tacz:57x28",
+    "tacz:58x42",
+    "tacz:68x51fury",
+    "tacz:6x43",
+    "tacz:762x25",
+    "tacz:762x39",
+    "tacz:762x54",
+    "tacz:792x57",
+    "tacz:9mm",
+    "tacz:rpg_rocket"
+  ]
+}

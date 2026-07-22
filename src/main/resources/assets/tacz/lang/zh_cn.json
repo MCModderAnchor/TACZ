@@ -332,5 +332,74 @@
   "gui.tacz.refit.adapter_none": "无适配器",
   "gui.tacz.refit.adapter_requires_unload": "请先卸下当前配件再切换适配器",
 
-  "tacz.resources.modresources": "永恒枪械工坊：Zero 枪包资源集"
+  "tacz.resources.modresources": "永恒枪械工坊：Zero 枪包资源集",
+
+  "advancement.tacz.root.title": "TAC Zero",
+  "advancement.tacz.root.description": "踏上枪械工匠之路",
+
+
+  "advancement.tacz.gun_smith_table.title": "一切开始的地方",
+  "advancement.tacz.gun_smith_table.description": "获得枪械工作台",
+  "advancement.tacz.craft_first_gun.title": "战争之王",
+  "advancement.tacz.craft_first_gun.description": "获得任意一把枪",
+  "advancement.tacz.times_changed.title": "时代变了",
+  "advancement.tacz.times_changed.description": "使用任意枪械击杀一只怪物",
+
+  "advancement.tacz.sniper_showdown.title": "真·狙击手的对决",
+  "advancement.tacz.sniper_showdown.description": "在一百米外用任意枪械击杀一只骷髅",
+  "advancement.tacz.hunt_showdown.title": "猎杀对决",
+  "advancement.tacz.hunt_showdown.description": "使用春田1873在75米外击杀一只生物",
+  "advancement.tacz.gunship.title": "空中炮艇",
+  "advancement.tacz.gunship.description": "在鞘翅滑翔时使用枪械击杀任意生物",
+  "advancement.tacz.rendezook.title": "RendeZook",
+  "advancement.tacz.rendezook.description": "鞘翅滑翔时使用RPG-7击杀一只幻翼",
+  "advancement.tacz.dodge_this.title": "Dodge this！",
+  "advancement.tacz.dodge_this.description": "使用任意枪械击杀一只末影人",
+  "advancement.tacz.invisible.title": "INVISIBLE",
+  "advancement.tacz.invisible.description": "为MK23装备两个专属配件并击杀怪物",
+
+  "advancement.tacz.timeless_zero.title": "让一切从零开始，再一次",
+  "advancement.tacz.timeless_zero.description": "获得TaCZ 一周年纪念武器",
+
+
+  "advancement.tacz.attachment_workbench.title": "锦上添花",
+  "advancement.tacz.attachment_workbench.description": "获得配件工作台",
+  "advancement.tacz.craft_first_attachment.title": "枪匠",
+  "advancement.tacz.craft_first_attachment.description": "获得任意一个配件",
+
+  "advancement.tacz.full_assault.title": "猛攻！",
+  "advancement.tacz.full_assault.description": "给一把枪械的所有六个配件槽位都安装上配件",
+
+
+  "advancement.tacz.ammo_workbench.title": "子弹是笨蛋",
+  "advancement.tacz.ammo_workbench.description": "获得弹药装配台",
+  "advancement.tacz.ammo_reserve.title": "弹药储备",
+  "advancement.tacz.ammo_reserve.description": "获得任意一种弹药盒",
+  "advancement.tacz.bigger_ammo_reserve.title": "更大，更多的弹药储备",
+  "advancement.tacz.bigger_ammo_reserve.description": "获得任意一种弹药库",
+
+
+  "advancement.tacz.arms_exhibition.title": "军火展览",
+  "advancement.tacz.arms_exhibition.description": "获得任意枪械展示方块",
+  "advancement.tacz.statue.title": "石像",
+  "advancement.tacz.statue.description": "获得石像",
+  "advancement.tacz.display_case.title": "枪械展示柜",
+  "advancement.tacz.display_case.description": "获得枪械展示柜",
+  "advancement.tacz.pegboard.title": "洞洞板",
+  "advancement.tacz.pegboard.description": "获得洞洞板",
+
+  "advancement.tacz.faith_into_chamber.title": "当信仰滑进枪膛",
+  "advancement.tacz.faith_into_chamber.description": "将任意枪械放置于石像上",
+  "advancement.tacz.display_case_place_gun.title": "安全的私人收藏",
+  "advancement.tacz.display_case_place_gun.description": "将任意枪械放置于枪械展示柜上",
+  "advancement.tacz.pegboard_place_gun.title": "琳琅满目",
+  "advancement.tacz.pegboard_place_gun.description": "将任意枪械放置于洞洞板上",
+
+
+  "advancement.tacz.range_time.title": "靶场时间",
+  "advancement.tacz.range_time.description": "获得任意标靶",
+  "advancement.tacz.target.title": "人形标靶",
+  "advancement.tacz.target.description": "获得人形标靶",
+  "advancement.tacz.target_minecart.title": "标靶车",
+  "advancement.tacz.target_minecart.description": "获得标靶车"
 }
