@@ -1,0 +1,9 @@
+{
+    "name": "tacz.gun.m1897.name",
+    "display": "tacz:m1897_display",
+    "data": "tacz:m1897_data",
+    "tooltip": "tacz.gun.m1897.desc",
+    "type": "shotgun",
+    "item_type": "modern_kinetic",
+    "sort": 1
+}

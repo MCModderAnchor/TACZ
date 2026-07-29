@@ -1,0 +1,8 @@
+{
+  "name": "tacz.attachment.oem_m1897_bayonet.name",
+  "display": "tacz:oem_m1897_bayonet_display",
+  "data": "tacz:oem_m1897_bayonet_data",
+  "type": "muzzle",
+  "sort": 6,
+  "hidden": true
+}
