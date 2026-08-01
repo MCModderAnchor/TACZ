@@ -3,5 +3,7 @@
   "#tacz:muzzle_silencer",
   "#tacz:ammo_mod",
   "#tacz:scope_lowsight",
-  "#tacz:ar_laser"
+  "#tacz:ar_laser",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

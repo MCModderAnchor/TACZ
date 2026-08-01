@@ -5,5 +5,7 @@
   "#tacz:amr_muzzle_silencer",
   "#tacz:ammo_mod",
   "#tacz:scope_lowsight",
-  "#tacz:stock"
+  "#tacz:stock",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]
