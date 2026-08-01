@@ -24,7 +24,7 @@
   },
   "iron_zoom": 1.2,
   "model_fov": 60,
-  "zoom_model_fov": 60,
+  "zoom_model_fov": 45,
   "sounds": {
     "reload_empty": "tacz:db_short/db_short_reload_empty",
     "reload_tactical": "tacz:db_short/db_short_reload_tactical",

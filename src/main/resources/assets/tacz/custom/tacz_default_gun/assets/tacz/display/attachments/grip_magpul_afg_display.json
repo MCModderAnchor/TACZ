@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/grip_magpul_afg",
+  "model": "tacz:attachment/grip_magpul_afg_geo",
+  "texture": "tacz:attachment/uv/grip_magpul_afg",
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_b",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

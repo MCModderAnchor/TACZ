@@ -2,6 +2,7 @@
   "ammo": "tacz:12g",
   "ammo_amount": 5,
   "bolt": "manual_action",
+  "force_aim_exit_on_reload": true,
   "rpm": 400,
   "bullet": {
     "life": 0.6,

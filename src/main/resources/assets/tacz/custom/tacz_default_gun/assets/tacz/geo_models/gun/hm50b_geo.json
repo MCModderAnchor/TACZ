@@ -12679,7 +12679,7 @@
 				{
 					"name": "scope_pos",
 					"parent": "positioning2",
-					"pivot": [0, 14.19063, 10.6]
+					"pivot": [0, 14.19063, 13.6]
 				},
 				{
 					"name": "muzzle_pos",
@@ -12744,7 +12744,7 @@
 					"name": "refit_view",
 					"parent": "view",
 					"pivot": [36.6, 9.275, -0.125],
-					"rotation": [0, 90, 0]
+					"rotation": [0, 89.9, 0]
 				},
 				{
 					"name": "refit_muzzle_view",

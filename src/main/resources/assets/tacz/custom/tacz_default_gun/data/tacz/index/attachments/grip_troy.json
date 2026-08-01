@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.grip_troy.name",
+  "display": "tacz:grip_troy_display",
+  "data": "tacz:grip_troy_data",
+  "type": "grip",
+  "sort": 1
+}

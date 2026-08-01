@@ -36,12 +36,12 @@
       "armor_ignore": 0.5,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 35, "damage": 12},
-        {"distance": 80, "damage": 9},
-        {"distance": "infinite", "damage": 7.5}
+        {"distance": 40, "damage": 12},
+        {"distance": 80, "damage": 10},
+        {"distance": "infinite", "damage": 9}
       ]
     },
-    "speed": 270,
+    "speed": 375,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.015,
@@ -77,9 +77,8 @@
   "fire_mode_adjust": {
     "auto": {
       // 加算，全自动模式的开火数值调整，如无调整可不写
-      "damage": -2,
-      "rpm": 350,
-      "speed": -10,
+      "damage": -1,
+      "rpm": 200,
       "knockback": 0,
       "armor_ignore": -0.2,
       "head_shot_multiplier": -0.25,
@@ -89,16 +88,15 @@
   },
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [1, 1]},
-      {"time": 0.15, "value": [1, 1]},
-      {"time": 0.55, "value": [-0.225, -0.225]},
-      {"time": 0.7, "value": [0, 0]},
+      {"time": 0, "value": [1.1, 1.1]},
+      {"time": 0.1, "value": [1.1, 1.1]},
+      {"time": 0.55, "value": [0.1, 0.1]},
+      {"time": 0.75, "value": [0, 0]},
       {"time": 0.8, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.3, 0.15]},
-      {"time": 0.25, "value": [-0.3, 0.15]},
-      {"time": 0.7, "value": [0, 0]}
+      {"time": 0.1, "value": [-0.35, 0.35]},
+      {"time": 0.4, "value": [0, 0]}
     ]
   },
   "inaccuracy": {

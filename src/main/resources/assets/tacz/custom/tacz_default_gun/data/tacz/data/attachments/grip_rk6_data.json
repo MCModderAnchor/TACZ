@@ -1,9 +1,14 @@
 {
   "weight": 0.1,
   "ads": {
-    "multiplier": 0.85
+    "multiplier": 0.8
   },
-  "inaccuracy": {
-    "multiplier": 0.88
+  "recoil": {
+    "pitch": {
+      "multiplier": 1.2
+    }
+  },
+  "aim_inaccuracy": {
+    "multiplier": 1.2
   }
 }

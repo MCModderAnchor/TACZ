@@ -3515,7 +3515,7 @@
 				{
 					"name": "refit_view",
 					"parent": "views",
-					"pivot": [20, 9, -2],
+					"pivot": [32, 9, 0],
 					"rotation": [0, 89.9, 0]
 				},
 				{

@@ -1,13 +1,13 @@
 {
   "ads": {
-    "addend": 0.02
+    "addend": 0.06
   },
-  "inaccuracy": {
-    "multiplier": 1.15
+  "aim_inaccuracy": {
+    "multiplier": 1.33
   },
   "recoil": {
     "pitch": {
-      "multiplier": 0.33
+      "multiplier": 0.4
     }
   }
 }

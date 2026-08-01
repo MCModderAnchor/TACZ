@@ -256,6 +256,8 @@
   "tacz.attachment.ammo_mod_overpressure_recoil.desc": "Shotgun shells packed with illegal overpressure propellant. \nDon't ask what is in the chamber; just pull the trigger \nand launch yourself and the target skyward.",
   
   "tacz.attachment.grip_magpul_afg_2.name": "Talon AFG1 Handstop",
+  "tacz.attachment.grip_magpul_afg.name": "Magpul AFG Angled Grip",
+  "tacz.attachment.grip_troy.name": "TROY Modular Angled Grip",
   "tacz.attachment.grip_vertical_talon.name": "Talon SG2 Grip",
   "tacz.attachment.grip_vertical_military.name":"Nagoma Military Standard Grip",
   "tacz.attachment.grip_vertical_ranger.name":"Koch Ranger Heavy Grip",

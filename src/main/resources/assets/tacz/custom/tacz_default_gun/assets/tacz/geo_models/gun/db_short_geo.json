@@ -3144,7 +3144,7 @@
 				{
 					"name": "iron_view",
 					"parent": "views",
-					"pivot": [0, 10, 8]
+					"pivot": [0, 10, 10]
 				},
 				{
 					"name": "refit_extended_mag_view",
