@@ -63,7 +63,6 @@
   "tacz.gun.qbz_95.name": "95式 \"长弓\" 突击步枪",
   "tacz.gun.p90.name": "P90 冲锋枪",
   "tacz.gun.m870.name": "M870 霰弹枪",
-  "tacz.gun.m1897.name": "M1897 “堑壕清扫者”",
   "tacz.gun.b93r.name": "B93R 冲锋手枪",
   "tacz.gun.minigun.name": "M134 转管机枪",
   "tacz.gun.spr15hb.name": "SPR-15 HB “射手座” 反狙击步枪",
@@ -93,7 +92,9 @@
   "tacz.gun.ak74m.name": "AK-74M 突击步枪",
   "tacz.gun.pkm.name": "PKM 通用机枪",
   "tacz.gun.hm50b.name": "HM50B .50口径反器材步枪",
+  "tacz.gun.m1897.name": "M1897 “堑壕清扫者”",
   "tacz.gun.ak12.name": "AK-12 突击步枪",
+  "tacz.gun.m1866.name": "温彻斯特 1866 步枪",
 
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
@@ -133,7 +134,6 @@
   "tacz.gun.qbz_95.desc": "做最优质的战士！",
   "tacz.gun.p90.desc": "用它在防弹衣上画个笑脸",
   "tacz.gun.m870.desc": "你选错屋了，蠢货！",
-  "tacz.gun.m1897.desc": "猛击走火！",
   "tacz.gun.b93r.desc": "又是官僚主义的谎言？也没那么差",
   "tacz.gun.minigun.desc": "§6“在枪管熔毁之前，焚烧这个世界”",
   "tacz.gun.springfield1873.desc": "人穷枪不短",
@@ -163,7 +163,9 @@
   "tacz.gun.ak74m.desc": "从雨林到海湾，再到雪原",
   "tacz.gun.pkm.desc": "打到弹链尽头为止",
   "tacz.gun.hm50b.desc": "巍然不动，然后扣扳机",
+  "tacz.gun.m1897.desc": "猛击走火！",
   "tacz.gun.ak12.desc": "请输入文本",
+  "tacz.gun.m1866.desc": "请输入文本",
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",
   "tacz.ammo.12g.name": "§912 号口径霰弹",

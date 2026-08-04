@@ -1,0 +1,96 @@
+{
+  "model": "tacz:gun/m1866_geo",
+  "texture": "tacz:gun/uv/m1866",
+  "lod": {
+    "model": "tacz:gun/lod/m1866",
+    "texture": "tacz:gun/lod/m1866"
+  },
+  "hud": "tacz:gun/hud/m1866",
+  "slot": "tacz:gun/slot/m1866",
+  "animation": "tacz:m1866",
+  "state_machine": "tacz:m1866_state_machine",
+  "state_machine_param": {
+    "bolt_shell_ejecting_time": 0.13,
+    "ending_shell_ejecting_time": 0.52,
+    "ending_duration": 0.55,
+    "ending_empty_duration": 1.28
+  },
+  "use_default_animation": "rifle",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.65
+  },
+  "shell": {
+    "initial_velocity": [-1.5, 4.5, 1.5],
+    "random_velocity": [1.5, 2.5, 1.5],
+    "acceleration": [0.0, -20, 0.0],
+    "angular_velocity": [1200, 90, 360],
+    "living_time": 1.0
+  },
+  "ammo": {
+    "particle": {
+      "name": "mycelium",
+      "delta": [0, 0, 0],
+      "speed": 0.0,
+      "life_time": 20,
+      "count": 100
+    },
+    "hit_surface_particles": [
+      {
+        "name": "minecraft:cloud",
+        "count_range": [2, 4],
+        "life_time": 10,
+        "color": "#8A8175",
+        "scale": 0.8,
+        "surface_offset": 0.045,
+        "random_offset": 0.018,
+        "normal_speed": 0.15,
+        "random_speed": 0.02,
+        "spread_angle": 15
+      },
+      {
+        "name": "minecraft:campfire_cosy_smoke",
+        "count": 2,
+        "life_time": 35,
+        "scale": 0.9,
+        "surface_offset": 0.055,
+        "random_offset": 0.025,
+        "normal_speed": 0.035,
+        "random_speed": 0.02,
+        "spread_angle": 45
+      }
+    ]
+  },
+  "iron_zoom": 2,
+  "model_fov": 60,
+  "zoom_model_fov": 25,
+  "sounds": {
+    "draw": "tacz:m700/m700_draw",
+    "shoot": "tacz:m1911/m1911_shoot",
+    "shoot_3p": "tacz:m1911/m1911_shoot_3p",
+    "silence": "tacz:m1911/m1911_silence",
+    "silence_3p": "tacz:m1911/m1911_silence_3p",
+    "put_away": "tacz:m700/m700_put_away",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  "offhand_show": {
+    "pos": [6, 18, 3],
+    "rotate": [-90, -5, -90],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-4, 18, 3],
+      "rotate": [-90, -5, -90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}
