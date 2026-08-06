@@ -60,18 +60,20 @@ public class BedrockPart {
 
     public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
         int cubePackedLight = light;
+        VertexConsumer cubeConsumer = consumer;
         if (illuminated) {
             // 最大亮度
             cubePackedLight = LightTexture.pack(15, 15);
+            cubeConsumer = UnshadedVertexConsumer.wrap(consumer);
         }
         if (this.visible) {
             if (!this.cubes.isEmpty() || !this.children.isEmpty()) {
                 poseStack.pushPose();
                 this.translateAndRotateAndScale(poseStack);
-                this.compile(poseStack.last(), consumer, cubePackedLight, overlay, red, green, blue, alpha);
+                this.compile(poseStack.last(), cubeConsumer, cubePackedLight, overlay, red, green, blue, alpha);
 
                 for (BedrockPart part : this.children) {
-                    part.render(poseStack, transformType, consumer, cubePackedLight, overlay, red, green, blue, alpha);
+                    part.render(poseStack, transformType, cubeConsumer, cubePackedLight, overlay, red, green, blue, alpha);
                 }
 
                 poseStack.popPose();

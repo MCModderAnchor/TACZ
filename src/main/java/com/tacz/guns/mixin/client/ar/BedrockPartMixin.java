@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.client.model.bedrock.BedrockCube;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
+import com.tacz.guns.client.model.bedrock.UnshadedVertexConsumer;
 import com.tacz.guns.compat.ar.ARCompat;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectList;
@@ -56,6 +57,10 @@ public class BedrockPartMixin implements IAcceleratedRenderer<Void> {
 			float alpha,
 			CallbackInfo ci
 	) {
+		if (consumer instanceof UnshadedVertexConsumer) {
+			return;
+		}
+
 		var extension = VertexConsumerExtension.getAccelerated(consumer);
 
 		if (ARCompat.shouldAccelerate() && extension.isAccelerated()) {
