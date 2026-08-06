@@ -5,6 +5,13 @@ local STATIC_TRACK_LINE = default.STATIC_TRACK_LINE
 local GUN_KICK_TRACK_LINE = default.GUN_KICK_TRACK_LINE
 local MAIN_TRACK = default.MAIN_TRACK
 local main_track_states = default.main_track_states
+
+local function increment(obj)
+    obj.value = obj.value + 1
+    return obj.value - 1
+end
+local HAMMER_TRACK = increment(default.static_track_top)
+
 -- main_track_states.idle 是我们要重写的状态。
 local idle_state = setmetatable({}, {__index = main_track_states.idle})
 
@@ -12,7 +19,8 @@ local gun_kick_state = setmetatable({}, {__index = default.gun_kick_state})
 -- reload_state、bolt_state 是定义的新状态，用于执行单发装填
 local reload_state = {
     need_ammo = 0,
-    loaded_ammo = 0
+    loaded_ammo = 0,
+    was_empty = false
 }
 local function get_ejection_time(context)
     local ejection_time = context:getStateMachineParams().intro_shell_ejecting_time
@@ -33,12 +41,12 @@ end
 function gun_kick_state.transition(this, context, input)
     if (input == INPUT_SHOOT) then
         local track = context:findIdleTrack(GUN_KICK_TRACK_LINE, false)
-            if(context:getAttachment("SCOPE") == "tacz:empty") then
-                context:runAnimation("shoot", track, true, PLAY_ONCE_STOP, 0)
-            else
-                context:runAnimation("shoot_scope", track, true, PLAY_ONCE_STOP, 0)
-            end
+        if (context:getAttachment("SCOPE") == "tacz:empty") then
+            context:runAnimation("shoot", track, true, PLAY_ONCE_STOP, 0)
+        else
+            context:runAnimation("shoot_scope", track, true, PLAY_ONCE_STOP, 0)
         end
+    end
     return nil
 end
 
@@ -46,6 +54,7 @@ end
 function idle_state.transition(this, context, input)
     if (input == INPUT_RELOAD) then
         if (context:getAttachment("SCOPE") == "tacz:empty" and isNoAmmo(context)) then
+            context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK))
             idle_state.timestamp = context:getCurrentTimestamp()
             idle_state.ejection_time = get_ejection_time(context)
             context:runAnimation("reload_empty_clip", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0.2)
@@ -54,12 +63,17 @@ function idle_state.transition(this, context, input)
         return this.main_track_states.reload
     end
     if (input == INPUT_BOLT) then
+        context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK))
         if (context:getAttachment("SCOPE") ~= "tacz:empty") then
             context:runAnimation("bolt_scope", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0.2)
         else
             context:runAnimation("bolt", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0.2)
         end
         return this.main_track_states.bolt
+    end
+    if (input == INPUT_SHOOT) then
+        context:runAnimation("static_hammer", context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK), false, LOOP, 0)
+        -- 返回到 idle，父级 manual_action 的默认实现会绕过抛壳
     end
     return main_track_states.idle.transition(this, context, input)
 end
@@ -80,8 +94,9 @@ function reload_state.entry(this, context, input)
 
     state.need_ammo = context:getMaxAmmoCount() - context:getAmmoCount()
     state.loaded_ammo = 0
+    state.was_empty = isNoAmmo(context)
 
-    if (isNoAmmo(context)) then
+    if (state.was_empty) then
         state.need_ammo = state.need_ammo + 1
         context:runAnimation("reload_intro_empty", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_HOLD, 0.2)
         idle_state.timestamp = context:getCurrentTimestamp()
@@ -93,7 +108,11 @@ end
 -- 在 update 函数里，循环播放 loop，让 loaded_ammo 变量自增。
 function reload_state.update(this, context)
     local state = this.main_track_states.reload
+    if (state.was_empty) then
+        context:runAnimation("static_hammer", context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK), false, LOOP, 0)
+    end
     if (state.loaded_ammo > state.need_ammo or not context:hasAmmoToConsume()) then
+        state.was_empty = false
         context:trigger(this.INPUT_RELOAD_RETREAT)
     else
         local track = context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK)
@@ -112,6 +131,7 @@ end
 -- 如果 loop 循环结束或者换弹被打断，退出到 idle 状态。否则由 idle 的 transition 函数决定下一个状态。
 function reload_state.transition(this, context, input)
     if (input == this.INPUT_RELOAD_RETREAT or input == INPUT_CANCEL_RELOAD) then
+        context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK))
         context:runAnimation("reload_end", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0.2)
         return this.main_track_states.idle
     end
@@ -132,6 +152,7 @@ function M:initialize(context)
     default.initialize(self, context)
     self.main_track_states.reload.need_ammo = 0
     self.main_track_states.reload.loaded_ammo = 0
+    self.main_track_states.reload.was_empty = false
 end
 -- 导出状态机
 return M

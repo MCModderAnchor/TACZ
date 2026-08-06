@@ -1,6 +1,6 @@
 {
   "ammo": "tacz:45acp",
-  "ammo_amount": 5,
+  "ammo_amount": 10,
   "bolt": "manual_action",
   "rpm": 300,
   "bullet": {
@@ -9,11 +9,11 @@
     "damage": 11,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.2,
+      "armor_ignore": 0.25,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 30, "damage": 11},
-        {"distance": 50, "damage": 9},
+        {"distance": 24, "damage": 11},
+        {"distance": 44, "damage": 9},
         {"distance": "infinite", "damage": 6.5}
       ]
     },

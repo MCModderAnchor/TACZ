@@ -3,6 +3,7 @@
 local default = require("tacz_manual_action_state_machine")
 local STATIC_TRACK_LINE = default.STATIC_TRACK_LINE
 local BLENDING_TRACK_LINE = default.BLENDING_TRACK_LINE
+local GUN_KICK_TRACK_LINE = default.GUN_KICK_TRACK_LINE
 local SLIDE_TRACK = default.SLIDE_TRACK
 local MAIN_TRACK = default.MAIN_TRACK
 local main_track_states = default.main_track_states
@@ -10,6 +11,7 @@ local static_track_top = default.static_track_top
 
 local inspect_state = setmetatable({}, {__index = main_track_states.inspect})
 local idle_state = setmetatable({}, {__index = main_track_states.idle})
+local gun_kick_state = setmetatable({}, {__index = default.gun_kick_state})
 
 
 -- 相当于 obj.value++
@@ -147,6 +149,19 @@ function crawl_states.crawl.transition(this, context, input)
     end
 end
 
+-- gun_kick_state: 最后一发使用 shoot_last 防止击锤与 static_bolt_caught 叠加错位
+function gun_kick_state.transition(this, context, input)
+    if (input == INPUT_SHOOT) then
+        local track = context:findIdleTrack(GUN_KICK_TRACK_LINE, false)
+        if (context:getAmmoCount() == 0) then
+            context:runAnimation("shoot_last", track, true, PLAY_ONCE_STOP, 0)
+        else
+            context:runAnimation("shoot", track, true, PLAY_ONCE_STOP, 0)
+        end
+    end
+    return nil
+end
+
 -- 用元表的方式继承默认状态机的属性
 local M = setmetatable({
     main_track_states = setmetatable({
@@ -159,7 +174,8 @@ local M = setmetatable({
     INPUT_MODE_BURST = "input_mode_burst",
     INPUT_MODE_AUTO = "input_mode_auto",
     INPUT_MODE_DRAW = "input_mode_draw",
-    crawl_states = crawl_states
+    crawl_states = crawl_states,
+    gun_kick_state = gun_kick_state
 }, {__index = default})
 function M:initialize(context)
     default.initialize(self, context)

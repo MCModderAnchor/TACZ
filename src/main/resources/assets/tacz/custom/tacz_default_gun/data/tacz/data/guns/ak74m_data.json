@@ -36,14 +36,14 @@
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.20,
-      "head_shot_multiplier": 1.75,
+      "head_shot_multiplier": 1.65,
       "damage_adjust": [
         {"distance": 30, "damage": 8},
         {"distance": 60, "damage": 6.5},
         {"distance": "infinite", "damage": 5}
       ]
     },
-    "speed": 280,
+    "speed": 295,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.015,
@@ -83,8 +83,8 @@
   "crawl_recoil_multiplier": 0.5,
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.45, 0.45]},
-      {"time": 0.1, "value": [0.45, 0.45]},
+      {"time": 0, "value": [0.40, 0.40]},
+      {"time": 0.1, "value": [0.40, 0.40]},
       {"time": 0.45, "value": [-0.175, -0.175]},
       {"time": 0.6, "value": [0, 0]}
     ],

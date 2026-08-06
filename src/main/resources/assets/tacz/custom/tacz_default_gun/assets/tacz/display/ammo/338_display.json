@@ -4,8 +4,8 @@
   "slot": "tacz:ammo/slot/338",
   "tracer_color": "#FFAAAA",
   "shell": {
-    "model": "tacz:shell/30_06_shell",
-    "texture": "tacz:shell/30_06_shell"
+    "model": "tacz:shell/338_shell",
+    "texture": "tacz:shell/338_shell"
   },
   "particle": {
     // 名称，具体可选粒子可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E7%B2%92%E5%AD%90
