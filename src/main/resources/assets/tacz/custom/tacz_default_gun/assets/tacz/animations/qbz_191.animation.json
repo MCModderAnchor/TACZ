@@ -3655,6 +3655,9 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				},
+				"bullet": {
+					"scale": 1
 				}
 			},
 			"sound_effects": {
@@ -4264,6 +4267,9 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				},
+				"bullet": {
+					"scale": 1
 				}
 			},
 			"sound_effects": {
@@ -4893,6 +4899,9 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				},
+				"bullet": {
+					"scale": 1
 				}
 			},
 			"sound_effects": {
@@ -5552,6 +5561,9 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				},
+				"bullet": {
+					"scale": 1
 				}
 			},
 			"sound_effects": {

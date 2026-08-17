@@ -3151,7 +3151,7 @@
 					},
 					"scale": {
 						"0.0": [0, 0, 0],
-						"0.05": {"pre": [1, 1, 1], "post": [1, 1, 1]},
+						"0.05": [1, 1, 1],
 						"0.0667": [1, 1, 1]
 					}
 				}
@@ -3822,6 +3822,9 @@
 				"constraint": {
 					"rotation": [0.25, 0.5, 0.5],
 					"position": [0.25, 0.35, 0.35]
+				},
+				"bullet": {
+					"scale": 1
 				}
 			},
 			"sound_effects": {
@@ -4339,6 +4342,9 @@
 				"constraint": {
 					"rotation": [0.25, 0.5, 0.5],
 					"position": [0.25, 0.35, 0.35]
+				},
+				"bullet": {
+					"scale": 1
 				}
 			},
 			"sound_effects": {
@@ -4857,6 +4863,9 @@
 				"constraint": {
 					"rotation": [0.25, 0.5, 0.5],
 					"position": [0.25, 0.35, 0.35]
+				},
+				"bullet": {
+					"scale": 1
 				}
 			},
 			"sound_effects": {
@@ -5374,6 +5383,9 @@
 				"constraint": {
 					"rotation": [0.25, 0.5, 0.5],
 					"position": [0.25, 0.35, 0.35]
+				},
+				"bullet": {
+					"scale": 1
 				}
 			},
 			"sound_effects": {
