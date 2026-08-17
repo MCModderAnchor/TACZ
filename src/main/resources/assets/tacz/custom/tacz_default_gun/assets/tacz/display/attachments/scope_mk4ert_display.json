@@ -1,0 +1,24 @@
+{
+  "slot": "tacz:attachment/slot/scope_mk4ert",
+  "model": "tacz:attachment/scope_mk4ert_geo",
+  "texture": "tacz:attachment/uv/scope_mk4ert",
+  "lod": {
+    "model": "tacz:attachment/lod/scope_mk4ert",
+    "texture": "tacz:attachment/lod/scope_mk5hd"
+  },
+  "zoom": [
+    8
+  ],
+  "views": [
+    1
+  ],
+  "views_fov": [
+    25.0
+  ],
+  "idle_scope_height_adjust": 0.5,
+  "scope": true,
+  "sounds": {
+    "install": "tacz:attachments/scope_general_a",
+    "uninstall": "tacz:attachments/scope_general_a"
+  }
+}

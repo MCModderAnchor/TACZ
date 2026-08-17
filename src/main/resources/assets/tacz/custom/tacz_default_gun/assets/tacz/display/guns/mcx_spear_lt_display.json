@@ -33,12 +33,12 @@
     "living_time": 1.0
   },
   "sounds": {
-    "shoot": "tacz:hk416d/hk416d_shoot",
-    "shoot_3p": "tacz:hk416d/hk416d_shoot_3p",
-    "draw": "tacz:hk416d/hk416d_draw",
-    "put_away": "tacz:hk416d/hk416d_put_away",
-    "silence": "tacz:hk416d/hk416d_silence",
-    "silence_3p": "tacz:hk416d/hk416d_silence_3p",
+    "shoot": "tacz:mcx_spear_lt/mcx_spear_lt_shoot",
+    "shoot_3p": "tacz:mcx_spear_lt/mcx_spear_lt_shoot_3p",
+    "draw": "tacz:mcx_spear_lt/mcx_spear_lt_draw",
+    "put_away": "tacz:mcx_spear_lt/mcx_spear_lt_put_away",
+    "silence": "tacz:mcx_spear_lt/mcx_spear_lt_silence",
+    "silence_3p": "tacz:hmcx_spear_lt/mcx_spear_lt_silence_3p",
     "melee_push": "tacz:melee_stock/melee_stock_01",
     "melee_stock": "tacz:melee_stock/melee_stock_02"
   },

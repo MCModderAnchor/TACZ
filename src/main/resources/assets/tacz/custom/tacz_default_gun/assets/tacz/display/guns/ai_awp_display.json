@@ -10,7 +10,8 @@
   "animation": "tacz:ai_awp",
   "state_machine": "tacz:ai_awp_state_machine",
   "state_machine_param": {
-    "bolt_shell_ejecting_time": 0.4
+    "bolt_shell_ejecting_time": 0.42,
+    "reload_empty_shell_ejecting_time": 2.62
   },
   "use_default_animation": "rifle",
   "transform": {

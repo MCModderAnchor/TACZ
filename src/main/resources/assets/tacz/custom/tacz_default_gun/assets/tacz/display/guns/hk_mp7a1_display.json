@@ -33,8 +33,12 @@
     "living_time": 1.0
   },
   "sounds": {
+    "draw":"tacz:hk_mp7a1/hk_mp7a1_draw",
+    "put_away":"tacz:hk_mp7a1/hk_mp7a1_put_away",
     "shoot": "tacz:hk_mp7a1/hk_mp7a1_shoot",
-    "shoot_3p": "tacz:hk_mp7a1/hk_mp7a1_shoot_3p"
+    "shoot_3p": "tacz:hk_mp7a1/hk_mp7a1_shoot_3p",
+    "silence": "tacz:hk_mp7a1/hk_mp7a1_silence",
+    "silence_3p": "tacz:hk_mp7a1/hk_mp7a1_silence_3p"
   },
   "offhand_show": {
     "pos": [-1, 20, 4],

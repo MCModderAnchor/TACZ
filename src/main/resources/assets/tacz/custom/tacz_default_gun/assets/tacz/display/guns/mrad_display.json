@@ -11,7 +11,8 @@
   "use_default_animation": "rifle",
   "state_machine": "tacz:mrad_state_machine",
   "state_machine_param": {
-    "bolt_shell_ejecting_time": 0.4
+    "bolt_shell_ejecting_time": 0.4,
+    "reload_empty_shell_ejecting_time": 0.54
   },
   "transform": {
     "scale": {

@@ -38,12 +38,12 @@
   "model_fov": 60,
   "zoom_model_fov": 25,
   "sounds": {
-    "draw": "tacz:m700/m700_draw",
-    "shoot": "tacz:m1911/m1911_shoot",
-    "shoot_3p": "tacz:m1911/m1911_shoot_3p",
-    "silence": "tacz:m1911/m1911_silence",
-    "silence_3p": "tacz:m1911/m1911_silence_3p",
-    "put_away": "tacz:m700/m700_put_away",
+    "draw": "tacz:m1866/m1866_draw",
+    "shoot": "tacz:m1866/m1866_shoot",
+    "shoot_3p": "tacz:m1866/m1866_shoot_3p",
+    "silence": "tacz:m1866/m1866_silence",
+    "silence_3p": "tacz:m1866/m1866_silence_3p",
+    "put_away": "tacz:m1866/m1866_put_away",
     "melee_push": "tacz:melee_stock/melee_stock_02",
     "melee_stock": "tacz:melee_stock/melee_stock_03"
   },

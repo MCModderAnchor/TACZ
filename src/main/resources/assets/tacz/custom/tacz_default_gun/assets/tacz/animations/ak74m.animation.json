@@ -910,8 +910,8 @@
 				}
 			},
 			"sound_effects": {
-				"0.0333": {
-					"effect": "tacz:ak47/ak47_reload_raise_shoulder"
+				"0.0": {
+					"effect": "tacz:ak74m/ak74m_reload_mvmt"
 				},
 				"0.6333": {
 					"effect": "tacz:ak47/ak47_reload_magout"
@@ -922,11 +922,11 @@
 				"1.1": {
 					"effect": "tacz:ak47/ak47_reload_magin"
 				},
-				"1.4333": {
-					"effect": "tacz:ak47/ak47_reload_mvt2"
+				"1.6": {
+					"effect": "tacz:ak74m/ak74m_reload_raise"
 				},
-				"2.0667": {
-					"effect": "tacz:ak47/ak47_reload_shoulder"
+				"1.9333": {
+					"effect": "tacz:ak74m/ak74m_reload_end"
 				}
 			}
 		},
@@ -1626,22 +1626,19 @@
 			},
 			"sound_effects": {
 				"0.1": {
-					"effect": "tacz:ak47/ak47_reload_raise_shoulder"
+					"effect": "tacz:ak74m/ak74m_reload_mvmt"
 				},
 				"0.75": {
 					"effect": "tacz:ak47/ak47_reload_magout"
-				},
-				"0.9": {
-					"effect": "tacz:ak47/ak47_reload_mvt"
 				},
 				"1.4": {
 					"effect": "tacz:ak47/ak47_reload_magin"
 				},
 				"1.7": {
-					"effect": "tacz:ak47/ak47_reload_mvt2"
+					"effect": "tacz:ak74m/ak74m_reload_mvmt_2"
 				},
-				"2.3": {
-					"effect": "tacz:ak47/ak47_reload_shoulder"
+				"2.05": {
+					"effect": "tacz:ak74m/ak74m_reload_end"
 				}
 			}
 		},
@@ -2448,7 +2445,7 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "tacz:ak47/ak47_reload_empty_up"
+					"effect": "tacz:ak74m/ak74m_reload_mvmt"
 				},
 				"0.95": {
 					"effect": "tacz:ak47/ak47_reload_empty_maghit"
@@ -2475,7 +2472,7 @@
 					"effect": "tacz:ak47/ak47_reload_empty_mvt"
 				},
 				"2.85": {
-					"effect": "tacz:ak47/ak47_reload_empty_shoulder"
+					"effect": "tacz:ak74m/ak74m_reload_end"
 				}
 			}
 		},
@@ -3139,9 +3136,9 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "tacz:ak47/ak47_reload_empty_up"
+					"effect": "tacz:ak74m/ak74m_reload_raise"
 				},
-				"0.1333": {
+				"0.0333": {
 					"effect": "tacz:ak47/ak47_inspect_pull"
 				},
 				"0.9667": {
@@ -3150,23 +3147,20 @@
 				"1.0667": {
 					"effect": "tacz:ak47/ak47_reload_empty_magout"
 				},
-				"1.6333": {
+				"1.4333": {
 					"effect": "tacz:ak47/ak47_reload_empty_mag_drop"
 				},
-				"1.6667": {
+				"1.7": {
 					"effect": "tacz:ak47/ak47_reload_empty_magbump"
 				},
-				"2.0667": {
+				"2.0": {
 					"effect": "tacz:ak47/ak47_reload_empty_magin"
 				},
-				"2.2333": {
+				"2.3": {
 					"effect": "tacz:ak47/ak47_inspect_empty_release"
 				},
-				"2.6667": {
-					"effect": "tacz:ak47/ak47_reload_empty_mvt"
-				},
-				"3.3": {
-					"effect": "tacz:ak47/ak47_reload_empty_shoulder"
+				"3.2667": {
+					"effect": "tacz:ak74m/ak74m_reload_end"
 				}
 			}
 		},
@@ -4244,6 +4238,35 @@
 				"bullet": {
 					"scale": 0
 				}
+			},
+			"sound_effects": {
+				"0.05": {
+					"effect": "tacz:ak74m/ak74m_inspect_raise"
+				},
+				"2.3": {
+					"effect": "tacz:ak74m/ak74m_inspect_rotate"
+				},
+				"4.15": {
+					"effect": "tacz:ak74m/ak74m_inspect_tilt"
+				},
+				"4.45": {
+					"effect": "tacz:ak47/ak47_inspect_magout"
+				},
+				"6.5": {
+					"effect": "tacz:ak47/ak47_inspect_mvt"
+				},
+				"6.95": {
+					"effect": "tacz:ak47/ak47_inspect_magin"
+				},
+				"7.45": {
+					"effect": "tacz:ak47/ak47_inspect_pull"
+				},
+				"8.55": {
+					"effect": "tacz:ak47/ak47_inspect_hit"
+				},
+				"8.95": {
+					"effect": "tacz:ak74m/ak74m_inspect_end"
+				}
 			}
 		},
 		"inspect_xmag": {
@@ -5319,6 +5342,35 @@
 				},
 				"bullet": {
 					"scale": 0
+				}
+			},
+			"sound_effects": {
+				"0.05": {
+					"effect": "tacz:ak74m/ak74m_inspect_raise"
+				},
+				"2.3": {
+					"effect": "tacz:ak74m/ak74m_inspect_rotate"
+				},
+				"4.15": {
+					"effect": "tacz:ak74m/ak74m_inspect_tilt"
+				},
+				"4.45": {
+					"effect": "tacz:ak47/ak47_inspect_magout"
+				},
+				"6.5": {
+					"effect": "tacz:ak47/ak47_inspect_mvt"
+				},
+				"6.95": {
+					"effect": "tacz:ak47/ak47_inspect_magin"
+				},
+				"7.45": {
+					"effect": "tacz:ak47/ak47_inspect_pull"
+				},
+				"8.55": {
+					"effect": "tacz:ak47/ak47_inspect_hit"
+				},
+				"8.95": {
+					"effect": "tacz:ak74m/ak74m_inspect_end"
 				}
 			}
 		},
@@ -7426,6 +7478,41 @@
 				"bullet": {
 					"scale": 0
 				}
+			},
+			"sound_effects": {
+				"0.05": {
+					"effect": "tacz:ak74m/ak74m_inspect_raise"
+				},
+				"2.3": {
+					"effect": "tacz:ak74m/ak74m_inspect_rotate"
+				},
+				"4.15": {
+					"effect": "tacz:ak74m:ak74m_inspect_tilt"
+				},
+				"4.45": {
+					"effect": "tacz:ak47/ak47_inspect_magout"
+				},
+				"6.5": {
+					"effect": "tacz:ak47/ak47_inspect_mvt"
+				},
+				"6.95": {
+					"effect": "tacz:ak47/ak47_inspect_magin"
+				},
+				"7.45": {
+					"effect": "tacz:ak47/ak47_inspect_pull"
+				},
+				"7.7": {
+					"effect": "tacz:ak47/ak47_inspect_empty_chamber"
+				},
+				"8.4": {
+					"effect": "tacz:ak47/ak47_inspect_empty_release"
+				},
+				"9.35": {
+					"effect": "tacz:ak47/ak47_inspect_hit"
+				},
+				"9.65": {
+					"effect": "tacz:ak74m/ak74m_inspect_end"
+				}
 			}
 		},
 		"inspect_empty_xmag": {
@@ -9531,6 +9618,41 @@
 				},
 				"bullet": {
 					"scale": 0
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:ak74m/ak74m_inspect_raise"
+				},
+				"2.25": {
+					"effect": "tacz:ak74m/ak74m_inspect_rotate"
+				},
+				"4.1": {
+					"effect": "tacz:ak74m:ak74m_inspect_tilt"
+				},
+				"4.4": {
+					"effect": "tacz:ak47/ak47_inspect_magout"
+				},
+				"6.45": {
+					"effect": "tacz:ak47/ak47_inspect_mvt"
+				},
+				"6.9": {
+					"effect": "tacz:ak47/ak47_inspect_magin"
+				},
+				"7.4": {
+					"effect": "tacz:ak47/ak47_inspect_pull"
+				},
+				"7.65": {
+					"effect": "tacz:ak47/ak47_inspect_empty_chamber"
+				},
+				"8.35": {
+					"effect": "tacz:ak47/ak47_inspect_empty_release"
+				},
+				"9.3": {
+					"effect": "tacz:ak47/ak47_inspect_hit"
+				},
+				"9.6": {
+					"effect": "tacz:ak74m/ak74m_inspect_end"
 				}
 			}
 		},

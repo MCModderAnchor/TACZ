@@ -38,12 +38,12 @@
     "living_time": 1.0
   },
   "sounds": {
-    "draw": "tacz:fn_evolys/evolys_draw",
-    "put_away": "tacz:fn_evolys/evolys_put_away",
-    "shoot": "tacz:fn_evolys/evolys_shoot",
-    "shoot_3p": "tacz:fn_evolys/evolys_shoot_3p",
-    "silence": "tacz:fn_evolys/evolys_silence",
-    "silence_3p": "tacz:fn_evolys/evolys_silence_3p",
+    "draw": "tacz:hcar/hcar_draw",
+    "put_away": "tacz:hcar/hcar_put_away",
+    "shoot": "tacz:hcar/hcar_shoot",
+    "shoot_3p": "tacz:hcar/hcar_shoot_3p",
+    "silence": "tacz:hcar/hcar_silence",
+    "silence_3p": "tacz:hcar/hcar_silence_3p",
     "dry_fire": "tacz:dry_fire",
     "fire_select": "tacz:fire_select",
     "head_hit": "tacz:head_hit",

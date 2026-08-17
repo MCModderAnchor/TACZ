@@ -45,6 +45,9 @@
 				},
 				"bolt": {
 					"position": [0, 0, 4]
+				},
+				"bullet": {
+					"scale": 0
 				}
 			}
 		},
@@ -328,9 +331,13 @@
 				},
 				"bullet_in_barrel": {
 					"position": {
-						"0.0": [0, -0.5, 5],
-						"0.0333": [0, 0, 5],
+						"0.0": [0, -0.5, 0],
+						"0.0333": [0, -0.5, 0],
 						"0.0667": [0, 0, 0]
+					},
+					"scale": {
+						"0.0": [0, 0, 0],
+						"0.0333": {"pre": [0, 0, 0], "post": [1, 1, 1]}
 					}
 				},
 				"camera": {
@@ -1115,6 +1122,23 @@
 						"1.7333": [0, 0, 0]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_start"
+				},
+				"0.4667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magout"
+				},
+				"0.9667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"1.0833": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"1.6333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_end"
+				}
 			}
 		},
 		"reload_tactical_xmag_1": {
@@ -1648,6 +1672,23 @@
 						"1.85": {"pre": [1, 1, 1], "post": [0, 0, 0]},
 						"1.8667": [0, 0, 0]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_start"
+				},
+				"0.4667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magout"
+				},
+				"0.9667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"1.1333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"1.8667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_end"
 				}
 			}
 		},
@@ -2240,6 +2281,23 @@
 						"2.0167": [0, 0, 0]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_start"
+				},
+				"0.4667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magout"
+				},
+				"1.1": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"1.2667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"2.05": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_end"
+				}
 			}
 		},
 		"reload_tactical_xmag_3": {
@@ -2821,6 +2879,23 @@
 						"0.7333": [0, 0, 0]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_start"
+				},
+				"0.3": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magout"
+				},
+				"1.2": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"1.4333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"2.1333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_end"
+				}
 			}
 		},
 		"reload_empty": {
@@ -3338,6 +3413,29 @@
 						"0.55": {"pre": [1, 1, 1], "post": [0, 0, 0]},
 						"0.5667": [0, 0, 0]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_start"
+				},
+				"0.2333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_magout"
+				},
+				"0.5833": {
+					"effect": "tacz:mag_drop_sound/iw8_phys_mag_drop_ar_metal_dirt_04"
+				},
+				"0.7833": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"0.8833": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"1.6667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_charge"
+				},
+				"2.0833": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_end"
 				}
 			}
 		},
@@ -3858,6 +3956,29 @@
 						"0.55": {"pre": [1, 1, 1], "post": [0, 0, 0]},
 						"0.5667": [0, 0, 0]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_start"
+				},
+				"0.2333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_magout"
+				},
+				"0.5833": {
+					"effect": "tacz:mag_drop_sound/iw8_phys_mag_drop_ar_metal_dirt_04"
+				},
+				"0.9": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"1.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"1.7833": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_charge"
+				},
+				"2.15": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_end"
 				}
 			}
 		},
@@ -4385,6 +4506,29 @@
 						"0.55": {"pre": [1, 1, 1], "post": [0, 0, 0]},
 						"0.5667": [0, 0, 0]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_start"
+				},
+				"0.2333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_magout"
+				},
+				"0.5833": {
+					"effect": "tacz:mag_drop_sound/iw8_phys_mag_drop_ar_metal_dirt_04"
+				},
+				"1.0667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"1.1667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"2.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_charge"
+				},
+				"2.3167": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_end"
 				}
 			}
 		},
@@ -4951,6 +5095,29 @@
 						},
 						"2.1167": [0, 0, 0]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_start"
+				},
+				"0.2333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_magout"
+				},
+				"0.75": {
+					"effect": "tacz:mag_drop_sound/iw8_phys_mag_drop_ar_metal_dirt_04"
+				},
+				"1.1": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"1.2": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"2.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_empty_xmag_charge"
+				},
+				"2.3167": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_end"
 				}
 			}
 		},
@@ -5594,6 +5761,32 @@
 				},
 				"additional_magazine": {
 					"scale": 0
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_start"
+				},
+				"0.2333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magout"
+				},
+				"1.5333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"1.6833": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"2.2167": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_rotate"
+				},
+				"2.6833": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_rackon"
+				},
+				"3.4": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_rackback"
+				},
+				"3.6667": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_end"
 				}
 			}
 		},
@@ -6556,6 +6749,41 @@
 				},
 				"additional_magazine": {
 					"scale": 0
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_start"
+				},
+				"0.2333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magout"
+				},
+				"1.4667": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_rotate"
+				},
+				"2.0333": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_rackcheck"
+				},
+				"2.8667": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_rackback"
+				},
+				"3.3833": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_maghit"
+				},
+				"3.5333": {
+					"effect": "tacz:mcx_spear_lt/mcx_reload_magin"
+				},
+				"4.0667": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_rotate"
+				},
+				"4.5333": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_rackon"
+				},
+				"5.25": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_rackback"
+				},
+				"5.5167": {
+					"effect": "tacz:mcx_spear_lt/mcx_inspect_end"
 				}
 			}
 		}

@@ -1400,6 +1400,26 @@
 						"2.45": [0.2, 0.2, 0.2]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_reload_tactical_raise"
+				},
+				"0.5833": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magdown"
+				},
+				"1.0167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_tilt"
+				},
+				"1.7333": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"1.8833": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"2.5333": {
+					"effect": "tacz:hcar/hcar_reload_tactical_end"
+				}
 			}
 		},
 		"reload_tactical_xmag_1": {
@@ -1910,6 +1930,26 @@
 						"2.45": [0.2, 0.2, 0.2],
 						"2.6167": [0.2, 0.2, 0.2]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_reload_tactical_raise"
+				},
+				"0.6167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magdown"
+				},
+				"1.1167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_tilt"
+				},
+				"1.8167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"1.9667": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"2.65": {
+					"effect": "tacz:hcar/hcar_reload_tactical_end"
 				}
 			}
 		},
@@ -2427,6 +2467,26 @@
 						"2.6833": [0.2, 0.2, 0.2],
 						"2.85": [0.2, 0.2, 0.2]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_reload_tactical_raise"
+				},
+				"0.65": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magdown"
+				},
+				"1.2": {
+					"effect": "tacz:hcar/hcar_reload_tactical_tilt"
+				},
+				"1.9667": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"2.1667": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"2.8": {
+					"effect": "tacz:hcar/hcar_reload_tactical_end"
 				}
 			}
 		},
@@ -2996,6 +3056,29 @@
 						"3.0167": [0.2, 0.2, 0.2],
 						"3.1667": [0.2, 0.2, 0.2]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_reload_tactical_raise"
+				},
+				"0.65": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magdown_xmag"
+				},
+				"1.2": {
+					"effect": "tacz:hcar/hcar_reload_tactical_tilt"
+				},
+				"1.9667": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"2.1167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin_xmag"
+				},
+				"2.7833": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maggrab_xmag"
+				},
+				"3.15": {
+					"effect": "tacz:hcar/hcar_reload_tactical_end"
 				}
 			}
 		},
@@ -3698,6 +3781,35 @@
 						"3.1833": [0.2, 0.2, 0.2]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_reload_empty_start"
+				},
+				"0.3": {
+					"effect": "tacz:hcar/hcar_reload_empty_rackoff"
+				},
+				"0.8167": {
+					"effect": "tacz:hcar/hcar_reload_empty_magdown"
+				},
+				"1.2167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_tilt"
+				},
+				"1.45": {
+					"effect": "tacz:mag_drop_sound/mag_drop_ar_poly_dirt"
+				},
+				"2.0167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"2.1667": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"2.9167": {
+					"effect": "tacz:hcar/hcar_reload_empty_rackback"
+				},
+				"3.2167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_end"
+				}
 			}
 		},
 		"reload_empty_xmag_1": {
@@ -4398,6 +4510,35 @@
 						"3.15": [0.325, 0.325, 0.45],
 						"3.3167": [0.2, 0.2, 0.2]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_reload_empty_start"
+				},
+				"0.3": {
+					"effect": "tacz:hcar/hcar_reload_empty_rackoff"
+				},
+				"0.8167": {
+					"effect": "tacz:hcar/hcar_reload_empty_magdown"
+				},
+				"1.2167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_tilt"
+				},
+				"1.45": {
+					"effect": "tacz:mag_drop_sound/mag_drop_ar_poly_dirt"
+				},
+				"2.0167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"2.1667": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"2.9167": {
+					"effect": "tacz:hcar/hcar_reload_empty_rackback"
+				},
+				"3.2167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_end"
 				}
 			}
 		},
@@ -5111,6 +5252,35 @@
 						"3.2833": [0.325, 0.325, 0.45],
 						"3.45": [0.2, 0.2, 0.2]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_reload_empty_start"
+				},
+				"0.3": {
+					"effect": "tacz:hcar/hcar_reload_empty_rackoff"
+				},
+				"0.8167": {
+					"effect": "tacz:hcar/hcar_reload_empty_magdown"
+				},
+				"1.2167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_tilt"
+				},
+				"1.5833": {
+					"effect": "tacz:mag_drop_sound/mag_drop_ar_poly_dirt"
+				},
+				"2.15": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"2.3": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"3.1333": {
+					"effect": "tacz:hcar/hcar_reload_empty_rackback"
+				},
+				"3.4": {
+					"effect": "tacz:hcar/hcar_reload_tactical_end"
 				}
 			}
 		},
@@ -5838,6 +6008,38 @@
 						"3.5667": [0.325, 0.325, 0.45],
 						"3.7333": [0.2, 0.2, 0.2]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_reload_empty_start"
+				},
+				"0.3": {
+					"effect": "tacz:hcar/hcar_reload_empty_rackoff"
+				},
+				"0.8167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magdown_xmag"
+				},
+				"1.2167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_tilt"
+				},
+				"1.5833": {
+					"effect": "tacz:mag_drop_sound/mag_drop_ar_poly_dirt"
+				},
+				"2.0833": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"2.2333": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"2.9": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maggrab_xmag"
+				},
+				"3.4": {
+					"effect": "tacz:hcar/hcar_reload_empty_rackback"
+				},
+				"3.6667": {
+					"effect": "tacz:hcar/hcar_reload_tactical_end"
 				}
 			}
 		},
@@ -6731,6 +6933,35 @@
 				"bullet": {
 					"scale": 0
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_inspect_start"
+				},
+				"1.25": {
+					"effect": "tacz:hcar/hcar_inspect_toss"
+				},
+				"1.7167": {
+					"effect": "tacz:hcar/hcar_inspect_magout"
+				},
+				"4.05": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"4.2": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"4.8": {
+					"effect": "tacz:hcar/hcar_inspect_rotate"
+				},
+				"5.4": {
+					"effect": "tacz:hcar/hcar_inspect_rackoff"
+				},
+				"6.1833": {
+					"effect": "tacz:hcar/hcar_inspect_rackback"
+				},
+				"6.3": {
+					"effect": "tacz:hcar/hcar_inspect_end"
+				}
 			}
 		},
 		"inspect_xmag_3": {
@@ -7615,6 +7846,35 @@
 				"bullet": {
 					"scale": 0
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_inspect_start"
+				},
+				"1.25": {
+					"effect": "tacz:hcar/hcar_inspect_toss"
+				},
+				"1.8333": {
+					"effect": "tacz:hcar/hcar_inspect_magout_xmag"
+				},
+				"4.3167": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"4.4667": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin_xmag"
+				},
+				"5.1167": {
+					"effect": "tacz:hcar/hcar_inspect_rotate"
+				},
+				"5.8": {
+					"effect": "tacz:hcar/hcar_inspect_rackoff"
+				},
+				"6.55": {
+					"effect": "tacz:hcar/hcar_inspect_rackback"
+				},
+				"6.6833": {
+					"effect": "tacz:hcar/hcar_inspect_end"
+				}
 			}
 		},
 		"inspect_empty": {
@@ -8309,6 +8569,26 @@
 				},
 				"bullet": {
 					"scale": 0
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_inspect_start"
+				},
+				"1.25": {
+					"effect": "tacz:hcar/hcar_inspect_toss"
+				},
+				"1.7167": {
+					"effect": "tacz:hcar/hcar_inspect_magout"
+				},
+				"4.05": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"4.2": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"4.4167": {
+					"effect": "tacz:hcar/hcar_inspect_end"
 				}
 			}
 		},
@@ -9006,6 +9286,26 @@
 				"bullet": {
 					"scale": 0
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:hcar/hcar_inspect_start"
+				},
+				"1.25": {
+					"effect": "tacz:hcar/hcar_inspect_toss"
+				},
+				"1.85": {
+					"effect": "tacz:hcar/hcar_inspect_magout_xmag"
+				},
+				"4.05": {
+					"effect": "tacz:hcar/hcar_reload_tactical_maghit"
+				},
+				"4.3": {
+					"effect": "tacz:hcar/hcar_reload_tactical_magin"
+				},
+				"4.6333": {
+					"effect": "tacz:hcar/hcar_inspect_end"
+				}
 			}
 		},
 		"shoot": {
@@ -9540,6 +9840,9 @@
 			"bones": {
 				"bolt": {
 					"position": [0, 0, 4]
+				},
+				"bullet": {
+					"scale": 0
 				}
 			}
 		},

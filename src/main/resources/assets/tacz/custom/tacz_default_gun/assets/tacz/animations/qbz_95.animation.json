@@ -871,6 +871,9 @@
 				},
 				"bullet_in_mag": {
 					"scale": 0
+				},
+				"bullet": {
+					"scale": 0
 				}
 			}
 		},

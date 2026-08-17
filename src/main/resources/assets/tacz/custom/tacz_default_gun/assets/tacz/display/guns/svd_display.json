@@ -76,11 +76,13 @@
     ]
   },
   "sounds": {
-    "shoot": "tacz:sks/sks_shoot",
+    "draw": "tacz:svd/svd_draw",
+    "put_away": "tacz:svd/svd_put_away",
+    "shoot": "tacz:svd/svd_shoot",
     "shoot_3p": "tacz:sks/sks_shoot_3p",
-    "silence": "tacz:sks/sks_silence",
+    "silence": "tacz:svd/svd_silence",
     "silence_3p": "tacz:sks/sks_silence_3p",
-    "dry_fire": "tacz:dry_fire",
+    "dry_fire": "tacz:svd/svd_dry_fire",
     "fire_select": "tacz:fire_select",
     "head_hit": "tacz:head_hit",
     "flesh_hit": "tacz:flesh_hit",

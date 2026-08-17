@@ -68,10 +68,10 @@
     ]
   },
   "sounds": {
-    "shoot": "tacz:scar_h/scar_h_shoot",
-    "shoot_3p": "tacz:scar_h/scar_h_shoot_3p",
-    "silence": "tacz:scar_h/scar_h_silence",
-    "silence_3p": "tacz:scar_h/scar_h_silence_3p",
+    "shoot": "tacz:mk20/mk20_shoot",
+    "shoot_3p": "tacz:mk20/mk20_shoot_3p",
+    "silence": "tacz:mk20/mk20_silence",
+    "silence_3p": "tacz:mk20/mk20_silence_3p",
     "dry_fire": "tacz:dry_fire",
     "fire_select": "tacz:fire_select",
     "head_hit": "tacz:head_hit",

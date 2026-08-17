@@ -2526,6 +2526,9 @@
 				"constraint": {
 					"rotation": [0.2, 0.2, 0.2],
 					"position": [0.2, 0.2, 0.2]
+				},
+				"bullet": {
+					"scale": 0
 				}
 			}
 		}

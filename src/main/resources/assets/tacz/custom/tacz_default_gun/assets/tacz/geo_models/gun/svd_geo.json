@@ -8541,7 +8541,7 @@
 				{
 					"name": "bullet_in_barrel",
 					"parent": "bolt_bullet",
-					"pivot": [6, 3.38558, -19.33366],
+					"pivot": [0, 9.21854, -5.49939],
 					"cubes": [
 						{
 							"origin": [-0.30625, 8.91257, -4.29272],

@@ -24,6 +24,15 @@ local function isNoAmmo(context)
     return (not context:hasBulletInBarrel()) and (context:getAmmoCount() <= 0)
 end
 
+local function get_ejection_time(context)
+    local ejection_time = context:getStateMachineParams().reload_empty_shell_ejecting_time
+    if (ejection_time) then
+        return ejection_time * 1000
+    else
+        return 0
+    end
+end
+
 local function runReloadAnimation(context)
     -- 此处获取的轨道是位于主轨道行上的主轨道
     local track = context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK)
@@ -56,6 +65,10 @@ local crawl_states = {
 
 function idle_state.transition(this, context, input)
     if (input == INPUT_RELOAD) then
+        if (isNoAmmo(context)) then
+            idle_state.timestamp = context:getCurrentTimestamp()
+            idle_state.ejection_time = get_ejection_time(context)
+        end
         runReloadAnimation(context)
         return this.main_track_states.idle
     end
@@ -84,6 +97,15 @@ function idle_state.transition(this, context, input)
         crawl_states.is_bolting = true
     end
     return main_track_states.idle.transition(this, context, input)
+end
+
+function idle_state.update(this, context)
+    if (idle_state.timestamp ~= nil) then
+        if (idle_state.timestamp ~= -1 and context:getCurrentTimestamp() - idle_state.timestamp > idle_state.ejection_time) then
+            context:popShellFrom(0)
+            idle_state.timestamp = -1
+        end
+    end
 end
 
 function crawl_states.normal.transition(this, context, input)
