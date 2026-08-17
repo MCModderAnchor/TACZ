@@ -8,6 +8,12 @@
     },
     {
       "item": {
+        "tag": "forge:ingots/copper"
+      },
+      "count": 10
+    },
+    {
+      "item": {
         "tag": "minecraft:logs"
       },
       "count": 8

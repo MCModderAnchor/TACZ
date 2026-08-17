@@ -56,11 +56,13 @@ local ending_state = {
 -- idle_state
 function idle_state.transition(this, context, input)
     if (input == INPUT_BOLT) then
+        idle_state.hammer_down = false
         context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK))
         context:runAnimation("bolt", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0.2)
         return this.main_track_states.bolt
     end
     if (input == INPUT_SHOOT) then
+        idle_state.hammer_down = true
         context:runAnimation("static_hammer", context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK), false, LOOP, 0)
         return this.main_track_states.idle
     end
@@ -68,6 +70,13 @@ function idle_state.transition(this, context, input)
         return this.main_track_states.reload
     end
     return main_track_states.idle.transition(this, context, input)
+end
+
+-- idle 状态每帧维护击锤状态（进存档时也能正确显示）
+function idle_state.update(this, context)
+    if (idle_state.hammer_down) then
+        context:runAnimation("static_hammer", context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK), false, LOOP, 0)
+    end
 end
 
 -- bolt_state
@@ -175,6 +184,7 @@ function ending_state.entry(this, context)
 
     local params = context:getStateMachineParams()
     if (state.was_empty) then
+        idle_state.hammer_down = false
         context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK))
         context:runAnimation("reload_end_empty", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0.2)
         local ejTime = params.ending_shell_ejecting_time
@@ -221,6 +231,8 @@ local M = setmetatable({
 
 function M:initialize(context)
     default.initialize(self, context)
+    -- 进存档时根据枪膛是否为空初始化击锤状态（空膛则击锤落下）
+    idle_state.hammer_down = not context:hasBulletInBarrel()
     self.main_track_states.reload.need_ammo = 0
     self.main_track_states.reload.loaded_ammo = 0
     self.main_track_states.reload.was_empty = false
@@ -230,6 +242,19 @@ function M:initialize(context)
     self.main_track_states.ending.ejection_time = 0
     self.main_track_states.ending.duration = 0
     self.main_track_states.ending.popped = false
+end
+
+-- 杠杆枪没有空仓挂机，去掉默认的 bolt_caught_states（用 static_hammer 替代）
+function M:states()
+    return {
+        self.base_track_state,
+        self.over_heat_states.normal,
+        self.main_track_states.start,
+        self.gun_kick_state,
+        self.movement_track_states.idle,
+        self.ADS_states.normal,
+        self.slide_states.normal
+    }
 end
 
 return M

@@ -1,10 +1,10 @@
 {
   "ammo": "tacz:762x54",
-  "ammo_amount": 100,
+  "ammo_amount": 75,
   "extended_mag_ammo_amount": [
+    100,
     150,
-    200,
-    250
+    200
   ],
   "can_slide": false,
   "bolt": "open_bolt",

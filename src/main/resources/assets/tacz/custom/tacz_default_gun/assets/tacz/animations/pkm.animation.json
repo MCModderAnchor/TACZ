@@ -869,7 +869,7 @@
 					},
 					"position": {
 						"0.0": [7.35, -14.665, -14.035],
-						"0.1": [10.85, -11.66, -12],
+						"0.1": [10.85, -13.06625, -12],
 						"0.2333": [10.35, -8.66, -8.5]
 					},
 					"scale": [1, 1.5, 1]
@@ -968,6 +968,19 @@
 						},
 						"0.9": {
 							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				},
+				"barrel_grip": {
+					"rotation": {
+						"0.0333": {
+							"pre": [0, 0, 0],
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.2333": {
+							"post": [0, 0, -45],
 							"lerp_mode": "catmullrom"
 						}
 					}
@@ -1237,6 +1250,41 @@
 							"lerp_mode": "catmullrom"
 						},
 						"1.6": {
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				},
+				"barrel_grip": {
+					"rotation": {
+						"0.0": [0, 0, -45],
+						"0.2333": [0, 0, -45],
+						"0.4": {
+							"pre": [0, 0, -4.98437],
+							"post": [0, 0, -4.98437],
+							"lerp_mode": "catmullrom"
+						},
+						"0.5": {
+							"post": [0, 0, 3.23438],
+							"lerp_mode": "catmullrom"
+						},
+						"0.6333": {
+							"post": [0, 0, -2.73437],
+							"lerp_mode": "catmullrom"
+						},
+						"0.8": {
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.9": {
+							"post": [0, 0, 3.73438],
+							"lerp_mode": "catmullrom"
+						},
+						"1.0667": {
+							"post": [0, 0, -0.66062],
+							"lerp_mode": "catmullrom"
+						},
+						"1.2667": {
 							"post": [0, 0, 0],
 							"lerp_mode": "catmullrom"
 						}
@@ -4500,11 +4548,8 @@
 				"4.3333": {
 					"effect": "tacz:pkm/pkm_reload_gundown"
 				},
-				"4.9": {
+				"5.0667": {
 					"effect": "tacz:pkm/pkm_reload_ammoboxhit"
-				},
-				"5.2333": {
-					"effect": "tacz:pkm/pkm_reload_ammoboxout"
 				},
 				"5.7": {
 					"effect": "tacz:pkm/pkm_reload_grab"
