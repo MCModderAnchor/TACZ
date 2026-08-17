@@ -28,13 +28,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Mixin(BedrockPart.class)
-public class BedrockPartMixin implements IAcceleratedRenderer<Void> {
+public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartMixin.LightingMode> {
 
 	@Unique
 	private static final PoseStack.Pose POSE = new PoseStack().last();
 
 	@Unique
 	private final Map<IBufferGraph, IMesh> meshes = new Object2ObjectOpenHashMap<>();
+	@Unique
+	private final Map<IBufferGraph, IMesh> unshadedMeshes = new Object2ObjectOpenHashMap<>();
 
 	@Shadow(remap = false)
 	@Final
@@ -57,11 +59,16 @@ public class BedrockPartMixin implements IAcceleratedRenderer<Void> {
 			float alpha,
 			CallbackInfo ci
 	) {
-		if (consumer instanceof UnshadedVertexConsumer) {
-			return;
+		var lightingMode = LightingMode.SHADED;
+		var acceleratedConsumer = consumer;
+		Matrix3f normalMatrix = pose.normal();
+		if (consumer instanceof UnshadedVertexConsumer unshadedConsumer) {
+			lightingMode = LightingMode.UNSHADED;
+			acceleratedConsumer = unshadedConsumer.getDelegate();
+			normalMatrix = unshadedConsumer.createNormalMatrix();
 		}
 
-		var extension = VertexConsumerExtension.getAccelerated(consumer);
+		var extension = VertexConsumerExtension.getAccelerated(acceleratedConsumer);
 
 		if (ARCompat.shouldAccelerate() && extension.isAccelerated()) {
 			ci.cancel();
@@ -75,9 +82,9 @@ public class BedrockPartMixin implements IAcceleratedRenderer<Void> {
 
 			extension.doRender(
 					this,
-					null,
+					lightingMode,
 					pose.pose(),
-					pose.normal(),
+					normalMatrix,
 					texU,
 					texV,
 					color
@@ -89,7 +96,7 @@ public class BedrockPartMixin implements IAcceleratedRenderer<Void> {
 	@Override
 	public void render(
 			VertexConsumer consumer,
-			Void context,
+			LightingMode lightingMode,
 			Matrix4f transform,
 			Matrix3f normal,
 			int light,
@@ -97,7 +104,8 @@ public class BedrockPartMixin implements IAcceleratedRenderer<Void> {
 			int color
 	) {
 		var extension = VertexConsumerExtension.getAccelerated(consumer);
-		var mesh = meshes.get(extension);
+		var meshCache = lightingMode == LightingMode.UNSHADED ? unshadedMeshes : meshes;
+		var mesh = meshCache.get(extension);
 
 		extension.beginTransform(transform, normal);
 
@@ -108,7 +116,10 @@ public class BedrockPartMixin implements IAcceleratedRenderer<Void> {
 		}
 
 		var culledMeshCollector = new CulledMeshCollector(extension);
-		var meshBuilder = extension.decorate(culledMeshCollector);
+		VertexConsumer meshBuilder = extension.decorate(culledMeshCollector);
+		if (lightingMode == LightingMode.UNSHADED) {
+			meshBuilder = UnshadedVertexConsumer.wrapFixedNormal(meshBuilder);
+		}
 
 		for (var cube : cubes) {
 			cube.compile(
@@ -130,9 +141,15 @@ public class BedrockPartMixin implements IAcceleratedRenderer<Void> {
 				.getBuilder()
 				.build(culledMeshCollector);
 
-		meshes.put(extension, mesh);
+		meshCache.put(extension, mesh);
 		mesh.write(extension, color, light, overlay);
 
 		extension.endTransform();
+	}
+
+	@Unique
+	enum LightingMode {
+		SHADED,
+		UNSHADED
 	}
 }

@@ -2,6 +2,7 @@ package com.tacz.guns.client.model.bedrock;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.mixin.client.RenderSystemAccessor;
+import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 public final class UnshadedVertexConsumer implements VertexConsumer {
@@ -42,11 +43,36 @@ public final class UnshadedVertexConsumer implements VertexConsumer {
         this.normalZ = primaryLight.z() / maxComponent;
     }
 
+    private UnshadedVertexConsumer(VertexConsumer delegate, float normalX, float normalY, float normalZ) {
+        this.delegate = delegate;
+        this.normalX = normalX;
+        this.normalY = normalY;
+        this.normalZ = normalZ;
+    }
+
     public static VertexConsumer wrap(VertexConsumer consumer) {
         if (consumer instanceof UnshadedVertexConsumer) {
             return consumer;
         }
         return new UnshadedVertexConsumer(consumer);
+    }
+
+    public static VertexConsumer wrapFixedNormal(VertexConsumer consumer) {
+        return new UnshadedVertexConsumer(consumer,
+                FALLBACK_NORMAL_X, FALLBACK_NORMAL_Y, FALLBACK_NORMAL_Z);
+    }
+
+    public VertexConsumer getDelegate() {
+        return delegate;
+    }
+
+    public Matrix3f createNormalMatrix() {
+        // Accelerated meshes store +Y as their canonical unshaded normal. The second matrix column
+        // maps that normal to the shader light direction captured for this render call.
+        return new Matrix3f()
+                .m10(normalX)
+                .m11(normalY)
+                .m12(normalZ);
     }
 
     @Override
