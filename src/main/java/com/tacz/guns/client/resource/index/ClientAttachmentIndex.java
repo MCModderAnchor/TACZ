@@ -47,6 +47,7 @@ public class ClientAttachmentIndex {
     private boolean isSight;
     private boolean showMuzzle;
     private boolean showMount;
+    private float muzzleFlashOffset;
     private boolean hasRangefinder;
     private boolean hasImpactPrediction;
     private @Nullable String adapterNodeName;
@@ -120,6 +121,7 @@ public class ClientAttachmentIndex {
         index.adapterNodeName = display.getAdapterNodeName();
         index.showMuzzle = display.isShowMuzzle();
         index.showMount = display.isShowMount();
+        index.muzzleFlashOffset = display.getMuzzleFlashOffset();
         index.hasRangefinder = display.getTextShows().values().stream().anyMatch(textShow -> textShow.getRangefinder() != null);
         index.hasImpactPrediction = display.getTextShows().values().stream()
                 .anyMatch(textShow -> textShow.getRangefinder() != null && textShow.getRangefinder().isShowImpactPrediction());
@@ -380,6 +382,10 @@ public class ClientAttachmentIndex {
 
     public boolean isShowMount() {
         return showMount;
+    }
+
+    public float getMuzzleFlashOffset() {
+        return muzzleFlashOffset;
     }
 
     public boolean hasRangefinder() {

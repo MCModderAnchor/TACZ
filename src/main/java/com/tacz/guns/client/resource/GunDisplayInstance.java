@@ -652,7 +652,8 @@ public class GunDisplayInstance {
 
     private void checkMuzzleFlash(GunDisplay display) {
         muzzleFlash = display.getMuzzleFlash();
-        if (muzzleFlash != null && muzzleFlash.getTexture() == null) {
+        // renew 模式走第一人称 snowstorm 粒子，无需四边形贴图
+        if (muzzleFlash != null && !muzzleFlash.isRenew() && muzzleFlash.getTexture() == null) {
             muzzleFlash = null;
         }
     }

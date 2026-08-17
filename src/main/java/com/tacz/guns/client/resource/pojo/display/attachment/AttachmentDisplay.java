@@ -38,6 +38,13 @@ public class AttachmentDisplay implements IDisplay {
     @SerializedName("show_mount")
     private boolean showMount = true;
 
+    /**
+     * Blockbench 模型单位，指向枪口前方；16 单位等于一格。
+     * 用于将第一人称枪口粒子发射原点沿枪口方向前移（如加装长消音器/制退器时）。
+     */
+    @SerializedName("muzzle_flash_offset")
+    private float muzzleFlashOffset = 0.0f;
+
     @SerializedName("text_show")
     private Map<String, TextShow> textShows = Maps.newHashMap();
 
@@ -105,6 +112,10 @@ public class AttachmentDisplay implements IDisplay {
         return showMount;
     }
 
+    public float getMuzzleFlashOffset() {
+        return muzzleFlashOffset;
+    }
+
     public Map<String, TextShow> getTextShows() {
         return textShows;
     }
@@ -160,6 +171,9 @@ public class AttachmentDisplay implements IDisplay {
 
     @Override
     public void init() {
+        if (!Float.isFinite(muzzleFlashOffset) || muzzleFlashOffset < 0.0f) {
+            muzzleFlashOffset = 0.0f;
+        }
         if (slotTextureLocation != null) {
             slotTextureLocation = converter.idToFile(slotTextureLocation);
         }

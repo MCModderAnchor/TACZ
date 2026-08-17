@@ -19,6 +19,7 @@
     }
   },
   "muzzle_flash": {
+    "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 1.125
   },

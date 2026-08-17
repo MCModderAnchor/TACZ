@@ -1,5 +1,6 @@
 package com.tacz.guns.api.client.animation;
 
+import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
 import com.tacz.guns.util.math.MathUtil;
 import net.minecraft.client.Minecraft;
 
@@ -42,6 +43,10 @@ public class ObjectAnimationRunner {
     @Nullable
     private ObjectAnimationRunner transitionTo;
     private long transitionProgressNs;
+    /**
+     * 本帧粒子效果通道跨过的关键帧请求（渲染层每帧消费）。
+     */
+    private final List<ParticleEffectData> pendingParticles = new ArrayList<>();
 
     public ObjectAnimationRunner(@Nonnull ObjectAnimation animation) {
         this.animation = Objects.requireNonNull(animation);
@@ -271,6 +276,10 @@ public class ObjectAnimationRunner {
             if (soundChannel != null && Minecraft.getInstance().player != null) {
                 soundChannel.playSound(fromTimeNs / 1e9, progressNs / 1e9, Minecraft.getInstance().player, 16, 1 ,1);
             }
+            ObjectAnimationParticleChannel particleChannel = animation.getParticleChannel();
+            if (particleChannel != null) {
+                particleChannel.collectParticles(fromTimeNs / 1e9, progressNs / 1e9, pendingParticles);
+            }
         }
     }
 
@@ -283,6 +292,22 @@ public class ObjectAnimationRunner {
         if (soundChannel != null && Minecraft.getInstance().player != null) {
             soundChannel.playSound(fromTimeNs / 1e9, progressNs / 1e9, Minecraft.getInstance().player, 16, 1 ,1);
         }
+        ObjectAnimationParticleChannel particleChannel = animation.getParticleChannel();
+        if (particleChannel != null) {
+            particleChannel.collectParticles(fromTimeNs / 1e9, progressNs / 1e9, pendingParticles);
+        }
+    }
+
+    /**
+     * 取出本帧动画 {@code particle_effects} 通道累积的粒子请求并清空。
+     */
+    public List<ParticleEffectData> consumeParticleEvents() {
+        if (pendingParticles.isEmpty()) {
+            return List.of();
+        }
+        List<ParticleEffectData> result = new ArrayList<>(pendingParticles);
+        pendingParticles.clear();
+        return result;
     }
 
     public boolean isRunning() {

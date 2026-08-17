@@ -1,5 +1,6 @@
 package com.tacz.guns.api.client.animation;
 
+import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
 import com.google.common.collect.Maps;
 
 import javax.annotation.Nullable;
@@ -16,6 +17,10 @@ public class AnimationController {
     private final ArrayList<Queue<AnimationPlan>> animationQueue = new ArrayList<>();
     protected Map<String, ObjectAnimation> prototypes = Maps.newHashMap();
     protected @Nullable Iterable<Integer> updatingTrackArray = null;
+    /**
+     * 本帧所有动画 runner 的 {@code particle_effects} 请求聚合（渲染层每帧消费）。
+     */
+    private final List<ParticleEffectData> pendingParticles = new ArrayList<>();
 
     public AnimationController(List<ObjectAnimation> animationPrototypes, AnimationListenerSupplier model) {
         for (ObjectAnimation prototype : animationPrototypes) {
@@ -141,6 +146,19 @@ public class AnimationController {
         }
     }
 
+    /**
+     * 取出本帧动画 {@code particle_effects} 通道累积的粒子请求并清空。
+     * 由第一人称枪械渲染层在 {@code update()} 之后调用。
+     */
+    public List<ParticleEffectData> consumePendingParticles() {
+        if (pendingParticles.isEmpty()) {
+            return List.of();
+        }
+        List<ParticleEffectData> result = new ArrayList<>(pendingParticles);
+        pendingParticles.clear();
+        return result;
+    }
+
     private void updateByTrack(int track, boolean isSoundOnly) {
         if (track >= currentRunners.size()) {
             return;
@@ -168,6 +186,13 @@ public class AnimationController {
             if (!runner.isTransitioning()) {
                 currentRunners.set(track, runner.getTransitionTo());
                 runner = runner.getTransitionTo();
+            }
+        }
+        // 聚合本帧粒子效果请求（仅完整更新路径消费；sound-only 路径不消费，避免粒子请求丢失）
+        if (!isSoundOnly) {
+            pendingParticles.addAll(runner.consumeParticleEvents());
+            if (runner.getTransitionTo() != null) {
+                pendingParticles.addAll(runner.getTransitionTo().consumeParticleEvents());
             }
         }
         // 如果动画结束，检查队列是否有下一个动画，有则播放

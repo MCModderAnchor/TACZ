@@ -95,6 +95,11 @@ public class FirstPersonRenderGunEvent {
         if (event.getLogicalSide().isClient()) {
             LivingEntity shooter = event.getShooter();
             LocalPlayer player = Minecraft.getInstance().player;
+            // 第三人称枪口效果：任何射手（本机玩家 + 服务器广播的其他玩家）。
+            // 本机玩家的请求仅在其第三人称持枪渲染时被消费（第一人称不可见）。
+            com.tacz.guns.client.particle.ThirdPersonMuzzleParticleManager.onShoot(shooter, event.getGunItemStack());
+            // 第三人称附着火光：按实体记录开火时间戳（跟随枪口，其他玩家也可见）
+            MuzzleFlashRender.onEntityShoot(shooter);
             if (!shooter.equals(player)) {
                 return;
             }
@@ -108,6 +113,8 @@ public class FirstPersonRenderGunEvent {
                 shootTimeStamp = System.currentTimeMillis();
                 // 记录枪口火焰数据
                 MuzzleFlashRender.onShoot();
+                // 记录 renew 枪口粒子数据
+                com.tacz.guns.client.particle.MuzzleParticleManager.onShoot(mainHandItem);
             });
         }
     }

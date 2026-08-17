@@ -14,6 +14,7 @@ import com.tacz.guns.client.resource.pojo.CommonTransformObject;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
+import com.tacz.guns.client.resource.pojo.animation.bedrock.ParticleEffectKeyframes;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.SoundEffectKeyframes;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
@@ -21,10 +22,7 @@ import com.tacz.guns.client.resource.pojo.display.block.BlockDisplay;
 import com.tacz.guns.client.resource.pojo.display.gun.GunDisplay;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.CubesItem;
-import com.tacz.guns.client.resource.serialize.AnimationKeyframesSerializer;
-import com.tacz.guns.client.resource.serialize.ItemStackSerializer;
-import com.tacz.guns.client.resource.serialize.SoundEffectKeyframesSerializer;
-import com.tacz.guns.client.resource.serialize.Vector3fSerializer;
+import com.tacz.guns.client.resource.serialize.*;
 import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.manager.LazyJsonDataManager;
 import com.tacz.guns.resource.manager.ScriptManager;
@@ -62,6 +60,7 @@ public enum ClientAssetsManager {
             .registerTypeAdapter(ItemStack.class, new ItemStackSerializer())
             .registerTypeAdapter(AnimationKeyframes.class, new AnimationKeyframesSerializer())
             .registerTypeAdapter(SoundEffectKeyframes.class, new SoundEffectKeyframesSerializer())
+            .registerTypeAdapter(ParticleEffectKeyframes.class, new ParticleEffectKeyframesSerializer())
             .registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
             .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
             .create();

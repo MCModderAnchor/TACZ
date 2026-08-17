@@ -1,5 +1,9 @@
 package com.tacz.guns.client.renderer.item;
 
+import com.github.mcmodderanchor.simplebedrockmodel.v1.client.handler.FirstPersonRenderHandler;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.firstperson.FirstPersonParticleSystem;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.render.CameraStateCache;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -18,10 +22,12 @@ import com.tacz.guns.client.model.SlotModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.functional.MuzzleFlashRender;
 import com.tacz.guns.client.model.functional.ShellRender;
+import com.tacz.guns.client.particle.MuzzleParticleManager;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.pojo.TransformScale;
 import com.tacz.guns.util.RenderDistance;
 import com.tacz.guns.util.math.MathUtil;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -30,9 +36,11 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.ViewportEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
@@ -44,6 +52,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+import static com.tacz.guns.client.particle.ThirdPersonMuzzleParticleManager.currentEntity;
+import static com.tacz.guns.client.particle.ThirdPersonMuzzleParticleManager.onMuzzleRendered;
 import static net.minecraft.world.item.ItemDisplayContext.*;
 
 /**
@@ -174,11 +184,14 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             }
 
             // 在渲染之前，先更新动画，让动画数据写入模型
+            List<ParticleEffectData> pendingParticles = null;
             if (animationStateMachine != null) {
                 animationStateMachine.processContextIfExist(context -> {
                     updateContext(context, stack, player, partialTick);
                 });
                 animationStateMachine.update();
+                // 消费本帧动画 particle_effects 关键帧触发的粒子请求
+                pendingParticles = animationStateMachine.getAnimationController().consumePendingParticles();
             }
 
             poseStack.pushPose();
@@ -220,6 +233,10 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             gunModel.render(poseStack, stack, ctx, renderType, light, OverlayTexture.NO_OVERLAY);
             // 缓存枪口位置，为第一人称曳光弹渲染作准备
             cacheMuzzlePosition(poseStack, gunModel);
+            // 创建并绑定第一人称枪口 snowstorm 粒子（火光/烟雾）
+            InteractionHand hand = ctx == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                    ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+            MuzzleParticleManager.spawnAndBind(FirstPersonRenderHandler.getParticleSystem(), poseStack, gunModel, hand, pendingParticles);
             // 恢复手臂渲染
             gunModel.setRenderHand(renderHand);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
@@ -251,6 +268,13 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
         }
     }
 
+    /**
+     * SBM 第一人称粒子系统在渲染枪体前调用：捕获当前 pass 的基准矩阵，供粒子绑定变换使用。
+     */
+    @Override
+    public void updateParticleEmitterTransforms(FirstPersonParticleSystem system, PoseStack poseStack, InteractionHand hand) {
+        MuzzleParticleManager.captureBasePose(hand, poseStack.last().pose());
+    }
 
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemDisplayContext transformType, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource pBuffer,
@@ -300,6 +324,32 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             float alpha = ItemPreviewRenderContext.alpha();
             RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(gunTexture) : RenderType.entityCutout(gunTexture);
             gunModel.render(poseStack, stack, transformType, renderType, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, alpha);
+            // 第三人称持枪渲染：捕获枪口世界坐标，触发第三人称枪口粒子
+            if (transformType == THIRD_PERSON_RIGHT_HAND && currentEntity != null) {
+                poseStack.pushPose();
+                List<BedrockPart> muzzlePath = gunModel.getMuzzleFlashPosPath();
+                if (muzzlePath != null) {
+                    for (BedrockPart part : muzzlePath) {
+                        part.translateAndRotateAndScale(poseStack);
+                    }
+                    Matrix4f pose = poseStack.last().pose();
+                    // GameRenderer.renderLevel 会把相机旋转（Rz(roll)·Rx(pitch)·Ry(yaw+180)）直接
+                    // 乘进实体渲染 poseStack，需先反旋相机旋转得到真实世界矩阵（旋转+平移），
+                    // 平移分量再加回相机位置
+                    Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+                    Vec3 camPos = camera.getPosition();
+                    Matrix4f viewRotationInv = new Matrix4f()
+                            .rotationY((float) Math.toRadians(-(camera.getYRot() + 180f)))
+                            .rotateX((float) Math.toRadians(-camera.getXRot()))
+                            .rotateZ(-CameraStateCache.getCameraRollRadians());
+                    Matrix4f muzzleWorld = new Matrix4f(viewRotationInv).mul(pose);
+                    muzzleWorld.m30(muzzleWorld.m30() + (float) camPos.x);
+                    muzzleWorld.m31(muzzleWorld.m31() + (float) camPos.y);
+                    muzzleWorld.m32(muzzleWorld.m32() + (float) camPos.z);
+                    onMuzzleRendered(currentEntity, muzzleWorld);
+                }
+                poseStack.popPose();
+            }
         }, () -> {
             // 没有这个 gunID，渲染个错误材质提醒别人
             renderSlotTexture(poseStack, pBuffer, pPackedLight, pPackedOverlay, MissingTextureAtlasSprite.getLocation());

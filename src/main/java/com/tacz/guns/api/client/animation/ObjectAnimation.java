@@ -17,6 +17,7 @@ public class ObjectAnimation {
      */
     private final Map<String, List<ObjectAnimationChannel>> channels = new HashMap<>();
     private @Nullable ObjectAnimationSoundChannel soundChannel;
+    private @Nullable ObjectAnimationParticleChannel particleChannel;
     /**
      * 播放类型
      */
@@ -52,6 +53,9 @@ public class ObjectAnimation {
         if (source.soundChannel != null) {
             this.soundChannel = new ObjectAnimationSoundChannel(source.soundChannel.content);
         }
+        if (source.particleChannel != null) {
+            this.particleChannel = new ObjectAnimationParticleChannel(source.particleChannel);
+        }
     }
 
     protected void addChannel(ObjectAnimationChannel channel) {
@@ -74,6 +78,13 @@ public class ObjectAnimation {
         this.soundChannel = soundChannel;
     }
 
+    protected void setParticleChannel(@Nonnull ObjectAnimationParticleChannel particleChannel) {
+        if (particleChannel.getEndTimeS() > maxEndTimeS) {
+            maxEndTimeS = (float) particleChannel.getEndTimeS();
+        }
+        this.particleChannel = particleChannel;
+    }
+
     public Map<String, List<ObjectAnimationChannel>> getChannels() {
         return channels;
     }
@@ -81,6 +92,11 @@ public class ObjectAnimation {
     @Nullable
     public ObjectAnimationSoundChannel getSoundChannel() {
         return this.soundChannel;
+    }
+
+    @Nullable
+    public ObjectAnimationParticleChannel getParticleChannel() {
+        return this.particleChannel;
     }
 
     public void applyAnimationListeners(AnimationListenerSupplier supplier) {

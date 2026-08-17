@@ -28,6 +28,7 @@
     "living_time": 1.0
   },
   "muzzle_flash": {
+    "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 0.5
   },

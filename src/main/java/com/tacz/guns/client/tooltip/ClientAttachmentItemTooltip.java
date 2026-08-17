@@ -170,6 +170,21 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                 components.add(Component.translatable("tooltip.tacz.attachment.recoil_push").withStyle(ChatFormatting.AQUA));
             }
 
+            if (data.hasFlashHider()) {
+                if (data.getFlashHider() < 1.0f) {
+                    components.add(Component.translatable("tooltip.tacz.attachment.flash_hider.decrease").withStyle(ChatFormatting.GREEN));
+                } else if (data.getFlashHider() > 1.0f) {
+                    components.add(Component.translatable("tooltip.tacz.attachment.flash_hider.increase").withStyle(ChatFormatting.RED));
+                }
+            }
+            if (data.hasSmokeHider()) {
+                if (data.getSmokeHider() < 1.0f) {
+                    components.add(Component.translatable("tooltip.tacz.attachment.smoke_hider.decrease").withStyle(ChatFormatting.GREEN));
+                } else if (data.getSmokeHider() > 1.0f) {
+                    components.add(Component.translatable("tooltip.tacz.attachment.smoke_hider.increase").withStyle(ChatFormatting.RED));
+                }
+            }
+
             if (attachment.getItem() instanceof IAttachment iAttachment) {
                 TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(attachmentIndex -> {
                     if (iAttachment.hasCustomLaserColor(attachment)) {

@@ -5,6 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue ENABLE_LASER_FADE_OUT;
+    public static ForgeConfigSpec.BooleanValue RENDER_MUZZLE_SMOKE;
     public static ForgeConfigSpec.IntValue GUN_LOD_RENDER_DISTANCE;
     public static ForgeConfigSpec.IntValue BULLET_HOLE_PARTICLE_LIFE;
     public static ForgeConfigSpec.DoubleValue BULLET_HOLE_PARTICLE_FADE_THRESHOLD;
@@ -31,6 +32,9 @@ public class RenderConfig {
 
         builder.comment("Whether or not apply fadeout effect on the laser beam. Close this may improve laser performance under some shaders.");
         ENABLE_LASER_FADE_OUT = builder.define("EnableLaserFadeOut", true);
+
+        builder.comment("Whether or not to render the renew (snowstorm particle) muzzle smoke. Disable this if translucent smoke has issues with shaders.");
+        RENDER_MUZZLE_SMOKE = builder.define("RenderMuzzleSmoke", true);
 
         builder.comment("How far to display the lod model, 0 means always display");
         GUN_LOD_RENDER_DISTANCE = builder.defineInRange("GunLodRenderDistance", 0, 0, Integer.MAX_VALUE);

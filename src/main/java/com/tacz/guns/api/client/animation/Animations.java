@@ -1,5 +1,6 @@
 package com.tacz.guns.api.client.animation;
 
+import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
 import com.tacz.guns.api.client.animation.gltf.AccessorModel;
 import com.tacz.guns.api.client.animation.gltf.AnimationModel;
 import com.tacz.guns.api.client.animation.gltf.AnimationStructure;
@@ -170,6 +171,21 @@ public class Animations {
                     i++;
                 }
                 animation.setSoundChannel(soundChannel);
+            }
+            // 将粒子效果数据转移到 ObjectAnimation 中
+            ParticleEffectKeyframes particleEffectKeyframes = bedrockAnimation.getParticleEffects();
+            if (particleEffectKeyframes != null && particleEffectKeyframes.getKeyframes() != null) {
+                ObjectAnimationParticleChannel particleChannel = new ObjectAnimationParticleChannel();
+                int keyframeNum = particleEffectKeyframes.getKeyframes().size();
+                particleChannel.keyframeTimeS = new double[keyframeNum];
+                particleChannel.keyframeData = new ParticleEffectData[keyframeNum];
+                int i = 0;
+                for (Double2ObjectMap.Entry<ParticleEffectData> entry : particleEffectKeyframes.getKeyframes().double2ObjectEntrySet()) {
+                    particleChannel.keyframeTimeS[i] = entry.getDoubleKey();
+                    particleChannel.keyframeData[i] = entry.getValue();
+                    i++;
+                }
+                animation.setParticleChannel(particleChannel);
             }
             result.add(animation);
         }
