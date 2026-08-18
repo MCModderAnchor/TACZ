@@ -67,7 +67,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
         TP_SHOOT_TIMESTAMPS.put(entity, System.currentTimeMillis());
     }
 
-    private static void renderMuzzleFlash(GunDisplayInstance display, PoseStack poseStack, BedrockModel bedrockModel, long time) {
+    private static void renderMuzzleFlash(GunDisplayInstance display, PoseStack poseStack, BedrockModel bedrockModel, long time, MultiBufferSource.BufferSource bufferSource) {
         MuzzleFlash muzzleFlash = display.getMuzzleFlash();
         if (muzzleFlash == null) {
             return;
@@ -75,15 +75,15 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
         // 每帧捕获当前枪口变换，使火光逐帧跟随枪口（后坐/摆动/瞄准均跟随）
         muzzleFlashNormal = new Matrix3f(poseStack.last().normal());
         muzzleFlashPose = new Matrix4f(poseStack.last().pose());
-        bedrockModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) -> doRender(light, overlay, muzzleFlash, time));
+        bedrockModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) -> doRender(light, overlay, muzzleFlash, time, bufferSource));
     }
 
-    private static void doRender(int light, int overlay, MuzzleFlash muzzleFlash, long time) {
+    private static void doRender(int light, int overlay, MuzzleFlash muzzleFlash, long time, MultiBufferSource.BufferSource bufferSource) {
         if (muzzleFlashNormal != null && muzzleFlashPose != null) {
             float scale = 0.5f * muzzleFlash.getScale();
             float scaleTime = TIME_RANGE / 2.0f;
             scale = time < scaleTime ? (scale * (time / scaleTime)) : scale;
-            MultiBufferSource multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+            MultiBufferSource multiBufferSource = bufferSource;
 
             // 推送到指定位置
             PoseStack poseStack2 = new PoseStack();
@@ -117,6 +117,12 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
     @Override
     @SuppressWarnings("unchecked")
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
+        render(poseStack, vertexBuffer, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
         if (OculusCompat.isRenderShadow()) {
             return;
         }
@@ -173,10 +179,10 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
                             return;
                         }
                     }
-                    renderMuzzleFlash(display, poseStack, bedrockGunModel, time);
+                    renderMuzzleFlash(display, poseStack, bedrockGunModel, time, bufferSource);
                 });
             } else {
-                renderMuzzleFlash(display, poseStack, bedrockGunModel, time);
+                renderMuzzleFlash(display, poseStack, bedrockGunModel, time, bufferSource);
             }
         });
     }

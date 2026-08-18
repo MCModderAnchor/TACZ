@@ -13,7 +13,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 public class ARCompatImpl {
 
 	public static boolean shouldAccelerate() {
-		return AcceleratedEntityRenderingFeature.isEnabled()
+		return CoreFeature.isLoaded()
+				&& AcceleratedEntityRenderingFeature.isEnabled()
 				&& AcceleratedEntityRenderingFeature.shouldUseAcceleratedPipeline()
 				&& (CoreFeature.isRenderingLevel() || CoreFeature.isRenderingHand() || (CoreFeature.isRenderingGui() && AcceleratedEntityRenderingFeature.shouldAccelerateInGui()));
 	}

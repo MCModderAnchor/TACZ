@@ -37,7 +37,14 @@ public class AttachmentRender implements IFunctionalRenderer {
         this.type = type;
     }
 
+    /**
+     * 无 bufferSource 版本：AR 加速渲染等路径调用，回退全局 bufferSource。
+     */
     public static void renderAttachment(ItemStack attachmentItem, ItemStack gunItem, AttachmentType type, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
+        renderAttachment(attachmentItem, gunItem, type, poseStack, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
+    }
+
+    public static void renderAttachment(ItemStack attachmentItem, ItemStack gunItem, AttachmentType type, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
         if (attachmentItem.isEmpty()) {
             return;
         }
@@ -55,12 +62,12 @@ public class AttachmentRender implements IFunctionalRenderer {
                 ClientSlotAdapterIndex slotAdapter = getSlotAdapter(gunItem, type, attachmentId);
                 if (slotAdapter != null) {
                     poseStack.pushPose();
-                    renderSlotAdapter(slotAdapter, gunItem, poseStack, transformType, light, overlay);
+                    renderSlotAdapter(slotAdapter, gunItem, poseStack, transformType, light, overlay, bufferSource);
                     poseStack.popPose();
                     applyMountOffset(poseStack, slotAdapter.getMountOffset());
                 }
                 if (variant != null && variant.isOverlayMode()) {
-                    renderVariantOverlay(variant, attachmentItem, gunItem, poseStack, transformType, light, overlay);
+                    renderVariantOverlay(variant, attachmentItem, gunItem, poseStack, transformType, light, overlay, bufferSource);
                     applyMountOffset(poseStack, variant.getMountOffset());
                 }
                 // 这里是枪械里的配件渲染，没有模型材质就不渲染
@@ -74,11 +81,10 @@ public class AttachmentRender implements IFunctionalRenderer {
                     }
                     float alpha = ItemPreviewRenderContext.alpha();
                     RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
-                    model.render(attachmentItem, gunItem, poseStack, transformType, renderType, light, overlay, alpha);
+                    model.render(attachmentItem, gunItem, poseStack, transformType, renderType, light, overlay, alpha, bufferSource);
                 }
             }, () -> {
                 // 没有对应的 attachmentIndex，渲染黑紫材质以提醒
-                MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
                 VertexConsumer buffer = bufferSource.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
                 AttachmentItemRenderer.SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, light, overlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
             });
@@ -90,7 +96,7 @@ public class AttachmentRender implements IFunctionalRenderer {
         return adapterId == null ? null : TimelessAPI.getClientSlotAdapterIndex(adapterId).orElse(null);
     }
 
-    private static void renderSlotAdapter(ClientSlotAdapterIndex adapter, ItemStack gunItem, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
+    private static void renderSlotAdapter(ClientSlotAdapterIndex adapter, ItemStack gunItem, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
         BedrockAttachmentModel model = adapter.getAdapterModel();
         ResourceLocation texture = adapter.getModelTexture();
         if (model == null || texture == null) {
@@ -98,7 +104,7 @@ public class AttachmentRender implements IFunctionalRenderer {
         }
         float alpha = ItemPreviewRenderContext.alpha();
         RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
-        model.render(ItemStack.EMPTY, gunItem, poseStack, transformType, renderType, light, overlay, alpha);
+        model.render(ItemStack.EMPTY, gunItem, poseStack, transformType, renderType, light, overlay, alpha, bufferSource);
     }
 
     private static void applyMountOffset(PoseStack poseStack, Vector3f offset) {
@@ -107,7 +113,7 @@ public class AttachmentRender implements IFunctionalRenderer {
         }
     }
 
-    private static void renderVariantOverlay(ClientAttachmentVariantIndex variant, ItemStack attachmentItem, ItemStack gunItem, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
+    private static void renderVariantOverlay(ClientAttachmentVariantIndex variant, ItemStack attachmentItem, ItemStack gunItem, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
         BedrockAttachmentModel model = variant.getAttachmentModel();
         ResourceLocation texture = variant.getModelTexture();
         if (model == null || texture == null) {
@@ -115,11 +121,16 @@ public class AttachmentRender implements IFunctionalRenderer {
         }
         float alpha = ItemPreviewRenderContext.alpha();
         RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
-        model.render(attachmentItem, gunItem, poseStack, transformType, renderType, light, overlay, alpha);
+        model.render(attachmentItem, gunItem, poseStack, transformType, renderType, light, overlay, alpha, bufferSource);
     }
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
+        render(poseStack, vertexBuffer, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
+    }
+
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
         EnumMap<AttachmentType, ItemStack> currentAttachmentItem = bedrockGunModel.getCurrentAttachmentItem();
         ItemStack attachmentItem = currentAttachmentItem.get(type);
         if (attachmentItem != null && !attachmentItem.isEmpty()) {
@@ -131,7 +142,7 @@ public class AttachmentRender implements IFunctionalRenderer {
                 poseStack2.last().normal().mul(normal);
                 poseStack2.last().pose().mul(pose);
                 // 渲染配件
-                renderAttachment(attachmentItem, bedrockGunModel.getCurrentGunItem(), type, poseStack2, transformType, light, overlay);
+                renderAttachment(attachmentItem, bedrockGunModel.getCurrentGunItem(), type, poseStack2, transformType, light, overlay, bufferSource);
             });
         }
     }

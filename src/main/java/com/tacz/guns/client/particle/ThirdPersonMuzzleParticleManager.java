@@ -7,6 +7,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.world.WorldEmitt
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -65,8 +66,16 @@ public final class ThirdPersonMuzzleParticleManager {
 
     /**
      * 客户端开火事件调用：任何射手（本机玩家 + 服务器广播的其他玩家）。
+     * <p>
+     * 视角门控：本机玩家在第一人称视角下不渲染其第三人称持枪层，若此时入队会在
+     * 切回第三人称时一次性堆积全发；因此本机玩家的请求仅在非第一人称视角时入队。
+     * 其他玩家（服务器广播）始终通过其第三人称持枪渲染消费，与本机视角无关。
      */
     public static void onShoot(LivingEntity shooter, ItemStack gunItem) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (shooter.equals(player) && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+            return;
+        }
         MuzzleParticleManager.MuzzleShot shot = MuzzleParticleManager.resolveShot(gunItem);
         if (shot == null) {
             return;

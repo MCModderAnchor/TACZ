@@ -21,6 +21,7 @@ import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -254,7 +255,15 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         render(matrixStack, gunItem, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
+    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+        render(matrixStack, gunItem, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
+    }
+
     public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha) {
+        render(matrixStack, gunItem, transformType, renderType, light, overlay, red, green, blue, alpha, Minecraft.getInstance().renderBuffers().bufferSource());
+    }
+
+    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha, MultiBufferSource.BufferSource bufferSource) {
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {
             return;
@@ -291,11 +300,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             }
         }
         if (laserBeamPaths != null) {
-            BeamRenderer.renderLaserBeam(gunItem, matrixStack, transformType, laserBeamPaths);
+            BeamRenderer.renderLaserBeam(gunItem, matrixStack, transformType, laserBeamPaths, bufferSource);
         }
 
 		if (alpha >= 1.0F && ARCompat.shouldAccelerate()) {
-			renderAccelerated(matrixStack, gunItem, transformType, renderType, light, overlay);
+			renderAccelerated(matrixStack, gunItem, transformType, renderType, light, overlay, bufferSource);
 			return;
 		}
 
@@ -307,7 +316,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             for (BedrockPart bedrockPart : scopePosPath) {
                 bedrockPart.translateAndRotateAndScale(matrixStack);
             }
-            AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay);
+            AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay, bufferSource);
             matrixStack.popPose();
             // 开启模板测试，因为镜内不渲染枪体
             if (iAttachment != null) {
@@ -324,13 +333,13 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             }
         }
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-        super.render(matrixStack, transformType, renderType, light, overlay, red, green, blue, alpha);
+        super.render(matrixStack, transformType, renderType, light, overlay, red, green, blue, alpha, bufferSource);
         RenderHelper.disableItemEntityStencilTest();
         RenderSystem.clearStencil(0);
         RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
     }
 
-	public void renderAccelerated(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+	public void renderAccelerated(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
 		// 镜子需要先渲染，写入模板值
 		var attachmentItem = currentAttachmentItem.get(AttachmentType.SCOPE);
 		var iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
@@ -343,7 +352,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 				bedrockPart.translateAndRotateAndScale(matrixStack);
 			}
 
-			AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay);
+			AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay, bufferSource);
 			matrixStack.popPose();
 
 			// 开启模板测试，因为镜内不渲染枪体
@@ -387,7 +396,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 			RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
 		});
 
-		super.render(matrixStack, transformType, renderType, light, overlay);
+		super.render(matrixStack, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
 
 		// 重置层和层后任务, 还原现场
 		ARCompat.resetRenderLayer();

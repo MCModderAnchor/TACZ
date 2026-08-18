@@ -18,6 +18,7 @@ import com.tacz.guns.client.animation.statemachine.GunAnimationStateContext;
 import com.tacz.guns.client.event.CameraSetupEvent;
 import com.tacz.guns.client.event.FirstPersonRenderGunEvent;
 import com.tacz.guns.client.model.BedrockGunModel;
+import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.model.SlotModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.functional.MuzzleFlashRender;
@@ -218,6 +219,32 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             // 应用持枪姿态变换，如第一人称摄像机定位
             FirstPersonRenderGunEvent.applyFirstPersonGunTransform(player, stack, poseStack, gunModel, partialTick);
 
+            // 第一人称粒子由本模组在枪体渲染的模板窗口内渲染（让粒子被镜内剔除），
+            // 通过 renderParticlesInModelWindow() 声明，SBM 将跳过事件末尾的自动渲染
+            InteractionHand particleHand = ctx == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                    ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+            gunModel.setParticleWindowRenderer(new IFunctionalRenderer() {
+                @Override
+                public void render(PoseStack poseStack1, VertexConsumer vertexBuffer1, ItemDisplayContext transformType1, int light1, int overlay1) {
+                    // 默认实现：无 bufferSource 时回退自动渲染（不会走到：window 内必有 buffer）
+                }
+
+                @Override
+                public void render(PoseStack poseStack1, VertexConsumer vertexBuffer1, ItemDisplayContext transformType1, int light1, int overlay1, MultiBufferSource.BufferSource particleBuffer) {
+                    // 粒子发射器以「渲染枪体前捕获的入口 basePose」为绑定基准；
+                    // 此刻 poseStack 已叠加枪体深层变换（translate(0,1.5,0)/180°翻转/定位），
+                    // 需把 last().pose() 设回 basePose，保证渲染基准与绑定时一致，避免粒子偏移。
+                    Matrix4f basePose = MuzzleParticleManager.getBasePose(particleHand);
+                    if (basePose == null) {
+                        return;
+                    }
+                    poseStack1.pushPose();
+                    poseStack1.last().pose().set(basePose);
+                    FirstPersonRenderHandler.renderParticlesNow(particleHand, poseStack1, particleBuffer, light1, partialTick);
+                    poseStack1.popPose();
+                }
+            });
+
             // 开启第一人称弹壳和火焰渲染
             MuzzleFlashRender.isSelf = true;
             ShellRender.isSelf = true;
@@ -230,7 +257,8 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             RenderType renderType = display.enablesTransparency()
                     ? RenderType.entityTranslucent(display.getModelTexture())
                     : RenderType.entityCutout(display.getModelTexture());
-            gunModel.render(poseStack, stack, ctx, renderType, light, OverlayTexture.NO_OVERLAY);
+            MultiBufferSource.BufferSource handBuffer = bufferSource instanceof MultiBufferSource.BufferSource bs ? bs : Minecraft.getInstance().renderBuffers().bufferSource();
+            gunModel.render(poseStack, stack, ctx, renderType, light, OverlayTexture.NO_OVERLAY, handBuffer);
             // 缓存枪口位置，为第一人称曳光弹渲染作准备
             cacheMuzzlePosition(poseStack, gunModel);
             // 创建并绑定第一人称枪口 snowstorm 粒子（火光/烟雾）
@@ -246,6 +274,15 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             MuzzleFlashRender.isSelf = false;
             ShellRender.isSelf = false;
         });
+    }
+
+    /**
+     * 第一人称粒子由本渲染器在枪体渲染的模板窗口内自行渲染（让粒子被镜内剔除），
+     * SBM 因此跳过事件末尾的自动粒子渲染，避免双重绘制。
+     */
+    @Override
+    public boolean renderParticlesInModelWindow() {
+        return true;
     }
 
     private static void cacheMuzzlePosition(PoseStack poseStack, BedrockGunModel gunModel) {
@@ -323,7 +360,8 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             // 渲染枪械模型
             float alpha = ItemPreviewRenderContext.alpha();
             RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(gunTexture) : RenderType.entityCutout(gunTexture);
-            gunModel.render(poseStack, stack, transformType, renderType, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, alpha);
+            MultiBufferSource.BufferSource handBuffer = pBuffer instanceof MultiBufferSource.BufferSource bs ? bs : Minecraft.getInstance().renderBuffers().bufferSource();
+            gunModel.render(poseStack, stack, transformType, renderType, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, alpha, handBuffer);
             // 第三人称持枪渲染：捕获枪口世界坐标，触发第三人称枪口粒子
             if (transformType == THIRD_PERSON_RIGHT_HAND && currentEntity != null) {
                 poseStack.pushPose();

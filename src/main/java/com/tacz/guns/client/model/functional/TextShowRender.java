@@ -6,8 +6,8 @@ import com.mojang.math.Axis;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.model.papi.PapiManager;
-import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.display.gun.RangefinderManager;
+import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
@@ -31,6 +31,11 @@ public class TextShowRender implements IFunctionalRenderer {
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
+        render(poseStack, vertexBuffer, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
+    }
+
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
         if (!transformType.firstPerson()) {
             return;
         }
@@ -67,7 +72,6 @@ public class TextShowRender implements IFunctionalRenderer {
             poseStack2.last().normal().mul(normal);
             poseStack2.last().pose().mul(pose);
             poseStack2.scale(2 / 300f * scale, -2 / 300f * scale, -2 / 300f);
-            MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             font.drawInBatch(text, -xOffset, -font.lineHeight / 2f, color, shadow, poseStack2.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, packLight);
             bufferSource.endBatch();
         });

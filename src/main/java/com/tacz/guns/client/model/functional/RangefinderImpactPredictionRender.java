@@ -35,6 +35,11 @@ public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
+        render(poseStack, vertexBuffer, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
+    }
+
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
         if (!transformType.firstPerson() || !RangefinderManager.shouldRenderImpactPrediction()) {
             return;
         }
@@ -49,7 +54,6 @@ public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
             poseStack2.last().pose().mul(pose);
             poseStack2.scale(MODEL_TEXT_SCALE, -MODEL_TEXT_SCALE, -MODEL_TEXT_SCALE);
 
-            MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             RenderType renderType = ImpactPredictionRenderState.getBox();
             VertexConsumer consumer = bufferSource.getBuffer(renderType);
             float yOffset = getCalibratedYOffset(poseStack2.last().pose());

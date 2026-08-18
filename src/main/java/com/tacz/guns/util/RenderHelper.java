@@ -81,12 +81,13 @@ public final class RenderHelper {
     }
 
     public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight) {
+        renderFirstPersonArm(player, hand, matrixStack, combinedLight, Minecraft.getInstance().renderBuffers().bufferSource());
+    }
+
+    public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight, MultiBufferSource.BufferSource buffer) {
         Minecraft mc = Minecraft.getInstance();
         EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
         PlayerRenderer renderer = (PlayerRenderer) renderManager.getRenderer(player);
-        MultiBufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        // int oldId = RenderSystem.getShaderTexture(0);
-        // RenderSystem.setShaderTexture(0, player.getSkinTextureLocation());
 
 		if (ARCompat.shouldAccelerate()) {
 			ARCompat.setRenderingLevel();

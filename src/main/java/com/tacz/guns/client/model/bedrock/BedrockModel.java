@@ -34,6 +34,11 @@ public class BedrockModel {
      */
     protected List<IFunctionalRenderer> delegateRenderers = new ArrayList<>();
     /**
+     * 模板窗口内粒子渲染器：由第一人称渲染器在渲染前设置，模型渲染时在模板测试
+     * 仍开启的窗口内执行（用于让粒子被镜内剔除），执行后清空。
+     */
+    protected IFunctionalRenderer particleWindowRenderer = null;
+    /**
      * 模型的中心点
      */
     protected @Nullable Vec3 offset = null;
@@ -62,6 +67,13 @@ public class BedrockModel {
 
     public void delegateRender(IFunctionalRenderer renderer) {
         delegateRenderers.add(renderer);
+    }
+
+    /**
+     * 设置模板窗口内粒子渲染器：在模型渲染的模板开启窗口内执行一次后自动清空。
+     */
+    public void setParticleWindowRenderer(IFunctionalRenderer renderer) {
+        this.particleWindowRenderer = renderer;
     }
 
     private void setRotationAngle(BedrockPart modelRenderer, float x, float y, float z) {
@@ -353,20 +365,41 @@ public class BedrockModel {
     }
 
     public void render(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha) {
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        render(matrixStack, transformType, renderType, light, overlay, red, green, blue, alpha, Minecraft.getInstance().renderBuffers().bufferSource());
+    }
+
+    /**
+     * 带手部 bufferSource 的渲染入口：由第一人称手部渲染链路调用，
+     * 保证枪体 / 配件 / quad / 粒子共用同一 bufferSource（光影下保持同一投影空间）。
+     */
+    public void render(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+        render(matrixStack, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
+    }
+
+    public void render(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha, MultiBufferSource.BufferSource bufferSource) {
         VertexConsumer builder = bufferSource.getBuffer(renderType);
 
         matrixStack.pushPose();
         for (BedrockPart model : shouldRender) {
-            model.render(matrixStack, transformType, builder, light, overlay, red, green, blue, alpha);
+            model.render(matrixStack, transformType, builder, light, overlay, red, green, blue, alpha, bufferSource);
         }
         matrixStack.popPose();
         if (!OculusCompat.endBatch(bufferSource)) {
             bufferSource.endBatch(renderType);
         }
 
+        // 模板窗口内粒子渲染：在模板测试仍开启（镜内剔除生效）时提交粒子顶点，
+        // 并立即 flush 让粒子真正绘制（粒子 renderType 与枪体不同，需单独提交）
+        if (particleWindowRenderer != null) {
+            particleWindowRenderer.render(matrixStack, builder, transformType, light, overlay, bufferSource);
+            particleWindowRenderer = null;
+            if (!OculusCompat.endBatch(bufferSource)) {
+                bufferSource.endBatch();
+            }
+        }
+
         for (IFunctionalRenderer renderer : delegateRenderers) {
-            renderer.render(matrixStack, builder, transformType, light, overlay);
+            renderer.render(matrixStack, builder, transformType, light, overlay, bufferSource);
         }
         delegateRenderers = new ArrayList<>();
     }

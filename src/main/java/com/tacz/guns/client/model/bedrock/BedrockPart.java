@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -59,6 +60,10 @@ public class BedrockPart {
     }
 
     public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
+        render(poseStack, transformType, consumer, light, overlay, red, green, blue, alpha, null);
+    }
+
+    public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha, @Nullable MultiBufferSource.BufferSource bufferSource) {
         int cubePackedLight = light;
         VertexConsumer cubeConsumer = consumer;
         if (illuminated) {
@@ -73,7 +78,7 @@ public class BedrockPart {
                 this.compile(poseStack.last(), cubeConsumer, cubePackedLight, overlay, red, green, blue, alpha);
 
                 for (BedrockPart part : this.children) {
-                    part.render(poseStack, transformType, cubeConsumer, cubePackedLight, overlay, red, green, blue, alpha);
+                    part.render(poseStack, transformType, cubeConsumer, cubePackedLight, overlay, red, green, blue, alpha, bufferSource);
                 }
 
                 poseStack.popPose();

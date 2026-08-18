@@ -98,6 +98,17 @@ public final class MuzzleParticleManager {
      * 客户端开火事件调用（仅本机玩家主手，与旧版枪口火光一致）。
      */
     public static void onShoot(ItemStack gunItem) {
+        // 第一人称粒子仅在第一人称视角下有持枪渲染层消费；第三人称视角下
+        // 本机不渲染第一人称持枪，入队只会堆积、切回第一人称时一次性全发。
+        if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+            enqueueShoot(gunItem);
+        }
+    }
+
+    /**
+     * 将一次开火请求入队，供第一人称渲染时消费。供按视角门控后的内部使用。
+     */
+    public static void enqueueShoot(ItemStack gunItem) {
         MuzzleShot shot = resolveShot(gunItem);
         if (shot == null) {
             return;
@@ -111,6 +122,16 @@ public final class MuzzleParticleManager {
      */
     public static void captureBasePose(InteractionHand hand, Matrix4f pose) {
         BASE_POSE.put(hand, new Matrix4f(pose));
+    }
+
+    /**
+     * 获取该手的基准矩阵（渲染枪体前捕获的入口 poseStack）。
+     * 粒子渲染时需把 poseStack 设回此矩阵，保证渲染基准与发射器绑定时一致。
+     */
+    @Nullable
+    public static Matrix4f getBasePose(InteractionHand hand) {
+        Matrix4f pose = BASE_POSE.get(hand);
+        return pose != null ? new Matrix4f(pose) : null;
     }
 
     /**

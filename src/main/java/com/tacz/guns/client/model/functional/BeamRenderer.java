@@ -33,7 +33,7 @@ public class BeamRenderer  {
     public static final ResourceLocation LASER_BEAM_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/entity/beam.png");
     private static final LaserConfig DEFAULT_LASER_CONFIG = new LaserConfig();
 
-    public static void renderLaserBeam(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path) {
+    public static void renderLaserBeam(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path, MultiBufferSource.BufferSource bufferSource) {
         if (stack == null || !transformType.firstPerson() && !(transformType == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)) {
             return;
         }
@@ -42,7 +42,6 @@ public class BeamRenderer  {
 			return;
 		}
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer builder = bufferSource.getBuffer(LaserBeamRenderState.getLaserBeam());
         poseStack.pushPose();
         {

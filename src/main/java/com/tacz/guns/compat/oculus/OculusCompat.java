@@ -44,6 +44,12 @@ public final class OculusCompat {
 
     public static boolean endBatch(MultiBufferSource.BufferSource bufferSource) {
         if (ModList.get().isLoaded(CompatRegistry.OCULUS)) {
+            // Iris 第一人称手部 pass 传入的是 UnflushableWrapper，其 endBatch 是空操作；
+            // 经 mixin 注入 IUnflushableWrapper 后取出内部真正的 FullyBufferedMultiBufferSource，
+            // 再交给版本分派 flush（保证模板状态与实际绘制同步）
+            if (bufferSource instanceof IUnflushableWrapper wrapper) {
+                bufferSource = wrapper.tacz$getWrapped();
+            }
             return END_BATCH_FUNCTION.apply(bufferSource);
         }
         return false;
