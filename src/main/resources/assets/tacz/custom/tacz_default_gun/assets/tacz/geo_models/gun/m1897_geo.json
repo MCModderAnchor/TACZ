@@ -5435,7 +5435,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0, 8, 0],
+					"pivot": [0, 6.76563, 6.375],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -5446,7 +5446,7 @@
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0, 7, 5]
+					"pivot": [0, 7, 6.1875]
 				},
 				{
 					"name": "views",

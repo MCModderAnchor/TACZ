@@ -10897,7 +10897,7 @@
 				{
 					"name": "ground",
 					"parent": "positioning",
-					"pivot": [0, -4.875, 1.125]
+					"pivot": [0, -7.875, 1.125]
 				},
 				{
 					"name": "thirdperson_hand",
@@ -10907,8 +10907,8 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0, 4.40625, 8.92188],
-					"rotation": [0, -90, 0]
+					"pivot": [2.375, 4.40625, 8.92188],
+					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "camera",
