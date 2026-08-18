@@ -3,6 +3,6 @@
   "display": "tacz:m1866_display",
   "data": "tacz:m1866_data",
   "tooltip": "tacz.gun.m1866.desc",
-  "type": "sniper",
-  "sort": 9
+  "type": "rifle",
+  "sort": 25
 }
