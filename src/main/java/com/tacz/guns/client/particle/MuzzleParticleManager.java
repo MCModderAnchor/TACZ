@@ -73,10 +73,6 @@ public final class MuzzleParticleManager {
             return null;
         }
         MuzzleAttachmentEffect effect = resolveAttachmentEffect(gunItem);
-        // 未配置 flash_hider 的消音器：隐藏整组枪口效果（与旧版行为一致）。
-        if (effect.silenced() && !effect.hasFlashHider()) {
-            return null;
-        }
 
         ResourceLocation flashId = muzzleFlash.getTextureSet();
         if (flashId == null) {
@@ -87,8 +83,13 @@ public final class MuzzleParticleManager {
         }
 
         float gunScale = muzzleFlash.getScale();
+        // 未配置 flash_hider 的消音器：隐藏枪焰（flashScale=0），保留枪烟。
+        float flashScale = gunScale * effect.flashScale();
+        if (effect.silenced() && !effect.hasFlashHider()) {
+            flashScale = 0.0f;
+        }
         return new MuzzleShot(flashId,
-                gunScale * effect.flashScale(),
+                flashScale,
                 MuzzleParticlePresets.smokeOf(flashId),
                 gunScale * effect.smokeScale(),
                 effect.offsetBb());
