@@ -12,6 +12,7 @@ import com.tacz.guns.client.model.bedrock.BedrockCube;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.bedrock.UnshadedVertexConsumer;
 import com.tacz.guns.compat.ar.ARCompat;
+import com.tacz.guns.compat.ar.BedrockPartLightingMode;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.util.FastColor;
@@ -28,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Mixin(BedrockPart.class)
-public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartMixin.LightingMode> {
+public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartLightingMode> {
 
 	@Unique
 	private static final PoseStack.Pose POSE = new PoseStack().last();
@@ -59,11 +60,11 @@ public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartMixin.L
 			float alpha,
 			CallbackInfo ci
 	) {
-		var lightingMode = LightingMode.SHADED;
+		var lightingMode = BedrockPartLightingMode.SHADED;
 		var acceleratedConsumer = consumer;
 		Matrix3f normalMatrix = pose.normal();
 		if (consumer instanceof UnshadedVertexConsumer unshadedConsumer) {
-			lightingMode = LightingMode.UNSHADED;
+			lightingMode = BedrockPartLightingMode.UNSHADED;
 			acceleratedConsumer = unshadedConsumer.getDelegate();
 			normalMatrix = unshadedConsumer.createNormalMatrix();
 		}
@@ -96,7 +97,7 @@ public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartMixin.L
 	@Override
 	public void render(
 			VertexConsumer consumer,
-			LightingMode lightingMode,
+			BedrockPartLightingMode lightingMode,
 			Matrix4f transform,
 			Matrix3f normal,
 			int light,
@@ -104,7 +105,7 @@ public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartMixin.L
 			int color
 	) {
 		var extension = VertexConsumerExtension.getAccelerated(consumer);
-		var meshCache = lightingMode == LightingMode.UNSHADED ? unshadedMeshes : meshes;
+		var meshCache = lightingMode == BedrockPartLightingMode.UNSHADED ? unshadedMeshes : meshes;
 		var mesh = meshCache.get(extension);
 
 		extension.beginTransform(transform, normal);
@@ -117,7 +118,7 @@ public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartMixin.L
 
 		var culledMeshCollector = new CulledMeshCollector(extension);
 		VertexConsumer meshBuilder = extension.decorate(culledMeshCollector);
-		if (lightingMode == LightingMode.UNSHADED) {
+		if (lightingMode == BedrockPartLightingMode.UNSHADED) {
 			meshBuilder = UnshadedVertexConsumer.wrapFixedNormal(meshBuilder);
 		}
 
@@ -147,9 +148,4 @@ public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartMixin.L
 		extension.endTransform();
 	}
 
-	@Unique
-	enum LightingMode {
-		SHADED,
-		UNSHADED
-	}
 }
