@@ -4,7 +4,7 @@
     "description": {
       "identifier": "tacz:muzzle_flash",
       "basic_render_parameters": {
-        "material": "particles_add",
+        "material": "energy_swirl",
         "texture": "tacz:particle/flash_strip"
       }
     },

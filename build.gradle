@@ -182,8 +182,8 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
 
-    jarJar(implementation(fg.deobf("com.github.mcmodderanchor:simplebedrockmodel:2.5.4-forge-mc1.20.1"))) {
-        jarJar.ranged(it, "[2.5.3,)")
+    jarJar(implementation(fg.deobf("com.github.mcmodderanchor:simplebedrockmodel:2.5.5-forge-mc1.20.1"))) {
+        jarJar.ranged(it, "[2.5.5,)")
     }
     compileOnly("com.maydaymemory:mae:1.1.2") {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
@@ -246,7 +246,7 @@ dependencies {
     compileOnly fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
 
     //加速渲染相关
-    implementation fg.deobf("curse.maven:accelerated-rendering-1314021:7342975")
+    compileOnly fg.deobf("curse.maven:accelerated-rendering-1314021:7342975")
 
     // 引入 MixinExtras 以解决一些棘手的 Mixin 冲突问题（比如 @Redirect 不能嵌套）
     // 如果未来有迁移到 Fabric / NeoForge 的计划，请注意这两个框架都已自带 MixinExtras，无需自行打包。

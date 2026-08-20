@@ -388,8 +388,6 @@ public class BedrockModel {
             bufferSource.endBatch(renderType);
         }
 
-        // 模板窗口内粒子渲染：在模板测试仍开启（镜内剔除生效）时提交粒子顶点，
-        // 并立即 flush 让粒子真正绘制（粒子 renderType 与枪体不同，需单独提交）
         if (particleWindowRenderer != null) {
             particleWindowRenderer.render(matrixStack, builder, transformType, light, overlay, bufferSource);
             particleWindowRenderer = null;

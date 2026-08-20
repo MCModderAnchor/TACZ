@@ -113,13 +113,15 @@ public final class ThirdPersonMuzzleParticleManager {
                 if (flashEmitter == null) {
                     // 首次渲染帧：用开火时记录的参数创建发射器，并把当前枪口矩阵设为初始锚点
                     MuzzleParticleManager.MuzzleShot shot = FLASH_PARAMS.get(entity);
-                    if (shot != null && shot.flashScale() > 0) {
-                        ParticleEffectDefinition def = ParticleDefinitionLoader.getInstance().getDefinition(shot.flashId());
+                    // id 为 null 表示 display 显式配置为不生成 3p 火光
+                    if (shot != null && shot.thirdPersonFlashId() != null && shot.flashScale() > 0) {
+                        ParticleEffectDefinition def = ParticleDefinitionLoader.getInstance().getDefinition(shot.thirdPersonFlashId());
                         if (def != null) {
                             Vec3 spawnPos = new Vec3(muzzleWorld.m30(), muzzleWorld.m31(), muzzleWorld.m32());
                             flashEmitter = WorldEmitterManager.getInstance().addEmitter(level, spawnPos, Vec3.ZERO, def);
                             if (flashEmitter != null) {
                                 flashEmitter.setVariable("muzzle_scale", shot.flashScale());
+                                flashEmitter.setVariable("muzzle_speed", shot.speedScale());
                                 flashEmitter.setFollowAnchor(true);
                                 FLASH_EMITTERS.put(entity, flashEmitter);
                                 // 立即写入初始锚点（含旋转），保证首帧粒子就锚定在枪口
@@ -138,13 +140,14 @@ public final class ThirdPersonMuzzleParticleManager {
 
         // 烟雾：一次性消费（与火光生命周期无关）
         MuzzleParticleManager.MuzzleShot shot = PENDING.remove(entity);
-        if (shot != null && RenderConfig.RENDER_MUZZLE_SMOKE.get() && shot.smokeScale() > 0 && shot.smokeId() != null) {
+        // id 为 null 表示 display 显式配置为不生成 3p 烟雾
+        if (shot != null && RenderConfig.RENDER_MUZZLE_SMOKE.get() && shot.thirdPersonSmokeId() != null && shot.smokeScale() > 0) {
             spawnEffect(level, new Vec3(muzzleWorld.m30(), muzzleWorld.m31(), muzzleWorld.m32()),
-                    shot.smokeId(), shot.smokeScale());
+                    shot.thirdPersonSmokeId(), shot.smokeScale(), shot.speedScale());
         }
     }
 
-    private static void spawnEffect(ClientLevel level, Vec3 muzzleWorld, ResourceLocation definitionId, float scale) {
+    private static void spawnEffect(ClientLevel level, Vec3 muzzleWorld, ResourceLocation definitionId, float scale, float speedScale) {
         ParticleEffectDefinition definition = ParticleDefinitionLoader.getInstance().getDefinition(definitionId);
         if (definition == null) {
             return;
@@ -156,5 +159,6 @@ public final class ThirdPersonMuzzleParticleManager {
             return;
         }
         emitter.setVariable("muzzle_scale", scale);
+        emitter.setVariable("muzzle_speed", speedScale);
     }
 }

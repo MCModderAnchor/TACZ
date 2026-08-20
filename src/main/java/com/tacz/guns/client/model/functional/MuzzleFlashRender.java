@@ -16,7 +16,6 @@ import com.tacz.guns.client.resource.pojo.display.gun.MuzzleFlash;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
 import it.unimi.dsi.fastutil.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -117,7 +116,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
     @Override
     @SuppressWarnings("unchecked")
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
-        render(poseStack, vertexBuffer, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
+//        render(poseStack, vertexBuffer, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
     }
 
     @Override

@@ -60,7 +60,11 @@ public final class MuzzleParticleManager {
 
     /**
      * 解析一次开火的枪口粒子参数（第一人称与第三人称共用）。
-     * 返回 null 表示无需粒子（非 renew 枪 / 消音器隐藏整组 / 无可用预设）。
+     * 返回 null 表示无需粒子（非 renew 枪）。
+     * <p>
+     * 4 个粒子 id（1p 闪光 / 1p 烟雾 / 3p 闪光 / 3p 烟雾）直接取 display 配置：
+     * 未配置时字段保留 {@link MuzzleFlash} 中的默认常量；显式写 {@code null} 表示
+     * 对应效果不生成（id 为 null），消费端据此跳过创建。
      */
     @Nullable
     public static MuzzleShot resolveShot(ItemStack gunItem) {
@@ -74,25 +78,20 @@ public final class MuzzleParticleManager {
         }
         MuzzleAttachmentEffect effect = resolveAttachmentEffect(gunItem);
 
-        ResourceLocation flashId = muzzleFlash.getTextureSet();
-        if (flashId == null) {
-            flashId = MuzzleParticlePresets.forGunType(gunTypeOf(gunItem));
-        }
-        if (flashId == null) {
-            return null;
-        }
-
         float gunScale = muzzleFlash.getScale();
         // 未配置 flash_hider 的消音器：隐藏枪焰（flashScale=0），保留枪烟。
         float flashScale = gunScale * effect.flashScale();
         if (effect.silenced() && !effect.hasFlashHider()) {
             flashScale = 0.0f;
         }
-        return new MuzzleShot(flashId,
+        return new MuzzleShot(muzzleFlash.getFirstPersonFlashId(),
                 flashScale,
-                MuzzleParticlePresets.smokeOf(flashId),
+                muzzleFlash.getFirstPersonSmokeId(),
                 gunScale * effect.smokeScale(),
-                effect.offsetBb());
+                effect.offsetBb(),
+                muzzleFlash.getThirdPersonFlashId(),
+                muzzleFlash.getThirdPersonSmokeId(),
+                muzzleFlash.getInitialSpeedScale());
     }
 
     /**
@@ -115,7 +114,7 @@ public final class MuzzleParticleManager {
             return;
         }
         PENDING.computeIfAbsent(InteractionHand.MAIN_HAND, h -> new ArrayList<>()).add(new PendingShoot(
-                shot.flashId(), shot.flashScale(), shot.smokeId(), shot.smokeScale(), shot.offsetBb()));
+                shot.flashId(), shot.flashScale(), shot.smokeId(), shot.smokeScale(), shot.offsetBb(), shot.speedScale()));
     }
 
     /**
@@ -165,12 +164,12 @@ public final class MuzzleParticleManager {
         List<PendingShoot> pending = PENDING.remove(hand);
         if (pending != null) {
             for (PendingShoot req : pending) {
-                // scale <= 0 表示隐藏该层（如 flash_hider: 0），直接跳过
-                if (req.flashScale() > 0) {
-                    createEmitter(system, hand, bound, newEmitters, req.flashId(), req.flashScale(), "muzzle_flash", req.offsetBb());
+                // id 为 null 表示 display 显式配置为不生成该层；scale <= 0 表示隐藏该层（如 flash_hider: 0）
+                if (req.flashId() != null && req.flashScale() > 0) {
+                    createEmitter(system, hand, bound, newEmitters, req.flashId(), req.flashScale(), "muzzle_flash", req.offsetBb(), req.speedScale());
                 }
-                if (RenderConfig.RENDER_MUZZLE_SMOKE.get() && req.smokeScale() > 0 && req.smokeId() != null) {
-                    createEmitter(system, hand, bound, newEmitters, req.smokeId(), req.smokeScale(), "muzzle_flash", req.offsetBb());
+                if (RenderConfig.RENDER_MUZZLE_SMOKE.get() && req.smokeId() != null && req.smokeScale() > 0) {
+                    createEmitter(system, hand, bound, newEmitters, req.smokeId(), req.smokeScale(), "muzzle_flash", req.offsetBb(), req.speedScale());
                 }
             }
         }
@@ -178,7 +177,7 @@ public final class MuzzleParticleManager {
         if (animationParticles != null) {
             for (ParticleEffectData data : animationParticles) {
                 String locator = data.locator() == null || data.locator().isEmpty() ? "muzzle_flash" : data.locator();
-                createEmitter(system, hand, bound, newEmitters, data.effect(), 1.0f, locator, 0.0f);
+                createEmitter(system, hand, bound, newEmitters, data.effect(), 1.0f, locator, 0.0f, 1.0f);
             }
         }
 
@@ -230,7 +229,7 @@ public final class MuzzleParticleManager {
 
     private static void createEmitter(FirstPersonParticleSystem system, InteractionHand hand, List<BoundEmitter> bound,
                                       List<ParticleEmitterInstance> newEmitters, ResourceLocation definitionId,
-                                      float scale, String locator, float offsetBb) {
+                                      float scale, String locator, float offsetBb, float speedScale) {
         ParticleEffectDefinition definition = ParticleDefinitionLoader.getInstance().getDefinition(definitionId);
         if (definition == null) {
             GunMod.LOGGER.warn("Muzzle particle definition {} not found, skipped", definitionId);
@@ -239,19 +238,10 @@ public final class MuzzleParticleManager {
         ParticleEmitterInstance emitter = system.addEmitter(definition, hand);
         // 通过每实例 molang 变量把尺寸/强度参数传给定义（v.muzzle_scale）
         emitter.setVariable("muzzle_scale", scale);
+        // 初速度倍率经 v.muzzle_speed 传给定义（如 smoke 定义的 particle_initial_speed）
+        emitter.setVariable("muzzle_speed", speedScale);
         bound.add(new BoundEmitter(emitter, locator, offsetBb));
         newEmitters.add(emitter);
-    }
-
-    @Nullable
-    private static String gunTypeOf(ItemStack gunItem) {
-        IGun gun = IGun.getIGunOrNull(gunItem);
-        if (gun == null) {
-            return null;
-        }
-        return TimelessAPI.getCommonGunIndex(gun.getGunId(gunItem))
-                .map(com.tacz.guns.resource.index.CommonGunIndex::getType)
-                .orElse(null);
     }
 
     private static MuzzleAttachmentEffect resolveAttachmentEffect(ItemStack gunItem) {
@@ -298,13 +288,18 @@ public final class MuzzleParticleManager {
 
     /**
      * 一次开火的枪口粒子参数（第一人称/第三人称共用）。
+     * id 为 null 表示 display 显式配置为不生成对应效果（闪光/烟雾 × 1p/3p）。
      */
-    public record MuzzleShot(ResourceLocation flashId, float flashScale,
-                             @Nullable ResourceLocation smokeId, float smokeScale, float offsetBb) {
+    public record MuzzleShot(@Nullable ResourceLocation flashId, float flashScale,
+                             @Nullable ResourceLocation smokeId, float smokeScale, float offsetBb,
+                             @Nullable ResourceLocation thirdPersonFlashId,
+                             @Nullable ResourceLocation thirdPersonSmokeId,
+                             float speedScale) {
     }
 
-    private record PendingShoot(ResourceLocation flashId, float flashScale,
-                                @Nullable ResourceLocation smokeId, float smokeScale, float offsetBb) {
+    private record PendingShoot(@Nullable ResourceLocation flashId, float flashScale,
+                                @Nullable ResourceLocation smokeId, float smokeScale, float offsetBb,
+                                float speedScale) {
     }
 
     private record BoundEmitter(ParticleEmitterInstance emitter, String locator, float offsetBb) {
