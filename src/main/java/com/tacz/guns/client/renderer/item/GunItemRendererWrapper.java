@@ -247,6 +247,9 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             if (RefitTransform.getOpeningProgress() != 0) {
                 gunModel.setRenderHand(false);
             }
+            InteractionHand hand = ctx == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                    ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+            MuzzleParticleManager.spawnAndBind(FirstPersonRenderHandler.getParticleSystem(), poseStack, gunModel, hand, pendingParticles);
             // 调用枪械模型渲染
             RenderType renderType = display.enablesTransparency()
                     ? RenderType.entityTranslucent(display.getModelTexture())
@@ -256,9 +259,7 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             // 缓存枪口位置，为第一人称曳光弹渲染作准备
             cacheMuzzlePosition(poseStack, gunModel);
             // 创建并绑定第一人称枪口 snowstorm 粒子（火光/烟雾）
-            InteractionHand hand = ctx == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
-                    ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-            MuzzleParticleManager.spawnAndBind(FirstPersonRenderHandler.getParticleSystem(), poseStack, gunModel, hand, pendingParticles);
+
             // 恢复手臂渲染
             gunModel.setRenderHand(renderHand);
             // 渲染完成后，将动画数据从模型中清除，不对其他视角下的模型渲染产生影响
