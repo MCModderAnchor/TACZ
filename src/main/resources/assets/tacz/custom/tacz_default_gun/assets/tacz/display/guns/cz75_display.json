@@ -30,7 +30,8 @@
   "muzzle_flash": {
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.55
+    "scale": 0.55,
+    "initial_speed_scale": 0.55
   },
   "sounds": {
     "shoot": "tacz:cz75/cz75_shoot",

@@ -42,7 +42,8 @@
   "muzzle_flash": {
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 1
+    "scale": 1,
+    "initial_speed_scale": 1
   },
   // 机瞄的放大倍数，默认 1.2
   "iron_zoom": 1.5,

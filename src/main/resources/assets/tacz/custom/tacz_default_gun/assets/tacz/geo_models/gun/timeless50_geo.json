@@ -5802,7 +5802,7 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "positioning2",
-					"pivot": [0, 9.25, -5.6875]
+					"pivot": [0, 9.29688, -4.4375]
 				},
 				{
 					"name": "laser_pos",

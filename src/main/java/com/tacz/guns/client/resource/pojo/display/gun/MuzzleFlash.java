@@ -68,6 +68,13 @@ public class MuzzleFlash {
     @SerializedName("initial_speed_scale")
     private float initialSpeedScale = 1.0f;
 
+    /**
+     * 烟雾粒子数量，以 molang 变量 {@code v.muzzle_particle_count} 传入粒子定义。
+     * 缺省 0 表示使用粒子定义内置默认值（15）。
+     */
+    @SerializedName("smoke_particle_count")
+    private float smokeParticleCount = 0f;
+
     public Type getType() {
         return type == null ? Type.DEFAULT : type;
     }
@@ -118,5 +125,12 @@ public class MuzzleFlash {
 
     public float getInitialSpeedScale() {
         return Float.isFinite(initialSpeedScale) ? initialSpeedScale : 1.0f;
+    }
+
+    /**
+     * @return 烟雾粒子数量；0 表示使用粒子定义内置默认值
+     */
+    public float getSmokeParticleCount() {
+        return Float.isFinite(smokeParticleCount) ? smokeParticleCount : 0f;
     }
 }

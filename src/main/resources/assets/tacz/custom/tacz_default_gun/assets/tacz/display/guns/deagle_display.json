@@ -31,7 +31,9 @@
   "muzzle_flash": {
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.7
+    "scale": 0.7,
+    "initial_speed_scale": 0.7,
+    "smoke_particle_count": 20
   },
   "sounds": {
     "draw": "tacz:deagle/deagle_draw",

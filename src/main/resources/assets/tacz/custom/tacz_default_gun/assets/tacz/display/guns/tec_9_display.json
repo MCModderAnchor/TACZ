@@ -21,7 +21,8 @@
   "muzzle_flash": {
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.6
+    "scale": 0.6,
+    "initial_speed_scale": 0.6
   },
   "iron_zoom": 1.2,
   "model_fov": 60,

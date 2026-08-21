@@ -31,7 +31,9 @@
   "muzzle_flash": {
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 1.5
+    "scale": 1.5,
+    "initial_speed_scale": 1.5,
+    "smoke_particle_count": 20
   },
   "sounds": {
     "draw": "tacz:taurus500/taurus500_draw",

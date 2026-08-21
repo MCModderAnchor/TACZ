@@ -143,11 +143,11 @@ public final class ThirdPersonMuzzleParticleManager {
         // id 为 null 表示 display 显式配置为不生成 3p 烟雾
         if (shot != null && RenderConfig.RENDER_MUZZLE_SMOKE.get() && shot.thirdPersonSmokeId() != null && shot.smokeScale() > 0) {
             spawnEffect(level, new Vec3(muzzleWorld.m30(), muzzleWorld.m31(), muzzleWorld.m32()),
-                    shot.thirdPersonSmokeId(), shot.smokeScale(), shot.speedScale());
+                    shot.thirdPersonSmokeId(), shot.smokeScale(), shot.speedScale(), shot.smokeParticleCount());
         }
     }
 
-    private static void spawnEffect(ClientLevel level, Vec3 muzzleWorld, ResourceLocation definitionId, float scale, float speedScale) {
+    private static void spawnEffect(ClientLevel level, Vec3 muzzleWorld, ResourceLocation definitionId, float scale, float speedScale, float smokeParticleCount) {
         ParticleEffectDefinition definition = ParticleDefinitionLoader.getInstance().getDefinition(definitionId);
         if (definition == null) {
             return;
@@ -160,5 +160,6 @@ public final class ThirdPersonMuzzleParticleManager {
         }
         emitter.setVariable("muzzle_scale", scale);
         emitter.setVariable("muzzle_speed", speedScale);
+        emitter.setVariable("muzzle_particle_count", smokeParticleCount);
     }
 }

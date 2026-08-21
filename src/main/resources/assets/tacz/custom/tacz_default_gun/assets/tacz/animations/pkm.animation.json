@@ -2769,13 +2769,13 @@
 				"3.9": {
 					"effect": "tacz:pkm/pkm_reload_ammoboxhand"
 				},
-				"5.1333": {
+				"5.0667": {
 					"effect": "tacz:pkm/pkm_reload_ammoboxhit"
 				},
-				"5.4333": {
+				"5.6": {
 					"effect": "tacz:pkm/pkm_reload_ammoboxin"
 				},
-				"5.9667": {
+				"5.7": {
 					"effect": "tacz:pkm/pkm_reload_grab"
 				},
 				"6.7667": {
@@ -4548,10 +4548,13 @@
 				"4.3333": {
 					"effect": "tacz:pkm/pkm_reload_gundown"
 				},
-				"5.0667": {
+				"4.8333": {
 					"effect": "tacz:pkm/pkm_reload_ammoboxhit"
 				},
-				"5.7": {
+				"5.3667": {
+					"effect": "tacz:pkm/pkm_reload_ammoboxin"
+				},
+				"5.4667": {
 					"effect": "tacz:pkm/pkm_reload_grab"
 				},
 				"6.5667": {

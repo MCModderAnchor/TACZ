@@ -5,5 +5,6 @@
   "sounds": {
     "install": "tacz:attachments/attachment_general_a",
     "uninstall": "tacz:attachments/attachment_general_uninstall"
-  }
+  },
+  "muzzle_flash_offset": 2
 }
