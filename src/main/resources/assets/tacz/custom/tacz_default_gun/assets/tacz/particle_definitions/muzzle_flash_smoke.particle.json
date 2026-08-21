@@ -4,6 +4,7 @@
     "description": {
       "identifier": "tacz:muzzle_flash_smoke",
       "basic_render_parameters": {
+        "material": "particles_add",
         "texture": "tacz:particle/smoke_strip"
       }
     },
