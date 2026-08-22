@@ -139,7 +139,7 @@ repositories {
         }
     }
     maven { url "https://maven.shedaniel.me/" } // cloth config api
-    maven { url "https://dvs1.progwml6.com/files/maven/" }
+//    maven { url "https://dvs1.progwml6.com/files/maven/" }
     maven { url "https://modmaven.dev" }
 //    maven {
 //        name = 'tterrag maven'
