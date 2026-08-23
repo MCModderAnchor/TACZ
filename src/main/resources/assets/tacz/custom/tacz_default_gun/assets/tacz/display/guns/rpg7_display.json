@@ -4,6 +4,7 @@
   "hud": "tacz:gun/hud/rpg7",
   "slot": "tacz:gun/slot/rpg7",
   "animation": "tacz:rpg7",
+  "state_machine": "tacz:default_state_machine",
   "use_default_animation": "rifle",
   "lod": {
     "model": "tacz:gun/lod/rpg7",
