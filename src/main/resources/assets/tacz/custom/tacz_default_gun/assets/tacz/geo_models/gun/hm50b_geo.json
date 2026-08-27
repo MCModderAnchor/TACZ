@@ -10814,7 +10814,7 @@
 					]
 				},
 				{
-					"name": "fore_sight_illumianted",
+					"name": "fore_illuminated2",
 					"parent": "fore2",
 					"pivot": [0, 15.09983, -1.93828],
 					"cubes": [
@@ -10998,7 +10998,7 @@
 					]
 				},
 				{
-					"name": "sight_f_illuminated",
+					"name": "rear_illuminated",
 					"parent": "octagon3",
 					"pivot": [0.1875, 15.09983, 18.62422],
 					"cubes": [
@@ -11188,7 +11188,7 @@
 					]
 				},
 				{
-					"name": "fore_sight_f_illuminated",
+					"name": "fore_illuminated",
 					"parent": "fore",
 					"pivot": [0.00001, 14.44436, -3.18221],
 					"cubes": [

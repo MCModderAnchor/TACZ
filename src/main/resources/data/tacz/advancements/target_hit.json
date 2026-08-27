@@ -1,0 +1,27 @@
+{
+  "parent": "tacz:target",
+  "display": {
+    "icon": {
+      "item": "tacz:target"
+    },
+    "title": {
+      "translate": "advancement.tacz.target_hit.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.target_hit.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "hit_target": {
+      "trigger": "tacz:target_hit",
+      "conditions": {
+        "distance": {
+          "min": 128
+        }
+      }
+    }
+  }
+}

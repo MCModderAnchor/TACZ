@@ -405,5 +405,7 @@
   "advancement.tacz.target.title": "Target",
   "advancement.tacz.target.description": "Obtain a target",
   "advancement.tacz.target_minecart.title": "Target Minecart",
-  "advancement.tacz.target_minecart.description": "Obtain a target minecart"
+  "advancement.tacz.target_minecart.description": "Obtain a target minecart",
+  "advancement.tacz.target_hit.title": "Target Hit",
+  "advancement.tacz.target_hit.description": "Hit a target from 128 meters away"
 }

@@ -1,5 +1,6 @@
 package com.tacz.guns.init;
 
+import com.tacz.guns.advancement.TargetHitTrigger;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.resource.GunPackLoader;
@@ -18,6 +19,7 @@ public final class CommonRegistry {
     public static void onSetupEvent(FMLCommonSetupEvent event) {
         event.enqueueWork(NetworkHandler::init);
         event.enqueueWork(ModSyncedEntityData::init);
+        event.enqueueWork(TargetHitTrigger::register);
     }
 
     @SubscribeEvent

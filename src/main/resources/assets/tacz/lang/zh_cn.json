@@ -407,5 +407,7 @@
   "advancement.tacz.target.title": "人形标靶",
   "advancement.tacz.target.description": "获得人形标靶",
   "advancement.tacz.target_minecart.title": "标靶车",
-  "advancement.tacz.target_minecart.description": "获得标靶车"
+  "advancement.tacz.target_minecart.description": "获得标靶车",
+  "advancement.tacz.target_hit.title": "命中标靶",
+  "advancement.tacz.target_hit.description": "用枪械击中128米外的标靶"
 }
