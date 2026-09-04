@@ -1,5 +1,4 @@
 local default = require("tacz_default_state_machine")
-local GUN_KICK_TRACK_LINE = GUN_KICK_TRACK_LINE
 
 local gun_kick_state = setmetatable({
     acceleration_count = 0
@@ -7,8 +6,6 @@ local gun_kick_state = setmetatable({
 
 function gun_kick_state.transition(this, context, input)
     if (input == INPUT_SHOOT) then
-        local track = context:findIdleTrack(GUN_KICK_TRACK_LINE, false)
-        context:runAnimation("shoot", track, true, PLAY_ONCE_STOP, 0)
         -- 定义最大连射加速数量、每发加速的比例
         local acceleration_max = 7
         local acceleration_ratio = 0.08
@@ -33,7 +30,7 @@ function gun_kick_state.transition(this, context, input)
             -- 没有加速，不需要调整射击间隔
         end
     end
-    return nil
+    return default.gun_kick_state.transition(this, context, input)
 end
 
 local M = setmetatable({
