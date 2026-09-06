@@ -330,6 +330,7 @@
   "tacz.slot_adapter.riser_pistol_low.name": "手枪低增高座",
   "tacz.slot_adapter.riser_pistol_high.name": "手枪高增高座",
   "tacz.slot_adapter.riser_rail_mid.name": "导轨中增高座",
+  "tacz.slot_adapter.riser_rail_mid_high.name": "导轨高增高座",
 
   "tacz.block.gun_smith_table.name": "TaCZ枪械工作台",
   "tacz.block.ammo_workbench.name": "TaCZ弹药装配台",

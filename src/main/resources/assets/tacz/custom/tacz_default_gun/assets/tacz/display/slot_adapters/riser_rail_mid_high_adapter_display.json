@@ -1,0 +1,9 @@
+{
+  "model": "tacz:attachment/riser_rail_mid_high_geo",
+  "texture": "tacz:attachment/uv/riser_rail_mid_high",
+  "mount_offset": [
+    0,
+    1.825,
+    0
+  ]
+}

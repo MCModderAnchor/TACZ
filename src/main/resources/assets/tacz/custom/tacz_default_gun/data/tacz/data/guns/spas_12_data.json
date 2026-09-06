@@ -151,5 +151,13 @@
   "fire_sound": {
     "fire_multiplier": 1,
     "silence_multiplier": 1
+  },
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:stock_heavy_spas_12",
+        "tacz:stock_tactical_spas_12"
+      ]
+    }
   }
 }

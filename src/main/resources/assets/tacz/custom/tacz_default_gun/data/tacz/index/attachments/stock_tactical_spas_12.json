@@ -3,5 +3,6 @@
   "display": "tacz:stock_tactical_spas_12_display",
   "data": "tacz:stock_tactical_spas_12_data",
   "type": "stock",
+  "hidden": true,
   "sort": 12
 }
