@@ -19,12 +19,12 @@ import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
+import com.tacz.guns.client.resource.pojo.display.SoundData;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoParticle;
 import com.tacz.guns.client.resource.pojo.display.ammo.HitSurfaceParticle;
 import com.tacz.guns.client.resource.pojo.display.gun.*;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
-import com.tacz.guns.client.sound.GunSoundPreload;
 import com.tacz.guns.config.client.ResourceConfig;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.ColorHex;
@@ -41,7 +41,10 @@ import org.jetbrains.annotations.Nullable;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.BiFunction;
@@ -79,8 +82,7 @@ public class GunDisplayInstance {
 
     private @Nullable ResourceLocation playerAnimator3rd = new ResourceLocation(GunMod.MOD_ID, "rifle_default.player_animation");
     private boolean is3rdFixedHand = false;
-    private Map<String, ResourceLocation> sounds = Maps.newHashMap();
-    private List<ResourceLocation> preloadSounds = Lists.newArrayList();
+    private Map<String, SoundData> sounds = Maps.newHashMap();
     private GunTransform transform = GunTransform.getDefault();
 
     private ResourceLocation modelTexture;
@@ -543,43 +545,20 @@ public class GunDisplayInstance {
 
     private void checkSounds(GunDisplay display) {
         sounds = Maps.newHashMap();
-        preloadSounds = Lists.newArrayList();
-        Map<String, ResourceLocation> soundMaps = display.getSounds();
+        Map<String, SoundData> soundMaps = display.getSounds();
         if (soundMaps == null || soundMaps.isEmpty()) {
             return;
         }
         // 部分音效为默认音效，不存在则需要添加默认音效
-        soundMaps.putIfAbsent(SoundManager.DRY_FIRE_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.DRY_FIRE_SOUND));
-        soundMaps.putIfAbsent(SoundManager.FIRE_SELECT, new ResourceLocation(GunMod.MOD_ID, SoundManager.FIRE_SELECT));
-        soundMaps.putIfAbsent(SoundManager.HEAD_HIT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.HEAD_HIT_SOUND));
-        soundMaps.putIfAbsent(SoundManager.FLESH_HIT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.FLESH_HIT_SOUND));
-        soundMaps.putIfAbsent(SoundManager.KILL_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.KILL_SOUND));
-        soundMaps.putIfAbsent(SoundManager.MELEE_BAYONET, new ResourceLocation(GunMod.MOD_ID, "melee_bayonet/melee_bayonet_01"));
-        soundMaps.putIfAbsent(SoundManager.MELEE_STOCK, new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_01"));
-        soundMaps.putIfAbsent(SoundManager.MELEE_PUSH, new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_02"));
+        soundMaps.putIfAbsent(SoundManager.DRY_FIRE_SOUND, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.DRY_FIRE_SOUND)));
+        soundMaps.putIfAbsent(SoundManager.FIRE_SELECT, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.FIRE_SELECT)));
+        soundMaps.putIfAbsent(SoundManager.HEAD_HIT_SOUND, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.HEAD_HIT_SOUND)));
+        soundMaps.putIfAbsent(SoundManager.FLESH_HIT_SOUND, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.FLESH_HIT_SOUND)));
+        soundMaps.putIfAbsent(SoundManager.KILL_SOUND, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.KILL_SOUND)));
+        soundMaps.putIfAbsent(SoundManager.MELEE_BAYONET, SoundData.of(new ResourceLocation(GunMod.MOD_ID, "melee_bayonet/melee_bayonet_01")));
+        soundMaps.putIfAbsent(SoundManager.MELEE_STOCK, SoundData.of(new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_01")));
+        soundMaps.putIfAbsent(SoundManager.MELEE_PUSH, SoundData.of(new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_02")));
         sounds.putAll(soundMaps);
-
-        Set<ResourceLocation> preloadSet = new LinkedHashSet<>();
-        for (String name : GunSoundPreload.DEFAULT_PRELOAD_NAMES) {
-            addPreloadSound(preloadSet, name);
-        }
-        List<String> configuredPreloadSounds = display.getPreloadSounds();
-        if (configuredPreloadSounds != null) {
-            for (String name : configuredPreloadSounds) {
-                addPreloadSound(preloadSet, name);
-            }
-        }
-        preloadSounds.addAll(preloadSet);
-    }
-
-    private void addPreloadSound(Set<ResourceLocation> preloadSet, String name) {
-        if (StringUtils.isBlank(name)) {
-            return;
-        }
-        ResourceLocation soundId = sounds.get(name);
-        if (soundId != null) {
-            preloadSet.add(soundId);
-        }
     }
 
     private void checkTransform(GunDisplay display) {
@@ -699,12 +678,8 @@ public class GunDisplayInstance {
     }
 
     @Nullable
-    public ResourceLocation getSounds(String name) {
+    public SoundData getSounds(String name) {
         return sounds.get(name);
-    }
-
-    public List<ResourceLocation> getPreloadSounds() {
-        return preloadSounds;
     }
 
     public GunTransform getTransform() {

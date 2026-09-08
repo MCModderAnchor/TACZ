@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
+import com.tacz.guns.client.resource.pojo.display.SoundData;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,7 +72,7 @@ public class GunDisplay implements IDisplay {
     private boolean playerAnimator3rdFixedHand = false;
     @Nullable
     @SerializedName("sounds")
-    private Map<String, ResourceLocation> sounds;
+    private Map<String, SoundData> sounds;
     @Nullable
     @SerializedName("preload_sounds")
     private List<String> preloadSounds;
@@ -175,7 +176,7 @@ public class GunDisplay implements IDisplay {
     }
 
     @Nullable
-    public Map<String, ResourceLocation> getSounds() {
+    public Map<String, SoundData> getSounds() {
         return sounds;
     }
 

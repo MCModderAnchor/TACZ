@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
+import com.tacz.guns.client.resource.pojo.display.SoundData;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;
@@ -73,7 +74,7 @@ public class AttachmentDisplay implements IDisplay {
     private float idleScopeHeightAdjust = 0;
 
     @SerializedName("sounds")
-    private Map<String, ResourceLocation> sounds = Maps.newHashMap();
+    private Map<String, SoundData> sounds = Maps.newHashMap();
 
     @SerializedName("mode")
     private String variantMode = "replace";
@@ -151,7 +152,7 @@ public class AttachmentDisplay implements IDisplay {
         return idleScopeHeightAdjust;
     }
 
-    public Map<String, ResourceLocation> getSounds() {
+    public Map<String, SoundData> getSounds() {
         return sounds;
     }
 

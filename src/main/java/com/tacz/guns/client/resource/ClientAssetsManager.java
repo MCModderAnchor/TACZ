@@ -16,6 +16,7 @@ import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.ParticleEffectKeyframes;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.SoundEffectKeyframes;
+import com.tacz.guns.client.resource.pojo.display.SoundData;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tacz.guns.client.resource.pojo.display.block.BlockDisplay;
@@ -63,6 +64,7 @@ public enum ClientAssetsManager {
             .registerTypeAdapter(ParticleEffectKeyframes.class, new ParticleEffectKeyframesSerializer())
             .registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
             .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
+            .registerTypeAdapter(SoundData.class, new SoundData.Deserializer())
             .create();
 
     // 枪械展示数据

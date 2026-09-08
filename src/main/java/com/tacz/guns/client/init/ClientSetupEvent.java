@@ -2,29 +2,18 @@ package com.tacz.guns.client.init;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
-import com.tacz.guns.client.gui.overlay.GunHudOverlay;
-import com.tacz.guns.client.gui.overlay.HeatBarOverlay;
-import com.tacz.guns.client.gui.overlay.InteractKeyTextOverlay;
-import com.tacz.guns.client.gui.overlay.KillAmountOverlay;
-import com.tacz.guns.client.gui.overlay.DisplayCaseLockHintOverlay;
+import com.tacz.guns.client.gui.overlay.*;
 import com.tacz.guns.client.input.*;
 import com.tacz.guns.client.resource.ClientAssetsManager;
-import com.tacz.guns.client.tooltip.ClientAmmoBoxTooltip;
-import com.tacz.guns.client.tooltip.ClientAmmoStorageTooltip;
-import com.tacz.guns.client.tooltip.ClientAttachmentItemTooltip;
-import com.tacz.guns.client.tooltip.ClientBlockItemTooltip;
-import com.tacz.guns.client.tooltip.ClientGunTooltip;
+import com.tacz.guns.client.sound.SoundPlayManager;
+import com.tacz.guns.client.tooltip.*;
 import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.compat.controllable.ControllableCompat;
 import com.tacz.guns.compat.playeranimator.PlayerAnimatorCompat;
 import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
 import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.init.ModItems;
-import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
-import com.tacz.guns.inventory.tooltip.AmmoStorageTooltip;
-import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
-import com.tacz.guns.inventory.tooltip.BlockItemTooltip;
-import com.tacz.guns.inventory.tooltip.GunTooltip;
+import com.tacz.guns.inventory.tooltip.*;
 import com.tacz.guns.item.AmmoBoxItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -113,6 +102,8 @@ public class ClientSetupEvent {
     @SubscribeEvent
     public static void onClientResourceReload(RegisterClientReloadListenersEvent event) {
         PlayerAnimatorCompat.init();
+        event.registerReloadListener((barrier, resourceManager, preparationProfiler, reloadProfiler, backgroundExecutor, gameExecutor) ->
+                barrier.wait(Void.TYPE).thenRunAsync(SoundPlayManager::clearSoundResourceCache, gameExecutor));
         ClientAssetsManager.INSTANCE.reloadAndRegister(event::registerReloadListener);
         if (PlayerAnimatorCompat.isInstalled()) {
             PlayerAnimatorCompat.registerReloadListener(event::registerReloadListener);

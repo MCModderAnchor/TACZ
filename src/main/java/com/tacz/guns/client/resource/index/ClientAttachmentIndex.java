@@ -7,6 +7,7 @@ import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.resource.ClientAssetLoadDispatcher;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
+import com.tacz.guns.client.resource.pojo.display.SoundData;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentLod;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
@@ -52,7 +53,7 @@ public class ClientAttachmentIndex {
     private boolean hasImpactPrediction;
     private @Nullable String adapterNodeName;
     private @Nullable String tooltipKey;
-    private Map<String, ResourceLocation> sounds;
+    private Map<String, SoundData> sounds;
     private @Nullable LaserConfig laserConfig;
     private volatile boolean modelsLoaded = false;
     private volatile boolean modelsLoadFailed = false;
@@ -298,7 +299,7 @@ public class ClientAttachmentIndex {
 
 
     private static void checkSounds(AttachmentDisplay display, ClientAttachmentIndex index) {
-        Map<String, ResourceLocation> displaySounds = display.getSounds();
+        Map<String, SoundData> displaySounds = display.getSounds();
         if (displaySounds == null) {
             index.sounds = Maps.newHashMap();
             return;
@@ -396,7 +397,7 @@ public class ClientAttachmentIndex {
         return hasImpactPrediction;
     }
 
-    public Map<String, ResourceLocation> getSounds() {
+    public Map<String, SoundData> getSounds() {
         return sounds;
     }
 

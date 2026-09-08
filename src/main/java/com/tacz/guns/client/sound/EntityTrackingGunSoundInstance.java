@@ -14,8 +14,9 @@ public class EntityTrackingGunSoundInstance extends GunSoundInstance implements 
     private final WeakReference<Entity> entityRef;
     private boolean stopped;
 
-    public EntityTrackingGunSoundInstance(SoundEvent soundEvent, SoundSource source, float volume, float pitch, Entity entity, int soundDistance, @Nullable ResourceLocation registryName, boolean mono) {
-        super(soundEvent, source, volume, pitch, entity, soundDistance, registryName, mono, false);
+    public EntityTrackingGunSoundInstance(SoundEvent soundEvent, SoundSource source, float volume, float pitch, Entity entity, int soundDistance,
+                                          @Nullable ResourceLocation registryName, boolean mono, boolean useTaczSound) {
+        super(soundEvent, source, volume, pitch, entity, soundDistance, registryName, mono, false, useTaczSound);
         this.entityRef = new WeakReference<>(entity);
     }
 
