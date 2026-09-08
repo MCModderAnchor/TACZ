@@ -1,0 +1,10 @@
+{
+  "slot": "tacz:attachment/slot/muzzle_silencer_socom_rc1",
+  "model": "tacz:attachment/muzzle_silencer_socom_rc1_geo",
+  "texture": "tacz:attachment/uv/muzzle_silencer_socom_rc1",
+  "sounds": {
+    "install": "tacz:attachments/muzzle_general",
+    "uninstall": "tacz:attachments/muzzle_general"
+  },
+  "muzzle_flash_offset": 7.4
+}

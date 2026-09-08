@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.muzzle_silencer_socom_rc1.name",
+  "display": "tacz:muzzle_silencer_socom_rc1_display",
+  "data": "tacz:muzzle_silencer_socom_rc1_data",
+  "type": "muzzle",
+  "sort": 2
+}

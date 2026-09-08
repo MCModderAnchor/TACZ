@@ -284,6 +284,7 @@
   "tacz.attachment.muzzle_silencer_ursus.name": "Ursus Military Standard Silencer",
   "tacz.attachment.muzzle_silencer_ptilopsis.name": "PO-2 \"Ptilopsis\" Silencer",
   "tacz.attachment.muzzle_silencer_knight_qd.name": "Knight QD Silencer",
+  "tacz.attachment.muzzle_silencer_socom_rc1.name": "SOCOM RC1 Suppressor",
   "tacz.attachment.muzzle_silencer_vulture.name" : "Vulture .50 Cal Suppressor",
   "tacz.attachment.muzzle_brake_pioneer.name": "Pioneer A3 Brake",
   "tacz.attachment.muzzle_brake_cthulhu.name": "Cthulhu K7 Brake",
@@ -328,6 +329,8 @@
   "tacz.slot_adapter.riser_pistol_low.name": "Pistol Low Riser",
   "tacz.slot_adapter.riser_pistol_high.name": "Pistol High Riser",
   "tacz.slot_adapter.riser_rail_mid.name": "Rail Mid Riser",
+  "tacz.slot_adapter.riser_rail_high.name": "Rail High Riser",
+  "tacz.slot_adapter.riser_rail_unity.name": "Unity Riser",
 
   "tacz.block.gun_smith_table.name": "TaCZ Gun Smith Table",
   "tacz.block.ammo_workbench.name": "TaCZ Ammo Assembly Table",

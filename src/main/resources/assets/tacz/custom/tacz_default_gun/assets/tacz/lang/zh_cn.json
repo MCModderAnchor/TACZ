@@ -297,6 +297,7 @@
   "tacz.attachment.muzzle_brake_mastiff_sg.name": "獒犬 制退器",
   "tacz.attachment.muzzle_silencer_sg.name": "12号口径消音器",
   "tacz.attachment.muzzle_silencer_wraith.name": "§6幽灵 手枪消音器",
+  "tacz.attachment.muzzle_silencer_socom_rc1.name": "圣焰 RC1 特种作战快拆消音器",
 
   "tacz.attachment.bayonet_6h3.name": "6H3 刺刀",
   "tacz.attachment.bayonet_m9.name": "M9 刺刀",
@@ -330,7 +331,8 @@
   "tacz.slot_adapter.riser_pistol_low.name": "手枪低增高座",
   "tacz.slot_adapter.riser_pistol_high.name": "手枪高增高座",
   "tacz.slot_adapter.riser_rail_mid.name": "导轨中增高座",
-  "tacz.slot_adapter.riser_rail_mid_high.name": "导轨高增高座",
+  "tacz.slot_adapter.riser_rail_high.name": "导轨高增高座",
+  "tacz.slot_adapter.riser_rail_unity.name": "Unity 增高座",
 
   "tacz.block.gun_smith_table.name": "TaCZ枪械工作台",
   "tacz.block.ammo_workbench.name": "TaCZ弹药装配台",
