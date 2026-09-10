@@ -84,6 +84,8 @@ public final class MuzzleParticleManager {
         if (effect.silenced() && !effect.hasFlashHider()) {
             flashScale = 0.0f;
         }
+        // 枪烟尺寸与枪焰 scale 完全解耦：未配置时返回 0，由粒子定义使用内置默认大小。
+        float smokeSize = muzzleFlash.getSmokeScale() * effect.smokeScale();
         return new MuzzleShot(muzzleFlash.getFirstPersonFlashId(),
                 flashScale,
                 muzzleFlash.getFirstPersonSmokeId(),
@@ -92,7 +94,8 @@ public final class MuzzleParticleManager {
                 muzzleFlash.getThirdPersonFlashId(),
                 muzzleFlash.getThirdPersonSmokeId(),
                 muzzleFlash.getInitialSpeedScale(),
-                muzzleFlash.getSmokeParticleCount());
+                muzzleFlash.getSmokeParticleCount(),
+                smokeSize);
     }
 
     /**
@@ -115,7 +118,7 @@ public final class MuzzleParticleManager {
             return;
         }
         PENDING.computeIfAbsent(InteractionHand.MAIN_HAND, h -> new ArrayList<>()).add(new PendingShoot(
-                shot.flashId(), shot.flashScale(), shot.smokeId(), shot.smokeScale(), shot.offsetBb(), shot.speedScale(), shot.smokeParticleCount()));
+                shot.flashId(), shot.flashScale(), shot.smokeId(), shot.smokeScale(), shot.offsetBb(), shot.speedScale(), shot.smokeParticleCount(), shot.smokeSize()));
     }
 
     /**
@@ -167,10 +170,13 @@ public final class MuzzleParticleManager {
             for (PendingShoot req : pending) {
                 // id 为 null 表示 display 显式配置为不生成该层；scale <= 0 表示隐藏该层（如 flash_hider: 0）
                 if (req.flashId() != null && req.flashScale() > 0) {
-                    createEmitter(system, hand, bound, newEmitters, req.flashId(), req.flashScale(), "muzzle_flash", req.offsetBb(), req.speedScale(), req.smokeParticleCount());
+                    createFlashEmitter(system, hand, bound, newEmitters, req.flashId(),
+                            req.flashScale(), "muzzle_flash", req.offsetBb(), req.speedScale());
                 }
                 if (RenderConfig.RENDER_MUZZLE_SMOKE.get() && req.smokeId() != null && req.smokeScale() > 0) {
-                    createEmitter(system, hand, bound, newEmitters, req.smokeId(), req.smokeScale(), "muzzle_flash", req.offsetBb(), req.speedScale(), req.smokeParticleCount());
+                    createSmokeEmitter(system, hand, bound, newEmitters, req.smokeId(),
+                            req.smokeScale(), "muzzle_flash", req.offsetBb(), req.speedScale(),
+                            req.smokeSize(), req.smokeParticleCount());
                 }
             }
         }
@@ -178,7 +184,8 @@ public final class MuzzleParticleManager {
         if (animationParticles != null) {
             for (ParticleEffectData data : animationParticles) {
                 String locator = data.locator() == null || data.locator().isEmpty() ? "muzzle_flash" : data.locator();
-                createEmitter(system, hand, bound, newEmitters, data.effect(), 1.0f, locator, 0.0f, 1.0f, 0f);
+                createFlashEmitter(system, hand, bound, newEmitters, data.effect(),
+                        1.0f, locator, 0.0f, 1.0f);
             }
         }
 
@@ -228,22 +235,56 @@ public final class MuzzleParticleManager {
 
     // ==================== 内部实现 ====================
 
-    private static void createEmitter(FirstPersonParticleSystem system, InteractionHand hand, List<BoundEmitter> bound,
-                                      List<ParticleEmitterInstance> newEmitters, ResourceLocation definitionId,
-                                      float scale, String locator, float offsetBb, float speedScale,
-                                      float smokeParticleCount) {
+    /**
+     * 创建枪焰发射器。只写入 {@code muzzle_*} 命名空间的变量。
+     * <p>
+     * 与枪烟发射器使用互不重叠的变量名：第一人称下所有发射器共用同一个
+     * SBM {@code ParticleMolangEnvironment}，变量覆盖按名字索引，同名变量后者会覆盖前者。
+     * 历史上枪焰与枪烟都写 {@code muzzle_scale} / {@code muzzle_speed}，导致枪烟粒子
+     * 读到的是枪焰最后写入的值（枪焰的 smokeSize 恒为 0），枪烟尺寸被刷成 0 而不可见。
+     * 拆分命名空间后两者互不干扰。
+     */
+    private static void createFlashEmitter(FirstPersonParticleSystem system, InteractionHand hand,
+                                           List<BoundEmitter> bound, List<ParticleEmitterInstance> newEmitters,
+                                           ResourceLocation definitionId, float scale, String locator,
+                                           float offsetBb, float speedScale) {
         ParticleEffectDefinition definition = ParticleDefinitionLoader.getInstance().getDefinition(definitionId);
         if (definition == null) {
             GunMod.LOGGER.warn("Muzzle particle definition {} not found, skipped", definitionId);
             return;
         }
         ParticleEmitterInstance emitter = system.addEmitter(definition, hand);
-        // 通过每实例 molang 变量把尺寸/强度参数传给定义（v.muzzle_scale）
+        // 枪焰尺寸 → v.muzzle_scale
         emitter.setVariable("muzzle_scale", scale);
-        // 初速度倍率经 v.muzzle_speed 传给定义（如 smoke 定义的 particle_initial_speed）
+        // 枪焰初速度倍率 → v.muzzle_speed
         emitter.setVariable("muzzle_speed", speedScale);
-        // 烟雾粒子数量经 v.muzzle_particle_count 传给定义（0 表示使用定义内置默认值）
-        emitter.setVariable("muzzle_particle_count", smokeParticleCount);
+        bound.add(new BoundEmitter(emitter, locator, offsetBb));
+        newEmitters.add(emitter);
+    }
+
+    /**
+     * 创建枪烟发射器。只写入 {@code smoke_*} 命名空间的变量，与枪焰完全隔离。
+     *
+     * @param smokeSize         枪烟尺寸倍率（0 表示使用粒子定义内置默认大小）
+     * @param smokeParticleCount 枪烟粒子数量（0 表示使用粒子定义内置默认值）
+     */
+    private static void createSmokeEmitter(FirstPersonParticleSystem system, InteractionHand hand,
+                                           List<BoundEmitter> bound, List<ParticleEmitterInstance> newEmitters,
+                                           ResourceLocation definitionId, float scale, String locator,
+                                           float offsetBb, float speedScale, float smokeSize,
+                                           float smokeParticleCount) {
+        ParticleEffectDefinition definition = ParticleDefinitionLoader.getInstance().getDefinition(definitionId);
+        if (definition == null) {
+            GunMod.LOGGER.warn("Muzzle particle definition {} not found, skipped", definitionId);
+            return;
+        }
+        ParticleEmitterInstance emitter = system.addEmitter(definition, hand);
+        // 枪烟尺寸倍率 → v.smoke_size
+        emitter.setVariable("smoke_size", smokeSize);
+        // 枪烟初速度倍率 → v.smoke_vel
+        emitter.setVariable("smoke_vel", speedScale);
+        // 枪烟粒子数量 → v.smoke_count
+        emitter.setVariable("smoke_count", smokeParticleCount);
         bound.add(new BoundEmitter(emitter, locator, offsetBb));
         newEmitters.add(emitter);
     }
@@ -298,12 +339,12 @@ public final class MuzzleParticleManager {
                              @Nullable ResourceLocation smokeId, float smokeScale, float offsetBb,
                              @Nullable ResourceLocation thirdPersonFlashId,
                              @Nullable ResourceLocation thirdPersonSmokeId,
-                             float speedScale, float smokeParticleCount) {
+                             float speedScale, float smokeParticleCount, float smokeSize) {
     }
 
     private record PendingShoot(@Nullable ResourceLocation flashId, float flashScale,
                                 @Nullable ResourceLocation smokeId, float smokeScale, float offsetBb,
-                                float speedScale, float smokeParticleCount) {
+                                float speedScale, float smokeParticleCount, float smokeSize) {
     }
 
     private record BoundEmitter(ParticleEmitterInstance emitter, String locator, float offsetBb) {

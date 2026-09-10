@@ -63,17 +63,25 @@ public class MuzzleFlash {
     private ResourceLocation thirdPersonSmoke = DEFAULT_THIRD_PERSON_SMOKE;
 
     /**
-     * 粒子初速度倍率，以 molang 变量 {@code v.muzzle_speed} 传入粒子定义，缺省 1.0。
+     * 粒子初速度倍率，以 molang 变量 {@code v.muzzle_speed}（枪焰）/ {@code v.smoke_vel}（枪烟）
+     * 传入粒子定义，缺省 1.0。
      */
     @SerializedName("initial_speed_scale")
     private float initialSpeedScale = 1.0f;
 
     /**
-     * 烟雾粒子数量，以 molang 变量 {@code v.muzzle_particle_count} 传入粒子定义。
-     * 缺省 0 表示使用粒子定义内置默认值（15）。
+     * 烟雾粒子数量，以 molang 变量 {@code v.muzzle_particle_count}（枪焰）/
+     * {@code v.smoke_count}（枪烟）传入粒子定义。缺省 0 表示使用粒子定义内置默认值（15）。
      */
     @SerializedName("smoke_particle_count")
     private float smokeParticleCount = 0f;
+
+    /**
+     * 枪烟尺寸倍率，以 molang 变量 {@code v.smoke_size} 传入枪烟粒子定义，与 {@link #scale} 完全解耦。
+     * 缺省 0 表示使用粒子定义内置默认大小（等价于 1.0），不跟随枪焰的 {@code scale}。
+     */
+    @SerializedName("smoke_scale")
+    private float smokeScale = 0f;
 
     public Type getType() {
         return type == null ? Type.DEFAULT : type;
@@ -132,5 +140,12 @@ public class MuzzleFlash {
      */
     public float getSmokeParticleCount() {
         return Float.isFinite(smokeParticleCount) ? smokeParticleCount : 0f;
+    }
+
+    /**
+     * @return 枪烟尺寸倍率；0 表示使用粒子定义内置默认大小
+     */
+    public float getSmokeScale() {
+        return Float.isFinite(smokeScale) && smokeScale > 0f ? smokeScale : 0f;
     }
 }

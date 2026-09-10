@@ -25,8 +25,9 @@
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 1,
-    "initial_speed_scale": 1.5,
-    "smoke_particle_count": 25
+    "smoke_scale": 2,
+    "initial_speed_scale": 2.45,
+    "smoke_particle_count": 30
   },
   // 机瞄的放大倍数，默认 1.2
   "iron_zoom": 1.5,

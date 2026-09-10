@@ -21,7 +21,9 @@
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 1,
-    "initial_speed_scale": 1
+    "smoke_scale": 1.65,
+    "initial_speed_scale": 1.7,
+    "smoke_particle_count": 20
   },
   "ammo":{
     "particle": {

@@ -27,7 +27,9 @@
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 0.65,
-    "initial_speed_scale": 0.65
+    "smoke_scale": 1.15,
+    "initial_speed_scale": 1.15,
+    "smoke_particle_count": 18
   },
   "shell": {
     "initial_velocity": [-1.5, 4.5, 1.5],

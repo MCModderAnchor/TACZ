@@ -23,7 +23,8 @@
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 0.7,
-    "initial_speed_scale": 0.7
+    "smoke_scale": 1,
+    "initial_speed_scale": 1
   },
   "iron_zoom": 1.33,
   "zoom_model_fov": 50,

@@ -31,7 +31,9 @@
   "muzzle_flash": {
     "type": "renew",
     "scale": 0.4,
-    "initial_speed_scale": 0.4
+    "smoke_scale": 1,
+    "initial_speed_scale": 1,
+    "smoke_particle_count": 18
   },
   "sounds": {
     "draw": "tacz:glock_17/glock17_draw",

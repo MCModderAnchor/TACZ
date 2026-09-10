@@ -32,7 +32,8 @@
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 1.2,
-    "initial_speed_scale": 1.2,
+    "initial_speed_scale": 1.7,
+    "smoke_scale": 2,
     "smoke_particle_count": 20
   },
   "iron_zoom": 1.5,

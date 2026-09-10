@@ -32,7 +32,9 @@
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 0.7,
-    "initial_speed_scale": 0.7
+    "smoke_scale": 1.25,
+    "initial_speed_scale": 1.25,
+    "smoke_particle_count": 20
   },
   "sounds": {
     "draw": "tacz:rhino357/rhino_draw",

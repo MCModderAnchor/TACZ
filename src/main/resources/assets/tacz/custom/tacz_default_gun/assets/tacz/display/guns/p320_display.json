@@ -31,7 +31,9 @@
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 0.5,
-    "initial_speed_scale": 0.5
+    "smoke_scale": 1.15,
+    "initial_speed_scale": 1.15,
+    "smoke_particle_count": 18
   },
   "sounds": {
     "draw": "tacz:p320/p320_draw",
