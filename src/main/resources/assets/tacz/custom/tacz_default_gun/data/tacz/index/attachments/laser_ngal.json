@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.laser_ngal",
+  "display": "tacz:laser_ngal_display",
+  "data": "tacz:laser_ngal_data",
+  "type": "laser",
+  "sort": 10
+}

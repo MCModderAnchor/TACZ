@@ -33,6 +33,7 @@
   "tacz.gun.ai_awp.name": "精密国际 AWM 狙击步枪",
   "tacz.gun.m95.name": "M95 .50口径反器材步枪",
   "tacz.gun.m4a1.name": "M4A1 卡宾枪",
+  "tacz.gun.urgi.name": "URGI 突击步枪",
   "tacz.gun.mk18.name": "MK18 特种作战步枪",
   "tacz.gun.m249.name": "M249 机枪",
   "tacz.gun.rpg7.name": "RPG-7 火箭筒",
@@ -109,6 +110,7 @@
   "tacz.gun.hk_g3.desc": "自由世界的左手",
   "tacz.gun.hk_mp5a5.desc": "就像抚摸一只打呼噜的猫咪",
   "tacz.gun.m4a1.desc": "士兵的爱人、妻子和情人",
+  "tacz.gun.urgi.desc": "请输入文本",
   "tacz.gun.mk18.desc": "没什么比这更资本主义了",
   "tacz.gun.m16a1.desc": "早上好，树林！",
   "tacz.gun.m16a4.desc": "官僚主义的谎言",
@@ -234,6 +236,7 @@
 
   "tacz.attachment.laser_compact": "§a米利泰克 小型激光指示器",
   "tacz.attachment.laser_lopro": "§5低姿战术激光指示器",
+  "tacz.attachment.laser_ngal": "§6NGAL 激光指示器",
   "tacz.attachment.laser_nightstick": "§a夜槌 便携式激光指示器",
   "tacz.attachment.laser_peq6": "§6PEQ6 集成激光瞄准模块",
 

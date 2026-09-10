@@ -33,6 +33,7 @@
   "tacz.gun.ai_awp.name": "Accuracy International AWM",
   "tacz.gun.m95.name": "M95 .50 Cal Antimaterial",
   "tacz.gun.m4a1.name": "M4A1 Carbine",
+  "tacz.gun.urgi.name": "URGI Assault Rifle",
   "tacz.gun.mk18.name": "MK18 MOD 1",
   "tacz.gun.m249.name": "M249 Machine Gun",
   "tacz.gun.rpg7.name": "RPG-7",
@@ -232,6 +233,7 @@
 
   "tacz.attachment.laser_compact": "§aMilitech Compact Laser",
   "tacz.attachment.laser_lopro":"§5Lopro Tactical Laser",
+  "tacz.attachment.laser_ngal":"NGAL Laser",
   "tacz.attachment.laser_nightstick":"§aNightstick Compact laser",
     "tacz.attachment.laser_peq6": "§6PEQ6 ILLM",
 
