@@ -261,9 +261,9 @@
   "tacz.attachment.stock_tactical_spas_12.name": "Franchi taktische Schulterstütze",
   "tacz.block.gun_smith_table.name": "TaCZ Waffen Schmiedetisch",
   "tacz.block.ammo_workbench.name": "TaCZ Munitionsherstellungstisch",
-  "tacz.block.attachment_workbench.name": "TaCZ Ausrüstungstisch",
+  "tacz.block.attachment_workbench.name": "TaCZ Anbauteiletisch",
   "tacz.block.gun_smith_table.desc": "Wo alles begann",
-  "tacz.block.ammo_workbench.desc": "Schwarzpulver-Glanz",
+  "tacz.block.ammo_workbench.desc": "Schwarzpulver-Glitzer",
   "tacz.block.attachment_workbench.desc": "Vergoldung der Lilie",
   "config.tacz.client.render.enable_tooltip_id": "Zeige Ids in Tooltip",
   "config.tacz.client.render.enable_tooltip_id.desc": "Zeige die Waffe/Munition/Aufsätze id im Item Tooltip, wenn der erweiterte Tooltip aktiviert ist."
