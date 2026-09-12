@@ -242,6 +242,8 @@
   "config.tacz.client.sound.default_sound_concurrency_limit.desc": "Максимальное количество активных звуков обычного оружия для одной сущности и звукового идентификатора. 0 отключает это ограничение.",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit": "Предел параллелизма высокочастотного звука",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit.desc": "Максимальное количество активных высокочастотных звуков оружия, таких как звуки выстрелов и анимации, для одной сущности и звукового идентификатора. 0 отключает это ограничение.",
+  "config.tacz.client.sound.first_person_animation_sound_tracking": "Звуковое сопровождение анимации от первого лица",
+  "config.tacz.client.sound.first_person_animation_sound_tracking.desc": "Использовать неотносительный отслеживающий сущности мировой источник звука для звуков ключевых кадров анимации от первого лица. Это может улучшить совместимость с модами, добавляющими физический звук, но может привести к небольшому смещению стереозвучания в движении.",
   "config.tacz.client.zoom": "Прицеливание",
   "config.tacz.client.zoom.screen_distance_coefficient": "Коэффициент расстояния экрана",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "Коэффициент расстояния экрана для прицеливания, используя стандарт MDV (по умолчанию MDV133)",

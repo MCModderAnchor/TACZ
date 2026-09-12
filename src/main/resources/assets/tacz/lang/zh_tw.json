@@ -242,6 +242,8 @@
   "config.tacz.client.sound.default_sound_concurrency_limit.desc": "針對同一實體和聲音標籤的常規槍械音效播放限制，設為0將停用此功能。",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit": "高頻率音效重疊限制",
   "config.tacz.client.sound.high_frequency_sound_concurrency_limit.desc": "針對同一實體和聲音標籤的高調用頻率槍械音效播放限制，如射擊和動畫關鍵幀音效。設為0將停用此功能。",
+  "config.tacz.client.sound.first_person_animation_sound_tracking": "First-person Animation Sound Tracking",
+  "config.tacz.client.sound.first_person_animation_sound_tracking.desc": "Use a non-relative entity-tracking world sound source for first-person animation keyframe sounds. This can improve compatibility with physical sound mods, but may introduce slight stereo drift while moving.",
   "config.tacz.client.zoom": "倍鏡焦距",
   "config.tacz.client.zoom.screen_distance_coefficient": "屏距係數",
   "config.tacz.client.zoom.screen_distance_coefficient.desc": "縮放的螢幕距離係數，採用MDV標準，預設為MDV133",
