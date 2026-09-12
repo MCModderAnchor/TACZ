@@ -207,7 +207,7 @@
   "tacz.attachment.ammo_mod_he.name": "§eMunicion Explosiva",
   "tacz.attachment.ammo_mod_hp.name": "§eMunicion De Punta Hueca",
   "tacz.attachment.ammo_mod_i.name": "§eMunicion Incendiaria",
-  "tacz.attachment.ammo_mod_slug.name": "§eShotgun Slug",
+  "tacz.attachment.ammo_mod_slug.name": "§eBalín de Escopeta",
   "tacz.attachment.ammo_mod_fmj.desc": "Puntas recubiertas de acero.\nAumenta la penetración de armadura pero reduce el daño final.",
   "tacz.attachment.ammo_mod_he.desc": "High explosive charged warheads. \nReduced direct hit and penetration capability, but high explosive power. \nChanges shotgun shots to shotgun slugs",
   "tacz.attachment.ammo_mod_hp.desc": "Puntas Huecas.\nAumenta la letalidad contra objetivos desarmados, pero reduce penetración de armadura.",
