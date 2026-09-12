@@ -12,6 +12,7 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.client.event.CameraSetupEvent;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.GunDisplayInstance;
@@ -220,8 +221,11 @@ public final class MuzzleParticleManager {
                 muzzleView.translate(0.0f, 0.0f, -be.offsetBb() / 16.0f);
             }
             // 尺寸/强度参数经每实例 molang 变量（v.muzzle_scale）传递，不在此缩放矩阵
+            Matrix4f worldMuzzleView = new Matrix4f()
+                    .scaling(1.0f, 1.0f, getFirstPersonToWorldDepthScale())
+                    .mul(muzzleView);
             emitter.setEmitterTransform(new Matrix4f(basePoseInv).mul(muzzleView),
-                    new Matrix4f(cameraRotationInv).mul(muzzleView));
+                    new Matrix4f(cameraRotationInv).mul(worldMuzzleView));
         }
 
         // 5. 新发射器立即 tick(0) 触发 instant 发射，本帧即可见。
@@ -236,6 +240,23 @@ public final class MuzzleParticleManager {
     // ==================== 内部实现 ====================
 
     /**
+     * 手部和世界使用不同投影 FOV 时，保持第一人称枪口在世界渲染中的屏幕位置。
+     * 该缩放必须在视图空间中、反相机旋转之前施加。
+     */
+    private static float getFirstPersonToWorldDepthScale() {
+        double handFov = CameraSetupEvent.ITEM_MODEL_FOV_DYNAMICS.get();
+        double worldFov = CameraSetupEvent.WORLD_FOV_DYNAMICS.get();
+        if (handFov <= 0.0 || worldFov <= 0.0) {
+            return 1.0f;
+        }
+        double worldTan = Math.tan(Math.toRadians(worldFov) / 2.0);
+        if (Math.abs(worldTan) < 1.0e-6) {
+            return 1.0f;
+        }
+        return (float) (Math.tan(Math.toRadians(handFov) / 2.0) / worldTan);
+    }
+
+        /**
      * 创建枪焰发射器。只写入 {@code muzzle_*} 命名空间的变量。
      * <p>
      * 与枪烟发射器使用互不重叠的变量名：第一人称下所有发射器共用同一个

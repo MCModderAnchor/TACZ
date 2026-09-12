@@ -146,8 +146,8 @@
     "melee_push": "tacz:melee_stock/melee_stock_01",
     "melee_stock": "tacz:melee_stock/melee_stock_02"
     // 替代写法
-//    "reload_empty": {
-//      "id": "tacz:ak47/ak47_reload_empty",                  // 音效 id，优先尝试 tacz_sounds 下的音源；不存在时回退到sounds.json里面注册的sound event
+//    "shoot": {
+//      "id": "minecraft:entity.cat.ambient",                 // 音效 id，优先尝试 tacz_sounds 下的音源；不存在时回退到sounds.json里面注册的sound event
 //      "volume": 0.8,                                        // 响度，未填写时使用对应情景默认值
 //      "pitch": 0.9,                                         // 音调，未填写时使用对应情景默认值
 //      "volume_random_range": 0.05,                          // 播放时响度在 ±0.05 内随机
