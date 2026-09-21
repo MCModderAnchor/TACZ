@@ -45,7 +45,7 @@
   },
   "sounds": {
     "shoot": "tacz:ak12/ak12_shoot",
-    "shoot_3p": "tacz:ak12/aak12_shoot_3p",
+    "shoot_3p": "tacz:ak12/ak12_shoot_3p",
     "draw": "tacz:ak12/ak12_draw",
     "put_away": "tacz:ak12/ak12_put_away",
     "silence": "tacz:ak12/ak12_silence",
