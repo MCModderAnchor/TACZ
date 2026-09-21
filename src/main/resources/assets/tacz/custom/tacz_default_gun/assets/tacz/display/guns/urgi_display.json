@@ -35,12 +35,12 @@
     "living_time": 1.0
   },
   "sounds": {
-    "shoot": "tacz:m4a1/m4a1_shoot",
-    "shoot_3p": "tacz:m4a1/m4a1_shoot_3p",
+    "shoot": "tacz:urgi/urgi_shoot",
+    "shoot_3p": "tacz:urgi/urgi_shoot_3p",
     "draw": "tacz:m4a1/m4a1_draw",
     "put_away": "tacz:m4a1/m4a1_put_away",
-    "silence": "tacz:m4a1/m4a1_silence",
-    "silence_3p": "tacz:m4a1/m4a1_silence_3p",
+    "silence": "tacz:urgi/urgi_silence",
+    "silence_3p": "tacz:urgi/urgi_silence_3p",
     "melee_push": "tacz:melee_stock/melee_stock_01",
     "melee_stock": "tacz:melee_stock/melee_stock_02"
   },

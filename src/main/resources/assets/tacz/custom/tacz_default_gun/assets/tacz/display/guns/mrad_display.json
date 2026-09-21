@@ -44,6 +44,8 @@
   "sounds": {
     "shoot": "tacz:mrad/mrad_shoot",
     "shoot_3p": "tacz:mrad/mrad_shoot_3p",
+    "draw": "tacz:mrad/mrad_draw",
+    "put_away": "tacz:mrad/mrad_put_away",
     "silence": "tacz:mrad/mrad_shoot_silence",
     "silence_3p": "tacz:mrad/mrad_shoot_silence_3p",
     "melee_push": "tacz:melee_stock/melee_stock_02",
