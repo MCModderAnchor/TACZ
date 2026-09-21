@@ -102,7 +102,8 @@
   },
   "allow_attachment_types": [
     "muzzle",
-    "extended_mag"
+    "extended_mag",
+    "scope"
   ],
   "exclusive_attachments": {
   }

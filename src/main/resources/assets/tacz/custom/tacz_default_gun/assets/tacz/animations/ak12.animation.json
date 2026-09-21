@@ -911,6 +911,29 @@
 				"bullet": {
 					"scale": 1
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:ak12/ak12_reload_raise"
+				},
+				"0.6833": {
+					"effect": "tacz:ak12/ak12_reload_empty_magdown"
+				},
+				"0.9833": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"1.0667": {
+					"effect": "tacz:mag_drop_sound/mag_drop_ar_poly_dirt"
+				},
+				"1.1167": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"1.7": {
+					"effect": "tacz:ak12/ak12_reload_empty_chamber_on"
+				},
+				"1.8333": {
+					"effect": "tacz:ak12/ak12_reload_end"
+				}
 			}
 		},
 		"reload_empty_xmag_1": {
@@ -1549,6 +1572,29 @@
 				"bullet": {
 					"scale": 1
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:ak12/ak12_reload_raise"
+				},
+				"0.6833": {
+					"effect": "tacz:ak12/ak12_reload_empty_magdown"
+				},
+				"0.9833": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"1.1333": {
+					"effect": "tacz:mag_drop_sound/mag_drop_ar_poly_dirt"
+				},
+				"1.2667": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"1.7667": {
+					"effect": "tacz:ak12/ak12_reload_empty_chamber_on"
+				},
+				"1.9667": {
+					"effect": "tacz:ak12/ak12_reload_end"
+				}
 			}
 		},
 		"reload_empty_xmag_2": {
@@ -2165,6 +2211,29 @@
 				},
 				"bullet": {
 					"scale": 1
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:ak12/ak12_reload_raise"
+				},
+				"0.6833": {
+					"effect": "tacz:ak12/ak12_reload_empty_magdown"
+				},
+				"1.1333": {
+					"effect": "tacz:mag_drop_sound/mag_drop_ar_poly_dirt"
+				},
+				"1.1667": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"1.3167": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"1.8667": {
+					"effect": "tacz:ak12/ak12_reload_empty_chamber_on"
+				},
+				"2.2667": {
+					"effect": "tacz:ak12/ak12_reload_end"
 				}
 			}
 		},
@@ -2785,6 +2854,29 @@
 				"bullet": {
 					"scale": 1
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:ak12/ak12_reload_raise"
+				},
+				"0.85": {
+					"effect": "tacz:ak12/ak12_reload_empty_magdown"
+				},
+				"1.2333": {
+					"effect": "tacz:mag_drop_sound/mag_drop_ar_poly_dirt"
+				},
+				"1.3": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"1.4333": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"2.0333": {
+					"effect": "tacz:ak12/ak12_reload_empty_chamber_on"
+				},
+				"2.5": {
+					"effect": "tacz:ak12/ak12_reload_end"
+				}
 			}
 		},
 		"reload_tactical": {
@@ -3209,6 +3301,23 @@
 						"1.7": [0.1, 0.1, 0.1]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:ak12/ak12_reload_raise"
+				},
+				"0.65": {
+					"effect": "tacz:ak12/ak12_reload_magout"
+				},
+				"0.9333": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"1.05": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"1.3833": {
+					"effect": "tacz:ak12/ak12_reload_end"
+				}
 			}
 		},
 		"reload_tactical_xmag_1": {
@@ -3632,6 +3741,23 @@
 						"1.5833": [0.1, 0.1, 0.1],
 						"1.9333": [0.1, 0.1, 0.1]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:ak12/ak12_reload_raise"
+				},
+				"0.75": {
+					"effect": "tacz:ak12/ak12_reload_magout"
+				},
+				"1.05": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"1.2": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"1.6333": {
+					"effect": "tacz:ak12/ak12_reload_end"
 				}
 			}
 		},
@@ -4216,6 +4342,23 @@
 						"2.3167": [0.1, 0.1, 0.1]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:ak12/ak12_reload_raise"
+				},
+				"0.9167": {
+					"effect": "tacz:ak12/ak12_reload_magout"
+				},
+				"1.4": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"1.5333": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"1.8833": {
+					"effect": "tacz:ak12/ak12_reload_end"
+				}
 			}
 		},
 		"reload_tactical_xmag_3": {
@@ -4793,6 +4936,23 @@
 						"2.25": [0.1, 0.1, 0.1],
 						"2.6167": [0.1, 0.1, 0.1]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "tacz:ak12/ak12_reload_raise"
+				},
+				"0.9833": {
+					"effect": "tacz:ak12/ak12_reload_magout"
+				},
+				"1.4667": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"1.6667": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"2.2167": {
+					"effect": "tacz:ak12/ak12_reload_end"
 				}
 			}
 		},
@@ -5973,6 +6133,38 @@
 						"7.5": [0, 0, 0]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0833": {
+					"effect": "tacz:ak12/ak12_inspect_start"
+				},
+				"1.9833": {
+					"effect": "tacz:ak12/ak12_inspect_rotate"
+				},
+				"4.2667": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"4.4167": {
+					"effect": "tacz:ak12/ak12_reload_magout"
+				},
+				"5.8": {
+					"effect": "tacz:ak12/ak12_inspect_magtoss"
+				},
+				"6.3333": {
+					"effect": "tacz:ak12/ak12_inspect_magcatch"
+				},
+				"7.1833": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"8.1333": {
+					"effect": "tacz:ak12/ak12_inspect_chamberpull"
+				},
+				"9.05": {
+					"effect": "tacz:ak12/ak12_inspect_chamberrelease"
+				},
+				"9.3667": {
+					"effect": "tacz:ak12/ak12_inspect_end"
+				}
 			}
 		},
 		"inspect_empty": {
@@ -6994,6 +7186,35 @@
 						"7.45": [-15, 0, 0],
 						"7.5": [0, 0, 0]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0833": {
+					"effect": "tacz:ak12/ak12_inspect_start"
+				},
+				"1.9833": {
+					"effect": "tacz:ak12/ak12_inspect_rotate"
+				},
+				"4.2667": {
+					"effect": "tacz:ak12/ak12_reload_maghit"
+				},
+				"4.4167": {
+					"effect": "tacz:ak12/ak12_reload_magout"
+				},
+				"5.8": {
+					"effect": "tacz:ak12/ak12_inspect_magtoss"
+				},
+				"6.3333": {
+					"effect": "tacz:ak12/ak12_inspect_magcatch"
+				},
+				"7.1833": {
+					"effect": "tacz:ak12/ak12_reload_magin"
+				},
+				"8.05": {
+					"effect": "tacz:ak12/ak12_inspect_tilt"
+				},
+				"9.3667": {
+					"effect": "tacz:ak12/ak12_inspect_end"
 				}
 			}
 		},

@@ -44,12 +44,12 @@
     "enable_bullet_hole": true
   },
   "sounds": {
-    "shoot": "tacz:ak47/ak47_shoot",
-    "shoot_3p": "tacz:ak47/ak47_shoot_3p",
-    "draw": "tacz:ak47/ak47_draw",
-    "put_away": "tacz:ak47/ak47_put_away",
-    "silence": "tacz:ak47/ak47_silence",
-    "silence_3p": "tacz:ak47/ak47_silence_3p",
+    "shoot": "tacz:ak12/ak12_shoot",
+    "shoot_3p": "tacz:ak12/aak12_shoot_3p",
+    "draw": "tacz:ak12/ak12_draw",
+    "put_away": "tacz:ak12/ak12_put_away",
+    "silence": "tacz:ak12/ak12_silence",
+    "silence_3p": "tacz:ak12/ak12_silence_3p",
     "dry_fire": "tacz:dry_fire",
     "fire_select": "tacz:fire_select",
     "head_hit": "tacz:head_hit",
