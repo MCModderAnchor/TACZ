@@ -291,11 +291,16 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             double itemRenderFov = CameraSetupEvent.ITEM_MODEL_FOV_DYNAMICS.get();
             double levelRenderFov = CameraSetupEvent.WORLD_FOV_DYNAMICS.get();
             poseStack.popPose();
-            // 缓存转换后的偏移坐标
+            // 缓存转换后的偏移坐标。手部与世界的投影 FOV 不同，这里与枪口粒子使用同一套补偿：
+            // 横向偏移 (x, y) 乘 tan(worldFov/2)/tan(modelFov/2)，让曳光弹起点落在模型 FOV 下枪口的
+            // 屏幕位置上，而深度 z 保持真实，不再把起点搬到更近/更远的深度上。
+            double itemTan = Math.tan(itemRenderFov / 2 * Math.PI / 180);
+            double levelTan = Math.tan(levelRenderFov / 2 * Math.PI / 180);
+            float lateral = itemTan > 1.0e-6 ? (float) (levelTan / itemTan) : 1.0f;
             muzzleRenderOffset.set(
-                    pose.m30(),
-                    pose.m31(),
-                    pose.m32() * Math.tan(itemRenderFov / 2 * Math.PI / 180) / Math.tan(levelRenderFov / 2 * Math.PI / 180)
+                    pose.m30() * lateral,
+                    pose.m31() * lateral,
+                    pose.m32()
             );
         }
     }

@@ -221,11 +221,10 @@ public final class MuzzleParticleManager {
                 muzzleView.translate(0.0f, 0.0f, -be.offsetBb() / 16.0f);
             }
             // 尺寸/强度参数经每实例 molang 变量（v.muzzle_scale）传递，不在此缩放矩阵
-            Matrix4f worldMuzzleView = new Matrix4f()
-                    .scaling(1.0f, 1.0f, getFirstPersonToWorldDepthScale())
-                    .mul(muzzleView);
+            // 投递到世界空间的粒子（枪烟等）尺寸按手部 FOV 的观感缩放，与枪体/枪焰保持一致
+            emitter.setWorldParticleScale(getWorldParticleScale());
             emitter.setEmitterTransform(new Matrix4f(basePoseInv).mul(muzzleView),
-                    new Matrix4f(cameraRotationInv).mul(worldMuzzleView));
+                    new Matrix4f(cameraRotationInv).mul(toWorldMuzzleView(muzzleView)));
         }
 
         // 5. 新发射器立即 tick(0) 触发 instant 发射，本帧即可见。
@@ -240,10 +239,10 @@ public final class MuzzleParticleManager {
     // ==================== 内部实现 ====================
 
     /**
-     * 手部和世界使用不同投影 FOV 时，保持第一人称枪口在世界渲染中的屏幕位置。
-     * 该缩放必须在视图空间中、反相机旋转之前施加。
+     * 手部（枪械 model_fov）与世界（玩家 FOV）的正切半径比：tan(modelFov / 2) / tan(worldFov / 2)。
+     * 等于 1 表示两者投影一致，无需补偿。
      */
-    private static float getFirstPersonToWorldDepthScale() {
+    private static float getHandToWorldTanRatio() {
         double handFov = CameraSetupEvent.ITEM_MODEL_FOV_DYNAMICS.get();
         double worldFov = CameraSetupEvent.WORLD_FOV_DYNAMICS.get();
         if (handFov <= 0.0 || worldFov <= 0.0) {
@@ -256,7 +255,46 @@ public final class MuzzleParticleManager {
         return (float) (Math.tan(Math.toRadians(handFov) / 2.0) / worldTan);
     }
 
-        /**
+    /**
+     * 构造"世界对齐"的枪口矩阵（相对摄像机、未叠加相机世界坐标）。
+     * <p>
+     * 手部 pass 用枪械 {@code model_fov}、世界 pass 用玩家 FOV：同一个世界点在世界 pass 中投到
+     * {@code x / (d·tan(worldFov/2))}，在手部 pass 中投到 {@code x / (d·tan(modelFov/2))}。
+     * 要让投递到原版 {@code ParticleEngine} 的世界空间粒子落在手部枪口的屏幕位置上，
+     * 只需把整个局部空间的横向 (x, y) 乘 {@code tan(worldFov/2) / tan(modelFov/2)}，深度 z 保持真实：
+     * 粒子的世界深度因此不变，尺寸、遮挡、透视都跟随世界 FOV（与第三人称枪烟一致），
+     * 不会被旧实现的深度压缩（z 乘 tan(modelFov/2)/tan(worldFov/2)）锁死在模型 FOV 上，
+     * 也不会被搬到更近/更远的深度上；整段局部空间一起缩放还保证云团的横向铺开在屏幕上也与
+     * 手部 FOV 下的观感一致（发射形状偏移、跟随锚点的局部偏移同一套映射）。
+     * <p>
+     * 注意：这里连矩阵基一起缩放，因此依赖 SBM 侧的配套改动 —— 粒子的 {@code spawnScale}
+     * 与初速度缩放必须取自发射器本地（定位器）变换而不是世界矩阵（见 SBM
+     * {@code ParticleEmitterInstance.applyLocalSpaceOnSpawn}），否则 FOV 比例会被算进尺寸和初速度。
+     */
+    private static Matrix4f toWorldMuzzleView(Matrix4f muzzleView) {
+        float fovRatio = getHandToWorldTanRatio();
+        if (fovRatio <= 1.0e-4f || Math.abs(fovRatio - 1.0f) <= 1.0e-4f) {
+            return new Matrix4f(muzzleView);
+        }
+        float lateral = 1.0f / fovRatio;
+        return new Matrix4f().scaling(lateral, lateral, 1.0f).mul(muzzleView);
+    }
+
+    /**
+     * 世界空间粒子（投递到原版 {@code ParticleEngine} 的部分，如枪烟）的尺寸/初速度缩放。
+     * <p>
+     * 这批粒子的屏幕位置由 {@link #toWorldMuzzleView} 补偿到手部 FOV 的枪口、深度保持真实，
+     * 但"真实深度 + 世界 FOV"会让它们的屏幕大小随玩家 FOV 变化：世界 FOV 很小时（如 30）
+     * 会明显胀大糊满屏幕。而枪体与枪焰都按 {@code model_fov} 绘制，尺寸不随玩家 FOV 变化，
+     * 因此这里按 {@code tan(worldFov/2) / tan(modelFov/2)} 缩放，让世界空间粒子在屏幕上
+     * 始终保持手部 FOV 下的观感。
+     */
+    private static float getWorldParticleScale() {
+        float ratio = getHandToWorldTanRatio();
+        return ratio > 1.0e-4f ? 1.0f / ratio : 1.0f;
+    }
+
+    /**
      * 创建枪焰发射器。只写入 {@code muzzle_*} 命名空间的变量。
      * <p>
      * 与枪烟发射器使用互不重叠的变量名：第一人称下所有发射器共用同一个
