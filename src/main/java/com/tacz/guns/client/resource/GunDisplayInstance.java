@@ -17,6 +17,8 @@ import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateContext;
 import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.model.BedrockGunModel;
+import com.tacz.guns.client.model.DisplayGunModelInstance;
+import com.tacz.guns.client.model.ExternalGunModel;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
 import com.tacz.guns.client.resource.pojo.display.SoundData;
@@ -41,10 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.BiFunction;
@@ -76,6 +75,10 @@ public class GunDisplayInstance {
     private String thirdPersonAnimation = "empty";
     private BedrockGunModel gunModel;
     private @Nullable Pair<BedrockGunModel, ResourceLocation> lodModel;
+    private @Nullable ExternalGunModel externalGunModel;
+    private @Nullable Pair<ExternalGunModel, ResourceLocation> externalLodModel;
+    private boolean externalModelAttempted;
+    private boolean externalLodAttempted;
 
     private LuaAnimationStateMachine<GunAnimationStateContext> animationStateMachine;
     private @Nullable LuaTable stateMachineParam;
@@ -121,6 +124,10 @@ public class GunDisplayInstance {
 
     public static GunDisplayInstance create(ResourceLocation displayId, GunDisplay display)  throws IllegalArgumentException {
         return new GunDisplayInstance(displayId, display);
+    }
+
+    public ResourceLocation getDisplayId() {
+        return displayId;
     }
 
     // 后台预热
@@ -661,10 +668,56 @@ public class GunDisplayInstance {
         return gunModel;
     }
 
+    /** 外部视角使用 SBM 烘焙模型；资源或自定义旧模型类型不支持时返回 null，调用方回退。 */
+    public @Nullable ExternalGunModel getExternalGunModel() {
+        ensureModelLoaded();
+        if (!modelLoaded || gunModel == null || gunModel.getClass() != BedrockGunModel.class) return null;
+        synchronized (loadLock) {
+            if (!externalModelAttempted) {
+                externalModelAttempted = true;
+                try {
+                    BedrockModelPOJO pojo = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(display.getModelLocation());
+                    if (pojo != null) externalGunModel = ExternalGunModel.bake(pojo,
+                            getExternalHiddenTextBones(), DisplayGunModelInstance.Kind.GUN);
+                } catch (RuntimeException exception) {
+                    GunMod.LOGGER.warn("Failed to bake SBM external gun model for {}", displayId, exception);
+                }
+            }
+            return externalGunModel;
+        }
+    }
+
+    /** 第一人称文本功能节点在 FIXED 上不输出模型几何。 */
+    public Set<String> getExternalHiddenTextBones() {
+        return display.getTextShows() == null ? Set.of() : Set.copyOf(display.getTextShows().keySet());
+    }
+
     @Nullable
     public Pair<BedrockGunModel, ResourceLocation> getLodModel() {
         ensureLodLoaded();
         return lodModel;
+    }
+
+    /** 与旧 LOD 选择对应的独立 SBM 模型，仍由调用方按距离选择。 */
+    public @Nullable Pair<ExternalGunModel, ResourceLocation> getExternalLodModel() {
+        ensureLodLoaded();
+        if (!lodLoaded || lodModel == null) return null;
+        synchronized (loadLock) {
+            if (!externalLodAttempted) {
+                externalLodAttempted = true;
+                try {
+                    GunLod lod = display.getGunLod();
+                    if (lod != null && lod.getModelLocation() != null && lod.getModelTexture() != null) {
+                        BedrockModelPOJO pojo = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(lod.getModelLocation());
+                        if (pojo != null) externalLodModel = Pair.of(ExternalGunModel.bake(pojo,
+                                getExternalHiddenTextBones(), DisplayGunModelInstance.Kind.GUN), lod.getModelTexture());
+                    }
+                } catch (RuntimeException exception) {
+                    GunMod.LOGGER.warn("Failed to bake SBM external gun LOD for {}", displayId, exception);
+                }
+            }
+            return externalLodModel;
+        }
     }
 
     public @Nullable LuaAnimationStateMachine<GunAnimationStateContext> getAnimationStateMachine() {

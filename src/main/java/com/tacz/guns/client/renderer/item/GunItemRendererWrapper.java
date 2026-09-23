@@ -25,7 +25,6 @@ import com.tacz.guns.client.model.functional.MuzzleFlashRender;
 import com.tacz.guns.client.model.functional.ShellRender;
 import com.tacz.guns.client.particle.MuzzleParticleManager;
 import com.tacz.guns.client.resource.GunDisplayInstance;
-import com.tacz.guns.client.resource.pojo.TransformScale;
 import com.tacz.guns.util.RenderDistance;
 import com.tacz.guns.util.math.MathUtil;
 import net.minecraft.client.Camera;
@@ -349,14 +348,7 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
                 renderSlotTexture(poseStack, pBuffer, pPackedLight, pPackedOverlay, gunIndex.getSlotTexture());
                 return;
             }
-            // 移动到模型原点
-            poseStack.translate(0.5, 2, 0.5);
-            // 反转模型
-            poseStack.scale(-1, -1, 1);
-            // 应用定位组的变换（位移和旋转，不包括缩放）
-            applyPositioningTransform(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
-            // 应用 display 数据中的缩放
-            applyScaleTransform(transformType, gunIndex.getTransform().getScale(), poseStack);
+            GunItemTransforms.apply(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
             // 渲染枪械模型
             float alpha = ItemPreviewRenderContext.alpha();
             RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(gunTexture) : RenderType.entityCutout(gunTexture);
@@ -402,52 +394,4 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
         SLOT_GUN_MODEL.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
     }
 
-    private static void applyPositioningTransform(ItemDisplayContext transformType, TransformScale scale, BedrockGunModel model,
-                                                  PoseStack poseStack) {
-        switch (transformType) {
-            case FIXED -> applyPositioningNodeTransform(model.getFixedOriginPath(), poseStack, scale.getFixed());
-            case GROUND -> applyPositioningNodeTransform(model.getGroundOriginPath(), poseStack, scale.getGround());
-            case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> applyPositioningNodeTransform(model.getThirdPersonHandOriginPath(), poseStack, scale.getThirdPerson());
-        }
-    }
-
-    private static void applyScaleTransform(ItemDisplayContext transformType, TransformScale scale, PoseStack poseStack) {
-        if (scale == null) {
-            return;
-        }
-        Vector3f vector3f = null;
-        switch (transformType) {
-            case FIXED -> vector3f = scale.getFixed();
-            case GROUND -> vector3f = scale.getGround();
-            case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> vector3f = scale.getThirdPerson();
-        }
-        if (vector3f != null) {
-            poseStack.translate(0, 1.5, 0);
-            poseStack.scale(vector3f.x(), vector3f.y(), vector3f.z());
-            poseStack.translate(0, -1.5, 0);
-        }
-    }
-
-    private static void applyPositioningNodeTransform(List<BedrockPart> nodePath, PoseStack poseStack, Vector3f scale) {
-        if (nodePath == null) {
-            return;
-        }
-        if (scale == null) {
-            scale = new Vector3f(1, 1, 1);
-        }
-        // 应用定位组的反向位移、旋转，使定位组的位置就是渲染中心
-        poseStack.translate(0, 1.5, 0);
-        for (int i = nodePath.size() - 1; i >= 0; i--) {
-            BedrockPart t = nodePath.get(i);
-            poseStack.mulPose(Axis.XN.rotation(t.xRot));
-            poseStack.mulPose(Axis.YN.rotation(t.yRot));
-            poseStack.mulPose(Axis.ZN.rotation(t.zRot));
-            if (t.getParent() != null) {
-                poseStack.translate(-t.x * scale.x() / 16.0F, -t.y * scale.y() / 16.0F, -t.z * scale.z() / 16.0F);
-            } else {
-                poseStack.translate(-t.x * scale.x() / 16.0F, (1.5F - t.y / 16.0F) * scale.y(), -t.z * scale.z() / 16.0F);
-            }
-        }
-        poseStack.translate(0, -1.5, 0);
-    }
 }

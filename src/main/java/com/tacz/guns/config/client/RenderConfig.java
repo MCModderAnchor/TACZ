@@ -26,6 +26,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue DISABLE_MOVEMENT_ATTRIBUTE_FOV;
     public static ForgeConfigSpec.BooleanValue ENABLE_TACZ_ID_IN_TOOLTIP;
     public static ForgeConfigSpec.BooleanValue BLOCK_ENTITY_TRANSLUCENT;
+    public static ForgeConfigSpec.BooleanValue DISPLAY_GUN_VBO;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -95,6 +96,9 @@ public class RenderConfig {
 
         builder.comment("Enable translucent while render block entity or not. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.");
         BLOCK_ENTITY_TRANSLUCENT = builder.define("EnableBlockEntityTranslucent", false);
+
+        builder.comment("Experimental SBM VBO rendering for guns in display cases and pegboards. Unsupported guns use the original renderer.");
+        DISPLAY_GUN_VBO = builder.define("EnableDisplayGunVbo", true);
 
         builder.pop();
     }

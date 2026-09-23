@@ -2,7 +2,6 @@ package com.tacz.guns.client.renderer.block;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import com.tacz.guns.block.GunPegboardBlock;
 import com.tacz.guns.block.GunPegboardSlotHelper;
 import com.tacz.guns.block.entity.GunPegboardBlockEntity;
@@ -39,6 +38,9 @@ public class GunPegboardRenderer implements BlockEntityRenderer<GunPegboardBlock
         for (int slot = 0; slot < GunPegboardBlockEntity.SLOT_COUNT; slot++) {
             ItemStack stack = blockEntity.getItem(slot);
             if (stack.isEmpty()) {
+                continue;
+            }
+            if (DisplayGunMeshGroup.tryRender(blockEntity, slot, packedOverlay)) {
                 continue;
             }
             int row = slot / GunPegboardBlockEntity.GRID_SIZE;
@@ -84,11 +86,7 @@ public class GunPegboardRenderer implements BlockEntityRenderer<GunPegboardBlock
 
     private static void renderPegboardItem(ItemStack stack, Level level, Direction facing, double x, double y, int rotation, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, float alpha) {
         poseStack.pushPose();
-        poseStack.translate(0.5D, 0.5D, 0.5D);
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - facing.get2DDataValue() * 90.0F));
-        poseStack.translate(x, y, ITEM_FRAME_ITEM_OFFSET);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(rotation * 45.0F));
-        poseStack.scale(0.5F, 0.5F, 0.5F);
+        DisplayItemTransforms.apply(poseStack, facing, x, y, ITEM_FRAME_ITEM_OFFSET, rotation);
         if (alpha < 1.0F) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();

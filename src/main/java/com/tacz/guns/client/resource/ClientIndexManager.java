@@ -23,10 +23,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientIndexManager {
     private static final int HOTBAR_SLOT_COUNT = 9;
+    private static final AtomicLong RESOURCE_REVISION = new AtomicLong();
 
     public static final Map<ResourceLocation, GunDisplayInstance> GUN_DISPLAY = Maps.newHashMap();
     public static final Map<ResourceLocation, ClientGunIndex> GUN_INDEX = Maps.newHashMap();
@@ -37,6 +39,7 @@ public class ClientIndexManager {
     public static final Map<ResourceLocation, ClientBlockIndex> BLOCK_INDEX = Maps.newHashMap();
 
     public static void clear() {
+        RESOURCE_REVISION.incrementAndGet();
         GUN_DISPLAY.clear();
         GUN_INDEX.clear();
         AMMO_INDEX.clear();
@@ -46,17 +49,25 @@ public class ClientIndexManager {
         BLOCK_INDEX.clear();
     }
 
+    public static long resourceRevision() {
+        return RESOURCE_REVISION.get();
+    }
+
     public static void reload() {
         clear();
-
-        loadGunDisplay();
-        loadGunIndex();
-        loadAmmoIndex();
-        loadAttachmentIndex();
-        loadAttachmentVariantIndex();
-        loadSlotAdapterIndex();
-        loadBlockIndex();
-        warmUpInventoryModels();
+        try {
+            loadGunDisplay();
+            loadGunIndex();
+            loadAmmoIndex();
+            loadAttachmentIndex();
+            loadAttachmentVariantIndex();
+            loadSlotAdapterIndex();
+            loadBlockIndex();
+            warmUpInventoryModels();
+        } finally {
+            // 使重载过程中暂时解析失败的展示槽位在资源就绪后再次解析。
+            RESOURCE_REVISION.incrementAndGet();
+        }
 
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && IGun.mainHandHoldGun(player)) {

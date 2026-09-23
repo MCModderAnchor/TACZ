@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import java.util.Map;
+
 public class GunPegboardBlockEntity extends BlockEntity {
     public static final int GRID_SIZE = 4;
     public static final int SLOT_COUNT = GRID_SIZE * GRID_SIZE;
@@ -28,6 +30,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
 
     private final ItemStack[] items = new ItemStack[SLOT_COUNT];
     private final byte[] rotations = new byte[SLOT_COUNT];
+    private final DisplayGunSlot[] displaySlots = new DisplayGunSlot[SLOT_COUNT];
 
     public GunPegboardBlockEntity(BlockPos pos, BlockState state) {
         super(TYPE, pos, state);
@@ -44,6 +47,17 @@ public class GunPegboardBlockEntity extends BlockEntity {
         return isValidSlot(slot) ? rotations[slot] & 7 : 0;
     }
 
+    public DisplayGunSlot getDisplaySlot(int slot) {
+        if (!isValidSlot(slot)) throw new IndexOutOfBoundsException(slot);
+        DisplayGunSlot handle = displaySlots[slot];
+        if (handle == null) displaySlots[slot] = handle = new DisplayGunSlot(this, slot);
+        return handle;
+    }
+
+    private void displaySlotChanged(int slot) {
+        if (displaySlots[slot] != null) displaySlots[slot].changed();
+    }
+
     public boolean setItem(int slot, ItemStack stack) {
         if (!isValidSlot(slot) || !items[slot].isEmpty()) {
             return false;
@@ -52,6 +66,30 @@ public class GunPegboardBlockEntity extends BlockEntity {
         stored.setCount(1);
         items[slot] = stored;
         rotations[slot] = 0;
+        displaySlotChanged(slot);
+        update();
+        return true;
+    }
+
+    /** Fill empty slots in one update when creating a display wall. */
+    public boolean setItems(Map<Integer, ItemStack> stacks) {
+        if (stacks.isEmpty() || stacks.size() > SLOT_COUNT) {
+            return false;
+        }
+        for (Map.Entry<Integer, ItemStack> entry : stacks.entrySet()) {
+            int slot = entry.getKey();
+            if (!isValidSlot(slot) || entry.getValue().isEmpty() || !items[slot].isEmpty()) {
+                return false;
+            }
+        }
+        for (Map.Entry<Integer, ItemStack> entry : stacks.entrySet()) {
+            int slot = entry.getKey();
+            ItemStack stored = entry.getValue().copy();
+            stored.setCount(1);
+            items[slot] = stored;
+            rotations[slot] = 0;
+            displaySlotChanged(slot);
+        }
         update();
         return true;
     }
@@ -61,6 +99,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
             return false;
         }
         rotations[slot] = (byte) ((rotations[slot] + 1) & 7);
+        if (displaySlots[slot] != null) displaySlots[slot].transformed();
         update();
         return true;
     }
@@ -73,6 +112,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
         Block.popResource(level, worldPosition.relative(facing), items[slot]);
         items[slot] = ItemStack.EMPTY;
         rotations[slot] = 0;
+        displaySlotChanged(slot);
         update();
         return true;
     }
@@ -83,6 +123,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
         }
         items[slot] = ItemStack.EMPTY;
         rotations[slot] = 0;
+        displaySlotChanged(slot);
         update();
         return true;
     }
@@ -97,6 +138,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
                 Block.popResource(level, worldPosition.relative(facing), items[i]);
                 items[i] = ItemStack.EMPTY;
                 rotations[i] = 0;
+                displaySlotChanged(i);
             }
         }
         update();
@@ -117,6 +159,8 @@ public class GunPegboardBlockEntity extends BlockEntity {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
+        ItemStack[] previousItems = items.clone();
+        byte[] previousRotations = rotations.clone();
         for (int i = 0; i < items.length; i++) {
             items[i] = ItemStack.EMPTY;
             rotations[i] = 0;
@@ -134,6 +178,12 @@ public class GunPegboardBlockEntity extends BlockEntity {
         if (tag.contains(ROTATIONS_TAG, Tag.TAG_BYTE_ARRAY)) {
             byte[] saved = tag.getByteArray(ROTATIONS_TAG);
             System.arraycopy(saved, 0, rotations, 0, Math.min(saved.length, rotations.length));
+        }
+        for (int i = 0; i < displaySlots.length; i++) {
+            DisplayGunSlot handle = displaySlots[i];
+            if (handle == null) continue;
+            if (!ItemStack.matches(previousItems[i], items[i])) handle.changed();
+            else if (previousRotations[i] != rotations[i]) handle.transformed();
         }
     }
 
