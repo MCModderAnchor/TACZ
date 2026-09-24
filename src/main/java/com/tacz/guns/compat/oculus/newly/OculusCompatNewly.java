@@ -9,7 +9,7 @@ public final class OculusCompatNewly {
         return ShadowRenderingState.areShadowsCurrentlyBeingRendered();
     }
 
-    public static boolean endBatch(MultiBufferSource.BufferSource bufferSource) {
+    public static boolean endBatch(MultiBufferSource bufferSource) {
         if (bufferSource instanceof FullyBufferedMultiBufferSource fullyBufferedMultiBufferSource) {
             fullyBufferedMultiBufferSource.endBatch();
             return true;

@@ -47,7 +47,7 @@ public class ShellRender implements IFunctionalRenderer {
         SHELL_QUEUE.offerLast(new Data(System.currentTimeMillis(), vector3f));
     }
 
-    private void renderShell(GunDisplayInstance display, GunData gunData, PoseStack poseStack, BedrockGunModel gunModel, MultiBufferSource.BufferSource bufferSource) {
+    private void renderShell(GunDisplayInstance display, GunData gunData, PoseStack poseStack, BedrockGunModel gunModel, MultiBufferSource bufferSource) {
         ShellEjection shellEjection = display.getShellEjection();
         if (shellEjection == null) {
             SHELL_QUEUE.clear();
@@ -90,7 +90,7 @@ public class ShellRender implements IFunctionalRenderer {
         });
     }
 
-    private void renderSingleShell(ItemDisplayContext transformType1, int light, int overlay, Data data, Vector3f initialVelocity, Vector3f acceleration, Vector3f angularVelocity, BedrockAmmoModel model, ResourceLocation location, MultiBufferSource.BufferSource bufferSource) {
+    private void renderSingleShell(ItemDisplayContext transformType1, int light, int overlay, Data data, Vector3f initialVelocity, Vector3f acceleration, Vector3f angularVelocity, BedrockAmmoModel model, ResourceLocation location, MultiBufferSource bufferSource) {
         // 再检查一次
         if (data.normal == null && data.pose == null) {
             return;
@@ -139,7 +139,7 @@ public class ShellRender implements IFunctionalRenderer {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
         if (OculusCompat.isRenderShadow()) {
             return;
         }

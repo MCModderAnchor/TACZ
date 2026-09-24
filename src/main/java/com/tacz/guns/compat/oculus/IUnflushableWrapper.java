@@ -8,5 +8,5 @@ import net.minecraft.client.renderer.MultiBufferSource;
  * 用于取出其内部真正的 {@code BufferSource} 以执行有效的 flush。
  */
 public interface IUnflushableWrapper {
-    MultiBufferSource.BufferSource tacz$getWrapped();
+    MultiBufferSource tacz$getWrapped();
 }

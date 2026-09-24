@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.resource.pojo.model.*;
 import com.tacz.guns.compat.oculus.OculusCompat;
+import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -372,11 +373,11 @@ public class BedrockModel {
      * 带手部 bufferSource 的渲染入口：由第一人称手部渲染链路调用，
      * 保证枪体 / 配件 / quad / 粒子共用同一 bufferSource（光影下保持同一投影空间）。
      */
-    public void render(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    public void render(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
         render(matrixStack, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
     }
 
-    public void render(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha, MultiBufferSource.BufferSource bufferSource) {
+    public void render(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha, MultiBufferSource bufferSource) {
         VertexConsumer builder = bufferSource.getBuffer(renderType);
 
         matrixStack.pushPose();
@@ -385,14 +386,14 @@ public class BedrockModel {
         }
         matrixStack.popPose();
         if (!OculusCompat.endBatch(bufferSource)) {
-            bufferSource.endBatch(renderType);
+            RenderHelper.endBatch(bufferSource, renderType);
         }
 
         if (particleWindowRenderer != null) {
             particleWindowRenderer.render(matrixStack, builder, transformType, light, overlay, bufferSource);
             particleWindowRenderer = null;
             if (!OculusCompat.endBatch(bufferSource)) {
-                bufferSource.endBatch();
+                RenderHelper.endBatch(bufferSource);
             }
         }
 

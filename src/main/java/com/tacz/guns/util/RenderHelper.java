@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
@@ -84,7 +85,7 @@ public final class RenderHelper {
         renderFirstPersonArm(player, hand, matrixStack, combinedLight, Minecraft.getInstance().renderBuffers().bufferSource());
     }
 
-    public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight, MultiBufferSource.BufferSource buffer) {
+    public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight, MultiBufferSource buffer) {
         Minecraft mc = Minecraft.getInstance();
         EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
         PlayerRenderer renderer = (PlayerRenderer) renderManager.getRenderer(player);
@@ -104,5 +105,17 @@ public final class RenderHelper {
 		}
 
         // RenderSystem.setShaderTexture(0, oldId);
+    }
+
+    public static void endBatch(MultiBufferSource buffer, RenderType renderType) {
+        if (buffer instanceof MultiBufferSource.BufferSource source) {
+            source.endBatch(renderType);
+        }
+    }
+
+    public static void endBatch(MultiBufferSource buffer) {
+        if (buffer instanceof MultiBufferSource.BufferSource source) {
+            source.endBatch();
+        }
     }
 }

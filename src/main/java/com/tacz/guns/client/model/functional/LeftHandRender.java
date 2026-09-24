@@ -26,7 +26,7 @@ public class LeftHandRender implements IFunctionalRenderer {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
         if (transformType.firstPerson()) {
             if (!bedrockGunModel.getRenderHand()) {
                 return;
@@ -40,7 +40,7 @@ public class LeftHandRender implements IFunctionalRenderer {
                 poseStack2.last().normal().mul(normal);
                 poseStack2.last().pose().mul(pose);
                 RenderHelper.renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, light1, bufferSource);
-                bufferSource.endBatch();
+                RenderHelper.endBatch(bufferSource);
             });
         }
     }

@@ -165,7 +165,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         render(attachmentItem, currentGunItem, matrixStack, transformType, renderType, light, overlay, alpha, Minecraft.getInstance().renderBuffers().bufferSource());
     }
 
-    public void render(@Nullable ItemStack attachmentItem, ItemStack currentGunItem, PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float alpha, MultiBufferSource.BufferSource bufferSource) {
+    public void render(@Nullable ItemStack attachmentItem, ItemStack currentGunItem, PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float alpha, MultiBufferSource bufferSource) {
         this.currentGunItem = currentGunItem;
         this.attachmentItem = attachmentItem;
         if (transformType.firstPerson()) {
@@ -197,6 +197,15 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         }
     }
 
+    /** Keep dynamic laser beams when the attachment body is drawn from a static VBO. */
+    public void renderExternalLasers(ItemStack attachmentItem, PoseStack poseStack,
+                                     ItemDisplayContext context, MultiBufferSource bufferSource) {
+        if (laserBeamPaths == null) return;
+        for (List<BedrockPart> path : laserBeamPaths) {
+            BeamRenderer.renderLaserBeamUnaccelerated(attachmentItem, poseStack, context, path, bufferSource);
+        }
+    }
+
     private Vector3f getBedrockPartCenter(PoseStack poseStack, @Nonnull List<BedrockPart> path) {
         poseStack.pushPose();
         for (BedrockPart part : path) {
@@ -218,12 +227,12 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     private void renderTempPart(PoseStack poseStack, ItemDisplayContext transformType, RenderType renderType,
-                                int light, int overlay, @Nonnull List<BedrockPart> path, MultiBufferSource.BufferSource bufferSource) {
+                                int light, int overlay, @Nonnull List<BedrockPart> path, MultiBufferSource bufferSource) {
         renderTempPart(poseStack, transformType, renderType, light, overlay, path, 1.0F, bufferSource);
     }
 
     private void renderTempPart(PoseStack poseStack, ItemDisplayContext transformType, RenderType renderType,
-                                int light, int overlay, @Nonnull List<BedrockPart> path, float alpha, MultiBufferSource.BufferSource bufferSource) {
+                                int light, int overlay, @Nonnull List<BedrockPart> path, float alpha, MultiBufferSource bufferSource) {
         poseStack.pushPose();
         for (int i = 0; i < path.size() - 1; ++i) {
             path.get(i).translateAndRotateAndScale(poseStack);
@@ -233,7 +242,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
         part.render(poseStack, transformType, vertexConsumer, light, overlay, 1.0F, 1.0F, 1.0F, alpha);
         if (!OculusCompat.endBatch(bufferSource)) {
-            bufferSource.endBatch(renderType);
+            RenderHelper.endBatch(bufferSource, renderType);
         }
         part.visible = false;
         poseStack.popPose();
@@ -243,7 +252,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         renderOcularStencil(matrixStack, transformType, renderType, light, overlay, isScope, Minecraft.getInstance().renderBuffers().bufferSource());
     }
 
-    private void renderOcularStencil(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, boolean isScope, MultiBufferSource.BufferSource bufferSource) {
+    private void renderOcularStencil(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, boolean isScope, MultiBufferSource bufferSource) {
         if (!ocularNodePaths.isEmpty()) {
             RenderSystem.colorMask(false, false, false, false);
             RenderSystem.depthMask(false);
@@ -267,7 +276,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         renderDivisionOnly(matrixStack, transformType, renderType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
     }
 
-    private void renderDivisionOnly(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    private void renderDivisionOnly(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
         if (!divisionNodePaths.isEmpty()) {
             RenderSystem.disableDepthTest();
             for (int i = 0; i < divisionNodePaths.size(); i++) {
@@ -282,7 +291,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         renderOcularAndDivision(matrixStack, transformType, renderType, light, overlay, selective, Minecraft.getInstance().renderBuffers().bufferSource());
     }
 
-    private void renderOcularAndDivision(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, boolean selective, MultiBufferSource.BufferSource bufferSource) {
+    private void renderOcularAndDivision(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, boolean selective, MultiBufferSource bufferSource) {
         if (!ocularNodePaths.isEmpty()) {
             BufferBuilder builder = Tesselator.getInstance().getBuilder();
             // 准备渲染圆形模板层
@@ -336,7 +345,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         }
     }
 
-    private void renderBoth(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    private void renderBoth(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		// 当加速渲染加载则使用加速渲染提供的方法进行加速
 		if (ARCompat.shouldAccelerate()) {
 			renderBothAccelerated(matrixStack, transformType, renderType, light, overlay);
@@ -371,7 +380,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         super.render(matrixStack, transformType, renderType, light, overlay, bufferSource);
     }
 
-    private void renderSight(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    private void renderSight(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		if (ARCompat.shouldAccelerate()) {
 			renderSightAccelerated(matrixStack, transformType, renderType, light, overlay);
 			return;
@@ -395,7 +404,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         super.render(matrixStack, transformType, renderType, light, overlay, bufferSource);
     }
 
-    private void renderScope(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    private void renderScope(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		if (ARCompat.shouldAccelerate()) {
 			renderScopeAccelerated(matrixStack, transformType, renderType, light, overlay);
 			return;

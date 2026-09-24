@@ -5,17 +5,29 @@ import com.mojang.math.Axis;
 import com.tacz.guns.client.model.ExternalGunModel;
 import org.joml.Vector3f;
 
-/** 根据 SBM 骨骼定义构造 FIXED 定位矩阵，不访问 TACZ 的旧模型实例。 */
+/** 根据 SBM 骨骼定义构造外部视角定位矩阵，不访问 TACZ 的旧模型实例。 */
 public final class SbmGunTransforms {
     private SbmGunTransforms() {}
 
     public static void applyFixed(PoseStack pose, ExternalGunModel external, Vector3f configuredScale) {
+        apply(pose, external, "fixed", configuredScale);
+    }
+
+    public static void applyGround(PoseStack pose, ExternalGunModel external, Vector3f configuredScale) {
+        apply(pose, external, "ground", configuredScale);
+    }
+
+    public static void applyThirdPerson(PoseStack pose, ExternalGunModel external, Vector3f configuredScale) {
+        apply(pose, external, "thirdperson_hand", configuredScale);
+    }
+
+    private static void apply(PoseStack pose, ExternalGunModel external, String anchor, Vector3f configuredScale) {
         Vector3f scale = configuredScale == null ? new Vector3f(1, 1, 1) : configuredScale;
         // BedrockGunModel 的模型空间与 SBM 烘焙空间相差一个固定的轴变换 B。
-        // 将旧 FIXED 锚点语义在 SBM 坐标内表示为 B * positioning * displayScale * B。
+        // 将旧外部锚点语义在 SBM 坐标内表示为 B * positioning * displayScale * B。
         bedrockToSbm(pose);
         var bones = external.model().bones();
-        int index = external.model().getIndex("fixed");
+        int index = external.model().getIndex(anchor);
         while (index >= 0) {
             var bone = bones[index];
             var rotation = bone.bindEulerRotation();

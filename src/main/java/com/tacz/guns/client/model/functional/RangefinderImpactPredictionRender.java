@@ -9,6 +9,7 @@ import com.mojang.math.Axis;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.resource.pojo.display.gun.RangefinderManager;
+import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -39,7 +40,7 @@ public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
         if (!transformType.firstPerson() || !RangefinderManager.shouldRenderImpactPrediction()) {
             return;
         }
@@ -58,7 +59,7 @@ public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
             VertexConsumer consumer = bufferSource.getBuffer(renderType);
             float yOffset = getCalibratedYOffset(poseStack2.last().pose());
             renderBox(consumer, poseStack2.last().pose(), yOffset, RangefinderManager.getImpactPredictionColor(), RangefinderManager.getImpactPredictionScale());
-            bufferSource.endBatch(renderType);
+            RenderHelper.endBatch(bufferSource, renderType);
         });
     }
 

@@ -66,7 +66,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
         TP_SHOOT_TIMESTAMPS.put(entity, System.currentTimeMillis());
     }
 
-    private static void renderMuzzleFlash(GunDisplayInstance display, PoseStack poseStack, BedrockModel bedrockModel, long time, MultiBufferSource.BufferSource bufferSource) {
+    private static void renderMuzzleFlash(GunDisplayInstance display, PoseStack poseStack, BedrockModel bedrockModel, long time, MultiBufferSource bufferSource) {
         MuzzleFlash muzzleFlash = display.getMuzzleFlash();
         if (muzzleFlash == null) {
             return;
@@ -77,7 +77,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
         bedrockModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) -> doRender(light, overlay, muzzleFlash, time, bufferSource));
     }
 
-    private static void doRender(int light, int overlay, MuzzleFlash muzzleFlash, long time, MultiBufferSource.BufferSource bufferSource) {
+    private static void doRender(int light, int overlay, MuzzleFlash muzzleFlash, long time, MultiBufferSource bufferSource) {
         if (muzzleFlashNormal != null && muzzleFlashPose != null) {
             float scale = 0.5f * muzzleFlash.getScale();
             float scaleTime = TIME_RANGE / 2.0f;
@@ -121,7 +121,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
         if (OculusCompat.isRenderShadow()) {
             return;
         }

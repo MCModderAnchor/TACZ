@@ -9,14 +9,14 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.model.DisplayGunModelInstance;
 import com.tacz.guns.client.model.ExternalGunModel;
+import com.tacz.guns.client.renderer.external.ExternalGunAppearance;
 import com.tacz.guns.client.renderer.item.SbmGunTransforms;
-import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Vector3f;
 
 import java.util.EnumMap;
 
@@ -44,21 +44,34 @@ public final class DisplayGunGeometry {
         return attached.isEmpty() ? gun.getBuiltinAttachment(stack, type) : attached;
     }
 
-    static boolean capture(ItemStack stack, GunDisplayInstance display, ExternalGunModel external,
-                           ResourceLocation texture, boolean useLod, GeometryCollector collector) {
+    public static boolean capture(ExternalGunAppearance.Snapshot snapshot, ItemDisplayContext context,
+                                  GeometryCollector collector) {
+        ItemStack stack = snapshot.stack();
         IGun gun = IGun.getIGunOrNull(stack);
         if (gun == null) return false;
         EnumMap<AttachmentType, ClientAttachmentIndex> attachments = resolveAttachments(gun, stack);
         if (attachments == null) return false;
+        ExternalGunModel external = snapshot.model();
         DisplayGunModelInstance instance = external.displayInstance();
         instance.configureGun(gun, stack, attachments);
 
         PoseStack pose = new PoseStack();
-        Vector3f fixedScale = display.getTransform().getScale() == null ? null : display.getTransform().getScale().getFixed();
-        SbmGunTransforms.applyFixed(pose, external, fixedScale);
-
-        renderModel(external, instance, pose, texture, collector);
-        renderAttachments(instance, pose, useLod, attachments, collector);
+        var scales = snapshot.display().getTransform().getScale();
+        switch (context) {
+            case FIXED -> SbmGunTransforms.applyFixed(pose, external, scales == null ? null : scales.getFixed());
+            case GROUND -> {
+                pose.translate(0.5, 0.5, 0.5);
+                SbmGunTransforms.applyGround(pose, external, scales == null ? null : scales.getGround());
+            }
+            case THIRD_PERSON_RIGHT_HAND -> {
+                pose.translate(0.5, 0.5, 0.5);
+                SbmGunTransforms.applyThirdPerson(pose, external,
+                        scales == null ? null : scales.getThirdPerson());
+            }
+            default -> { return false; }
+        }
+        renderModel(external, instance, pose, snapshot.texture(), collector);
+        renderAttachments(instance, pose, snapshot.useLod(), attachments, collector);
         return true;
     }
 
@@ -92,10 +105,9 @@ public final class DisplayGunGeometry {
 
     private static void renderModel(ExternalGunModel external, DisplayGunModelInstance instance, PoseStack pose,
                                     ResourceLocation texture, GeometryCollector collector) {
-        var ordinary = collector.buffer(RenderType.entityCutout(texture), VertexFormat.Mode.QUADS);
-        var emissive = collector.buffer(DisplayGunRenderType.emissive(texture), VertexFormat.Mode.QUADS);
-        var router = new DisplayGunVertexRouter(ordinary, emissive);
-        external.model().renderBoneTree(instance, pose, router, 0, OverlayTexture.NO_OVERLAY,
+        var buffer = collector.buffer(RenderType.entityCutout(texture),
+                DisplayGunRenderType.emissive(texture), VertexFormat.Mode.QUADS);
+        external.model().renderBoneTree(instance, pose, buffer, 0, OverlayTexture.NO_OVERLAY,
                 1, 1, 1, 1, true, true);
     }
 }

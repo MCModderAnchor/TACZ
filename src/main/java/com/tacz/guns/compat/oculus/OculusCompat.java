@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 public final class OculusCompat {
     private static final DefaultArtifactVersion VERSION = new DefaultArtifactVersion("1.7.0");
-    private static Function<MultiBufferSource.BufferSource, Boolean> END_BATCH_FUNCTION;
+    private static Function<MultiBufferSource, Boolean> END_BATCH_FUNCTION;
     private static Supplier<Boolean> IS_RENDER_SHADOW_SUPPER;
 
     public static void initCompat() {
@@ -42,7 +42,7 @@ public final class OculusCompat {
         return false;
     }
 
-    public static boolean endBatch(MultiBufferSource.BufferSource bufferSource) {
+    public static boolean endBatch(MultiBufferSource bufferSource) {
         if (ModList.get().isLoaded(CompatRegistry.OCULUS)) {
             // Iris 第一人称手部 pass 传入的是 UnflushableWrapper，其 endBatch 是空操作；
             // 经 mixin 注入 IUnflushableWrapper 后取出内部真正的 FullyBufferedMultiBufferSource，

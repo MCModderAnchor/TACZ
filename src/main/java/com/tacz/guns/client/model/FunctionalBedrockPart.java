@@ -51,7 +51,7 @@ public class FunctionalBedrockPart extends BedrockPart {
     }
 
     @Override
-    public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha, @Nullable MultiBufferSource.BufferSource bufferSource) {
+    public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha, @Nullable MultiBufferSource bufferSource) {
         int cubePackedLight = light;
         VertexConsumer cubeConsumer = consumer;
         if (illuminated) {

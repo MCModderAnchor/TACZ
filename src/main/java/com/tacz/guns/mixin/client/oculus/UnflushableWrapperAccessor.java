@@ -13,7 +13,7 @@ public abstract class UnflushableWrapperAccessor implements IUnflushableWrapper 
     public abstract FullyBufferedMultiBufferSource tacz$getWrappedInternal();
 
     @Override
-    public MultiBufferSource.BufferSource tacz$getWrapped() {
+    public MultiBufferSource tacz$getWrapped() {
         return tacz$getWrappedInternal();
     }
 }

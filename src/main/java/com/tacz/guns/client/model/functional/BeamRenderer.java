@@ -33,7 +33,7 @@ public class BeamRenderer  {
     public static final ResourceLocation LASER_BEAM_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/entity/beam.png");
     private static final LaserConfig DEFAULT_LASER_CONFIG = new LaserConfig();
 
-    public static void renderLaserBeam(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path, MultiBufferSource.BufferSource bufferSource) {
+    public static void renderLaserBeam(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path, MultiBufferSource bufferSource) {
         if (stack == null || !transformType.firstPerson() && !(transformType == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)) {
             return;
         }
@@ -41,6 +41,16 @@ public class BeamRenderer  {
 		if (ARCompat.shouldAccelerate() && renderLaserBeamAccelerated(stack, poseStack, transformType, path)) {
 			return;
 		}
+
+        renderLaserBeamUnaccelerated(stack, poseStack, transformType, path, bufferSource);
+    }
+
+    /** Used with the static gun VBO, where the AR gun-body layer is intentionally bypassed. */
+    public static void renderLaserBeamUnaccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType,
+                                                     @Nonnull List<BedrockPart> path, MultiBufferSource bufferSource) {
+        if (stack == null || !transformType.firstPerson() && transformType != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+            return;
+        }
 
         VertexConsumer builder = bufferSource.getBuffer(LaserBeamRenderState.getLaserBeam());
         poseStack.pushPose();

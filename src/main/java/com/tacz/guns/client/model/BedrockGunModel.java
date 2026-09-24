@@ -255,7 +255,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         render(matrixStack, gunItem, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
         render(matrixStack, gunItem, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
     }
 
@@ -263,7 +263,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         render(matrixStack, gunItem, transformType, renderType, light, overlay, red, green, blue, alpha, Minecraft.getInstance().renderBuffers().bufferSource());
     }
 
-    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha, MultiBufferSource.BufferSource bufferSource) {
+    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha, MultiBufferSource bufferSource) {
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {
             return;
@@ -339,7 +339,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
     }
 
-	public void renderAccelerated(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource.BufferSource bufferSource) {
+	public void renderAccelerated(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		// 镜子需要先渲染，写入模板值
 		var attachmentItem = currentAttachmentItem.get(AttachmentType.SCOPE);
 		var iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
@@ -493,6 +493,18 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     public List<BedrockPart> getMuzzleFlashPosPath() {
         return muzzleFlashPosPath;
+    }
+
+    /** Draw the existing dynamic laser without traversing or rendering the gun body. */
+    public void renderExternalLaser(PoseStack poseStack, ItemStack stack, ItemDisplayContext context,
+                                    MultiBufferSource bufferSource) {
+        if (laserBeamPaths != null) {
+            BeamRenderer.renderLaserBeamUnaccelerated(stack, poseStack, context, laserBeamPaths, bufferSource);
+        }
+    }
+
+    public @Nullable List<BedrockPart> getAttachmentPositionPath(AttachmentType type) {
+        return getPath(modelMap.get(type.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
     }
 
     @Nullable
