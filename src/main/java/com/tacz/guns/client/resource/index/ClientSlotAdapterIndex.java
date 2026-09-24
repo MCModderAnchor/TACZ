@@ -3,9 +3,12 @@ package com.tacz.guns.client.resource.index;
 import com.google.common.base.Preconditions;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.model.BedrockAttachmentModel;
+import com.tacz.guns.client.model.DisplayGunModelInstance;
+import com.tacz.guns.client.model.ExternalGunModel;
 import com.tacz.guns.client.resource.ClientAssetLoadDispatcher;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
+import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.resource.index.CommonSlotAdapterIndex;
 import com.tacz.guns.resource.pojo.SlotAdapterIndexPOJO;
 import net.minecraft.network.chat.Component;
@@ -13,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -22,6 +26,8 @@ public class ClientSlotAdapterIndex {
     private AttachmentDisplay display;
     private @Nullable BedrockAttachmentModel adapterModel;
     private @Nullable ResourceLocation modelTexture;
+    private @Nullable ExternalGunModel externalModel;
+    private boolean externalModelAttempted;
     private @Nullable Vector3f mountOffset;
     private volatile boolean modelsLoaded = false;
     private volatile boolean modelsLoadFailed = false;
@@ -124,6 +130,25 @@ public class ClientSlotAdapterIndex {
     public @Nullable BedrockAttachmentModel getAdapterModel() {
         ensureModelsLoaded();
         return adapterModel;
+    }
+
+    public @Nullable ExternalGunModel getExternalModel() {
+        ensureModelsLoaded();
+        if (!modelsLoaded || adapterModel == null || display.getModel() == null) return null;
+        synchronized (modelLoadLock) {
+            if (!externalModelAttempted) {
+                externalModelAttempted = true;
+                try {
+                    BedrockModelPOJO source = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(display.getModel());
+                    if (source != null) externalModel = ExternalGunModel.bake(source,
+                            display.getTextShows() == null ? Set.of() : Set.copyOf(display.getTextShows().keySet()),
+                            DisplayGunModelInstance.Kind.ATTACHMENT);
+                } catch (RuntimeException exception) {
+                    GunMod.LOGGER.warn("Failed to bake SBM slot adapter model {}", display.getModel(), exception);
+                }
+            }
+            return externalModel;
+        }
     }
 
     public @Nullable ResourceLocation getModelTexture() {

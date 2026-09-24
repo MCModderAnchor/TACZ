@@ -9,13 +9,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-/** Immediate VBO path for static third-person and ground gun appearances. */
+/** Immediate VBO path for static third-person, ground and fixed gun appearances. */
 public class ExternalGunItemVboRenderer {
     private static boolean wasEnabled;
 
     private ExternalGunItemVboRenderer() {}
 
-    /** The fixed display transform differs between ground and hand, so each has its own static VBO. */
+    /** Each item context bakes a different fixed transform into its own static VBO. */
     private record ItemGeometryKey(ExternalGunAppearance.GeometryKey appearance, ItemDisplayContext context) {}
 
     public static ImmediateStaticMeshRenderer.DrawResult tryRender(ItemStack stack, ItemDisplayContext context,
@@ -29,7 +29,9 @@ public class ExternalGunItemVboRenderer {
         }
         wasEnabled = true;
         if (ItemPreviewRenderContext.isPreview()
-                || context != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND && context != ItemDisplayContext.GROUND) {
+                || context != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND
+                && context != ItemDisplayContext.GROUND
+                && (context != ItemDisplayContext.FIXED || ScreenItemVboContext.isActive())) {
             return ImmediateStaticMeshRenderer.DrawResult.UNSUPPORTED;
         }
         ExternalGunAppearance.Variants appearances = ExternalGunAppearance.resolve(stack, false);
@@ -37,7 +39,7 @@ public class ExternalGunItemVboRenderer {
         ExternalGunAppearance.Snapshot appearance = appearances.select(useLod);
         return ImmediateStaticMeshRenderer.tryDraw(new ItemGeometryKey(appearance.key(), context),
                 collector -> {
-                    return DisplayGunGeometry.capture(appearance, context, collector);
+                    return DisplayGunGeometry.capture(appearance, context, true, collector);
                 },
                 pose, packedLight, packedOverlay, () -> {
                 });

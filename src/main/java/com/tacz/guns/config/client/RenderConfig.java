@@ -101,7 +101,7 @@ public class RenderConfig {
         builder.comment("Experimental SBM VBO rendering for guns in display cases and pegboards.");
         DISPLAY_GUN_VBO = builder.define("EnableDisplayGunVbo", true);
 
-        builder.comment("Experimental SBM VBO rendering for third-person held and dropped guns.");
+        builder.comment("Experimental SBM VBO rendering for third-person held, dropped and fixed guns outside GUI screens.");
         EXTERNAL_ITEM_GUN_VBO = builder.define("EnableExternalItemGunVbo", true);
 
         builder.pop();

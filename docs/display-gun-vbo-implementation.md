@@ -6,7 +6,7 @@
 
 本项目当前只收集 QUADS。poly mesh（三角面）不参与捕获，也不为其增加专门的回退判定；保留 `skipNormalVisibilityCull=true`。
 
-本文区分已完成的改动与待实现部分。当前已建立 SBM 独立模型／LOD 懒加载、SBM 逐对象帧级接管 API、展示槽位调用，以及第三人称／掉落物即时 VBO 入口。两个 VBO 开关默认开启；光影开启的展示路径已验证可用，新增物品即时路径的坐标、材质、阴影和性能仍需游戏内验收。
+本文区分已完成的改动与待实现部分。当前已建立 SBM 独立模型／LOD 懒加载、SBM 逐对象帧级接管 API、展示槽位调用，以及第三人称／掉落物／FIXED 即时 VBO 入口。两个 VBO 开关默认开启；光影开启的展示路径已验证可用，新增物品即时路径的坐标、材质、阴影和性能仍需游戏内验收。
 
 ## 1. 当前代码中的接入边界
 
@@ -41,7 +41,7 @@ TACZ 只维护业务数据：枪包资源到 SBM 模型的转换、外观解析�
 - 几何回放使用 SBM 的烘焙 chunk／顶点出口，不调用 TACZ 的旧 render、flush、stencil、粒子、AR 注册或全局 bufferSource。
 - 可变骨骼状态属于此次捕获，不写回第一人称共享模型。资源暂缺返回失败，不能把缺资源缓存成成功的空模型。
 
-配件模型也从对应的枪包 POJO 烘焙为 SBM 模型，首批已支持无变体／无 slot adapter 的普通配件，包括 FIXED 视角的瞄具；分划板节点不进入静态几何。带 replace／overlay 变体或 slot adapter 的组合仍让整枪回退。枪体 LOD 模型缺少配件挂点时跳过该配件，与旧渲染路径一致。自定义模型类型若依赖非标准旧子类行为，应由提供者适配 SBM 表示；尚无适配时该枪完整回退。
+配件、replace／overlay 变体及 slot adapter 模型均从对应的枪包 POJO 烘焙为 SBM 模型；捕获按旧路径顺序应用适配器和 overlay 偏移。远距基础配件 LOD 会覆盖 replace 变体，与旧路径一致。分划板节点不进入静态几何；所需模型无法烘焙时整枪回退。枪体 LOD 模型缺少配件挂点时跳过该配件。自定义模型类型若依赖非标准旧子类行为，应由提供者适配 SBM 表示；尚无适配时该枪完整回退。新增组合仍需游戏内逐项对照。
 
 ### 2.2 外观快照
 
@@ -59,7 +59,7 @@ TACZ 只维护业务数据：枪包资源到 SBM 模型的转换、外观解析�
 
 把显隐规则从 BedrockGunModel 中提取为可复用的纯解析逻辑，将结果写入 SBM BakedModelInstance。旧模型的 FunctionalBedrockPart 只用于核对现有语义，不作为新表示的渲染机制。不能无条件输出所有保留骨骼，其中相当一部分受弹药和配件状态控制。
 
-`Snapshot` 按槽位内容版本及枪包资源版本缓存近距、远距两种捕获参数；每帧只按相机距离选择已有快照。缓存以弱引用槽位为键，不另存长期槽位表。geometryKey 用展示资源 ID、按类型排列的有效配件 ID、枪包资源版本、弹膛与弹匣有无子弹及实际 LOD 选择描述共享网格。GunDisplayInstance、ClientAttachmentIndex、ExternalGunModel、世界位置、光照、朝向、槽号、旋转和无关物品 tag 都不进入 key。
+`Snapshot` 按槽位内容版本及枪包资源版本缓存近距、远距两种捕获参数；每帧只按相机距离选择已有快照。缓存以弱引用槽位为键，不另存长期槽位表。geometryKey 用展示资源 ID、按类型排列的有效配件 ID／有效变体 ID／槽位适配器 ID、枪包资源版本、弹膛与弹匣有无子弹及实际 LOD 选择描述共享网格。GunDisplayInstance、ClientAttachmentIndex、ExternalGunModel、世界位置、光照、朝向、槽号、旋转和无关物品 tag 都不进入 key。
 
 ### 2.3 槽位对象
 
@@ -117,7 +117,7 @@ WorldMeshGroup 已新增 `claimForWorldDraw(object, expectedGeometryKey)`，在�
 
 该接管机制已采用显式帧序号与期望 key，claim 失败时不移除缓存引用。当前 `DisplayGunMeshGroup.tryRender` 忽略 claim 返回值并在已识别的展示枪上返回 true，正是未就绪跳过旧绘制的语义；不能将它误改成回退。SECTION 没有逐对象接管能力，因此展示枪渲染组只声明支持 INSTANCE。
 
-非枪物品与明确不受支持的自定义模型或复杂配件组合使用旧路径。受支持的外观在捕获／上传未就绪时跳过本次绘制；可重试错误保持待处理并记录原因，不能因旧路径耗时耗尽准备预算。光影与 AR 本身不阻止 VBO；真正回退时须同步抑制 VBO，避免重复绘制。
+非枪物品与明确无法烘焙的模型组合使用旧路径。受支持的外观在捕获／上传未就绪时跳过本次绘制；可重试错误保持待处理并记录原因，不能因旧路径耗时耗尽准备预算。光影与 AR 本身不阻止 VBO；真正回退时须同步抑制 VBO，避免重复绘制。
 
 ## 5. 生命周期和更新频率
 
@@ -138,6 +138,7 @@ WorldMeshGroup 已新增 `claimForWorldDraw(object, expectedGeometryKey)`，在�
 - 展示枪继续在捕获时烘入 `applyFixed`；第三人称右手和 `GROUND` 在同一捕获流程里先补偿 ItemRenderer 的 `(-0.5,-0.5,-0.5)` 位移，再烘入自己的 SBM 定位及 display 缩放。物品 VBO 键包含视角，场景运动与掉落旋转不入键。
 - 在 `GunItemRendererWrapper.renderByItem` 的原调用位置即时绘制，不能延后到世界 `AFTER_BLOCK_ENTITIES` 阶段。继续遵守第三人称左手跳过规则；第一人称保留原链路。
 - 物品后端按外观键和视角在所有对应实例间共享 VBO。展示枪、手持和掉落的静态定位变换不同，当前分别上传对应视角的网格。
+- 所有 `FIXED` 调用接入同一个即时后端，实际 Screen 绘制期间回退旧路径。通过 Forge `ScreenEvent.Render.Pre/Post` 标记 Screen 绘制阶段，不依据 `Minecraft.screen != null` 判断；打开 GUI 时背后的世界仍使用 VBO。即时 `FIXED` 捕获补偿 ItemRenderer 的居中平移，挂板／展示柜仍使用独立世界网格。
 - 局部模型旋转和非均匀缩放要求法线与 shader 光源处于一致空间。主 pass、阴影 pass 和缓冲绘制顺序分别验证；不能仅因启用光影或 AR 而回退。
 - `DRAWN` 与 `PENDING` 都由 VBO 路径接管，后者本帧跳过绘制但推进准备工作。VBO 默认优先于 AR，只有明确 `UNSUPPORTED` 或用户关闭功能才进入旧路径。
 - 若现有第三人称枪口世界位置上报、粒子和激光仍需执行，将它们保留在静态网格外的渲染器流程，不通过旧枪体 render 来取得结果。
@@ -156,9 +157,9 @@ WorldMeshGroup 已新增 `claimForWorldDraw(object, expectedGeometryKey)`，在�
 
 B/C 的本地依赖已准备：带即时物品 VBO 和双材质几何收集 API 的 SBM `2.5.19-forge-mc1.20.1` 已发布至 Maven Local，TACZ 优先解析 Maven Local，依赖与 jarJar 范围同步到 2.5.19。当前原型仍需游戏内确认，未来修改 SBM 公共 API 时再次提升版本，不覆盖已使用的同名制品。
 
-展示枪开关位于 TACZ 客户端配置 `render.EnableDisplayGunVbo`，物品即时 VBO 独立使用 `render.EnableExternalItemGunVbo`，两者默认 true。受支持的外观优先走 VBO，包括光影开启且 AR 同时可用的情况；未就绪时跳过本次枪体绘制。预览、复杂配件组合和自定义旧模型子类继续原路径。展示枪现有世界阶段仅负责主场景绘制；物品即时后端在当前 pass 内提交。自发光 pass 复用原版 `rendertype_energy_swirl` shader，配置独立纹理、静态 UV、cutout 深度与不混合状态；不注册新 core shader。
+展示枪开关位于 TACZ 客户端配置 `render.EnableDisplayGunVbo`，物品即时 VBO 独立使用 `render.EnableExternalItemGunVbo`，两者默认 true。受支持的外观优先走 VBO，包括光影开启且 AR 同时可用的情况；未就绪时跳过本次枪体绘制。预览、无法烘焙的模型组合和自定义旧模型子类继续原路径。展示枪现有世界阶段仅负责主场景绘制；物品即时后端在当前 pass 内提交。自发光 pass 复用原版 `rendertype_energy_swirl` shader，配置独立纹理、静态 UV、cutout 深度与不混合状态；不注册新 core shader。
 
-第三人称右手与掉落物的即时 VBO 入口、未就绪跳过、独立默认开启配置和动态激光／枪口外围调用已实现并通过 Java 编译；游戏内绘制行为仍需在实际接入场景中确认。
+第三人称右手、掉落物与非 Screen 绘制阶段 `FIXED` 的即时 VBO 入口、未就绪跳过、独立默认开启配置和动态激光／枪口外围调用已实现并通过 Java 编译；游戏内绘制行为仍需在实际接入场景中确认。
 
 游戏内验收至少覆盖：四个朝向、八档槽位旋转、高低模边界、内置／安装配件、replace／overlay 变体、slot adapter、满／空弹匣、非均匀缩放、自发光、普通／发光挂板与展示柜、预览、锁定展示柜、取放、破坏容器、切世界、枪包重载和 F3+T。
 

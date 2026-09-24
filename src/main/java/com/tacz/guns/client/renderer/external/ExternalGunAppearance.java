@@ -8,7 +8,10 @@ import com.tacz.guns.client.model.ExternalGunModel;
 import com.tacz.guns.client.resource.ClientIndexManager;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
+import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
+import com.tacz.guns.client.resource.index.ClientSlotAdapterIndex;
 import com.tacz.guns.util.SlotAdapterHelper;
+import com.tacz.guns.util.VariantHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -21,7 +24,9 @@ import java.util.List;
 public class ExternalGunAppearance {
     private ExternalGunAppearance() {}
 
-    public record AttachmentKey(AttachmentType type, ResourceLocation id) {}
+    public record AttachmentKey(AttachmentType type, ResourceLocation id,
+                                @Nullable ResourceLocation variantId,
+                                @Nullable ResourceLocation slotAdapterId) {}
 
     /** Only properties that change captured vertices or material belong in this key. */
     public record GeometryKey(long resourceRevision, ResourceLocation displayId,
@@ -67,13 +72,26 @@ public class ExternalGunAppearance {
             IAttachment item = IAttachment.getIAttachmentOrNull(attached);
             if (item == null) continue;
             ResourceLocation id = item.getAttachmentId(attached);
-            // The display capture does not yet implement variants or slot adapters.
-            if (TimelessAPI.getClientAttachmentVariantIndex(attached).isPresent()
-                    || SlotAdapterHelper.getEffectiveSlotAdapter(stack, type, id) != null) return null;
             ClientAttachmentIndex index = TimelessAPI.getClientAttachmentIndex(id).orElse(null);
             if (index == null) return null;
+            ClientAttachmentVariantIndex variant = TimelessAPI.getClientAttachmentVariantIndex(attached).orElse(null);
+            ResourceLocation variantId = variant == null ? null : VariantHelper.getVariant(attached);
+            boolean replacesBase = variant != null && variant.isReplaceMode()
+                    && variant.getAttachmentModel() != null && variant.getModelTexture() != null;
+            if (!replacesBase && index.getAttachmentModel() != null && index.getModelTexture() != null
+                    && index.getExternalModel() == null) return null;
+            if (variant != null && variant.getAttachmentModel() != null && variant.getModelTexture() != null
+                    && variant.getExternalModel() == null) return null;
             lodAffectsGeometry |= index.getLodModel() != null;
-            attachments.add(new AttachmentKey(type, id));
+            if (index.getLodModel() != null && index.getExternalLodModel() == null) return null;
+
+            ResourceLocation selectedAdapter = SlotAdapterHelper.getEffectiveSlotAdapter(stack, type, id);
+            ClientSlotAdapterIndex adapter = selectedAdapter == null ? null
+                    : TimelessAPI.getClientSlotAdapterIndex(selectedAdapter).orElse(null);
+            ResourceLocation adapterId = adapter == null ? null : selectedAdapter;
+            if (adapter != null && adapter.getAdapterModel() != null && adapter.getModelTexture() != null
+                    && adapter.getExternalModel() == null) return null;
+            attachments.add(new AttachmentKey(type, id, variantId, adapterId));
         }
 
         long revision = ClientIndexManager.resourceRevision();
