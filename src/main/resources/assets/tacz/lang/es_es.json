@@ -17,7 +17,7 @@
   "commands.tacz.config.server_shoot_network_check.enabled": "§a§l[TACZ]§r Detección de disparo por parte del servidor en línea está habilitado.",
   "commands.tacz.config.server_shoot_network_check.disabled": "§a§l[TACZ]§r Detección de disparo por parte del servidor en línea está deshabilitado.",
   "commands.tacz.config.server_shoot_cooldown_check.enabled": "§a§l[TACZ]§r El tiempo de reposo para la detección de disparo por parte del servidor en línea está habilitado.",
-  "commands.tacz.config.server_shoot_cooldown_check.disabled": "§a§l[TACZ]§r Server-side shoot cooldown check is disabled.\n §6WARNING: Close this will disable the shoot cooldown check in server-side at all, which may lead to potential for cheating. Only consider to close this when you can't shoot at all often.",
+  "commands.tacz.config.server_shoot_cooldown_check.disabled": "§a§l[TACZ]§r El tiempo de espera para la detección de disparos por parte del servidor está desactivado.\n §6Alerta: Cerrar esto desactivará la detección de disparos por parte del servidor completamente, lo que puede resultar en uso de trampas. Solo considerar cerrar esto cuando no dispares frequentemente.",
   "message.tacz.fire_select.fail": "Modo de disparo desconocido, incapaz de disparar",
   "key.category.tacz": "Timeless & Classic Guns: Zero",
   "message.tacz.target_minecart.hit": "Daño: %s Distancia: %s",
