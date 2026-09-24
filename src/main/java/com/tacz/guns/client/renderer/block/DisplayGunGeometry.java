@@ -20,10 +20,10 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumMap;
 
-public final class DisplayGunGeometry {
+public class DisplayGunGeometry {
     private DisplayGunGeometry() {}
 
-    private static EnumMap<AttachmentType, ClientAttachmentIndex> resolveAttachments(IGun gun, ItemStack stack) {
+    public static EnumMap<AttachmentType, ClientAttachmentIndex> resolveAttachments(IGun gun, ItemStack stack) {
         EnumMap<AttachmentType, ClientAttachmentIndex> indexes = new EnumMap<>(AttachmentType.class);
         for (AttachmentType type : AttachmentType.values()) {
             if (type == AttachmentType.NONE) continue;
@@ -39,7 +39,7 @@ public final class DisplayGunGeometry {
         return indexes;
     }
 
-    private static ItemStack effectiveAttachment(IGun gun, ItemStack stack, AttachmentType type) {
+    public static ItemStack effectiveAttachment(IGun gun, ItemStack stack, AttachmentType type) {
         ItemStack attached = gun.getAttachment(stack, type);
         return attached.isEmpty() ? gun.getBuiltinAttachment(stack, type) : attached;
     }
@@ -75,7 +75,7 @@ public final class DisplayGunGeometry {
         return true;
     }
 
-    private static void renderAttachments(DisplayGunModelInstance instance, PoseStack pose, boolean useLod,
+    public static void renderAttachments(DisplayGunModelInstance instance, PoseStack pose, boolean useLod,
                                           EnumMap<AttachmentType, ClientAttachmentIndex> attachments,
                                           GeometryCollector collector) {
         for (var entry : attachments.entrySet()) {
@@ -103,7 +103,7 @@ public final class DisplayGunGeometry {
         }
     }
 
-    private static void renderModel(ExternalGunModel external, DisplayGunModelInstance instance, PoseStack pose,
+    public static void renderModel(ExternalGunModel external, DisplayGunModelInstance instance, PoseStack pose,
                                     ResourceLocation texture, GeometryCollector collector) {
         var buffer = collector.buffer(RenderType.entityCutout(texture),
                 DisplayGunRenderType.emissive(texture), VertexFormat.Mode.QUADS);

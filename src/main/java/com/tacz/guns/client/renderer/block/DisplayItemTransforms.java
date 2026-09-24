@@ -5,7 +5,7 @@ import com.mojang.math.Axis;
 import net.minecraft.core.Direction;
 
 /** 展示容器的槽位变换；输出是调用 ItemRenderer.renderStatic 之前的坐标空间。 */
-public final class DisplayItemTransforms {
+public class DisplayItemTransforms {
     private DisplayItemTransforms() {}
 
     public static void apply(PoseStack pose, Direction facing, double x, double y, double offset, int rotation) {

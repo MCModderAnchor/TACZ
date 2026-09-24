@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 /** Immediate VBO path for static third-person and ground gun appearances. */
-public final class ExternalGunItemVboRenderer {
+public class ExternalGunItemVboRenderer {
     private static boolean wasEnabled;
 
     private ExternalGunItemVboRenderer() {}

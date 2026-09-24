@@ -15,7 +15,7 @@ import java.util.Set;
 import static com.tacz.guns.client.model.GunModelConstant.*;
 
 /** 捕获阶段复用的模型状态；骨骼名称只在资源构造时解析一次。 */
-public final class DisplayGunModelInstance extends BakedModelInstance {
+public class DisplayGunModelInstance extends BakedModelInstance {
     public enum Kind { GUN, ATTACHMENT }
 
     private static final AttachmentType[] TYPES = AttachmentType.values();
@@ -126,11 +126,11 @@ public final class DisplayGunModelInstance extends BakedModelInstance {
         }
     }
 
-    private static void setVisible(BoneState bone, boolean visible) {
+    public static void setVisible(BoneState bone, boolean visible) {
         if (bone != null) bone.visible = visible;
     }
 
-    private static boolean isHiddenGunBone(String name) {
+    public static boolean isHiddenGunBone(String name) {
         return name.equals(MAG_ADDITIONAL_NODE) || name.equals(MUZZLE_FLASH_ORIGIN_NODE)
                 || name.equals(LEFTHAND_POS_NODE) || name.equals(RIGHTHAND_POS_NODE)
                 || name.equals(SHELL_ORIGIN_NODE) || name.matches("shell_\\d+");

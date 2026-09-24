@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 /** 每个悬挂物独立登记；稳定身份由所属方块实体创建和持有。 */
-public final class DisplayGunMeshGroup {
+public class DisplayGunMeshGroup {
     private static final int GRID_SIZE = 4;
     private static final double ITEM_DEPTH = 0.25D;
     private static WorldMeshGroup<DisplayGunSlot> group;
@@ -117,32 +117,32 @@ public final class DisplayGunMeshGroup {
         return true;
     }
 
-    private static DisplayGunSlot slot(BlockEntity owner, int index) {
+    public static DisplayGunSlot slot(BlockEntity owner, int index) {
         if (owner instanceof GunPegboardBlockEntity board) return board.getDisplaySlot(index);
         if (owner instanceof GunDisplayCaseBlockEntity showcase) return showcase.getDisplaySlot(index);
         throw new IllegalArgumentException("Unsupported display block entity: " + owner.getClass());
     }
 
-    private static ItemStack stack(BlockEntity owner, int index) {
+    public static ItemStack stack(BlockEntity owner, int index) {
         if (owner instanceof GunPegboardBlockEntity board) return board.getItem(index);
         if (owner instanceof GunDisplayCaseBlockEntity showcase) return showcase.getItem(index);
         return ItemStack.EMPTY;
     }
 
-    private static Direction facing(BlockEntity owner) {
+    public static Direction facing(BlockEntity owner) {
         if (owner instanceof GunPegboardBlockEntity board) return board.getBlockState().getValue(GunPegboardBlock.FACING);
         if (owner instanceof GunDisplayCaseBlockEntity showcase)
             return showcase.getBlockState().getValue(GunDisplayCaseBlock.FACING);
         return Direction.NORTH;
     }
 
-    private static int rotation(BlockEntity owner, int index) {
+    public static int rotation(BlockEntity owner, int index) {
         if (owner instanceof GunPegboardBlockEntity board) return board.getRotation(index);
         if (owner instanceof GunDisplayCaseBlockEntity showcase) return showcase.getRotation(index);
         return 0;
     }
 
-    private static ExternalGunAppearance.Snapshot snapshot(DisplayGunSlot slot) {
+    public static ExternalGunAppearance.Snapshot snapshot(DisplayGunSlot slot) {
         BlockEntity owner = slot.owner();
         if (owner.isRemoved()) return null;
         long appearanceRevision = slot.appearanceRevision();

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Static external appearance shared by display guns and item VBO rendering. */
-public final class ExternalGunAppearance {
+public class ExternalGunAppearance {
     private ExternalGunAppearance() {}
 
     public record AttachmentKey(AttachmentType type, ResourceLocation id) {}

@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** 采用原版无方向光、带 alpha 裁剪的 shader；独立配置实体材质的深度与混合状态。 */
-public final class DisplayGunRenderType extends RenderStateShard {
+public class DisplayGunRenderType extends RenderStateShard {
     private static final Map<ResourceLocation, RenderType> CACHE = new HashMap<>();
 
-    private DisplayGunRenderType(String name, Runnable setup, Runnable clear) {
+    public DisplayGunRenderType(String name, Runnable setup, Runnable clear) {
         super(name, setup, clear);
     }
 

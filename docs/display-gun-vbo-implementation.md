@@ -154,7 +154,7 @@ WorldMeshGroup 已新增 `claimForWorldDraw(object, expectedGeometryKey)`，在�
 | D：验收 | 开关、等待／不支持原因统计、A/B 记录 | 原版／Embeddium／已验证光影的正确性与性能实测，确认 VBO 高于 AR 的优先级 |
 | E：第三人称／掉落物 | 独立矩阵绘制入口与动态效果衔接 | 旋转、非均匀缩放、光影、未就绪跳过、激光及枪口粒子验证 |
 
-B/C 的本地依赖已准备：带即时物品 VBO 和双材质几何收集 API 的 SBM `2.5.17-forge-mc1.20.1` 已发布至 Maven Local，TACZ 优先解析 Maven Local，依赖与 jarJar 范围同步到 2.5.17。当前原型仍需游戏内确认，未来修改 SBM 公共 API 时再次提升版本，不覆盖已使用的同名制品。
+B/C 的本地依赖已准备：带即时物品 VBO 和双材质几何收集 API 的 SBM `2.5.19-forge-mc1.20.1` 已发布至 Maven Local，TACZ 优先解析 Maven Local，依赖与 jarJar 范围同步到 2.5.19。当前原型仍需游戏内确认，未来修改 SBM 公共 API 时再次提升版本，不覆盖已使用的同名制品。
 
 展示枪开关位于 TACZ 客户端配置 `render.EnableDisplayGunVbo`，物品即时 VBO 独立使用 `render.EnableExternalItemGunVbo`，两者默认 true。受支持的外观优先走 VBO，包括光影开启且 AR 同时可用的情况；未就绪时跳过本次枪体绘制。预览、复杂配件组合和自定义旧模型子类继续原路径。展示枪现有世界阶段仅负责主场景绘制；物品即时后端在当前 pass 内提交。自发光 pass 复用原版 `rendertype_energy_swirl` shader，配置独立纹理、静态 UV、cutout 深度与不混合状态；不注册新 core shader。
 

@@ -20,7 +20,7 @@ import java.util.Set;
  * 外部视角的 SBM 模型资源。它从 TACZ 已解析的同一份枪包几何构造，
  * 不读取或渲染 BedrockGunModel 的可变骨骼树。
  */
-public final class ExternalGunModel {
+public class ExternalGunModel {
     private static final Gson SOURCE_GSON = new GsonBuilder()
             .registerTypeAdapter(CubesItem.class, (JsonSerializer<CubesItem>) (cube, type, context) -> {
                 JsonObject json = new JsonObject();
@@ -39,7 +39,7 @@ public final class ExternalGunModel {
     private final BakedBedrockModel model;
     private final DisplayGunModelInstance displayInstance;
 
-    private ExternalGunModel(BakedBedrockModel model, Set<String> hiddenTextBones,
+    public ExternalGunModel(BakedBedrockModel model, Set<String> hiddenTextBones,
                              DisplayGunModelInstance.Kind kind) {
         this.model = model;
         this.displayInstance = new DisplayGunModelInstance(model, hiddenTextBones, kind);

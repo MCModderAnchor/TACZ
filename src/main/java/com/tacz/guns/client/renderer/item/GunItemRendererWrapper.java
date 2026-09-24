@@ -390,7 +390,7 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
         poseStack.popPose();
     }
 
-    private static void captureThirdPersonMuzzle(PoseStack poseStack, BedrockGunModel gunModel) {
+    public static void captureThirdPersonMuzzle(PoseStack poseStack, BedrockGunModel gunModel) {
         if (currentEntity == null) return;
         List<BedrockPart> muzzlePath = gunModel.getMuzzleFlashPosPath();
         if (muzzlePath == null) return;
@@ -415,7 +415,7 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
         }
     }
 
-    private static void renderExternalAttachmentLasers(ItemStack stack, BedrockGunModel gunModel,
+    public static void renderExternalAttachmentLasers(ItemStack stack, BedrockGunModel gunModel,
                                                        PoseStack poseStack, ItemDisplayContext context,
                                                        MultiBufferSource bufferSource) {
         IGun gun = IGun.getIGunOrNull(stack);
