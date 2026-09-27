@@ -106,5 +106,13 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.enable_translucent"), RenderConfig.BLOCK_ENTITY_TRANSLUCENT.get())
                 .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.client.render.enable_translucent.desc"))
                 .setSaveConsumer(RenderConfig.BLOCK_ENTITY_TRANSLUCENT::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.display_gun_vbo"), RenderConfig.DISPLAY_GUN_VBO.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.display_gun_vbo.desc"))
+                .setSaveConsumer(RenderConfig.DISPLAY_GUN_VBO::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.static_item_gun_vbo"), RenderConfig.STATIC_ITEM_GUN_VBO.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.static_item_gun_vbo.desc"))
+                .setSaveConsumer(RenderConfig.STATIC_ITEM_GUN_VBO::set).build());
     }
 }

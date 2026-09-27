@@ -245,7 +245,11 @@ public class LocalPlayerShoot {
         // 获取余弹数
         boolean consumeAmmo = IGunOperator.fromLivingEntity(player).consumesAmmoOrNot();
         boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainHandItem) && boltType != Bolt.OPEN_BOLT;
-        int ammoCount = consumeAmmo ? iGun.getCurrentAmmoCount(mainHandItem) + (hasAmmoInBarrel ? 1 : 0) : Integer.MAX_VALUE;
+        int ammoCount = consumeAmmo
+                ? (iGun.useInventoryAmmo(mainHandItem)
+                    ? ClientAmmoCount.get(player, mainHandItem, iGun) + (hasAmmoInBarrel ? 1 : 0)
+                    : iGun.getCurrentAmmoCount(mainHandItem) + (hasAmmoInBarrel ? 1 : 0))
+                : Integer.MAX_VALUE;
         // 连发射击间隔
         long period = fireMode == FireMode.BURST ? gunData.getBurstShootInterval() : 1;
         // 最大连发数

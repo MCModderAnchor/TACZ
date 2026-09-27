@@ -11,6 +11,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.util.LuaNbtAccessor;
+import com.tacz.guns.client.gameplay.ClientAmmoCount;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.functional.ShellRender;
 import com.tacz.guns.client.resource.GunDisplayInstance;
@@ -149,11 +150,17 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
     }
 
     /**
-     * 获取弹匣中的备弹数。
-     * @return 返回弹匣中的备弹数，不计算已在枪管中的弹药。
+     * 获取弹匣中的备弹数。背包直读枪械返回背包弹药数。
+     * @return 不计算已在枪管中的弹药。
      */
     public int getAmmoCount() {
-        return processGunData((iGun, gunIndex) -> iGun.getCurrentAmmoCount(currentGunItem)).orElse(0);
+        return processGunData((iGun, gunIndex) -> {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (iGun.useInventoryAmmo(currentGunItem) && player != null && player.getMainHandItem() == currentGunItem) {
+                return ClientAmmoCount.getCached(player, currentGunItem, iGun);
+            }
+            return iGun.getCurrentAmmoCount(currentGunItem);
+        }).orElse(0);
     }
 
     /**

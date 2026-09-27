@@ -22,7 +22,7 @@ public class ExternalGunItemVboRenderer {
                                                                     boolean useLod, PoseStack pose,
                                                                     MultiBufferSource buffers,
                                                                     int packedLight, int packedOverlay) {
-        if (!RenderConfig.EXTERNAL_ITEM_GUN_VBO.get()) {
+        if (!RenderConfig.STATIC_ITEM_GUN_VBO.get()) {
             if (wasEnabled) ImmediateStaticMeshRenderer.clear();
             wasEnabled = false;
             return ImmediateStaticMeshRenderer.DrawResult.UNSUPPORTED;

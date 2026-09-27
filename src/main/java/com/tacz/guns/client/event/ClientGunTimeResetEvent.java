@@ -29,7 +29,9 @@ public final class ClientGunTimeResetEvent {
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
-            IClientPlayerGunOperator.fromLocalPlayer(player).getDataHolder().cancelShootFutures();
+            LocalPlayerDataHolder dataHolder = IClientPlayerGunOperator.fromLocalPlayer(player).getDataHolder();
+            dataHolder.cancelShootFutures();
+            dataHolder.resetAmmoCountCache();
         }
         GunTime.resetEpoch();
         LocalPlayerDataHolder.clientClickButtonTimestamp = -1L;

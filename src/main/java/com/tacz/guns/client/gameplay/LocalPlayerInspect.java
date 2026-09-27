@@ -43,7 +43,9 @@ public class LocalPlayerInspect {
             Bolt boltType = gunData.getBolt();
             boolean noAmmo;
             if (boltType == Bolt.OPEN_BOLT) {
-                noAmmo = iGun.getCurrentAmmoCount(mainHandItem) <= 0;
+                noAmmo = iGun.useInventoryAmmo(mainHandItem)
+                        ? ClientAmmoCount.getCached(player, mainHandItem, iGun) <= 0
+                        : iGun.getCurrentAmmoCount(mainHandItem) <= 0;
             } else {
                 noAmmo = !iGun.hasBulletInBarrel(mainHandItem);
             }

@@ -2,8 +2,10 @@ package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
+import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -16,6 +18,11 @@ import java.util.function.Predicate;
 public class LocalPlayerDataHolder {
     public static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(2);
     private final Set<ScheduledFuture<?>> shootFutures = ConcurrentHashMap.newKeySet();
+    private static final long AMMO_COUNT_CACHE_MILLIS = 50L;
+    private ItemStack cachedAmmoGun;
+    private long cachedAmmoTimestamp = -1L;
+    private long cachedAmmoEpoch = -1L;
+    private int cachedAmmoCount;
     public long clientBaseTimestamp = -1L;
     /**
      * 上一个 tick 的瞄准进度，用于插值，范围 0 ~ 1
@@ -78,6 +85,27 @@ public class LocalPlayerDataHolder {
 
     public LocalPlayerDataHolder(LocalPlayer player) {
         this.player = player;
+    }
+
+    public int getCachedAmmoCount(ItemStack gun, IGun iGun) {
+        long epoch = GunTime.epoch();
+        long now = GunTime.nowMillis();
+        long elapsed = now - cachedAmmoTimestamp;
+        if (gun != cachedAmmoGun || epoch != cachedAmmoEpoch || cachedAmmoTimestamp < 0
+                || elapsed < 0 || elapsed >= AMMO_COUNT_CACHE_MILLIS) {
+            cachedAmmoCount = ClientAmmoCount.get(player, gun, iGun);
+            cachedAmmoGun = gun;
+            cachedAmmoTimestamp = now;
+            cachedAmmoEpoch = epoch;
+        }
+        return cachedAmmoCount;
+    }
+
+    public void resetAmmoCountCache() {
+        cachedAmmoGun = null;
+        cachedAmmoTimestamp = -1L;
+        cachedAmmoEpoch = -1L;
+        cachedAmmoCount = 0;
     }
 
     /**
@@ -143,6 +171,7 @@ public class LocalPlayerDataHolder {
      */
     public void reset() {
         cancelShootFutures();
+        resetAmmoCountCache();
         // 重置客户端的 shoot 时间戳
         isShootRecorded = true;
         clientShootTimestamp = -1;

@@ -237,8 +237,8 @@ dependencies {
     implementation fg.deobf("curse.maven:embeddium-908741:${embeddedt_id}")
     // 同时兼容两个版本
     compileOnly fg.deobf('libs:oculus_legacy:mc1.20.1-1.6.13')
-    implementation fg.deobf('libs:oculus:mc1.20.1-1.7.0')
-    runtimeOnly fg.deobf('curse.maven:rubidium-extra-654373:6101745')
+    compileOnly fg.deobf('libs:oculus:mc1.20.1-1.7.0')
+//    runtimeOnly fg.deobf('curse.maven:rubidium-extra-654373:6101745')
 
     runtimeOnly fg.deobf("curse.maven:carry-on-274259:${carry_on_id}")
 

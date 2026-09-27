@@ -2,9 +2,12 @@ package com.tacz.guns.client.model.papi;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.client.gameplay.ClientAmmoCount;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,7 +29,11 @@ public class AmmoCountPapi implements Function<ItemStack, String> {
             if (gunData == null) {
                 return "";
             }
-            int ammoCount = iGun.getCurrentAmmoCount(stack) + (iGun.hasBulletInBarrel(stack) && gunData.getBolt() != Bolt.OPEN_BOLT ? 1 : 0);
+            LocalPlayer player = Minecraft.getInstance().player;
+            int ammoCount = iGun.useInventoryAmmo(stack) && player != null && player.getMainHandItem() == stack
+                    ? ClientAmmoCount.getCached(player, stack, iGun)
+                    : iGun.getCurrentAmmoCount(stack);
+            ammoCount += iGun.hasBulletInBarrel(stack) && gunData.getBolt() != Bolt.OPEN_BOLT ? 1 : 0;
             return "" + ammoCount;
         }
         return "";

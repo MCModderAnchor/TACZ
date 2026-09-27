@@ -26,6 +26,7 @@ public class SbmGunTransforms {
         // BedrockGunModel 的模型空间与 SBM 烘焙空间相差一个固定的轴变换 B。
         // 将旧外部锚点语义在 SBM 坐标内表示为 B * positioning * displayScale * B。
         bedrockToSbm(pose);
+        pose.translate(0, 1.5, 0);
         var bones = external.model().bones();
         int index = external.model().getIndex(anchor);
         while (index >= 0) {
@@ -45,10 +46,9 @@ public class SbmGunTransforms {
             index = bone.parentIndex();
         }
         if (configuredScale != null) {
-            pose.translate(0, 1.5, 0);
             pose.scale(scale.x(), scale.y(), scale.z());
-            pose.translate(0, -1.5, 0);
         }
+        pose.translate(0, -1.5, 0);
         bedrockToSbm(pose);
     }
 
