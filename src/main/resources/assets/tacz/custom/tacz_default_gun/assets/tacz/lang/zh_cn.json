@@ -33,7 +33,6 @@
   "tacz.gun.ai_awp.name": "精密国际 AWM 狙击步枪",
   "tacz.gun.m95.name": "M95 .50口径反器材步枪",
   "tacz.gun.m4a1.name": "M4A1 卡宾枪",
-  "tacz.gun.urgi.name": "URGI 突击步枪",
   "tacz.gun.mk18.name": "MK18 特种作战步枪",
   "tacz.gun.m249.name": "M249 机枪",
   "tacz.gun.rpg7.name": "RPG-7 火箭筒",
@@ -96,6 +95,7 @@
   "tacz.gun.m1897.name": "M1897 “堑壕清扫者”",
   "tacz.gun.ak12.name": "AK-12 突击步枪",
   "tacz.gun.m1866.name": "温彻斯特 1866 杠杆步枪",
+  "tacz.gun.urgi.name": "URGI 突击步枪",
 
 
   "tacz.gun.ak47.desc": "从雨林到海湾，永远不会错过它的身影",
@@ -110,7 +110,6 @@
   "tacz.gun.hk_g3.desc": "自由世界的左手",
   "tacz.gun.hk_mp5a5.desc": "就像抚摸一只打呼噜的猫咪",
   "tacz.gun.m4a1.desc": "士兵的爱人、妻子和情人",
-  "tacz.gun.urgi.desc": "请输入文本",
   "tacz.gun.mk18.desc": "没什么比这更资本主义了",
   "tacz.gun.m16a1.desc": "早上好，树林！",
   "tacz.gun.m16a4.desc": "官僚主义的谎言",
@@ -158,7 +157,7 @@
   "tacz.gun.hcar.desc": "新瓶装旧酒",
   "tacz.gun.tec_9.desc": "便宜、吵、还容易卡弹，但你还能要求什么？",
   "tacz.gun.svd.desc": "是狙不是狙，这得看你怎么用",
-  "tacz.gun.qr_24.desc": "请输入文本",
+  "tacz.gun.qr_24.desc": "明天的火力，今天的账单",
   "tacz.gun.mrad.desc": "礼貌和精准，可以并存",
   "tacz.gun.hk_mp7a1.desc": "用它在头盔上画个哭脸",
   "tacz.gun.scar_mk20.desc": "精准是奢侈的代名词",
@@ -168,6 +167,7 @@
   "tacz.gun.m1897.desc": "猛击走火！",
   "tacz.gun.ak12.desc": "被寄予厚望的设计，可惜没过验收那一关",
   "tacz.gun.m1866.desc": "征服西部的那把枪",
+  "tacz.gun.urgi.desc": "展现你捍卫资本主义的决心",
 
   "tacz.ammo.9mm.name": "§a9mm 手枪弹",
   "tacz.ammo.12g.name": "§912 号口径霰弹",
