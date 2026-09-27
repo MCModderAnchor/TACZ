@@ -49,12 +49,11 @@ public class GunRefitScreen extends Screen {
     private static final int VARIANT_BUTTON_HEIGHT = 12;
     private static final int VARIANT_BUTTON_SPACING = 1;
     private static final int INVENTORY_ATTACHMENT_START_Y = 50;
-    private static final int INVENTORY_ATTACHMENT_ADAPTER_GAP = 4;
+    private static final int LIST_COLUMN_GAP = 4;
     private static final int INVENTORY_ATTACHMENT_SLOT_COUNT = 8;
     private static boolean HIDE_GUN_PROPERTY_DIAGRAMS = true;
 
     private int currentPage = 0;
-    private int inventoryAttachmentStartY = INVENTORY_ATTACHMENT_START_Y;
 
     public GunRefitScreen() {
         super(Component.literal("Gun Refit Screen"));
@@ -99,7 +98,6 @@ public class GunRefitScreen extends Screen {
     @Override
     public void init() {
         this.clearWidgets();
-        this.inventoryAttachmentStartY = INVENTORY_ATTACHMENT_START_Y;
         // 添加配件槽位
         this.addAttachmentTypeButtons();
         // 添加可选配件列表
@@ -148,7 +146,7 @@ public class GunRefitScreen extends Screen {
             return;
         }
         int startX = this.width - 30;
-        int startY = inventoryAttachmentStartY;
+        int startY = INVENTORY_ATTACHMENT_START_Y;
         int pageStart = currentPage * INVENTORY_ATTACHMENT_SLOT_COUNT;
         int count = 0;
         int currentY = startY;
@@ -276,6 +274,11 @@ public class GunRefitScreen extends Screen {
             });
             if (RefitTransform.getCurrentTransformType() == type) {
                 button.setSelected(true);
+                int adapterListX = this.width - 30 - VARIANT_BUTTON_WIDTH - LIST_COLUMN_GAP;
+                boolean hasSlotAdapters = !SlotAdapterHelper.getAvailableSlotAdapters(player.getMainHandItem(), type).isEmpty();
+                int variantListX = hasSlotAdapters
+                        ? adapterListX - VARIANT_BUTTON_WIDTH - LIST_COLUMN_GAP
+                        : startX + SLOT_SIZE - VARIANT_BUTTON_WIDTH;
                 // 添加拆卸配件按钮
                 RefitUnloadButton unloadButton = new RefitUnloadButton(startX + 5, startY + SLOT_SIZE + 2, b -> {
                     ItemStack attachmentItem = button.getAttachmentItem();
@@ -290,11 +293,10 @@ public class GunRefitScreen extends Screen {
                         }
                     }
                 });
-                int nextY = startY + SLOT_SIZE + 2;
                 if (!button.getAttachmentItem().isEmpty()) {
                     this.addRenderableWidget(unloadButton);
-                    nextY = addVariantButtons(type, button.getAttachmentItem(), inventory,
-                            startX + SLOT_SIZE - VARIANT_BUTTON_WIDTH, startY + SLOT_SIZE + 14);
+                    addVariantButtons(type, button.getAttachmentItem(), inventory,
+                            variantListX, startY + SLOT_SIZE + 14);
 
                     if (button.getAttachmentItem().getItem() instanceof IAttachment iAttachment) {
                         TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(button.getAttachmentItem()))
@@ -308,20 +310,17 @@ public class GunRefitScreen extends Screen {
                                     }});
                     }
                 }
-                int slotAdapterEndY = addSlotAdapterButtons(type, button.getAttachmentItem(), inventory,
-                        startX + SLOT_SIZE - VARIANT_BUTTON_WIDTH, nextY);
-                if (slotAdapterEndY > nextY) {
-                    inventoryAttachmentStartY = Math.max(inventoryAttachmentStartY, slotAdapterEndY + INVENTORY_ATTACHMENT_ADAPTER_GAP);
-                }
+                addSlotAdapterButtons(type, button.getAttachmentItem(), inventory,
+                        adapterListX, INVENTORY_ATTACHMENT_START_Y);
             }
             this.addRenderableWidget(button);
             startX = startX - SLOT_SIZE;
         }
     }
 
-    private int addVariantButtons(AttachmentType type, ItemStack attachmentItem, Inventory inventory, int x, int y) {
+    private void addVariantButtons(AttachmentType type, ItemStack attachmentItem, Inventory inventory, int x, int y) {
         if (!(attachmentItem.getItem() instanceof IAttachment attachment)) {
-            return y;
+            return;
         }
         ResourceLocation attachmentId = attachment.getAttachmentId(attachmentItem);
         List<Map.Entry<ResourceLocation, CommonAttachmentVariantIndex>> variants = TimelessAPI.getAllCommonAttachmentVariantIndex().stream()
@@ -329,7 +328,7 @@ public class GunRefitScreen extends Screen {
                 .sorted(Comparator.comparingInt(entry -> entry.getValue().getSort()))
                 .toList();
         if (variants.isEmpty()) {
-            return y;
+            return;
         }
         ResourceLocation current = VariantHelper.getVariant(attachmentItem);
         Component standardLabel = current == null
@@ -350,21 +349,20 @@ public class GunRefitScreen extends Screen {
             }));
             currentY += VARIANT_BUTTON_HEIGHT + VARIANT_BUTTON_SPACING;
         }
-        return currentY;
     }
 
-    private int addSlotAdapterButtons(AttachmentType type, ItemStack attachmentItem, Inventory inventory, int x, int y) {
+    private void addSlotAdapterButtons(AttachmentType type, ItemStack attachmentItem, Inventory inventory, int x, int y) {
         ItemStack gunItem = inventory.getItem(inventory.selected);
         List<Map.Entry<ResourceLocation, CommonSlotAdapterIndex>> adapters = SlotAdapterHelper.getAvailableSlotAdapters(gunItem, type);
         if (adapters.isEmpty()) {
-            return y;
+            return;
         }
 
         ResourceLocation attachmentId = null;
         if (!attachmentItem.isEmpty()) {
             IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentItem);
             if (attachment == null || attachment.getType(attachmentItem) != type) {
-                return y;
+                return;
             }
             attachmentId = attachment.getAttachmentId(attachmentItem);
         }
@@ -405,7 +403,6 @@ public class GunRefitScreen extends Screen {
             this.addRenderableWidget(adapterButton);
             currentY += VARIANT_BUTTON_HEIGHT + VARIANT_BUTTON_SPACING;
         }
-        return currentY;
     }
 
     @Override

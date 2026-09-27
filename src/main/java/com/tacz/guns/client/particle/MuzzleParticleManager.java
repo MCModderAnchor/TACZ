@@ -12,7 +12,6 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
-import com.tacz.guns.client.event.CameraSetupEvent;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.GunDisplayInstance;
@@ -243,16 +242,7 @@ public final class MuzzleParticleManager {
      * 等于 1 表示两者投影一致，无需补偿。
      */
     private static float getHandToWorldTanRatio() {
-        double handFov = CameraSetupEvent.ITEM_MODEL_FOV_DYNAMICS.get();
-        double worldFov = CameraSetupEvent.WORLD_FOV_DYNAMICS.get();
-        if (handFov <= 0.0 || worldFov <= 0.0) {
-            return 1.0f;
-        }
-        double worldTan = Math.tan(Math.toRadians(worldFov) / 2.0);
-        if (Math.abs(worldTan) < 1.0e-6) {
-            return 1.0f;
-        }
-        return (float) (Math.tan(Math.toRadians(handFov) / 2.0) / worldTan);
+        return CameraStateCache.getFirstPersonToWorldDepthScale();
     }
 
     /**
@@ -267,9 +257,8 @@ public final class MuzzleParticleManager {
      * 也不会被搬到更近/更远的深度上；整段局部空间一起缩放还保证云团的横向铺开在屏幕上也与
      * 手部 FOV 下的观感一致（发射形状偏移、跟随锚点的局部偏移同一套映射）。
      * <p>
-     * 注意：这里连矩阵基一起缩放，因此依赖 SBM 侧的配套改动 —— 粒子的 {@code spawnScale}
-     * 与初速度缩放必须取自发射器本地（定位器）变换而不是世界矩阵（见 SBM
-     * {@code ParticleEmitterInstance.applyLocalSpaceOnSpawn}），否则 FOV 比例会被算进尺寸和初速度。
+     * 注意：这里连矩阵基一起缩放。SBM 侧从定位器变换读取出生尺寸，并在世界粒子
+     * 绘制和后续加速度更新时处理 FOV 比例，避免旧粒子尺寸混杂或粒子群散布不一致。
      */
     private static Matrix4f toWorldMuzzleView(Matrix4f muzzleView) {
         float fovRatio = getHandToWorldTanRatio();
