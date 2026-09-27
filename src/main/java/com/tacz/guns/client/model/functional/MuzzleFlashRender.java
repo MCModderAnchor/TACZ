@@ -15,6 +15,7 @@ import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.pojo.display.gun.MuzzleFlash;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
+import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -54,7 +55,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
 
     public static void onShoot() {
         // 记录开火时间戳
-        shootTimeStamp = System.currentTimeMillis();
+        shootTimeStamp = GunTime.nowMillis();
         // 随机给予枪口火焰的旋转
         muzzleFlashRandomRotate = (float) (Math.random() * 360);
     }
@@ -63,7 +64,12 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
      * 记录某实体（任意射手）的第三人称开火时间戳，用于附着在枪口骨骼上的火光。
      */
     public static void onEntityShoot(LivingEntity entity) {
-        TP_SHOOT_TIMESTAMPS.put(entity, System.currentTimeMillis());
+        TP_SHOOT_TIMESTAMPS.put(entity, GunTime.nowMillis());
+    }
+
+    public static void resetTimestamps() {
+        shootTimeStamp = -1;
+        TP_SHOOT_TIMESTAMPS.clear();
     }
 
     private static void renderMuzzleFlash(GunDisplayInstance display, PoseStack poseStack, BedrockModel bedrockModel, long time, MultiBufferSource bufferSource) {
@@ -131,13 +137,10 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
             if (!isSelf) {
                 return;
             }
-            if (shootTimeStamp < 0) {
+            if (!GunTime.isWithin(shootTimeStamp, TIME_RANGE + 1)) {
                 return;
             }
-            time = System.currentTimeMillis() - shootTimeStamp;
-            if (time > TIME_RANGE) {
-                return;
-            }
+            time = GunTime.nowMillis() - shootTimeStamp;
         } else {
             // 第三人称：任意实体（本机 F5 + 其他玩家），按实体计时，附着枪口渲染（跟随枪口）
             LivingEntity entity = ThirdPersonMuzzleParticleManager.currentEntity;
@@ -148,8 +151,8 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
             if (ts == null) {
                 return;
             }
-            time = System.currentTimeMillis() - ts;
-            if (time > TIME_RANGE) {
+            time = GunTime.nowMillis() - ts;
+            if (time < 0 || time > TIME_RANGE) {
                 TP_SHOOT_TIMESTAMPS.remove(entity);
                 return;
             }

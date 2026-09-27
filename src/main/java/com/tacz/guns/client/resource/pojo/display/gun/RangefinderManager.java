@@ -14,6 +14,7 @@ import com.tacz.guns.util.HitboxHelper;
 import com.tacz.guns.util.block.BlockRayTrace;
 import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -55,6 +56,13 @@ public final class RangefinderManager {
     private RangefinderManager() {
     }
 
+    public static void resetTimestamps() {
+        currentConfig = null;
+        lastUpdateTimestamp = 0L;
+        lastRefreshTick = 2;
+        clearResult();
+    }
+
     public static void setCurrentConfig(@Nullable Rangefinder config) {
         currentConfig = config;
     }
@@ -75,8 +83,8 @@ public final class RangefinderManager {
             return MISS_TEXT;
         }
         int refreshTick = currentConfig.getRefreshTick();
-        long now = System.currentTimeMillis();
-        if (lastUpdateTimestamp != 0L && now - lastUpdateTimestamp < refreshTick * MILLIS_PER_TICK && refreshTick == lastRefreshTick) {
+        long now = GunTime.nowMillis();
+        if (lastUpdateTimestamp != 0L && GunTime.isWithin(lastUpdateTimestamp, refreshTick * MILLIS_PER_TICK) && refreshTick == lastRefreshTick) {
             return text;
         }
         lastUpdateTimestamp = now;
@@ -91,7 +99,7 @@ public final class RangefinderManager {
         }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        if (player == null || System.currentTimeMillis() - lastUpdateTimestamp > (lastRefreshTick + 1L) * MILLIS_PER_TICK) {
+        if (player == null || !GunTime.isWithin(lastUpdateTimestamp, (lastRefreshTick + 1L) * MILLIS_PER_TICK)) {
             showImpactPrediction = false;
             return false;
         }

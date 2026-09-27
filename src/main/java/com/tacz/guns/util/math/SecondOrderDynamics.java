@@ -1,5 +1,8 @@
 package com.tacz.guns.util.math;
 
+import com.tacz.guns.util.time.GunTime;
+import net.minecraft.client.Minecraft;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -69,21 +72,23 @@ public class SecondOrderDynamics {
 
     private void update() {
         while (!stop) {
-            // 修正罕见的 NAN 错误
-            if (Float.isNaN(py)) {
-                py = 0;
-            }
-            if (Float.isNaN(pyd)) {
-                pyd = 0;
-            }
+            if (Minecraft.getInstance() == null || GunTime.shouldTick()) {
+                // 修正罕见的 NAN 错误
+                if (Float.isNaN(py)) {
+                    py = 0;
+                }
+                if (Float.isNaN(pyd)) {
+                    pyd = 0;
+                }
 
-            float t = 0.05f;
-            float xd = (target - px) / t;
-            float y = py + t * pyd;
+                float t = 0.05f;
+                float xd = (target - px) / t;
+                float y = py + t * pyd;
 
-            pyd = pyd + t * (px + k3 * xd - py - k1 * pyd) / k2;
-            px = target;
-            py = y;
+                pyd = pyd + t * (px + k3 * xd - py - k1 * pyd) / k2;
+                px = target;
+                py = y;
+            }
 
             try {
                 Thread.sleep(6);

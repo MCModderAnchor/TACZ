@@ -32,6 +32,7 @@ import com.tacz.guns.resource.filter.RecipeFilter;
 import com.tacz.guns.resource.pojo.data.block.TabConfig;
 import com.tacz.guns.util.RenderDistance;
 import com.tacz.guns.util.RenderHelper;
+import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.ChatFormatting;
@@ -611,7 +612,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 Ingredient ingredient = smithTableIngredient.getIngredient();
 
                 ItemStack[] items = ingredient.getItems();
-                int itemIndex = ((int) (System.currentTimeMillis() / 1_000)) % items.length;
+                int itemIndex = ((int) (GunTime.nowMillis() / 1_000)) % items.length;
                 ItemStack item = items[itemIndex];
 
                 gui.renderFakeItem(item, offsetX, offsetY);
@@ -660,7 +661,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 if (items.length == 0) {
                     return;
                 }
-                int itemIndex = ((int) (System.currentTimeMillis() / 1_000)) % items.length;
+                int itemIndex = ((int) (GunTime.nowMillis() / 1_000)) % items.length;
                 ItemStack item = items[itemIndex];
                 if (!item.isEmpty()) {
                     gui.renderComponentTooltip(font, getIngredientTooltip(item), mouseX, mouseY, item);
@@ -716,7 +717,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         posestack.translate(8.0D, 8.0D, 0.0D);
         posestack.scale(1.0F, -1.0F, 1.0F);
         posestack.scale(scale, scale, scale);
-        float rot = (System.currentTimeMillis() % (int) (rotationPeriod * 1000)) * (360f / (rotationPeriod * 1000));
+        float rot = (GunTime.nowMillis() % (int) (rotationPeriod * 1000)) * (360f / (rotationPeriod * 1000));
         posestack.mulPose(Axis.XP.rotationDegrees(rotPitch));
         posestack.mulPose(Axis.YP.rotationDegrees(rot));
         RenderSystem.applyModelViewMatrix();

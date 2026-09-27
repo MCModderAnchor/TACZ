@@ -20,6 +20,7 @@ import com.tacz.guns.resource.pojo.data.attachment.EffectData;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.AllowAttachmentTagMatcher;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -241,9 +242,9 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     }
 
     public void tickLocked(IGun iGun, ItemStack gunStack, GunHeatData heatData, long heatTimestamp) {
-        if(System.currentTimeMillis() - heatTimestamp >= heatData.getOverHeatTime()) {
+        if(GunTime.nowMillis() - heatTimestamp >= heatData.getOverHeatTime()) {
             float heatAmount = iGun.getHeatAmount(gunStack)
-                    - ((float)(System.currentTimeMillis() - heatTimestamp) / 10000f)
+                    - ((float)(GunTime.nowMillis() - heatTimestamp) / 10000f)
                     * heatData.getCoolingMultiplier();
 
             iGun.setHeatAmount(gunStack, heatAmount);
@@ -254,9 +255,9 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     }
 
     public void tickNormal(IGun iGun, ItemStack gunStack, GunHeatData heatData, long heatTimestamp) {
-        if(System.currentTimeMillis() - heatTimestamp >= heatData.getCoolingDelay()) {
+        if(GunTime.nowMillis() - heatTimestamp >= heatData.getCoolingDelay()) {
             float heatAmount = iGun.getHeatAmount(gunStack)
-                    - ((float)(System.currentTimeMillis() - heatTimestamp) / 10000f)
+                    - ((float)(GunTime.nowMillis() - heatTimestamp) / 10000f)
                     * heatData.getCoolingMultiplier();
 
             iGun.setHeatAmount(gunStack, heatAmount);

@@ -2,9 +2,12 @@ package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.player.LocalPlayer;
 
 import javax.annotation.Nullable;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -12,6 +15,7 @@ import java.util.function.Predicate;
 
 public class LocalPlayerDataHolder {
     public static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(2);
+    private final Set<ScheduledFuture<?>> shootFutures = ConcurrentHashMap.newKeySet();
     public long clientBaseTimestamp = -1L;
     /**
      * 上一个 tick 的瞄准进度，用于插值，范围 0 ~ 1
@@ -81,7 +85,7 @@ public class LocalPlayerDataHolder {
      */
     public void lockState(@Nullable Predicate<IGunOperator> lockedCondition) {
         clientStateLock = true;
-        lockTimestamp = System.currentTimeMillis();
+        lockTimestamp = GunTime.nowMillis();
         this.lockedCondition = lockedCondition;
     }
 
@@ -94,7 +98,7 @@ public class LocalPlayerDataHolder {
         // 如果还没完成上锁，则不能释放状态锁
         // 上锁允许的最大响应时间，毫秒
         long maxLockTime = 250;
-        long lockTime = System.currentTimeMillis() - lockTimestamp;
+        long lockTime = GunTime.nowMillis() - lockTimestamp;
         if (lockTime < maxLockTime && lockedCondition != null && !lockedCondition.test(gunOperator)) {
             return;
         }
@@ -121,10 +125,24 @@ public class LocalPlayerDataHolder {
         clientReloadStarting = false;
     }
 
+    public void registerShootFuture(ScheduledFuture<?> future) {
+        shootFutures.add(future);
+    }
+
+    public void unregisterShootFuture(ScheduledFuture<?> future) {
+        shootFutures.remove(future);
+    }
+
+    public void cancelShootFutures() {
+        shootFutures.forEach(future -> future.cancel(false));
+        shootFutures.clear();
+    }
+
     /**
      * 重生后各种参数的重置
      */
     public void reset() {
+        cancelShootFutures();
         // 重置客户端的 shoot 时间戳
         isShootRecorded = true;
         clientShootTimestamp = -1;

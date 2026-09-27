@@ -16,6 +16,7 @@ import com.tacz.guns.network.message.ClientMessagePlayerCancelReload;
 import com.tacz.guns.network.message.ClientMessagePlayerReloadGun;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -71,7 +72,7 @@ public class LocalPlayerReload {
             if (data.clientStateLock) {
                 return;
             }
-            if (System.currentTimeMillis() - data.clientShootTimestamp < 100) {
+            if (GunTime.isWithin(data.clientShootTimestamp, 100)) {
                 return;
             }
             // 弹药简单检查

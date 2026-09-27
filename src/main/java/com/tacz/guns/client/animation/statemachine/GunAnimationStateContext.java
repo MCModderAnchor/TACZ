@@ -18,6 +18,7 @@ import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.AttachmentDataUtils;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
@@ -114,7 +115,7 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
     }
 
     /**
-     * 返回上次射击的 timestamp(系统时间)，单位为毫秒。此值在切枪时会重置为 -1。
+     * 返回上次射击的枪械时间，单位为毫秒。此值在切枪时会重置为 -1。
      * @return 上次射击的 timestamp，在切枪时会重置为 -1。
      */
     public long getLastShootTimestamp() {
@@ -122,10 +123,16 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
     }
 
     /**
-     * 获取当前系统时间，单位毫秒。
-     * @return 当前系统时间
+     * 获取当前枪械时间，单位毫秒。单人游戏暂停时此时间不前进。
+     * 此时间不是 Unix 时间戳；如需真实系统时间，使用 {@link #getRealSystemTimestamp()}。
+     * @return 当前枪械时间
      */
     public long getCurrentTimestamp() {
+        return GunTime.nowMillis();
+    }
+
+    /** 获取真实系统时间（Unix 毫秒时间戳），不受游戏暂停影响。 */
+    public long getRealSystemTimestamp() {
         return System.currentTimeMillis();
     }
 

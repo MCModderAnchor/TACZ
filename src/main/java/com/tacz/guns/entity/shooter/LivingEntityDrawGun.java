@@ -7,6 +7,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunDraw;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -31,20 +32,20 @@ public class LivingEntityDrawGun {
 
         // 更新切枪时间戳
         if (data.drawTimestamp == -1) {
-            data.drawTimestamp = System.currentTimeMillis();
+            data.drawTimestamp = GunTime.nowMillis();
         }
         if (data.heatTimestamp == -1) {
-            data.heatTimestamp = System.currentTimeMillis();
+            data.heatTimestamp = GunTime.nowMillis();
         }
-        long drawTime = System.currentTimeMillis() - data.drawTimestamp;
+        long drawTime = GunTime.nowMillis() - data.drawTimestamp;
         if (drawTime >= 0) {
             // 如果不处于收枪状态，则需要计算收枪时长
             if (drawTime < data.currentPutAwayTimeS * 1000) {
                 // 从开始切枪到现在，抬枪的时间小于收枪需要的时间，则按抬枪时间计算。
-                data.drawTimestamp = System.currentTimeMillis() + drawTime;
+                data.drawTimestamp = GunTime.nowMillis() + drawTime;
             } else {
                 // 从开始切枪到现在，抬枪的时间大于收枪需要的时间，则按收枪时间计算。
-                data.drawTimestamp = System.currentTimeMillis() + (long) (data.currentPutAwayTimeS * 1000);
+                data.drawTimestamp = GunTime.nowMillis() + (long) (data.currentPutAwayTimeS * 1000);
             }
         }
         ItemStack lastItem = data.currentGunItem == null ? ItemStack.EMPTY : data.currentGunItem.get();
@@ -67,7 +68,7 @@ public class LivingEntityDrawGun {
         ResourceLocation gunId = iGun.getGunId(currentGunItem);
         Optional<CommonGunIndex> gunIndex = TimelessAPI.getCommonGunIndex(gunId);
         return gunIndex.map(index -> {
-            long coolDown = (long) (index.getGunData().getDrawTime() * 1000) - (System.currentTimeMillis() - data.drawTimestamp);
+            long coolDown = (long) (index.getGunData().getDrawTime() * 1000) - (GunTime.nowMillis() - data.drawTimestamp);
             // 给 5 ms 的窗口时间，以平衡延迟
             coolDown = coolDown - 5;
             if (coolDown < 0) {

@@ -2,6 +2,7 @@ package com.tacz.guns.api.client.animation;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
 import com.tacz.guns.util.math.MathUtil;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nonnull;
@@ -35,6 +36,7 @@ public class ObjectAnimationRunner {
     private boolean running = false;
     private boolean pausing = false;
     private long lastUpdateNs;
+    private long lastUpdateEpoch = GunTime.epoch();
     /**
      * 当前动画播放进度
      */
@@ -67,7 +69,8 @@ public class ObjectAnimationRunner {
     public void run() {
         if (!running) {
             running = true;
-            lastUpdateNs = System.nanoTime();
+            lastUpdateNs = GunTime.nowNanos();
+            lastUpdateEpoch = GunTime.epoch();
         }
         pausing = false;
     }
@@ -258,10 +261,8 @@ public class ObjectAnimationRunner {
 
     public void update(boolean blend) {
         long fromTimeNs = progressNs;
-        long currentNs = System.nanoTime();
-        long alphaProgress = currentNs - lastUpdateNs;
+        long alphaProgress = elapsedSinceLastUpdate();
         updateProgress(alphaProgress);
-        lastUpdateNs = currentNs;
         if (isTransitioning) {
             transitionProgressNs += alphaProgress;
             if (transitionProgressNs >= transitionTimeNs) {
@@ -285,9 +286,7 @@ public class ObjectAnimationRunner {
 
     public void updateSoundOnly() {
         long fromTimeNs = progressNs;
-        long currentNs = System.nanoTime();
-        updateProgress(currentNs - lastUpdateNs);
-        lastUpdateNs = currentNs;
+        updateProgress(elapsedSinceLastUpdate());
         ObjectAnimationSoundChannel soundChannel = animation.getSoundChannel();
         if (soundChannel != null && Minecraft.getInstance().player != null) {
             soundChannel.playSound(fromTimeNs / 1e9, progressNs / 1e9, Minecraft.getInstance().player, 16, 1 ,1);
@@ -308,6 +307,19 @@ public class ObjectAnimationRunner {
         List<ParticleEffectData> result = new ArrayList<>(pendingParticles);
         pendingParticles.clear();
         return result;
+    }
+
+    private long elapsedSinceLastUpdate() {
+        long currentEpoch = GunTime.epoch();
+        long currentNs = GunTime.nowNanos();
+        if (lastUpdateEpoch != currentEpoch) {
+            lastUpdateEpoch = currentEpoch;
+            lastUpdateNs = currentNs;
+            return 0;
+        }
+        long elapsed = Math.max(0L, currentNs - lastUpdateNs);
+        lastUpdateNs = currentNs;
+        return elapsed;
     }
 
     public boolean isRunning() {

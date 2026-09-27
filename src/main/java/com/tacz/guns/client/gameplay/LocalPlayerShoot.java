@@ -23,6 +23,7 @@ import com.tacz.guns.resource.pojo.data.gun.ChargeData;
 import com.tacz.guns.resource.pojo.data.gun.ChargeType;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.sound.SoundManager;
+import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -36,6 +37,7 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 public class LocalPlayerShoot {
@@ -182,7 +184,7 @@ public class LocalPlayerShoot {
                                            GunDisplayInstance display, GunData gunData, boolean playDrySound) {
         // 按钮冷却时间未到，防止点击按钮后误触开火
         // 默认设置为 50 ms
-        if (System.currentTimeMillis() - LocalPlayerDataHolder.clientClickButtonTimestamp < 50) {
+        if (GunTime.isWithin(LocalPlayerDataHolder.clientClickButtonTimestamp, 50)) {
             return ShootResult.COOL_DOWN;
         }
 
@@ -250,8 +252,24 @@ public class LocalPlayerShoot {
         final int maxCount = Math.min(ammoCount, fireMode == FireMode.BURST ? gunData.getBurstData().getCount() : 1);
         // 连发计数器
         AtomicInteger count = new AtomicInteger(0);
+        long scheduledEpoch = GunTime.epoch();
+        AtomicReference<ScheduledFuture<?>> futureRef = new AtomicReference<>();
+        Runnable stop = () -> {
+            ScheduledFuture<?> future = futureRef.get();
+            if (future != null) {
+                future.cancel(false);
+                data.unregisterShootFuture(future);
+            }
+        };
 
-        LocalPlayerDataHolder.SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
+        ScheduledFuture<?> future = LocalPlayerDataHolder.SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
+            if (GunTime.epoch() != scheduledEpoch || Minecraft.getInstance().player != player) {
+                stop.run();
+                return;
+            }
+            if (!GunTime.shouldTick()) {
+                return;
+            }
 
             if (count.get() == 0) {
                 // 转换 isRecord 状态，允许下一个tick的开火检测。
@@ -260,15 +278,13 @@ public class LocalPlayerShoot {
             //Handle Heat Data
             if(gunData.hasHeatData()) {
                 if(iGun.isOverheatLocked(mainHandItem)) {
-                    ScheduledFuture<?> future = (ScheduledFuture<?>) Thread.currentThread();
-                    future.cancel(false); // 取消当前任务
+                    stop.run();
                     return;
                 }
             }
             // 如果达到最大连发次数，或者玩家已经死亡，取消任务
             if (count.get() >= maxCount || player.isDeadOrDying()) {
-                ScheduledFuture<?> future = (ScheduledFuture<?>) Thread.currentThread();
-                future.cancel(false); // 取消当前任务
+                stop.run();
                 return;
             }
 
@@ -280,7 +296,7 @@ public class LocalPlayerShoot {
                 }
                 // 记录新的开火时间戳
                 data.clientLastShootTimestamp = data.clientShootTimestamp;
-                data.clientShootTimestamp = System.currentTimeMillis();
+                data.clientShootTimestamp = GunTime.nowMillis();
                 // 发送开火的数据包，通知服务器
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot(data.clientShootTimestamp - data.clientBaseTimestamp, chargeProgress));
             }
@@ -288,6 +304,9 @@ public class LocalPlayerShoot {
             // todo 需要检查
             // 播放声音和状态机触发需要从异步线程上传到主线程执行，否则会引起cme
             Minecraft.getInstance().submitAsync(() -> {
+                if (GunTime.epoch() != scheduledEpoch || Minecraft.getInstance().player != player || !GunTime.shouldTick()) {
+                    return;
+                }
                 // 触发击发事件
                 boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(player, mainHandItem, LogicalSide.CLIENT));
                 if (fire) {
@@ -308,8 +327,14 @@ public class LocalPlayerShoot {
                 }
             });
 
-            count.getAndIncrement();
+            if (count.incrementAndGet() >= maxCount) {
+                stop.run();
+            }
         }, delay, period, TimeUnit.MILLISECONDS);
+        futureRef.set(future);
+        if (!future.isDone()) {
+            data.registerShootFuture(future);
+        }
     }
 
     private boolean useSilenceSound() {
@@ -325,9 +350,9 @@ public class LocalPlayerShoot {
         FireMode fireMode = iGun.getFireMode(mainHandItem);
         long coolDown;
         if (fireMode == FireMode.BURST) {
-            coolDown = (long) (gunData.getBurstData().getMinInterval() * 1000f) - (System.currentTimeMillis() - data.clientShootTimestamp);
+            coolDown = (long) (gunData.getBurstData().getMinInterval() * 1000f) - (GunTime.nowMillis() - data.clientShootTimestamp);
         } else {
-            coolDown = gunData.getShootInterval(this.player, fireMode, mainHandItem) - (System.currentTimeMillis() - data.clientShootTimestamp);
+            coolDown = gunData.getShootInterval(this.player, fireMode, mainHandItem) - (GunTime.nowMillis() - data.clientShootTimestamp);
         }
         return Math.max(coolDown, 0);
     }

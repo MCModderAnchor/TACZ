@@ -27,6 +27,7 @@ import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.CycleTaskHelper;
+import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -330,7 +331,7 @@ public class ModernKineticGunScriptAPI {
         if (dataHolder.reloadTimestamp == -1) {
             return 0;
         }
-        return System.currentTimeMillis() - dataHolder.reloadTimestamp;
+        return GunTime.nowMillis() - dataHolder.reloadTimestamp;
     }
 
     /**
@@ -342,7 +343,7 @@ public class ModernKineticGunScriptAPI {
         if (!dataHolder.isBolting) {
             return 0;
         }
-        return System.currentTimeMillis() - dataHolder.boltTimestamp;
+        return GunTime.nowMillis() - dataHolder.boltTimestamp;
     }
 
     /**
@@ -365,12 +366,12 @@ public class ModernKineticGunScriptAPI {
     }
 
     /**
-     * 返回上次射击的 timestamp(系统时间)，单位为毫秒。此值在切枪时会重置为 -1。
+     * 返回上次射击的枪械时间，单位为毫秒。此值在切枪时会重置为 -1。
      *
      * @return 上次射击的 timestamp，在切枪时会重置为 -1。
      */
     public long getLastShootTimestamp() {
-        return dataHolder.lastShootTimestamp + dataHolder.baseTimestamp;
+        return dataHolder.lastShootTimestamp < 0 ? -1 : dataHolder.lastShootTimestamp + dataHolder.baseTimestamp;
     }
 
     /**
@@ -718,11 +719,17 @@ public class ModernKineticGunScriptAPI {
     }
 
     /**
-     * 获取当前系统时间，单位毫秒。
+     * 获取当前枪械时间，单位毫秒。单人游戏暂停时此时间不前进。
+     * 此时间不是 Unix 时间戳；如需真实系统时间，使用 {@link #getRealSystemTimestamp()}。
      *
-     * @return 当前系统时间
+     * @return 当前枪械时间
      */
     public long getCurrentTimestamp() {
+        return GunTime.nowMillis();
+    }
+
+    /** 获取真实系统时间（Unix 毫秒时间戳），不受游戏暂停影响。 */
+    public long getRealSystemTimestamp() {
         return System.currentTimeMillis();
     }
 
@@ -857,7 +864,7 @@ public class ModernKineticGunScriptAPI {
     public float calcHeatReduction(long heatTimestamp) {
         GunHeatData heatData = gunIndex.getGunData().getHeatData();
         if (heatData != null) {
-            return ((float)(System.currentTimeMillis() - heatTimestamp) / 10000f)
+            return ((float)(GunTime.nowMillis() - heatTimestamp) / 10000f)
                     * heatData.getCoolingMultiplier();
         }
         return 0f;

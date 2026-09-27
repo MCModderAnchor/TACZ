@@ -8,6 +8,7 @@ import com.tacz.guns.entity.shooter.*;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -134,7 +135,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     @Override
     public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw) {
-        return this.shoot(pitch, yaw, System.currentTimeMillis() - tacz$data.baseTimestamp);
+        return this.shoot(pitch, yaw, GunTime.nowMillis() - tacz$data.baseTimestamp);
     }
 
     @Unique

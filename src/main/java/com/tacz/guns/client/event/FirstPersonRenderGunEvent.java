@@ -27,6 +27,7 @@ import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.PerlinNoise;
 import com.tacz.guns.util.math.SecondOrderDynamics;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -110,7 +111,7 @@ public class FirstPersonRenderGunEvent {
             }
             TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItem)).ifPresent(gunIndex -> {
                 // 记录开火时间戳，用于后坐力程序动画
-                shootTimeStamp = System.currentTimeMillis();
+                shootTimeStamp = GunTime.nowMillis();
                 // 记录枪口火焰数据
                 MuzzleFlashRender.onShoot();
                 // 记录 renew 枪口粒子数据
@@ -295,10 +296,9 @@ public class FirstPersonRenderGunEvent {
     private static void applyShootSwayAndRotation(BedrockGunModel model, float aimingProgress) {
         BedrockPart rootNode = model.getRootNode();
         if (rootNode != null) {
-            float progress = 1 - (System.currentTimeMillis() - shootTimeStamp) / (SHOOT_ANIMATION_TIME * 1000);
-            if (progress < 0) {
-                progress = 0;
-            }
+            float progress = GunTime.isWithin(shootTimeStamp, (long) (SHOOT_ANIMATION_TIME * 1000))
+                    ? 1 - (GunTime.nowMillis() - shootTimeStamp) / (SHOOT_ANIMATION_TIME * 1000)
+                    : 0;
             progress = (float) Easing.easeOutCubic(progress);
             rootNode.offsetX += SHOOT_X_SWAY_NOISE.getValue() / 16 * progress * (1 - aimingProgress);
             // 基岩版模型 y 轴上下颠倒，sway 值取相反数
@@ -309,7 +309,7 @@ public class FirstPersonRenderGunEvent {
 
     private static void applyJumpingSway(BedrockGunModel model, float partialTicks) {
         if (jumpingTimeStamp == -1) {
-            jumpingTimeStamp = System.currentTimeMillis();
+            jumpingTimeStamp = GunTime.nowMillis();
         }
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
@@ -323,7 +323,7 @@ public class FirstPersonRenderGunEvent {
                     }
                     lastOnGround = true;
                 } else {
-                    jumpingSwayProgress -= (System.currentTimeMillis() - jumpingTimeStamp) / (LANDING_SWAY_TIME * 1000);
+                    jumpingSwayProgress -= (GunTime.nowMillis() - jumpingTimeStamp) / (LANDING_SWAY_TIME * 1000);
                     if (jumpingSwayProgress < 0) {
                         jumpingSwayProgress = 0;
                     }
@@ -337,20 +337,27 @@ public class FirstPersonRenderGunEvent {
                     }
                     lastOnGround = false;
                 } else {
-                    jumpingSwayProgress -= (System.currentTimeMillis() - jumpingTimeStamp) / (JUMPING_SWAY_TIME * 1000);
+                    jumpingSwayProgress -= (GunTime.nowMillis() - jumpingTimeStamp) / (JUMPING_SWAY_TIME * 1000);
                     if (jumpingSwayProgress < 0) {
                         jumpingSwayProgress = 0;
                     }
                 }
             }
         }
-        jumpingTimeStamp = System.currentTimeMillis();
+        jumpingTimeStamp = GunTime.nowMillis();
         float ySway = JUMPING_DYNAMICS.update(JUMPING_Y_SWAY * jumpingSwayProgress);
         BedrockPart rootNode = model.getRootNode();
         if (rootNode != null) {
             // 基岩版模型 y 轴上下颠倒，sway 值取相反数
             rootNode.offsetY += -ySway / 16;
         }
+    }
+
+    public static void resetTimestamps() {
+        shootTimeStamp = -1;
+        jumpingTimeStamp = -1;
+        jumpingSwayProgress = 0;
+        lastOnGround = false;
     }
 
     /**

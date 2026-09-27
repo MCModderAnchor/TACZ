@@ -8,6 +8,7 @@ import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunReload;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -76,7 +77,7 @@ public class LivingEntityReload {
                 // 初始化战术换弹的 tick 的状态
                 data.reloadStateType = ReloadState.StateType.TACTICAL_RELOAD_FEEDING;
             }
-            data.reloadTimestamp = System.currentTimeMillis();
+            data.reloadTimestamp = GunTime.nowMillis();
             // 调用枪械逻辑
             if (!gunItem.startReload(data, currentGunItem, shooter)) {
                 data.reloadStateType = ReloadState.StateType.NOT_RELOADING;

@@ -27,6 +27,7 @@ import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.SecondOrderDynamics;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -216,7 +217,7 @@ public class CameraSetupEvent {
             }
             pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction((float) attachmentRecoilModifier.left().eval(aimingRecoilModifier));
             yawSplineFunction = gunData.getRecoil().genYawSplineFunction((float) attachmentRecoilModifier.right().eval(aimingRecoilModifier));
-            shootTimeStamp = System.currentTimeMillis();
+            shootTimeStamp = GunTime.nowMillis();
             xRotO = 0;
             yRotO = 0;
         }
@@ -228,8 +229,8 @@ public class CameraSetupEvent {
         if (player == null) {
             return;
         }
-        long timeTotal = System.currentTimeMillis() - shootTimeStamp;
-        if (pitchSplineFunction != null && pitchSplineFunction.isValidPoint(timeTotal)) {
+        long timeTotal = GunTime.nowMillis() - shootTimeStamp;
+        if (shootTimeStamp >= 0 && timeTotal >= 0 && pitchSplineFunction != null && pitchSplineFunction.isValidPoint(timeTotal)) {
             double value = pitchSplineFunction.value(timeTotal);
             if (ShoulderSurfingCompat.isInstalled() && ShoulderSurfing.getInstance().isShoulderSurfing()) {
                 IShoulderSurfingCamera camera = ShoulderSurfing.getInstance().getCamera();
@@ -239,7 +240,7 @@ public class CameraSetupEvent {
             }
             xRotO = value;
         }
-        if (yawSplineFunction != null && yawSplineFunction.isValidPoint(timeTotal)) {
+        if (shootTimeStamp >= 0 && timeTotal >= 0 && yawSplineFunction != null && yawSplineFunction.isValidPoint(timeTotal)) {
             double value = yawSplineFunction.value(timeTotal);
             if (ShoulderSurfingCompat.isInstalled() && ShoulderSurfing.getInstance().isShoulderSurfing()) {
                 IShoulderSurfingCamera camera = ShoulderSurfing.getInstance().getCamera();
@@ -249,6 +250,14 @@ public class CameraSetupEvent {
             }
             yRotO = value;
         }
+    }
+
+    public static void resetTimestamp() {
+        shootTimeStamp = -1;
+        pitchSplineFunction = null;
+        yawSplineFunction = null;
+        xRotO = 0;
+        yRotO = 0;
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

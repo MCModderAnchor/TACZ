@@ -7,6 +7,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerAim;
 import com.tacz.guns.resource.modifier.custom.AdsModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -59,7 +60,7 @@ public class LocalPlayerAim {
             return;
         }
         // 如果正在收枪，则不能瞄准
-        if (System.currentTimeMillis() - data.clientDrawTimestamp < 0) {
+        if (GunTime.nowMillis() - data.clientDrawTimestamp < 0) {
             data.clientIsAiming = false;
         }
         ResourceLocation gunId = iGun.getGunId(mainHandItem);
@@ -90,7 +91,7 @@ public class LocalPlayerAim {
                 data.clientAimingProgress = 0;
             }
         }
-        data.clientAimingTimestamp = System.currentTimeMillis();
+        data.clientAimingTimestamp = GunTime.nowMillis();
     }
 
     private boolean shouldBlockAim(GunData gunData) {
@@ -109,6 +110,6 @@ public class LocalPlayerAim {
             aimTime = operator.getCacheProperty().<Float>getCache(AdsModifier.ID);
         }
         aimTime = Math.max(0, aimTime);
-        return (System.currentTimeMillis() - data.clientAimingTimestamp + 1) / (aimTime * 1000);
+        return (GunTime.nowMillis() - data.clientAimingTimestamp + 1) / (aimTime * 1000);
     }
 }

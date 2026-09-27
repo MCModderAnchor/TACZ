@@ -13,6 +13,7 @@ import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.resource.pojo.display.gun.ShellEjection;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -44,7 +45,7 @@ public class ShellRender implements IFunctionalRenderer {
         double yRandom = Math.random() * randomVelocity.y();
         double zRandom = Math.random() * randomVelocity.z();
         Vector3f vector3f = new Vector3f((float) xRandom, (float) yRandom, (float) zRandom);
-        SHELL_QUEUE.offerLast(new Data(System.currentTimeMillis(), vector3f));
+        SHELL_QUEUE.offerLast(new Data(GunTime.nowMillis(), vector3f));
     }
 
     private void renderShell(GunDisplayInstance display, GunData gunData, PoseStack poseStack, BedrockGunModel gunModel, MultiBufferSource bufferSource) {
@@ -92,7 +93,7 @@ public class ShellRender implements IFunctionalRenderer {
 
     private void renderSingleShell(ItemDisplayContext transformType1, int light, int overlay, Data data, Vector3f initialVelocity, Vector3f acceleration, Vector3f angularVelocity, BedrockAmmoModel model, ResourceLocation location, MultiBufferSource bufferSource) {
         // 再检查一次
-        if (data.normal == null && data.pose == null) {
+        if (data.epoch != GunTime.epoch() || data.normal == null && data.pose == null) {
             return;
         }
         // 先初始化到缓存位置和朝向
@@ -101,7 +102,7 @@ public class ShellRender implements IFunctionalRenderer {
         poseStack2.last().pose().mul(data.pose);
 
         // 获取存留时间和各种参数
-        long remindTime = System.currentTimeMillis() - data.timeStamp;
+        long remindTime = GunTime.nowMillis() - data.timeStamp;
         double time = remindTime / 1000.0;
         Vector3f randomOffset = data.randomOffset;
 
@@ -126,7 +127,7 @@ public class ShellRender implements IFunctionalRenderer {
     private void checkShellQueue(long lifeTime) {
         if (!SHELL_QUEUE.isEmpty()) {
             Data data = SHELL_QUEUE.peekFirst();
-            if ((System.currentTimeMillis() - data.timeStamp) > lifeTime) {
+            if (data.epoch != GunTime.epoch() || (GunTime.nowMillis() - data.timeStamp) > lifeTime) {
                 SHELL_QUEUE.pollFirst();
                 checkShellQueue(lifeTime);
             }
@@ -163,6 +164,7 @@ public class ShellRender implements IFunctionalRenderer {
 
     public static class Data {
         public final long timeStamp;
+        public final long epoch;
         public final Vector3f randomOffset;
 
         public Matrix3f normal = null;
@@ -170,6 +172,7 @@ public class ShellRender implements IFunctionalRenderer {
 
         public Data(long timeStamp, Vector3f randomOffset) {
             this.timeStamp = timeStamp;
+            this.epoch = GunTime.epoch();
             this.randomOffset = randomOffset;
         }
     }

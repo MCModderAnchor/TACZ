@@ -17,6 +17,7 @@ import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.AttachmentDataUtils;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -178,8 +179,8 @@ public class GunHudOverlay implements IGuiOverlay {
 
     private static void handleCacheCount(LocalPlayer player, ItemStack stack, GunData gunData, IGun iGun, boolean useInventoryAmmo) {
         // 0.05 秒 (1 tick) 检查一次
-        if ((System.currentTimeMillis() - checkAmmoTimestamp) > 50) {
-            checkAmmoTimestamp = System.currentTimeMillis();
+        if (checkAmmoTimestamp < 0 || GunTime.hasElapsed(checkAmmoTimestamp, 50)) {
+            checkAmmoTimestamp = GunTime.nowMillis();
             // 当前枪械的总弹药数
             cacheMaxAmmoCount = AttachmentDataUtils.getAmmoCountWithAttachment(stack, gunData);
             // 玩家背包弹药数
@@ -198,6 +199,12 @@ public class GunHudOverlay implements IGuiOverlay {
                 iGun.setCurrentAmmoCount(stack, cacheInventoryAmmoCount);
             }
         }
+    }
+
+    public static void resetTimestamp() {
+        checkAmmoTimestamp = -1L;
+        cacheMaxAmmoCount = 0;
+        cacheInventoryAmmoCount = 0;
     }
 
     private static void handleInventoryAmmo(ItemStack stack, Inventory inventory) {

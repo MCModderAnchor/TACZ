@@ -16,6 +16,7 @@ import com.tacz.guns.client.model.BedrockAnimatedModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.util.math.MathUtil;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -80,7 +81,7 @@ public abstract class AnimateGeoItemRenderer<M extends BedrockAnimatedModel, CTX
         if (stateMachine == null) {
             return false;
         }
-        return !stateMachine.isInitialized() && stateMachine.getExitingTime() < System.currentTimeMillis();
+        return !stateMachine.isInitialized() && stateMachine.getExitingTime() < GunTime.nowMillis();
     }
 
     public abstract CTX initContext(ItemStack stack, Player player, float partialTick);

@@ -5,6 +5,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.resource.Particl
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleEmitterInstance;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.world.WorldEmitterManager;
 import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -40,6 +41,14 @@ public final class ThirdPersonMuzzleParticleManager {
     private ThirdPersonMuzzleParticleManager() {
     }
 
+    public static void resetTimestamps() {
+        PENDING.clear();
+        FLASH_PARAMS.clear();
+        FLASH_EMITTERS.clear();
+        FLASH_START.clear();
+        currentEntity = null;
+    }
+
     /**
      * 客户端开火事件调用：任何射手（本机玩家 + 服务器广播的其他玩家）。
      * <p>
@@ -58,7 +67,7 @@ public final class ThirdPersonMuzzleParticleManager {
         }
         PENDING.put(shooter, shot);
         FLASH_PARAMS.put(shooter, shot);
-        FLASH_START.put(shooter, System.currentTimeMillis());
+        FLASH_START.put(shooter, GunTime.nowMillis());
     }
 
     /**
@@ -75,12 +84,12 @@ public final class ThirdPersonMuzzleParticleManager {
         if (level == null) {
             return;
         }
-        long now = System.currentTimeMillis();
+        long now = GunTime.nowMillis();
 
         // 火光：窗口内每帧更新锚点矩阵；窗口结束停止维护（粒子自然消亡）
         Long flashStart = FLASH_START.get(entity);
         if (flashStart != null) {
-            if (now - flashStart >= FLASH_WINDOW_MS) {
+            if (now < flashStart || now - flashStart >= FLASH_WINDOW_MS) {
                 FLASH_START.remove(entity);
                 FLASH_PARAMS.remove(entity);
                 FLASH_EMITTERS.remove(entity);
