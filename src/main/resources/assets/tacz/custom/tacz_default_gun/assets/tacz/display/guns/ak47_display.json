@@ -45,12 +45,19 @@
       "fixed": [1.2, 1.2, 1.2]
     }
   },
+  // 枪口火焰与枪烟，不填则不显示枪口火焰
   "muzzle_flash": {
+    // 效果类型：renew 为新版粒子系统，default 为旧版贴图火光
     "type": "renew",
+    // 枪焰贴图，仅 default 模式使用
     "texture": "tacz:flash/common_muzzle_flash",
+    // 枪焰大小缩放，不影响枪烟
     "scale": 0.75,
+    // 枪烟大小缩放，与 scale 独立
     "smoke_scale": 1.65,
+    // 枪烟扩散速度倍率，初速度 = 6 × 该值
     "initial_speed_scale": 1.7,
+    // 单次开火的枪烟粒子数量，不填则用内置默认 15
     "smoke_particle_count": 16
   },
   // 机瞄的放大倍数，默认 1.2

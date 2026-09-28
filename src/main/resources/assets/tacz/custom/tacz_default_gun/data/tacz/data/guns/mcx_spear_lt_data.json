@@ -128,5 +128,13 @@
     "laser"
   ],
   "exclusive_attachments": {
+  },
+  "builtin_attachments": {
+    "muzzle": {
+      "attachments": [
+        "tacz:muzzle_silencer_phantom_s1"
+        ],
+      "default_attached": "tacz:muzzle_silencer_phantom_s1"
+    }
   }
 }
