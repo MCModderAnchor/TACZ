@@ -68,8 +68,8 @@ public class LocalPlayerReload {
             if (gunItem.useInventoryAmmo(mainHandItem)) {
                 return;
             }
-            // 检查状态锁
-            if (data.clientStateLock) {
+            // 蓄力期间不接受换弹，避免重置蓄力或覆盖蓄力动画
+            if (data.clientStateLock || data.isCharging) {
                 return;
             }
             if (GunTime.isWithin(data.clientShootTimestamp, 100)) {

@@ -254,6 +254,9 @@ dependencies {
     //加速渲染相关
     compileOnly fg.deobf("curse.maven:accelerated-rendering-1314021:7342975")
 
+    // create
+    runtimeOnly fg.deobf("curse.maven:create-328085:7178761")
+
     // 引入 MixinExtras 以解决一些棘手的 Mixin 冲突问题（比如 @Redirect 不能嵌套）
     // 如果未来有迁移到 Fabric / NeoForge 的计划，请注意这两个框架都已自带 MixinExtras，无需自行打包。
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.6"))

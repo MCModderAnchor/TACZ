@@ -25,8 +25,8 @@ public class LocalPlayerFireSelect {
     }
 
     public void fireSelect() {
-        // 检查状态锁
-        if (data.clientStateLock) {
+        // 检查状态锁及蓄力状态
+        if (data.clientStateLock || data.isCharging) {
             return;
         }
         // 暂定为主手

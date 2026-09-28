@@ -1,9 +1,13 @@
 package com.tacz.guns.resource.pojo.data.attachment;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
+import com.tacz.guns.resource.manager.AttachmentScriptManager;
+import com.tacz.guns.resource.serialize.ModifierTypeAdapterFactory;
 
 import javax.annotation.Nullable;
 
+@JsonAdapter(ModifierTypeAdapterFactory.class)
 public class Modifier {
     @SerializedName("addend")
     private double addend = 0;
@@ -17,6 +21,9 @@ public class Modifier {
     @Nullable
     @SerializedName("function")
     private String function = null;
+
+    @Nullable
+    private transient AttachmentScriptManager.CompiledScript compiledFunction;
 
     public double getAddend() {
         return addend;
@@ -33,6 +40,15 @@ public class Modifier {
     @Nullable
     public String getFunction() {
         return function;
+    }
+
+    public void compileFunction() {
+        compiledFunction = AttachmentScriptManager.compile(function);
+    }
+
+    @Nullable
+    public AttachmentScriptManager.CompiledScript getCompiledFunction() {
+        return compiledFunction;
     }
 
     @Deprecated

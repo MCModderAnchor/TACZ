@@ -51,6 +51,8 @@ public class LocalPlayerShoot {
     }
 
     public boolean chargeShoot(boolean isCharging) {
+        // 每次重新计算蓄力状态，避免提前返回或松开扳机后保留状态
+        data.isCharging = false;
         // 因为开火冷却检测用了特别定制的方法，所以不检查状态锁，而是手动检查是否换弹、切枪
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
         ItemStack mainHandItem = player.getMainHandItem();
@@ -63,6 +65,7 @@ public class LocalPlayerShoot {
         Optional<ClientGunIndex> gunIndexOptional = TimelessAPI.getClientGunIndex(gunId);
         GunDisplayInstance display = TimelessAPI.getGunDisplay(mainHandItem).orElse(null);
         if (gunIndexOptional.isEmpty() || display == null) {
+            data.chargeProgress = 0f;
             return false;
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
@@ -71,6 +74,7 @@ public class LocalPlayerShoot {
 
         ChargeData chargeData = gunData.getChargeData(fireMode);
         if (chargeData == null) {
+            data.chargeProgress = 0f;
             return isCharging;
         }
 

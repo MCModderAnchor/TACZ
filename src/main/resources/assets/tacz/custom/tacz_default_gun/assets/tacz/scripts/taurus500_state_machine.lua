@@ -43,6 +43,10 @@ end
 
 -- 离开延迟扳机状态
 function charge_state.transition(this, context, input)
+    -- 切换物品可以中断蓄力，收枪动画沿用闲置态的处理
+    if (input == INPUT_PUT_AWAY) then
+        return main_track_states.idle.transition(this, context, input)
+    end
     if (input == INPUT_SHOOT) then
         context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))
         charge_state.can_charge = false

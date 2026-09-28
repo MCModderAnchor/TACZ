@@ -1,6 +1,7 @@
 package com.tacz.guns.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.KeyMapping;
@@ -36,6 +37,9 @@ public class RefitKey {
             }
             if (isInGame()) {
                 if (IGun.mainHandHoldGun(player) && Minecraft.getInstance().screen == null) {
+                    if (IClientPlayerGunOperator.fromLocalPlayer(player).isCharging()) {
+                        return;
+                    }
                     IGun iGun = IGun.getIGunOrNull(player.getMainHandItem());
                     if (iGun != null && iGun.hasAttachmentLock(player.getMainHandItem())) {
                         return;
