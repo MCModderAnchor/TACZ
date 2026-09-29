@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.common.util.LazyOptional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -41,6 +42,7 @@ public class SyncedEntityData {
     private final AtomicInteger nextIdTracker = new AtomicInteger();
     private final List<Entity> dirtyEntities = new ArrayList<>();
     private boolean dirty = false;
+    private final ThreadLocal<HolderScopeStack> holderScopes = ThreadLocal.withInitial(HolderScopeStack::new);
 
     private SyncedEntityData() {
     }
@@ -150,9 +152,39 @@ public class SyncedEntityData {
         return ImmutableSet.copyOf(this.registeredDataKeys);
     }
 
+    /**
+     * Resolves the data holder of the entity once and reuses it for every lookup on the current
+     * thread until {@link #endHolderScope()} is called, so adjacent writes do not resolve the
+     * capability again. Scopes can be nested. The scope has to be ended in a finally block.
+     *
+     * @param entity the entity whose data holder is reused
+     */
+    public void beginHolderScope(Entity entity) {
+        this.holderScopes.get().push(entity);
+    }
+
+    /**
+     * Ends the innermost scope opened by {@link #beginHolderScope(Entity)} on the current thread.
+     */
+    public void endHolderScope() {
+        this.holderScopes.get().pop();
+    }
+
     @Nullable
     public DataHolder getDataHolder(Entity entity) {
-        return entity.getCapability(DataHolderCapabilityProvider.CAPABILITY, null).resolve().orElse(null);
+        HolderScope scope = this.holderScopes.get().current();
+        if (scope == null || scope.entity != entity) {
+            return entity.getCapability(DataHolderCapabilityProvider.CAPABILITY, null).resolve().orElse(null);
+        }
+        if (scope.capability != null && scope.capability.isPresent()) {
+            return scope.holder;
+        }
+        // An empty or invalidated capability is looked up again, another callback can revive it
+        LazyOptional<DataHolder> capability = entity.getCapability(DataHolderCapabilityProvider.CAPABILITY, null);
+        DataHolder holder = capability.resolve().orElse(null);
+        scope.capability = holder != null ? capability : null;
+        scope.holder = holder;
+        return holder;
     }
 
 //    public boolean hasSyncedDataKey(Class<? extends Entity> entityClass) {
@@ -241,5 +273,44 @@ public class SyncedEntityData {
 
     public List<Entity> getDirtyEntities() {
         return dirtyEntities;
+    }
+
+    /**
+     * The data holder cached for one entity by {@link #beginHolderScope(Entity)}.
+     */
+    private static class HolderScope {
+        private Entity entity;
+        private LazyOptional<DataHolder> capability;
+        private DataHolder holder;
+    }
+
+    /**
+     * The scopes of one thread, innermost last. Ended scopes are kept for reuse.
+     */
+    private static class HolderScopeStack {
+        private final List<HolderScope> scopes = new ArrayList<>();
+        private int depth = 0;
+
+        private void push(Entity entity) {
+            if (this.depth == this.scopes.size()) {
+                this.scopes.add(new HolderScope());
+            }
+            this.scopes.get(this.depth++).entity = entity;
+        }
+
+        private void pop() {
+            if (this.depth == 0) {
+                throw new IllegalStateException("Ended a data holder scope that was never begun");
+            }
+            HolderScope scope = this.scopes.get(--this.depth);
+            scope.entity = null;
+            scope.capability = null;
+            scope.holder = null;
+        }
+
+        @Nullable
+        private HolderScope current() {
+            return this.depth == 0 ? null : this.scopes.get(this.depth - 1);
+        }
     }
 }
