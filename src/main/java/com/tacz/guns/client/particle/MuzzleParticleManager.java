@@ -18,6 +18,7 @@ import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.pojo.display.gun.MuzzleFlash;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
+import com.tacz.guns.resource.pojo.data.SmokeDirectionData;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Camera;
@@ -85,7 +86,7 @@ public final class MuzzleParticleManager {
             flashScale = 0.0f;
         }
         // 枪烟尺寸与枪焰 scale 完全解耦：未配置时返回 0，由粒子定义使用内置默认大小。
-        float smokeSize = muzzleFlash.getSmokeScale() * effect.smokeScale();
+        float smokeSize = applyAttachmentScale(muzzleFlash.getSmokeScale(), BUILTIN_SMOKE_SIZE, effect.smokeScale());
         return new MuzzleShot(muzzleFlash.getFirstPersonFlashId(),
                 flashScale,
                 muzzleFlash.getFirstPersonSmokeId(),
@@ -93,9 +94,72 @@ public final class MuzzleParticleManager {
                 effect.offsetBb(),
                 muzzleFlash.getThirdPersonFlashId(),
                 muzzleFlash.getThirdPersonSmokeId(),
-                muzzleFlash.getInitialSpeedScale(),
-                muzzleFlash.getSmokeParticleCount(),
-                smokeSize);
+                // 速度与数量按配件倍率相乘：枪械给绝对值，配件只做相对调整。
+                muzzleFlash.getInitialSpeedScale() * effect.smokeSpeedScale(),
+                applyAttachmentScale(muzzleFlash.getSmokeParticleCount(), BUILTIN_SMOKE_PARTICLE_COUNT, effect.smokeCountScale()),
+                smokeSize,
+                resolveSmokeDirection(muzzleFlash, effect));
+    }
+
+    /**
+     * 解析最终的枪烟发射方向。
+     * <p>
+     * 方向与倍率类字段的取舍规则不同：<b>枪口配件优先</b>。配件本身就替换了枪口模型，
+     * 排烟方式随之接管；配件没配（或压根没装配件）才回退到枪械 display 的默认值，
+     * 这样裸枪也能有自己的排烟表现。
+     */
+    @Nullable
+    private static SmokeDirection resolveSmokeDirection(MuzzleFlash muzzleFlash, MuzzleAttachmentEffect effect) {
+        boolean fromAttachment = effect.smokeDirections() != null;
+        float[][] raw = fromAttachment ? effect.smokeDirections() : muzzleFlash.getSmokeDirections();
+        if (raw == null) {
+            return null;
+        }
+        float spread = fromAttachment ? effect.smokeSpread() : muzzleFlash.getSmokeSpread();
+        // 粒子的局部空间取自枪体的 poseStack，而渲染前对它做过一次绕 Z 轴 180° 的翻转
+        // （1p 见 GunItemRendererWrapper#renderFirstPerson 的 rotateZ(180°)，
+        //  3p 见 GunItemTransforms 的 scale(-1, -1, 1)，两者是同一个变换 (x,y,z) → (-x,-y,z)），
+        // 所以那个空间实际是 +X 左、+Y 下。不翻回来的话，枪包作者按直觉写的"上（+Y）"
+        // 会得到朝下的烟。这里抵消掉翻转，让配置空间回到直觉：+X 右、+Y 上、-Z 枪口前方。
+        // Z 不受影响，与 muzzle_flash_offset 的前移方向（同为 -Z）保持同一套轴向。
+        float[][] fixed = new float[raw.length][];
+        for (int i = 0; i < raw.length; i++) {
+            fixed[i] = new float[]{-raw[i][0], -raw[i][1], raw[i][2]};
+        }
+        return new SmokeDirection(fixed, spread);
+    }
+
+    /**
+     * 枪烟粒子数量的内置默认值，须与 {@code muzzle_flash_smoke.particle.json} 中
+     * {@code v.smoke_count == 0 ? 15 : v.smoke_count} 的兜底值保持一致。
+     */
+    private static final float BUILTIN_SMOKE_PARTICLE_COUNT = 15.0f;
+
+    /**
+     * 枪烟尺寸的内置默认值。粒子定义里 {@code v.smoke_size} 为 0 与非 0 走的是同一套
+     * 尺寸曲线，只是 0 时代入常量 1.0，故这里取 1.0 等价。
+     */
+    private static final float BUILTIN_SMOKE_SIZE = 1.0f;
+
+    /**
+     * 把配件倍率作用到枪械 display 的枪烟参数上。
+     * <p>
+     * 这些字段用 <b>0 作为哨兵值</b>表示"未配置，交给粒子定义的内置默认值"。
+     * 若直接相乘，{@code 0 × k} 恒为 0，哨兵原样透传到粒子定义、又回退成内置默认值，
+     * 配件倍率就被静默吞掉了。因此枪械未配置时改用内置默认值作为基数，
+     * 倍率才能真正作用于最终结果。
+     * <p>
+     * 倍率为 1.0（配件没写这个字段）时原样透传，保证不装配件时的行为与旧版完全一致。
+     *
+     * @param gunValue       枪械 display 中配置的值，0 表示未配置
+     * @param builtinDefault 粒子定义中的内置默认值，仅在枪械未配置时顶替
+     * @param scale          配件提供的倍率
+     */
+    private static float applyAttachmentScale(float gunValue, float builtinDefault, float scale) {
+        if (scale == 1.0f) {
+            return gunValue;
+        }
+        return (gunValue > 0.0f ? gunValue : builtinDefault) * scale;
     }
 
     /**
@@ -118,7 +182,7 @@ public final class MuzzleParticleManager {
             return;
         }
         PENDING.computeIfAbsent(InteractionHand.MAIN_HAND, h -> new ArrayList<>()).add(new PendingShoot(
-                shot.flashId(), shot.flashScale(), shot.smokeId(), shot.smokeScale(), shot.offsetBb(), shot.speedScale(), shot.smokeParticleCount(), shot.smokeSize()));
+                shot.flashId(), shot.flashScale(), shot.smokeId(), shot.smokeScale(), shot.offsetBb(), shot.speedScale(), shot.smokeParticleCount(), shot.smokeSize(), shot.smokeDirection()));
     }
 
     /**
@@ -176,7 +240,7 @@ public final class MuzzleParticleManager {
                 if (RenderConfig.RENDER_MUZZLE_SMOKE.get() && req.smokeId() != null && req.smokeScale() > 0) {
                     createSmokeEmitter(system, hand, bound, newEmitters, req.smokeId(),
                             req.smokeScale(), "muzzle_flash", req.offsetBb(), req.speedScale(),
-                            req.smokeSize(), req.smokeParticleCount());
+                            req.smokeSize(), req.smokeParticleCount(), req.smokeDirection());
                 }
             }
         }
@@ -315,12 +379,14 @@ public final class MuzzleParticleManager {
      *
      * @param smokeSize         枪烟尺寸倍率（0 表示使用粒子定义内置默认大小）
      * @param smokeParticleCount 枪烟粒子数量（0 表示使用粒子定义内置默认值）
+     * @param smokeDirection    配件指定的发射方向；null 表示不干预，粒子定义回退到均匀四散
      */
     private static void createSmokeEmitter(FirstPersonParticleSystem system, InteractionHand hand,
                                            List<BoundEmitter> bound, List<ParticleEmitterInstance> newEmitters,
                                            ResourceLocation definitionId, float scale, String locator,
                                            float offsetBb, float speedScale, float smokeSize,
-                                           float smokeParticleCount) {
+                                           float smokeParticleCount,
+                                           @Nullable SmokeDirection smokeDirection) {
         ParticleEffectDefinition definition = ParticleDefinitionLoader.getInstance().getDefinition(definitionId);
         if (definition == null) {
             GunMod.LOGGER.warn("Muzzle particle definition {} not found, skipped", definitionId);
@@ -333,8 +399,41 @@ public final class MuzzleParticleManager {
         emitter.setVariable("smoke_vel", speedScale);
         // 枪烟粒子数量 → v.smoke_count
         emitter.setVariable("smoke_count", smokeParticleCount);
+        writeSmokeDirectionVariables(emitter, smokeDirection);
         bound.add(new BoundEmitter(emitter, locator, offsetBb));
         newEmitters.add(emitter);
+    }
+
+    /**
+     * 写入枪烟发射方向相关的 molang 变量。
+     * <p>
+     * 方向列表平铺成固定 {@link SmokeDirectionData#MAX_DIRECTIONS} 组标量变量
+     * （{@code v.smoke_dir<i>_x / _y / _z}），配合方向数量 {@code v.smoke_dir_n}
+     * 供粒子定义按 {@code v.particle_random_1} 挑选。未用到的槽位一律写 0。
+     * <p>
+     * 第三人称暂不支持方向，但同样要调用本方法并传 {@code null} 把全部变量显式写成 0：
+     * 粒子定义里的方向是乘积形式，若某个分量未定义且默认值为 NaN，{@code 0 * NaN}
+     * 仍是 NaN，不会归零。另外变量存储在同帧内是所有发射器共享的，写全也避免读到
+     * 其他发射器的残留值。
+     */
+    static void writeSmokeDirectionVariables(ParticleEmitterInstance emitter, @Nullable SmokeDirection direction) {
+        int count = direction == null ? 0 : direction.dirs().length;
+        emitter.setVariable("smoke_dir_n", count);
+        emitter.setVariable("smoke_spread", direction == null ? 0.0f : direction.spread());
+        for (int i = 0; i < SmokeDirectionData.MAX_DIRECTIONS; i++) {
+            float x = 0.0f;
+            float y = 0.0f;
+            float z = 0.0f;
+            if (direction != null && i < count) {
+                float[] dir = direction.dirs()[i];
+                x = dir[0];
+                y = dir[1];
+                z = dir[2];
+            }
+            emitter.setVariable("smoke_dir" + i + "_x", x);
+            emitter.setVariable("smoke_dir" + i + "_y", y);
+            emitter.setVariable("smoke_dir" + i + "_z", z);
+        }
     }
 
     private static MuzzleAttachmentEffect resolveAttachmentEffect(ItemStack gunItem) {
@@ -365,7 +464,16 @@ public final class MuzzleParticleManager {
         boolean hasFlashHider = data != null && data.hasFlashHider();
         float flashScale = hasFlashHider ? data.getFlashHider() : 1.0f;
         float smokeScale = data != null ? data.getSmokeHider() : 1.0f;
-        return new MuzzleAttachmentEffect(offsetBb, flashScale, smokeScale, isSilenced(data), hasFlashHider);
+        // 速度与数量同样按倍率处理：配件不覆盖枪械的绝对值，只在其基础上做相对调整。
+        float smokeSpeedScale = data != null ? data.getSmokeSpeedScale() : 1.0f;
+        float smokeCountScale = data != null ? data.getSmokeCountScale() : 1.0f;
+        // 方向是例外：方向没有天然的"1.0 基准"可供相乘，故配件直接给出绝对方向，
+        // 不配置就完全不干预。这里只取原始值，与枪械 display 的取舍留到 resolveShot 里做。
+        float[][] smokeDirections = data != null ? data.getSmokeDirections() : null;
+        float smokeSpread = data != null ? data.getSmokeSpread() : SmokeDirectionData.DEFAULT_SPREAD;
+        return new MuzzleAttachmentEffect(offsetBb, flashScale, smokeScale,
+                smokeSpeedScale, smokeCountScale, smokeDirections, smokeSpread,
+                isSilenced(data), hasFlashHider);
     }
 
     private static boolean isSilenced(@Nullable AttachmentData data) {
@@ -387,20 +495,34 @@ public final class MuzzleParticleManager {
                              @Nullable ResourceLocation smokeId, float smokeScale, float offsetBb,
                              @Nullable ResourceLocation thirdPersonFlashId,
                              @Nullable ResourceLocation thirdPersonSmokeId,
-                             float speedScale, float smokeParticleCount, float smokeSize) {
+                             float speedScale, float smokeParticleCount, float smokeSize,
+                             @Nullable SmokeDirection smokeDirection) {
     }
 
     private record PendingShoot(@Nullable ResourceLocation flashId, float flashScale,
                                 @Nullable ResourceLocation smokeId, float smokeScale, float offsetBb,
-                                float speedScale, float smokeParticleCount, float smokeSize) {
+                                float speedScale, float smokeParticleCount, float smokeSize,
+                                @Nullable SmokeDirection smokeDirection) {
     }
 
     private record BoundEmitter(ParticleEmitterInstance emitter, String locator, float offsetBb) {
     }
 
     private record MuzzleAttachmentEffect(float offsetBb, float flashScale, float smokeScale,
+                                          float smokeSpeedScale, float smokeCountScale,
+                                          @Nullable float[][] smokeDirections, float smokeSpread,
                                           boolean silenced, boolean hasFlashHider) {
         private static final MuzzleAttachmentEffect NONE =
-                new MuzzleAttachmentEffect(0.0f, 1.0f, 1.0f, false, false);
+                new MuzzleAttachmentEffect(0.0f, 1.0f, 1.0f, 1.0f, 1.0f, null,
+                        SmokeDirectionData.DEFAULT_SPREAD, false, false);
+    }
+
+    /**
+     * 枪烟发射方向：{@code dirs} 是一组归一化单位向量（每个粒子随机挑其中一个），
+     * {@code spread} 为随机散布量。
+     * 坐标系是配置用的直觉空间（+X 右、+Y 上、-Z 枪口前方），构造时已抵消渲染空间的翻转。
+     * 为 {@code null} 表示配件不干预方向，粒子定义回退到默认的均匀四散。
+     */
+    record SmokeDirection(float[][] dirs, float spread) {
     }
 }

@@ -1,6 +1,8 @@
 package com.tacz.guns.client.resource.pojo.display.gun;
 
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
+import com.tacz.guns.resource.pojo.data.SmokeDirectionData;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -83,6 +85,26 @@ public class MuzzleFlash {
     @SerializedName("smoke_scale")
     private float smokeScale = 0f;
 
+    /**
+     * 枪烟的默认发射方向（裸枪状态）。装上枪口配件后由配件的同名字段接管——
+     * 枪口配件本身就替换了枪口模型，排烟方式随之覆盖。
+     * <p>
+     * 写法与配件一致：单方向 {@code [x, y, z]} 或多方向 {@code [[x, y, z], ...]}，
+     * {@code [0, 0, -1]} 为枪口正前方、{@code [0, 1, 0]} 为正上方。
+     * 不填、格式非法或零向量时视为不干预，保持默认的均匀四散。
+     */
+    @SerializedName("smoke_direction")
+    @Nullable
+    private JsonElement smokeDirection = null;
+
+    /**
+     * 枪烟方向的随机散布量，仅在配置了 {@link #smokeDirection} 时生效；
+     * 不填则用 {@link SmokeDirectionData#DEFAULT_SPREAD}。装上枪口配件后由配件接管。
+     */
+    @SerializedName("smoke_spread")
+    @Nullable
+    private Float smokeSpread = null;
+
     public Type getType() {
         return type == null ? Type.DEFAULT : type;
     }
@@ -147,5 +169,22 @@ public class MuzzleFlash {
      */
     public float getSmokeScale() {
         return Float.isFinite(smokeScale) && smokeScale > 0f ? smokeScale : 0f;
+    }
+
+    /**
+     * @return 归一化后的枪烟发射方向列表；未配置或配置非法时为 {@code null}（不干预）。
+     *         写法与容错规则见 {@link SmokeDirectionData#parseDirections}。
+     */
+    @Nullable
+    public float[][] getSmokeDirections() {
+        return SmokeDirectionData.parseDirections(smokeDirection);
+    }
+
+    /**
+     * @return 枪烟发射方向的随机散布量；未配置或非法时用
+     *         {@link SmokeDirectionData#DEFAULT_SPREAD}。
+     */
+    public float getSmokeSpread() {
+        return SmokeDirectionData.parseSpread(smokeSpread);
     }
 }

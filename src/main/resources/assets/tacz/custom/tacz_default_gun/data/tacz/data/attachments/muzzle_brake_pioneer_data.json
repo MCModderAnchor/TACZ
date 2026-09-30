@@ -1,5 +1,7 @@
 {
   "weight": 0.25,
+  "smoke_direction": [[1, 0, 0], [-1, 0, 0]],
+  "smoke_spread": 0.75,
   "ads": {
     "addend": 0.06
   },

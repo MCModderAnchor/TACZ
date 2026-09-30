@@ -10,10 +10,18 @@
     },
     "components": {
       "sbm:fp_emitter_local_space": { "position": true, "rotation": false, "velocity": true, "to_world": true },
-      "minecraft:emitter_rate_instant": { "num_particles": "math.random(0, 1) < 0.33 ? (v.smoke_count == 0 ? 15 : v.smoke_count) : 0" },
+      "minecraft:emitter_rate_instant": { "num_particles": "v.smoke_count == 0 ? 15 : v.smoke_count" },
       "minecraft:emitter_lifetime_once": { "active_time": 0.06 },
-      "minecraft:emitter_shape_sphere": { "offset": [0, 0, 0.12], "radius": 0.12, "direction": "outwards" },
-      "minecraft:particle_lifetime_expression": { "max_lifetime": "math.random(0.1, 0.16)" },
+      "minecraft:emitter_shape_sphere": {
+        "offset": [0, 0, 0.12],
+        "radius": 0.12,
+        "direction": [
+          "v.smoke_dir_n == 0 ? 0.0 : ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_dir0_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_dir1_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_dir2_x : v.smoke_dir3_x))) + math.random(-1, 1) * v.smoke_spread)",
+          "v.smoke_dir_n == 0 ? 0.0 : ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_dir0_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_dir1_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_dir2_y : v.smoke_dir3_y))) + math.random(-1, 1) * v.smoke_spread)",
+          "v.smoke_dir_n == 0 ? 0.0 : ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_dir0_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_dir1_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_dir2_z : v.smoke_dir3_z))) + math.random(-1, 1) * v.smoke_spread)"
+        ]
+      },
+      "minecraft:particle_lifetime_expression": { "max_lifetime": "math.random(0.08, 0.2)" },
       "minecraft:particle_initial_speed": "v.smoke_vel == 0 ? 6 : v.smoke_vel * 6",
       "minecraft:particle_initial_spin": { "rotation": "math.random(-180, 180)", "rotation_rate": "math.random(-60, 60)" },
       "minecraft:particle_motion_dynamic": { "linear_drag_coefficient": 1.5},
@@ -37,7 +45,7 @@
       "minecraft:particle_appearance_tinting": {
         "color": {
           "interpolant": "v.particle_age / v.particle_lifetime",
-          "gradient": { "0.0": "#998C8C8C", "0.3": "#95808080", "0.6": "#80404040", "0.85": "#00000000", "1.0": "#00000000" }
+          "gradient": { "0.0": "#99FFFFFF", "0.6": "#55FFFFFF", "1.0": "#00FFFFFF" }
         }
       }
     }

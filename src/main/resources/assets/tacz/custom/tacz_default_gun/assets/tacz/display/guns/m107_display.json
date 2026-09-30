@@ -27,7 +27,9 @@
     "scale": 2,
     "smoke_scale": 2.5,
     "initial_speed_scale": 3,
-    "smoke_particle_count": 40
+    "smoke_particle_count": 40,
+    "smoke_direction": [[1, 0, 0], [-1, 0, 0]],
+    "smoke_spread": 0.75
   },
   // 机瞄的放大倍数，默认 1.2
   "iron_zoom": 1.5,

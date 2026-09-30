@@ -127,26 +127,39 @@ public final class ThirdPersonMuzzleParticleManager {
         MuzzleParticleManager.MuzzleShot shot = PENDING.remove(entity);
         // id 为 null 表示 display 显式配置为不生成 3p 烟雾
         if (shot != null && RenderConfig.RENDER_MUZZLE_SMOKE.get() && shot.thirdPersonSmokeId() != null && shot.smokeScale() > 0) {
-            spawnEffect(level, new Vec3(muzzleWorld.m30(), muzzleWorld.m31(), muzzleWorld.m32()),
+            spawnEffect(level, muzzleWorld,
                     shot.thirdPersonSmokeId(), shot.smokeScale(), shot.speedScale(),
-                    shot.smokeParticleCount(), shot.smokeSize());
+                    shot.smokeParticleCount(), shot.smokeSize(), shot.smokeDirection());
         }
     }
 
-    private static void spawnEffect(ClientLevel level, Vec3 muzzleWorld, ResourceLocation definitionId, float scale, float speedScale, float smokeParticleCount, float smokeSize) {
+    /**
+     * @param muzzleWorld 枪口世界矩阵（含旋转），不能只取平移分量——粒子的发射方向要经它变换到世界空间，
+     *                    丢掉旋转后方向就成了世界坐标里定死的一条，枪一转就跟不上。
+     */
+    private static void spawnEffect(ClientLevel level, Matrix4f muzzleWorld, ResourceLocation definitionId,
+                                    float scale, float speedScale, float smokeParticleCount, float smokeSize,
+                                    @Nullable MuzzleParticleManager.SmokeDirection smokeDirection) {
         ParticleEffectDefinition definition = ParticleDefinitionLoader.getInstance().getDefinition(definitionId);
         if (definition == null) {
             return;
         }
         // 交给 SBM 的世界发射器管理器：生命周期/每 tick 驱动/引擎投递全部由其接管
         ParticleEmitterInstance emitter = WorldEmitterManager.getInstance()
-                .addEmitter(level, muzzleWorld, Vec3.ZERO, definition);
+                .addEmitter(level, new Vec3(muzzleWorld.m30(), muzzleWorld.m31(), muzzleWorld.m32()), Vec3.ZERO, definition);
         if (emitter == null) {
             return;
         }
+        // addEmitter 只给了位置，旋转要在这里补上：不补的话 emitter 的 worldTransform 停在单位阵，
+        // 粒子方向就落在世界坐标里，不跟随枪口朝向。
+        // 轴系与第一人称一致：第三人称的枪体 poseStack 经过 GunItemTransforms 的 scale(-1, -1, 1)，
+        // 与第一人称那句 rotateZ(180°) 是同一个变换（(x,y,z) → (-x,-y,z)），
+        // 所以 MuzzleShot 里已经抵消过翻转的方向可以直接用，不必再翻一次。
+        WorldEmitterManager.getInstance().updateEmitterAnchor(emitter, muzzleWorld);
         // 与枪焰使用互不重叠的 smoke_* 命名空间（见 MuzzleParticleManager#createSmokeEmitter）
         emitter.setVariable("smoke_size", smokeSize);
         emitter.setVariable("smoke_vel", speedScale);
         emitter.setVariable("smoke_count", smokeParticleCount);
+        MuzzleParticleManager.writeSmokeDirectionVariables(emitter, smokeDirection);
     }
 }
