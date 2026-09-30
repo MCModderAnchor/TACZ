@@ -7972,12 +7972,12 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 8.21875, 12.5]
+					"pivot": [0, 8.21875, 15.5]
 				},
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [2.21875, 9.0125, 15.5125]
+					"pivot": [2.75, 9.25, 15.5125]
 				},
 				{
 					"name": "refit_view",

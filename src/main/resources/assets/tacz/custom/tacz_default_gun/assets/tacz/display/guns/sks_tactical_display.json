@@ -20,6 +20,10 @@
   },
   "muzzle_flash": {
     "type": "renew",
+    "first_person_flash": "tacz:muzzle_flash",
+    "third_person_flash": "tacz:muzzle_flash",
+    "first_person_smoke": "tacz:muzzle_flash_smoke",
+    "third_person_smoke": "tacz:muzzle_flash_smoke",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 1.0,
     "smoke_scale": 1.65,
@@ -27,7 +31,7 @@
   },
   "iron_zoom": 1.5,
   "model_fov": 60,
-  "zoom_model_fov": 45,
+  "zoom_model_fov": 42,
   "shell": {
     "initial_velocity": [5, 2, 1],
     "random_velocity": [1, 1, 0.25],

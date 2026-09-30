@@ -49,6 +49,10 @@
   "muzzle_flash": {
     // 效果类型：renew 为新版粒子系统，default 为旧版贴图火光
     "type": "renew",
+    "first_person_flash": "tacz:muzzle_flash",
+    "third_person_flash": "tacz:muzzle_flash",
+    "first_person_smoke": "tacz:muzzle_flash_smoke",
+    "third_person_smoke": "tacz:muzzle_flash_smoke",
     // 枪焰贴图，仅 default 模式使用
     "texture": "tacz:flash/common_muzzle_flash",
     // 枪焰大小缩放，不影响枪烟
