@@ -23,7 +23,14 @@
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 0.75,
     "smoke_scale": 1.45,
-    "initial_speed_scale": 1.5
+    "initial_speed_scale": 1.5,
+    "smoke_directions": [
+      { "plane_angle": 30, "out_angle": 0 },
+      { "plane_angle": -30, "out_angle": 0 },
+      { "plane_angle": 150, "out_angle": 0 },
+      { "plane_angle": -150, "out_angle": 0 }
+    ],
+    "smoke_spread_angle": 15
   },
   "iron_zoom": 1.33,
   "model_fov": 60,

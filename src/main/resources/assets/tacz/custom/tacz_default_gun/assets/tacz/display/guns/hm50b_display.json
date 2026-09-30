@@ -22,7 +22,12 @@
     "scale": 2,
     "smoke_scale": 2.5,
     "initial_speed_scale": 3,
-    "smoke_particle_count": 40
+    "smoke_particle_count": 40,
+    "smoke_directions": [
+      { "plane_angle": 0, "out_angle": 0 },
+      { "plane_angle": 180, "out_angle": 0 }
+    ],
+    "smoke_spread_angle": 45
   },
   // 机瞄的放大倍数，默认 1.2
   "iron_zoom": 1.5,

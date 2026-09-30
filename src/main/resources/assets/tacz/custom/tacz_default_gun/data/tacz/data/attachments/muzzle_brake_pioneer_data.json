@@ -1,7 +1,10 @@
 {
   "weight": 0.25,
-  "smoke_direction": [[1, 0, 0], [-1, 0, 0]],
-  "smoke_spread": 0.75,
+  "smoke_directions": [
+    { "plane_angle": 0, "out_angle": 0 },
+    { "plane_angle": 180, "out_angle": 0 }
+  ],
+  "smoke_spread_angle": 55,
   "ads": {
     "addend": 0.06
   },

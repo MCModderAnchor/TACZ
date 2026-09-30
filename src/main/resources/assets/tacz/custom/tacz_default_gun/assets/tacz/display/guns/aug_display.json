@@ -20,9 +20,15 @@
   "muzzle_flash": {
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.75,
-    "smoke_scale": 1.45,
-    "initial_speed_scale": 1.5
+    "scale": 0.4,
+    "smoke_scale": 1.25,
+    "initial_speed_scale": 1.5,
+    "smoke_particle_count": 10,
+    "smoke_directions": [
+      { "plane_angle": 0, "out_angle": 0 },
+      { "plane_angle": 180, "out_angle": 0 }
+    ],
+    "smoke_spread_angle": 60
   },
   "iron_zoom": 1.2,
   "model_fov": 60,

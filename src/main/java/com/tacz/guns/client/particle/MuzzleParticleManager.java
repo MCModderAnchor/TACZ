@@ -110,12 +110,12 @@ public final class MuzzleParticleManager {
      */
     @Nullable
     private static SmokeDirection resolveSmokeDirection(MuzzleFlash muzzleFlash, MuzzleAttachmentEffect effect) {
-        boolean fromAttachment = effect.smokeDirections() != null;
-        float[][] raw = fromAttachment ? effect.smokeDirections() : muzzleFlash.getSmokeDirections();
-        if (raw == null) {
+        SmokeDirectionData.Config config = effect.smokeDirectionConfig() != null
+                ? effect.smokeDirectionConfig() : muzzleFlash.getSmokeDirectionConfig();
+        if (config == null) {
             return null;
         }
-        float spread = fromAttachment ? effect.smokeSpread() : muzzleFlash.getSmokeSpread();
+        float[][] raw = config.directions();
         // 粒子的局部空间取自枪体的 poseStack，而渲染前对它做过一次绕 Z 轴 180° 的翻转
         // （1p 见 GunItemRendererWrapper#renderFirstPerson 的 rotateZ(180°)，
         //  3p 见 GunItemTransforms 的 scale(-1, -1, 1)，两者是同一个变换 (x,y,z) → (-x,-y,z)），
@@ -126,7 +126,7 @@ public final class MuzzleParticleManager {
         for (int i = 0; i < raw.length; i++) {
             fixed[i] = new float[]{-raw[i][0], -raw[i][1], raw[i][2]};
         }
-        return new SmokeDirection(fixed, spread);
+        return new SmokeDirection(fixed, config.spread(), config.angleMode());
     }
 
     /**
@@ -411,7 +411,7 @@ public final class MuzzleParticleManager {
      * （{@code v.smoke_dir<i>_x / _y / _z}），配合方向数量 {@code v.smoke_dir_n}
      * 供粒子定义按 {@code v.particle_random_1} 挑选。未用到的槽位一律写 0。
      * <p>
-     * 第三人称暂不支持方向，但同样要调用本方法并传 {@code null} 把全部变量显式写成 0：
+     * 第一、第三人称都调用本方法，把未使用的变量显式写成 0：
      * 粒子定义里的方向是乘积形式，若某个分量未定义且默认值为 NaN，{@code 0 * NaN}
      * 仍是 NaN，不会归零。另外变量存储在同帧内是所有发射器共享的，写全也避免读到
      * 其他发射器的残留值。
@@ -420,19 +420,42 @@ public final class MuzzleParticleManager {
         int count = direction == null ? 0 : direction.dirs().length;
         emitter.setVariable("smoke_dir_n", count);
         emitter.setVariable("smoke_spread", direction == null ? 0.0f : direction.spread());
+        emitter.setVariable("smoke_angle_mode", direction != null && direction.angleMode() ? 1.0f : 0.0f);
         for (int i = 0; i < SmokeDirectionData.MAX_DIRECTIONS; i++) {
             float x = 0.0f;
             float y = 0.0f;
             float z = 0.0f;
+            float ux = 0.0f;
+            float uy = 0.0f;
+            float uz = 0.0f;
+            float vx = 0.0f;
+            float vy = 0.0f;
+            float vz = 0.0f;
             if (direction != null && i < count) {
                 float[] dir = direction.dirs()[i];
                 x = dir[0];
                 y = dir[1];
                 z = dir[2];
+                float lateral = (float) Math.hypot(x, y);
+                if (lateral > 1.0e-6f) {
+                    ux = -y / lateral;
+                    uy = x / lateral;
+                } else {
+                    ux = 1.0f;
+                }
+                vx = y * uz - z * uy;
+                vy = z * ux - x * uz;
+                vz = x * uy - y * ux;
             }
             emitter.setVariable("smoke_dir" + i + "_x", x);
             emitter.setVariable("smoke_dir" + i + "_y", y);
             emitter.setVariable("smoke_dir" + i + "_z", z);
+            emitter.setVariable("smoke_u" + i + "_x", ux);
+            emitter.setVariable("smoke_u" + i + "_y", uy);
+            emitter.setVariable("smoke_u" + i + "_z", uz);
+            emitter.setVariable("smoke_v" + i + "_x", vx);
+            emitter.setVariable("smoke_v" + i + "_y", vy);
+            emitter.setVariable("smoke_v" + i + "_z", vz);
         }
     }
 
@@ -469,10 +492,9 @@ public final class MuzzleParticleManager {
         float smokeCountScale = data != null ? data.getSmokeCountScale() : 1.0f;
         // 方向是例外：方向没有天然的"1.0 基准"可供相乘，故配件直接给出绝对方向，
         // 不配置就完全不干预。这里只取原始值，与枪械 display 的取舍留到 resolveShot 里做。
-        float[][] smokeDirections = data != null ? data.getSmokeDirections() : null;
-        float smokeSpread = data != null ? data.getSmokeSpread() : SmokeDirectionData.DEFAULT_SPREAD;
+        SmokeDirectionData.Config smokeDirectionConfig = data != null ? data.getSmokeDirectionConfig() : null;
         return new MuzzleAttachmentEffect(offsetBb, flashScale, smokeScale,
-                smokeSpeedScale, smokeCountScale, smokeDirections, smokeSpread,
+                smokeSpeedScale, smokeCountScale, smokeDirectionConfig,
                 isSilenced(data), hasFlashHider);
     }
 
@@ -510,11 +532,10 @@ public final class MuzzleParticleManager {
 
     private record MuzzleAttachmentEffect(float offsetBb, float flashScale, float smokeScale,
                                           float smokeSpeedScale, float smokeCountScale,
-                                          @Nullable float[][] smokeDirections, float smokeSpread,
+                                          @Nullable SmokeDirectionData.Config smokeDirectionConfig,
                                           boolean silenced, boolean hasFlashHider) {
         private static final MuzzleAttachmentEffect NONE =
-                new MuzzleAttachmentEffect(0.0f, 1.0f, 1.0f, 1.0f, 1.0f, null,
-                        SmokeDirectionData.DEFAULT_SPREAD, false, false);
+                new MuzzleAttachmentEffect(0.0f, 1.0f, 1.0f, 1.0f, 1.0f, null, false, false);
     }
 
     /**
@@ -523,6 +544,6 @@ public final class MuzzleParticleManager {
      * 坐标系是配置用的直觉空间（+X 右、+Y 上、-Z 枪口前方），构造时已抵消渲染空间的翻转。
      * 为 {@code null} 表示配件不干预方向，粒子定义回退到默认的均匀四散。
      */
-    record SmokeDirection(float[][] dirs, float spread) {
+    record SmokeDirection(float[][] dirs, float spread, boolean angleMode) {
     }
 }

@@ -1,5 +1,8 @@
 {
   "weight": 0.25,
+  "flash_hider": 0,
+  "smoke_directions": { "plane_angle": 0, "out_angle": 90 },
+  "smoke_spread_angle": 90,
   "ads": {
     // 加数（多个配件的数值相加，作为第一个乘区）
     "addend": 0.02

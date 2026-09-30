@@ -71,6 +71,16 @@ public class AttachmentData {
     @Nullable
     private JsonElement smokeDirection = null;
 
+    /** 角度方向：平面角 0=右、90=上；外倾角为正时朝枪口前方。最多四路。 */
+    @SerializedName("smoke_directions")
+    @Nullable
+    private JsonElement smokeDirections = null;
+
+    /** 每路烟雾的圆锥半角，单位为度。仅与角度方向配合使用。 */
+    @SerializedName("smoke_spread_angle")
+    @Nullable
+    private Float smokeSpreadAngle = null;
+
     /**
      * 枪烟发射方向的随机散布量：粒子方向在归一化主方向的基础上按 ± 该值随机偏移，
      * 形成锥形喷射。仅在配置了 {@link #smokeDirection} 时生效，不填则用
@@ -139,6 +149,11 @@ public class AttachmentData {
      */
     public float getSmokeSpread() {
         return SmokeDirectionData.parseSpread(smokeSpread);
+    }
+
+    @Nullable
+    public SmokeDirectionData.Config getSmokeDirectionConfig() {
+        return SmokeDirectionData.parse(smokeDirections, smokeSpreadAngle, smokeDirection, smokeSpread);
     }
 
     @Nullable

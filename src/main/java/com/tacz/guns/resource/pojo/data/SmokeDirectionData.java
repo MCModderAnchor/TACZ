@@ -24,8 +24,74 @@ public final class SmokeDirectionData {
      * 相对主方向的横向偏移量，约对应 ±19° 的锥角。
      */
     public static final float DEFAULT_SPREAD = 0.35f;
+    public static final float DEFAULT_SPREAD_ANGLE = 20.0f;
+
+    public record Config(float[][] directions, float spread, boolean angleMode) {
+    }
 
     private SmokeDirectionData() {
+    }
+
+    @Nullable
+    public static Config parse(@Nullable JsonElement angles, @Nullable Float spreadAngle,
+                               @Nullable JsonElement vectors, @Nullable Float spread) {
+        float[][] angleDirections = parseAngles(angles);
+        if (angleDirections != null) {
+            return new Config(angleDirections, parseSpreadAngle(spreadAngle), true);
+        }
+        float[][] legacyDirections = parseDirections(vectors);
+        return legacyDirections == null ? null : new Config(legacyDirections, parseSpread(spread), false);
+    }
+
+    @Nullable
+    private static float[][] parseAngles(@Nullable JsonElement element) {
+        if (element == null || (!element.isJsonArray() && !element.isJsonObject())) {
+            return null;
+        }
+        JsonArray array;
+        if (element.isJsonArray()) {
+            array = element.getAsJsonArray();
+        } else {
+            array = new JsonArray();
+            array.add(element);
+        }
+        if (array.size() == 0) {
+            return null;
+        }
+        int count = Math.min(array.size(), MAX_DIRECTIONS);
+        float[][] result = new float[count][];
+        for (int i = 0; i < count; i++) {
+            JsonElement direction = array.get(i);
+            if (!direction.isJsonObject()) {
+                return null;
+            }
+            JsonElement plane = direction.getAsJsonObject().get("plane_angle");
+            JsonElement out = direction.getAsJsonObject().get("out_angle");
+            if (!isFiniteNumber(plane) || !isFiniteNumber(out)) {
+                return null;
+            }
+            float planeDegrees = plane.getAsFloat();
+            float outDegrees = out.getAsFloat();
+            if (planeDegrees < -180 || planeDegrees > 180 || outDegrees < -90 || outDegrees > 90) {
+                return null;
+            }
+            double planeRadians = Math.toRadians(planeDegrees);
+            double outRadians = Math.toRadians(outDegrees);
+            result[i] = new float[]{(float) (Math.cos(outRadians) * Math.cos(planeRadians)),
+                    (float) (Math.cos(outRadians) * Math.sin(planeRadians)),
+                    (float) -Math.sin(outRadians)};
+        }
+        return result;
+    }
+
+    private static boolean isFiniteNumber(@Nullable JsonElement value) {
+        return value != null && value.isJsonPrimitive() && value.getAsJsonPrimitive().isNumber()
+                && Float.isFinite(value.getAsFloat());
+    }
+
+    public static float parseSpreadAngle(@Nullable Float angle) {
+        return angle != null && Float.isFinite(angle) && angle >= 0 && angle <= 180
+                ? angle : DEFAULT_SPREAD_ANGLE;
     }
 
     /**

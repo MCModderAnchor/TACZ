@@ -16,7 +16,7 @@
       "minecraft:particle_lifetime_expression": { "max_lifetime": 0.02 },
       "minecraft:particle_initial_spin": { "rotation": "math.random(-60, 60)", "rotation_rate": 0 },
       "minecraft:particle_appearance_billboard": {
-        "size": ["v.muzzle_scale == 0 ? 0.45 : v.muzzle_scale * 0.45", "v.muzzle_scale == 0 ? 0.45 : v.muzzle_scale * 0.45"],
+        "size": ["(v.muzzle_scale == 0 ? 0.5 : v.muzzle_scale) * 0.45", "(v.muzzle_scale == 0 ? 1 : v.muzzle_scale) * 0.45"],
         "facing_camera_mode": "rotate_xyz",
         "uv": {
           "texture_width": 1152,

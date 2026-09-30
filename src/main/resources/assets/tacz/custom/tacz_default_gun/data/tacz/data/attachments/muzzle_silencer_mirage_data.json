@@ -1,5 +1,8 @@
 {
   "weight": 0.15,
+  "flash_hider": 0,
+  "smoke_directions": { "plane_angle": 0, "out_angle": 90 },
+  "smoke_spread_angle": 90,
   "head_shot":{
     "multiplier": 1.25
   },

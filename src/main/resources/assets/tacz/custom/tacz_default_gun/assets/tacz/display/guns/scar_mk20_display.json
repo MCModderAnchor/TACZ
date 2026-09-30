@@ -24,7 +24,13 @@
     "scale": 1.25,
     "smoke_scale": 2,
     "initial_speed_scale": 2.45,
-    "smoke_particle_count": 30
+    "smoke_particle_count": 30,
+    "smoke_directions": [
+      { "plane_angle": -150, "out_angle": 20 },
+      { "plane_angle": -30, "out_angle": 20 },
+      { "plane_angle": 90, "out_angle": 15 }
+    ],
+    "smoke_spread_angle": 25
   },
   "iron_zoom": 1.5,
   "model_fov": 60,
