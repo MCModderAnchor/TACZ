@@ -1,26 +1,26 @@
 {
   "ammo": "tacz:45acp",
-  "ammo_amount": 10,
+  "ammo_amount": 11,
   "bolt": "manual_action",
-  "rpm": 300,
+  "rpm": 275,
   "bullet": {
-    "life": 1,
+    "life": 1.2,
     "bullet_amount": 1,
-    "damage": 11,
+    "damage": 12,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.25,
-      "head_shot_multiplier": 1.5,
+      "armor_ignore": 0.0,
+      "head_shot_multiplier": 1.75,
       "damage_adjust": [
-        {"distance": 24, "damage": 11},
-        {"distance": 44, "damage": 9},
-        {"distance": "infinite", "damage": 6.5}
+        {"distance": 26, "damage": 12},
+        {"distance": 52, "damage": 10},
+        {"distance": "infinite", "damage": 6}
       ]
     },
-    "speed": 200,
+    "speed": 210,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.025,
+    "friction": 0.05,
     "ignite": false,
     "pierce": 1
   },
@@ -46,8 +46,8 @@
   "weight": 4.0,
   "movement_speed": {
     "base": 0.0,
-    "aim": -0.25,
-    "reload": -0.2
+    "aim": -0.2,
+    "reload": 0.0
   },
   "crawl_recoil_multiplier": 0.35,
   "fire_mode": [
@@ -55,10 +55,9 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [1.5, 1.5]},
-      {"time": 0.07, "value": [0.7, 0.7]},
-      {"time": 0.16, "value": [1.3, 1.3]},
-      {"time": 0.24, "value": [0.1, 0.1]},
+      {"time": 0, "value": [1.75, 1.75]},
+      {"time": 0.15, "value": [1.75, 1.75]},
+      {"time": 0.33, "value": [0.1, 0.1]},
       {"time": 0.6, "value": [0, 0]},
       {"time": 0.65, "value": [-0.05, -0.05]},
       {"time": 0.7, "value": [0, 0]},
@@ -72,10 +71,10 @@
     ]
   },
   "inaccuracy": {
-    "stand": 4,
-    "move": 4.75,
-    "sneak": 3,
-    "lie": 2,
+    "stand": 2.5,
+    "move": 2.5,
+    "sneak": 1.5,
+    "lie": 1,
     "aim": 0.08
   },
   "melee": {

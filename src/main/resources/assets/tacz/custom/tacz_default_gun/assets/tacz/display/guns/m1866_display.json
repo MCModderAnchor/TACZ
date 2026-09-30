@@ -26,8 +26,8 @@
   "muzzle_flash": {
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.5,
-    "smoke_scale": 1,
+    "scale": 0.35,
+    "smoke_scale": 1.25,
     "initial_speed_scale": 1.15,
     "smoke_particle_count": 18
   },
@@ -38,7 +38,7 @@
     "angular_velocity": [1200, 90, 360],
     "living_time": 1.0
   },
-  "iron_zoom": 2,
+  "iron_zoom": 1.75,
   "model_fov": 60,
   "zoom_model_fov": 25,
   "sounds": {
@@ -52,14 +52,14 @@
     "melee_stock": "tacz:melee_stock/melee_stock_03"
   },
   "offhand_show": {
-    "pos": [6, 18, 3],
-    "rotate": [-90, -5, -90],
+    "pos": [2, 22, 3.5],
+    "rotate": [0, 0, 60],
     "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [-4, 18, 3],
-      "rotate": [-90, -5, -90],
+      "pos": [-2, 22, 3],
+      "rotate": [-180, 0, 120],
       "scale": [0.5, 0.5, 0.5]
     }
   }

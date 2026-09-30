@@ -1,18 +1,18 @@
 {
   "ammo": "tacz:12g",
   "force_aim_exit_on_reload": true,
-  "rpm": 150,
+  "rpm": 200,
   "bullet": {
-    "life": 0.75,
+    "life": 1,
     "bullet_amount": 12,
     "damage": 36,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.33,
-      "head_shot_multiplier": 1.2,
+      "armor_ignore": 0.25,
+      "head_shot_multiplier": 1.5,
       "damage_adjust": [
         {"distance": 24, "damage": 36},
-        {"distance": 32, "damage": 30},
+        {"distance": 36, "damage": 30},
         {"distance": "infinite", "damage": 24}
       ]
     },
