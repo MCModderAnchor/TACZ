@@ -226,7 +226,7 @@
   "config.tacz.client.render.first_person_bullet_tracer_enable.desc": "Renderizar o no el rastro de las balas en primera persona",
   "config.tacz.client.render.disable_interact_hud_text": "Desactivar el texto del Hud de interacción",
   "config.tacz.client.render.disable_interact_hud_text.desc": "Desactivar el texto interactivo en el hud en el centro de la pantalla",
-  "config.tacz.client.render.auto_select_gun_smith_table_filter": "Auto Filter Gun Smith Table By Held Item",
+  "config.tacz.client.render.auto_select_gun_smith_table_filter": "Filtrado Automático por el Objeto en la Mano en la Mesa de Armero",
   "config.tacz.client.render.auto_select_gun_smith_table_filter.desc": "When opening a gun smith table with a gun, attachment, or ammo in your main hand, automatically select the held item filter.",
   "config.tacz.client.render.disable_movement_fov.desc": "Desactivar todo efecto FOV del atributo de velocidad de movimiento al sostener un arma.",
   "config.tacz.client.render.disable_movement_fov": "Desactivar efecto FOV de velocidad",
