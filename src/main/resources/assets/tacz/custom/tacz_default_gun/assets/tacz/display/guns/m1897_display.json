@@ -28,10 +28,6 @@
   },
   "muzzle_flash": {
     "type": "renew",
-    "first_person_flash": "tacz:muzzle_flash_large",
-    "third_person_flash": "tacz:muzzle_flash_large",
-    "first_person_smoke": "tacz:muzzle_flash_smoke_large",
-    "third_person_smoke": "tacz:muzzle_flash_smoke_large",
     "texture": "tacz:flash/common_muzzle_flash",
     "scale": 2,
     "initial_speed_scale": 2,
