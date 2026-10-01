@@ -17,7 +17,7 @@ public class BlockIndexPOJO {
     private ResourceLocation data;
 
     @SerializedName("id")
-    private ResourceLocation id = new ResourceLocation(GunMod.MOD_ID, "gun_smith_table");
+    private ResourceLocation id = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "gun_smith_table");
 
     @SerializedName("stack_size")
     private int stackSize;

@@ -13,9 +13,11 @@ import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.config.util.GunPegboardItemConfigRead;
 import com.tacz.guns.config.util.InteractKeyConfigRead;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -26,14 +28,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import org.apache.commons.lang3.StringUtils;
 
-public class InteractKeyTextOverlay implements IGuiOverlay {
+public class InteractKeyTextOverlay implements LayeredDraw.Layer {
 
     @Override
-    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+    public void render(GuiGraphics graphics, DeltaTracker delta) {
+        int width = graphics.guiWidth();
+        int height = graphics.guiHeight();
         if (RenderConfig.DISABLE_INTERACT_HUD_TEXT.get()) {
             return;
         }

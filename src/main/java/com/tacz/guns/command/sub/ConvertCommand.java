@@ -6,8 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.tacz.guns.resource.PackConvertor;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 public class ConvertCommand {
     private static final String CONVERT_NAME = "convert";
@@ -19,7 +19,7 @@ public class ConvertCommand {
     }
 
     private static int convert(CommandContext<CommandSourceStack> context) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> PackConvertor.convert(context.getSource()));
+        if (FMLEnvironment.dist == Dist.CLIENT) PackConvertor.convert(context.getSource());
         return Command.SINGLE_SUCCESS;
     }
 }

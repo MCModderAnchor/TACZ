@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 
 public class GunSmithTableItemRenderer extends BlockEntityWithoutLevelRenderer {
+    public static GunSmithTableItemRenderer INSTANCE;
     private static final SlotModel SLOT_BLOCK_MODEL = new SlotModel();
     public GunSmithTableItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
         super(dispatcher, modelSet);
@@ -53,7 +54,7 @@ public class GunSmithTableItemRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.translate(0.5, 1.5, 0.5);
             poseStack.mulPose(Axis.ZN.rotationDegrees(180));
             VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
-            SLOT_BLOCK_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1, 1, 1, 1);
+            SLOT_BLOCK_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay);
         });
     }
 }

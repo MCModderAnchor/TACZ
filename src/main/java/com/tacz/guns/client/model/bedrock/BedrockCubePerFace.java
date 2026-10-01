@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.client.resource.pojo.model.FaceItem;
 import com.tacz.guns.client.resource.pojo.model.FaceUVsItem;
 import net.minecraft.core.Direction;
+import net.minecraft.util.FastColor;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -88,7 +89,7 @@ public class BedrockCubePerFace implements BedrockCube {
                 float z = vertex.pos.z() / 16.0F;
                 Vector4f vector4f = new Vector4f(x, y, z, 1.0F);
                 vector4f.mul(matrix4f);
-                consumer.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.u, vertex.v, overlay, light, nx, ny, nz);
+                consumer.addVertex(vector4f.x(), vector4f.y(), vector4f.z(), FastColor.ARGB32.colorFromFloat(alpha, red, green, blue), vertex.u, vertex.v, overlay, light, nx, ny, nz);
             }
         }
     }

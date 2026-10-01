@@ -15,23 +15,29 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.network.IContainerFactory;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class GunSmithTableMenu extends AbstractContainerMenu {
-    public static final MenuType<GunSmithTableMenu> TYPE = IForgeMenuType.create((windowId, inv, data) -> {
-        ResourceLocation blockId = data.readResourceLocation();
-        return new GunSmithTableMenu(windowId, inv, blockId);
-    });
+    public static final MenuType<GunSmithTableMenu> TYPE = new MenuType<>(
+        (IContainerFactory<GunSmithTableMenu>) (id, inventory, buf) -> {
+            ResourceLocation resourceLocation = null;
+            if (buf != null) resourceLocation = buf.readResourceLocation();
+            return new GunSmithTableMenu(id, inventory, resourceLocation);
+        },
+        FeatureFlags.DEFAULT_FLAGS
+    );
 
     private final ResourceLocation blockId;
     private final RecipeFilter filter;
@@ -92,9 +98,8 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
                 return null;
             }
         }
-
-        Recipe<?> recipe = recipeManager.byKey(recipeId).orElse(null);
-        if (recipe instanceof GunSmithTableRecipe gunSmithTableRecipe) {
+        RecipeHolder<?> holder = recipeManager.byKey(recipeId).orElse(null);
+        if (holder != null && holder.value() instanceof GunSmithTableRecipe gunSmithTableRecipe) {
             boolean flag = TimelessAPI.getCommonBlockIndex(getBlockId()).map(blockIndex -> {
                 return blockIndex.getData().getTabs().stream().noneMatch(tab -> tab.id().equals(gunSmithTableRecipe.getTab()));
             }).orElse(true);
@@ -114,7 +119,7 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
         if (recipe == null) {
             return;
         }
-        player.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(handler -> {
+        Optional.ofNullable(player.getCapability(Capabilities.ItemHandler.ENTITY, null)).ifPresent(handler -> {
             // 是创造模式，就不扣材料
             if (!player.isCreative()) {
                 Int2IntArrayMap recordCount = new Int2IntArrayMap();

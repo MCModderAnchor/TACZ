@@ -2,6 +2,7 @@ package com.tacz.guns.entity.sync;
 
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.entity.sync.core.IDataSerializer;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -23,7 +24,7 @@ public class ModSerializers {
         }
 
         @Override
-        public Tag write(ReloadState value) {
+        public Tag write(HolderLookup.Provider provider, ReloadState value) {
             CompoundTag compound = new CompoundTag();
             compound.putString("StateType", value.getStateType().toString());
             compound.putLong("CountDown", value.getCountDown());
@@ -31,7 +32,7 @@ public class ModSerializers {
         }
 
         @Override
-        public ReloadState read(Tag nbt) {
+        public ReloadState read(HolderLookup.Provider provider, Tag nbt) {
             CompoundTag compound = (CompoundTag) nbt;
             try {
                 ReloadState.StateType stateType = ReloadState.StateType.valueOf(compound.getString("StateType"));

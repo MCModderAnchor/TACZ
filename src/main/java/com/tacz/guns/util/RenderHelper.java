@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.tacz.guns.client.animation.third.AnimationRenderContext;
 import com.tacz.guns.client.animation.third.PlayerModelRenderState;
 import com.tacz.guns.compat.ar.ARCompat;
-import com.tacz.guns.compat.oculus.OculusCompat;
+import com.tacz.guns.compat.iris.IrisCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -16,8 +16,8 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -40,13 +40,12 @@ public final class RenderHelper {
 
     private static void innerBlit(Matrix4f matrix, float x1, float x2, float y1, float y2, float blitOffset, float minU, float maxU, float minV, float maxV) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(matrix, x1, y2, blitOffset).uv(minU, maxV).endVertex();
-        bufferbuilder.vertex(matrix, x2, y2, blitOffset).uv(maxU, maxV).endVertex();
-        bufferbuilder.vertex(matrix, x2, y1, blitOffset).uv(maxU, minV).endVertex();
-        bufferbuilder.vertex(matrix, x1, y1, blitOffset).uv(minU, minV).endVertex();
-        BufferUploader.draw(bufferbuilder.end());
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferbuilder.addVertex(matrix, x1, y2, blitOffset).setUv(minU, maxV);
+        bufferbuilder.addVertex(matrix, x2, y2, blitOffset).setUv(maxU, maxV);
+        bufferbuilder.addVertex(matrix, x2, y1, blitOffset).setUv(maxU, minV);
+        bufferbuilder.addVertex(matrix, x1, y1, blitOffset).setUv(minU, minV);
+        BufferUploader.draw(bufferbuilder.buildOrThrow());
     }
 
     public static void enableItemEntityStencilTest() {
@@ -88,7 +87,7 @@ public final class RenderHelper {
     /** Prefer passing the caller's buffer; old overloads must respect an active shader hand pass. */
     public static MultiBufferSource getBufferSource(ItemDisplayContext context) {
         if (context.firstPerson()) {
-            MultiBufferSource handBuffer = OculusCompat.getHandBufferSource();
+            MultiBufferSource handBuffer = IrisCompat.getHandBufferSource();
             if (handBuffer != null) {
                 return handBuffer;
             }

@@ -3,28 +3,35 @@ package com.tacz.guns.network.message.handshake;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.network.IMessage;
 import com.tacz.guns.network.LoginIndexHolder;
+import com.tacz.guns.network.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+public class Acknowledge extends LoginIndexHolder implements IMessage {
+    public static final Acknowledge INSTANCE = new Acknowledge();
+    public static final CustomPacketPayload.Type<Acknowledge> TYPE = new CustomPacketPayload.Type<>(
+        ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "acknowledge")
+    );
+    public static final StreamCodec<FriendlyByteBuf, Acknowledge> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
-public class Acknowledge extends LoginIndexHolder implements IMessage<Acknowledge> {
+    private Acknowledge() { }
+
+    @Override
+    public @NotNull CustomPacketPayload.Type<Acknowledge> type() {
+        return TYPE;
+    }
+
     public static final Marker ACKNOWLEDGE = MarkerManager.getMarker("HANDSHAKE_ACKNOWLEDGE");
 
     @Override
-    public void encode(Acknowledge message, FriendlyByteBuf buffer) {
-    }
-
-    @Override
-    public Acknowledge decode(FriendlyByteBuf buf) {
-        return new Acknowledge();
-    }
-
-    @Override
-    public void handle(Acknowledge message, Supplier<NetworkEvent.Context> c) {
+    public void handle(IPayloadContext context) {
         GunMod.LOGGER.debug(ACKNOWLEDGE, "Received acknowledgement from client");
-        c.get().setPacketHandled(true);
+        context.finishCurrentTask(NetworkHandler.Task.TYPE);
     }
 }

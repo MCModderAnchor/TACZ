@@ -2,7 +2,7 @@ package com.tacz.guns.config.common;
 
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
@@ -11,22 +11,22 @@ public class AmmoConfig {
     public static final List<String> DEFAULT_BULLET_DAMAGE_IGNORE_LIST = List.of(
             "minecraft:painting", "minecraft:item_frame", "minecraft:glow_item_frame");
 
-    public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_DESTROYS_BLOCK;
-    public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_FIRE;
-    public static ForgeConfigSpec.BooleanValue EXPLOSIVE_AMMO_KNOCK_BACK;
-    public static ForgeConfigSpec.IntValue EXPLOSIVE_AMMO_VISIBLE_DISTANCE;
-    public static ForgeConfigSpec.ConfigValue<List<? extends String>> PASS_THROUGH_BLOCKS;
-    public static ForgeConfigSpec.BooleanValue DESTROY_GLASS;
-    public static ForgeConfigSpec.ConfigValue<List<? extends String>> DESTROY_BLOCKS;
-    public static ForgeConfigSpec.DoubleValue DESTROY_BLOCK_HARDNESS_THRESHOLD;
-    public static ForgeConfigSpec.BooleanValue IGNITE_BLOCK;
-    public static ForgeConfigSpec.BooleanValue IGNITE_ENTITY;
-    public static ForgeConfigSpec.BooleanValue IGNORE_TEAM_FRIENDLY_FIRE;
-    public static ForgeConfigSpec.BooleanValue ENABLE_BULLET_DAMAGE_IGNORE_LIST;
-    public static ForgeConfigSpec.ConfigValue<List<? extends String>> BULLET_DAMAGE_IGNORE_LIST;
-    public static ForgeConfigSpec.DoubleValue GLOBAL_BULLET_SPEED_MODIFIER;
+    public static ModConfigSpec.BooleanValue EXPLOSIVE_AMMO_DESTROYS_BLOCK;
+    public static ModConfigSpec.BooleanValue EXPLOSIVE_AMMO_FIRE;
+    public static ModConfigSpec.BooleanValue EXPLOSIVE_AMMO_KNOCK_BACK;
+    public static ModConfigSpec.IntValue EXPLOSIVE_AMMO_VISIBLE_DISTANCE;
+    public static ModConfigSpec.ConfigValue<List<? extends String>> PASS_THROUGH_BLOCKS;
+    public static ModConfigSpec.BooleanValue DESTROY_GLASS;
+    public static ModConfigSpec.ConfigValue<List<? extends String>> DESTROY_BLOCKS;
+    public static ModConfigSpec.DoubleValue DESTROY_BLOCK_HARDNESS_THRESHOLD;
+    public static ModConfigSpec.BooleanValue IGNITE_BLOCK;
+    public static ModConfigSpec.BooleanValue IGNITE_ENTITY;
+    public static ModConfigSpec.BooleanValue IGNORE_TEAM_FRIENDLY_FIRE;
+    public static ModConfigSpec.BooleanValue ENABLE_BULLET_DAMAGE_IGNORE_LIST;
+    public static ModConfigSpec.ConfigValue<List<? extends String>> BULLET_DAMAGE_IGNORE_LIST;
+    public static ModConfigSpec.DoubleValue GLOBAL_BULLET_SPEED_MODIFIER;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("ammo");
 
         builder.comment("Warning: Ammo with explosive properties can break blocks");

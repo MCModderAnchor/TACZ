@@ -1,50 +1,50 @@
 package com.tacz.guns.config.sync;
 
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
 public class SyncConfig {
     // 交互键的判断是在客户端执行的，但是需要服务端来控制
-    public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_WHITELIST_BLOCKS;
-    public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_WHITELIST_ENTITIES;
-    public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_BLOCKS;
-    public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_ENTITIES;
-    public static ForgeConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_WHITELIST_ITEMS;
-    public static ForgeConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_BLACKLIST_ITEMS;
-    public static ForgeConfigSpec.BooleanValue ENABLE_TABLE_FILTER;
-    public static ForgeConfigSpec.IntValue BULLET_HIT_BLOCK_EFFECT_SEND_DISTANCE;
-    public static ForgeConfigSpec.BooleanValue SERVER_SHOOT_NETWORK_V;
-    public static ForgeConfigSpec.BooleanValue SERVER_SHOOT_COOLDOWN_V;
+    public static ModConfigSpec.ConfigValue<List<String>> INTERACT_KEY_WHITELIST_BLOCKS;
+    public static ModConfigSpec.ConfigValue<List<String>> INTERACT_KEY_WHITELIST_ENTITIES;
+    public static ModConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_BLOCKS;
+    public static ModConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_ENTITIES;
+    public static ModConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_WHITELIST_ITEMS;
+    public static ModConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_BLACKLIST_ITEMS;
+    public static ModConfigSpec.BooleanValue ENABLE_TABLE_FILTER;
+    public static ModConfigSpec.IntValue BULLET_HIT_BLOCK_EFFECT_SEND_DISTANCE;
+    public static ModConfigSpec.BooleanValue SERVER_SHOOT_NETWORK_V;
+    public static ModConfigSpec.BooleanValue SERVER_SHOOT_COOLDOWN_V;
 
     // 三个全局系数，用于客户端枪械文本提示，需要同步
-    public static ForgeConfigSpec.DoubleValue DAMAGE_BASE_MULTIPLIER;
-    public static ForgeConfigSpec.DoubleValue ARMOR_IGNORE_BASE_MULTIPLIER;
-    public static ForgeConfigSpec.DoubleValue HEAD_SHOT_BASE_MULTIPLIER;
-    public static ForgeConfigSpec.DoubleValue WEIGHT_SPEED_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue DAMAGE_BASE_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue ARMOR_IGNORE_BASE_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue HEAD_SHOT_BASE_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue WEIGHT_SPEED_MULTIPLIER;
 
     // 需要同步到客户端，方便客户端 debug 显示碰撞箱
-    public static ForgeConfigSpec.ConfigValue<List<String>> HEAD_SHOT_AABB;
+    public static ModConfigSpec.ConfigValue<List<String>> HEAD_SHOT_AABB;
     // 子弹盒存储上限需要客户端显示支持
-    public static ForgeConfigSpec.IntValue AMMO_BOX_STACK_SIZE;
+    public static ModConfigSpec.IntValue AMMO_BOX_STACK_SIZE;
     // 客户端需要下载的枪械包
-    public static ForgeConfigSpec.ConfigValue<List<List<String>>> CLIENT_GUN_PACK_DOWNLOAD_URLS;
+    public static ModConfigSpec.ConfigValue<List<List<String>>> CLIENT_GUN_PACK_DOWNLOAD_URLS;
     // 禁用趴下战术动作
-    public static ForgeConfigSpec.BooleanValue ENABLE_CRAWL;
-    public static ForgeConfigSpec.BooleanValue ENABLE_CRAWL_WITHOUT_GUN;
+    public static ModConfigSpec.BooleanValue ENABLE_CRAWL;
+    public static ModConfigSpec.BooleanValue ENABLE_CRAWL_WITHOUT_GUN;
     // 持枪趴下时的最大仰角和俯角，单位为度，需要同步到客户端。
-    public static ForgeConfigSpec.DoubleValue CRAWL_MAX_UP_ANGLE;
-    public static ForgeConfigSpec.DoubleValue CRAWL_MAX_DOWN_ANGLE;
+    public static ModConfigSpec.DoubleValue CRAWL_MAX_UP_ANGLE;
+    public static ModConfigSpec.DoubleValue CRAWL_MAX_DOWN_ANGLE;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         interactKey(builder);
         gunPegboard(builder);
         baseMultiplier(builder);
         misc(builder);
     }
 
-    public static void interactKey(ForgeConfigSpec.Builder builder) {
+    public static void interactKey(ModConfigSpec.Builder builder) {
         builder.push("interact_key");
 
         builder.comment("These whitelist blocks can be interacted with when the interact key is pressed");
@@ -62,7 +62,7 @@ public class SyncConfig {
         builder.pop();
     }
 
-    private static void gunPegboard(ForgeConfigSpec.Builder builder) {
+    private static void gunPegboard(ModConfigSpec.Builder builder) {
         builder.push("gun_pegboard");
 
         builder.comment("Extra item ids allowed on the gun pegboard, in addition to TACZ guns, attachments, ammo, and ammo boxes");
@@ -74,7 +74,7 @@ public class SyncConfig {
         builder.pop();
     }
 
-    private static void baseMultiplier(ForgeConfigSpec.Builder builder) {
+    private static void baseMultiplier(ModConfigSpec.Builder builder) {
         builder.push("base_multiplier");
 
         builder.comment("All base damage number is multiplied by this factor");
@@ -92,7 +92,7 @@ public class SyncConfig {
         builder.pop();
     }
 
-    private static void misc(ForgeConfigSpec.Builder builder) {
+    private static void misc(ModConfigSpec.Builder builder) {
         builder.push("misc");
 
         builder.comment("The entity's head hitbox during the headshot");

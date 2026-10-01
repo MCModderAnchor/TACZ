@@ -2,6 +2,7 @@ package com.tacz.guns.entity.sync.core;
 
 import com.google.common.collect.ImmutableSet;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.init.CapabilityRegistry;
 import com.tacz.guns.init.CommonRegistry;
 import com.tacz.guns.network.message.handshake.ServerMessageSyncedEntityDataMapping;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
@@ -152,7 +153,7 @@ public class SyncedEntityData {
 
     @Nullable
     public DataHolder getDataHolder(Entity entity) {
-        return entity.getCapability(DataHolderCapabilityProvider.CAPABILITY, null).resolve().orElse(null);
+        return entity.getData(CapabilityRegistry.DATA_HOLDER);
     }
 
 //    public boolean hasSyncedDataKey(Class<? extends Entity> entityClass) {

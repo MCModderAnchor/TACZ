@@ -12,7 +12,7 @@ import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.compat.ar.ARCompat;
-import com.tacz.guns.compat.oculus.OculusCompat;
+import com.tacz.guns.compat.iris.IrisCompat;
 import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -199,6 +199,8 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     private Vector3f getBedrockPartCenter(PoseStack poseStack, @Nonnull List<BedrockPart> path) {
         poseStack.pushPose();
+		poseStack.last().pose().mulLocal(RenderSystem.getModelViewMatrix());
+
         for (BedrockPart part : path) {
             part.translateAndRotateAndScale(poseStack);
         }
@@ -222,7 +224,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         part.visible = true;
         VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
         part.render(poseStack, transformType, vertexConsumer, light, overlay, 1.0F, 1.0F, 1.0F, alpha, bufferSource);
-        if (!OculusCompat.endBatch(bufferSource)) {
+        if (!IrisCompat.endBatch(bufferSource)) {
             RenderHelper.endBatch(bufferSource, renderType);
         }
         part.visible = false;
@@ -262,7 +264,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     private void renderOcularAndDivision(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, boolean selective, MultiBufferSource bufferSource) {
         if (!ocularNodePaths.isEmpty()) {
-            BufferBuilder builder = Tesselator.getInstance().getBuilder();
             // 准备渲染圆形模板层
             RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INVERT);
             RenderSystem.colorMask(false, false, false, false);
@@ -271,7 +272,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             float rad = 80 * scopeViewRadiusModifier;
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
-                rad *= IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getFrameTime());
+                rad *= IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
             }
             for (int i = 0; i < ocularNodePaths.size(); i++) {
                 if (selective && !isScopeOcular.get(i)) {
@@ -281,15 +282,15 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
                 Vector3f ocularCenter = getBedrockPartCenter(matrixStack, ocularNodePaths.get(i));
                 float centerX = ocularCenter.x() * 16 * 90;
                 float centerY = ocularCenter.y() * 16 * 90;
-                builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
-                builder.vertex(centerX, centerY, -90.0D).color(255, 255, 255, 255).endVertex();
+                BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+                builder.addVertex(matrixStack.last(), centerX, centerY, -90.0F).setColor(255, 255, 255, 255);
                 for (int j = 0; j <= 90; j++) {
                     float angle = (float) j * ((float) Math.PI * 2F) / 90.0F;
                     float sin = Mth.sin(angle);
                     float cos = Mth.cos(angle);
-                    builder.vertex(centerX + cos * rad, centerY + sin * rad, -90.0D).color(255, 255, 255, 255).endVertex();
+                    builder.addVertex(matrixStack.last(), centerX + cos * rad, centerY + sin * rad, -90.0F).setColor(255, 255, 255, 255);
                 }
-                BufferUploader.drawWithShader(builder.end());
+                BufferUploader.drawWithShader(builder.buildOrThrow());
             }
             RenderSystem.depthMask(true);
             RenderSystem.colorMask(true, true, true, true);

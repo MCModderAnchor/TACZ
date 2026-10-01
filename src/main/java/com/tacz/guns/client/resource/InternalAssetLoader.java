@@ -26,24 +26,24 @@ import java.util.Optional;
 // 这个理论上已经不需要了
 public class InternalAssetLoader {
     // 曳光弹模型
-    public static final ResourceLocation DEFAULT_BULLET_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/entity/basic_bullet.png");
-    public static final ResourceLocation DEFAULT_BULLET_MODEL = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/basic_bullet.json");
+    public static final ResourceLocation DEFAULT_BULLET_TEXTURE = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/entity/basic_bullet.png");
+    public static final ResourceLocation DEFAULT_BULLET_MODEL = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "models/bedrock/basic_bullet.json");
     // 射击标靶车
-    public static final ResourceLocation TARGET_MINECART_MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/target_minecart.json");
-    public static final ResourceLocation TARGET_MINECART_TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/entity/target_minecart.png");
-    public static final ResourceLocation ENTITY_EMPTY_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/entity/empty.png");
+    public static final ResourceLocation TARGET_MINECART_MODEL_LOCATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "models/bedrock/target_minecart.json");
+    public static final ResourceLocation TARGET_MINECART_TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/entity/target_minecart.png");
+    public static final ResourceLocation ENTITY_EMPTY_TEXTURE = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/entity/empty.png");
     // 射击标靶
-    public static final ResourceLocation TARGET_MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/target.json");
-    public static final ResourceLocation TARGET_TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/block/target.png");
+    public static final ResourceLocation TARGET_MODEL_LOCATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "models/bedrock/target.json");
+    public static final ResourceLocation TARGET_TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/block/target.png");
     // 雕像
-    public static final ResourceLocation STATUE_MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/statue.json");
-    public static final ResourceLocation STATUE_TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/block/statue.png");
+    public static final ResourceLocation STATUE_MODEL_LOCATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "models/bedrock/statue.json");
+    public static final ResourceLocation STATUE_TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/block/statue.png");
     // 改装台
-    public static final ResourceLocation SMITH_TABLE_MODEL_LOCATION = new ResourceLocation(GunMod.MOD_ID, "models/bedrock/gun_smith_table.json");
-    public static final ResourceLocation SMITH_TABLE_TEXTURE_LOCATION = new ResourceLocation(GunMod.MOD_ID, "textures/block/gun_smith_table.png");
+    public static final ResourceLocation SMITH_TABLE_MODEL_LOCATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "models/bedrock/gun_smith_table.json");
+    public static final ResourceLocation SMITH_TABLE_TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/block/gun_smith_table.png");
     // 默认动画
-    private static final ResourceLocation DEFAULT_PISTOL_ANIMATIONS_LOC = new ResourceLocation(GunMod.MOD_ID, "animations/pistol_default.animation.json");
-    private static final ResourceLocation DEFAULT_RIFLE_ANIMATIONS_LOC = new ResourceLocation(GunMod.MOD_ID, "animations/rifle_default.animation.json");
+    private static final ResourceLocation DEFAULT_PISTOL_ANIMATIONS_LOC = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "animations/pistol_default.animation.json");
+    private static final ResourceLocation DEFAULT_RIFLE_ANIMATIONS_LOC = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "animations/rifle_default.animation.json");
     // 内部资源缓存
     private static final Map<ResourceLocation, BedrockModel> BEDROCK_MODELS = Maps.newHashMap();
     private static List<ObjectAnimation> defaultPistolAnimations;

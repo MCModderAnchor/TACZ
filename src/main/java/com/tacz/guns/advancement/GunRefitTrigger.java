@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class GunRefitTrigger extends SimpleCriterionTrigger<GunRefitTrigger.TriggerInstance> {
     public static final GunRefitTrigger INSTANCE = new GunRefitTrigger();
-    private static final ResourceLocation ID = new ResourceLocation("tacz", "gun_refit");
+    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("tacz", "gun_refit");
 
     public static void register() {
         CriteriaTriggers.register(INSTANCE);

@@ -1,5 +1,6 @@
 package com.tacz.guns.client.model.functional;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -11,7 +12,7 @@ import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.resource.pojo.display.gun.ShellEjection;
-import com.tacz.guns.compat.oculus.OculusCompat;
+import com.tacz.guns.compat.iris.IrisCompat;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.RenderHelper;
 import com.tacz.guns.util.time.GunTime;
@@ -141,7 +142,7 @@ public class ShellRender implements IFunctionalRenderer {
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
-        if (OculusCompat.isRenderShadow()) {
+        if (IrisCompat.isRenderShadow()) {
             return;
         }
         if (!isSelf) {

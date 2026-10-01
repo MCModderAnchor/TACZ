@@ -5,7 +5,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.*;

@@ -1,12 +1,12 @@
 package com.tacz.guns.config.client;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ZoomConfig {
-    public static ForgeConfigSpec.DoubleValue SCREEN_DISTANCE_COEFFICIENT;
-    public static ForgeConfigSpec.DoubleValue ZOOM_SENSITIVITY_BASE_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue SCREEN_DISTANCE_COEFFICIENT;
+    public static ModConfigSpec.DoubleValue ZOOM_SENSITIVITY_BASE_MULTIPLIER;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("Zoom");
 
         builder.comment("Screen distance coefficient for zoom, using MDV standard, default is MDV133");

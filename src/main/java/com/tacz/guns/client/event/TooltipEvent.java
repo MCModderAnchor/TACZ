@@ -9,12 +9,12 @@ import com.tacz.guns.init.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class TooltipEvent {
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {

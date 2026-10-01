@@ -4,6 +4,7 @@ import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.inventory.GunSmithTableMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -18,9 +19,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
 public class GunSmithTableBlockEntity extends BlockEntity implements MenuProvider {
@@ -56,12 +54,6 @@ public class GunSmithTableBlockEntity extends BlockEntity implements MenuProvide
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public AABB getRenderBoundingBox() {
-        return new AABB(worldPosition.offset(-2, 0, -2), worldPosition.offset(2, 1, 2));
-    }
-
-    @Override
     public Component getDisplayName() {
         return Component.literal("Gun Smith Table");
     }
@@ -73,8 +65,8 @@ public class GunSmithTableBlockEntity extends BlockEntity implements MenuProvide
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
         if (tag.contains(ID_TAG, Tag.TAG_STRING)) {
             this.id = ResourceLocation.tryParse(tag.getString(ID_TAG));
         } else {
@@ -83,15 +75,15 @@ public class GunSmithTableBlockEntity extends BlockEntity implements MenuProvide
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
         if (id != null) {
             tag.putString(ID_TAG, id.toString());
         }
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return saveWithoutMetadata(provider);
     }
 }

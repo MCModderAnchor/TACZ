@@ -16,13 +16,13 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = GunMod.MOD_ID)
+@net.neoforged.fml.common.EventBusSubscriber(modid = GunMod.MOD_ID)
 public class GunSoundAngerEvent {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onGunFire(GunFireEvent event) {

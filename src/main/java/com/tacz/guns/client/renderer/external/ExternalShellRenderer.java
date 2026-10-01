@@ -8,7 +8,7 @@ import com.tacz.guns.client.model.DisplayGunModelInstance;
 import com.tacz.guns.client.renderer.item.SbmGunTransforms;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.pojo.display.gun.ShellEjection;
-import com.tacz.guns.compat.oculus.OculusCompat;
+import com.tacz.guns.compat.iris.IrisCompat;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -35,7 +35,7 @@ public final class ExternalShellRenderer {
 
     public void render(GunDisplayInstance display, GunData gunData, DisplayGunModelInstance instance,
                        PoseStack modelPose, MultiBufferSource buffers, int packedLight, int packedOverlay) {
-        if (OculusCompat.isRenderShadow()) return;
+        if (IrisCompat.isRenderShadow()) return;
         ShellEjection ejection = display.getShellEjection();
         if (ejection == null) {
             shells.clear();

@@ -17,12 +17,12 @@ public final class AttachmentIdFix {
     public static final Map<ResourceLocation, ResourceLocation> OLD_TO_NEW;
     static  {
         OLD_TO_NEW = ImmutableMap.<ResourceLocation, ResourceLocation>builder()
-                .put(new ResourceLocation("tacz", "muzzle_silence_knight_qd"), new ResourceLocation("tacz", "muzzle_silencer_knight_qd"))
-                .put(new ResourceLocation("tacz", "muzzle_silence_mirage"), new ResourceLocation("tacz", "muzzle_silencer_mirage"))
-                .put(new ResourceLocation("tacz", "muzzle_silence_phantom_s1"), new ResourceLocation("tacz", "muzzle_silencer_phantom_s1"))
-                .put(new ResourceLocation("tacz", "muzzle_silence_ptilopsis"), new ResourceLocation("tacz", "muzzle_silencer_ptilopsis"))
-                .put(new ResourceLocation("tacz", "muzzle_silence_ursus"), new ResourceLocation("tacz", "muzzle_silencer_ursus"))
-                .put(new ResourceLocation("tacz", "muzzle_silence_vulture"), new ResourceLocation("tacz", "muzzle_silencer_vulture"))
+                .put(ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silence_knight_qd"), ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silencer_knight_qd"))
+                .put(ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silence_mirage"), ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silencer_mirage"))
+                .put(ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silence_phantom_s1"), ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silencer_phantom_s1"))
+                .put(ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silence_ptilopsis"), ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silencer_ptilopsis"))
+                .put(ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silence_ursus"), ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silencer_ursus"))
+                .put(ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silence_vulture"), ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_silencer_vulture"))
                 .build();
     }
 

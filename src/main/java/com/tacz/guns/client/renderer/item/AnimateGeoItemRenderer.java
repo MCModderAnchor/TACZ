@@ -29,7 +29,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.ViewportEvent;
+import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -214,6 +214,11 @@ public abstract class AnimateGeoItemRenderer<M extends BedrockAnimatedModel, CTX
      */
     public void renderFirstPerson(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx, PoseStack poseStack, MultiBufferSource bufferSource,
                                   int light, float partialTick) {
+        renderFirstPersonInner(player, stack, ctx, poseStack, bufferSource, light, partialTick);
+    }
+
+    protected void renderFirstPersonInner(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx, PoseStack poseStack, MultiBufferSource bufferSource,
+                                          int light, float partialTick) {
         M model = getModel(stack);
         if (model != null) {
             poseStack.pushPose();
@@ -312,7 +317,7 @@ public abstract class AnimateGeoItemRenderer<M extends BedrockAnimatedModel, CTX
 
         // 应用变换到 PoseStack
         poseStack.translate(0, 1.5f, 0);
-        poseStack.mulPoseMatrix(transformMatrix);
+        poseStack.mulPose(transformMatrix);
         poseStack.translate(0, -1.5f, 0);
     }
 

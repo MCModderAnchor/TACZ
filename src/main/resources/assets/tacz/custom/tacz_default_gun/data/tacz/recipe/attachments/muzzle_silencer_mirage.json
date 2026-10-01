@@ -1,0 +1,21 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 10
+    },
+    {
+      "item": {
+        "tag": "c:dusts/redstone"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "type": "attachment",
+    "id": "tacz:muzzle_silencer_mirage"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

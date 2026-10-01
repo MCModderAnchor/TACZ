@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "nbt": {
+      "BlockId": "tacz:ammo_workbench"
+    },
+    "id": "tacz:workbench_a"
+  },
+  "pattern": [
+    "CC",
+    "IB"
+  ],
+  "key": {
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "B": {
+      "item": "tacz:ammo_box"
+    }
+  }
+}

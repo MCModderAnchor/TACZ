@@ -103,7 +103,7 @@ public final class HitSurfaceParticleSpawner {
     @Nullable
     private static Integer getAmmoBlockParticleCount(String ammoId) {
         try {
-            return TimelessAPI.getClientAmmoIndex(new ResourceLocation(ammoId))
+            return TimelessAPI.getClientAmmoIndex(ResourceLocation.parse(ammoId))
                     .map(ammoIndex -> ammoIndex.getHitBlockParticleCount())
                     .orElse(null);
         } catch (Exception ignored) {
@@ -114,13 +114,13 @@ public final class HitSurfaceParticleSpawner {
     @Nullable
     private static List<HitSurfaceParticle> getDisplayParticles(String ammoId, String gunId, String gunDisplayId) {
         try {
-            ResourceLocation gunDisplayLocation = new ResourceLocation(gunDisplayId);
-            ResourceLocation gunLocation = new ResourceLocation(gunId);
+            ResourceLocation gunDisplayLocation = ResourceLocation.parse(gunDisplayId);
+            ResourceLocation gunLocation = ResourceLocation.parse(gunId);
             var gunDisplay = TimelessAPI.getGunDisplay(gunDisplayLocation, gunLocation);
             if (gunDisplay.isPresent() && gunDisplay.get().getHitSurfaceParticles() != null) {
                 return gunDisplay.get().getHitSurfaceParticles();
             }
-            return TimelessAPI.getClientAmmoIndex(new ResourceLocation(ammoId))
+            return TimelessAPI.getClientAmmoIndex(ResourceLocation.parse(ammoId))
                     .map(ammoIndex -> ammoIndex.getHitSurfaceParticles())
                     .orElse(null);
         } catch (Exception ignored) {

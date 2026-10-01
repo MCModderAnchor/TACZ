@@ -16,13 +16,13 @@ public class MuzzleFlash {
     }
 
     /** 默认 1p 闪光粒子定义 id。 */
-    public static final ResourceLocation DEFAULT_FIRST_PERSON_FLASH = new ResourceLocation("tacz", "muzzle_flash");
+    public static final ResourceLocation DEFAULT_FIRST_PERSON_FLASH = ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_flash");
     /** 默认 1p 烟雾粒子定义 id。 */
-    public static final ResourceLocation DEFAULT_FIRST_PERSON_SMOKE = new ResourceLocation("tacz", "muzzle_flash_smoke");
+    public static final ResourceLocation DEFAULT_FIRST_PERSON_SMOKE = ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_flash_smoke");
     /** 默认 3p 闪光粒子定义 id。 */
-    public static final ResourceLocation DEFAULT_THIRD_PERSON_FLASH = new ResourceLocation("tacz", "muzzle_flash");
+    public static final ResourceLocation DEFAULT_THIRD_PERSON_FLASH = ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_flash");
     /** 默认 3p 烟雾粒子定义 id。 */
-    public static final ResourceLocation DEFAULT_THIRD_PERSON_SMOKE = new ResourceLocation("tacz", "muzzle_flash_smoke");
+    public static final ResourceLocation DEFAULT_THIRD_PERSON_SMOKE = ResourceLocation.fromNamespaceAndPath("tacz", "muzzle_flash_smoke");
 
     /**
      * 枪口效果类型：default 走旧的四边形火光渲染；renew 使用第一人称 snowstorm 粒子系统。

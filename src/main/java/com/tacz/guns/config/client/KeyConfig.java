@@ -1,13 +1,13 @@
 package com.tacz.guns.config.client;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class KeyConfig {
-    public static ForgeConfigSpec.BooleanValue HOLD_TO_AIM;
-    public static ForgeConfigSpec.BooleanValue HOLD_TO_CRAWL;
-    public static ForgeConfigSpec.BooleanValue AUTO_RELOAD;
+    public static ModConfigSpec.BooleanValue HOLD_TO_AIM;
+    public static ModConfigSpec.BooleanValue HOLD_TO_CRAWL;
+    public static ModConfigSpec.BooleanValue AUTO_RELOAD;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("key");
 
         builder.comment("True if you want to hold the right mouse button to aim");

@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+logoFile = "logo.png"
+authors = "Serene Wave Studio | Timeless Squad; NeoForge port contributors: MUKSC/TACZ-1.21.1"
+license = "GPL3 / CC BY-NC-ND 4.0"
+
+[[mods]]
+modId = "${id}"
+version = "${version}"
+displayName = "${name}"
+description = '''
+'''
+
+[[mixins]]
+config = "tacz.mixins.json"
+
+[[mixins]]
+config = "tacz.compat.acceleratedrendering.mixins.json"
+
+[[dependencies."${id}"]]
+modId = "neoforge"
+type = "REQUIRED"
+versionRange = "${loader_version}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${id}"]]
+modId = "minecraft"
+type = "REQUIRED"
+versionRange = "${minecraft_version}"
+ordering = "NONE"
+side = "BOTH"

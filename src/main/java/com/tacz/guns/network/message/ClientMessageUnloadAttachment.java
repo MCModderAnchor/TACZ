@@ -1,5 +1,6 @@
 package com.tacz.guns.network.message;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.advancement.GunRefitTrigger;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -7,14 +8,32 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.util.VirtualOemAttachment;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+public class ClientMessageUnloadAttachment implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<ClientMessageUnloadAttachment> TYPE = new CustomPacketPayload.Type<>(
+        ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "client_unload_attachment")
+    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientMessageUnloadAttachment> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.INT, message -> message.gunSlotIndex,
+        ByteBufCodecs.fromCodec(AttachmentType.CODEC), message -> message.attachmentType,
+        ClientMessageUnloadAttachment::new
+    );
 
-public class ClientMessageUnloadAttachment {
+    @Override
+    public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
     private final int gunSlotIndex;
     private final AttachmentType attachmentType;
 
@@ -23,20 +42,10 @@ public class ClientMessageUnloadAttachment {
         this.attachmentType = attachmentType;
     }
 
-    public static void encode(ClientMessageUnloadAttachment message, FriendlyByteBuf buf) {
-        buf.writeInt(message.gunSlotIndex);
-        buf.writeEnum(message.attachmentType);
-    }
-
-    public static ClientMessageUnloadAttachment decode(FriendlyByteBuf buf) {
-        return new ClientMessageUnloadAttachment(buf.readInt(), buf.readEnum(AttachmentType.class));
-    }
-
-    public static void handle(ClientMessageUnloadAttachment message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isServer()) {
+    public static void handle(ClientMessageUnloadAttachment message, IPayloadContext context) {
+        if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
-                ServerPlayer player = context.getSender();
+                ServerPlayer player = (ServerPlayer) context.player();
                 if (player == null) {
                     return;
                 }
@@ -48,10 +57,10 @@ public class ClientMessageUnloadAttachment {
                     if (iGun.hasAttachmentLock(gunItem)) {
                         return;
                     }
-                    ItemStack attachmentItem = iGun.getAttachment(gunItem, message.attachmentType);
+                    ItemStack attachmentItem = iGun.getAttachment(player.registryAccess(), gunItem, message.attachmentType);
                     if (!attachmentItem.isEmpty() && (VirtualOemAttachment.isMarked(attachmentItem) || inventory.add(attachmentItem))) {
                         ItemStack beforeRefit = gunItem.copy();
-                        iGun.unloadAttachment(gunItem, message.attachmentType);
+                        iGun.unloadAttachment(player.registryAccess(), gunItem, message.attachmentType);
                         GunRefitTrigger.INSTANCE.trigger(player, beforeRefit, gunItem);
                         // 刷新配件数据
                         AttachmentPropertyManager.postChangeEvent(player, gunItem);
@@ -60,12 +69,10 @@ public class ClientMessageUnloadAttachment {
                             iGun.dropAllAmmo(player, gunItem);
                         }
                         player.inventoryMenu.broadcastChanges();
-                        NetworkHandler.sendToClientPlayer(new ServerMessageRefreshRefitScreen(), player);
+                        NetworkHandler.sendToClientPlayer(ServerMessageRefreshRefitScreen.INSTANCE, player);
                     }
                 }
             });
         }
-        context.setPacketHandled(true);
     }
-
 }

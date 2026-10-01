@@ -19,31 +19,31 @@ public class AcceleratedBeamRenderer implements IAcceleratedRenderer<BeamRenderC
 
 		extension.beginTransform(transform, normal);
 
-		vertexConsumer.vertex(-halfWidth, -halfWidth, 0).color(color).uv(0, 0).uv2(light).overlayCoords(overlay).normal(-1, 0, 0).endVertex();
-		vertexConsumer.vertex(-halfWidth, halfWidth, 0).color(color).uv(0, 1).uv2(light).overlayCoords(overlay).normal(-1, 0, 0).endVertex();
-		vertexConsumer.vertex(-halfWidth, halfWidth, z).color(endColor).uv(1, 1).uv2(light).overlayCoords(overlay).normal(-1, 0, 0).endVertex();
-		vertexConsumer.vertex(-halfWidth, -halfWidth, z).color(endColor).uv(1, 0).uv2(light).overlayCoords(overlay).normal(-1, 0, 0).endVertex();
+		vertexConsumer.addVertex(-halfWidth, -halfWidth, 0).setColor(color).setUv(0, 0).setLight(light).setOverlay(overlay).setNormal(-1, 0, 0);
+		vertexConsumer.addVertex(-halfWidth, halfWidth, 0).setColor(color).setUv(0, 1).setLight(light).setOverlay(overlay).setNormal(-1, 0, 0);
+		vertexConsumer.addVertex(-halfWidth, halfWidth, z).setColor(endColor).setUv(1, 1).setLight(light).setOverlay(overlay).setNormal(-1, 0, 0);
+		vertexConsumer.addVertex(-halfWidth, -halfWidth, z).setColor(endColor).setUv(1, 0).setLight(light).setOverlay(overlay).setNormal(-1, 0, 0);
 
 		extension.beginTransform(transform, normal);
 
-		vertexConsumer.vertex(-halfWidth, halfWidth, 0).color(color).uv(0, 0).uv2(light).overlayCoords(overlay).normal(0, 1, 0).endVertex();
-		vertexConsumer.vertex(halfWidth, halfWidth, 0).color(color).uv(0, 1).uv2(light).overlayCoords(overlay).normal(0, 1, 0).endVertex();
-		vertexConsumer.vertex(halfWidth, halfWidth, z).color(endColor).uv(1, 1).uv2(light).overlayCoords(overlay).normal(0, 1, 0).endVertex();
-		vertexConsumer.vertex(-halfWidth, halfWidth, z).color(endColor).uv(1, 0).uv2(light).overlayCoords(overlay).normal(0, 1, 0).endVertex();
+		vertexConsumer.addVertex(-halfWidth, halfWidth, 0).setColor(color).setUv(0, 0).setLight(light).setOverlay(overlay).setNormal(0, 1, 0);
+		vertexConsumer.addVertex(halfWidth, halfWidth, 0).setColor(color).setUv(0, 1).setLight(light).setOverlay(overlay).setNormal(0, 1, 0);
+		vertexConsumer.addVertex(halfWidth, halfWidth, z).setColor(endColor).setUv(1, 1).setLight(light).setOverlay(overlay).setNormal(0, 1, 0);
+		vertexConsumer.addVertex(-halfWidth, halfWidth, z).setColor(endColor).setUv(1, 0).setLight(light).setOverlay(overlay).setNormal(0, 1, 0);
 
 		extension.beginTransform(transform, normal);
 
-		vertexConsumer.vertex(halfWidth, halfWidth, 0).color(color).uv(0, 0).uv2(light).overlayCoords(overlay).normal(1, 0, 0).endVertex();
-		vertexConsumer.vertex(halfWidth, -halfWidth, 0).color(color).uv(0, 1).uv2(light).overlayCoords(overlay).normal(1, 0, 0).endVertex();
-		vertexConsumer.vertex(halfWidth, -halfWidth, z).color(endColor).uv(1, 1).uv2(light).overlayCoords(overlay).normal(1, 0, 0).endVertex();
-		vertexConsumer.vertex(halfWidth, halfWidth, z).color(endColor).uv(1, 0).uv2(light).overlayCoords(overlay).normal(1, 0, 0).endVertex();
+		vertexConsumer.addVertex(halfWidth, halfWidth, 0).setColor(color).setUv(0, 0).setLight(light).setOverlay(overlay).setNormal(1, 0, 0);
+		vertexConsumer.addVertex(halfWidth, -halfWidth, 0).setColor(color).setUv(0, 1).setLight(light).setOverlay(overlay).setNormal(1, 0, 0);
+		vertexConsumer.addVertex(halfWidth, -halfWidth, z).setColor(endColor).setUv(1, 1).setLight(light).setOverlay(overlay).setNormal(1, 0, 0);
+		vertexConsumer.addVertex(halfWidth, halfWidth, z).setColor(endColor).setUv(1, 0).setLight(light).setOverlay(overlay).setNormal(1, 0, 0);
 
 		extension.beginTransform(transform, normal);
 
-		vertexConsumer.vertex(halfWidth, -halfWidth, 0).color(color).uv(0, 1).uv2(light).overlayCoords(overlay).normal(0, -1, 0).endVertex();
-		vertexConsumer.vertex(-halfWidth, -halfWidth, 0).color(color).uv(0, 1).uv2(light).overlayCoords(overlay).normal(0, -1, 0).endVertex();
-		vertexConsumer.vertex(-halfWidth, -halfWidth, z).color(endColor).uv(1, 1).uv2(light).overlayCoords(overlay).normal(0, -1, 0).endVertex();
-		vertexConsumer.vertex(halfWidth, -halfWidth, z).color(endColor).uv(1, 0).uv2(light).overlayCoords(overlay).normal(0, -1, 0).endVertex();
+		vertexConsumer.addVertex(halfWidth, -halfWidth, 0).setColor(color).setUv(0, 1).setLight(light).setOverlay(overlay).setNormal(0, -1, 0);
+		vertexConsumer.addVertex(-halfWidth, -halfWidth, 0).setColor(color).setUv(0, 1).setLight(light).setOverlay(overlay).setNormal(0, -1, 0);
+		vertexConsumer.addVertex(-halfWidth, -halfWidth, z).setColor(endColor).setUv(1, 1).setLight(light).setOverlay(overlay).setNormal(0, -1, 0);
+		vertexConsumer.addVertex(halfWidth, -halfWidth, z).setColor(endColor).setUv(1, 0).setLight(light).setOverlay(overlay).setNormal(0, -1, 0);
 
 		extension.endTransform();
 	}

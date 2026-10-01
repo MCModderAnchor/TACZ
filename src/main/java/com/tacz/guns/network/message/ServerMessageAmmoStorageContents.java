@@ -1,39 +1,46 @@
 package com.tacz.guns.network.message;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.tacz.guns.inventory.AmmoStorageEntry;
 import com.tacz.guns.inventory.AmmoStorageMenu;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
+
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 public record ServerMessageAmmoStorageContents(int containerId, int capacityStacks, long usedStacks,
-                                               List<AmmoStorageEntry> entries) {
+                                               List<AmmoStorageEntry> entries) implements net.minecraft.network.protocol.common.custom.CustomPacketPayload {
+    public static final net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<ServerMessageAmmoStorageContents> TYPE =
+            new net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<>(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("tacz", "server_message_ammo_storage_contents"));
+    public static final net.minecraft.network.codec.StreamCodec<RegistryFriendlyByteBuf, ServerMessageAmmoStorageContents> STREAM_CODEC =
+            net.minecraft.network.codec.StreamCodec.of((buf, message) -> encode(message, buf), ServerMessageAmmoStorageContents::decode);
+    @Override
+    public net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> type() { return TYPE; }
+
     public ServerMessageAmmoStorageContents {
         entries = List.copyOf(entries);
     }
 
-    public static void encode(ServerMessageAmmoStorageContents message, FriendlyByteBuf buf) {
+    public static void encode(ServerMessageAmmoStorageContents message, RegistryFriendlyByteBuf buf) {
         buf.writeVarInt(message.containerId);
         buf.writeVarInt(message.capacityStacks);
         buf.writeVarLong(message.usedStacks);
         buf.writeVarInt(message.entries.size());
         for (AmmoStorageEntry entry : message.entries) {
             buf.writeVarInt(entry.id());
-            buf.writeItem(entry.sample());
+            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, entry.sample());
             buf.writeVarLong(entry.count());
             buf.writeVarLong(entry.remainingCapacity());
         }
     }
 
-    public static ServerMessageAmmoStorageContents decode(FriendlyByteBuf buf) {
+    public static ServerMessageAmmoStorageContents decode(RegistryFriendlyByteBuf buf) {
         int containerId = buf.readVarInt();
         int capacityStacks = buf.readVarInt();
         long usedStacks = buf.readVarLong();
@@ -44,7 +51,7 @@ public record ServerMessageAmmoStorageContents(int containerId, int capacityStac
         List<AmmoStorageEntry> entries = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             int id = buf.readVarInt();
-            ItemStack sample = buf.readItem();
+            ItemStack sample = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
             long count = buf.readVarLong();
             long remaining = buf.readVarLong();
             if (id < 0 || sample.isEmpty() || count <= 0 || remaining < 0) {
@@ -55,10 +62,8 @@ public record ServerMessageAmmoStorageContents(int containerId, int capacityStac
         return new ServerMessageAmmoStorageContents(containerId, capacityStacks, usedStacks, entries);
     }
 
-    public static void handle(ServerMessageAmmoStorageContents message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
+    public static void handle(ServerMessageAmmoStorageContents message, net.neoforged.neoforge.network.handling.IPayloadContext context) {
         context.enqueueWork(() -> updateContents(message));
-        context.setPacketHandled(true);
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -15,7 +15,7 @@ public interface IAnimationItem {
         if (pStack == pOther) {
             return true;
         } else {
-            return ItemStack.isSameItemSameTags(pStack, pOther);
+            return ItemStack.isSameItemSameComponents(pStack, pOther);
         }
     }
 }

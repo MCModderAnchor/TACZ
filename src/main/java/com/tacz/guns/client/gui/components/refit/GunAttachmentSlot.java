@@ -67,7 +67,7 @@ public class GunAttachmentSlot extends Button implements IStackTooltip {
             graphics.blit(GunRefitScreen.SLOT_TEXTURE, x + 1, y + 1, 1, 1, width - 2, height - 2, GunRefitScreen.SLOT_SIZE, GunRefitScreen.SLOT_SIZE);
         }
         // 渲染内部物品，或者空置时的icon
-        this.attachmentItem = iGun.getAttachment(gunItem, type);
+        this.attachmentItem = iGun.getAttachment(Minecraft.getInstance().level.registryAccess(), gunItem, type);
         if (!attachmentItem.isEmpty()) {
             graphics.renderItem(attachmentItem, x + 1, y + 1);
         } else {
@@ -93,7 +93,7 @@ public class GunAttachmentSlot extends Button implements IStackTooltip {
         if (iGun == null) {
             return ItemStack.EMPTY;
         }
-        return iGun.getAttachment(gunItem, type);
+        return iGun.getAttachment(Minecraft.getInstance().level.registryAccess(), gunItem, type);
     }
 
     public boolean isAllow() {

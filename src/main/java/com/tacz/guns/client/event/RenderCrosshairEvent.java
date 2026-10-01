@@ -24,17 +24,17 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class RenderCrosshairEvent {
-    private static final ResourceLocation HIT_ICON = new ResourceLocation(GunMod.MOD_ID, "textures/crosshair/hit/hit_marker.png");
+    private static final ResourceLocation HIT_ICON = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/crosshair/hit/hit_marker.png");
     private static final long KEEP_TIME = 300;
     private static boolean isRefitScreen = false;
     private static long hitTimestamp = -1L;
@@ -45,8 +45,8 @@ public class RenderCrosshairEvent {
      * 当玩家手上拿着枪时，播放特定动画、或瞄准时需要隐藏准心
      */
     @SubscribeEvent(receiveCanceled = true)
-    public static void onRenderOverlay(RenderGuiOverlayEvent.Pre event) {
-        if (event.getOverlay().id().equals(VanillaGuiOverlay.CROSSHAIR.id())) {
+    public static void onRenderCrosshair(RenderGuiLayerEvent.Pre event) {
+        if (event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null || player.isSpectator()) {
                 return;
@@ -57,7 +57,8 @@ public class RenderCrosshairEvent {
             // 全面替换成自己的
             event.setCanceled(true);
             // 击中显示
-            renderHitMarker(event.getGuiGraphics(), event.getWindow());
+            Window window = Minecraft.getInstance().getWindow();
+            renderHitMarker(event.getGuiGraphics(), window);
             // 换弹进行时取消准心渲染
             ReloadState reloadState = IGunOperator.fromLivingEntity(player).getSynReloadState();
             if (reloadState.getStateType().isReloading()) {
@@ -76,7 +77,7 @@ public class RenderCrosshairEvent {
             IClientPlayerGunOperator playerGunOperator = IClientPlayerGunOperator.fromLocalPlayer(player);
             TimelessAPI.getGunDisplay(stack).ifPresent(gunIndex -> {
                 // 瞄准快要完成时，取消准心渲染
-                if (playerGunOperator.getClientAimingProgress(event.getPartialTick()) > 0.9) {
+                if (playerGunOperator.getClientAimingProgress(event.getPartialTick().getGameTimeDeltaPartialTick(false)) > 0.9) {
                     // 枪包可以强制显示准星
                     boolean forceShow = gunIndex.isShowCrosshair();
                     // 越肩视角可以强制显示准星
@@ -89,19 +90,21 @@ public class RenderCrosshairEvent {
 
                 AnimationStateMachine<?> animationStateMachine = gunIndex.getAnimationStateMachine();
                 if (animationStateMachine == null) {
-                    renderCrosshair(event.getGuiGraphics(), event.getWindow());
+                    renderCrosshair(event.getGuiGraphics(), Minecraft.getInstance().getWindow());
                     return;
                 }
                 AnimationStateContext context = animationStateMachine.getContext();
                 if (context == null || !context.shouldHideCrossHair()) {
-                    renderCrosshair(event.getGuiGraphics(), event.getWindow());
+                    renderCrosshair(event.getGuiGraphics(), window);
                 }
             });
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 
     @SubscribeEvent
-    public static void onRenderTick(TickEvent.RenderTickEvent event) {
+    public static void onRenderTick(RenderFrameEvent.Pre event) {
         // 奇迹的是，RenderGameOverlayEvent.PreLayer 事件中，screen 还未被赋值...
         isRefitScreen = Minecraft.getInstance().screen instanceof GunRefitScreen;
     }

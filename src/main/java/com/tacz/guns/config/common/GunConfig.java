@@ -1,20 +1,20 @@
 package com.tacz.guns.config.common;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class GunConfig {
     public static final int MAX_GUN_SOUND_MOB_ANGER_DISTANCE = 64;
 
-    public static ForgeConfigSpec.IntValue DEFAULT_GUN_FIRE_SOUND_DISTANCE;
-    public static ForgeConfigSpec.IntValue DEFAULT_GUN_SILENCE_SOUND_DISTANCE;
-    public static ForgeConfigSpec.IntValue DEFAULT_GUN_OTHER_SOUND_DISTANCE;
-    public static ForgeConfigSpec.BooleanValue ENABLE_GUN_SOUND_ANGER;
-    public static ForgeConfigSpec.IntValue DEFAULT_GUN_SOUND_NEUTRAL_MOB_ANGER_DISTANCE;
-    public static ForgeConfigSpec.IntValue DEFAULT_GUN_SOUND_HOSTILE_MOB_ANGER_DISTANCE;
-    public static ForgeConfigSpec.BooleanValue CREATIVE_PLAYER_CONSUME_AMMO;
-    public static ForgeConfigSpec.BooleanValue AUTO_RELOAD_WHEN_RESPAWN;
+    public static ModConfigSpec.IntValue DEFAULT_GUN_FIRE_SOUND_DISTANCE;
+    public static ModConfigSpec.IntValue DEFAULT_GUN_SILENCE_SOUND_DISTANCE;
+    public static ModConfigSpec.IntValue DEFAULT_GUN_OTHER_SOUND_DISTANCE;
+    public static ModConfigSpec.BooleanValue ENABLE_GUN_SOUND_ANGER;
+    public static ModConfigSpec.IntValue DEFAULT_GUN_SOUND_NEUTRAL_MOB_ANGER_DISTANCE;
+    public static ModConfigSpec.IntValue DEFAULT_GUN_SOUND_HOSTILE_MOB_ANGER_DISTANCE;
+    public static ModConfigSpec.BooleanValue CREATIVE_PLAYER_CONSUME_AMMO;
+    public static ModConfigSpec.BooleanValue AUTO_RELOAD_WHEN_RESPAWN;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("gun");
 
         builder.comment("The default fire sound range (block)");

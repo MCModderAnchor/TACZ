@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "tacz:gun_smith_table"
+  },
+  "pattern": [
+    "LLL",
+    "IBI",
+    "I I"
+  ],
+  "key": {
+    "L": {
+      "tag": "minecraft:logs"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "B": {
+      "item": "minecraft:iron_block"
+    }
+  }
+}

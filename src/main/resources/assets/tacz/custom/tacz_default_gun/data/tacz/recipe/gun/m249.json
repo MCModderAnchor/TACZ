@@ -1,0 +1,33 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:gems/diamond"
+      },
+      "count": 4
+    },
+    {
+      "item": {
+        "tag": "c:ingots/gold"
+      },
+      "count": 16
+    },
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 110
+    },
+    {
+      "item": {
+        "tag": "forge:rods/blaze"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:m249"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

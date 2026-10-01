@@ -8,7 +8,7 @@ import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.server.command.EnumArgument;
+import net.neoforged.neoforge.server.command.EnumArgument;
 
 public class ConfigCommand {
     private static final String CONFIG_NAME = "config";
@@ -30,9 +30,18 @@ public class ConfigCommand {
             return 0;
         }
         switch (key) {
-            case defaultTableLimit -> SyncConfig.ENABLE_TABLE_FILTER.set(state);
-            case serverShootNetworkCheck -> SyncConfig.SERVER_SHOOT_NETWORK_V.set(state);
-            case serverShootCooldownCheck -> SyncConfig.SERVER_SHOOT_COOLDOWN_V.set(state);
+            case defaultTableLimit -> {
+                SyncConfig.ENABLE_TABLE_FILTER.set(state);
+                SyncConfig.ENABLE_TABLE_FILTER.save();
+            }
+            case serverShootNetworkCheck -> {
+                SyncConfig.SERVER_SHOOT_NETWORK_V.set(state);
+                SyncConfig.SERVER_SHOOT_NETWORK_V.save();
+            }
+            case serverShootCooldownCheck -> {
+                SyncConfig.SERVER_SHOOT_COOLDOWN_V.set(state);
+                SyncConfig.SERVER_SHOOT_COOLDOWN_V.save();
+            }
         }
         context.getSource().sendSystemMessage(Component.translatable(key.lang + "." + (state ? "enabled" : "disabled")));
 
@@ -46,6 +55,7 @@ public class ConfigCommand {
         ;
 
         public final String lang;
+
         ConfigKey(String lang) {
             this.lang = lang;
         }

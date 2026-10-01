@@ -9,7 +9,7 @@ import net.minecraft.util.GsonHelper;
 
 public class TargetHitTrigger extends SimpleCriterionTrigger<TargetHitTrigger.TriggerInstance> {
     public static final TargetHitTrigger INSTANCE = new TargetHitTrigger();
-    static final ResourceLocation ID = new ResourceLocation("tacz", "target_hit");
+    static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("tacz", "target_hit");
 
     public static void register() {
         CriteriaTriggers.register(INSTANCE);

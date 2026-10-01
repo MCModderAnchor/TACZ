@@ -67,7 +67,7 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
         ItemStack attachment = AttachmentItemBuilder.create().setId(attachmentId).build();
         TimelessAPI.getAllCommonGunIndex().forEach(entry -> {
             ResourceLocation gunId = entry.getKey();
-            ItemStack gun = GunItemBuilder.create().setId(gunId).build();
+            ItemStack gun = GunItemBuilder.create().setId(gunId).build(null);
             if (!(gun.getItem() instanceof IGun iGun)) {
                 return;
             }

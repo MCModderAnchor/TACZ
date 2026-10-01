@@ -11,7 +11,7 @@ import java.util.List;
 public class BlockData {
     @NotNull
     @SerializedName("filter")
-    private ResourceLocation filter = new ResourceLocation(GunMod.MOD_ID, "default");
+    private ResourceLocation filter = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "default");
 
     @SerializedName("tabs")
     private List<TabConfig> tabs = new ArrayList<>();

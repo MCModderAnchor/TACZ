@@ -2,14 +2,15 @@ package com.tacz.guns.api.event.common;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
+import net.neoforged.fml.LogicalSide;
 
 /**
  * 生物射击时触发的事件。扣动一次扳机只会触发一次，但可能产生多次成功击发通知
  * {@link GunFirePostEvent}（如枪械处于 Burst 模式）。
  */
-public class GunShootEvent extends Event implements KubeJSGunEventPoster<GunShootEvent>{
+public class GunShootEvent extends Event implements ICancellableEvent{
     private final LivingEntity shooter;
     private final ItemStack gunItemStack;
     private final LogicalSide logicalSide;
@@ -18,12 +19,7 @@ public class GunShootEvent extends Event implements KubeJSGunEventPoster<GunShoo
         this.shooter = shooter;
         this.gunItemStack = gunItemStack;
         this.logicalSide = side;
-        postEventToKubeJS(this);
-    }
 
-    @Override
-    public boolean isCancelable() {
-        return true;
     }
 
     public LivingEntity getShooter() {

@@ -13,19 +13,20 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecipe> {
+public class GunSmithTableCategory implements IRecipeCategory<RecipeHolder<GunSmithTableRecipe>> {
     private final Component title;
     private final IDrawableStatic bgDraw;
     private final IDrawable slotDraw;
     private final IDrawable iconDraw;
-    private final RecipeType<GunSmithTableRecipe> type;
+    private final RecipeType<RecipeHolder<GunSmithTableRecipe>> type;
 
-    public GunSmithTableCategory(IGuiHelper guiHelper, ItemStack icon, RecipeType<GunSmithTableRecipe> type, Component title) {
+    public GunSmithTableCategory(IGuiHelper guiHelper, ItemStack icon, RecipeType<RecipeHolder<GunSmithTableRecipe>> type, Component title) {
         this.bgDraw = guiHelper.createBlankDrawable(160, 40);
         this.slotDraw = guiHelper.getSlotDrawable();
         this.iconDraw = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, icon);
@@ -34,11 +35,11 @@ public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecip
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, GunSmithTableRecipe recipe, IFocusGroup focuses) {
-        ItemStack output = recipe.getOutput();
+    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<GunSmithTableRecipe> recipe, IFocusGroup focuses) {
+        ItemStack output = recipe.value().getOutput();
         builder.addSlot(RecipeIngredientRole.OUTPUT, 3, 12).addItemStack(output).setBackground(slotDraw, -1, -1);
 
-        List<GunSmithTableIngredient> inputs = recipe.getInputs();
+        List<GunSmithTableIngredient> inputs = recipe.value().getInputs();
         int size = inputs.size();
         // 单行排布
         if (size < 7) {
@@ -67,8 +68,7 @@ public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecip
         if (index < inputs.size()) {
             GunSmithTableIngredient ingredient = inputs.get(index);
             ItemStack[] items = ingredient.getIngredient().getItems();
-            Arrays.stream(items).forEach(stack -> stack.setCount(ingredient.getCount()));
-            return List.of(items);
+            return Arrays.stream(items).map(stack -> stack.copyWithCount(ingredient.getCount())).toList();
         }
         return Collections.singletonList(ItemStack.EMPTY);
     }
@@ -90,7 +90,7 @@ public class GunSmithTableCategory implements IRecipeCategory<GunSmithTableRecip
     }
 
     @Override
-    public RecipeType<GunSmithTableRecipe> getRecipeType() {
+    public RecipeType<RecipeHolder<GunSmithTableRecipe>> getRecipeType() {
         return type;
     }
 }

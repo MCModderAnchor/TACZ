@@ -2,15 +2,18 @@ package com.tacz.guns.api.item.nbt;
 
 import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.item.IAttachment;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+@SuppressWarnings("deprecation")
 public interface AttachmentItemDataAccessor extends IAttachment {
     String ATTACHMENT_ID_TAG = "AttachmentId";
     String SKIN_ID_TAG = "Skin";
@@ -48,25 +51,30 @@ public interface AttachmentItemDataAccessor extends IAttachment {
         nbt.putInt(ZOOM_NUMBER_TAG, zoomNumber);
     }
 
+    static void setLaserColorToTag(CompoundTag nbt, int color) {
+        nbt.putInt(LASER_COLOR_TAG, color);
+    }
+
     @Override
     @Nonnull
     default ResourceLocation getAttachmentId(ItemStack attachmentStack) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        CompoundTag nbt = attachmentStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
         return getAttachmentIdFromTag(nbt);
     }
 
     @Override
     default void setAttachmentId(ItemStack attachmentStack, @Nullable ResourceLocation attachmentId) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
-        if (attachmentId != null) {
-            nbt.putString(ATTACHMENT_ID_TAG, attachmentId.toString());
-        }
+        attachmentStack.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, data -> data.update(tag -> {
+            if (attachmentId != null) {
+                tag.putString(ATTACHMENT_ID_TAG, attachmentId.toString());
+            }
+        }));
     }
 
     @Override
     @Nullable
     default ResourceLocation getSkinId(ItemStack attachmentStack) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        CompoundTag nbt = attachmentStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
         if (nbt.contains(SKIN_ID_TAG, Tag.TAG_STRING)) {
             return ResourceLocation.tryParse(nbt.getString(SKIN_ID_TAG));
         }
@@ -75,35 +83,37 @@ public interface AttachmentItemDataAccessor extends IAttachment {
 
     @Override
     default void setSkinId(ItemStack attachmentStack, @Nullable ResourceLocation skinId) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
-        if (skinId != null) {
-            nbt.putString(SKIN_ID_TAG, skinId.toString());
-        } else {
-            nbt.remove(SKIN_ID_TAG);
-        }
+        attachmentStack.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, data -> data.update(tag -> {
+            if (skinId != null) {
+                tag.putString(SKIN_ID_TAG, skinId.toString());
+            } else {
+                tag.remove(SKIN_ID_TAG);
+            }
+        }));
     }
 
     @Override
     default int getZoomNumber(ItemStack attachmentStack) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        CompoundTag nbt = attachmentStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
         return getZoomNumberFromTag(nbt);
     }
 
     @Override
     default void setZoomNumber(ItemStack attachmentStack, int zoomNumber) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
-        setZoomNumberToTag(nbt, zoomNumber);
+        attachmentStack.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, data -> data.update(tag -> {
+            setZoomNumberToTag(tag, zoomNumber);
+        }));
     }
 
     @Override
     default boolean hasCustomLaserColor(ItemStack attachmentStack) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        CompoundTag nbt = attachmentStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
         return nbt.contains(LASER_COLOR_TAG, Tag.TAG_INT);
     }
 
     @Override
     default int getLaserColor(ItemStack attachmentStack) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
+        CompoundTag nbt = attachmentStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
         if (!hasCustomLaserColor(attachmentStack)) {
             return 0xFF0000;
         }
@@ -112,7 +122,8 @@ public interface AttachmentItemDataAccessor extends IAttachment {
 
     @Override
     default void setLaserColor(ItemStack attachmentStack, int color) {
-        CompoundTag nbt = attachmentStack.getOrCreateTag();
-        nbt.putInt(LASER_COLOR_TAG, color);
+        attachmentStack.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, data -> data.update(tag -> {
+            setLaserColorToTag(tag, color);
+        }));
     }
 }

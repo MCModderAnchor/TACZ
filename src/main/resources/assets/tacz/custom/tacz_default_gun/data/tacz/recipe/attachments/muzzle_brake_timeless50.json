@@ -1,0 +1,21 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 15
+    },
+    {
+      "item": {
+        "tag": "c:dusts/redstone"
+      },
+      "count": 5
+    }
+  ],
+  "result": {
+    "type": "attachment",
+    "id": "tacz:muzzle_brake_timeless50"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

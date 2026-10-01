@@ -5,7 +5,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ public class AmmoStorageInventory implements IItemHandler {
     private long insertIntoSlot(int slot, ItemStack sample, long amount, boolean simulate) {
         Entry entry = entries[slot];
         int matching = findMatchingSlot(sample);
-        if (amount <= 0 || (entry != null && !ItemStack.isSameItemSameTags(entry.sample, sample))
+        if (amount <= 0 || (entry != null && !ItemStack.isSameItemSameComponents(entry.sample, sample))
                 || (matching >= 0 && matching != slot)) {
             return 0;
         }
@@ -182,7 +182,7 @@ public class AmmoStorageInventory implements IItemHandler {
             for (int slot = end - 1; slot >= 0 && remaining > 0; slot--) {
                 ItemStack existing = target.getItem(slot);
                 if ((existing.isEmpty() != (pass == 1)) || !target.canPlaceItem(slot, sample)
-                        || (!existing.isEmpty() && !ItemStack.isSameItemSameTags(existing, sample))) {
+                        || (!existing.isEmpty() && !ItemStack.isSameItemSameComponents(existing, sample))) {
                     continue;
                 }
                 int limit = Math.min(target.getMaxStackSize(), sample.getMaxStackSize());
@@ -232,14 +232,14 @@ public class AmmoStorageInventory implements IItemHandler {
         return used == 0 ? 0 : (int) (14L * Math.min(used, capacity) / capacity + 1);
     }
 
-    public ListTag save() {
+    public ListTag save(net.minecraft.core.HolderLookup.Provider registries) {
         ListTag result = new ListTag();
         for (int slot = 0; slot < entries.length; slot++) {
             Entry entry = entries[slot];
             if (entry != null) {
                 CompoundTag tag = new CompoundTag();
                 tag.putByte("Slot", (byte) slot);
-                tag.put("Stack", entry.sample.save(new CompoundTag()));
+                tag.put("Stack", entry.sample.saveOptional(registries));
                 tag.putLong("Count", entry.count);
                 result.add(tag);
             }
@@ -248,7 +248,7 @@ public class AmmoStorageInventory implements IItemHandler {
     }
 
     /** Restores saved stock, including excess capacity, without invoking world updates. */
-    public void load(ListTag list) {
+    public void load(ListTag list, net.minecraft.core.HolderLookup.Provider registries) {
         Arrays.fill(entries, null);
         BitSet seenSlots = new BitSet(entries.length);
         for (int i = 0; i < list.size(); i++) {
@@ -259,7 +259,7 @@ public class AmmoStorageInventory implements IItemHandler {
                 continue;
             }
             try {
-                ItemStack sample = ItemStack.of(tag.getCompound("Stack"));
+                ItemStack sample = ItemStack.parseOptional(registries, tag.getCompound("Stack"));
                 long count = tag.getLong("Count");
                 if (sample.isEmpty() || count <= 0 || !validator.test(sample)) {
                     continue;
@@ -299,7 +299,7 @@ public class AmmoStorageInventory implements IItemHandler {
 
     private int findMatchingSlot(ItemStack sample) {
         for (int slot = 0; slot < entries.length; slot++) {
-            if (entries[slot] != null && ItemStack.isSameItemSameTags(entries[slot].sample, sample)) {
+            if (entries[slot] != null && ItemStack.isSameItemSameComponents(entries[slot].sample, sample)) {
                 return slot;
             }
         }

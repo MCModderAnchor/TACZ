@@ -33,7 +33,7 @@ public class PlayerAnimatorLoader {
                 return false;
             }
             try (InputStream stream = zipFile.getInputStream(entry)) {
-                ResourceLocation registryName = new ResourceLocation(namespace, path);
+                ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(namespace, path);
                 PlayerAnimatorAssetManager.get().putAnimation(registryName, stream);
                 return true;
             } catch (IOException | JsonSyntaxException | JsonIOException exception) {

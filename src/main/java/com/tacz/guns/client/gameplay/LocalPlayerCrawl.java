@@ -8,6 +8,7 @@ import com.tacz.guns.network.message.ClientMessagePlayerCrawl;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class LocalPlayerCrawl {
     /**
@@ -84,6 +85,6 @@ public class LocalPlayerCrawl {
         if (crawling || player.getForcedPose() == Pose.SWIMMING) {
             player.setForcedPose(crawling ? Pose.SWIMMING : null);
         }
-        NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerCrawl(crawling));
+        net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientMessagePlayerCrawl(crawling));
     }
 }

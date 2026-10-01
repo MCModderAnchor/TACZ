@@ -27,6 +27,7 @@ import static net.minecraft.world.item.ItemDisplayContext.GUI;
 
 
 public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
+    public static AmmoItemRenderer INSTANCE;
     private static final SlotModel SLOT_AMMO_MODEL = new SlotModel();
 
     public AmmoItemRenderer(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
@@ -72,7 +73,7 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.translate(0.5, 1.5, 0.5);
                 poseStack.mulPose(Axis.ZN.rotationDegrees(180));
                 VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(ammoIndex.getSlotTextureLocation()));
-                SLOT_AMMO_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
+                SLOT_AMMO_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, net.minecraft.util.FastColor.ARGB32.color((int)(255 * ItemPreviewRenderContext.alpha()), 255, 255, 255));
                 return;
             }
             // 剩下的渲染
@@ -93,7 +94,7 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.translate(0.5, 1.5, 0.5);
             poseStack.mulPose(Axis.ZN.rotationDegrees(180));
             VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
-            SLOT_AMMO_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
+            SLOT_AMMO_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, net.minecraft.util.FastColor.ARGB32.color((int)(255 * ItemPreviewRenderContext.alpha()), 255, 255, 255));
         });
         poseStack.popPose();
     }

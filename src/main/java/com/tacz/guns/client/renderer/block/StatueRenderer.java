@@ -21,7 +21,9 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -97,5 +99,11 @@ public class StatueRenderer implements BlockEntityRenderer<StatueBlockEntity> {
     @Override
     public boolean shouldRender(StatueBlockEntity pBlockEntity, Vec3 pCameraPos) {
         return Vec3.atCenterOf(pBlockEntity.getBlockPos().above()).closerThan(pCameraPos, this.getViewDistance());
+    }
+
+    @Override
+    public @NotNull AABB getRenderBoundingBox(StatueBlockEntity blockEntity) {
+        Vec3 pos = Vec3.atLowerCornerOf(blockEntity.getBlockPos());
+        return new AABB(pos.add(-2, 0, -2), pos.add(2, 2, 2));
     }
 }

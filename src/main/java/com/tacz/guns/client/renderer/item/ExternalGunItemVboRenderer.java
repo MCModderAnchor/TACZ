@@ -16,7 +16,7 @@ import java.time.Duration;
 
 /** 第三人称手持、掉落物及固定展示枪械的即时 VBO 渲染入口。 */
 public class ExternalGunItemVboRenderer {
-    private static final ResourceLocation OWNER = new ResourceLocation("tacz", "external_item_guns");
+    private static final ResourceLocation OWNER = ResourceLocation.fromNamespaceAndPath("tacz", "external_item_guns");
     private static boolean wasEnabled;
     private static final Duration IDLE_RETENTION = Duration.ofSeconds(300);
 

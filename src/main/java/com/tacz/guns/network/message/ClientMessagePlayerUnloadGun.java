@@ -1,20 +1,27 @@
 package com.tacz.guns.network.message;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
-import net.minecraft.network.FriendlyByteBuf;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ClientMessagePlayerUnloadGun {
+public class ClientMessagePlayerUnloadGun implements net.minecraft.network.protocol.common.custom.CustomPacketPayload {
+    public static final net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<ClientMessagePlayerUnloadGun> TYPE =
+            new net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<>(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("tacz", "client_message_player_unload_gun"));
+    public static final net.minecraft.network.codec.StreamCodec<RegistryFriendlyByteBuf, ClientMessagePlayerUnloadGun> STREAM_CODEC =
+            net.minecraft.network.codec.StreamCodec.of((buf, message) -> encode(message, buf), ClientMessagePlayerUnloadGun::decode);
+    @Override
+    public net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> type() { return TYPE; }
+
     private final int slot;
     private final ResourceLocation gunId;
 
@@ -23,20 +30,19 @@ public class ClientMessagePlayerUnloadGun {
         this.gunId = gunId;
     }
 
-    public static void encode(ClientMessagePlayerUnloadGun message, FriendlyByteBuf buf) {
+    public static void encode(ClientMessagePlayerUnloadGun message, RegistryFriendlyByteBuf buf) {
         buf.writeVarInt(message.slot);
         buf.writeResourceLocation(message.gunId);
     }
 
-    public static ClientMessagePlayerUnloadGun decode(FriendlyByteBuf buf) {
+    public static ClientMessagePlayerUnloadGun decode(RegistryFriendlyByteBuf buf) {
         return new ClientMessagePlayerUnloadGun(buf.readVarInt(), buf.readResourceLocation());
     }
 
-    public static void handle(ClientMessagePlayerUnloadGun message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isServer()) {
+    public static void handle(ClientMessagePlayerUnloadGun message, net.neoforged.neoforge.network.handling.IPayloadContext context) {
+        if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
-                ServerPlayer player = context.getSender();
+                ServerPlayer player = (net.minecraft.server.level.ServerPlayer) context.player();
                 if (player == null) {
                     return;
                 }
@@ -76,7 +82,6 @@ public class ClientMessagePlayerUnloadGun {
                 }
             });
         }
-        context.setPacketHandled(true);
     }
 
     private static long getLoadedAmmoCount(IGun gun, ItemStack stack, Bolt bolt) {

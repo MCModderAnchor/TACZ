@@ -1,6 +1,7 @@
 package com.tacz.guns.resource.serialize;
 
 import com.google.gson.*;
+import com.mojang.serialization.JsonOps;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -15,7 +16,7 @@ public class GunSmithTableIngredientSerializer implements JsonDeserializer<GunSm
             if (!jsonObject.has("item")) {
                 throw new JsonSyntaxException("Expected " + jsonObject + " must has a item member");
             }
-            Ingredient ingredient = Ingredient.fromJson(jsonObject.get("item"));
+            Ingredient ingredient = Ingredient.CODEC.parse(JsonOps.INSTANCE, jsonObject.get("item")).getOrThrow();
             int count = 1;
             if (jsonObject.has("count")) {
                 count = Math.max(GsonHelper.getAsInt(jsonObject, "count"), 1);

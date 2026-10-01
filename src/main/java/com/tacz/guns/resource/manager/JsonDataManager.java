@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.util.ResourceScanner;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -62,6 +63,8 @@ public class JsonDataManager<T> extends SimplePreparableReloadListener<Map<Resou
                 }
             } catch (JsonParseException | IllegalArgumentException e) {
                 GunMod.LOGGER.error(marker, "Failed to load data file {}", id, e);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
             }
         }
     }

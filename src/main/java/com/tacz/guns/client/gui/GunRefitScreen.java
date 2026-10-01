@@ -17,6 +17,9 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.*;
 import com.tacz.guns.resource.index.CommonAttachmentVariantIndex;
 import com.tacz.guns.resource.index.CommonSlotAdapterIndex;
+import com.tacz.guns.network.message.ClientMessageLaserColor;
+import com.tacz.guns.network.message.ClientMessageRefitGun;
+import com.tacz.guns.network.message.ClientMessageUnloadAttachment;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.SlotAdapterHelper;
 import com.tacz.guns.util.VariantHelper;
@@ -29,19 +32,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.Mod;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
+@net.neoforged.fml.common.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class GunRefitScreen extends Screen {
-    public static final ResourceLocation SLOT_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_slot.png");
-    public static final ResourceLocation TURN_PAGE_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_turn_page.png");
-    public static final ResourceLocation UNLOAD_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_unload.png");
-    public static final ResourceLocation ICONS_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/refit_slot_icons.png");
+    public static final ResourceLocation SLOT_TEXTURE = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/gui/refit_slot.png");
+    public static final ResourceLocation TURN_PAGE_TEXTURE = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/gui/refit_turn_page.png");
+    public static final ResourceLocation UNLOAD_TEXTURE = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/gui/refit_unload.png");
+    public static final ResourceLocation ICONS_TEXTURE = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/gui/refit_slot_icons.png");
 
     public static final int ICON_UV_SIZE = 32;
     public static final int SLOT_SIZE = 18;
@@ -120,6 +123,9 @@ public class GunRefitScreen extends Screen {
                     Component.translatable("gui.tacz.gun_refit.property_diagrams.hide"), b -> switchHideButton()));
         }
     }
+
+    @Override
+    protected void renderBlurredBackground(float partialTick) { }
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
@@ -206,14 +212,14 @@ public class GunRefitScreen extends Screen {
                     }
                     SoundPlayManager.playerRefitSound(attachmentStack, player, SoundManager.INSTALL_SOUND);
                     ClientMessageInstallVirtualAttachment message = new ClientMessageInstallVirtualAttachment(inventory.selected, attachmentType, attachment.getAttachmentId(attachmentStack));
-                    NetworkHandler.CHANNEL.sendToServer(message);
+                    net.neoforged.neoforge.network.PacketDistributor.sendToServer(message);
                 });
             } else {
                 button = new InventoryAttachmentSlot(startX, currentY, entry.slotIndex(), inventory, b -> {
                     int slotIndex = ((InventoryAttachmentSlot) b).getSlotIndex();
                     SoundPlayManager.playerRefitSound(inventory.getItem(slotIndex), player, SoundManager.INSTALL_SOUND);
                     ClientMessageRefitGun message = new ClientMessageRefitGun(slotIndex, inventory.selected, attachmentType);
-                    NetworkHandler.CHANNEL.sendToServer(message);
+                    net.neoforged.neoforge.network.PacketDistributor.sendToServer(message);
                 });
             }
             this.addRenderableWidget(button);
@@ -303,7 +309,7 @@ public class GunRefitScreen extends Screen {
                         if (freeSlot != -1 || VirtualOemAttachment.isMarked(attachmentItem)) {
                             SoundPlayManager.playerRefitSound(attachmentItem, player, SoundManager.UNINSTALL_SOUND);
                             ClientMessageUnloadAttachment message = new ClientMessageUnloadAttachment(inventory.selected, RefitTransform.getCurrentTransformType());
-                            NetworkHandler.CHANNEL.sendToServer(message);
+                            PacketDistributor.sendToServer(message);
                         } else {
                             player.sendSystemMessage(Component.translatable("gui.tacz.gun_refit.unload.no_space"));
                         }
@@ -351,7 +357,7 @@ public class GunRefitScreen extends Screen {
                 ? Component.literal("> ").append(Component.translatable("gui.tacz.refit.variant_default"))
                 : Component.translatable("gui.tacz.refit.variant_default");
         this.addRenderableWidget(new FlatColorButton(x, y, VARIANT_BUTTON_WIDTH, VARIANT_BUTTON_HEIGHT, standardLabel, b -> {
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessageSetAttachmentVariant(inventory.selected, type, null));
+            net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientMessageSetAttachmentVariant(inventory.selected, type, null));
             this.init();
         }));
         int currentY = y + VARIANT_BUTTON_HEIGHT + VARIANT_BUTTON_SPACING;
@@ -360,7 +366,7 @@ public class GunRefitScreen extends Screen {
             Component name = Component.translatable(entry.getValue().getPojo().getName());
             Component label = variantId.equals(current) ? Component.literal("> ").append(name) : name;
             this.addRenderableWidget(new FlatColorButton(x, currentY, VARIANT_BUTTON_WIDTH, VARIANT_BUTTON_HEIGHT, label, b -> {
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessageSetAttachmentVariant(inventory.selected, type, variantId));
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientMessageSetAttachmentVariant(inventory.selected, type, variantId));
                 this.init();
             }));
             currentY += VARIANT_BUTTON_HEIGHT + VARIANT_BUTTON_SPACING;
@@ -393,7 +399,7 @@ public class GunRefitScreen extends Screen {
                 : Component.translatable("gui.tacz.refit.adapter_none");
         FlatColorButton noneButton = new FlatColorButton(x, currentY, VARIANT_BUTTON_WIDTH, VARIANT_BUTTON_HEIGHT, noneLabel, b -> {
             currentPage = 0;
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessageSetSlotAdapter(inventory.selected, type, null));
+            net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientMessageSetSlotAdapter(inventory.selected, type, null));
             this.init();
         });
         if (currentAttachmentId != null && !SlotAdapterHelper.allowsDirectAttachment(gunItem, currentAttachmentId)) {
@@ -409,7 +415,7 @@ public class GunRefitScreen extends Screen {
             Component label = adapterId.equals(current) ? Component.literal("> ").append(name) : name;
             FlatColorButton adapterButton = new FlatColorButton(x, currentY, VARIANT_BUTTON_WIDTH, VARIANT_BUTTON_HEIGHT, label, b -> {
                 currentPage = 0;
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessageSetSlotAdapter(inventory.selected, type, adapterId));
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientMessageSetSlotAdapter(inventory.selected, type, adapterId));
                 this.init();
             });
             if (currentAttachmentId != null && !entry.getValue().allowsAttachment(currentAttachmentId)) {
@@ -429,7 +435,7 @@ public class GunRefitScreen extends Screen {
             ItemStack gun = player.getMainHandItem();
             if (player.getMainHandItem().getItem() instanceof IGun) {
                 ClientMessageLaserColor message = new ClientMessageLaserColor(gun, player.getInventory().selected);
-                NetworkHandler.CHANNEL.sendToServer(message);
+                PacketDistributor.sendToServer(message);
             }
         }
         super.onClose();

@@ -3,9 +3,10 @@ package com.tacz.guns.compat.playeranimator.animation;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonParseException;
 import com.tacz.guns.GunMod;
+import dev.kosmx.playerAnim.api.IPlayable;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
-import dev.kosmx.playerAnim.core.data.gson.AnimationSerializing;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
+import dev.kosmx.playerAnim.minecraftApi.codec.AnimationCodecs;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -15,7 +16,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.util.*;
 
 public class PlayerAnimatorAssetManager extends SimplePreparableReloadListener<Map<ResourceLocation, HashMap<String, KeyframeAnimation>>> {
@@ -32,9 +32,9 @@ public class PlayerAnimatorAssetManager extends SimplePreparableReloadListener<M
     }
 
     void putAnimation(ResourceLocation id, InputStream stream) throws IOException {
-        List<KeyframeAnimation> keyframeAnimations = AnimationSerializing.deserializeAnimation(stream);
-        for (var animation : keyframeAnimations) {
-            if (animation.extraData.get("name") instanceof String text) {
+        Collection<IPlayable> keyframeAnimations = AnimationCodecs.deserialize("json", () -> stream);;
+        for (var playable : keyframeAnimations) {
+            if (playable instanceof KeyframeAnimation animation && animation.extraData.get("name") instanceof String text) {
                 String name = PlayerAnimationRegistry.serializeTextToString(text).toLowerCase(Locale.ENGLISH);
                 animations.computeIfAbsent(id, k -> Maps.newHashMap()).put(name, animation);
             }
@@ -64,10 +64,10 @@ public class PlayerAnimatorAssetManager extends SimplePreparableReloadListener<M
             ResourceLocation resourcelocation = entry.getKey();
             ResourceLocation resourcelocation1 = filetoidconverter.fileToId(resourcelocation);
 
-            try (Reader reader = entry.getValue().openAsReader()) {
-                List<KeyframeAnimation> keyframeAnimations = AnimationSerializing.deserializeAnimation(reader);
-                for (var animation : keyframeAnimations) {
-                    if (animation.extraData.get("name") instanceof String text) {
+            try (InputStream stream = entry.getValue().open()) {
+                Collection<IPlayable> keyframeAnimations = AnimationCodecs.deserialize("json", () -> stream);
+                for (var playable : keyframeAnimations) {
+                    if (playable instanceof KeyframeAnimation animation && animation.extraData.get("name") instanceof String text) {
                         String name = PlayerAnimationRegistry.serializeTextToString(text).toLowerCase(Locale.ENGLISH);
                         output.computeIfAbsent(resourcelocation1, k -> Maps.newHashMap()).put(name, animation);
                     }

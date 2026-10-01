@@ -5,18 +5,18 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.client.gui.GunRefitScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
 import static com.tacz.guns.util.InputExtraCheck.isInGame;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
+@net.neoforged.fml.common.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public final class GunInputHandler {
     private static final List<PressBinding> PRESS_BINDINGS = List.of(
             new PressBinding(UnloadKey.UNLOAD_KEY, UnloadKey::onUnloadPress),

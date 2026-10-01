@@ -21,10 +21,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -81,7 +81,7 @@ public class LivingEntityShoot {
             long alpha = GunTime.nowMillis() - data.baseTimestamp - timestamp;
             if (alpha < -300 || alpha > 300 + tickTime * 2) { // 允许 +- 300ms 的网络波动、窗口下限再扩大 2 个 tick time 时间(最坏情况射击会延迟2个 tick)
                 if (shooter instanceof ServerPlayer player) {
-                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new ServerMessageSyncBaseTimestamp());
+                    PacketDistributor.sendToPlayer(player, ServerMessageSyncBaseTimestamp.INSTANCE);
                 }
                 return ShootResult.NETWORK_FAIL;
             }
@@ -143,7 +143,7 @@ public class LivingEntityShoot {
             iGun.setBulletInBarrel(currentGunItem, true);
         }
         // 触发射击事件
-        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
+        if (NeoForge.EVENT_BUS.post(new GunShootEvent(shooter, currentGunItem, LogicalSide.SERVER)).isCanceled()) {
             return ShootResult.FORGE_EVENT_CANCEL;
         }
 
@@ -277,7 +277,7 @@ public class LivingEntityShoot {
         if (abstractGunItem.useDummyAmmo(itemStack)) {
             abstractGunItem.findAndExtractDummyAmmo(itemStack, neededAmount);
         } else {
-            shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
+            Optional.ofNullable(shooter.getCapability(Capabilities.ItemHandler.ENTITY, null))
                     .map(cap -> abstractGunItem.findAndExtractInventoryAmmo(cap, itemStack, neededAmount));
         }
     }

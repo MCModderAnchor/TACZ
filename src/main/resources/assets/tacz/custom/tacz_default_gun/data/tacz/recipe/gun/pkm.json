@@ -1,0 +1,33 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 155
+    },
+    {
+      "item": {
+        "tag": "c:ingots/gold"
+      },
+      "count": 32
+    },
+    {
+      "item": {
+        "tag": "c:gems/diamond"
+      },
+      "count": 5
+    },
+    {
+      "item": {
+        "tag": "forge:rods/blaze"
+      },
+      "count": 7
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:pkm"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

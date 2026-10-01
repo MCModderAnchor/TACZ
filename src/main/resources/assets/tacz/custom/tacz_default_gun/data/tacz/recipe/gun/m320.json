@@ -1,0 +1,27 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/gold"
+      },
+      "count": 15
+    },
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 50
+    },
+    {
+      "item": {
+        "tag": "c:gems/lapis"
+      },
+      "count": 6
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:m320"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

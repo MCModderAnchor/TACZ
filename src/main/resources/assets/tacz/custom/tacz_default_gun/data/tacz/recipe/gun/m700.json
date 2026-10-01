@@ -1,0 +1,30 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:gems/diamond"
+      },
+      "count": 1
+    },
+    {
+      "item": {
+        "tag": "c:ingots/gold"
+      },
+      "count": 4
+    },
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 45
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:m700",
+    "attachments": {
+      "scope": "tacz:scope_contender"
+    }
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

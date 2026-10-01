@@ -1,15 +1,15 @@
 package com.tacz.guns.config.common;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class OtherConfig {
-    public static ForgeConfigSpec.BooleanValue DEFAULT_PACK_DEBUG;
-    public static ForgeConfigSpec.IntValue TARGET_SOUND_DISTANCE;
-    public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_OFFSET;
-    public static ForgeConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
-    public static ForgeConfigSpec.DoubleValue SERVER_HITBOX_LATENCY_MAX_SAVE_MS;
+    public static ModConfigSpec.BooleanValue DEFAULT_PACK_DEBUG;
+    public static ModConfigSpec.IntValue TARGET_SOUND_DISTANCE;
+    public static ModConfigSpec.DoubleValue SERVER_HITBOX_OFFSET;
+    public static ModConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
+    public static ModConfigSpec.DoubleValue SERVER_HITBOX_LATENCY_MAX_SAVE_MS;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("other");
 
         builder.comment("Deprecated and ignored: use [gunpack].DefaultPackDebug in <game directory>/tacz/tacz-pre.toml.");
@@ -26,7 +26,7 @@ public class OtherConfig {
     /**
      * 这些配置不加入 cloth config api 中
      */
-    private static void serverConfig(ForgeConfigSpec.Builder builder) {
+    private static void serverConfig(ModConfigSpec.Builder builder) {
         builder.comment("DEV: Server hitbox offset (If the hitbox is ahead, fill in a negative number)");
         SERVER_HITBOX_OFFSET = builder.defineInRange("ServerHitboxOffset", 3, -Double.MAX_VALUE, Double.MAX_VALUE);
 

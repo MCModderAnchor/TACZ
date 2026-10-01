@@ -33,6 +33,7 @@ import com.tacz.guns.util.CycleTaskHelper;
 import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -42,9 +43,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.NeoForge;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
@@ -168,7 +171,7 @@ public class ModernKineticGunScriptAPI {
                 return false;
             }
             // 触发击发事件
-            boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(shooter, itemStack, LogicalSide.SERVER));
+            boolean fire = !NeoForge.EVENT_BUS.post(new GunFireEvent(shooter, itemStack, LogicalSide.SERVER)).isCanceled();
             if (fire) {
                 NetworkHandler.sendToTrackingEntity(new ServerMessageGunFire(shooter.getId(), itemStack), shooter);
                 // 削减弹药
@@ -209,7 +212,7 @@ public class ModernKineticGunScriptAPI {
                     SoundManager.sendSoundToNearby(shooter, soundDistance, gunId, gunDisplayId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
                 }
                 // 仅成功击发才发布后置事件并通知旁观客户端。
-                MinecraftForge.EVENT_BUS.post(new GunFirePostEvent(shooter, itemStack, LogicalSide.SERVER));
+                NeoForge.EVENT_BUS.post(new GunFirePostEvent(shooter, itemStack, LogicalSide.SERVER));
                 NetworkHandler.sendToTrackingEntity(new ServerMessageGunFirePost(shooter.getId(), itemStack), shooter);
             }
             return true;
@@ -582,7 +585,7 @@ public class ModernKineticGunScriptAPI {
         if (abstractGunItem.useDummyAmmo(itemStack)) {
             return abstractGunItem.findAndExtractDummyAmmo(itemStack, neededAmount);
         } else {
-            return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
+            return Optional.ofNullable(shooter.getCapability(Capabilities.ItemHandler.ENTITY, null))
                     .map(cap -> abstractGunItem.findAndExtractInventoryAmmo(cap, itemStack, neededAmount))
                     .orElse(0);
         }
@@ -600,7 +603,7 @@ public class ModernKineticGunScriptAPI {
         if (abstractGunItem.useDummyAmmo(itemStack)) {
             return abstractGunItem.getDummyAmmoAmount(itemStack) > 0;
         }
-        return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null).map(cap -> {
+        return Optional.ofNullable(shooter.getCapability(Capabilities.ItemHandler.ENTITY, null)).map(cap -> {
             // 背包检查
             for (int i = 0; i < cap.getSlots(); i++) {
                 ItemStack checkAmmoStack = cap.getStackInSlot(i);
@@ -932,6 +935,7 @@ public class ModernKineticGunScriptAPI {
     }
 
     private void initGunItem() {
+        nbtUtil = null;
         if (itemStack == null || !(itemStack.getItem() instanceof AbstractGunItem gunItem)) {
             gunIndex = null;
             abstractGunItem = null;
@@ -942,9 +946,7 @@ public class ModernKineticGunScriptAPI {
         Optional<CommonGunIndex> gunIndexOptional = TimelessAPI.getCommonGunIndex(gunId);
         gunIndex = gunIndexOptional.orElse(null);
         abstractGunItem = gunItem;
-        if (itemStack.hasTag()) {
-            nbtUtil = new LuaNbtAccessor(itemStack.getTag());
-        }
+        nbtUtil = LuaNbtAccessor.from(itemStack);
     }
 
 

@@ -12,8 +12,6 @@ import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.AmmoBoxTooltip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -25,17 +23,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItemDataAccessor {
-    public static final ResourceLocation PROPERTY_NAME = new ResourceLocation(GunMod.MOD_ID, "ammo_statue");
+public class AmmoBoxItem extends Item implements AmmoBoxItemDataAccessor {
+    public static final ResourceLocation PROPERTY_NAME = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "ammo_statue");
 
     public static final int IRON_LEVEL = 0;
     public static final int GOLD_LEVEL = 1;
@@ -56,7 +57,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
 
     @OnlyIn(Dist.CLIENT)
     public static int getColor(ItemStack stack, int tintIndex) {
-        return tintIndex > 0 ? -1 : getTagColor(stack);
+        return tintIndex > 0 ? -1 : DyedItemColor.getOrDefault(stack, 0xff727d6b);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -87,11 +88,6 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
 
     private static int getLevelStatue(ItemStack stack, IAmmoBox iAmmoBox) {
         return iAmmoBox.getAmmoLevel(stack);
-    }
-
-    private static int getTagColor(ItemStack stack) {
-        CompoundTag compoundtag = stack.getTagElement(DISPLAY_TAG);
-        return compoundtag != null && compoundtag.contains(COLOR_TAG, Tag.TAG_ANY_NUMERIC) ? compoundtag.getInt(COLOR_TAG) : 0x727d6b;
     }
 
     @Override
@@ -274,7 +270,7 @@ public class AmmoBoxItem extends Item implements DyeableLeatherItem, AmmoBoxItem
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> components, TooltipFlag isAdvanced) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag isAdvanced) {
         if (isAllTypeCreative(stack)) {
             components.add(Component.translatable("tooltip.tacz.ammo_box.usage.all_type_creative").withStyle(ChatFormatting.GOLD));
             return;

@@ -6,6 +6,7 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -299,7 +300,7 @@ public interface IGun {
      * 获取当前枪械指定类型的配件
      */
     @Nonnull
-    ItemStack getAttachment(ItemStack gun, AttachmentType type);
+    ItemStack getAttachment(HolderLookup.Provider provider, ItemStack gun, AttachmentType type);
 
     @Nonnull
     ItemStack getBuiltinAttachment(ItemStack gun, AttachmentType type);
@@ -311,6 +312,8 @@ public interface IGun {
      */
     @Nullable
     CompoundTag getAttachmentTag(ItemStack gun, AttachmentType type);
+
+    void setAttachmentTag(ItemStack gun, AttachmentType type, CompoundTag attachmentTag);
 
     @Nonnull
     ResourceLocation getBuiltInAttachmentId(ItemStack gun, AttachmentType type);
@@ -326,12 +329,12 @@ public interface IGun {
     /**
      * 安装配件
      */
-    void installAttachment(@Nonnull ItemStack gun, @Nonnull ItemStack attachment);
+    void installAttachment(HolderLookup.Provider provider, @Nonnull ItemStack gun, @Nonnull ItemStack attachment);
 
     /**
      * 卸载配件
      */
-    void unloadAttachment(@Nonnull ItemStack gun, AttachmentType type);
+    void unloadAttachment(HolderLookup.Provider provider, @Nonnull ItemStack gun, AttachmentType type);
 
     /**
      * 该枪械是否允许装配该配件

@@ -27,7 +27,7 @@ public class HeadShotAABBConfigRead {
     public static void addCheck(String text) {
         Matcher matcher = REG.matcher(text);
         if (matcher.find()) {
-            ResourceLocation id = new ResourceLocation(matcher.group(1));
+            ResourceLocation id = ResourceLocation.parse(matcher.group(1));
             double x1 = Double.parseDouble(matcher.group(2));
             double y1 = Double.parseDouble(matcher.group(3));
             double z1 = Double.parseDouble(matcher.group(4));

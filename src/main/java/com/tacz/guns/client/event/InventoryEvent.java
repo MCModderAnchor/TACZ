@@ -10,13 +10,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class InventoryEvent {
     private static final int HOTBAR_WARM_UP_INTERVAL_TICKS = 7;
     private static final int BACKPACK_WARM_UP_INTERVAL_TICKS = 41;
@@ -26,7 +26,16 @@ public class InventoryEvent {
     private static ItemStack oldHotbarSelectItem = ItemStack.EMPTY;
 
     @SubscribeEvent
-    public static void onPlayerChangeSelect(TickEvent.ClientTickEvent event) {
+    public static void onPlayerChangeSelect(ClientTickEvent.Pre event) {
+        onPlayerChangeSelect(false);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerChangeSelect(ClientTickEvent.Post event) {
+        onPlayerChangeSelect(true);
+    }
+
+    public static void onPlayerChangeSelect(Boolean post) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             return;
@@ -59,7 +68,7 @@ public class InventoryEvent {
         if (!ItemStack.matches(oldHotbarSelectItem, currentItem)) {
             oldHotbarSelectItem = currentItem.copy();
         }
-        if (event.phase == TickEvent.Phase.END) {
+        if (post) {
             if (player.tickCount % HOTBAR_WARM_UP_INTERVAL_TICKS == 0) {
                 ClientIndexManager.warmUpEquippedAndHotbarModels();
             }

@@ -285,7 +285,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             if (type == AttachmentType.NONE) {
                 continue;
             }
-            ItemStack attachmentItem = iGun.getAttachment(gunItem, type);
+            ItemStack attachmentItem = iGun.getAttachment(Minecraft.getInstance().level.registryAccess(), gunItem, type);
             if (attachmentItem.isEmpty()) {
                 attachmentItem = iGun.getBuiltinAttachment(gunItem, type);
             }
@@ -395,6 +395,15 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 						RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 					});
 
+                    // 设置层后任务
+                    ARCompat.setRenderAfterFunction(() -> {
+                        // 关闭模板测试
+                        RenderHelper.disableItemEntityStencilTest();
+                        // 重置模板缓冲区
+                        RenderSystem.clearStencil(0);
+                        RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
+                    });
+
 					// 确认使用层前行为, 应在渲染完毕后重置层前行为
 					useStencil = true;
 				}
@@ -419,11 +428,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 
 		// 重置层和层后任务, 还原现场
 		ARCompat.resetRenderLayer();
-		ARCompat.resetRenderAfterFunction();
 
 		// 如果使用了层前行为, 则进行重置, 还原现场
 		if (useStencil) {
 			ARCompat.resetRenderBeforeFunction();
+		    ARCompat.resetRenderAfterFunction();
 		}
 	}
 

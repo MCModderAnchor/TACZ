@@ -25,6 +25,7 @@ public class OverwriteCommand {
     private static int setOverwrite(CommandContext<CommandSourceStack> context) {
         boolean enable = BoolArgumentType.getBool(context, ENABLE);
         PreLoadConfig.override.set(!enable);
+        PreLoadConfig.override.save();
         if (context.getSource().getEntity() instanceof ServerPlayer serverPlayer) {
             if (PreLoadConfig.override.get()) {
                 serverPlayer.sendSystemMessage(Component.translatable("commands.tacz.reload.overwrite_off"));

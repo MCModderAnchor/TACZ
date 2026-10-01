@@ -68,7 +68,7 @@ public class AttachmentQueryEntry {
             String tabType = type.name().toLowerCase(Locale.US);
             String gunType = entry.getValue().getType();
             if (tabType.equals(gunType)) {
-                ItemStack gun = GunItemBuilder.create().setId(entry.getKey()).build();
+                ItemStack gun = GunItemBuilder.create().setId(entry.getKey()).build(null);
                 if (!(gun.getItem() instanceof IGun iGun)) {
                     return;
                 }

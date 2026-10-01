@@ -2,13 +2,13 @@ package com.tacz.guns.api.event.common;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.bus.api.Event;
+import net.neoforged.fml.LogicalSide;
 
 /**
  * 射击完成后触发的通知事件，不可取消。
  */
-public class GunFirePostEvent extends Event implements KubeJSGunEventPoster<GunFirePostEvent> {
+public class GunFirePostEvent extends Event {
     private final LivingEntity shooter;
     private final ItemStack gunItemStack;
     private final LogicalSide logicalSide;
@@ -17,7 +17,7 @@ public class GunFirePostEvent extends Event implements KubeJSGunEventPoster<GunF
         this.shooter = shooter;
         this.gunItemStack = gunItemStack;
         this.logicalSide = side;
-        postEventToKubeJS(this);
+
     }
 
     public LivingEntity getShooter() {

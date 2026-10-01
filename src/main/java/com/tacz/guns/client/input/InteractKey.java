@@ -17,10 +17,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.client.settings.KeyModifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.client.settings.KeyModifier;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.InputEvent;
 import org.lwjgl.glfw.GLFW;
 
 import static com.tacz.guns.util.InputExtraCheck.isInGame;
@@ -72,7 +75,7 @@ public class InteractKey {
             GunDisplayCaseClientInteractionEvent.showHintForTarget(mc, true);
         }
         if (block.getBlock() instanceof AmmoStorageBlock) {
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessageAmmoStorageInteract(blockPos));
+            net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientMessageAmmoStorageInteract(blockPos));
             return;
         }
         if (InteractKeyConfigRead.canInteractBlock(block)) {

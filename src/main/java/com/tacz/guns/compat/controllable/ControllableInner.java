@@ -1,14 +1,14 @@
 package com.tacz.guns.compat.controllable;
 
 import com.mrcrayfish.controllable.Controllable;
-import com.mrcrayfish.controllable.client.binding.BindingRegistry;
 import com.mrcrayfish.controllable.client.binding.ButtonBinding;
-import com.mrcrayfish.controllable.client.binding.IBindingContext;
+import com.mrcrayfish.controllable.client.binding.context.BindingContext;
+import com.mrcrayfish.controllable.client.binding.context.InGameContext;
+import com.mrcrayfish.controllable.client.binding.handlers.OnPressAndReleaseHandler;
 import com.mrcrayfish.controllable.client.input.Buttons;
 import com.mrcrayfish.controllable.client.input.Controller;
-import com.mrcrayfish.controllable.event.ControllerEvents;
-import com.mrcrayfish.controllable.event.Value;
 import com.mrcrayfish.framework.api.event.TickEvents;
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
@@ -17,10 +17,11 @@ import com.tacz.guns.client.resource.pojo.display.gun.ControllableData;
 import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.settings.KeyConflictContext;
 
 import java.util.EnumMap;
+import java.util.Optional;
 
 public class ControllableInner {
     public static final IBindingContext GUN_KEY_CONFLICT = new GunKeyConflict();
@@ -47,17 +48,16 @@ public class ControllableInner {
     public static final ButtonBinding INSPECT = new ButtonBinding(-1, "key.tacz.inspect.desc", "key.category.tacz", GUN_KEY_CONFLICT);
 
     public static void init() {
-        BindingRegistry.getInstance().register(AIM);
-        BindingRegistry.getInstance().register(SHOOT);
-        BindingRegistry.getInstance().register(RELOAD);
-        BindingRegistry.getInstance().register(MELEE);
-        BindingRegistry.getInstance().register(CRAWL);
-        BindingRegistry.getInstance().register(ZOOM);
-        BindingRegistry.getInstance().register(FIRE_SELECT);
-        BindingRegistry.getInstance().register(INTERACT);
-        BindingRegistry.getInstance().register(INSPECT);
+        Controllable.getBindingRegistry().register(AIM);
+        Controllable.getBindingRegistry().register(SHOOT);
+        Controllable.getBindingRegistry().register(RELOAD);
+        Controllable.getBindingRegistry().register(MELEE);
+        Controllable.getBindingRegistry().register(CRAWL);
+        Controllable.getBindingRegistry().register(ZOOM);
+        Controllable.getBindingRegistry().register(FIRE_SELECT);
+        Controllable.getBindingRegistry().register(INTERACT);
+        Controllable.getBindingRegistry().register(INSPECT);
 
-        ControllerEvents.INPUT.register(ControllableInner::onButtonInput);
         TickEvents.END_CLIENT.register(ControllableInner::onClientTickEnd);
     }
 
@@ -127,11 +127,9 @@ public class ControllableInner {
         });
     }
 
-    public static class GunKeyConflict implements IBindingContext {
-        @Override
-        public boolean isActive() {
-            LocalPlayer player = Minecraft.getInstance().player;
-            return !KeyConflictContext.GUI.isActive() && player != null && IGun.mainHandHoldGun(player);
+    public static class GunKeyConflict extends InGameContext {
+        protected GunKeyConflict(ResourceLocation id) {
+            super(id);
         }
 
         @Override

@@ -12,7 +12,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -20,8 +20,8 @@ import java.util.List;
 public final class GunPegboardItemConfigRead {
     private static final List<ResourceLocation> WHITELIST = Lists.newArrayList();
     private static final List<ResourceLocation> BLACKLIST = Lists.newArrayList();
-    private static final TagKey<Item> WHITELIST_ITEMS = ItemTags.create(new ResourceLocation(GunMod.MOD_ID, "gun_pegboard/whitelist"));
-    private static final TagKey<Item> BLACKLIST_ITEMS = ItemTags.create(new ResourceLocation(GunMod.MOD_ID, "gun_pegboard/blacklist"));
+    private static final TagKey<Item> WHITELIST_ITEMS = ItemTags.create(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "gun_pegboard/whitelist"));
+    private static final TagKey<Item> BLACKLIST_ITEMS = ItemTags.create(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "gun_pegboard/blacklist"));
 
     private GunPegboardItemConfigRead() {
     }
@@ -34,7 +34,7 @@ public final class GunPegboardItemConfigRead {
     }
 
     public static boolean canPlace(ItemStack stack) {
-        ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if (itemId == null) {
             return false;
         }
@@ -53,7 +53,7 @@ public final class GunPegboardItemConfigRead {
             if (StringUtils.isBlank(data)) {
                 return;
             }
-            storeList.add(new ResourceLocation(data));
+            storeList.add(ResourceLocation.parse(data));
         });
     }
 }

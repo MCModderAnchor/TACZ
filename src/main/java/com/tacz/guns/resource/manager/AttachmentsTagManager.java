@@ -65,7 +65,7 @@ public class AttachmentsTagManager extends SimplePreparableReloadListener<Map<Re
                         }
                     }
                 } catch (JsonParseException e) {
-                    GunMod.LOGGER.error(marker, "Failed to parse data file {}", id, e);
+                    GunMod.LOGGER.error(marker, "Failed to load data file {}", id, e);
                 }
             }
 

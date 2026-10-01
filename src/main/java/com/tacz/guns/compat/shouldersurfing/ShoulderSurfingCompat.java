@@ -1,6 +1,6 @@
 package com.tacz.guns.compat.shouldersurfing;
 
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 public final class ShoulderSurfingCompat {
     private static final String MOD_ID = "shouldersurfing";

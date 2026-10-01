@@ -9,15 +9,15 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.sound.SoundPlayManager;
-import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerMelee;
 import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import com.tacz.guns.resource.pojo.data.gun.GunDefaultMeleeData;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 
@@ -80,14 +80,14 @@ public class LocalPlayerMelee {
         data.lockState(operator -> operator.getSynMeleeCoolDown() > 0);
         // 触发近战事件
         GunMeleeEvent gunMeleeEvent = new GunMeleeEvent(player, player.getMainHandItem(), LogicalSide.CLIENT);
-        return !MinecraftForge.EVENT_BUS.post(gunMeleeEvent);
+        return !NeoForge.EVENT_BUS.post(gunMeleeEvent).isCanceled();
     }
 
     private void doMuzzleMelee(GunDisplayInstance display) {
         if (prepareMelee()) {
             SoundPlayManager.playMeleeBayonetSound(player, display);
             // 发送执行近战的数据包，通知服务器
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerMelee());
+            PacketDistributor.sendToServer(ClientMessagePlayerMelee.INSTANCE);
             // 动画状态机转移状态
             AnimationStateMachine<?> animationStateMachine = display.getAnimationStateMachine();
             if (animationStateMachine != null) {
@@ -100,7 +100,7 @@ public class LocalPlayerMelee {
         if (prepareMelee()) {
             SoundPlayManager.playMeleeStockSound(player, display);
             // 发送执行近战的数据包，通知服务器
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerMelee());
+            PacketDistributor.sendToServer(ClientMessagePlayerMelee.INSTANCE);
             // 动画状态机转移状态
             AnimationStateMachine<?> animationStateMachine = display.getAnimationStateMachine();
             if (animationStateMachine != null) {
@@ -114,7 +114,7 @@ public class LocalPlayerMelee {
             // 播放音效
             SoundPlayManager.playMeleePushSound(player, display);
             // 发送执行近战的数据包，通知服务器
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerMelee());
+            PacketDistributor.sendToServer(ClientMessagePlayerMelee.INSTANCE);
             // 动画状态机转移状态
             AnimationStateMachine<?> animationStateMachine = display.getAnimationStateMachine();
             if (animationStateMachine != null) {

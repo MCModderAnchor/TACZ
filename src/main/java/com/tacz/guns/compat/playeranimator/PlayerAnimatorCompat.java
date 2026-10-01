@@ -10,18 +10,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.io.File;
 import java.util.function.Consumer;
 import java.util.zip.ZipFile;
 
 public class PlayerAnimatorCompat {
-    public static ResourceLocation LOWER_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "lower_animation");
-    public static ResourceLocation LOOP_UPPER_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "loop_upper_animation");
-    public static ResourceLocation ONCE_UPPER_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "once_upper_animation");
-    public static ResourceLocation ROTATION_ANIMATION = new ResourceLocation(GunMod.MOD_ID, "rotation");
+    public static ResourceLocation LOWER_ANIMATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "lower_animation");
+    public static ResourceLocation LOOP_UPPER_ANIMATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "loop_upper_animation");
+    public static ResourceLocation ONCE_UPPER_ANIMATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "once_upper_animation");
+    public static ResourceLocation ROTATION_ANIMATION = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "rotation");
 
     private static final String MOD_ID = "playeranimator";
     private static boolean INSTALLED = false;
@@ -30,7 +31,7 @@ public class PlayerAnimatorCompat {
         INSTALLED = ModList.get().isLoaded(MOD_ID);
         if (isInstalled()) {
             AnimationDataRegisterFactory.registerData();
-            MinecraftForge.EVENT_BUS.register(new AnimationManager());
+            NeoForge.EVENT_BUS.register(new AnimationManager());
         }
     }
 

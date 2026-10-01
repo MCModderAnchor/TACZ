@@ -1,46 +1,50 @@
 package com.tacz.guns.network.message;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientIndexManager;
 import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.network.CommonNetworkCache;
 import com.tacz.guns.resource.network.DataType;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
+public class ServerMessageSyncGunPack implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<ServerMessageSyncGunPack> TYPE = new CustomPacketPayload.Type<>(
+        ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "server_sync_gun_pack")
+    );
+    public static final StreamCodec<FriendlyByteBuf, ServerMessageSyncGunPack> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.map(HashMap::new, ByteBufCodecs.fromCodec(DataType.CODEC),
+            ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.STRING_UTF8)),
+        ServerMessageSyncGunPack::getCache,
+        ServerMessageSyncGunPack::new
+    );
 
-public class ServerMessageSyncGunPack {
+    @Override
+    public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
     private final Map<DataType, Map<ResourceLocation, String>> cache;
 
     public ServerMessageSyncGunPack(Map<DataType, Map<ResourceLocation, String>> cache) {
         this.cache = cache;
     }
 
-    public static void encode(ServerMessageSyncGunPack message, FriendlyByteBuf buf) {
-        buf.writeMap(message.getCache(), FriendlyByteBuf::writeEnum, (buf1, map) -> {
-            buf1.writeMap(map, FriendlyByteBuf::writeResourceLocation, FriendlyByteBuf::writeUtf);
+    public static void handle(ServerMessageSyncGunPack message, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            boolean remoteConnection = !context.connection().isMemoryConnection();
+            doSync(message, remoteConnection);
         });
-    }
-
-    public static ServerMessageSyncGunPack decode(FriendlyByteBuf buf) {
-        var map = buf.readMap(buf1 -> buf1.readEnum(DataType.class), buf2 -> {
-            return buf2.readMap(FriendlyByteBuf::readResourceLocation, FriendlyByteBuf::readUtf);
-        });
-        return new ServerMessageSyncGunPack(map);
-    }
-
-    public static void handle(ServerMessageSyncGunPack message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isClient()) {
-            boolean remoteConnection = context.getNetworkManager() != null && !context.getNetworkManager().isMemoryConnection();
-            context.enqueueWork(() -> doSync(message, remoteConnection));
-        }
-        context.setPacketHandled(true);
     }
 
 

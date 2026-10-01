@@ -1,9 +1,19 @@
 package com.tacz.guns.client.init;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.client.gui.overlay.*;
 import com.tacz.guns.client.input.GunInputHandler;
+import com.tacz.guns.client.gui.overlay.GunHudOverlay;
+import com.tacz.guns.client.gui.overlay.HeatBarOverlay;
+import com.tacz.guns.client.gui.overlay.InteractKeyTextOverlay;
+import com.tacz.guns.client.gui.overlay.KillAmountOverlay;
+import com.tacz.guns.client.input.*;
+import com.tacz.guns.client.renderer.item.AmmoItemRenderer;
+import com.tacz.guns.client.renderer.item.AttachmentItemRenderer;
+import com.tacz.guns.client.renderer.item.GunItemRendererWrapper;
+import com.tacz.guns.client.renderer.item.GunSmithTableItemRenderer;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.client.tooltip.*;
@@ -19,18 +29,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
-import static net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.CROSSHAIR;
+import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.CROSSHAIR;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = GunMod.MOD_ID)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class ClientSetupEvent {
     @SubscribeEvent
     public static void onClientSetup(RegisterKeyMappingsEvent event) {
@@ -85,8 +96,24 @@ public class ClientSetupEvent {
         // 与 Controllable 的兼容
         event.enqueueWork(ControllableCompat::init);
 
-		// 与 Accelerated Rendering 的兼容
+        // 与 Accelerated Rendering 的兼容
 		event.enqueueWork(ARCompat::init);
+
+        Minecraft minecraft = Minecraft.getInstance();
+        RenderSystem.recordRenderCall(() -> minecraft.getMainRenderTarget().enableStencil());
+        GunItemRendererWrapper.INSTANCE = new GunItemRendererWrapper();
+        AmmoItemRenderer.INSTANCE = new AmmoItemRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+        AttachmentItemRenderer.INSTANCE = new AttachmentItemRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+        GunSmithTableItemRenderer.INSTANCE = new GunSmithTableItemRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+    }
+
+    @SubscribeEvent
+    public static void onRegisterGuiLayers(RegisterGuiLayersEvent event) {
+        // 注册 HUD
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "tac_gun_hud_overlay"), new GunHudOverlay());
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID,  "tac_heat_bar"), new HeatBarOverlay());
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID,  "tac_kill_amount_overlay"), new KillAmountOverlay());
+        event.registerAbove(CROSSHAIR, ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "tac_interact_key_overlay"), new InteractKeyTextOverlay());
     }
 
     @SubscribeEvent

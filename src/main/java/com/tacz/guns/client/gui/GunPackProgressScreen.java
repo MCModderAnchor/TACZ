@@ -6,12 +6,15 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.HttpUtil;
 import net.minecraft.util.ProgressListener;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.OptionalLong;
 
-public class GunPackProgressScreen extends Screen implements ProgressListener {
+// FIXME: Needs actual testing
+public class GunPackProgressScreen extends Screen implements HttpUtil.DownloadProgressListener {
     private @Nullable Component header;
     private @Nullable Component stage;
     private int progress;
@@ -24,7 +27,7 @@ public class GunPackProgressScreen extends Screen implements ProgressListener {
     @Override
     protected void init() {
         Button button = Button.builder(
-                Component.translatable("gui.tacz.client_gun_pack_downloader.background_download"), b -> this.stop()
+                Component.translatable("gui.tacz.client_gun_pack_downloader.background_download"), b -> this.requestFinished(false)
         ).bounds((width - 200) / 2, 120, 200, 20).build();
         this.addRenderableWidget(button);
     }
@@ -34,7 +37,7 @@ public class GunPackProgressScreen extends Screen implements ProgressListener {
         if (this.stop) {
             this.getMinecraft().setScreen(null);
         } else {
-            this.renderBackground(gui);
+            this.renderBackground(gui, mouseX, mouseY, partialTick);
             if (this.header != null) {
                 gui.drawCenteredString(this.font, this.header, this.width / 2, 70, 16777215);
             }
@@ -46,30 +49,29 @@ public class GunPackProgressScreen extends Screen implements ProgressListener {
         }
     }
 
+    private long total;
+    private long downloaded;
 
     @Override
-    public void progressStartNoAbort(Component component) {
-        this.progressStart(component);
-    }
-
-    @Override
-    public void progressStart(Component header) {
+    public void requestStart() {
         this.header = Component.translatable("gui.tacz.client_gun_pack_downloader.downloading");
     }
 
     @Override
-    public void progressStage(Component component) {
-        this.stage = component;
-        this.progressStagePercentage(0);
+    public void downloadStart(OptionalLong optionalLong) {
+        this.total = optionalLong.orElse(0L);
+        this.downloaded = 0L;
+        this.progress = 0;
     }
 
     @Override
-    public void progressStagePercentage(int progress) {
-        this.progress = progress;
+    public void downloadedBytes(long l) {
+        this.downloaded += l;
+        this.progress = (int) Math.ceil((double) this.total / this.downloaded);
     }
 
     @Override
-    public void stop() {
+    public void requestFinished(boolean b) {
         this.stop = true;
     }
 }

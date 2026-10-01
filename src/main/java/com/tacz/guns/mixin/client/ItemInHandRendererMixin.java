@@ -9,7 +9,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -36,7 +36,7 @@ public class ItemInHandRendererMixin implements KeepingItemRenderer {
 
     @Inject(method = "renderHandsWithItems", at = @At("HEAD"))
     public void beforeHandRender(float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource.BufferSource pBuffer, LocalPlayer pPlayerEntity, int pCombinedLight, CallbackInfo ci) {
-        MinecraftForge.EVENT_BUS.post(new BeforeRenderHandEvent(pMatrixStack));
+        NeoForge.EVENT_BUS.post(new BeforeRenderHandEvent(pMatrixStack));
     }
 
     @Inject(method = "tick", at = @At("HEAD"))

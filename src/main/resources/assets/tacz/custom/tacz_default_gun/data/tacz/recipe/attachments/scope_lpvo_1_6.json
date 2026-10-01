@@ -1,0 +1,33 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 14
+    },
+    {
+      "item": {
+        "tag": "c:gems/amethyst"
+      },
+      "count": 4
+    },
+    {
+      "item": {
+        "tag": "c:dusts/glowstone"
+      },
+      "count": 8
+    },
+    {
+      "item": {
+        "tag": "c:dusts/redstone"
+      },
+      "count": 6
+    }
+  ],
+  "result": {
+    "type": "attachment",
+    "id": "tacz:scope_lpvo_1_6"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

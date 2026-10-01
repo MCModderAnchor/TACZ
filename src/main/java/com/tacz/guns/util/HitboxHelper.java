@@ -85,7 +85,7 @@ public final class HitboxHelper {
         Vec3 velocity = new Vec3(entity.getX() - entity.xOld, entity.getY() - entity.yOld, entity.getZ() - entity.zOld);
         // hitbox 延迟补偿。只有射击者是玩家（且被击中者也是玩家）才进行此类延迟补偿计算
         if (OtherConfig.SERVER_HITBOX_LATENCY_FIX.get() && entity instanceof ServerPlayer player && owner instanceof ServerPlayer serverPlayerOwner) {
-            int ping = Mth.floor((serverPlayerOwner.latency / 1000.0) * 20.0 + 0.5);
+            int ping = Mth.floor((serverPlayerOwner.connection.latency() / 1000.0) * 20.0 + 0.5);
             boundingBox = getBoundingBox(player, ping);
             velocity = getVelocity(player, ping);
         }

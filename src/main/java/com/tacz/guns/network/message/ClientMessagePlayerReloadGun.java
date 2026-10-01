@@ -1,34 +1,33 @@
 package com.tacz.guns.network.message;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.entity.IGunOperator;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+public class ClientMessagePlayerReloadGun implements CustomPacketPayload {
+    public static final ClientMessagePlayerReloadGun INSTANCE = ClientMessagePlayerReloadGun.INSTANCE;
+    public static final CustomPacketPayload.Type<ClientMessagePlayerReloadGun> TYPE = new CustomPacketPayload.Type<>(
+        ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "client_player_reload")
+    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientMessagePlayerReloadGun> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
-public class ClientMessagePlayerReloadGun {
-    public ClientMessagePlayerReloadGun() {
+    private ClientMessagePlayerReloadGun() { }
+
+    @Override
+    public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static void encode(ClientMessagePlayerReloadGun message, FriendlyByteBuf buf) {
-    }
-
-    public static ClientMessagePlayerReloadGun decode(FriendlyByteBuf buf) {
-        return new ClientMessagePlayerReloadGun();
-    }
-
-    public static void handle(ClientMessagePlayerReloadGun message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isServer()) {
-            context.enqueueWork(() -> {
-                ServerPlayer entity = context.getSender();
-                if (entity == null) {
-                    return;
-                }
-                IGunOperator.fromLivingEntity(entity).reload();
-            });
-        }
-        context.setPacketHandled(true);
+    public static void handle(ClientMessagePlayerReloadGun message, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            ServerPlayer entity = (ServerPlayer) context.player();
+            IGunOperator.fromLivingEntity(entity).reload();
+        });
     }
 }

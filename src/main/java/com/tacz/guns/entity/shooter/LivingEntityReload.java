@@ -14,8 +14,8 @@ import com.tacz.guns.util.time.GunTime;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.common.NeoForge;
 
 public class LivingEntityReload {
     private final LivingEntity shooter;
@@ -66,7 +66,7 @@ public class LivingEntityReload {
                 return;
             }
             // 触发装弹事件
-            if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(shooter, currentGunItem, LogicalSide.SERVER))) {
+            if (NeoForge.EVENT_BUS.post(new GunReloadEvent(shooter, currentGunItem, LogicalSide.SERVER)).isCanceled()) {
                 return;
             }
             NetworkHandler.sendToTrackingEntity(new ServerMessageGunReload(shooter.getId(), currentGunItem), shooter);
@@ -127,7 +127,7 @@ public class LivingEntityReload {
         }
         // 状态更新后再通知监听器。
         if (finishedReload) {
-            MinecraftForge.EVENT_BUS.post(new GunFinishReloadEvent(shooter, currentGunItem, LogicalSide.SERVER));
+            NeoForge.EVENT_BUS.post(new GunFinishReloadEvent(shooter, currentGunItem, LogicalSide.SERVER));
             NetworkHandler.sendToTrackingEntityAndSelf(shooter, new ServerMessageGunFinishReload(shooter.getId(), currentGunItem));
         }
         return result;

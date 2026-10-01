@@ -1,0 +1,21 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 6
+    },
+    {
+      "item": {
+        "tag": "c:dusts/redstone"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "type": "attachment",
+    "id": "tacz:sight_fastfire_rifle"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

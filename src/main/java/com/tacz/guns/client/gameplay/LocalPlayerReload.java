@@ -11,7 +11,6 @@ import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
-import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerCancelReload;
 import com.tacz.guns.network.message.ClientMessagePlayerReloadGun;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
@@ -20,8 +19,9 @@ import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class LocalPlayerReload {
     private final LocalPlayerDataHolder data;
@@ -46,7 +46,7 @@ public class LocalPlayerReload {
                 return;
             }
             // 发包通知服务器
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerCancelReload());
+            PacketDistributor.sendToServer(ClientMessagePlayerCancelReload.INSTANCE);
             // 执行本地取消换弹逻辑
             this.cancelReload(display);
         });
@@ -85,12 +85,12 @@ public class LocalPlayerReload {
             data.clientReloadStarting = true;
             data.chargeProgress = 0f;
             // 触发换弹事件
-            if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
+            if (NeoForge.EVENT_BUS.post(new GunReloadEvent(player, player.getMainHandItem(), LogicalSide.CLIENT)).isCanceled()) {
                 data.clientReloadStarting = false;
                 return;
             }
             // 发包通知服务器
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
+            net.neoforged.neoforge.network.PacketDistributor.sendToServer(ClientMessagePlayerReloadGun.INSTANCE);
             if (gunData.isForceAimExitOnReload()) {
                 IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
             }

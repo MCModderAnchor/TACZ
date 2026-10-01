@@ -27,6 +27,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 
@@ -34,12 +35,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @JeiPlugin
 public class GunModPlugin implements IModPlugin {
-    private static final ResourceLocation UID = new ResourceLocation(GunMod.MOD_ID, "jei");
+    private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "jei");
 
-    private Map<ResourceLocation, RecipeType<GunSmithTableRecipe>> recipeTypeMap = new HashMap<>();
+    private Map<ResourceLocation, RecipeType<RecipeHolder<GunSmithTableRecipe>>> recipeTypeMap = new HashMap<>();
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
@@ -48,7 +50,7 @@ public class GunModPlugin implements IModPlugin {
         for (var entry : map) {
             BlockItem item = entry.getValue().getBlock();
             ItemStack icon = BlockItemBuilder.create(item).setId(entry.getKey()).build();
-            RecipeType<GunSmithTableRecipe> type = RecipeType.create(GunMod.MOD_ID, "gun_smith_table/" + entry.getKey().toString().replace(':', '_'), GunSmithTableRecipe.class);
+            RecipeType<RecipeHolder<GunSmithTableRecipe>> type = RecipeType.createRecipeHolderType(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "gun_smith_table/" + entry.getKey().toString().replace(':', '_')));
             registration.addRecipeCategories(new GunSmithTableCategory(registration.getJeiHelpers().getGuiHelper(), icon, type, item.getName(icon)));
             recipeTypeMap.put(entry.getKey(), type);
         }
@@ -62,13 +64,13 @@ public class GunModPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         if(Minecraft.getInstance().level==null) return;
         RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
-        List<GunSmithTableRecipe> recipes = recipeManager.getAllRecipesFor(ModRecipe.GUN_SMITH_TABLE_CRAFTING.get());
+        List<RecipeHolder<GunSmithTableRecipe>> recipes = recipeManager.getAllRecipesFor(ModRecipe.GUN_SMITH_TABLE_CRAFTING.get());
 
         for (var entry : recipeTypeMap.entrySet()) {
             TimelessAPI.getCommonBlockIndex(entry.getKey()).ifPresent(blockIndex -> {
-                List<GunSmithTableRecipe> recipeList = blockIndex.getFilter().filter(recipes, GunSmithTableRecipe::getId);
+                List<RecipeHolder<GunSmithTableRecipe>> recipeList = blockIndex.getFilter().filter(recipes, RecipeHolder::id).stream().collect(Collectors.toList());
                 recipeList.removeIf(recipe -> {
-                    return blockIndex.getData().getTabs().stream().noneMatch(tab -> Objects.equals(tab.id(), recipe.getResult().getGroup()));
+                    return blockIndex.getData().getTabs().stream().noneMatch(tab -> Objects.equals(tab.id(), recipe.value().getResult().getGroup()));
                 });
                 registration.addRecipes(entry.getValue(), recipeList);
             });

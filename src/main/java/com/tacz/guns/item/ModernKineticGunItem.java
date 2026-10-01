@@ -21,9 +21,12 @@ import com.tacz.guns.resource.pojo.data.attachment.MeleeData;
 import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.util.AllowAttachmentTagMatcher;
 import com.tacz.guns.util.time.GunTime;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -34,8 +37,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Vector2d;
 import org.luaj.vm2.*;
@@ -46,7 +49,6 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
@@ -57,8 +59,8 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     public static final String TYPE_NAME = "modern_kinetic";
 
     private static final DoubleFunction<AttributeModifier> AM_FACTORY = amount -> new AttributeModifier(
-            UUID.randomUUID(), "TACZ Melee Damage",
-            amount, AttributeModifier.Operation.ADDITION
+            ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "melee_damage"),
+            amount, AttributeModifier.Operation.ADD_VALUE
     );
 
     public ModernKineticGunItem() {
@@ -342,7 +344,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
     public final DefaultPropertyModification defaultPropertyModification = new DefaultPropertyModification();
 
     public class DefaultPropertyModification {
-        public static final ResourceLocation SLUGS = new ResourceLocation(GunMod.MOD_ID, "intrinsic/slug");
+        public static final ResourceLocation SLUGS = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "intrinsic/slug");
 
         @SuppressWarnings("unchecked")
         public <T> T modify(ItemStack gunItem, LivingEntity shooter, CommonGunIndex gunIndex,
@@ -563,19 +565,22 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
             return;
         }
         target.knockback(knockback, (float) Math.sin(Math.toRadians(user.getYRot())), (float) -Math.cos(Math.toRadians(user.getYRot())));
+        DamageSource source;
         if (user instanceof Player player) {
-            target.hurt(user.damageSources().playerAttack(player), damage);
+            source = user.damageSources().playerAttack(player);
         } else {
-            target.hurt(user.damageSources().mobAttack(user), damage);
+            source = user.damageSources().mobAttack(user);
         }
-        // 修复近战枪械不触发神化词条/宝石的bug
-        user.doEnchantDamageEffects(user, target);
+        target.hurt(source, damage);
+        if (target.level() instanceof ServerLevel serverLevel) {
+            EnchantmentHelper.doPostAttackEffects(serverLevel, target, source);
+        }
 
         if (!target.isAlive()) {
             return;
         }
         for (EffectData data : effects) {
-            MobEffect mobEffect = ForgeRegistries.MOB_EFFECTS.getValue(data.getEffectId());
+            Holder<MobEffect> mobEffect = BuiltInRegistries.MOB_EFFECT.getHolder(data.getEffectId()).orElse(null);
             if (mobEffect == null) {
                 continue;
             }

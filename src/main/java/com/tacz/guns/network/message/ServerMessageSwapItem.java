@@ -1,30 +1,30 @@
 package com.tacz.guns.network.message;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.event.SwapItemWithOffHand;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+public class ServerMessageSwapItem implements CustomPacketPayload {
+    public static final ServerMessageSwapItem INSTANCE = new ServerMessageSwapItem();
+    public static final CustomPacketPayload.Type<ServerMessageSwapItem> TYPE = new CustomPacketPayload.Type<>(
+        ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "server_swap_item")
+    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerMessageSwapItem> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
-public class ServerMessageSwapItem {
-    public ServerMessageSwapItem() {
+    private ServerMessageSwapItem() { }
+
+    @Override
+    public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static void encode(ServerMessageSwapItem message, FriendlyByteBuf buf) {
-    }
-
-    public static ServerMessageSwapItem decode(FriendlyByteBuf buf) {
-        return new ServerMessageSwapItem();
-    }
-
-    public static void handle(ServerMessageSwapItem message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isClient()) {
-            context.enqueueWork(() -> {
-                MinecraftForge.EVENT_BUS.post(new SwapItemWithOffHand());
-            });
-        }
-        context.setPacketHandled(true);
+    public static void handle(ServerMessageSwapItem message, IPayloadContext context) {
+        NeoForge.EVENT_BUS.post(new SwapItemWithOffHand());
     }
 }

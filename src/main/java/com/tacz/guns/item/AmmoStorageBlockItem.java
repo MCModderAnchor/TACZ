@@ -85,7 +85,7 @@ public class AmmoStorageBlockItem extends BlockItem {
     private static void mergeTooltipEntry(List<AmmoStorageTooltip.Entry> entries, ItemStack stack, long count) {
         for (int i = 0; i < entries.size(); i++) {
             AmmoStorageTooltip.Entry entry = entries.get(i);
-            if (ItemStack.isSameItemSameTags(entry.ammo(), stack)) {
+            if (ItemStack.isSameItemSameComponents(entry.ammo(), stack)) {
                 long mergedCount = saturatedAdd(entry.count(), count);
                 entries.set(i, new AmmoStorageTooltip.Entry(entry.ammo(), mergedCount));
                 return;

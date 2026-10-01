@@ -67,7 +67,7 @@ public class LocalPlayerUnload {
         if (Minecraft.getInstance().gameMode != null) {
             Minecraft.getInstance().gameMode.ensureHasSentCarriedItem();
         }
-        NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerUnloadGun(player.getInventory().selected, gunId));
+        net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientMessagePlayerUnloadGun(player.getInventory().selected, gunId));
     }
 
     private void showCannotUnload() {

@@ -1,107 +1,70 @@
 package com.tacz.guns.api.util;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.ApiStatus;
 
-/**
- * 一个简单的NBT包装，用于在Lua中访问NBT数据。<br/>
- * 暂时只支持基本数据类型的读写，不支持数组等复杂数据类型。
- */
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+/** Basic NBT access for Lua, with copy-on-write updates for item components. */
 @SuppressWarnings("unused")
-public record LuaNbtAccessor(CompoundTag nbt) {
+public final class LuaNbtAccessor {
+    private final Supplier<CompoundTag> reader;
+    private final Consumer<Consumer<CompoundTag>> writer;
 
+    public LuaNbtAccessor(CompoundTag nbt) {
+        this(() -> nbt, change -> change.accept(nbt));
+    }
+
+    private LuaNbtAccessor(Supplier<CompoundTag> reader, Consumer<Consumer<CompoundTag>> writer) {
+        this.reader = reader;
+        this.writer = writer;
+    }
+
+    /** Read the latest component on every access; never retain a stale snapshot. */
     public static LuaNbtAccessor from(ItemStack stack) {
-        return new LuaNbtAccessor(stack.getTag());
+        return new LuaNbtAccessor(
+                () -> stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag(),
+                change -> stack.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY,
+                        data -> data.update(change)));
     }
 
-    public static LuaNbtAccessor from(CompoundTag nbt) {
-        return new LuaNbtAccessor(nbt);
-    }
-
-    public boolean contains(String key) {
-        return nbt.contains(key);
-    }
-
-    public boolean contains(String key, int type) {
-        return nbt.contains(key, type);
-    }
-
-    public LuaNbtAccessor newCompoundTag() {
-        return new LuaNbtAccessor(new CompoundTag());
-    }
-
-    public int getInt(String key) {
-        return nbt.getInt(key);
-    }
-
-    public double getDouble(String key) {
-        return nbt.getDouble(key);
-    }
-
-    public float getFloat(String key) {
-        return nbt.getFloat(key);
-    }
-
-    public long getLong(String key) {
-        return nbt.getLong(key);
-    }
-
-    public String getString(String key) {
-        return nbt.getString(key);
-    }
-
-    public boolean getBoolean(CompoundTag nbt, String key) {
-        return nbt.getBoolean(key);
-    }
+    public static LuaNbtAccessor from(CompoundTag nbt) { return new LuaNbtAccessor(nbt); }
+    public boolean contains(String key) { return reader.get().contains(key); }
+    public boolean contains(String key, int type) { return reader.get().contains(key, type); }
+    public LuaNbtAccessor newCompoundTag() { return from(new CompoundTag()); }
+    public int getInt(String key) { return reader.get().getInt(key); }
+    public double getDouble(String key) { return reader.get().getDouble(key); }
+    public float getFloat(String key) { return reader.get().getFloat(key); }
+    public long getLong(String key) { return reader.get().getLong(key); }
+    public String getString(String key) { return reader.get().getString(key); }
+    public boolean getBoolean(String key) { return reader.get().getBoolean(key); }
+    /** Retained for scripts using the old two-argument API. */
+    public boolean getBoolean(CompoundTag nbt, String key) { return nbt.getBoolean(key); }
 
     public LuaNbtAccessor getCompound(String key) {
-        if (!nbt.contains(key, Tag.TAG_COMPOUND)) {
-            return null;
-        }
-        return from(nbt.getCompound(key));
+        if (!reader.get().contains(key, Tag.TAG_COMPOUND)) return null;
+        return new LuaNbtAccessor(() -> reader.get().getCompound(key), change -> writer.accept(root -> {
+            if (!root.contains(key, Tag.TAG_COMPOUND)) root.put(key, new CompoundTag());
+            change.accept(root.getCompound(key));
+        }));
     }
 
-    public void putInt(String key, int value) {
-        nbt.putInt(key, value);
-    }
-
-    public void putDouble(String key, double value) {
-        nbt.putDouble(key, value);
-    }
-
-    public void putFloat(String key, float value) {
-        nbt.putFloat(key, value);
-    }
-
-    public void putLong(String key, long value) {
-        nbt.putLong(key, value);
-    }
-
-    public void putString(String key, String value) {
-        nbt.putString(key, value);
-    }
-
-    public void putBoolean(String key, boolean value) {
-        nbt.putBoolean(key, value);
-    }
-
-    /**
-     * 向当前的NbtCompound中添加一个新的Compound
-     *
-     * @param key   键
-     * @param value 在脚本中请使用{@link LuaNbtAccessor#newCompoundTag()}创建一个新的LuaNbtAccessor对象
-     */
+    public void putInt(String key, int value) { writer.accept(tag -> tag.putInt(key, value)); }
+    public void putDouble(String key, double value) { writer.accept(tag -> tag.putDouble(key, value)); }
+    public void putFloat(String key, float value) { writer.accept(tag -> tag.putFloat(key, value)); }
+    public void putLong(String key, long value) { writer.accept(tag -> tag.putLong(key, value)); }
+    public void putString(String key, String value) { writer.accept(tag -> tag.putString(key, value)); }
+    public void putBoolean(String key, boolean value) { writer.accept(tag -> tag.putBoolean(key, value)); }
     public void putCompound(String key, LuaNbtAccessor value) {
-        if (value != null) {
-            nbt.put(key, value.nbt());
-        }
+        if (value != null) writer.accept(tag -> tag.put(key, value.nbt()));
     }
 
-    @Override
+    /** A detached value: changes must go through the accessor's put methods. */
     @ApiStatus.Internal
-    public CompoundTag nbt() {
-        return nbt;
-    }
+    public CompoundTag nbt() { return reader.get().copy(); }
 }

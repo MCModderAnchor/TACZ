@@ -26,8 +26,8 @@ import java.util.function.Consumer;
 
 /** A screen-local content pack filter; the registered creative tabs keep their full contents. */
 public class CreativePackFilters {
-    private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("textures/gui/recipe_book.png");
-    private static final ResourceLocation ALL_PACKS_ICON = new ResourceLocation(GunMod.MOD_ID, "textures/gui/creative_pack_all.png");
+    private static final ResourceLocation TAB_TEXTURE = ResourceLocation.parse("textures/gui/recipe_book.png");
+    private static final ResourceLocation ALL_PACKS_ICON = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/gui/creative_pack_all.png");
     private static final int VISIBLE_PACKS = 3;
     private static final int TAB_HEIGHT = 26;
     private static final int TAB_SPACING = 29;

@@ -7,7 +7,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -49,8 +49,8 @@ public final class AmmoBlockConfigRead {
             if (isTag) {
                 // 配置加载时 tag 尚未绑定，缓存 TagKey 可随数据包重载自动匹配新内容。
                 tags.add(BlockTags.create(id));
-            } else if (ForgeRegistries.BLOCKS.containsKey(id)) {
-                blocks.add(ForgeRegistries.BLOCKS.getValue(id));
+            } else if (BuiltInRegistries.BLOCK.containsKey(id)) {
+                blocks.add(BuiltInRegistries.BLOCK.get(id));
             } else {
                 GunMod.LOGGER.warn("Ignoring unknown block ID '{}' in ammo.{}", entry, configName);
             }

@@ -4,8 +4,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.bus.api.Event;
+import net.neoforged.fml.LogicalSide;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * 生物被枪械子弹击杀时触发的事件
  */
-public class EntityKillByGunEvent extends Event implements KubeJSGunEventPoster<EntityKillByGunEvent>{
+public class EntityKillByGunEvent extends Event {
     private final Entity bullet;
     private final @Nullable LivingEntity killedEntity;
     private final @Nullable LivingEntity attacker;
@@ -41,7 +41,7 @@ public class EntityKillByGunEvent extends Event implements KubeJSGunEventPoster<
         this.isHeadShot = isHeadShot;
         this.headshotMultiplier = headshotMultiplier;
         this.logicalSide = logicalSide;
-        postEventToKubeJS(this);
+
     }
 
     /**

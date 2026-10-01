@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 
 public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
+    public static AttachmentItemRenderer INSTANCE;
     public static final SlotModel SLOT_ATTACHMENT_MODEL = new SlotModel();
 
     public AttachmentItemRenderer(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
@@ -42,7 +43,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                     poseStack.translate(0.5, 1.5, 0.5);
                     poseStack.mulPose(Axis.ZN.rotationDegrees(180));
                     VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
-                    SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
+                    SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, net.minecraft.util.FastColor.ARGB32.color((int)(255 * ItemPreviewRenderContext.alpha()), 255, 255, 255));
                     return;
                 }
                 poseStack.translate(0.5, 2, 0.5);
@@ -58,7 +59,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.translate(0.5, 1.5, 0.5);
                 poseStack.mulPose(Axis.ZN.rotationDegrees(180));
                 VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation()));
-                SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
+                SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, net.minecraft.util.FastColor.ARGB32.color((int)(255 * ItemPreviewRenderContext.alpha()), 255, 255, 255));
             });
             poseStack.popPose();
         }
@@ -92,7 +93,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.mulPose(Axis.YP.rotationDegrees(90));
             }
             VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(attachmentIndex.getSlotTexture()));
-            SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
+            SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, net.minecraft.util.FastColor.ARGB32.color((int)(255 * ItemPreviewRenderContext.alpha()), 255, 255, 255));
         }
         if (variant != null && variant.isOverlayMode()) {
             renderVariantOverlay(transformType, poseStack, pPackedLight, pPackedOverlay, variant, pBuffer);

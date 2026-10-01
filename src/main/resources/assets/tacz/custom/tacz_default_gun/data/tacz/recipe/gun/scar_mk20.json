@@ -1,0 +1,33 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 96
+    },
+    {
+      "item": {
+        "tag": "c:ingots/gold"
+      },
+      "count": 18
+    },
+    {
+      "item": {
+        "tag": "c:gems/diamond"
+      },
+      "count": 3
+    },
+    {
+      "item": {
+        "tag": "forge:rods/blaze"
+      },
+      "count": 5
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:scar_mk20"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

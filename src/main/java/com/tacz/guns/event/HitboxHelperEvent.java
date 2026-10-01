@@ -2,21 +2,23 @@ package com.tacz.guns.event;
 
 import com.tacz.guns.config.common.OtherConfig;
 import com.tacz.guns.util.HitboxHelper;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class HitboxHelperEvent {
     @SubscribeEvent(receiveCanceled = true)
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!OtherConfig.SERVER_HITBOX_LATENCY_FIX.get()) {
             return;
         }
-        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END) {
-            HitboxHelper.onPlayerTick(event.player);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            HitboxHelper.onPlayerTick(player);
         }
     }
 

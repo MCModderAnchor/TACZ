@@ -1,0 +1,33 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/gold"
+      },
+      "count": 8
+    },
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 72
+    },
+    {
+      "item": {
+        "tag": "c:gems/quartz"
+      },
+      "count": 3
+    },
+    {
+      "item": {
+        "tag": "c:gems/diamond"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:p90"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

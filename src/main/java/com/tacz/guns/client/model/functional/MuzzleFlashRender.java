@@ -1,5 +1,6 @@
 package com.tacz.guns.client.model.functional;
 
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -13,7 +14,7 @@ import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.particle.ThirdPersonMuzzleParticleManager;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.pojo.display.gun.MuzzleFlash;
-import com.tacz.guns.compat.oculus.OculusCompat;
+import com.tacz.guns.compat.iris.IrisCompat;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
 import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
@@ -102,7 +103,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
                 poseStack2.mulPose(Axis.ZP.rotationDegrees(muzzleFlashRandomRotate));
                 poseStack2.translate(0, -1, 0);
                 RenderType renderTypeBg = RenderType.entityTranslucent(muzzleFlash.getTexture());
-                MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeBg), light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeBg), light, overlay);
             }
             poseStack2.popPose();
 
@@ -113,9 +114,12 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
                 poseStack2.mulPose(Axis.ZP.rotationDegrees(muzzleFlashRandomRotate));
                 poseStack2.translate(0, -0.9, 0);
                 RenderType renderTypeLight = RenderType.energySwirl(muzzleFlash.getTexture(), 1, 1);
-                MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeLight), light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeLight), light, overlay);
             }
             poseStack2.popPose();
+            if (IrisCompat.isPackInUseQuick()) {
+                multiBufferSource.endBatch();
+            }
         }
     }
 
@@ -127,7 +131,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
     @Override
     @SuppressWarnings("unchecked")
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
-        if (OculusCompat.isRenderShadow()) {
+        if (IrisCompat.isRenderShadow()) {
             return;
         }
         long time;

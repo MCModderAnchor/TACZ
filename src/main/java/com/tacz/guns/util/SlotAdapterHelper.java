@@ -25,10 +25,12 @@ public final class SlotAdapterHelper {
         if (holder.isEmpty() || type == null || adapterId == null) {
             return;
         }
-        CompoundTag root = holder.getOrCreateTag();
-        CompoundTag adapters = root.getCompound(SLOT_ADAPTERS_TAG);
-        adapters.putString(slotKey(type), adapterId.toString());
-        root.put(SLOT_ADAPTERS_TAG, adapters);
+        holder.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY, data -> data.update(root -> {
+            CompoundTag adapters = root.getCompound(SLOT_ADAPTERS_TAG);
+            adapters.putString(slotKey(type), adapterId.toString());
+            root.put(SLOT_ADAPTERS_TAG, adapters);
+        }));
     }
 
     @Nullable
@@ -36,7 +38,7 @@ public final class SlotAdapterHelper {
         if (holder.isEmpty() || type == null) {
             return null;
         }
-        CompoundTag root = holder.getTag();
+        CompoundTag root = holder.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
         if (root == null || !root.contains(SLOT_ADAPTERS_TAG, Tag.TAG_COMPOUND)) {
             return null;
         }
@@ -52,17 +54,17 @@ public final class SlotAdapterHelper {
         if (holder.isEmpty() || type == null) {
             return;
         }
-        CompoundTag root = holder.getTag();
+        CompoundTag root = holder.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
         if (root == null || !root.contains(SLOT_ADAPTERS_TAG, Tag.TAG_COMPOUND)) {
             return;
         }
-        CompoundTag adapters = root.getCompound(SLOT_ADAPTERS_TAG);
-        adapters.remove(slotKey(type));
-        if (adapters.isEmpty()) {
-            root.remove(SLOT_ADAPTERS_TAG);
-        } else {
-            root.put(SLOT_ADAPTERS_TAG, adapters);
-        }
+        holder.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY, data -> data.update(current -> {
+            CompoundTag adapters = current.getCompound(SLOT_ADAPTERS_TAG);
+            adapters.remove(slotKey(type));
+            if (adapters.isEmpty()) current.remove(SLOT_ADAPTERS_TAG);
+            else current.put(SLOT_ADAPTERS_TAG, adapters);
+        }));
     }
 
     public static boolean allowsDirectAttachment(ItemStack gun, ResourceLocation attachmentId) {

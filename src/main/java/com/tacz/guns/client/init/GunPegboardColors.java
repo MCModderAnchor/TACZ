@@ -7,13 +7,13 @@ import com.tacz.guns.init.ModItems;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeableLeatherItem;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
-@Mod.EventBusSubscriber(modid = GunMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@net.neoforged.fml.common.EventBusSubscriber(modid = GunMod.MOD_ID, bus = net.neoforged.fml.common.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class GunPegboardColors {
     @SubscribeEvent
     public static void blockColors(RegisterColorHandlersEvent.Block event) {
@@ -30,9 +30,9 @@ public final class GunPegboardColors {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> ItemProperties.register(ModItems.GUN_PEGBOARD.get(), new ResourceLocation(GunMod.MOD_ID, "dyed"),
+        event.enqueueWork(() -> ItemProperties.register(ModItems.GUN_PEGBOARD.get(), ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "dyed"),
                 (stack, level, entity, seed) -> ((DyeableLeatherItem) stack.getItem()).hasCustomColor(stack) ? 1 : 0));
-        event.enqueueWork(() -> ItemProperties.register(ModItems.GLOW_GUN_PEGBOARD.get(), new ResourceLocation(GunMod.MOD_ID, "dyed"),
+        event.enqueueWork(() -> ItemProperties.register(ModItems.GLOW_GUN_PEGBOARD.get(), ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "dyed"),
                 (stack, level, entity, seed) -> ((DyeableLeatherItem) stack.getItem()).hasCustomColor(stack) ? 1 : 0));
     }
 }

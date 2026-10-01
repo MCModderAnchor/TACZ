@@ -18,8 +18,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +80,7 @@ public class ClientIndexManager {
 
             // 自动切一次枪，以便刷新状态机
             IClientPlayerGunOperator.fromLocalPlayer(player).draw(ItemStack.EMPTY);
-            FirstPersonRenderHandler.reset();
+            // FIXME: FirstPersonRenderHandler.reset();
         }
     }
 

@@ -1,6 +1,6 @@
 package com.tacz.guns.loot;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.tacz.guns.init.ModLootModifiers;
 import com.tacz.guns.resource.CommonAssetsManager;
@@ -10,14 +10,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.loot.LootModifier;
+import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+import net.neoforged.neoforge.common.loot.LootModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class LootTableInjectorModifier extends LootModifier {
-    public static final Codec<LootTableInjectorModifier> CODEC = RecordCodecBuilder.create(instance ->
+    public static final MapCodec<LootTableInjectorModifier> CODEC = RecordCodecBuilder.mapCodec(instance ->
             codecStart(instance).apply(instance, LootTableInjectorModifier::new));
 
     public LootTableInjectorModifier(LootItemCondition[] conditions) {
@@ -46,7 +46,7 @@ public class LootTableInjectorModifier extends LootModifier {
     }
 
     @Override
-    public Codec<? extends IGlobalLootModifier> codec() {
+    public MapCodec<? extends IGlobalLootModifier> codec() {
         return ModLootModifiers.LOOT_TABLE_INJECTOR.get();
     }
 }

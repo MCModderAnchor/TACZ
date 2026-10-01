@@ -40,11 +40,11 @@ public final class VirtualOemAttachment {
     }
 
     public static void mark(ItemStack attachmentStack) {
-        attachmentStack.getOrCreateTag().putBoolean(VIRTUAL_OEM_TAG, true);
+        attachmentStack.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY, data -> data.update(tag -> tag.putBoolean(VIRTUAL_OEM_TAG, true)));
     }
 
     public static boolean isMarked(ItemStack attachmentStack) {
-        CompoundTag tag = attachmentStack.getTag();
+        CompoundTag tag = attachmentStack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
         return tag != null && tag.contains(VIRTUAL_OEM_TAG, Tag.TAG_BYTE) && tag.getBoolean(VIRTUAL_OEM_TAG);
     }
 }

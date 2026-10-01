@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AmmoStorageScreen extends AbstractContainerScreen<AmmoStorageMenu> {
-    private static final ResourceLocation CONTAINER_LOCATION = new ResourceLocation("textures/gui/container/generic_54.png");
+    private static final ResourceLocation CONTAINER_LOCATION = ResourceLocation.parse("textures/gui/container/generic_54.png");
     private static final int CONTAINER_ROWS = AmmoStorageMenu.STORAGE_ROWS;
     private int virtualClickButton = -1;
 
@@ -90,7 +90,7 @@ public class AmmoStorageScreen extends AbstractContainerScreen<AmmoStorageMenu> 
             int entryId = cell < menu.getEntries().size() ? menu.getEntries().get(cell).id() : -1;
             AmmoStorageMenu.Action action = hasShiftDown() ? AmmoStorageMenu.Action.QUICK_MOVE
                     : button == 1 ? AmmoStorageMenu.Action.PICKUP_HALF : AmmoStorageMenu.Action.PICKUP;
-            NetworkHandler.CHANNEL.sendToServer(new ClientMessageAmmoStorageClick(menu.containerId, entryId, action));
+            net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientMessageAmmoStorageClick(menu.containerId, entryId, action));
             virtualClickButton = button;
             return true;
         }

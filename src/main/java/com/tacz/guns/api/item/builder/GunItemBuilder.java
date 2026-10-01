@@ -7,11 +7,12 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.item.gun.GunItemManager;
+import net.minecraft.core.HolderLookup;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.util.VirtualOemAttachment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 import java.util.EnumMap;
 
@@ -81,7 +82,8 @@ public final class GunItemBuilder {
      * 强行以默认的枪支Item构建一个物品，不进行index检查<br/>
      * 可能会返回功能不完整的物品
      */
-    public ItemStack forceBuild() {
+    public ItemStack forceBuild(HolderLookup.Provider provider) {
+        if (!this.attachments.isEmpty() && provider == null) throw new IllegalArgumentException("'provider' must not be null if attachments are present");
         ItemStack gun = new ItemStack(ModItems.MODERN_KINETIC_GUN.get(), this.count);
         if (gun.getItem() instanceof IGun iGun) {
             iGun.setGunId(gun, this.gunId);
@@ -89,18 +91,19 @@ public final class GunItemBuilder {
             iGun.setCurrentAmmoCount(gun, this.ammoCount);
             iGun.setBulletInBarrel(gun, this.bulletInBarrel);
             if(heatData) iGun.setHeatAmount(gun, 0f);
-            installAttachments(gun, iGun);
+            installAttachments(provider, gun, iGun);
         }
         return gun;
     }
 
-    public ItemStack build() {
+    public ItemStack build(HolderLookup.Provider provider) {
+        if (!this.attachments.isEmpty() && provider == null) throw new IllegalArgumentException("'provider' must not be null if attachments are present");
         String itemType = TimelessAPI.getCommonGunIndex(gunId).map(index -> index.getPojo().getItemType()).orElse(null);
         if (itemType == null) {
             return ItemStack.EMPTY;
         }
 
-        RegistryObject<? extends AbstractGunItem> gunItemRegistryObject = GunItemManager.getGunItemRegistryObject(itemType);
+        DeferredItem<? extends AbstractGunItem> gunItemRegistryObject = GunItemManager.getGunItemRegistryObject(itemType);
         if (gunItemRegistryObject == null) {
             return ItemStack.EMPTY;
         }
@@ -111,23 +114,23 @@ public final class GunItemBuilder {
             iGun.setFireMode(gun, this.fireMode);
             iGun.setCurrentAmmoCount(gun, this.ammoCount);
             iGun.setBulletInBarrel(gun, this.bulletInBarrel);
-            installAttachments(gun, iGun);
+            installAttachments(provider, gun, iGun);
         }
         return gun;
     }
 
-    private void installAttachments(ItemStack gun, IGun iGun) {
+    private void installAttachments(HolderLookup.Provider provider, ItemStack gun, IGun iGun) {
         this.virtualAttachments.forEach((type, id) -> {
             if (this.attachments.containsKey(type)) {
                 return;
             }
             ItemStack attachmentStack = AttachmentItemBuilder.create().setId(id).build();
             VirtualOemAttachment.mark(attachmentStack);
-            iGun.installAttachment(gun, attachmentStack);
+            iGun.installAttachment(provider, gun, attachmentStack);
         });
         this.attachments.forEach((type, id) -> {
             ItemStack attachmentStack = AttachmentItemBuilder.create().setId(id).build();
-            iGun.installAttachment(gun, attachmentStack);
+            iGun.installAttachment(provider, gun, attachmentStack);
         });
     }
 }

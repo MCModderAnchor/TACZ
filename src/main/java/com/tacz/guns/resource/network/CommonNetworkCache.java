@@ -196,6 +196,7 @@ public enum CommonNetworkCache implements ICommonResourceProvider {
         for (Map.Entry<DataType, Map<ResourceLocation, String>> entry : delayed.entrySet()) {
             fromNetwork(entry.getKey(), entry.getValue());
         }
+        AllowAttachmentTagMatcher.resetCache();
     }
 
     private <T> T parse(String json, Class<T> dataClass) {

@@ -1,5 +1,6 @@
 package com.tacz.guns.compat.cloth;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.compat.cloth.client.*;
 import com.tacz.guns.compat.cloth.common.AmmoClothConfig;
 import com.tacz.guns.compat.cloth.common.GunClothConfig;
@@ -11,14 +12,18 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.neoforged.fml.IExtensionPoint;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import javax.annotation.Nullable;
 
-public class MenuIntegration {
+public class MenuIntegration implements IExtensionPoint {
     public static ConfigBuilder getConfigBuilder() {
         ConfigBuilder root = ConfigBuilder.create().setTitle(Component.literal("Timeless and Classics Guns"));
+        root.setSavingRunnable(() -> {
+            CommonConfig.spec.save();
+            ClientConfig.spec.save();
+        });
         root.setGlobalized(true);
         root.setGlobalizedExpanded(false);
         root.setSavingRunnable(() -> {
@@ -46,8 +51,7 @@ public class MenuIntegration {
     }
 
     public static void registerModsPage() {
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () ->
-                new ConfigScreenHandler.ConfigScreenFactory((client, parent) -> getConfigScreen(parent)));
+        GunMod.container.registerExtensionPoint(IConfigScreenFactory.class, (container, screen) -> getConfigScreen(screen));
     }
 
     public static Screen getConfigScreen(@Nullable Screen parent) {

@@ -1,11 +1,11 @@
 package com.tacz.guns.config.client;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ResourceConfig {
-    public static ForgeConfigSpec.BooleanValue ENABLE_LAZY_CLIENT_ASSET_LOAD;
+    public static ModConfigSpec.BooleanValue ENABLE_LAZY_CLIENT_ASSET_LOAD;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("resource");
 
         builder.comment("Build heavy TACZ client assets such as models and animation state machines on demand.",

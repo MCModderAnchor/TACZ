@@ -1,14 +1,14 @@
 package com.tacz.guns.config.client;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class SoundConfig {
-    public static ForgeConfigSpec.IntValue HIT_SOUND_CONCURRENCY_LIMIT;
-    public static ForgeConfigSpec.IntValue DEFAULT_SOUND_CONCURRENCY_LIMIT;
-    public static ForgeConfigSpec.IntValue HIGH_FREQUENCY_SOUND_CONCURRENCY_LIMIT;
-    public static ForgeConfigSpec.BooleanValue FIRST_PERSON_ANIMATION_SOUND_TRACKING;
+    public static ModConfigSpec.IntValue HIT_SOUND_CONCURRENCY_LIMIT;
+    public static ModConfigSpec.IntValue DEFAULT_SOUND_CONCURRENCY_LIMIT;
+    public static ModConfigSpec.IntValue HIGH_FREQUENCY_SOUND_CONCURRENCY_LIMIT;
+    public static ModConfigSpec.BooleanValue FIRST_PERSON_ANIMATION_SOUND_TRACKING;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("sound");
 
         builder.comment("Max active hit marker sounds for the same entity and sound id. 0 disables this limit.");

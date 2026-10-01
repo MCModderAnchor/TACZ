@@ -1,5 +1,8 @@
 package com.tacz.guns.entity.sync.core;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.apache.commons.lang3.Validate;
@@ -16,6 +19,18 @@ public record SyncedDataKey<E extends Entity, T>(Pair<ResourceLocation, Resource
                                                  SyncedClassKey<E> classKey, IDataSerializer<T> serializer,
                                                  Supplier<T> defaultValueSupplier, boolean save, boolean persistent,
                                                  SyncMode syncMode) {
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncedDataKey<?, ?>> STREAM_CODEC = StreamCodec.composite(
+        ResourceLocation.STREAM_CODEC, (key) -> key.classKey().id(),
+        ResourceLocation.STREAM_CODEC, SyncedDataKey::id,
+        (classKey, dataKey) -> {
+            SyncedClassKey<?> syncedClassKey = SyncedEntityData.instance().getClassKey(classKey);
+            if (syncedClassKey == null) return null;
+            SyncedDataKey<?, ?> syncedDataKey = SyncedEntityData.instance().getKey(syncedClassKey, dataKey);
+            if (syncedDataKey == null || !syncedDataKey.save()) return null;
+            return syncedDataKey;
+        }
+    );
+
     public static <E extends Entity, T> Builder<E, T> builder(SyncedClassKey<E> entityClass, IDataSerializer<T> serializer) {
         return new Builder<>(entityClass, serializer);
     }
@@ -119,7 +134,7 @@ public record SyncedDataKey<E extends Entity, T>(Pair<ResourceLocation, Resource
          * Sets the id for the synced key using a String. This is a required property.
          */
         public Builder<E, T> id(String id) {
-            this.id = new ResourceLocation(id);
+            this.id = ResourceLocation.parse(id);
             return this;
         }
 

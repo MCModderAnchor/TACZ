@@ -31,11 +31,14 @@ public class GunPackList extends ContainerObjectSelectionList<GunPackList.Entry>
     private final EditBox byName;
     private boolean clearingFilters;
 
+    /*@Override
+    protected void renderListBackground(GuiGraphics pGuiGraphics) {
+        super.renderListBackground(pGuiGraphics);
+    }*/
+
     public GunPackList(Minecraft pMinecraft, int pWidth, int pHeight, int pY0, int pY1, int pItemHeight,
                        Map<ResourceLocation, List<ResourceLocation>> recipes, GunSmithTableScreen parent) {
-        super(pMinecraft, pWidth, pHeight, pY0, pY1, pItemHeight);
-        this.setRenderBackground(false);
-        this.setRenderTopAndBottom(false);
+        super(pMinecraft, pWidth, pHeight, pY0, pItemHeight);
         this.parent = parent;
         Set<String> namespaces = new HashSet<>();
         for (List<ResourceLocation> entry : recipes.values()) {
@@ -135,27 +138,28 @@ public class GunPackList extends ContainerObjectSelectionList<GunPackList.Entry>
     }
 
     protected int getScrollbarPosition() {
-        return this.x1 - 2;
+        return this.getRight() - 2;
     }
 
     @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        this.renderBackground(pGuiGraphics);
-        pGuiGraphics.fill(this.x0, this.y0, this.x1, this.y1, 0x80000000);
+    public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        this.renderListBackground(pGuiGraphics);
+        pGuiGraphics.fill(this.getX(), this.getY(), this.getRight(), this.getBottom(), 0x80000000);
         int i = this.getScrollbarPosition();
         int j = i + 6;
 
         this.enableScissor(pGuiGraphics);
-        this.renderList(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        this.renderListItems(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         pGuiGraphics.disableScissor();
+        this.renderListSeparators(pGuiGraphics);
 
         int i2 = this.getMaxScroll();
         if (i2 > 0) {
-            int j2 = (int)((float)((this.y1 - this.y0) * (this.y1 - this.y0)) / (float)this.getMaxPosition());
-            j2 = Mth.clamp(j2, 32, this.y1 - this.y0 - 8);
-            int k1 = (int)this.getScrollAmount() * (this.y1 - this.y0 - j2) / i2 + this.y0;
-            if (k1 < this.y0) {
-                k1 = this.y0;
+            int j2 = (int)((float)((this.getBottom() - this.getY()) * (this.getBottom() - this.getY())) / (float)this.getMaxPosition());
+            j2 = Mth.clamp(j2, 32, this.getBottom() - this.getY() - 8);
+            int k1 = (int)this.getScrollAmount() * (this.getBottom() - this.getY() - j2) / i2 + this.getY();
+            if (k1 < this.getY()) {
+                k1 = this.getY();
             }
             pGuiGraphics.fill(i, k1, j, k1 + j2, -8355712);
             pGuiGraphics.fill(i, k1, j - 1, k1 + j2 - 1, -4144960);
@@ -166,7 +170,7 @@ public class GunPackList extends ContainerObjectSelectionList<GunPackList.Entry>
     }
 
     public int getRowLeft() {
-        return this.x0 + 4;
+        return this.getX() + 4;
     }
 
     public int getRowWidth() {
@@ -199,7 +203,10 @@ public class GunPackList extends ContainerObjectSelectionList<GunPackList.Entry>
     }
 
     public static class Checkbox extends AbstractButton {
-        private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
+        private static final ResourceLocation CHECKBOX = ResourceLocation.withDefaultNamespace("textures/gui/sprites/widget/checkbox.png");
+        private static final ResourceLocation CHECKBOX_HIGHLIGHTED = ResourceLocation.withDefaultNamespace("textures/gui/sprites/widget/checkbox_highlighted.png");
+        private static final ResourceLocation CHECKBOX_SELECTED = ResourceLocation.withDefaultNamespace("textures/gui/sprites/widget/checkbox_selected.png");
+        private static final ResourceLocation CHECKBOX_SELECTED_HIGHLIGHTED = ResourceLocation.withDefaultNamespace("textures/gui/sprites/widget/checkbox_selected_highlighted.png");
         protected boolean selected;
         protected final boolean showLabel;
         private String id;
@@ -249,7 +256,21 @@ public class GunPackList extends ContainerObjectSelectionList<GunPackList.Entry>
             Font font = minecraft.font;
             pGuiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
             RenderSystem.enableBlend();
-            pGuiGraphics.blit(TEXTURE, this.getX(), this.getY(), this.isFocused() ? 10.0F : 0.0F, this.selected ? 10.0F : 0.0F, 10, 10, 32, 32);
+            ResourceLocation texture;
+            if (this.isFocused()) {
+                if (this.selected) {
+                    texture = CHECKBOX_SELECTED_HIGHLIGHTED;
+                } else {
+                    texture = CHECKBOX_HIGHLIGHTED;
+                }
+            } else {
+                if (this.selected) {
+                    texture = CHECKBOX_SELECTED;
+                } else {
+                    texture = CHECKBOX;
+                }
+            }
+            pGuiGraphics.blit(texture, this.getX(), this.getY(), 0.0F, 0.0F, 10, 10, 10, 10);
             pGuiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             if (this.showLabel) {
                 pGuiGraphics.drawString(font, this.getMessage(), this.getX() + 24, this.getY() + (this.height - 8) / 2, 14737632 | Mth.ceil(this.alpha * 255.0F) << 24);

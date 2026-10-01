@@ -1,0 +1,39 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 130
+    },
+    {
+      "item": {
+        "tag": "c:ingots/gold"
+      },
+      "count": 18
+    },
+    {
+      "item": {
+        "tag": "c:gems/diamond"
+      },
+      "count": 4
+    },
+    {
+      "item": {
+        "tag": "forge:rods/blaze"
+      },
+      "count": 6
+    },
+    {
+      "item": {
+        "tag": "c:gems/quartz"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:hcar"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

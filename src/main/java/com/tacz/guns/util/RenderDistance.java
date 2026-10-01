@@ -3,8 +3,8 @@ package com.tacz.guns.util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.client.renderer.item.ScreenItemVboContext;
 import com.tacz.guns.config.client.RenderConfig;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 @OnlyIn(Dist.CLIENT)

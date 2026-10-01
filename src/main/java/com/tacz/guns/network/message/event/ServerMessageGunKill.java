@@ -1,22 +1,38 @@
 package com.tacz.guns.network.message.event;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.event.common.EntityKillByGunEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
-public class ServerMessageGunKill {
+public class ServerMessageGunKill implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<ServerMessageGunKill> TYPE = new CustomPacketPayload.Type<>(
+        ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "server_gun_kill")
+    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerMessageGunKill> STREAM_CODEC = StreamCodec.of(
+        ServerMessageGunKill::encode,
+        ServerMessageGunKill::decode
+    );
+
+    @Override
+    public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
     private final int bulletId;
     private final int killEntityId;
     private final int attackerId;
@@ -37,7 +53,7 @@ public class ServerMessageGunKill {
         this.headshotMultiplier = headshotMultiplier;
     }
 
-    public static void encode(ServerMessageGunKill message, FriendlyByteBuf buf) {
+    public static void encode(RegistryFriendlyByteBuf buf, ServerMessageGunKill message) {
         buf.writeInt(message.bulletId);
         buf.writeInt(message.killEntityId);
         buf.writeInt(message.attackerId);
@@ -48,7 +64,7 @@ public class ServerMessageGunKill {
         buf.writeFloat(message.headshotMultiplier);
     }
 
-    public static ServerMessageGunKill decode(FriendlyByteBuf buf) {
+    public static ServerMessageGunKill decode(RegistryFriendlyByteBuf buf) {
         int bulletId = buf.readInt();
         int killEntityId = buf.readInt();
         int attackerId = buf.readInt();
@@ -60,12 +76,8 @@ public class ServerMessageGunKill {
         return new ServerMessageGunKill(bulletId, killEntityId, attackerId, gunId, gunDisplayId, baseDamage, isHeadShot, headshotMultiplier);
     }
 
-    public static void handle(ServerMessageGunKill message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isClient()) {
-            context.enqueueWork(() -> onKill(message));
-        }
-        context.setPacketHandled(true);
+    public static void handle(ServerMessageGunKill message, IPayloadContext context) {
+        context.enqueueWork(() -> onKill(message));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -77,6 +89,6 @@ public class ServerMessageGunKill {
         @Nullable Entity bullet = level.getEntity(message.bulletId);
         @Nullable LivingEntity killedEntity = level.getEntity(message.killEntityId) instanceof LivingEntity livingEntity ? livingEntity : null;
         @Nullable LivingEntity attacker = level.getEntity(message.attackerId) instanceof LivingEntity livingEntity ? livingEntity : null;
-        MinecraftForge.EVENT_BUS.post(new EntityKillByGunEvent(bullet, killedEntity, attacker, message.gunId, message.gunDisplayId, message.baseDamage, null, message.isHeadShot, message.headshotMultiplier, LogicalSide.CLIENT));
+        NeoForge.EVENT_BUS.post(new EntityKillByGunEvent(bullet, killedEntity, attacker, message.gunId, message.gunDisplayId, message.baseDamage, null, message.isHeadShot, message.headshotMultiplier, LogicalSide.CLIENT));
     }
 }

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 public class ResultButton extends Button {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/gun_smith_table.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/gui/gun_smith_table.png");
     private final ItemStack stack;
     private boolean isSelected = false;
 

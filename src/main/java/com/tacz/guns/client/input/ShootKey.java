@@ -13,19 +13,18 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.client.settings.KeyModifier;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.client.settings.KeyModifier;
 import org.lwjgl.glfw.GLFW;
 
 import static com.tacz.guns.util.InputExtraCheck.isInGame;
 
-@OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(value = Dist.CLIENT)
+@EventBusSubscriber(value = Dist.CLIENT)
 public class ShootKey {
     public static final KeyMapping SHOOT_KEY = new KeyMapping("key.tacz.shoot.desc",
             KeyConflictContext.IN_GAME,
@@ -37,8 +36,8 @@ public class ShootKey {
     private static boolean controllerShootDown = false;
 
     @SubscribeEvent
-    public static void autoShoot(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !isInGame()) {
+    public static void autoShoot(ClientTickEvent.Post event) {
+        if (!isInGame()) {
             return;
         }
         LocalPlayerSprint.stopSprint = false;

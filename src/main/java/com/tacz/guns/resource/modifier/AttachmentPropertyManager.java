@@ -15,7 +15,8 @@ import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,10 +57,10 @@ public class AttachmentPropertyManager {
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(index -> {
             AttachmentCacheProperty cacheProperty = new AttachmentCacheProperty();
             // 发布事件
-            AttachmentPropertyEvent event = new AttachmentPropertyEvent(gunItem, cacheProperty);
+            AttachmentPropertyEvent event = new AttachmentPropertyEvent(shooter, gunItem, cacheProperty);
             ChangeGunPropertyEvent.internalOnAttachmentPropertyEvent(event);
-            event.postEventToKubeJS(event);
-            MinecraftForge.EVENT_BUS.post(event);
+
+            NeoForge.EVENT_BUS.post(event);
             // 让脚本更新缓存
             IGunOperator operator = IGunOperator.fromLivingEntity(shooter);
             ShooterDataHolder dataHolder = operator.getDataHolder();

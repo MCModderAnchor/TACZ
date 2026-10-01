@@ -1,5 +1,6 @@
 package com.tacz.guns.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,6 +23,13 @@ import org.jetbrains.annotations.Nullable;
  * 双方块的枪械工作台，1x2x1
  */
 public class GunSmithTableBlockC extends AbstractGunSmithTableBlock {
+    public static final MapCodec<GunSmithTableBlockC> CODEC = simpleCodec((properties) -> new GunSmithTableBlockC());
+
+    @Override
+    protected MapCodec<GunSmithTableBlockC> codec() {
+        return CODEC;
+    }
+
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     public GunSmithTableBlockC() {
@@ -76,7 +84,7 @@ public class GunSmithTableBlockC extends AbstractGunSmithTableBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState blockState, Player player) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState blockState, Player player) {
         // 用于抑制创造模式下摧毁upper方块时lower的掉落
         if (!level.isClientSide && player.isCreative()) {
             DoubleBlockHalf half = blockState.getValue(HALF);
@@ -89,7 +97,7 @@ public class GunSmithTableBlockC extends AbstractGunSmithTableBlock {
                 }
             }
         }
-        super.playerWillDestroy(level, pos, blockState, player);
+        return super.playerWillDestroy(level, pos, blockState, player);
     }
 
     @Override

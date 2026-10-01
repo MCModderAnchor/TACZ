@@ -22,11 +22,12 @@ import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import org.joml.Vector3f;
 import org.luaj.vm2.LuaTable;
 
@@ -187,7 +188,7 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
             return iGun.getDummyAmmoAmount(currentGunItem) > 0;
         }
         return processCameraEntity(entity ->
-                    entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
+                    Optional.ofNullable(entity.getCapability(Capabilities.ItemHandler.ENTITY, null))
                         .map(cap -> {
                             // 背包检查
                             for (int i = 0; i < cap.getSlots(); i++) {
@@ -465,8 +466,8 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
             gunData = TimelessAPI.getClientGunIndex(iGun.getGunId(currentGunItem))
                     .map(ClientGunIndex::getGunData).orElse(null);
         }
-        if (currentGunItem.hasTag()) {
-            nbtUtil = new LuaNbtAccessor(currentGunItem.getTag());
+        if (currentGunItem.has(DataComponents.CUSTOM_DATA)) {
+            nbtUtil = new LuaNbtAccessor(currentGunItem.get(DataComponents.CUSTOM_DATA).copyTag());
         }
     }
 }

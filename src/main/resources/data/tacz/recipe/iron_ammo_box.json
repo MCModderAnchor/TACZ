@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "nbt": {
+      "Level": 0
+    },
+    "id": "tacz:ammo_box"
+  },
+  "pattern": [
+    "PIP",
+    "P P",
+    "PPP"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  }
+}

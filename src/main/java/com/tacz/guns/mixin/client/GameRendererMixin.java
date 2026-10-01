@@ -11,7 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,9 +30,6 @@ public abstract class GameRendererMixin {
     @Shadow
     public abstract Minecraft getMinecraft();
 
-    @Shadow
-    public abstract void render(float pPartialTicks, long pNanoTime, boolean pRenderLevel);
-
     @Inject(method = "bobHurt", at = @At("HEAD"), cancellable = true)
     public void onBobHurt(PoseStack pMatrixStack, float pPartialTicks, CallbackInfo ci) {
         // 取消受伤导致的视角摇晃
@@ -44,9 +42,9 @@ public abstract class GameRendererMixin {
         // 触发其他事件
         boolean cancel;
         if (!tacz$useFovSetting) {
-            cancel = MinecraftForge.EVENT_BUS.post(new RenderItemInHandBobEvent.BobHurt());
+            cancel = NeoForge.EVENT_BUS.post(new RenderItemInHandBobEvent.BobHurt()).isCanceled();
         } else {
-            cancel = MinecraftForge.EVENT_BUS.post(new RenderLevelBobEvent.BobHurt());
+            cancel = NeoForge.EVENT_BUS.post(new RenderLevelBobEvent.BobHurt()).isCanceled();
         }
         if (cancel) {
             ci.cancel();
@@ -73,9 +71,9 @@ public abstract class GameRendererMixin {
     public void onBobView(PoseStack pMatrixStack, float pPartialTicks, CallbackInfo ci) {
         boolean cancel;
         if (!tacz$useFovSetting) {
-            cancel = MinecraftForge.EVENT_BUS.post(new RenderItemInHandBobEvent.BobView());
+            cancel = NeoForge.EVENT_BUS.post(new RenderItemInHandBobEvent.BobView()).isCanceled();
         } else {
-            cancel = MinecraftForge.EVENT_BUS.post(new RenderLevelBobEvent.BobView());
+            cancel = NeoForge.EVENT_BUS.post(new RenderLevelBobEvent.BobView()).isCanceled();
         }
         if (cancel) {
             ci.cancel();

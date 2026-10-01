@@ -14,11 +14,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -75,5 +79,11 @@ public class GunSmithTableRenderer implements BlockEntityRenderer<GunSmithTableB
     @Override
     public boolean shouldRenderOffScreen(GunSmithTableBlockEntity blockEntity) {
         return true;
+    }
+
+    @Override
+    public @NotNull AABB getRenderBoundingBox(GunSmithTableBlockEntity blockEntity) {
+        Vec3 pos = Vec3.atLowerCornerOf(blockEntity.getBlockPos());
+        return new AABB(pos.add(-2, 0, -2), pos.add(2, 1, 2));
     }
 }

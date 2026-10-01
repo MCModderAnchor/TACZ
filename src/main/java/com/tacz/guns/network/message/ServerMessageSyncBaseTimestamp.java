@@ -1,5 +1,6 @@
 package com.tacz.guns.network.message;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.client.gameplay.LocalPlayerDataHolder;
@@ -7,35 +8,39 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
-public class ServerMessageSyncBaseTimestamp {
-    private static final Marker MARKER = MarkerManager.getMarker("SYNC_BASE_TIMESTAMP");
+public class ServerMessageSyncBaseTimestamp implements CustomPacketPayload {
+    public static final ServerMessageSyncBaseTimestamp INSTANCE = new ServerMessageSyncBaseTimestamp();
+    public static final CustomPacketPayload.Type<ServerMessageSyncBaseTimestamp> TYPE = new CustomPacketPayload.Type<>(
+        ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "server_sync_base_timestamp")
+    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerMessageSyncBaseTimestamp> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
-    public ServerMessageSyncBaseTimestamp() { }
+    private ServerMessageSyncBaseTimestamp() { }
 
-    public static void encode(ServerMessageSyncBaseTimestamp message, FriendlyByteBuf buf) { }
-
-    public static ServerMessageSyncBaseTimestamp decode(FriendlyByteBuf buf) {
-        return new ServerMessageSyncBaseTimestamp();
+    @Override
+    public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static void handle(ServerMessageSyncBaseTimestamp message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isClient()) {
+    public static void handle(ServerMessageSyncBaseTimestamp message, net.neoforged.neoforge.network.handling.IPayloadContext context) {
+        if (context.flow().isClientbound()) {
             long timestamp = GunTime.nowMillis();
             context.enqueueWork(() -> updateBaseTimestamp(timestamp));
         }
-        context.setPacketHandled(true);
-        NetworkHandler.CHANNEL.reply(new ClientMessageSyncBaseTimestamp(), context);
+        NetworkHandler.CHANNEL.reply(ClientMessageSyncBaseTimestamp.INSTANCE, context);
     }
 
     @OnlyIn(Dist.CLIENT)

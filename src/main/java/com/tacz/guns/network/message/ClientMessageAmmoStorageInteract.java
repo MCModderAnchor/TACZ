@@ -1,11 +1,12 @@
 package com.tacz.guns.network.message;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.block.entity.AmmoStorageBlockEntity;
 import com.tacz.guns.util.AmmoStorageHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,11 +14,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ClientMessageAmmoStorageInteract {
+public class ClientMessageAmmoStorageInteract implements net.minecraft.network.protocol.common.custom.CustomPacketPayload {
+    public static final net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<ClientMessageAmmoStorageInteract> TYPE =
+            new net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<>(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("tacz", "client_message_ammo_storage_interact"));
+    public static final net.minecraft.network.codec.StreamCodec<RegistryFriendlyByteBuf, ClientMessageAmmoStorageInteract> STREAM_CODEC =
+            net.minecraft.network.codec.StreamCodec.of((buf, message) -> encode(message, buf), ClientMessageAmmoStorageInteract::decode);
+    @Override
+    public net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> type() { return TYPE; }
+
     private static final String LAST_PICKUP_TAG = "TacAmmoStorageLastPickup";
     private static final String LAST_ACCUMULATE_TAG = "TacAmmoStorageLastAccumulate";
     private static final String ACCUMULATE_AMMO_TAG = "TacAmmoStorageAccumulateAmmo";
@@ -31,19 +38,18 @@ public class ClientMessageAmmoStorageInteract {
         this.pos = pos;
     }
 
-    public static void encode(ClientMessageAmmoStorageInteract message, FriendlyByteBuf buf) {
+    public static void encode(ClientMessageAmmoStorageInteract message, RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(message.pos);
     }
 
-    public static ClientMessageAmmoStorageInteract decode(FriendlyByteBuf buf) {
+    public static ClientMessageAmmoStorageInteract decode(RegistryFriendlyByteBuf buf) {
         return new ClientMessageAmmoStorageInteract(buf.readBlockPos());
     }
 
-    public static void handle(ClientMessageAmmoStorageInteract message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isServer()) {
+    public static void handle(ClientMessageAmmoStorageInteract message, net.neoforged.neoforge.network.handling.IPayloadContext context) {
+        if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
-                ServerPlayer player = context.getSender();
+                ServerPlayer player = (net.minecraft.server.level.ServerPlayer) context.player();
                 if (player == null || player.isSpectator()) {
                     return;
                 }
@@ -86,7 +92,6 @@ public class ClientMessageAmmoStorageInteract {
                 player.level().playSound(null, player.blockPosition(), SoundEvents.ARMOR_EQUIP_IRON, SoundSource.PLAYERS, 0.8F, 1.0F);
             });
         }
-        context.setPacketHandled(true);
     }
 
     private static int getAccumulatedCount(ServerPlayer player, ResourceLocation ammoId, int count, long gameTime) {

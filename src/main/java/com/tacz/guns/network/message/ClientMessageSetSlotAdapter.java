@@ -1,5 +1,6 @@
 package com.tacz.guns.network.message;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.advancement.GunRefitTrigger;
 import com.tacz.guns.api.item.IGun;
@@ -7,17 +8,23 @@ import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.util.SlotAdapterHelper;
-import net.minecraft.network.FriendlyByteBuf;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class ClientMessageSetSlotAdapter {
+public class ClientMessageSetSlotAdapter implements net.minecraft.network.protocol.common.custom.CustomPacketPayload {
+    public static final net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<ClientMessageSetSlotAdapter> TYPE =
+            new net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<>(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("tacz", "client_message_set_slot_adapter"));
+    public static final net.minecraft.network.codec.StreamCodec<RegistryFriendlyByteBuf, ClientMessageSetSlotAdapter> STREAM_CODEC =
+            net.minecraft.network.codec.StreamCodec.of((buf, message) -> encode(message, buf), ClientMessageSetSlotAdapter::decode);
+    @Override
+    public net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> type() { return TYPE; }
+
     private final int gunSlotIndex;
     private final AttachmentType attachmentType;
     @Nullable
@@ -29,7 +36,7 @@ public class ClientMessageSetSlotAdapter {
         this.adapterId = adapterId;
     }
 
-    public static void encode(ClientMessageSetSlotAdapter message, FriendlyByteBuf buf) {
+    public static void encode(ClientMessageSetSlotAdapter message, RegistryFriendlyByteBuf buf) {
         buf.writeInt(message.gunSlotIndex);
         buf.writeEnum(message.attachmentType);
         buf.writeBoolean(message.adapterId != null);
@@ -38,19 +45,17 @@ public class ClientMessageSetSlotAdapter {
         }
     }
 
-    public static ClientMessageSetSlotAdapter decode(FriendlyByteBuf buf) {
+    public static ClientMessageSetSlotAdapter decode(RegistryFriendlyByteBuf buf) {
         int gunSlotIndex = buf.readInt();
         AttachmentType attachmentType = buf.readEnum(AttachmentType.class);
         ResourceLocation adapterId = buf.readBoolean() ? buf.readResourceLocation() : null;
         return new ClientMessageSetSlotAdapter(gunSlotIndex, attachmentType, adapterId);
     }
 
-    public static void handle(ClientMessageSetSlotAdapter message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isServer()) {
-            context.enqueueWork(() -> handleServer(message, context.getSender()));
+    public static void handle(ClientMessageSetSlotAdapter message, net.neoforged.neoforge.network.handling.IPayloadContext context) {
+        if (context.flow().isServerbound()) {
+            context.enqueueWork(() -> handleServer(message, (net.minecraft.server.level.ServerPlayer) context.player()));
         }
-        context.setPacketHandled(true);
     }
 
     private static void handleServer(ClientMessageSetSlotAdapter message, @Nullable ServerPlayer player) {
@@ -97,6 +102,6 @@ public class ClientMessageSetSlotAdapter {
         AttachmentPropertyManager.postChangeEvent(player, gunItem);
         GunRefitTrigger.INSTANCE.trigger(player, beforeRefit, gunItem);
         player.inventoryMenu.broadcastChanges();
-        NetworkHandler.sendToClientPlayer(new ServerMessageRefreshRefitScreen(), player);
+        NetworkHandler.sendToClientPlayer(ServerMessageRefreshRefitScreen.INSTANCE, player);
     }
 }

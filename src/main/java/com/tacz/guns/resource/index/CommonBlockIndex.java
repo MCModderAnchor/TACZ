@@ -5,9 +5,9 @@ import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.filter.RecipeFilter;
 import com.tacz.guns.resource.pojo.BlockIndexPOJO;
 import com.tacz.guns.resource.pojo.data.block.BlockData;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class CommonBlockIndex {
 
@@ -27,7 +27,7 @@ public class CommonBlockIndex {
     private static void checkIndex(BlockIndexPOJO block, CommonBlockIndex index) {
         ResourceLocation id = index.pojo.getId();
         Preconditions.checkArgument(block != null, "index object file is empty");
-        if(!(ForgeRegistries.ITEMS.getValue(id) instanceof BlockItem item)) {
+        if(!(BuiltInRegistries.ITEM.get(id) instanceof BlockItem item)) {
             throw new IllegalArgumentException("BlockItem not found for " + block.getName());
         }
         index.block = item;

@@ -14,7 +14,6 @@ import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.sound.SoundPlayManager;
-import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerShoot;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
@@ -30,8 +29,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -162,7 +162,7 @@ public class LocalPlayerShoot {
             return ShootResult.IS_SPRINTING;
         }
         // 触发开火事件
-        if (MinecraftForge.EVENT_BUS.post(new GunShootEvent(player, mainHandItem, LogicalSide.CLIENT))) {
+        if (NeoForge.EVENT_BUS.post(new GunShootEvent(player, mainHandItem, LogicalSide.CLIENT)).isCanceled()) {
             return ShootResult.FORGE_EVENT_CANCEL;
         }
         // 切换状态锁，不允许换弹、检视等行为进行。
@@ -307,7 +307,7 @@ public class LocalPlayerShoot {
                 data.clientLastShootTimestamp = data.clientShootTimestamp;
                 data.clientShootTimestamp = GunTime.nowMillis();
                 // 发送开火的数据包，通知服务器
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot(data.clientShootTimestamp - data.clientBaseTimestamp, chargeProgress));
+                PacketDistributor.sendToServer(new ClientMessagePlayerShoot(data.clientShootTimestamp - data.clientBaseTimestamp, chargeProgress));
             }
 
             // todo 需要检查
@@ -318,7 +318,7 @@ public class LocalPlayerShoot {
                     return;
                 }
                 // 本机预测效果也区分可取消的前置事件与成功后的通知。
-                boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(player, mainHandItem, LogicalSide.CLIENT));
+                boolean fire = !NeoForge.EVENT_BUS.post(new GunFireEvent(player, mainHandItem, LogicalSide.CLIENT)).isCanceled();
                 if (fire) {
                     // 动画和声音循环播放
                     AnimationStateMachine<?> animationStateMachine = display.getAnimationStateMachine();
@@ -334,7 +334,7 @@ public class LocalPlayerShoot {
                     } else {
                         SoundPlayManager.playShootSound(player, display, gunData);
                     }
-                    MinecraftForge.EVENT_BUS.post(new GunFirePostEvent(player, mainHandItem, LogicalSide.CLIENT));
+                    NeoForge.EVENT_BUS.post(new GunFirePostEvent(player, mainHandItem, LogicalSide.CLIENT));
                 }
             });
 

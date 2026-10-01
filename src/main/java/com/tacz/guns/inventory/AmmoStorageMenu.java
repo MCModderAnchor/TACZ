@@ -94,7 +94,7 @@ public class AmmoStorageMenu extends AbstractContainerMenu {
         for (AmmoStorageInventory.Content content : storage.getContents()) {
             int id = -1;
             for (AmmoStorageEntry previous : entries) {
-                if (ItemStack.isSameItemSameTags(previous.sample(), content.sample())) {
+                if (ItemStack.isSameItemSameComponents(previous.sample(), content.sample())) {
                     id = previous.id();
                     break;
                 }
@@ -105,7 +105,7 @@ public class AmmoStorageMenu extends AbstractContainerMenu {
         }
         updated.sort(Comparator.comparingInt((AmmoStorageEntry entry) -> AmmoStorageHelper.getSort(entry.sample()))
                 .thenComparing(entry -> String.valueOf(AmmoStorageHelper.getAmmoId(entry.sample())))
-                .thenComparing(entry -> String.valueOf(entry.sample().getTag())));
+                .thenComparing(entry -> String.valueOf(entry.sample().getComponents())));
         entries = List.copyOf(updated);
         capacityStacks = capacity;
         usedStacks = used;

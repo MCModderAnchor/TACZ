@@ -6,30 +6,24 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.resource.ResourceManager;
 import com.tacz.guns.config.PreLoadConfig;
 import com.tacz.guns.util.GetJarResources;
-import cpw.mods.jarhandling.SecureJar;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.*;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.server.packs.resources.IoSupplier;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.DelegatingPackResources;
-import net.minecraftforge.resource.PathPackResources;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforgespi.language.IModInfo;
+import net.neoforged.neoforgespi.locating.IModFile;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -40,10 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -91,47 +82,34 @@ public enum GunPackLoader implements RepositorySource {
         GunMod.LOGGER.info(MARKER, "Start scanning for gun packs in {}", resourcePacksPath);
         List<GunPack> gunPacks = scanExtensions(resourcePacksPath);
         GunMod.LOGGER.info(MARKER, "Found {} possible gunpack(s) and added them to resource set.", gunPacks.size());
-        List<PathPackResources> extensionPacks = new ArrayList<>();
+        List<PackResources> extensionPacks = new ArrayList<>();
 
         for(GunPack gunPack : gunPacks) {
-            PathPackResources packResources = new PathPackResources(gunPack.name, false, gunPack.path) {
-                private final SecureJar secureJar = SecureJar.from(gunPack.path);
-
-                @NotNull
-                protected Path resolve(String... paths) {
-                    if (paths.length < 1) {
-                        throw new IllegalArgumentException("Missing path");
-                    } else {
-                        return this.secureJar.getPath(String.join("/", paths));
-                    }
-                }
-
-                public IoSupplier<InputStream> getResource(PackType type, ResourceLocation location) {
-                    return super.getResource(type, location);
-                }
-
-                public void listResources(PackType type, String namespace, String path, PackResources.ResourceOutput resourceOutput) {
-                    super.listResources(type, namespace, path, resourceOutput);
-                }
-            };
+            /* FIXME: I'm not sure why the previous code don't work anymore and how it's supposed to work, so I'll just do this*/
+            PackResources packResources;
+            if (Files.isDirectory(gunPack.path)) {
+                packResources = new PathPackResources.PathResourcesSupplier(gunPack.path).openPrimary(new PackLocationInfo(gunPack.name, Component.literal(gunPack.name), PackSource.BUILT_IN, Optional.empty()));
+            } else {
+                packResources = new FilePackResources.FileResourcesSupplier(gunPack.path).openPrimary(new PackLocationInfo(gunPack.name, Component.literal(gunPack.name), PackSource.BUILT_IN, Optional.empty()));
+            }
             extensionPacks.add(packResources);
         }
 
-
-        return Pack.readMetaAndCreate("tacz_resources", Component.literal("TACZ Resources"), true, (id) -> {
-            return new DelegatingPackResources(id, false, new PackMetadataSection(Component.translatable("tacz.resources.modresources"),
-                    SharedConstants.getCurrentVersion().getPackVersion(packType)), extensionPacks) {
-                public IoSupplier<InputStream> getRootResource(String... paths) {
-                    if (paths.length == 1 && paths[0].equals("pack.png")) {
-                        Path logoPath = getModIcon("tacz");
-                        if (logoPath != null) {
-                            return IoSupplier.create(logoPath);
-                        }
+        PackLocationInfo info = new PackLocationInfo("tacz_resources", Component.literal("TACZ Resources"), PackSource.BUILT_IN, Optional.empty());
+        PackMetadataSection meta = new PackMetadataSection(Component.translatable("tacz.resources.modresources"), SharedConstants.getCurrentVersion().getPackVersion(packType), Optional.empty());
+        DelegatingPackResources pack = new DelegatingPackResources(info, meta, extensionPacks) {
+            public IoSupplier<InputStream> getRootResource(String... paths) {
+                if (paths.length == 1 && paths[0].equals("pack.png")) {
+                    Path logoPath = getModIcon("tacz");
+                    if (logoPath != null) {
+                        return IoSupplier.create(logoPath);
                     }
-                    return null;
                 }
-            };
-        }, packType, Pack.Position.BOTTOM, PackSource.BUILT_IN);
+                return null;
+            }
+        };
+        PackSelectionConfig config = new PackSelectionConfig(true, Pack.Position.BOTTOM, false);
+        return Pack.readMetaAndCreate(info, pack, packType, config);
     }
 
     public static @Nullable Path getModIcon(String modId) {

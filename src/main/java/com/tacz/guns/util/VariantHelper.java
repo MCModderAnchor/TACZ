@@ -16,7 +16,7 @@ public final class VariantHelper {
         if (attachment.isEmpty() || variantId == null) {
             return;
         }
-        attachment.getOrCreateTag().putString(VARIANT_TAG, variantId.toString());
+        attachment.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY, data -> data.update(tag -> tag.putString(VARIANT_TAG, variantId.toString())));
     }
 
     @Nullable
@@ -24,7 +24,7 @@ public final class VariantHelper {
         if (attachment.isEmpty()) {
             return null;
         }
-        CompoundTag tag = attachment.getTag();
+        CompoundTag tag = attachment.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
         if (tag == null || !tag.contains(VARIANT_TAG, Tag.TAG_STRING)) {
             return null;
         }
@@ -39,9 +39,8 @@ public final class VariantHelper {
         if (attachment.isEmpty()) {
             return;
         }
-        CompoundTag tag = attachment.getTag();
-        if (tag != null) {
-            tag.remove(VARIANT_TAG);
-        }
+        attachment.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY,
+                data -> data.update(tag -> tag.remove(VARIANT_TAG)));
     }
 }

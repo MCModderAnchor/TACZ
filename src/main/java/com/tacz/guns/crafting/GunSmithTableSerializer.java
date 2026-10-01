@@ -1,58 +1,21 @@
 package com.tacz.guns.crafting;
 
-import com.google.gson.JsonObject;
-import com.tacz.guns.crafting.result.GunSmithTableResult;
-import com.tacz.guns.resource.CommonAssetsManager;
-import com.tacz.guns.resource.pojo.data.recipe.TableRecipe;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 工作台配方序列化器
  */
 public class GunSmithTableSerializer implements RecipeSerializer<GunSmithTableRecipe> {
     @Override
-    @Nullable
-    public GunSmithTableRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {
-        TableRecipe tableRecipe = CommonAssetsManager.GSON.fromJson(jsonObject, TableRecipe.class);
-        if (tableRecipe != null) {
-            return new GunSmithTableRecipe(id, tableRecipe);
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public GunSmithTableRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-        int size = buffer.readInt();
-        List<GunSmithTableIngredient> ingredients = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            ingredients.add(new GunSmithTableIngredient(Ingredient.fromNetwork(buffer), buffer.readInt()));
-        }
-        ItemStack resultItem = buffer.readItem();
-        resultItem.setCount(buffer.readVarInt());
-        ResourceLocation group = buffer.readResourceLocation();
-        GunSmithTableResult result = new GunSmithTableResult(resultItem, group);
-        return new GunSmithTableRecipe(recipeId, result, ingredients);
+    public MapCodec<GunSmithTableRecipe> codec() {
+        return GunSmithTableRecipe.CODEC;
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, GunSmithTableRecipe recipe) {
-        buffer.writeInt(recipe.getInputs().size());
-        for(GunSmithTableIngredient ingredient : recipe.getInputs()) {
-            ingredient.getIngredient().toNetwork(buffer);
-            buffer.writeInt(ingredient.getCount());
-        }
-        ItemStack result = recipe.getResult().getResult();
-        buffer.writeItem(result.copyWithCount(1));
-        buffer.writeVarInt(result.getCount());
-        buffer.writeResourceLocation(recipe.getResult().getGroup());
+    public StreamCodec<RegistryFriendlyByteBuf, GunSmithTableRecipe> streamCodec() {
+        return GunSmithTableRecipe.STREAM_CODEC;
     }
 }

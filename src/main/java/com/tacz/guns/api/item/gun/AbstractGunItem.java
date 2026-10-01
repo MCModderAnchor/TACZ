@@ -28,12 +28,12 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -167,7 +167,7 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
             return getDummyAmmoAmount(gunItem) > 0;
         }
         // 检查背包内的弹药数量
-        return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null).map(cap -> {
+        return Optional.ofNullable(shooter.getCapability(Capabilities.ItemHandler.ENTITY, null)).map(cap -> {
             // 背包检查
             for (int i = 0; i < cap.getSlots(); i++) {
                 ItemStack checkAmmoStack = cap.getStackInSlot(i);
@@ -377,22 +377,19 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
     /**
      * 阻止玩家手臂挥动
      */
+    @SuppressWarnings("removal")
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         return true;
     }
 
+    @SuppressWarnings("removal")
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
-            GunItemRendererWrapper renderer;
-
             @Override
             public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                if (renderer == null) {
-                    renderer = new GunItemRendererWrapper();
-                }
-                return renderer;
+                return GunItemRendererWrapper.INSTANCE;
             }
         });
     }
@@ -453,7 +450,7 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
             return getDummyAmmoAmount(gun) > 0;
         }
         // 检查背包内的弹药数量
-        return shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null).map(cap -> {
+        return Optional.ofNullable(shooter.getCapability(Capabilities.ItemHandler.ENTITY, null)).map(cap -> {
             // 背包检查
             for (int i = 0; i < cap.getSlots(); i++) {
                 ItemStack checkAmmoStack = cap.getStackInSlot(i);

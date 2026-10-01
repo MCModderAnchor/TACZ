@@ -1,13 +1,15 @@
 package com.tacz.guns.client.gui.components.refit;
 
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
+import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
 import com.tacz.guns.util.LaserColorUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
+import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -56,10 +58,11 @@ public class HSVSliderGroup {
                 return;
             }
 
-            ItemStack laser = iGun.getAttachment(gun, type);
-            if (laser.getItem() instanceof IAttachment iAttachment) {
-                iAttachment.setLaserColor(laser, rgb_new);
+            CompoundTag tag = iGun.getAttachmentTag(gun, type);
+            if (tag != null) {
+                AttachmentItemDataAccessor.setLaserColorToTag(tag, rgb_new);
             }
+            iGun.setAttachmentTag(gun, type, tag);
         }
     }
 
@@ -75,7 +78,7 @@ public class HSVSliderGroup {
             if (type == AttachmentType.NONE) {
                 return LaserColorUtil.getLaserColor(gun);
             } else {
-                ItemStack attachment = iGun.getAttachment(gun, type);
+                ItemStack attachment = iGun.getAttachment(Minecraft.getInstance().level.registryAccess(), gun, type);
                 return LaserColorUtil.getLaserColor(attachment);
             }
         }
@@ -83,7 +86,7 @@ public class HSVSliderGroup {
         return 0XFF0000;
     }
 
-    public static class LaserColorSlider extends ForgeSlider {
+    public static class LaserColorSlider extends ExtendedSlider {
         private final HSVSliderGroup parent;
 
         public LaserColorSlider(int x, int y, int width, int height, HSVSliderGroup parent, double current) {

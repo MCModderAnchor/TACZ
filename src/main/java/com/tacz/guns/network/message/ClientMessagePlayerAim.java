@@ -1,38 +1,40 @@
 package com.tacz.guns.network.message;
 
+import com.tacz.guns.GunMod;
 import com.tacz.guns.api.entity.IGunOperator;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+public class ClientMessagePlayerAim implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<ClientMessagePlayerAim> TYPE = new CustomPacketPayload.Type<>(
+        ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "client_player_aim")
+    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientMessagePlayerAim> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.BOOL, message -> message.isAim,
+        ClientMessagePlayerAim::new
+    );
 
-public class ClientMessagePlayerAim {
+    @Override
+    public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
     private final boolean isAim;
 
     public ClientMessagePlayerAim(boolean isAim) {
         this.isAim = isAim;
     }
 
-    public static void encode(ClientMessagePlayerAim message, FriendlyByteBuf buf) {
-        buf.writeBoolean(message.isAim);
-    }
-
-    public static ClientMessagePlayerAim decode(FriendlyByteBuf buf) {
-        return new ClientMessagePlayerAim(buf.readBoolean());
-    }
-
-    public static void handle(ClientMessagePlayerAim message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        if (context.getDirection().getReceptionSide().isServer()) {
-            context.enqueueWork(() -> {
-                ServerPlayer entity = context.getSender();
-                if (entity == null) {
-                    return;
-                }
-                IGunOperator.fromLivingEntity(entity).aim(message.isAim);
-            });
-        }
-        context.setPacketHandled(true);
+    public static void handle(ClientMessagePlayerAim message, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            ServerPlayer entity = (ServerPlayer) context.player();
+            IGunOperator.fromLivingEntity(entity).aim(message.isAim);
+        });
     }
 }
