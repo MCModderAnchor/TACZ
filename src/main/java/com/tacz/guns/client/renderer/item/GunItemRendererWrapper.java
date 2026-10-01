@@ -236,7 +236,8 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
                     }
                     poseStack1.pushPose();
                     poseStack1.last().pose().set(basePose);
-                    FirstPersonRenderHandler.renderParticlesNow(particleHand, poseStack1, particleBuffer, light1, partialTick);
+                    // 枪口照明只作用于模型；烟雾仍读取原始环境光，火光粒子自身保持全亮。
+                    FirstPersonRenderHandler.renderParticlesNow(particleHand, poseStack1, particleBuffer, light, partialTick);
                     poseStack1.popPose();
                 }
             });
@@ -256,7 +257,8 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             RenderType renderType = display.enablesTransparency()
                     ? RenderType.entityTranslucent(display.getModelTexture())
                     : RenderType.entityCutout(display.getModelTexture());
-            gunModel.render(poseStack, stack, ctx, renderType, light, OverlayTexture.NO_OVERLAY, bufferSource);
+            int modelLight = MuzzleParticleManager.getFirstPersonModelLight(stack, light);
+            gunModel.render(poseStack, stack, ctx, renderType, modelLight, OverlayTexture.NO_OVERLAY, bufferSource);
             // 缓存枪口位置，为第一人称曳光弹渲染作准备
             cacheMuzzlePosition(poseStack, gunModel);
             // 创建并绑定第一人称枪口 snowstorm 粒子（火光/烟雾）

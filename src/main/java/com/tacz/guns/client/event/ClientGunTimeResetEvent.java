@@ -7,6 +7,7 @@ import com.tacz.guns.client.gameplay.LocalPlayerDataHolder;
 import com.tacz.guns.client.gui.overlay.GunHudOverlay;
 import com.tacz.guns.client.gui.overlay.KillAmountOverlay;
 import com.tacz.guns.client.model.functional.MuzzleFlashRender;
+import com.tacz.guns.client.particle.MuzzleParticleManager;
 import com.tacz.guns.client.particle.ThirdPersonMuzzleParticleManager;
 import com.tacz.guns.client.renderer.other.GunHurtBobTweak;
 import com.tacz.guns.client.resource.pojo.display.gun.RangefinderManager;
@@ -43,6 +44,7 @@ public final class ClientGunTimeResetEvent {
         FirstPersonRenderGunEvent.resetTimestamps();
         CameraSetupEvent.resetTimestamp();
         MuzzleFlashRender.resetTimestamps();
+        MuzzleParticleManager.resetMuzzleLight();
         ThirdPersonMuzzleParticleManager.resetTimestamps();
         RangefinderManager.resetTimestamps();
         GunHurtBobTweak.resetTimestamp();

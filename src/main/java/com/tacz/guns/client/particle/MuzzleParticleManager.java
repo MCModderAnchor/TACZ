@@ -20,9 +20,11 @@ import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
 import com.tacz.guns.resource.pojo.data.SmokeDirectionData;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -47,12 +49,16 @@ import java.util.List;
  * 粒子系统的 tick / 渲染由 SBM 的 {@code FirstPersonRenderHandler} 统一接管，本类只负责创建与绑定。
  */
 public final class MuzzleParticleManager {
+    private static final long FLASH_LIGHT_TIME_MS = 50;
     /** 开枪触发的待创建请求（按手）。 */
     private static final EnumMap<InteractionHand, List<PendingShoot>> PENDING = new EnumMap<>(InteractionHand.class);
     /** 已创建发射器 → 定位骨骼名（按手）。 */
     private static final EnumMap<InteractionHand, List<BoundEmitter>> BOUND = new EnumMap<>(InteractionHand.class);
     /** 基准 pose（由渲染器在粒子渲染 pass 捕获，按手）。 */
     private static final EnumMap<InteractionHand, Matrix4f> BASE_POSE = new EnumMap<>(InteractionHand.class);
+    private static GunDisplayInstance lightDisplay;
+    private static long lightShootTime = -1;
+    private static int flashLightLevel;
 
     private MuzzleParticleManager() {
     }
@@ -85,10 +91,13 @@ public final class MuzzleParticleManager {
         if (effect.silenced() && !effect.hasFlashHider()) {
             flashScale = 0.0f;
         }
+        int flashLightLevel = Math.max(0, Math.min(15,
+                (int) Math.ceil(muzzleFlash.getFlashLightLevel() * effect.flashScale())));
         // 枪烟尺寸与枪焰 scale 完全解耦：未配置时返回 0，由粒子定义使用内置默认大小。
         float smokeSize = applyAttachmentScale(muzzleFlash.getSmokeScale(), BUILTIN_SMOKE_SIZE, effect.smokeScale());
         return new MuzzleShot(muzzleFlash.getFirstPersonFlashId(),
                 flashScale,
+                flashLightLevel,
                 muzzleFlash.getFirstPersonSmokeId(),
                 gunScale * effect.smokeScale(),
                 effect.offsetBb(),
@@ -179,10 +188,30 @@ public final class MuzzleParticleManager {
     public static void enqueueShoot(ItemStack gunItem) {
         MuzzleShot shot = resolveShot(gunItem);
         if (shot == null) {
+            resetMuzzleLight();
             return;
         }
+        lightDisplay = TimelessAPI.getGunDisplay(gunItem).orElse(null);
+        lightShootTime = GunTime.nowMillis();
+        flashLightLevel = shot.flashId() != null && shot.flashScale() > 0 ? shot.flashLightLevel() : 0;
         PENDING.computeIfAbsent(InteractionHand.MAIN_HAND, h -> new ArrayList<>()).add(new PendingShoot(
                 shot.flashId(), shot.flashScale(), shot.smokeId(), shot.smokeScale(), shot.offsetBb(), shot.speedScale(), shot.smokeParticleCount(), shot.smokeSize(), shot.smokeDirection()));
+    }
+
+    /** 仅提升当前第一人称枪械的方块光，保留环境天空光。 */
+    public static int getFirstPersonModelLight(ItemStack gunItem, int environmentLight) {
+        if (lightDisplay == null || flashLightLevel <= 0 || !GunTime.isWithin(lightShootTime, FLASH_LIGHT_TIME_MS)
+                || TimelessAPI.getGunDisplay(gunItem).orElse(null) != lightDisplay) {
+            return environmentLight;
+        }
+        int blockLight = Math.max(LightTexture.block(environmentLight), flashLightLevel);
+        return LightTexture.pack(blockLight, LightTexture.sky(environmentLight));
+    }
+
+    public static void resetMuzzleLight() {
+        lightDisplay = null;
+        lightShootTime = -1;
+        flashLightLevel = 0;
     }
 
     /**
@@ -513,7 +542,7 @@ public final class MuzzleParticleManager {
      * 一次开火的枪口粒子参数（第一人称/第三人称共用）。
      * id 为 null 表示 display 显式配置为不生成对应效果（闪光/烟雾 × 1p/3p）。
      */
-    public record MuzzleShot(@Nullable ResourceLocation flashId, float flashScale,
+    public record MuzzleShot(@Nullable ResourceLocation flashId, float flashScale, int flashLightLevel,
                              @Nullable ResourceLocation smokeId, float smokeScale, float offsetBb,
                              @Nullable ResourceLocation thirdPersonFlashId,
                              @Nullable ResourceLocation thirdPersonSmokeId,

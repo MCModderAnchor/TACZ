@@ -36,6 +36,10 @@ public class MuzzleFlash {
     @SerializedName("scale")
     private float scale = 1;
 
+    /** Renew 开火时第一人称枪械的最低方块光，0 表示不额外照明。 */
+    @SerializedName("flash_light_level")
+    private int flashLightLevel = 15;
+
     /**
      * 第一人称火光粒子定义 id（对应 assets/&lt;namespace&gt;/particle_definitions/ 下的定义）。
      * 缺省为 {@link #DEFAULT_FIRST_PERSON_FLASH}；显式写 {@code null} 表示第一人称不生成火光。
@@ -129,6 +133,10 @@ public class MuzzleFlash {
 
     public float getScale() {
         return scale;
+    }
+
+    public int getFlashLightLevel() {
+        return Math.max(0, Math.min(15, flashLightLevel));
     }
 
     /**

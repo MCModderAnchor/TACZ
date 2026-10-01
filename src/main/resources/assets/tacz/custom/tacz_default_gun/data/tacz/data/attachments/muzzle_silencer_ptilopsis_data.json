@@ -1,6 +1,6 @@
 {
   "weight": 0.4,
-  "flash_hider": 0,
+  "flash_hider": 0.13,
   "smoke_directions": { "plane_angle": 0, "out_angle": 90 },
   "smoke_spread_angle": 90,
   "ads": {
