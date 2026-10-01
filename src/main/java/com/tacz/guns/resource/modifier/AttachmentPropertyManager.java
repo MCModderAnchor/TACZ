@@ -1,7 +1,6 @@
 package com.tacz.guns.resource.modifier;
 
 import com.google.common.collect.Maps;
-import com.tacz.guns.GunMod;
 import com.tacz.guns.api.GunProperties;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
@@ -10,21 +9,19 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.modifier.IAttachmentModifier;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.event.ChangeGunPropertyEvent;
+import com.tacz.guns.resource.manager.AttachmentScriptManager;
 import com.tacz.guns.resource.modifier.custom.*;
 import com.tacz.guns.resource.pojo.data.attachment.Modifier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import org.apache.commons.lang3.StringUtils;
-import org.luaj.vm2.script.LuaScriptEngineFactory;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class AttachmentPropertyManager {
-    private static final ScriptEngine LUAJ_ENGINE = new LuaScriptEngineFactory().getScriptEngine();
     private static final Map<String, IAttachmentModifier<?, ?>> MODIFIERS = Maps.newLinkedHashMap();
 
     public static void registerModifier() {
@@ -90,11 +87,10 @@ public class AttachmentPropertyManager {
         percent = Math.max(percent, 0f);
         double value = addend * percent * multiplier;
         for (Modifier modifier : modifiers) {
-            String function = modifier.getFunction();
-            if (StringUtils.isEmpty(function)) {
-                continue;
+            AttachmentScriptManager.CompiledScript function = modifier.getCompiledFunction();
+            if (function != null) {
+                value = function.eval(value, defaultValue);
             }
-            value = functionEval(value, defaultValue, function);
         }
         return value;
     }
@@ -110,17 +106,7 @@ public class AttachmentPropertyManager {
     }
 
     public static double functionEval(double value, double defaultValue, String script) {
-        script = script.toLowerCase(Locale.ENGLISH);
-        LUAJ_ENGINE.put("x", value);
-        LUAJ_ENGINE.put("r", defaultValue);
-        try {
-            LUAJ_ENGINE.eval(script);
-        } catch (ScriptException e) {
-            GunMod.LOGGER.catching(e);
-        }
-        if (LUAJ_ENGINE.get("y") instanceof Number number) {
-            return number.doubleValue();
-        }
-        return value;
+        AttachmentScriptManager.CompiledScript function = AttachmentScriptManager.compile(script);
+        return function == null ? value : function.eval(value, defaultValue);
     }
 }
