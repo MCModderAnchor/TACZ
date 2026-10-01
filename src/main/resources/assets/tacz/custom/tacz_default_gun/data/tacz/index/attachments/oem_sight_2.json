@@ -1,5 +1,6 @@
 {
   "name": "tacz.attachment.oem_sight_2.name",
+  "builtin_attachment": true,
   "display": "tacz:oem_sight_2_display",
   "data": "tacz:oem_sight_2_data",
   "type": "scope",

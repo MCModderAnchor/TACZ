@@ -31,6 +31,12 @@ public final class VirtualOemAttachment {
                 .orElse(false);
     }
 
+    public static boolean isBuiltinAttachment(ResourceLocation attachmentId) {
+        return TimelessAPI.getCommonAttachmentIndex(attachmentId)
+                .map(index -> index.getPojo().isBuiltinAttachment())
+                .orElse(false);
+    }
+
     public static void mark(ItemStack attachmentStack) {
         attachmentStack.getOrCreateTag().putBoolean(VIRTUAL_OEM_TAG, true);
     }

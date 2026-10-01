@@ -213,6 +213,7 @@
   "tooltip.tacz.attachment.rangefinder": "+ Rangefinder",
   "tooltip.tacz.attachment.fire_control": "+ Fire Control",
   "tooltip.tacz.attachment.yaw.shift": "Press [Shift] to see the support guns",
+  "tooltip.tacz.attachment.builtin": "§9Built-in attachment",
   "tooltip.tacz.attachment.yaw.support": "Support Guns:",
   "tooltip.tacz.page.previous": "Previous",
   "tooltip.tacz.page.next": "Next",

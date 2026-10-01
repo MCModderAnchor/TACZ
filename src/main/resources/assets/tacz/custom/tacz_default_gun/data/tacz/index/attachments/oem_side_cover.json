@@ -1,5 +1,6 @@
 {
   "name": "tacz.attachment.oem_side_cover.name",
+  "builtin_attachment": true,
   "display": "tacz:oem_side_cover_display",
   "data": "tacz:oem_side_cover_data",
   "type": "laser",

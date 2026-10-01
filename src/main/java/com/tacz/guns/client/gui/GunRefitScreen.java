@@ -153,55 +153,59 @@ public class GunRefitScreen extends Screen {
         Inventory inventory = player.getInventory();
         ItemStack gunItem = player.getMainHandItem();
         IGun iGun = IGun.getIGunOrNull(gunItem);
+        if (iGun == null) {
+            return;
+        }
+        AttachmentType attachmentType = RefitTransform.getCurrentTransformType();
         Set<ResourceLocation> displayedAttachmentIds = new HashSet<>();
+        List<RefitAttachmentEntry> attachmentEntries = new ArrayList<>();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack inventoryItem = inventory.getItem(i);
             IAttachment attachment = IAttachment.getIAttachmentOrNull(inventoryItem);
-            if (attachment != null && iGun != null && attachment.getType(inventoryItem) == RefitTransform.getCurrentTransformType()) {
+            if (attachment != null && attachment.getType(inventoryItem) == attachmentType) {
                 if (!iGun.allowAttachment(gunItem, inventoryItem)) {
                     continue;
                 }
                 displayedAttachmentIds.add(attachment.getAttachmentId(inventoryItem));
-                count++;
-                if (count <= pageStart) {
-                    continue;
-                }
-                if (count > pageStart + INVENTORY_ATTACHMENT_SLOT_COUNT) {
-                    continue;
-                }
-                InventoryAttachmentSlot button = new InventoryAttachmentSlot(startX, currentY, i, inventory, b -> {
-                    int slotIndex = ((InventoryAttachmentSlot) b).getSlotIndex();
-                    SoundPlayManager.playerRefitSound(inventory.getItem(slotIndex), player, SoundManager.INSTALL_SOUND);
-                    ClientMessageRefitGun message = new ClientMessageRefitGun(slotIndex, inventory.selected, RefitTransform.getCurrentTransformType());
-                    NetworkHandler.CHANNEL.sendToServer(message);
-                });
-                this.addRenderableWidget(button);
-                currentY = currentY + SLOT_SIZE;
+                attachmentEntries.add(new RefitAttachmentEntry(i, inventoryItem, false));
             }
         }
-        if (iGun != null) {
-            List<ItemStack> virtualOemAttachments = getVirtualOemAttachments(gunItem, iGun, RefitTransform.getCurrentTransformType(), displayedAttachmentIds);
-            for (ItemStack virtualAttachment : virtualOemAttachments) {
-                count++;
-                if (count <= pageStart) {
-                    continue;
-                }
-                if (count > pageStart + INVENTORY_ATTACHMENT_SLOT_COUNT) {
-                    continue;
-                }
-                InventoryAttachmentSlot button = new InventoryAttachmentSlot(startX, currentY, virtualAttachment, inventory, b -> {
+
+        getVirtualOemAttachments(gunItem, iGun, attachmentType, displayedAttachmentIds)
+                .forEach(attachment -> attachmentEntries.add(new RefitAttachmentEntry(-1, attachment, true)));
+        // 仅显式标注的内置原厂配件置顶，通用配件保持原有顺序。
+        attachmentEntries.sort(Comparator.comparingInt(entry -> isBuiltinOemAttachment(entry.stack()) ? 0 : 1));
+
+        for (RefitAttachmentEntry entry : attachmentEntries) {
+            count++;
+            if (count <= pageStart) {
+                continue;
+            }
+            if (count > pageStart + INVENTORY_ATTACHMENT_SLOT_COUNT) {
+                continue;
+            }
+            InventoryAttachmentSlot button;
+            if (entry.virtualOem()) {
+                button = new InventoryAttachmentSlot(startX, currentY, entry.stack(), inventory, b -> {
                     ItemStack attachmentStack = ((InventoryAttachmentSlot) b).getItemStack();
                     IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
                     if (attachment == null) {
                         return;
                     }
                     SoundPlayManager.playerRefitSound(attachmentStack, player, SoundManager.INSTALL_SOUND);
-                    ClientMessageInstallVirtualAttachment message = new ClientMessageInstallVirtualAttachment(inventory.selected, RefitTransform.getCurrentTransformType(), attachment.getAttachmentId(attachmentStack));
+                    ClientMessageInstallVirtualAttachment message = new ClientMessageInstallVirtualAttachment(inventory.selected, attachmentType, attachment.getAttachmentId(attachmentStack));
                     NetworkHandler.CHANNEL.sendToServer(message);
                 });
-                this.addRenderableWidget(button);
-                currentY = currentY + SLOT_SIZE;
+            } else {
+                button = new InventoryAttachmentSlot(startX, currentY, entry.slotIndex(), inventory, b -> {
+                    int slotIndex = ((InventoryAttachmentSlot) b).getSlotIndex();
+                    SoundPlayManager.playerRefitSound(inventory.getItem(slotIndex), player, SoundManager.INSTALL_SOUND);
+                    ClientMessageRefitGun message = new ClientMessageRefitGun(slotIndex, inventory.selected, attachmentType);
+                    NetworkHandler.CHANNEL.sendToServer(message);
+                });
             }
+            this.addRenderableWidget(button);
+            currentY = currentY + SLOT_SIZE;
         }
         int totalPage = (count - 1) / INVENTORY_ATTACHMENT_SLOT_COUNT;
         RefitTurnPageButton turnPageButtonUp = new RefitTurnPageButton(startX, startY - 10, true, b -> {
@@ -437,5 +441,16 @@ public class GunRefitScreen extends Screen {
                 .filter(pair -> iGun.allowAttachment(gunItem, pair.getValue()))
                 .map(Pair::getValue)
                 .toList();
+    }
+
+    private static boolean isBuiltinOemAttachment(ItemStack attachmentStack) {
+        IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentStack);
+        if (attachment == null) {
+            return false;
+        }
+        return VirtualOemAttachment.isBuiltinAttachment(attachment.getAttachmentId(attachmentStack));
+    }
+
+    private record RefitAttachmentEntry(int slotIndex, ItemStack stack, boolean virtualOem) {
     }
 }

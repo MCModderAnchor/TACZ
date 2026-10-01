@@ -1,5 +1,6 @@
 {
   "name": "tacz.attachment.oem_grip_cover.name",
+  "builtin_attachment": true,
   "display": "tacz:oem_grip_cover_display",
   "data": "tacz:oem_grip_cover_data",
   "type": "grip",

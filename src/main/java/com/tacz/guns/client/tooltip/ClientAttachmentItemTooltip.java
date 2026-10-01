@@ -15,6 +15,7 @@ import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
 import com.tacz.guns.resource.modifier.custom.RecoilPushModifier;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.resource.pojo.data.gun.GunRecoilPushData;
+import com.tacz.guns.util.VirtualOemAttachment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -37,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
+    private static final String BUILTIN_ATTACHMENT_TOOLTIP_KEY = "tooltip.tacz.attachment.builtin";
     private static final Cache<ResourceLocation, List<ItemStack>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.SECONDS).build();
     private final ResourceLocation attachmentId;
     private final List<Component> components = Lists.newArrayList();
@@ -155,6 +157,9 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
     }
 
     private void addText(AttachmentType type) {
+        if (VirtualOemAttachment.isBuiltinAttachment(attachmentId)) {
+            components.add(Component.translatable(BUILTIN_ATTACHMENT_TOOLTIP_KEY));
+        }
         TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> {
             AttachmentData data = index.getData();
 
