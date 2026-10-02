@@ -4,6 +4,7 @@ import com.tacz.guns.compat.oculus.legacy.OculusCompatLegacy;
 import com.tacz.guns.compat.oculus.newly.OculusCompatNewly;
 import com.tacz.guns.init.CompatRegistry;
 import net.irisshaders.iris.api.v0.IrisApi;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraftforge.fml.ModList;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -17,6 +18,7 @@ public final class OculusCompat {
     private static Supplier<Boolean> IS_RENDER_SHADOW_SUPPER;
 
     public static void initCompat() {
+        Minecraft.getInstance().getMainRenderTarget().enableStencil();
         ModList.get().getModContainerById(CompatRegistry.OCULUS).ifPresent(mod -> {
             if (mod.getModInfo().getVersion().compareTo(VERSION) >= 0) {
                 END_BATCH_FUNCTION = OculusCompatNewly::endBatch;
