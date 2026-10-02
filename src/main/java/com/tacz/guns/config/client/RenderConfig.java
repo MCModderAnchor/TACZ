@@ -39,7 +39,7 @@ public class RenderConfig {
         RENDER_MUZZLE_SMOKE = builder.define("RenderMuzzleSmoke", true);
 
         builder.comment("How far to display the lod model, 0 means always display");
-        GUN_LOD_RENDER_DISTANCE = builder.defineInRange("GunLodRenderDistance", 0, 0, Integer.MAX_VALUE);
+        GUN_LOD_RENDER_DISTANCE = builder.defineInRange("GunLodRenderDistance", 16, 0, Integer.MAX_VALUE);
 
         builder.comment("The existence time of bullet hole particles, in tick");
         BULLET_HOLE_PARTICLE_LIFE = builder.defineInRange("BulletHoleParticleLife", 400, 0, Integer.MAX_VALUE);

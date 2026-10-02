@@ -52,7 +52,7 @@
       "damage": 30,
       "radius": 0.75,
       "knockback": true,
-      "delay": 1
+      "delay": 0.2
     }
   },
   "ammo_amount": 12,

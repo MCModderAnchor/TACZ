@@ -43,10 +43,10 @@
     "ignite_entity_time": 2,
     "explosion": {
       "explode": false,
-      "damage": 64,
+      "damage": 16,
       "radius": 3,
       "knockback": false,
-      "delay": 5
+      "delay": 0.15
     }
   },
   "reload": {

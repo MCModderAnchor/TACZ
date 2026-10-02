@@ -41,7 +41,7 @@
         {"distance": "infinite", "damage": 9}
       ]
     },
-    "speed": 320,
+    "speed": 325,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.0125,
@@ -49,10 +49,10 @@
     "pierce": 2,
     "explosion": {
       "explode": false,
-      "damage": 25,
-      "radius": 0.75,
+      "damage": 10,
+      "radius": 1,
       "knockback": true,
-      "delay": 1
+      "delay": 0.15
     }
   },
   "reload": {

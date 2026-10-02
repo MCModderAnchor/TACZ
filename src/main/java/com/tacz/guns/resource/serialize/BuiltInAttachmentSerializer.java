@@ -45,6 +45,11 @@ public class BuiltInAttachmentSerializer implements JsonDeserializer<BuiltInAtta
                     attachments.add(defaultAttachment);
                 }
             }
+            // 保留未安装配件时的原有显示，供可选内置配件共用。
+            JsonElement displayElement = object.get("display_attachment");
+            if (displayElement != null) {
+                displayAttachment = context.deserialize(displayElement, ResourceLocation.class);
+            }
             JsonElement showIconElement = object.get("show_icon");
             if (showIconElement != null) {
                 showIcon = showIconElement.getAsBoolean();

@@ -37,10 +37,10 @@
     "pierce": 5,
     "explosion": {
       "explode": false,
-      "damage": 140,
+      "damage": 30,
       "radius": 1.8,
       "knockback": true,
-      "delay": 1
+      "delay": 0.25
     }
   },
   "reload": {

@@ -26,7 +26,9 @@ public final class VirtualOemAttachment {
         return TimelessAPI.getCommonGunIndex(gunId)
                 .map(index -> {
                     var builtInAttachment = index.getGunData().getBuiltInAttachments().get(type);
-                    return builtInAttachment != null && builtInAttachment.getAttachments().contains(attachmentId) && builtInAttachment.isShowIcon();
+                    // 回退显示的配件已在枪上，不重复列入改装选项。
+                    return builtInAttachment != null && builtInAttachment.getAttachments().contains(attachmentId)
+                            && builtInAttachment.isShowIcon() && !attachmentId.equals(builtInAttachment.getDisplayAttachment());
                 })
                 .orElse(false);
     }

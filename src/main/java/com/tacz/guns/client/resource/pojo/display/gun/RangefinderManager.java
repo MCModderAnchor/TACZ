@@ -145,10 +145,10 @@ public final class RangefinderManager {
 
         if (entityHit != null) {
             double distance = start.distanceTo(entityHit.hitPos());
-            setDistanceText(distance, true);
+            setDistanceText(distance, true, maxDistance);
             updateImpactPrediction(player, stack, iGun, config, distance);
         } else if (blockDistance != Double.MAX_VALUE) {
-            setDistanceText(blockDistance, false);
+            setDistanceText(blockDistance, false, maxDistance);
             showImpactPrediction = false;
         } else {
             clearResult();
@@ -166,14 +166,14 @@ public final class RangefinderManager {
                 .min(Comparator.comparingDouble(hit -> start.distanceTo(hit.hitPos())));
     }
 
-    private static void setDistanceText(double distance, boolean entityHit) {
+    private static void setDistanceText(double distance, boolean entityHit, float maxDistance) {
         hitDistance = distance;
         hitEntity = entityHit;
         int roundedDistance = Mth.floor(distance + 0.5);
-        text = roundedDistance > 999 ? MISS_TEXT : Integer.toString(roundedDistance);
-        if (MISS_TEXT.equals(text)) {
-            showImpactPrediction = false;
-        }
+        // 与距离使用相同的取整规则，按测距上限的位数补零。
+        int digits = Integer.toString(Mth.floor(maxDistance + 0.5)).length();
+        String distanceText = Integer.toString(roundedDistance);
+        text = "0".repeat(Math.max(0, digits - distanceText.length())) + distanceText;
     }
 
     private static void clearResult() {

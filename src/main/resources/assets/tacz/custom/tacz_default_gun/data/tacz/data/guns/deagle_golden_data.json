@@ -43,10 +43,10 @@
     "pierce": 1,
     "explosion": {
       "explode": false,
-      "damage": 20,
-      "radius": 0.6,
+      "damage": 5,
+      "radius": 1,
       "knockback": true,
-      "delay": 1
+      "delay": 0.15
     }
   },
   "ammo_amount": 9,

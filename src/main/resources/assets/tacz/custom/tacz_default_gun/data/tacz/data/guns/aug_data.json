@@ -2,8 +2,8 @@
   "ammo": "tacz:556x45",
   "ammo_amount": 30,
   "extended_mag_ammo_amount": [
-    34,
-    39,
+    35,
+    40,
     50
   ],
   "bolt": "closed_bolt",
@@ -22,7 +22,7 @@
         {"distance":"infinite","damage":5}
       ]
     },
-    "speed": 295,
+    "speed": 350,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.0175,
@@ -116,7 +116,14 @@
     "scope"
   ],
   "builtin_attachments": {
-    "scope": "tacz:scope_aug_default"
+    "scope": {
+      "attachments": [
+        "tacz:scope_aug_default",
+        "tacz:oem_sight_aug"
+      ],
+      // 未安装瞄具时继续显示原有的 AUG 内置瞄镜。
+      "display_attachment": "tacz:scope_aug_default"
+    }
   },
   "exclusive_attachments": {
   }
