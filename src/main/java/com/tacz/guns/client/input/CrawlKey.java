@@ -26,7 +26,7 @@ public class CrawlKey {
             KeyConflictContext.IN_GAME,
             KeyModifier.NONE,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_C,
+            GLFW.GLFW_KEY_Z,
             "key.category.tacz");
 
     @SubscribeEvent

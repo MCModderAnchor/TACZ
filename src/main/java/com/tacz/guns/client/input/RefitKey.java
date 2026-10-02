@@ -24,7 +24,7 @@ public class RefitKey {
             KeyConflictContext.IN_GAME,
             KeyModifier.NONE,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_Z,
+            GLFW.GLFW_KEY_Y,
             "key.category.tacz");
 
     @SubscribeEvent
