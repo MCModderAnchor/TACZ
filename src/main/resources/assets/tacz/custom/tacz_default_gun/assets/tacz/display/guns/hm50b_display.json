@@ -1,6 +1,10 @@
 {
   "model": "tacz:gun/hm50b_geo",
   "texture": "tacz:gun/uv/hm50b",
+  "lod": {
+    "model": "tacz:gun/lod/hm50b",
+    "texture": "tacz:gun/lod/hm50b"
+  },
   "hud": "tacz:gun/hud/hm50b",
   "slot": "tacz:gun/slot/hm50b",
   "animation": "tacz:hm50b",
