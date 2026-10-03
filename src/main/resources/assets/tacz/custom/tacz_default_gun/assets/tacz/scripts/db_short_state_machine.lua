@@ -35,7 +35,7 @@ local function runReloadAnimation(context)
     -- 此处获取的轨道是位于主轨道行上的主轨道
     local track = context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK)
     -- 随机数
-    local flag = math.random(5, 1000)
+    local flag = math.random(1, 1000)
     -- 根据当前整枪内是否还有弹药决定是播放战术换弹还是空枪换弹
     if (isNoAmmo(context)) then
         if (flag <= 5) then
