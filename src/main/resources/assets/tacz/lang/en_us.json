@@ -1,4 +1,6 @@
 {
+  "config.tacz.client.render.creative_pack_sidebar": "Creative Content Pack Sidebar",
+  "config.tacz.client.render.creative_pack_sidebar.desc": "Show the content pack sidebar in TACZ creative tabs. Disabling it also clears the pack filter and shows all items in the current tab.",
   "gui.tacz.creative_pack_filter.all": "All",
   "gui.tacz.creative_pack_filter.previous": "Previous content packs",
   "gui.tacz.creative_pack_filter.next": "Next content packs",

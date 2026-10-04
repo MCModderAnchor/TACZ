@@ -6,6 +6,7 @@ import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.item.*;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.PackInfo;
+import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -26,6 +27,7 @@ import java.util.function.Consumer;
 /** A screen-local content pack filter; the registered creative tabs keep their full contents. */
 public class CreativePackFilters {
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("textures/gui/recipe_book.png");
+    private static final ResourceLocation ALL_PACKS_ICON = new ResourceLocation(GunMod.MOD_ID, "textures/gui/creative_pack_all.png");
     private static final int VISIBLE_PACKS = 3;
     private static final int TAB_HEIGHT = 26;
     private static final int TAB_SPACING = 29;
@@ -67,14 +69,17 @@ public class CreativePackFilters {
     }
 
     public void updateTab(CreativeModeTab tab, boolean force) {
+        if (!RenderConfig.RENDER_CREATIVE_PACK_SIDEBAR.get()) {
+            if (currentTab == tab) {
+                showItems(tab.getDisplayItems());
+            }
+            selections.clear();
+            hideWidgets();
+            return;
+        }
         ResourceLocation tabId = BuiltInRegistries.CREATIVE_MODE_TAB.getKey(tab);
         if (tabId == null || !GunMod.MOD_ID.equals(tabId.getNamespace()) || tab.getType() != CreativeModeTab.Type.CATEGORY) {
-            currentTab = null;
-            sourceItems = null;
-            buttons.forEach(button -> button.setOption(null));
-            previousButton.visible = false;
-            nextButton.visible = false;
-            previousButton.active = nextButton.active = false;
+            hideWidgets();
             return;
         }
 
@@ -93,7 +98,7 @@ public class CreativePackFilters {
 
         List<ItemStack> allItems = displayItems.stream().map(ItemStack::copy).toList();
         options.add(new FilterOption(null, Component.translatable("gui.tacz.creative_pack_filter.all"),
-                tab.getIconItem().copy(), null, allItems));
+                ItemStack.EMPTY, ALL_PACKS_ICON, allItems));
         Map<String, List<ItemStack>> groupedItems = groupItems(displayItems);
         groupedItems.forEach((namespace, items) -> {
             PackInfo info = ClientAssetsManager.INSTANCE.getPackInfo(namespace);
@@ -104,7 +109,12 @@ public class CreativePackFilters {
             if (logo != null && Minecraft.getInstance().getResourceManager().getResource(logo).isEmpty()) {
                 logo = null;
             }
-            options.add(new FilterOption(namespace, name, items.get(0).copy(), logo, items));
+            FilterOption option = new FilterOption(namespace, name, items.get(0).copy(), logo, items);
+            if (GunMod.MOD_ID.equals(namespace)) {
+                options.add(1, option);
+            } else {
+                options.add(option);
+            }
         });
         String selected = selections.get(tab);
         if (selected != null && !groupedItems.containsKey(selected)) {
@@ -113,6 +123,14 @@ public class CreativePackFilters {
         packScroll = Mth.clamp(packScroll, 0, maxScroll());
         updateButtons();
         applyFilter();
+    }
+
+    private void hideWidgets() {
+        currentTab = null;
+        sourceItems = null;
+        buttons.forEach(button -> button.setOption(null));
+        previousButton.visible = nextButton.visible = false;
+        previousButton.active = nextButton.active = false;
     }
 
     /** Keeps every stack, including multiple NBT variants of the same registered item. */
@@ -162,8 +180,12 @@ public class CreativePackFilters {
         String selected = selections.get(currentTab);
         FilterOption option = options.stream().filter(entry -> Objects.equals(entry.namespace(), selected))
                 .findFirst().orElse(options.get(0));
+        showItems(option.items());
+    }
+
+    private void showItems(Collection<ItemStack> items) {
         screen.getMenu().items.clear();
-        option.items().forEach(stack -> screen.getMenu().items.add(stack.copy()));
+        items.forEach(stack -> screen.getMenu().items.add(stack.copy()));
         resetScroll.run();
         screen.getMenu().scrollTo(0);
     }
@@ -189,7 +211,7 @@ public class CreativePackFilters {
     }
 
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if (currentTab == null || delta == 0) {
+        if (!RenderConfig.RENDER_CREATIVE_PACK_SIDEBAR.get() || currentTab == null || delta == 0) {
             return false;
         }
         int x = screen.getGuiLeft() - 28;

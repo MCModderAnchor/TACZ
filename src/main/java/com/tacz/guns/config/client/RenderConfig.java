@@ -22,6 +22,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue FIRST_PERSON_BULLET_TRACER_ENABLE;
     public static ForgeConfigSpec.BooleanValue DISABLE_INTERACT_HUD_TEXT;
     public static ForgeConfigSpec.BooleanValue AUTO_SELECT_GUN_SMITH_TABLE_FILTER;
+    public static ForgeConfigSpec.BooleanValue RENDER_CREATIVE_PACK_SIDEBAR;
     public static ForgeConfigSpec.IntValue DAMAGE_COUNTER_RESET_TIME;
     public static ForgeConfigSpec.BooleanValue DISABLE_MOVEMENT_ATTRIBUTE_FOV;
     public static ForgeConfigSpec.BooleanValue ENABLE_TACZ_ID_IN_TOOLTIP;
@@ -85,6 +86,9 @@ public class RenderConfig {
 
         builder.comment("Whether or not to automatically select the gun smith table's held item filter when opening it with a gun, attachment or ammo in main hand");
         AUTO_SELECT_GUN_SMITH_TABLE_FILTER = builder.define("AutoSelectGunSmithTableFilter", true);
+
+        builder.comment("Whether or not to display the content pack sidebar in TACZ creative tabs. Disabling this also restores all items in the current tab.");
+        RENDER_CREATIVE_PACK_SIDEBAR = builder.define("RenderCreativePackSidebar", true);
 
         builder.comment("Max time the damage counter will reset");
         DAMAGE_COUNTER_RESET_TIME = builder.defineInRange("DamageCounterResetTime", 2000, 10, Integer.MAX_VALUE);

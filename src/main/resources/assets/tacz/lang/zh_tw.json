@@ -1,4 +1,6 @@
 {
+  "config.tacz.client.render.creative_pack_sidebar": "創造模式內容包側欄",
+  "config.tacz.client.render.creative_pack_sidebar.desc": "是否顯示 TACZ 創造模式物品欄的內容包側欄。關閉後同時清除內容包篩選，顯示目前分類的全部物品。",
   "gui.tacz.creative_pack_filter.all": "全部",
   "gui.tacz.creative_pack_filter.previous": "前面的內容包",
   "gui.tacz.creative_pack_filter.next": "後面的內容包",
