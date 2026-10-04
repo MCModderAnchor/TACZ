@@ -4,10 +4,10 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.builder.BlockItemBuilder;
 import com.tacz.guns.api.item.gun.GunItemManager;
-import com.tacz.guns.compat.jei.category.AttachmentQueryCategory;
-import com.tacz.guns.compat.jei.category.GunAttachmentQueryCategory;
-import com.tacz.guns.compat.jei.category.GunSmithTableCategory;
+import com.tacz.guns.compat.jei.category.*;
+import com.tacz.guns.compat.jei.entry.AmmoQueryEntry;
 import com.tacz.guns.compat.jei.entry.AttachmentQueryEntry;
+import com.tacz.guns.compat.jei.entry.GunAmmoQueryEntry;
 import com.tacz.guns.compat.jei.entry.GunAttachmentQueryEntry;
 import com.tacz.guns.crafting.AmmoStorageUpgradeRecipe;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
@@ -56,6 +56,8 @@ public class GunModPlugin implements IModPlugin {
         }
         registration.addRecipeCategories(new AttachmentQueryCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new GunAttachmentQueryCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new GunAmmoQueryCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new AmmoQueryCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -82,6 +84,9 @@ public class GunModPlugin implements IModPlugin {
 
         registration.addRecipes(AttachmentQueryCategory.ATTACHMENT_QUERY, AttachmentQueryEntry.getAllAttachmentQueryEntries());
         registration.addRecipes(GunAttachmentQueryCategory.GUN_ATTACHMENT_QUERY, GunAttachmentQueryEntry.getAllGunAttachmentQueryEntries());
+        List<GunAmmoQueryEntry> gunAmmoEntries = GunAmmoQueryEntry.getAllGunAmmoQueryEntries();
+        registration.addRecipes(GunAmmoQueryCategory.GUN_AMMO_QUERY, gunAmmoEntries);
+        registration.addRecipes(AmmoQueryCategory.AMMO_QUERY, AmmoQueryEntry.getAllAmmoQueryEntries(gunAmmoEntries));
     }
 
     /**
