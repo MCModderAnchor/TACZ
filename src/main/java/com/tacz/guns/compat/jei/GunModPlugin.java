@@ -5,8 +5,10 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.builder.BlockItemBuilder;
 import com.tacz.guns.api.item.gun.GunItemManager;
 import com.tacz.guns.compat.jei.category.AttachmentQueryCategory;
+import com.tacz.guns.compat.jei.category.GunAttachmentQueryCategory;
 import com.tacz.guns.compat.jei.category.GunSmithTableCategory;
 import com.tacz.guns.compat.jei.entry.AttachmentQueryEntry;
+import com.tacz.guns.compat.jei.entry.GunAttachmentQueryEntry;
 import com.tacz.guns.crafting.AmmoStorageUpgradeRecipe;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.init.ModItems;
@@ -53,6 +55,7 @@ public class GunModPlugin implements IModPlugin {
             recipeTypeMap.put(entry.getKey(), type);
         }
         registration.addRecipeCategories(new AttachmentQueryCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new GunAttachmentQueryCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -78,6 +81,7 @@ public class GunModPlugin implements IModPlugin {
         registration.addRecipes(RecipeTypes.CRAFTING, ammoStorageUpgradeRecipes);
 
         registration.addRecipes(AttachmentQueryCategory.ATTACHMENT_QUERY, AttachmentQueryEntry.getAllAttachmentQueryEntries());
+        registration.addRecipes(GunAttachmentQueryCategory.GUN_ATTACHMENT_QUERY, GunAttachmentQueryEntry.getAllGunAttachmentQueryEntries());
     }
 
     /**
