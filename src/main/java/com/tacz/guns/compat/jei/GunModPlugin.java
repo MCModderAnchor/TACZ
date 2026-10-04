@@ -9,6 +9,7 @@ import com.tacz.guns.compat.jei.entry.AmmoQueryEntry;
 import com.tacz.guns.compat.jei.entry.AttachmentQueryEntry;
 import com.tacz.guns.compat.jei.entry.GunAmmoQueryEntry;
 import com.tacz.guns.compat.jei.entry.GunAttachmentQueryEntry;
+import com.tacz.guns.compat.jei.transfer.GunSmithTableTransferHandler;
 import com.tacz.guns.crafting.AmmoStorageUpgradeRecipe;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.init.ModItems;
@@ -18,10 +19,7 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.recipe.RecipeType;
-import mezz.jei.api.registration.IRecipeCatalystRegistration;
-import mezz.jei.api.registration.IRecipeCategoryRegistration;
-import mezz.jei.api.registration.IRecipeRegistration;
-import mezz.jei.api.registration.ISubtypeRegistration;
+import mezz.jei.api.registration.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -117,6 +115,13 @@ public class GunModPlugin implements IModPlugin {
 
         }
 
+    }
+
+    @Override
+    public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
+        for (RecipeType<GunSmithTableRecipe> type : recipeTypeMap.values()) {
+            registration.addRecipeTransferHandler(new GunSmithTableTransferHandler(type, registration.getTransferHelper()), type);
+        }
     }
 
     @Override

@@ -247,6 +247,35 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         this.getPlayerIngredientCount(this.selectedRecipe);
     }
 
+    private void applyRequestedRecipeSelection() {
+        ResourceLocation recipeId = this.menu.consumeRecipeSelection();
+        if (recipeId == null || this.minecraft.level == null
+                || !this.menu.canSelectRecipe(recipeId, this.minecraft.level.getRecipeManager())) {
+            return;
+        }
+        GunSmithTableRecipe recipe = this.getSelectedRecipe(recipeId);
+        if (recipe == null) {
+            return;
+        }
+        ResourceLocation type = recipe.getTab();
+        List<ResourceLocation> recipeList = this.recipes.get(type);
+        if (recipeList == null || !recipeList.contains(recipeId)) {
+            // User filters can hide a valid recipe; table restrictions still apply in classifyRecipes.
+            this.filterList.clearFilters();
+            this.classifyRecipes();
+            recipeList = this.recipes.get(type);
+        }
+        if (recipeList == null || !recipeList.contains(recipeId)) {
+            return;
+        }
+        this.selectedType = type;
+        this.selectedRecipeList = recipeList;
+        this.selectedRecipe = recipe;
+        this.typePage = new ArrayList<>(this.recipeKeys.keySet()).indexOf(type) / 7;
+        this.indexPage = recipeList.indexOf(recipeId) / 6;
+        this.filterEnabled = false;
+    }
+
     public void setIndexPage(int indexPage) {
         this.indexPage = indexPage;
     }
@@ -305,6 +334,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         this.filterList.setLeftPos(leftPos);
 
         this.classifyRecipes();
+        this.applyRequestedRecipeSelection();
         this.updateSelectedRecipeAfterFiltering();
         this.clearWidgets();
 

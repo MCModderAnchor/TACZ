@@ -9,6 +9,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ServerMessageCraft;
 import com.tacz.guns.resource.filter.RecipeFilter;
 import com.tacz.guns.resource.index.CommonBlockIndex;
+import com.tacz.guns.resource.pojo.data.block.TabConfig;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -34,6 +35,8 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
 
     private final ResourceLocation blockId;
     private final RecipeFilter filter;
+    @Nullable
+    private ResourceLocation requestedRecipeId;
 
     public GunSmithTableMenu(int id, Inventory inventory, @Nullable ResourceLocation resourceLocation) {
         super(TYPE, id);
@@ -44,6 +47,32 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
     @Nullable
     public ResourceLocation getBlockId() {
         return blockId;
+    }
+
+    public boolean canSelectRecipe(ResourceLocation recipeId, RecipeManager recipeManager) {
+        if (this.blockId == null || TimelessAPI.getCommonBlockIndex(this.blockId).isEmpty()) {
+            return false;
+        }
+        GunSmithTableRecipe recipe = this.getRecipe(recipeId, recipeManager);
+        if (recipe == null) {
+            return false;
+        }
+        if (DefaultAssets.DEFAULT_BLOCK_ID.equals(this.blockId) && !SyncConfig.ENABLE_TABLE_FILTER.get()) {
+            return TabConfig.DEFAULT_TABS.stream().anyMatch(tab -> tab.id().equals(recipe.getTab()));
+        }
+        return true;
+    }
+
+    /** Queues a client-side selection for when JEI restores the workbench screen. */
+    public void requestRecipeSelection(ResourceLocation recipeId) {
+        this.requestedRecipeId = recipeId;
+    }
+
+    @Nullable
+    public ResourceLocation consumeRecipeSelection() {
+        ResourceLocation recipeId = this.requestedRecipeId;
+        this.requestedRecipeId = null;
+        return recipeId;
     }
 
     @Override

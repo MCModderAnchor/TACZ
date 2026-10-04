@@ -230,6 +230,7 @@
   "painting.tacz.blood_strike_2.author": "血战突袭",
   "jei.tacz.attachment_query.more": "更多...",
   "jei.tacz.attachment_query.title": "配件查询",
+  "jei.tacz.gun_smith_table.recipe_unavailable": "当前枪械工作台不支持此配方",
   "jei.tacz.gun_attachment_query.title": "枪械配件查询",
   "jei.tacz.gun_attachment_query.group": "%s（%s）",
   "jei.tacz.gun_attachment_query.page": "第 %s/%s 页",

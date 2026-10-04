@@ -228,6 +228,7 @@
   "subtitle.tacz.gun": "Gun Sound",
   "subtitle.tacz.target_block_hit": "Target Block: Hit",
   "jei.tacz.attachment_query.title": "Attachment Query",
+  "jei.tacz.gun_smith_table.recipe_unavailable": "This recipe is not available at the current gun smith table",
   "jei.tacz.attachment_query.more": "More...",
   "jei.tacz.gun_attachment_query.title": "Gun Attachments",
   "jei.tacz.gun_attachment_query.group": "%s (%s)",
