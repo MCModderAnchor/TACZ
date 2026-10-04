@@ -9,9 +9,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
+import java.time.Duration;
+
 /** Immediate VBO path for static third-person, ground and fixed gun appearances. */
 public class ExternalGunItemVboRenderer {
     private static boolean wasEnabled;
+    private static final Duration IDLE_RETENTION = Duration.ofSeconds(30);
 
     private ExternalGunItemVboRenderer() {}
 
@@ -37,11 +40,16 @@ public class ExternalGunItemVboRenderer {
         ExternalGunAppearance.Variants appearances = ExternalGunAppearance.resolve(stack, false);
         if (appearances == null) return ImmediateStaticMeshRenderer.DrawResult.UNSUPPORTED;
         ExternalGunAppearance.Snapshot appearance = appearances.select(useLod);
-        return ImmediateStaticMeshRenderer.tryDraw(new ItemGeometryKey(appearance.key(), context),
+        ExternalGunAppearance.Snapshot previous = appearances.select(!useLod);
+        ImmediateStaticMeshRenderer.DrawResult result = ImmediateStaticMeshRenderer.tryDraw(
+                new ItemGeometryKey(appearance.key(), context), new ItemGeometryKey(previous.key(), context),
                 collector -> {
                     return DisplayGunGeometry.capture(appearance, context, true, collector);
                 },
                 pose, packedLight, packedOverlay, () -> {
-                });
+                }, IDLE_RETENTION);
+        // A recognized static appearance stays on the VBO path even if a capture/layout fails.
+        return result == ImmediateStaticMeshRenderer.DrawResult.UNSUPPORTED
+                ? ImmediateStaticMeshRenderer.DrawResult.PENDING : result;
     }
 }

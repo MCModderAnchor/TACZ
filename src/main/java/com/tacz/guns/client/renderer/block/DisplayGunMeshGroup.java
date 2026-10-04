@@ -110,10 +110,13 @@ public class DisplayGunMeshGroup {
         ExternalGunAppearance.Snapshot current = snapshot(slot);
         if (current == null) return false;
         if (group == null) group = WorldMeshRenderer.createGroup("tacz:display_guns",
-                WorldMeshStrategy.INSTANCE, Set.of(WorldMeshStrategy.INSTANCE));
+                WorldMeshStrategy.INSTANCE, Set.of(WorldMeshStrategy.INSTANCE), MeshCachePolicy.DEFAULT);
         group.track(slot, ADAPTER);
         if (slot.consumeChange()) group.markDirty(slot);
-        group.claimForWorldDraw(slot, current.key());
+        CachedAppearance cached = APPEARANCES.get(slot);
+        ExternalGunAppearance.Snapshot previous = cached.variants().select(!current.useLod());
+        group.claimForWorldDraw(slot, current.key(), previous.key());
+        // Pending capture/upload stays owned by the VBO path; ordinary rendering is too expensive.
         return true;
     }
 

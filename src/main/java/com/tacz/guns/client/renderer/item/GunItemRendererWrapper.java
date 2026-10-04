@@ -343,13 +343,15 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             ImmediateStaticMeshRenderer.DrawResult vbo = ExternalGunItemVboRenderer.tryRender(
                     stack, transformType, outsideHighPolyDistance, poseStack, pBuffer, pPackedLight, pPackedOverlay);
             if (vbo == ImmediateStaticMeshRenderer.DrawResult.PENDING
-                    || vbo == ImmediateStaticMeshRenderer.DrawResult.DRAWN && transformType == GROUND) return;
+                    || vbo.drawn() && transformType == GROUND) return;
 
             // The old model is needed only for fallback or third-person dynamic effects.
             BedrockGunModel gunModel;
             ResourceLocation gunTexture;
             Pair<BedrockGunModel, ResourceLocation> lodModel = gunIndex.getLodModel();
-            boolean useLod = lodModel != null && outsideHighPolyDistance;
+            boolean drawnLod = vbo == ImmediateStaticMeshRenderer.DrawResult.DRAWN_PREVIOUS
+                    ? !outsideHighPolyDistance : outsideHighPolyDistance;
+            boolean useLod = lodModel != null && drawnLod;
             if (!useLod) {
                 gunModel = gunIndex.getGunModel();
                 gunTexture = gunIndex.getModelTexture();
@@ -361,14 +363,14 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
                 renderSlotTexture(poseStack, pBuffer, pPackedLight, pPackedOverlay, gunIndex.getSlotTexture());
                 return;
             }
-            if (vbo == ImmediateStaticMeshRenderer.DrawResult.DRAWN) {
+            if (vbo.drawn()) {
                 if (transformType == THIRD_PERSON_RIGHT_HAND) {
                     poseStack.pushPose();
                     try {
                         GunItemTransforms.apply(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
                         
                         gunModel.renderExternalLaser(poseStack, stack, transformType, pBuffer);
-                        renderExternalAttachmentLasers(stack, gunModel, poseStack, transformType, pBuffer);
+                        renderExternalAttachmentLasers(stack, gunModel, poseStack, transformType, pBuffer, drawnLod);
                         captureThirdPersonMuzzle(poseStack, gunModel);
                     } finally {
                         poseStack.popPose();
@@ -420,6 +422,13 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
     public static void renderExternalAttachmentLasers(ItemStack stack, BedrockGunModel gunModel,
                                                        PoseStack poseStack, ItemDisplayContext context,
                                                        MultiBufferSource bufferSource) {
+        renderExternalAttachmentLasers(stack, gunModel, poseStack, context, bufferSource,
+                !RenderDistance.inRenderHighPolyModelDistance(poseStack));
+    }
+
+    private static void renderExternalAttachmentLasers(ItemStack stack, BedrockGunModel gunModel,
+                                                       PoseStack poseStack, ItemDisplayContext context,
+                                                       MultiBufferSource bufferSource, boolean useLod) {
         IGun gun = IGun.getIGunOrNull(stack);
         if (gun == null) return;
         for (AttachmentType type : AttachmentType.values()) {
@@ -437,7 +446,7 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
                 poseStack.translate(0, -1.5, 0);
                 var model = index.getAttachmentModel();
                 var lod = index.getLodModel();
-                if (lod != null && !RenderDistance.inRenderHighPolyModelDistance(poseStack)) model = lod.getLeft();
+                if (lod != null && useLod) model = lod.getLeft();
                 if (model != null) model.renderExternalLasers(attached, poseStack, context, bufferSource);
             } finally {
                 poseStack.popPose();
