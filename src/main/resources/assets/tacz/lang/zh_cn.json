@@ -211,6 +211,8 @@
   "gui.tacz.gun_smith_table.filter": "过滤器",
   "gui.tacz.gun_smith_table.filter.all": "全选",
   "gui.tacz.gun_smith_table.filter.handgun": "按手中物品",
+  "gui.tacz.gun_smith_table.filter.hand.empty": "没有匹配配方\n手持物品筛选已开启",
+  "gui.tacz.gun_smith_table.filter.hand.clear": "取消手持筛选",
   "gui.tacz.gun_smith_table.filter.search": "搜索...",
   "item.tacz.ammo_box.all_type_creative": "全类型创造弹药盒",
   "item.tacz.ammo_box.creative": "创造弹药盒",

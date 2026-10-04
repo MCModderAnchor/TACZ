@@ -103,6 +103,8 @@
   "gui.tacz.gun_smith_table.filter": "Filter",
   "gui.tacz.gun_smith_table.filter.all": "Select All",
   "gui.tacz.gun_smith_table.filter.handgun": "By Item In Hand",
+  "gui.tacz.gun_smith_table.filter.hand.empty": "No matching recipes\nHeld item filter is on",
+  "gui.tacz.gun_smith_table.filter.hand.clear": "Clear held filter",
   "gui.tacz.gun_smith_table.filter.search": "Search...",
   "gui.tacz.interact_key.text.desc": "[%s] to interact",
   "gui.tacz.interact_key.text.gun_smith_table_filter": "Opens filtered by the item in your hand",
