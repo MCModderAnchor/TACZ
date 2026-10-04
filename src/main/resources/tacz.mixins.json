@@ -12,6 +12,7 @@
   ],
   "client": [
     "client.AbstractButtonMixin",
+    "client.CreativeModeInventoryScreenMixin",
     "client.GameRendererMixin",
     "client.HumanoidModelMixin",
     "client.ItemInHandLayerMixin",

@@ -2,7 +2,9 @@ package com.tacz.guns.client.resource.pojo;
 
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
+import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class PackInfo {
@@ -26,6 +28,9 @@ public class PackInfo {
 
     @SerializedName("url")
     private String url;
+
+    @SerializedName("logo")
+    private String logo;
 
     public String getVersion() {
         return version;
@@ -53,5 +58,14 @@ public class PackInfo {
 
     public String getUrl() {
         return url;
+    }
+
+    /** Resolves an optional texture path relative to this content pack's namespace. */
+    @Nullable
+    public ResourceLocation getLogo(String namespace) {
+        if (logo == null || logo.isBlank()) {
+            return null;
+        }
+        return ResourceLocation.tryParse(logo.contains(":") ? logo : namespace + ":" + logo);
     }
 }

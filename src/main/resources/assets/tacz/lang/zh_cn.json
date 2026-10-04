@@ -1,4 +1,7 @@
 {
+  "gui.tacz.creative_pack_filter.all": "全部",
+  "gui.tacz.creative_pack_filter.previous": "前面的内容包",
+  "gui.tacz.creative_pack_filter.next": "后面的内容包",
   "block.tacz.statue": "石像",
   "block.tacz.target": "人形标靶",
   "block.tacz.gun_pegboard": "挂板",

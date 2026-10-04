@@ -183,6 +183,10 @@ public enum ClientAssetsManager {
         return packInfo.getData(namespace);
     }
 
+    public long getPackInfoReloadVersion() {
+        return packInfo == null ? 0 : packInfo.getReloadVersion();
+    }
+
     @Nullable
     public PackInfo getPackInfo(@Nullable ResourceLocation namespace) {
         if (namespace == null) {

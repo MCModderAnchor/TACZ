@@ -1,4 +1,7 @@
 {
+  "gui.tacz.creative_pack_filter.all": "All",
+  "gui.tacz.creative_pack_filter.previous": "Previous content packs",
+  "gui.tacz.creative_pack_filter.next": "Next content packs",
   "toast.tacz.level_up": "Level Up!",
   "toast.tacz.sub.level_up": "This weapon works better",
   "toast.tacz.sub.damage_up": "Weapons become more deadly",

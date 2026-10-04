@@ -1,4 +1,7 @@
 {
+  "gui.tacz.creative_pack_filter.all": "全部",
+  "gui.tacz.creative_pack_filter.previous": "前面的內容包",
+  "gui.tacz.creative_pack_filter.next": "後面的內容包",
   "toast.tacz.level_up": "等級提升！",
   "toast.tacz.sub.level_up": "這把武器效果更好",
   "toast.tacz.sub.damage_up": "武器變得更致命",
