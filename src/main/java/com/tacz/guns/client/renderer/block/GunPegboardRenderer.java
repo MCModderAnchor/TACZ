@@ -34,7 +34,6 @@ public class GunPegboardRenderer implements BlockEntityRenderer<GunPegboardBlock
 
     @Override
     public void render(GunPegboardBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        Direction facing = blockEntity.getBlockState().getValue(GunPegboardBlock.FACING);
         for (int slot = 0; slot < GunPegboardBlockEntity.SLOT_COUNT; slot++) {
             ItemStack stack = blockEntity.getItem(slot);
             if (stack.isEmpty()) {
@@ -43,7 +42,8 @@ public class GunPegboardRenderer implements BlockEntityRenderer<GunPegboardBlock
             if (DisplayGunMeshGroup.tryRender(blockEntity, slot, packedOverlay)) {
                 continue;
             }
-            int row = slot / GunPegboardBlockEntity.GRID_SIZE;
+            Direction facing = GunPegboardSlotHelper.getSlotFacing(blockEntity.getBlockState(), slot);
+            int row = (slot % GunPegboardBlockEntity.SLOTS_PER_FACE) / GunPegboardBlockEntity.GRID_SIZE;
             int col = slot % GunPegboardBlockEntity.GRID_SIZE;
             double x = (col + 0.5D) / GunPegboardBlockEntity.GRID_SIZE - 0.5D;
             double y = (row + 0.5D) / GunPegboardBlockEntity.GRID_SIZE - 0.5D;
@@ -73,11 +73,11 @@ public class GunPegboardRenderer implements BlockEntityRenderer<GunPegboardBlock
         if (slot < 0 || !blockEntity.getItem(slot).isEmpty()) {
             return;
         }
-        int row = slot / GunPegboardBlockEntity.GRID_SIZE;
+        int row = (slot % GunPegboardBlockEntity.SLOTS_PER_FACE) / GunPegboardBlockEntity.GRID_SIZE;
         int col = slot % GunPegboardBlockEntity.GRID_SIZE;
         double x = (col + 0.5D) / GunPegboardBlockEntity.GRID_SIZE - 0.5D;
         double y = (row + 0.5D) / GunPegboardBlockEntity.GRID_SIZE - 0.5D;
-        Direction facing = blockEntity.getBlockState().getValue(GunPegboardBlock.FACING);
+        Direction facing = GunPegboardSlotHelper.getSlotFacing(blockEntity.getBlockState(), slot);
         int itemLight = isGlowing(blockEntity) ? LightTexture.pack(15, 15) : packedLight;
         ItemStack preview = held.copy();
         preview.setCount(1);

@@ -12,12 +12,16 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,6 +29,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -41,6 +46,7 @@ import java.util.List;
 public class GunPegboardBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty DYED = BooleanProperty.create("dyed");
+    public static final EnumProperty<PegboardShape> SHAPE = EnumProperty.create("shape", PegboardShape.class);
     private static final VoxelShape NORTH_SHAPE = Block.box(0, 0, 13, 16, 16, 16);
     private static final VoxelShape SOUTH_SHAPE = Block.box(0, 0, 0, 16, 16, 3);
     private static final VoxelShape WEST_SHAPE = Block.box(13, 0, 0, 16, 16, 16);
@@ -54,7 +60,7 @@ public class GunPegboardBlock extends BaseEntityBlock {
     public GunPegboardBlock(boolean glowing) {
         super(Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0F, 6.0F).noOcclusion().lightLevel(state -> glowing ? 10 : 0));
         this.glowing = glowing;
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(DYED, false));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(DYED, false).setValue(SHAPE, PegboardShape.STRAIGHT));
     }
 
     public boolean isGlowing() {
@@ -63,7 +69,7 @@ public class GunPegboardBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, DYED);
+        builder.add(FACING, DYED, SHAPE);
     }
 
     @Nullable
@@ -75,21 +81,76 @@ public class GunPegboardBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockState state;
         Direction clickedFace = context.getClickedFace();
         BlockPos target = context.getClickedPos().relative(clickedFace.getOpposite());
         BlockState targetState = context.getLevel().getBlockState(target);
-        if (!context.replacingClickedOnBlock() && targetState.getBlock() instanceof GunPegboardBlock
-                && clickedFace.getAxis() != targetState.getValue(FACING).getAxis()) {
-            return defaultBlockState().setValue(FACING, targetState.getValue(FACING));
+        if (!context.replacingClickedOnBlock() && targetState.getBlock() instanceof GunPegboardBlock) {
+            Direction targetFacing = targetState.getValue(FACING);
+            if (GunPegboardSlotHelper.hasCorner(targetState)
+                    && clickedFace == targetState.getValue(SHAPE).getCornerFacing(targetFacing)) {
+                targetFacing = clickedFace;
+            }
+            Direction playerFacing = context.getHorizontalDirection();
+            // 水平视线正对板面时延续朝向，沿板面看时按玩家朝向放置垂直板。
+            Direction placedFacing = playerFacing.getAxis() == targetFacing.getAxis()
+                    ? targetFacing : playerFacing.getOpposite();
+            state = defaultBlockState().setValue(FACING, placedFacing);
+        } else if (clickedFace.getAxis() == Direction.Axis.Y) {
+            state = defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        } else {
+            state = defaultBlockState().setValue(FACING, clickedFace);
         }
-        if (clickedFace.getAxis() == Direction.Axis.Y) {
-            return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return state.setValue(SHAPE, getConnectedShape(state, context.getLevel(), context.getClickedPos()));
+    }
+
+    private PegboardShape getConnectedShape(BlockState state, BlockGetter level, BlockPos pos) {
+        Direction facing = state.getValue(FACING);
+        BlockState front = level.getBlockState(pos.relative(facing));
+        if (front.getBlock() instanceof GunPegboardBlock) {
+            Direction otherFacing = front.getValue(FACING);
+            // 折面位于其朝向的反侧；该边已有同朝向直板时不能转角。
+            if (otherFacing == facing.getCounterClockWise()
+                    && !hasStraightConnection(level, pos.relative(facing.getClockWise()), facing)) {
+                return PegboardShape.CORNER_LEFT;
+            }
+            if (otherFacing == facing.getClockWise()
+                    && !hasStraightConnection(level, pos.relative(facing.getCounterClockWise()), facing)) {
+                return PegboardShape.CORNER_RIGHT;
+            }
         }
-        return defaultBlockState().setValue(FACING, clickedFace);
+        return PegboardShape.STRAIGHT;
+    }
+
+    private static boolean hasStraightConnection(BlockGetter level, BlockPos pos, Direction facing) {
+        BlockState neighbor = level.getBlockState(pos);
+        return neighbor.getBlock() instanceof GunPegboardBlock && neighbor.getValue(FACING) == facing;
+    }
+
+    @Override
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        return state.setValue(SHAPE, getConnectedShape(state, level, pos));
+    }
+
+    @Override
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        if (mirror == Mirror.NONE) return state;
+        PegboardShape shape = switch (state.getValue(SHAPE)) {
+            case CORNER_LEFT -> PegboardShape.CORNER_RIGHT;
+            case CORNER_RIGHT -> PegboardShape.CORNER_LEFT;
+            case STRAIGHT -> PegboardShape.STRAIGHT;
+        };
+        return state.setValue(FACING, mirror.mirror(state.getValue(FACING))).setValue(SHAPE, shape);
     }
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (player.getItemInHand(hand).is(Items.DEBUG_STICK)) return InteractionResult.PASS;
         if (player.getItemInHand(hand).getItem() instanceof GunPegboardItem) {
             return InteractionResult.PASS;
         }
@@ -130,7 +191,13 @@ public class GunPegboardBlock extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return switch (state.getValue(FACING)) {
+        VoxelShape plate = getPlateShape(state.getValue(FACING));
+        if (state.getValue(SHAPE) == PegboardShape.STRAIGHT) return plate;
+        return Shapes.or(plate, getPlateShape(state.getValue(SHAPE).getCornerFacing(state.getValue(FACING))));
+    }
+
+    private static VoxelShape getPlateShape(Direction facing) {
+        return switch (facing) {
             case SOUTH -> SOUTH_SHAPE;
             case WEST -> WEST_SHAPE;
             case EAST -> EAST_SHAPE;

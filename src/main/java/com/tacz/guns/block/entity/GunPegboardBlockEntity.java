@@ -1,6 +1,8 @@
 package com.tacz.guns.block.entity;
 
 import com.tacz.guns.block.GunPegboardBlock;
+import com.tacz.guns.block.GunPegboardSlotHelper;
+import com.tacz.guns.block.PegboardShape;
 import com.tacz.guns.init.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,12 +23,15 @@ import java.util.Map;
 
 public class GunPegboardBlockEntity extends BlockEntity {
     public static final int GRID_SIZE = 4;
-    public static final int SLOT_COUNT = GRID_SIZE * GRID_SIZE;
+    public static final int SLOTS_PER_FACE = GRID_SIZE * GRID_SIZE;
+    // 原有 0..15 槽位保持不变，16..31 属于折面；转角时每面仅启用三列。
+    public static final int SLOT_COUNT = SLOTS_PER_FACE * 2;
     public static final BlockEntityType<GunPegboardBlockEntity> TYPE = BlockEntityType.Builder.of(GunPegboardBlockEntity::new, ModBlocks.GUN_PEGBOARD.get(), ModBlocks.GLOW_GUN_PEGBOARD.get()).build(null);
     private static final String ITEMS_TAG = "Items";
     private static final String SLOT_TAG = "Slot";
     private static final String ITEM_TAG = "Item";
     private static final String ROTATIONS_TAG = "Rotations";
+    private static final String SLOT_SHAPE_TAG = "SlotShape";
     private static final String COLOR_TAG = "Color";
     private static final String INHERITED_COLOR_TAG = "InheritedColor";
 
@@ -44,7 +49,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
     }
 
     public ItemStack getItem(int slot) {
-        return isValidSlot(slot) ? items[slot] : ItemStack.EMPTY;
+        return GunPegboardSlotHelper.isSlotActive(getBlockState(), slot) ? items[slot] : ItemStack.EMPTY;
     }
 
     public int getColor() {
@@ -83,7 +88,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
     }
 
     public boolean setItem(int slot, ItemStack stack) {
-        if (!isValidSlot(slot) || !items[slot].isEmpty()) {
+        if (!GunPegboardSlotHelper.isSlotActive(getBlockState(), slot) || !items[slot].isEmpty()) {
             return false;
         }
         ItemStack stored = stack.copy();
@@ -102,7 +107,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
         }
         for (Map.Entry<Integer, ItemStack> entry : stacks.entrySet()) {
             int slot = entry.getKey();
-            if (!isValidSlot(slot) || entry.getValue().isEmpty() || !items[slot].isEmpty()) {
+            if (!GunPegboardSlotHelper.isSlotActive(getBlockState(), slot) || entry.getValue().isEmpty() || !items[slot].isEmpty()) {
                 return false;
             }
         }
@@ -119,7 +124,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
     }
 
     public boolean rotateItem(int slot) {
-        if (!isValidSlot(slot) || items[slot].isEmpty()) {
+        if (!GunPegboardSlotHelper.isSlotActive(getBlockState(), slot) || items[slot].isEmpty()) {
             return false;
         }
         rotations[slot] = (byte) ((rotations[slot] + 1) & 7);
@@ -132,7 +137,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
         if (!isValidSlot(slot) || items[slot].isEmpty() || level == null) {
             return false;
         }
-        Direction facing = getBlockState().getValue(GunPegboardBlock.FACING);
+        Direction facing = GunPegboardSlotHelper.getSlotFacing(getBlockState(), slot);
         Block.popResource(level, worldPosition.relative(facing), items[slot]);
         items[slot] = ItemStack.EMPTY;
         rotations[slot] = 0;
@@ -156,10 +161,9 @@ public class GunPegboardBlockEntity extends BlockEntity {
         if (level == null) {
             return;
         }
-        Direction facing = getBlockState().getValue(GunPegboardBlock.FACING);
         for (int i = 0; i < SLOT_COUNT; i++) {
             if (!items[i].isEmpty()) {
-                Block.popResource(level, worldPosition.relative(facing), items[i]);
+                Block.popResource(level, worldPosition.relative(GunPegboardSlotHelper.getSlotFacing(getBlockState(), i)), items[i]);
                 items[i] = ItemStack.EMPTY;
                 rotations[i] = 0;
                 displaySlotChanged(i);
@@ -178,6 +182,30 @@ public class GunPegboardBlockEntity extends BlockEntity {
 
     private static boolean isValidSlot(int slot) {
         return slot >= 0 && slot < SLOT_COUNT;
+    }
+
+    @Override
+    public void setBlockState(BlockState state) {
+        BlockState previous = getBlockState();
+        super.setBlockState(state);
+        if (previous.getValue(GunPegboardBlock.FACING) != state.getValue(GunPegboardBlock.FACING)
+                || previous.getValue(GunPegboardBlock.SHAPE) != state.getValue(GunPegboardBlock.SHAPE)) {
+            boolean changed = false;
+            for (int slot = 0; slot < SLOT_COUNT; slot++) {
+                if (displaySlots[slot] != null) displaySlots[slot].transformed();
+                boolean removedFace = slot >= SLOTS_PER_FACE
+                        && previous.getValue(GunPegboardBlock.SHAPE) != state.getValue(GunPegboardBlock.SHAPE);
+                if (level != null && !level.isClientSide() && !items[slot].isEmpty()
+                        && (!GunPegboardSlotHelper.isSlotActive(state, slot) || removedFace)) {
+                    Block.popResource(level, worldPosition.relative(GunPegboardSlotHelper.getSlotFacing(previous, slot)), items[slot]);
+                    items[slot] = ItemStack.EMPTY;
+                    rotations[slot] = 0;
+                    displaySlotChanged(slot);
+                    changed = true;
+                }
+            }
+            if (changed) update();
+        }
     }
 
     @Override
@@ -205,6 +233,22 @@ public class GunPegboardBlockEntity extends BlockEntity {
             byte[] saved = tag.getByteArray(ROTATIONS_TAG);
             System.arraycopy(saved, 0, rotations, 0, Math.min(saved.length, rotations.length));
         }
+        PegboardShape shape = getBlockState().getValue(GunPegboardBlock.SHAPE);
+        String savedShape = tag.getString(SLOT_SHAPE_TAG);
+        // 结构镜像只转换方块状态；左右转角互换时，同步镜像每面的槽位列和旋转角度。
+        boolean mirrored = shape == PegboardShape.CORNER_LEFT
+                && savedShape.equals(PegboardShape.CORNER_RIGHT.getSerializedName())
+                || shape == PegboardShape.CORNER_RIGHT
+                && savedShape.equals(PegboardShape.CORNER_LEFT.getSerializedName());
+        if (mirrored) {
+            ItemStack[] savedItems = items.clone();
+            byte[] savedRotations = rotations.clone();
+            for (int slot = 0; slot < SLOT_COUNT; slot++) {
+                int mirroredSlot = slot - slot % GRID_SIZE + GRID_SIZE - 1 - slot % GRID_SIZE;
+                items[mirroredSlot] = savedItems[slot];
+                rotations[mirroredSlot] = (byte) (-savedRotations[slot] & 7);
+            }
+        }
         for (int i = 0; i < displaySlots.length; i++) {
             DisplayGunSlot handle = displaySlots[i];
             if (handle == null) continue;
@@ -216,6 +260,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
+        tag.putString(SLOT_SHAPE_TAG, getBlockState().getValue(GunPegboardBlock.SHAPE).getSerializedName());
         if (color >= 0) tag.putInt(COLOR_TAG, color);
         if (inheritedColor) tag.putBoolean(INHERITED_COLOR_TAG, true);
         ListTag list = new ListTag();
@@ -235,6 +280,8 @@ public class GunPegboardBlockEntity extends BlockEntity {
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
         saveAdditional(tag);
+        // 网络更新不能按结构镜像解释，客户端可能尚未收到对应的方块状态。
+        tag.remove(SLOT_SHAPE_TAG);
         return tag;
     }
 

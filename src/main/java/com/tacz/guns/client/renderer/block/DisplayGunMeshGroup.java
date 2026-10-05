@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.block.GunDisplayCaseBlock;
 import com.tacz.guns.block.GunPegboardBlock;
+import com.tacz.guns.block.GunPegboardSlotHelper;
 import com.tacz.guns.block.entity.DisplayGunSlot;
 import com.tacz.guns.block.entity.GunDisplayCaseBlockEntity;
 import com.tacz.guns.block.entity.GunPegboardBlockEntity;
@@ -63,9 +64,12 @@ public class DisplayGunMeshGroup {
             BlockEntity owner = slot.owner();
             int index = slot.index();
             double x = ((index % GRID_SIZE) + 0.5D) / GRID_SIZE - 0.5D;
-            double y = ((index / GRID_SIZE) + 0.5D) / GRID_SIZE - 0.5D;
+            int localIndex = owner instanceof GunPegboardBlockEntity ? index % GunPegboardBlockEntity.SLOTS_PER_FACE : index;
+            double y = ((localIndex / GRID_SIZE) + 0.5D) / GRID_SIZE - 0.5D;
             PoseStack pose = new PoseStack();
-            DisplayItemTransforms.apply(pose, facing(owner), x, y, ITEM_DEPTH, rotation(owner, index));
+            Direction facing = owner instanceof GunPegboardBlockEntity
+                    ? GunPegboardSlotHelper.getSlotFacing(owner.getBlockState(), index) : facing(owner);
+            DisplayItemTransforms.apply(pose, facing, x, y, ITEM_DEPTH, rotation(owner, index));
             return new Matrix4f(pose.last().pose());
         }
 
