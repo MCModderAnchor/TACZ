@@ -27,9 +27,13 @@ public class GunPegboardBlockEntity extends BlockEntity {
     private static final String SLOT_TAG = "Slot";
     private static final String ITEM_TAG = "Item";
     private static final String ROTATIONS_TAG = "Rotations";
+    private static final String COLOR_TAG = "Color";
+    private static final String INHERITED_COLOR_TAG = "InheritedColor";
 
     private final ItemStack[] items = new ItemStack[SLOT_COUNT];
     private final byte[] rotations = new byte[SLOT_COUNT];
+    private int color = -1;
+    private boolean inheritedColor;
     private final DisplayGunSlot[] displaySlots = new DisplayGunSlot[SLOT_COUNT];
 
     public GunPegboardBlockEntity(BlockPos pos, BlockState state) {
@@ -41,6 +45,26 @@ public class GunPegboardBlockEntity extends BlockEntity {
 
     public ItemStack getItem(int slot) {
         return isValidSlot(slot) ? items[slot] : ItemStack.EMPTY;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public boolean hasInheritedColor() {
+        return inheritedColor;
+    }
+
+    public void setColor(int color, boolean inherited) {
+        int normalized = color < 0 ? -1 : color & 0xFFFFFF;
+        boolean inheritedColor = normalized >= 0 && inherited;
+        if (this.color == normalized && this.inheritedColor == inheritedColor) return;
+        this.color = normalized;
+        this.inheritedColor = inheritedColor;
+        if (level != null && !level.isClientSide()) {
+            level.setBlock(worldPosition, getBlockState().setValue(GunPegboardBlock.DYED, this.color >= 0), Block.UPDATE_ALL);
+        }
+        update();
     }
 
     public int getRotation(int slot) {
@@ -159,6 +183,8 @@ public class GunPegboardBlockEntity extends BlockEntity {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
+        color = tag.contains(COLOR_TAG, Tag.TAG_INT) ? tag.getInt(COLOR_TAG) & 0xFFFFFF : -1;
+        inheritedColor = color >= 0 && tag.getBoolean(INHERITED_COLOR_TAG);
         ItemStack[] previousItems = items.clone();
         byte[] previousRotations = rotations.clone();
         for (int i = 0; i < items.length; i++) {
@@ -190,6 +216,8 @@ public class GunPegboardBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
+        if (color >= 0) tag.putInt(COLOR_TAG, color);
+        if (inheritedColor) tag.putBoolean(INHERITED_COLOR_TAG, true);
         ListTag list = new ListTag();
         for (int i = 0; i < items.length; i++) {
             if (!items[i].isEmpty()) {

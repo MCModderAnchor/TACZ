@@ -7,6 +7,8 @@
   "block.tacz.statue": "石像",
   "block.tacz.target": "人形标靶",
   "block.tacz.gun_pegboard": "挂板",
+  "tooltip.tacz.gun_pegboard.dye": "可使用染料改变颜色，或用炼药锅清除颜色。",
+  "tooltip.tacz.gun_pegboard.link_color": "默认挂板与染色挂板相邻时将会自动连接颜色",
   "block.tacz.glow_gun_pegboard": "发光挂板",
   "block.tacz.gun_display_case": "枪械展示柜",
   "item.tacz.gun_display_case": "枪械展示柜",

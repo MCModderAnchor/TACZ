@@ -64,6 +64,8 @@
   "block.tacz.target": "人形目標",
   "block.tacz.statue": "石像",
   "block.tacz.gun_display_case": "槍械展示櫃",
+  "tooltip.tacz.gun_pegboard.dye": "可使用染料改變顏色，或用鍊藥鍋清除顏色。",
+  "tooltip.tacz.gun_pegboard.link_color": "預設掛板與染色掛板相鄰時將會自動連接顏色",
   "item.tacz.gun_display_case": "槍械展示櫃",
   "tooltip.tacz.gun_display_case": "可用於展示您的私人收藏，且非常安全。",
   "block.tacz.gun_smith_table": "槍匠工作桌",

@@ -1,6 +1,7 @@
 package com.tacz.guns.block;
 
 import com.tacz.guns.block.entity.GunPegboardBlockEntity;
+import com.tacz.guns.item.GunPegboardItem;
 import com.tacz.guns.config.util.GunPegboardItemConfigRead;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,6 +10,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -21,17 +23,24 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class GunPegboardBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final BooleanProperty DYED = BooleanProperty.create("dyed");
     private static final VoxelShape NORTH_SHAPE = Block.box(0, 0, 13, 16, 16, 16);
     private static final VoxelShape SOUTH_SHAPE = Block.box(0, 0, 0, 16, 16, 3);
     private static final VoxelShape WEST_SHAPE = Block.box(13, 0, 0, 16, 16, 16);
@@ -43,9 +52,9 @@ public class GunPegboardBlock extends BaseEntityBlock {
     }
 
     public GunPegboardBlock(boolean glowing) {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0F, 3.0F).noOcclusion().lightLevel(state -> glowing ? 10 : 0));
+        super(Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0F, 6.0F).noOcclusion().lightLevel(state -> glowing ? 10 : 0));
         this.glowing = glowing;
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(DYED, false));
     }
 
     public boolean isGlowing() {
@@ -54,7 +63,7 @@ public class GunPegboardBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, DYED);
     }
 
     @Nullable
@@ -67,6 +76,12 @@ public class GunPegboardBlock extends BaseEntityBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction clickedFace = context.getClickedFace();
+        BlockPos target = context.getClickedPos().relative(clickedFace.getOpposite());
+        BlockState targetState = context.getLevel().getBlockState(target);
+        if (!context.replacingClickedOnBlock() && targetState.getBlock() instanceof GunPegboardBlock
+                && clickedFace.getAxis() != targetState.getValue(FACING).getAxis()) {
+            return defaultBlockState().setValue(FACING, targetState.getValue(FACING));
+        }
         if (clickedFace.getAxis() == Direction.Axis.Y) {
             return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
         }
@@ -75,6 +90,9 @@ public class GunPegboardBlock extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (player.getItemInHand(hand).getItem() instanceof GunPegboardItem) {
+            return InteractionResult.PASS;
+        }
         if (player.isShiftKeyDown()) {
             return InteractionResult.PASS;
         }
@@ -140,6 +158,28 @@ public class GunPegboardBlock extends BaseEntityBlock {
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
+        List<ItemStack> drops = super.getDrops(state, builder);
+        if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof GunPegboardBlockEntity pegboard) {
+            for (ItemStack drop : drops) {
+                if (drop.is(asItem()) && pegboard.getColor() >= 0 && !pegboard.hasInheritedColor()) {
+                    ((DyeableLeatherItem) drop.getItem()).setColor(drop, pegboard.getColor());
+                }
+            }
+        }
+        return drops;
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+        ItemStack stack = new ItemStack(asItem());
+        if (level.getBlockEntity(pos) instanceof GunPegboardBlockEntity pegboard && pegboard.getColor() >= 0) {
+            ((DyeableLeatherItem) stack.getItem()).setColor(stack, pegboard.getColor());
+        }
+        return stack;
     }
 
     @Override

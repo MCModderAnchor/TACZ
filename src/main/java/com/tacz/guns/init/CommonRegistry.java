@@ -5,6 +5,7 @@ import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.resource.GunPackLoader;
 import net.minecraftforge.event.AddPackFindersEvent;
+import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,6 +21,8 @@ public final class CommonRegistry {
         event.enqueueWork(NetworkHandler::init);
         event.enqueueWork(ModSyncedEntityData::init);
         event.enqueueWork(TargetHitTrigger::register);
+        event.enqueueWork(() -> CauldronInteraction.WATER.put(ModItems.GUN_PEGBOARD.get(), CauldronInteraction.DYED_ITEM));
+        event.enqueueWork(() -> CauldronInteraction.WATER.put(ModItems.GLOW_GUN_PEGBOARD.get(), CauldronInteraction.DYED_ITEM));
     }
 
     @SubscribeEvent

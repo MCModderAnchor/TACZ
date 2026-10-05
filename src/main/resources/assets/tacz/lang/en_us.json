@@ -68,6 +68,8 @@
   "block.tacz.target": "Humanoid Target",
   "block.tacz.statue": "Stone Statue",
   "block.tacz.gun_pegboard": "Pegboard",
+  "tooltip.tacz.gun_pegboard.dye": "Use dyes to change the color, or a cauldron to remove it.",
+  "tooltip.tacz.gun_pegboard.link_color": "Undyed pegboards automatically inherit color when placed next to dyed pegboards.",
   "block.tacz.glow_gun_pegboard": "Glow Pegboard",
   "block.tacz.gun_display_case": "Gun Display Case",
   "item.tacz.gun_display_case": "Gun Display Case",

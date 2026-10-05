@@ -1,8 +1,34 @@
 {
   "variants": {
-    "facing=north": { "model": "tacz:block/glow_gun_pegboard" },
-    "facing=east": { "model": "tacz:block/glow_gun_pegboard", "y": 90 },
-    "facing=south": { "model": "tacz:block/glow_gun_pegboard", "y": 180 },
-    "facing=west": { "model": "tacz:block/glow_gun_pegboard", "y": 270 }
+    "facing=north,dyed=false": {
+      "model": "tacz:block/glow_gun_pegboard"
+    },
+    "facing=north,dyed=true": {
+      "model": "tacz:block/glow_gun_pegboard_dyed"
+    },
+    "facing=east,dyed=false": {
+      "model": "tacz:block/glow_gun_pegboard",
+      "y": 90
+    },
+    "facing=east,dyed=true": {
+      "model": "tacz:block/glow_gun_pegboard_dyed",
+      "y": 90
+    },
+    "facing=south,dyed=false": {
+      "model": "tacz:block/glow_gun_pegboard",
+      "y": 180
+    },
+    "facing=south,dyed=true": {
+      "model": "tacz:block/glow_gun_pegboard_dyed",
+      "y": 180
+    },
+    "facing=west,dyed=false": {
+      "model": "tacz:block/glow_gun_pegboard",
+      "y": 270
+    },
+    "facing=west,dyed=true": {
+      "model": "tacz:block/glow_gun_pegboard_dyed",
+      "y": 270
+    }
   }
 }
