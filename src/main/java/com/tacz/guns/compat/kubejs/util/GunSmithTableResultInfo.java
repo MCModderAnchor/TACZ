@@ -151,6 +151,7 @@ public class GunSmithTableResultInfo {
         MUZZLE("muzzle"),
         PISTOL("pistol"),
         RIFLE("rifle"),
+        DMR("dmr"),
         RPG("rpg"),
         SCOPE("scope"),
         SHOTGUN("shotgun"),

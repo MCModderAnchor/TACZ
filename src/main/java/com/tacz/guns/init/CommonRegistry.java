@@ -1,6 +1,7 @@
 package com.tacz.guns.init;
 
 import com.tacz.guns.advancement.TargetHitTrigger;
+import com.tacz.guns.advancement.GunRefitTrigger;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.resource.GunPackLoader;
@@ -21,6 +22,7 @@ public final class CommonRegistry {
         event.enqueueWork(NetworkHandler::init);
         event.enqueueWork(ModSyncedEntityData::init);
         event.enqueueWork(TargetHitTrigger::register);
+        event.enqueueWork(GunRefitTrigger::register);
         event.enqueueWork(() -> CauldronInteraction.WATER.put(ModItems.GUN_PEGBOARD.get(), CauldronInteraction.DYED_ITEM));
         event.enqueueWork(() -> CauldronInteraction.WATER.put(ModItems.GLOW_GUN_PEGBOARD.get(), CauldronInteraction.DYED_ITEM));
     }

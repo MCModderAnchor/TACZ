@@ -42,15 +42,15 @@
   "muzzle_flash": {
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 1,
-    "smoke_scale": 1.65,
+    "scale": 0.5,
+    "smoke_scale": 1.25,
     "initial_speed_scale": 1.7
   },
   // 机瞄的放大倍数，默认 1.2
   "iron_zoom": 1.5,
   "model_fov": 60,
   // 机瞄模型缩放fov，默认70
-  "zoom_model_fov": 45,
+  "zoom_model_fov": 38,
   // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
   "shell": {
     // 抛壳的初速度

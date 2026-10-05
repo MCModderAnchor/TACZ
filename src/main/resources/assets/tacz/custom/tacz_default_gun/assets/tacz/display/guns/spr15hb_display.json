@@ -21,13 +21,13 @@
   "muzzle_flash": {
     "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.5,
+    "scale": 0.35,
     "smoke_scale": 1.25,
     "initial_speed_scale": 1.5
   },
-  "iron_zoom": 1.5,
+  "iron_zoom": 1.66,
   "model_fov": 60,
-  "zoom_model_fov": 50,
+  "zoom_model_fov": 38,
   "shell": {
     "initial_velocity": [5, 2, 1],
     "random_velocity": [1, 1, 0.25],

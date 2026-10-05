@@ -85,8 +85,13 @@ public class ModCreativeTabs {
             .icon(() -> GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "ai_awp")).build())
             .displayItems((parameters, output) -> output.acceptAll(AbstractGunItem.fillItemCategory(GunTabType.SNIPER))).build());
 
+    public static RegistryObject<CreativeModeTab> GUN_DMR_TAB = TABS.register("dmr", () -> CreativeModeTab.builder()
+            .title(Component.translatable("tacz.type.dmr.name")).withTabsBefore(GUN_SNIPER_TAB.getId())
+            .icon(() -> GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "mk14")).build())
+            .displayItems((parameters, output) -> output.acceptAll(AbstractGunItem.fillItemCategory(GunTabType.DMR))).build());
+
     public static RegistryObject<CreativeModeTab> GUN_RIFLE_TAB = TABS.register("rifle", () -> CreativeModeTab.builder()
-            .title(Component.translatable("tacz.type.rifle.name")).withTabsBefore(GUN_SNIPER_TAB.getId())
+            .title(Component.translatable("tacz.type.rifle.name")).withTabsBefore(GUN_DMR_TAB.getId())
             .icon(() -> GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "ak47")).build())
             .displayItems((parameters, output) -> output.acceptAll(AbstractGunItem.fillItemCategory(GunTabType.RIFLE))).build());
 

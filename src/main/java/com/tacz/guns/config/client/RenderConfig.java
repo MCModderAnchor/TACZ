@@ -25,6 +25,7 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue RENDER_CREATIVE_PACK_SIDEBAR;
     public static ForgeConfigSpec.IntValue DAMAGE_COUNTER_RESET_TIME;
     public static ForgeConfigSpec.BooleanValue DISABLE_MOVEMENT_ATTRIBUTE_FOV;
+    public static ForgeConfigSpec.DoubleValue GUN_HURT_BOB_MULTIPLIER;
     public static ForgeConfigSpec.BooleanValue ENABLE_TACZ_ID_IN_TOOLTIP;
     public static ForgeConfigSpec.BooleanValue BLOCK_ENTITY_TRANSLUCENT;
     public static ForgeConfigSpec.BooleanValue DISPLAY_GUN_VBO;
@@ -95,6 +96,9 @@ public class RenderConfig {
 
         builder.comment("Disable the fov effect from the movement speed attribute while holding a gun");
         DISABLE_MOVEMENT_ATTRIBUTE_FOV = builder.define("DisableMovementAttributeFov", true);
+
+        builder.comment("First-person vanilla hurt tilt multiplier while holding a gun in the main hand. 0 disables it, 1 preserves vanilla side-hit strength. Front/back hits use half this multiplier, with smooth transitions for diagonal hits. Multiplies the vanilla Damage Tilt setting; gunshot-specific hurt effects keep their gun data settings.");
+        GUN_HURT_BOB_MULTIPLIER = builder.defineInRange("GunHurtBobMultiplier", 0.1, 0, 1);
 
         builder.comment("Enable the display of the TACZ ID in the tooltip when Advanced Tooltip is enabled");
         ENABLE_TACZ_ID_IN_TOOLTIP = builder.define("EnableTaczIdInTooltip", true);

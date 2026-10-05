@@ -4,16 +4,20 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tacz.guns.api.client.event.RenderLevelBobEvent;
 import com.tacz.guns.client.renderer.other.GunHurtBobTweak;
+import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.Mth;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -47,6 +51,22 @@ public abstract class GameRendererMixin {
         if (cancel) {
             ci.cancel();
         }
+    }
+
+    // 第三个旋转是受伤倾斜；保持死亡旋转及受击方向的前后旋转不变。
+    @ModifyArg(method = "bobHurt", at = @At(value = "INVOKE", target = "Lcom/mojang/math/Axis;rotationDegrees(F)Lorg/joml/Quaternionf;", ordinal = 2), index = 0)
+    private float tacz$scaleHeldGunHurtTilt(float angle) {
+        Minecraft minecraft = this.getMinecraft();
+        if (minecraft.options.getCameraType().isFirstPerson()
+                && minecraft.getCameraEntity() instanceof LocalPlayer player
+                && !player.isDeadOrDying()
+                && player.getMainHandItem().getItem() instanceof AbstractGunItem) {
+            // 正面和背面受击以俯仰为主，额外减半；侧面保持配置倍率，斜向平滑过渡。
+            float frontBackWeight = Math.abs(Mth.sin(player.getHurtDir() * Mth.DEG_TO_RAD));
+            float directionMultiplier = 1.0F - 0.5F * frontBackWeight;
+            return angle * RenderConfig.GUN_HURT_BOB_MULTIPLIER.get().floatValue() * directionMultiplier;
+        }
+        return angle;
     }
 
     @Inject(method = "bobView", at = @At("HEAD"), cancellable = true)

@@ -1,6 +1,7 @@
 package com.tacz.guns.network.message;
 
 import com.tacz.guns.api.item.IAttachment;
+import com.tacz.guns.advancement.GunRefitTrigger;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.network.NetworkHandler;
@@ -60,7 +61,9 @@ public class ClientMessageRefitGun {
                         }
                         AttachmentType realType = iAttachment.getType(attachmentItem);
                         ItemStack oldAttachmentItem = iGun.getAttachment(gunItem, realType);
+                        ItemStack beforeRefit = gunItem.copy();
                         iGun.installAttachment(gunItem, attachmentItem);
+                        GunRefitTrigger.INSTANCE.trigger(player, beforeRefit, gunItem);
                         // 刷新配件数据
                         AttachmentPropertyManager.postChangeEvent(player, gunItem);
                         inventory.setItem(message.attachmentSlotIndex, VirtualOemAttachment.isMarked(oldAttachmentItem) ? ItemStack.EMPTY : oldAttachmentItem);

@@ -113,6 +113,8 @@
   "config.tacz.client.zoom.zoom_sensitivity_base_multiplier": "开镜灵敏度基础乘数",
   "config.tacz.client.zoom.zoom_sensitivity_base_multiplier.desc": "开镜灵敏度最终会乘上这个系数",
   "config.tacz.client.render.disable_movement_fov": "禁用移速FOV效果",
+  "config.tacz.client.render.gun_hurt_bob_multiplier": "持枪受伤倾斜倍率",
+  "config.tacz.client.render.gun_hurt_bob_multiplier.desc": "主手持枪时第一人称原版受伤倾斜的倍率。0 为关闭，1 为原版侧面受击幅度，默认 0.1。正面和背面受击再减半，斜向平滑过渡。与原版伤害倾斜设置相乘；枪弹命中的专用晃动仍使用枪械数据配置。",
   "config.tacz.client.render.disable_movement_fov.desc": "持枪时完全屏蔽移速属性带来的fov变化",
   "config.tacz.client.render.enable_tooltip_id": "显示tacz的物品ID",
   "config.tacz.client.render.enable_tooltip_id.desc": "当高级提示框(F3+H)开启时，在tooltips中显示tacz的枪械/弹药/配件ID",
@@ -398,7 +400,7 @@
   "advancement.tacz.attachment_workbench.title": "锦上添花",
   "advancement.tacz.attachment_workbench.description": "获得配件工作台",
   "advancement.tacz.craft_first_attachment.title": "枪匠",
-  "advancement.tacz.craft_first_attachment.description": "获得任意一个配件",
+  "advancement.tacz.craft_first_attachment.description": "改装任意一把枪",
 
   "advancement.tacz.full_assault.title": "猛攻！",
   "advancement.tacz.full_assault.description": "给一把枪械的所有六个配件槽位都安装上配件",
@@ -425,8 +427,8 @@
   "advancement.tacz.faith_into_chamber.description": "将任意枪械放置于石像上",
   "advancement.tacz.display_case_place_gun.title": "安全的私人收藏",
   "advancement.tacz.display_case_place_gun.description": "将任意枪械放置于枪械展示柜上",
-  "advancement.tacz.pegboard_place_gun.title": "琳琅满目",
-  "advancement.tacz.pegboard_place_gun.description": "将任意枪械放置于挂板上",
+  "advancement.tacz.pegboard_place_gun.title": "艺术创想",
+  "advancement.tacz.pegboard_place_gun.description": "将任意挂板进行合成染色",
 
 
   "advancement.tacz.range_time.title": "靶场时间",
@@ -435,6 +437,6 @@
   "advancement.tacz.target.description": "获得人形标靶",
   "advancement.tacz.target_minecart.title": "标靶车",
   "advancement.tacz.target_minecart.description": "获得标靶车",
-  "advancement.tacz.target_hit.title": "命中标靶",
+  "advancement.tacz.target_hit.title": "校正参数",
   "advancement.tacz.target_hit.description": "用枪械击中128米外的标靶"
 }

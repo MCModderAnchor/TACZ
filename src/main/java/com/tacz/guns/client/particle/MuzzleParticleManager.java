@@ -204,8 +204,15 @@ public final class MuzzleParticleManager {
                 || TimelessAPI.getGunDisplay(gunItem).orElse(null) != lightDisplay) {
             return environmentLight;
         }
-        int blockLight = Math.max(LightTexture.block(environmentLight), flashLightLevel);
-        return LightTexture.pack(blockLight, LightTexture.sky(environmentLight));
+        int environmentBlockLight = LightTexture.block(environmentLight);
+        int environmentSkyLight = LightTexture.sky(environmentLight);
+        if (environmentBlockLight >= 12) {
+            return environmentLight;
+        }
+        // 暗处最多提高十级，火光提亮上限为十二级；保留更亮的环境光。
+        int flashLightLimit = Math.min(12, environmentBlockLight + 10);
+        int blockLight = Math.max(environmentBlockLight, Math.min(flashLightLevel, flashLightLimit));
+        return LightTexture.pack(blockLight, environmentSkyLight);
     }
 
     public static void resetMuzzleLight() {

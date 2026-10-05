@@ -1,6 +1,7 @@
 package com.tacz.guns.network.message;
 
 import com.tacz.guns.api.item.IAttachment;
+import com.tacz.guns.advancement.GunRefitTrigger;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.network.NetworkHandler;
@@ -67,6 +68,7 @@ public class ClientMessageSetAttachmentVariant {
         if (attachment == null || attachmentItem.isEmpty()) {
             return;
         }
+        ItemStack beforeRefit = gunItem.copy();
         ResourceLocation attachmentId = attachment.getAttachmentId(attachmentItem);
         if (message.variantId == null) {
             VariantHelper.removeVariant(attachmentItem);
@@ -80,6 +82,7 @@ public class ClientMessageSetAttachmentVariant {
             VariantHelper.setVariant(attachmentItem, message.variantId);
         }
         gun.installAttachment(gunItem, attachmentItem);
+        GunRefitTrigger.INSTANCE.trigger(player, beforeRefit, gunItem);
         AttachmentPropertyManager.postChangeEvent(player, gunItem);
         player.inventoryMenu.broadcastChanges();
         NetworkHandler.sendToClientPlayer(new ServerMessageRefreshRefitScreen(), player);

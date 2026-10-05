@@ -1,5 +1,5 @@
 {
-  "parent": "tacz:statue",
+  "parent": "tacz:arms_exhibition",
   "display": {
     "icon": {
       "item": "tacz:statue"
@@ -10,7 +10,7 @@
     "description": {
       "translate": "advancement.tacz.faith_into_chamber.description"
     },
-    "frame": "challenge",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true
   },

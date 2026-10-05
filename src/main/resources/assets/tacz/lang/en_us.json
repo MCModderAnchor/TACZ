@@ -285,6 +285,8 @@
   "config.tacz.client.render.auto_select_gun_smith_table_filter.desc": "When opening a gun smith table with a gun, attachment, or ammo in your main hand, automatically select the held item filter.",
   "config.tacz.client.render.disable_movement_fov.desc": "Disable all fov effect from the movement speed attribute while holding a gun.",
   "config.tacz.client.render.disable_movement_fov": "Disable Speed Fov Effect",
+  "config.tacz.client.render.gun_hurt_bob_multiplier": "Held Gun Hurt Tilt Multiplier",
+  "config.tacz.client.render.gun_hurt_bob_multiplier.desc": "First-person vanilla hurt tilt multiplier with a gun in the main hand. 0 disables it, 1 preserves vanilla side-hit strength; default 0.1. Front/back hits use half this multiplier, with smooth transitions for diagonal hits. Multiplies vanilla Damage Tilt. Gunshot-specific hurt effects still use gun data settings.",
   "config.tacz.client.render.enable_translucent": "Enable Block Entity Translucent",
   "config.tacz.client.render.enable_translucent.desc": "Should enable translucent while rendering block entity like gunsmith table or statue. Enable this option will result in ADDITIONAL PERFORMANCE OVERHEAD.",
   "config.tacz.client.render.display_gun_vbo": "Display Gun VBO (Experimental)",
@@ -396,7 +398,7 @@
   "advancement.tacz.attachment_workbench.title": "Gilding the Lily",
   "advancement.tacz.attachment_workbench.description": "Obtain the Attachment Table",
   "advancement.tacz.craft_first_attachment.title": "Gunsmith",
-  "advancement.tacz.craft_first_attachment.description": "Obtain any attachment",
+  "advancement.tacz.craft_first_attachment.description": "Modify any gun",
 
   "advancement.tacz.full_assault.title": "Full Assault!",
   "advancement.tacz.full_assault.description": "Fill all six attachment slots on a gun",
@@ -424,7 +426,7 @@
   "advancement.tacz.display_case_place_gun.title": "Safe Private Collection",
   "advancement.tacz.display_case_place_gun.description": "Place any gun on a gun display case",
   "advancement.tacz.pegboard_place_gun.title": "A Dazzling Display",
-  "advancement.tacz.pegboard_place_gun.description": "Place any gun on a pegboard",
+  "advancement.tacz.pegboard_place_gun.description": "Dye any pegboard through crafting",
 
 
   "advancement.tacz.range_time.title": "Range Time",
@@ -433,6 +435,6 @@
   "advancement.tacz.target.description": "Obtain a target",
   "advancement.tacz.target_minecart.title": "Target Minecart",
   "advancement.tacz.target_minecart.description": "Obtain a target minecart",
-  "advancement.tacz.target_hit.title": "Target Hit",
+  "advancement.tacz.target_hit.title": "Parameter Calibration",
   "advancement.tacz.target_hit.description": "Hit a target from 128 meters away"
 }

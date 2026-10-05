@@ -11,7 +11,7 @@
   ],
   "idle_scope_height_adjust": 0.5,
   "scope": true,
-  "fov": 40.0,
+  "fov": 35.0,
   "sounds": {
     "install": "tacz:attachments/scope_general_b",
     "uninstall": "tacz:attachments/scope_general_b"

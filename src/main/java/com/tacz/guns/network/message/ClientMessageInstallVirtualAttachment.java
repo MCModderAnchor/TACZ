@@ -1,6 +1,7 @@
 package com.tacz.guns.network.message;
 
 import com.tacz.guns.api.item.IAttachment;
+import com.tacz.guns.advancement.GunRefitTrigger;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
@@ -64,7 +65,9 @@ public class ClientMessageInstallVirtualAttachment {
                     return;
                 }
                 VirtualOemAttachment.mark(virtualAttachment);
+                ItemStack beforeRefit = gunItem.copy();
                 iGun.installAttachment(gunItem, virtualAttachment);
+                GunRefitTrigger.INSTANCE.trigger(player, beforeRefit, gunItem);
                 if (!oldAttachmentItem.isEmpty() && !VirtualOemAttachment.isMarked(oldAttachmentItem)) {
                     inventory.add(oldAttachmentItem);
                 }

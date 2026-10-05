@@ -3,6 +3,6 @@
   "display": "tacz:m1866_display",
   "data": "tacz:m1866_data",
   "tooltip": "tacz.gun.m1866.desc",
-  "type": "rifle",
+  "type": "dmr",
   "sort": 25
 }
