@@ -3,8 +3,8 @@
 	"credit": "Made by NekoCrane",
 	"texture_size": [64, 64],
 	"textures": {
-		"2": "下载/glow_pegboard_cornor_s",
-		"particle": "tacz:block/glow_pegboard_cornor_n"
+		"2": "tacz:block/glow_pegboard_cornor",
+		"particle": "#2"
 	},
 	"elements": [
 		{
