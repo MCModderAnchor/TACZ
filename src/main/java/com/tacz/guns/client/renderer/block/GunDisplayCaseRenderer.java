@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.block.GunDisplayCaseBlock;
 import com.tacz.guns.block.GunDisplayCaseSlotHelper;
 import com.tacz.guns.block.entity.GunDisplayCaseBlockEntity;
+import com.tacz.guns.client.renderer.item.DisplayItemRenderContext;
 import com.tacz.guns.client.renderer.item.ItemPreviewRenderContext;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.config.util.GunPegboardItemConfigRead;
@@ -93,7 +94,7 @@ public class GunDisplayCaseRenderer implements BlockEntityRenderer<GunDisplayCas
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
             ItemPreviewRenderContext.setAlpha(alpha);
         }
-        Minecraft.getInstance().getItemRenderer().renderStatic(
+        DisplayItemRenderContext.render(() -> Minecraft.getInstance().getItemRenderer().renderStatic(
                 stack,
                 ItemDisplayContext.FIXED,
                 packedLight,
@@ -102,7 +103,7 @@ public class GunDisplayCaseRenderer implements BlockEntityRenderer<GunDisplayCas
                 buffer,
                 level,
                 0
-        );
+        ));
         if (alpha < 1.0F) {
             ItemPreviewRenderContext.setAlpha(1.0F);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);

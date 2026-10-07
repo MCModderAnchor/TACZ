@@ -1,6 +1,11 @@
 package com.tacz.guns.client.renderer.block;
 
-import com.github.mcmodderanchor.simplebedrockmodel.v2.client.world.*;
+import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.cache.MeshCachePolicy;
+import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.capture.GeometryCollector;
+import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.world.MeshRenderableAdapter;
+import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.world.WorldMeshGroup;
+import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.world.WorldMeshRenderer;
+import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.world.WorldMeshStrategy;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.block.GunDisplayCaseBlock;

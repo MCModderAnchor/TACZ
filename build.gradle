@@ -187,8 +187,8 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
 
-    jarJar(implementation(fg.deobf("com.github.mcmodderanchor:simplebedrockmodel:2.5.22-forge-mc1.20.1"))) {
-        jarJar.ranged(it, "[2.5.22,)")
+    jarJar(implementation(fg.deobf("com.github.mcmodderanchor:simplebedrockmodel:2.5.26-forge-mc1.20.1"))) {
+        jarJar.ranged(it, "[2.5.26,)")
     }
     compileOnly("com.maydaymemory:mae:1.1.2") {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
@@ -237,8 +237,8 @@ dependencies {
     implementation fg.deobf("curse.maven:embeddium-908741:${embeddedt_id}")
     // 同时兼容两个版本
     compileOnly fg.deobf('libs:oculus_legacy:mc1.20.1-1.6.13')
-    compileOnly fg.deobf('libs:oculus:mc1.20.1-1.7.0')
-//    runtimeOnly fg.deobf('curse.maven:rubidium-extra-654373:6101745')
+    implementation fg.deobf('libs:oculus:mc1.20.1-1.7.0')
+    runtimeOnly fg.deobf('curse.maven:rubidium-extra-654373:6101745')
 
     runtimeOnly fg.deobf("curse.maven:carry-on-274259:${carry_on_id}")
 

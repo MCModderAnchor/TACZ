@@ -4,7 +4,6 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.client.handler.FirstPerso
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.firstperson.FirstPersonParticleSystem;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.render.CameraStateCache;
-import com.github.mcmodderanchor.simplebedrockmodel.v2.client.world.ImmediateStaticMeshRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -340,17 +339,16 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             }
             // Static external appearances own the call even while capture/upload is pending.
             boolean outsideHighPolyDistance = !RenderDistance.inRenderHighPolyModelDistance(poseStack);
-            ImmediateStaticMeshRenderer.DrawResult vbo = ExternalGunItemVboRenderer.tryRender(
+            StaticGunRenderResult vbo = ExternalGunItemVboRenderer.tryRender(
                     stack, transformType, outsideHighPolyDistance, poseStack, pBuffer, pPackedLight, pPackedOverlay);
-            if (vbo == ImmediateStaticMeshRenderer.DrawResult.PENDING
-                    || vbo.drawn() && transformType == GROUND) return;
+            if (vbo.status() == StaticGunRenderResult.Status.PENDING
+                    || vbo.submitted() && transformType == GROUND) return;
 
             // The old model is needed only for fallback or third-person dynamic effects.
             BedrockGunModel gunModel;
             ResourceLocation gunTexture;
             Pair<BedrockGunModel, ResourceLocation> lodModel = gunIndex.getLodModel();
-            boolean drawnLod = vbo == ImmediateStaticMeshRenderer.DrawResult.DRAWN_PREVIOUS
-                    ? !outsideHighPolyDistance : outsideHighPolyDistance;
+            boolean drawnLod = vbo.submitted() ? vbo.selectedLod() : outsideHighPolyDistance;
             boolean useLod = lodModel != null && drawnLod;
             if (!useLod) {
                 gunModel = gunIndex.getGunModel();
@@ -363,7 +361,7 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
                 renderSlotTexture(poseStack, pBuffer, pPackedLight, pPackedOverlay, gunIndex.getSlotTexture());
                 return;
             }
-            if (vbo.drawn()) {
+            if (vbo.submitted()) {
                 if (transformType == THIRD_PERSON_RIGHT_HAND) {
                     poseStack.pushPose();
                     try {
