@@ -448,10 +448,17 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 		poseStack.last().pose().set(matrixStack.last().pose());
 		poseStack.last().normal().set(matrixStack.last().normal());
 
+		// 获取先前的层前/层后任务, 防止覆盖
+		Runnable before = ARCompat.getRenderBeforeFunction();
+		Runnable after = ARCompat.getRenderAfterFunction();
+
 		// 设置外环的渲染层和渲染前后任务
 		// 清空模板缓冲区、准备绘制模板缓冲
 		ARCompat.setRenderLayer(-943);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 清除上模板残留, 这里其实可以按原始渲染方法移出去, 但为了统一先放入第一层渲染
 			RenderHelper.enableItemEntityStencilTest();
 			RenderSystem.clearStencil(0);
@@ -462,8 +469,13 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 		});
 
-		// 画完目镜外环后, 临时关闭模板缓冲区防止渲染异常
-		ARCompat.setRenderAfterFunction(RenderHelper::disableItemEntityStencilTest);
+		ARCompat.setRenderAfterFunction(() -> {
+			// 画完目镜外环后, 临时关闭模板缓冲区防止渲染异常
+			RenderHelper.disableItemEntityStencilTest();
+
+			// 最后执行被覆盖的层后方法
+			after.run();
+		});
 
 		if (ocularRingPath != null) {
 			// 渲染目镜外环
@@ -478,6 +490,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 		// 设置镜身的渲染层和渲染前后任务
 		ARCompat.setRenderLayer(-943 + 1);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 重新启用上一层关闭的模板缓冲区
 			RenderHelper.enableItemEntityStencilTest();
 
@@ -526,6 +541,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			// 关闭模板缓冲
 			RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
 			RenderHelper.disableItemEntityStencilTest();
+
+			// 最后执行被覆盖的层后方法
+			after.run();
 		});
 
 		if (scopeBodyPath != null) {
@@ -554,9 +572,15 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 		poseStack.last().pose().set(matrixStack.last().pose());
 		poseStack.last().normal().set(matrixStack.last().normal());
 
+		// 获取先前的层前任务, 防止覆盖
+		Runnable before = ARCompat.getRenderBeforeFunction();
+
 		// 设置层前任务, 清除模板缓冲并绘制目镜和划分
 		ARCompat.setRenderLayer(-943);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 清除上模板残留, 这里其实可以按原始渲染方法移出去, 但为了统一先放入第一层渲染
 			RenderHelper.enableItemEntityStencilTest();
 			RenderSystem.clearStencil(0);
@@ -603,10 +627,17 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 		poseStack.last().pose().set(matrixStack.last().pose());
 		poseStack.last().normal().set(matrixStack.last().normal());
 
+		// 获取先前的层前/层后任务, 防止覆盖
+		Runnable before = ARCompat.getRenderBeforeFunction();
+		Runnable after = ARCompat.getRenderAfterFunction();
+
 		// 设置外环的渲染层和渲染前后任务
 		// 清空模板缓冲区、准备绘制模板缓冲
 		ARCompat.setRenderLayer(-943);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 清除上模板残留, 这里其实可以按原始渲染方法移出去, 但为了统一先放入第一层渲染
 			RenderHelper.enableItemEntityStencilTest();
 			RenderSystem.clearStencil(0);
@@ -617,8 +648,13 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 		});
 
-		// 画完目镜外环后, 临时关闭模板缓冲区防止渲染异常
-		ARCompat.setRenderAfterFunction(RenderHelper::disableItemEntityStencilTest);
+		ARCompat.setRenderAfterFunction(() -> {
+			// 画完目镜外环后, 临时关闭模板缓冲区防止渲染异常
+			RenderHelper.disableItemEntityStencilTest();
+
+			// 最后执行被覆盖的层后方法
+			after.run();
+		});
 
 		// 渲染目镜外环
 		if (ocularRingPath != null) {
@@ -633,6 +669,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 		// 设置镜身的渲染层和渲染前后任务
 		ARCompat.setRenderLayer(-943 + 1);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 重新启用上一层关闭的模板缓冲区
 			RenderHelper.enableItemEntityStencilTest();
 
@@ -679,6 +718,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			// 关闭模板缓冲
 			RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
 			RenderHelper.disableItemEntityStencilTest();
+
+			// 最后执行被覆盖的层后方法
+			after.run();
 		});
 
 		// 渲染镜身

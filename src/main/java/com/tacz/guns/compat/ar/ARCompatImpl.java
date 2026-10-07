@@ -5,6 +5,7 @@ import com.github.argon4w.acceleratedrendering.core.buffers.accelerated.builders
 import com.github.argon4w.acceleratedrendering.features.entities.AcceleratedEntityRenderingFeature;
 import com.github.argon4w.acceleratedrendering.features.items.AcceleratedItemRenderingFeature;
 import com.github.argon4w.acceleratedrendering.features.text.AcceleratedTextRenderingFeature;
+import com.google.common.util.concurrent.Runnables;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
@@ -41,6 +42,14 @@ public class ARCompatImpl {
 
 	public static void setRenderAfterFunction(Runnable runnable) {
 		CoreFeature.forceSetDefaultLayerAfterFunction(runnable);
+	}
+
+	public static Runnable getRenderBeforeFunction() {
+		return CoreFeature.getDefaultLayerBeforeFunction();
+	}
+
+	public static Runnable getRenderAfterFunction() {
+		return CoreFeature.getDefaultLayerAfterFunction();
 	}
 
 	public static void resetRenderLayer() {

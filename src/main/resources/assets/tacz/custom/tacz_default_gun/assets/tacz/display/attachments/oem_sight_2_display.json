@@ -3,7 +3,7 @@
   "model": "tacz:attachment/oem_sight_2_geo",
   "texture": "tacz:gun/uv/m4a1",
   "sight": true,
-  "fov": 45.0,
+  "fov": 40.0,
   "zoom": [
     1.33
   ],

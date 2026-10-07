@@ -23,10 +23,10 @@
         {"distance": "infinite", "damage": 10.5}
       ]
     },
-    "speed": 310,
+    "speed": 340,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.01,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 3,
     "explosion": {
@@ -78,18 +78,16 @@
   },
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [1.75, 1.85]},
-      {"time": 0.05, "value": [1.25, 1.25]},
+      {"time": 0, "value": [1.75, 1.75]},
       {"time": 0.12, "value": [1.5, 1.5]},
-      {"time": 0.25, "value": [-0.15, -0.1]},
-      {"time": 0.5, "value": [0, 0]},
-      {"time": 0.7, "value": [0.15, 0.25]},
-      {"time": 0.9, "value": [0, 0]}
+      {"time": 0.25, "value": [0.1, 0.1]},
+      {"time": 0.35, "value": [0, 0]},
+      {"time": 0.7, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.5, 0.35]},
-      {"time": 0.05, "value": [-0.5, 0.35]},
-      {"time": 0.25, "value": [0, 0]}
+      {"time": 0, "value": [-0.35, 0.35]},
+      {"time": 0.25, "value": [0, 0]},
+      {"time": 0.3, "value": [0, 0]}
     ]
   },
   "inaccuracy": {

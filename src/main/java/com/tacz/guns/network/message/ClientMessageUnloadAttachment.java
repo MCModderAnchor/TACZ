@@ -1,6 +1,7 @@
 package com.tacz.guns.network.message;
 
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.advancement.GunRefitTrigger;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
@@ -49,7 +50,9 @@ public class ClientMessageUnloadAttachment {
                     }
                     ItemStack attachmentItem = iGun.getAttachment(gunItem, message.attachmentType);
                     if (!attachmentItem.isEmpty() && (VirtualOemAttachment.isMarked(attachmentItem) || inventory.add(attachmentItem))) {
+                        ItemStack beforeRefit = gunItem.copy();
                         iGun.unloadAttachment(gunItem, message.attachmentType);
+                        GunRefitTrigger.INSTANCE.trigger(player, beforeRefit, gunItem);
                         // 刷新配件数据
                         AttachmentPropertyManager.postChangeEvent(player, gunItem);
                         // 如果卸载的是扩容弹匣，吐出所有子弹

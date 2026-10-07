@@ -3010,7 +3010,8 @@
 				{
 					"name": "shell",
 					"parent": "positioning2",
-					"pivot": [0, 10.15, 1.0375]
+					"pivot": [0, 10, 1.0375],
+					"rotation": [-15, 0, 0]
 				},
 				{
 					"name": "muzzle_flash",
@@ -3097,7 +3098,8 @@
 				},
 				{
 					"name": "camera",
-					"pivot": [3, 13.15625, 13.05]
+					"pivot": [3, 13.1563, 13.05],
+					"rotation": [0, 0, -7.5]
 				},
 				{
 					"name": "views",
@@ -3106,13 +3108,13 @@
 				{
 					"name": "idle_view",
 					"parent": "views",
-					"pivot": [3, 13.1563, 13.05],
-					"rotation": [0, 0, -7.5]
+					"pivot": [2.5, 12.9063, 13.05],
+					"rotation": [0, 0, -5]
 				},
 				{
 					"name": "iron_view",
 					"parent": "views",
-					"pivot": [0, 10.9268, 12]
+					"pivot": [0, 10.9268, 12.5]
 				},
 				{
 					"name": "refit_view",

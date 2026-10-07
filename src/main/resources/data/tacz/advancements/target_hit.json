@@ -1,5 +1,5 @@
 {
-  "parent": "tacz:target",
+  "parent": "tacz:range_time",
   "display": {
     "icon": {
       "item": "tacz:target"

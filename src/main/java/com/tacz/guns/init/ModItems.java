@@ -39,8 +39,8 @@ public class ModItems {
 
     public static RegistryObject<Item> TARGET = ITEMS.register("target", () -> new BlockItem(ModBlocks.TARGET.get(), new Item.Properties()));
     public static RegistryObject<Item> STATUE = ITEMS.register("statue", () -> new BlockItem(ModBlocks.STATUE.get(), new Item.Properties()));
-    public static RegistryObject<Item> GUN_PEGBOARD = ITEMS.register("gun_pegboard", () -> new BlockItem(ModBlocks.GUN_PEGBOARD.get(), new Item.Properties()));
-    public static RegistryObject<Item> GLOW_GUN_PEGBOARD = ITEMS.register("glow_gun_pegboard", () -> new BlockItem(ModBlocks.GLOW_GUN_PEGBOARD.get(), new Item.Properties()));
+    public static RegistryObject<Item> GUN_PEGBOARD = ITEMS.register("gun_pegboard", () -> new GunPegboardItem(ModBlocks.GUN_PEGBOARD.get(), new Item.Properties()));
+    public static RegistryObject<Item> GLOW_GUN_PEGBOARD = ITEMS.register("glow_gun_pegboard", () -> new GunPegboardItem(ModBlocks.GLOW_GUN_PEGBOARD.get(), new Item.Properties()));
     public static RegistryObject<Item> AMMO_STORAGE = ITEMS.register("ammo_storage", () -> new AmmoStorageBlockItem(ModBlocks.AMMO_STORAGE.get()));
     public static RegistryObject<Item> AMMO_STORAGE_GOLD = ITEMS.register("ammo_storage_gold", () -> new AmmoStorageBlockItem(ModBlocks.AMMO_STORAGE_GOLD.get()));
     public static RegistryObject<Item> AMMO_STORAGE_DIAMOND = ITEMS.register("ammo_storage_diamond", () -> new AmmoStorageBlockItem(ModBlocks.AMMO_STORAGE_DIAMOND.get()));

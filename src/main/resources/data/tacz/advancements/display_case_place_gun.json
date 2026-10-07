@@ -1,5 +1,5 @@
 {
-  "parent": "tacz:display_case",
+  "parent": "tacz:arms_exhibition",
   "display": {
     "icon": {
       "item": "tacz:gun_display_case"
@@ -10,7 +10,7 @@
     "description": {
       "translate": "advancement.tacz.display_case_place_gun.description"
     },
-    "frame": "challenge",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true
   },

@@ -9962,7 +9962,7 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 13.9375, 12.5]
+					"pivot": [0, 13.9375, 15.5]
 				},
 				{
 					"name": "idle_view",

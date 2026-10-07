@@ -3,6 +3,6 @@
   "display": "tacz:scar_mk20_display",
   "data": "tacz:scar_mk20_data",
   "tooltip": "tacz.gun.scar_mk20.desc",
-  "type": "sniper",
+  "type": "dmr",
   "sort": 8
 }

@@ -32,15 +32,15 @@
     "smoke_particle_count": 18
   },
   "shell": {
-    "initial_velocity": [-1.5, 4.5, 1.5],
-    "random_velocity": [1.5, 2.5, 1.5],
-    "acceleration": [0.0, -20, 0.0],
-    "angular_velocity": [1200, 90, 360],
-    "living_time": 1.0
+    "initial_velocity": [-2.5, 4.5, -0.5],
+    "random_velocity": [1, 2.5, 0.5],
+    "acceleration": [0, -15, 0.0],
+    "angular_velocity": [1200, 180, 30],
+    "living_time": 1.5
   },
-  "iron_zoom": 1.75,
+  "iron_zoom": 1.66,
   "model_fov": 60,
-  "zoom_model_fov": 25,
+  "zoom_model_fov": 30,
   "sounds": {
     "draw": "tacz:m1866/m1866_draw",
     "shoot": "tacz:m1866/m1866_shoot",

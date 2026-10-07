@@ -16,15 +16,8 @@
     "announce_to_chat": true
   },
   "criteria": {
-    "obtain": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": ["tacz:attachment"]
-          }
-        ]
-      }
+    "refit": {
+      "trigger": "tacz:gun_refit"
     }
   }
 }

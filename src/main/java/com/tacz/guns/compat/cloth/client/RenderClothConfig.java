@@ -103,6 +103,10 @@ public class RenderClothConfig {
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.disable_movement_fov.desc"))
                 .setSaveConsumer(RenderConfig.DISABLE_MOVEMENT_ATTRIBUTE_FOV::set).build());
 
+        render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.gun_hurt_bob_multiplier"), RenderConfig.GUN_HURT_BOB_MULTIPLIER.get())
+                .setMin(0).setMax(1).setDefaultValue(0.1).setTooltip(Component.translatable("config.tacz.client.render.gun_hurt_bob_multiplier.desc"))
+                .setSaveConsumer(RenderConfig.GUN_HURT_BOB_MULTIPLIER::set).build());
+
         render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.enable_tooltip_id"), RenderConfig.ENABLE_TACZ_ID_IN_TOOLTIP.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.enable_tooltip_id.desc"))
                 .setSaveConsumer(RenderConfig.ENABLE_TACZ_ID_IN_TOOLTIP::set).build());

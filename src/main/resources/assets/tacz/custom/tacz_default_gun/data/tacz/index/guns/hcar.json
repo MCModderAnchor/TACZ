@@ -3,6 +3,6 @@
   "display": "tacz:hcar_display",
   "data": "tacz:hcar_data",
   "tooltip": "tacz.gun.hcar.desc",
-  "type": "rifle",
+  "type": "dmr",
   "sort": 20
 }

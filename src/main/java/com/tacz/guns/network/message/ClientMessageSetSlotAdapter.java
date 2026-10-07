@@ -1,6 +1,7 @@
 package com.tacz.guns.network.message;
 
 import com.tacz.guns.api.item.IAttachment;
+import com.tacz.guns.advancement.GunRefitTrigger;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.network.NetworkHandler;
@@ -76,6 +77,7 @@ public class ClientMessageSetSlotAdapter {
             attachmentId = attachment.getAttachmentId(attachmentItem);
         }
 
+        ItemStack beforeRefit = gunItem.copy();
         if (message.adapterId == null) {
             if (attachmentId != null && !SlotAdapterHelper.allowsDirectAttachment(gunItem, attachmentId)) {
                 return;
@@ -93,6 +95,7 @@ public class ClientMessageSetSlotAdapter {
         }
 
         AttachmentPropertyManager.postChangeEvent(player, gunItem);
+        GunRefitTrigger.INSTANCE.trigger(player, beforeRefit, gunItem);
         player.inventoryMenu.broadcastChanges();
         NetworkHandler.sendToClientPlayer(new ServerMessageRefreshRefitScreen(), player);
     }
