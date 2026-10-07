@@ -36,7 +36,8 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
         if (tacz$packFilters == null) {
             tacz$packFilters = new CreativePackFilters((CreativeModeInventoryScreen) (Object) this, () -> scrollOffs = 0);
         }
-        tacz$packFilters.init(this::addRenderableWidget, selectedTab);
+        // 直接 this::addRenderableWidget 会导致编译器生成妙妙方法直接引用 CreativeModeInventoryScreenMixin 然后原地爆炸
+        tacz$packFilters.init(widget -> addRenderableWidget(widget), selectedTab);
     }
 
     @Inject(method = "selectTab", at = @At("TAIL"))
