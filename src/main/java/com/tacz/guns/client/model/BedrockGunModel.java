@@ -345,6 +345,10 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 		var iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
 		var useStencil = false;
 
+		// 获取先前的层前/层后任务, 防止覆盖
+		Runnable before = ARCompat.getRenderBeforeFunction();
+		Runnable after = ARCompat.getRenderAfterFunction();
+
 		if (scopePosPath != null && attachmentItem != null && !attachmentItem.isEmpty()) {
 			matrixStack.pushPose();
 
@@ -363,6 +367,9 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 				if (attachmentIndex.isPresent()) {
 					// 如果有attachment, 则设置层前任务开启模板缓冲区设置对应的模板函数
 					ARCompat.setRenderBeforeFunction(() -> {
+						// 先执行被覆盖的层前方法
+						before.run();
+
 						// 获取实际的attachmentIndex
 						var index = attachmentIndex.get();
 
@@ -394,6 +401,9 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 			// 重置模板缓冲区
 			RenderSystem.clearStencil(0);
 			RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
+
+			// 最后执行被覆盖的层后方法
+			after.run();
 		});
 
 		super.render(matrixStack, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
