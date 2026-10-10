@@ -3,7 +3,7 @@
   "model": "tacz:attachment/oem_sight_aug_geo",
   "texture": "tacz:attachment/uv/oem_sight_aug",
   "sight": true,
-  "fov": 45.0,
+  "fov": 40.0,
   "zoom": [
     1.33
   ],

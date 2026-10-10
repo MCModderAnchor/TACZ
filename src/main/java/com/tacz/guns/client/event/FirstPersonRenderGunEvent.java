@@ -21,6 +21,7 @@ import com.tacz.guns.client.renderer.item.GunItemRendererWrapper;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
 import com.tacz.guns.client.resource.index.ClientSlotAdapterIndex;
+import com.tacz.guns.client.resource.pojo.display.gun.AdsPath;
 import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.util.SlotAdapterHelper;
 import com.tacz.guns.util.math.Easing;
@@ -52,7 +53,6 @@ import java.util.Optional;
  */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class FirstPersonRenderGunEvent {
-    // 用于生成瞄准动作的运动曲线，使动作看起来更平滑
     private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(1.2f, 1.2f, 0.5f, 0);
     private static SecondOrderDynamics SWITCH_VIEW_DYNAMICS;
     // 用于打开改装界面时枪械运动的平滑
@@ -131,11 +131,13 @@ public class FirstPersonRenderGunEvent {
         // 配合运动曲线，计算改装枪口的打开进度
         float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(RefitTransform.getOpeningProgress());
         // 配合运动曲线，计算瞄准进度
-        float aimingProgress = AIMING_DYNAMICS.update(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
+        float rawAimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks);
+        float aimingProgress = AIMING_DYNAMICS.update(rawAimingProgress);
+        AdsPath adsPath = TimelessAPI.getGunDisplay(gunItemStack).map(display -> display.getAdsPath()).orElse(null);
         // 应用枪械动态，如后坐力、持枪跳跃等
         applyGunMovements(model, aimingProgress, partialTicks);
         // 应用各种摄像机定位组的变换（默认持枪、瞄准、改装界面等）
-        applyFirstPersonPositioningTransform(poseStack, model, gunItemStack, aimingProgress, refitScreenOpeningProgress);
+        applyFirstPersonPositioningTransform(poseStack, model, gunItemStack, aimingProgress, refitScreenOpeningProgress, adsPath);
         // 应用动画约束变换
         applyAnimationConstraintTransform(poseStack, model, aimingProgress * (1 - refitScreenOpeningProgress));
     }
@@ -148,7 +150,7 @@ public class FirstPersonRenderGunEvent {
     /**
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。会在几个摄像机定位之间插值。
      */
-    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, ItemStack stack, float aimingProgress, float refitScreenOpeningProgress) {
+    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, ItemStack stack, float aimingProgress, float refitScreenOpeningProgress, AdsPath adsPath) {
         IGun iGun = IGun.getIGunOrNull(stack);
         if (iGun == null) {
             return;
@@ -218,7 +220,20 @@ public class FirstPersonRenderGunEvent {
         float idleScopeHeightAdjust = scopeIndexOptional.map(ClientAttachmentIndex::getIdleScopeHeightAdjust).orElse(0f) / 16.0f;
         Matrix4f idleViewMatrix = getPositioningNodeInverse(idleNodePath);
         MathUtil.applyMatrixLerp(transformMatrix, idleViewMatrix, transformMatrix, (1 - refitScreenOpeningProgress));
-        MathUtil.applyMatrixLerp(transformMatrix, aimingViewMatrix, transformMatrix, (1 - refitScreenOpeningProgress) * aimingProgress);
+        float positioningWeight = 1 - refitScreenOpeningProgress;
+        float pathProgress = aimingProgress;
+        float rotationProgress = adsPath == null ? aimingProgress : adsPath.rotation(pathProgress);
+        MathUtil.applyMatrixLerp(transformMatrix, aimingViewMatrix, transformMatrix, positioningWeight * rotationProgress);
+        if (adsPath != null) {
+            // 保留原有旋转插值，位移各轴按自己的时间窗口到达同一瞄准终点。
+            // 共享已有的平滑开镜进度，避免短 ADS 时间导致模型瞬间横移。
+            transformMatrix.m30(transformMatrix.m30() + (aimingViewMatrix.m30() - idleViewMatrix.m30())
+                    * (adsPath.x(pathProgress) - rotationProgress) * positioningWeight);
+            transformMatrix.m31(transformMatrix.m31() + (aimingViewMatrix.m31() - idleViewMatrix.m31())
+                    * (adsPath.y(pathProgress) - rotationProgress) * positioningWeight);
+            transformMatrix.m32(transformMatrix.m32() + (aimingViewMatrix.m32() - idleViewMatrix.m32())
+                    * (adsPath.z(pathProgress) - rotationProgress) * positioningWeight);
+        }
         // 应用改装界面开启时的定位
         float refitTransformProgress = (float) Easing.easeOutCubic(RefitTransform.getTransformProgress());
         AttachmentType oldType = RefitTransform.getOldTransformType();
@@ -229,7 +244,8 @@ public class FirstPersonRenderGunEvent {
         Matrix4f toViewMatrix = getPositioningNodeInverse(toNode);
         MathUtil.applyMatrixLerp(transformMatrix, fromViewMatrix, transformMatrix, refitScreenOpeningProgress);
         MathUtil.applyMatrixLerp(transformMatrix, toViewMatrix, transformMatrix, refitScreenOpeningProgress * refitTransformProgress);
-        transformMatrix.m31(transformMatrix.m31() + idleScopeHeightAdjust * (1 - aimingProgress));
+        float heightProgress = adsPath == null ? aimingProgress : adsPath.y(pathProgress);
+        transformMatrix.m31(transformMatrix.m31() + idleScopeHeightAdjust * (1 - heightProgress));
         // 应用变换到 PoseStack
         poseStack.translate(0, 1.5f, 0);
         poseStack.mulPoseMatrix(transformMatrix);

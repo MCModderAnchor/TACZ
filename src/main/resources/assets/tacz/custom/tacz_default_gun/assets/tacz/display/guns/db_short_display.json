@@ -1,4 +1,5 @@
 {
+  "ads_preset": "tacz:renew",
   "state_machine": "tacz:db_short_state_machine",
   "model": "tacz:gun/db_short_geo",
   "texture": "tacz:gun/uv/db_short",

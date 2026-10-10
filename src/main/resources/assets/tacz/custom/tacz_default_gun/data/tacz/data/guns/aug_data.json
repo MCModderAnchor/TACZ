@@ -42,7 +42,7 @@
   },
   "draw_time": 0.43,
   "put_away_time": 0.33,
-  "aim_time": 0.2,
+  "aim_time": 0.24,
   "sprint_time": 0.2,
   // 拉栓上膛的时间，仅当枪栓类型为 manual_action 时有效
   // "bolt_action_time": 0.9,

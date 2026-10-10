@@ -55,6 +55,7 @@ import java.util.function.BiFunction;
 public class GunDisplayInstance {
     private final ResourceLocation displayId;
     private final GunDisplay display;
+    private @Nullable AdsPreset adsPreset;
     private final Object loadLock = new Object();
 
     // 加载标志位
@@ -371,6 +372,13 @@ public class GunDisplayInstance {
 
     // 基础数据直接读
     private void initBase(GunDisplay display) {
+        ResourceLocation presetId = display.getAdsPreset();
+        ResourceLocation legacyId = new ResourceLocation(GunMod.MOD_ID, "legacy");
+        adsPreset = ClientAssetsManager.INSTANCE.getAdsPreset(presetId == null ? legacyId : presetId);
+        if (adsPreset == null && presetId != null) {
+            GunMod.LOGGER.warn("Missing ADS preset {} referenced by gun display {}; falling back to {}", presetId, displayId, legacyId);
+            adsPreset = ClientAssetsManager.INSTANCE.getAdsPreset(legacyId);
+        }
         checkSlotTexture(display);
         checkHUDTexture(display);
         checkSounds(display);
@@ -821,6 +829,19 @@ public class GunDisplayInstance {
 
     public float getZoomModelFov() {
         return zoomModelFov;
+    }
+
+    public @Nullable AdsPath getAdsPath() {
+        AdsPath path = display.getAdsPath();
+        if (path == null && adsPreset != null) {
+            path = adsPreset.getPath();
+        }
+        return path != null && path.isValid() ? path : null;
+    }
+
+    public @Nullable AdsFov getAdsFov() {
+        AdsFov fov = display.getAdsFov();
+        return fov != null ? fov : adsPreset == null ? null : adsPreset.getFov();
     }
 
     public boolean isShowCrosshair() {

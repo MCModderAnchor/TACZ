@@ -1,4 +1,5 @@
 {
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/hk_mp5a5_geo",
   "texture": "tacz:gun/uv/hk_mp5a5",
   "lod": {

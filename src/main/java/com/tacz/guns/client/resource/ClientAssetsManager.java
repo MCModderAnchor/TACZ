@@ -21,11 +21,13 @@ import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tacz.guns.client.resource.pojo.display.block.BlockDisplay;
 import com.tacz.guns.client.resource.pojo.display.gun.GunDisplay;
+import com.tacz.guns.client.resource.pojo.display.gun.AdsPreset;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.CubesItem;
 import com.tacz.guns.client.resource.serialize.*;
 import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.manager.LazyJsonDataManager;
+import com.tacz.guns.resource.manager.JsonDataManager;
 import com.tacz.guns.resource.manager.ScriptManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransform;
@@ -69,6 +71,7 @@ public enum ClientAssetsManager {
 
     // 枪械展示数据
     private DisplayManager<GunDisplay> gunDisplay;
+    private JsonDataManager<AdsPreset> adsPresets;
     // 弹药展示数据
     private DisplayManager<AmmoDisplay> ammoDisplay;
     // 配件展示数据
@@ -96,6 +99,7 @@ public enum ClientAssetsManager {
         if (listeners == null) {
             listeners = new ArrayList<>();
             gunDisplay = register(new DisplayManager<>(GunDisplay.class, GSON, "display/guns", "GunDisplayLoader"));
+            adsPresets = register(new JsonDataManager<>(AdsPreset.class, GSON, "ads_presets", "AdsPresetLoader"));
             ammoDisplay = register(new DisplayManager<>(AmmoDisplay.class, GSON, "display/ammo", "AmmoDisplayLoader"));
             attachmentDisplay = register(new DisplayManager<>(AttachmentDisplay.class, GSON, "display/attachments", "AttachmentDisplayLoader"));
             attachmentVariantDisplay = register(new DisplayManager<>(AttachmentDisplay.class, GSON, "display/attachment_variants", "AttachmentVariantDisplayLoader"));
@@ -123,6 +127,10 @@ public enum ClientAssetsManager {
     @Nullable
     public GunDisplay getGunDisplay(ResourceLocation id) {
         return gunDisplay.getData(id);
+    }
+
+    public @Nullable AdsPreset getAdsPreset(ResourceLocation id) {
+        return adsPresets.getData(id);
     }
 
     public Set<Map.Entry<ResourceLocation, GunDisplay>> getGunDisplays() {

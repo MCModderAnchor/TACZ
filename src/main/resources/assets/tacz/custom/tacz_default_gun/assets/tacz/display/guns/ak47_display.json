@@ -1,5 +1,6 @@
 {
   // 默认的模型，在包目录下的 models 文件夹中寻找，不可为空
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/ak47_geo",
   // 默认材质，不可为空
   "texture": "tacz:gun/uv/ak47",

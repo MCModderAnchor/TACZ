@@ -2550,7 +2550,7 @@
 				{
 					"name": "constraint",
 					"parent": "m4",
-					"pivot": [0, 12.275, -13.625]
+					"pivot": [0, 12.775, -17.625]
 				},
 				{
 					"name": "m4_body",
@@ -18979,7 +18979,7 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 12.71683, 7.5]
+					"pivot": [0, 12.71683, 5.5]
 				},
 				{
 					"name": "idle_view",

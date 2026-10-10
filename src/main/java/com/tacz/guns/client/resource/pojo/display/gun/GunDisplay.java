@@ -28,6 +28,15 @@ public class GunDisplay implements IDisplay {
     @SerializedName("zoom_model_fov")
     private float zoomModelFov = 70f;
     @Nullable
+    @SerializedName("ads_path")
+    private AdsPath adsPath;
+    @Nullable
+    @SerializedName("ads_fov")
+    private AdsFov adsFov;
+    @Nullable
+    @SerializedName("ads_preset")
+    private ResourceLocation adsPreset;
+    @Nullable
     @SerializedName("lod")
     private GunLod gunLod;
     @Nullable
@@ -224,6 +233,19 @@ public class GunDisplay implements IDisplay {
 
     public float getZoomModelFov() {
         return zoomModelFov;
+    }
+
+    @Nullable
+    public AdsPath getAdsPath() {
+        return adsPath;
+    }
+
+    public @Nullable AdsFov getAdsFov() {
+        return adsFov;
+    }
+
+    public @Nullable ResourceLocation getAdsPreset() {
+        return adsPreset;
     }
 
     public Map<String, TextShow> getTextShows() {

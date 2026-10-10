@@ -16,6 +16,8 @@ import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
 import com.tacz.guns.api.modifier.ParameterizedCachePair;
 import com.tacz.guns.client.renderer.item.AnimateGeoItemRenderer;
+import com.tacz.guns.client.resource.pojo.display.gun.AdsCurve;
+import com.tacz.guns.client.resource.pojo.display.gun.AdsFov;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
@@ -108,19 +110,12 @@ public class CameraSetupEvent {
                 return;
             }
             float zoom = iGun.getAimingZoom(stack);
-            if (livingEntity instanceof LocalPlayer localPlayer) {
-                IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
-                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
-                float fovProgress = (float) Easing.easeInExpo(aimingProgress);
-                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * fovProgress, event.getFOV()));
-                event.setFOV(fov);
-            } else {
-                IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
-                float aimingProgress = gunOperator.getSynAimingProgress();
-                float fovProgress = (float) Easing.easeInExpo(aimingProgress);
-                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * fovProgress, event.getFOV()));
-                event.setFOV(fov);
-            }
+            AdsFov.Channel curve = TimelessAPI.getGunDisplay(stack)
+                    .map(GunDisplayInstance::getAdsFov).map(AdsFov::getWorld).orElse(null);
+            float fovProgress = getFovProgress(livingEntity, (float) event.getPartialTick(), curve);
+            float targetFov = (float) MathUtil.magnificationToFov(1 + (zoom - 1) * fovProgress, event.getFOV());
+            float smoothedFov = WORLD_FOV_DYNAMICS.update(targetFov);
+            event.setFOV(curve == null || curve.isSmooth() ? smoothedFov : targetFov);
         }
     }
 
@@ -165,20 +160,22 @@ public class CameraSetupEvent {
                                             .map(GunDisplayInstance::getZoomModelFov)
                                             .orElse(modelFov)
                             ));
-            if (livingEntity instanceof LocalPlayer localPlayer) {
-                IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
-                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
-                float fovProgress = (float) Easing.easeInExpo(aimingProgress);
-                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(fovProgress, modelFov, modifiedFov));
-                event.setFOV(fov);
-            } else {
-                IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
-                float aimingProgress = gunOperator.getSynAimingProgress();
-                float fovProgress = (float) Easing.easeInExpo(aimingProgress);
-                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(fovProgress, modelFov, modifiedFov));
-                event.setFOV(fov);
-            }
+            AdsFov.Channel curve = gunDisplay.map(GunDisplayInstance::getAdsFov).map(AdsFov::getModel).orElse(null);
+            float fovProgress = getFovProgress(livingEntity, (float) event.getPartialTick(), curve);
+            float targetFov = Mth.lerp(fovProgress, modelFov, modifiedFov);
+            float smoothedFov = ITEM_MODEL_FOV_DYNAMICS.update(targetFov);
+            event.setFOV(curve == null || curve.isSmooth() ? smoothedFov : targetFov);
         }
+    }
+
+    private static float getFovProgress(LivingEntity entity, float partialTick, AdsCurve curve) {
+        float progress = entity instanceof LocalPlayer localPlayer
+                ? IClientPlayerGunOperator.fromLocalPlayer(localPlayer).getClientAimingProgress(partialTick)
+                : IGunOperator.fromLivingEntity(entity).getSynAimingProgress();
+        if (curve == null) {
+            return (float) Easing.easeInExpo(progress);
+        }
+        return curve.evaluate(progress);
     }
 
     @SubscribeEvent

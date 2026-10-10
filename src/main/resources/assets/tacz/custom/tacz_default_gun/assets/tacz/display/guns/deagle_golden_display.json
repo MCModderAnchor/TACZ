@@ -1,4 +1,5 @@
 {
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/deagle_golden_geo",
   "texture": "tacz:gun/uv/deagle_golden",
   "hud": "tacz:gun/hud/deagle_golden",

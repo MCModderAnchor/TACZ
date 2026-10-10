@@ -6,6 +6,8 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.client.resource.GunDisplayInstance;
+import com.tacz.guns.client.event.CameraSetupEvent;
 import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.pojo.data.gun.BulletData;
@@ -231,9 +233,19 @@ public final class RangefinderManager {
     private static float getCurrentFov(LocalPlayer player, ItemStack stack, IGun iGun) {
         float configuredFov = Minecraft.getInstance().options.fov().get().floatValue();
         float aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getFrameTime());
-        float fovProgress = (float) Easing.easeInExpo(aimingProgress);
+        AdsFov.Channel curve = TimelessAPI.getGunDisplay(stack)
+                .map(GunDisplayInstance::getAdsFov).map(AdsFov::getWorld).orElse(null);
+        float fovProgress = curve == null ? (float) Easing.easeInExpo(aimingProgress)
+                : curve.evaluate(aimingProgress);
         float zoom = iGun.getAimingZoom(stack);
-        return (float) MathUtil.magnificationToFov(1 + (zoom - 1) * fovProgress, configuredFov);
+        float targetFov = (float) MathUtil.magnificationToFov(1 + (zoom - 1) * fovProgress, configuredFov);
+        if (curve != null && curve.isSmooth()) {
+            float actualFov = CameraSetupEvent.WORLD_FOV_DYNAMICS.get();
+            if (Float.isFinite(actualFov) && actualFov > 0) {
+                return actualFov;
+            }
+        }
+        return targetFov;
     }
 
     private static double calculateDrop(double distance, double lookY, float speedPerTick, float gravity, float friction) {

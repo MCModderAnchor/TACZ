@@ -1,0 +1,50 @@
+{
+  // ease 可用类型（定位和模型/世界 FOV 通用）：
+  // linear, smoothstep
+  // ease_in_sine, ease_out_sine, ease_in_out_sine
+  // ease_in_quad, ease_out_quad, ease_in_out_quad
+  // ease_in_cubic, ease_out_cubic, ease_in_out_cubic
+  // ease_in_quart, ease_out_quart, ease_in_out_quart
+  // ease_in_quint, ease_out_quint, ease_in_out_quint
+  // ease_in_expo, ease_out_expo, ease_in_out_expo
+  // ease_in_circ, ease_out_circ, ease_in_out_circ
+  // ease_in_back, ease_out_back, ease_in_out_back
+  // 也支持图示 camelCase 名称，如 easeInOutSine；建议使用以上小写下划线名称。
+  // clamp 默认 true，只限制输入进度；Back 曲线仍可超出 0～1，产生回拉/越过终点效果。
+  // Circ 曲线始终限制输入到 0～1，避免越界产生 NaN；Expo 也保留起终点限制。
+  // FOV smooth 默认 true，使用独立平滑器；false 直接使用曲线算出的目标值。
+  "ads_path": {
+    "x": {
+      "start": 0,
+      "end": 1,
+      "ease": "ease_out_cubic"
+    },
+    "y": {
+      "start": 0,
+      "end": 1,
+      "ease": "smoothstep"
+    },
+    "z": {
+      "start": 0.25,
+      "end": 1,
+      "ease": "ease_in_out_cubic"
+    },
+    "rotation": {
+      "start": 0,
+      "end": 1,
+      "ease": "ease_out_sine"
+    }
+  },
+  "ads_fov": {
+    "model": {
+      "start": 0.25,
+      "end": 1,
+      "ease": "ease_in_out_sine"
+    },
+    "world": {
+      "start": 0,
+      "end": 1,
+      "ease": "smoothstep"
+    }
+  }
+}

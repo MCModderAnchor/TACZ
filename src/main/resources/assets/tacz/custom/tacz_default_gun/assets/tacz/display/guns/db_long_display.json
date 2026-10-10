@@ -1,4 +1,5 @@
 {
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/db_long_geo",
   "texture": "tacz:gun/uv/db_long",
   "lod": {

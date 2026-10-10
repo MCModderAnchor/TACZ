@@ -487,7 +487,7 @@
 				{
 					"name": "scope_view",
 					"parent": "view",
-					"pivot": [0, 1.31009, 11]
+					"pivot": [0, 1.31009, 10.5]
 				},
 				{
 					"name": "octagon",
