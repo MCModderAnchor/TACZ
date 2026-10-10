@@ -1,5 +1,6 @@
 package com.tacz.guns.util;
 
+import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import com.tacz.guns.entity.EntityKineticBullet;
 import net.minecraft.resources.ResourceLocation;
@@ -7,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,6 +79,14 @@ public class EntityUtil {
 
     @Nullable
     protected static EntityKineticBullet.EntityResult getHitResult(Projectile bulletEntity, Entity entity, Vec3 startVec, Vec3 endVec) {
+        // Filter before picking the nearest hit, so an ignored ally cannot hide an enemy behind it.
+        Entity owner = bulletEntity.getOwner();
+        if (AmmoConfig.IGNORE_TEAM_FRIENDLY_FIRE.get() && owner != null) {
+            Team team = owner.getTeam();
+            if (team != null && team.isAlliedTo(entity.getTeam()) && !team.isAllowFriendlyFire()) {
+                return null;
+            }
+        }
         AABB boundingBox = HitboxHelper.getFixedBoundingBox(entity, bulletEntity.getOwner());
         // 计算射线与实体 boundingBox 的交点
         Vec3 hitPos = boundingBox.clip(startVec, endVec).orElse(null);

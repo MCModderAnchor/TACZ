@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class NetworkHandler {
-    private static final String VERSION = "1.0.6";
+    private static final String VERSION = "1.0.7";
 
     public static final SimpleChannel HANDSHAKE_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(GunMod.MOD_ID, "handshake"),
             () -> VERSION, it -> it.equals(VERSION), it -> it.equals(VERSION));

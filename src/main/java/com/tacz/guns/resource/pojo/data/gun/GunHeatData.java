@@ -19,6 +19,10 @@ public class GunHeatData {
     @SerializedName("over_heat_time")
     private long overHeatTime = 3000L; //ms
 
+    /** Heat removed per inventory tick, without cooling delays. Zero disables it. */
+    @SerializedName("inventory_cooling_per_tick")
+    private float inventoryCoolingPerTick = 0f;
+
     @SerializedName("min_inaccuracy")
     private float minInaccuracy = 1f;
 
@@ -33,6 +37,10 @@ public class GunHeatData {
 
     public long getCoolingDelay() {
         return coolingDelay;
+    }
+
+    public float getInventoryCoolingPerTick() {
+        return inventoryCoolingPerTick;
     }
 
     public float getHeatMax() {

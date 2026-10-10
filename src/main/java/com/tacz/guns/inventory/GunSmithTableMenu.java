@@ -154,9 +154,15 @@ public class GunSmithTableMenu extends AbstractContainerMenu {
             // 给玩家对应的物品
             Level level = player.level();
             if (!level.isClientSide) {
-                ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(), recipe.getResultItem(player.level().registryAccess()).copy());
-                itemEntity.setPickUpDelay(0);
-                level.addFreshEntity(itemEntity);
+                ItemStack result = recipe.getResultItem(level.registryAccess());
+                // Item counts in entity packets are bytes; also respect each stack's dynamic limit.
+                int stackLimit = Math.max(1, Math.min(result.getMaxStackSize(), Byte.MAX_VALUE));
+                while (!result.isEmpty()) {
+                    ItemStack stack = result.split(stackLimit);
+                    ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(), stack);
+                    itemEntity.setPickUpDelay(0);
+                    level.addFreshEntity(itemEntity);
+                }
             }
             // 更新，否则客户端显示不正确
             player.inventoryMenu.broadcastFullState();

@@ -12,18 +12,17 @@ public class ConstraintTranslateListener implements AnimationListener {
 
     @Override
     public void update(float[] values, boolean blend) {
+        float x = Math.abs(values[0] * 16);
+        float y = Math.abs(values[1] * 16);
+        float z = Math.abs(values[2] * 16);
         if (blend) {
             constraint.translationConstraint.set(
-                    Math.max(constraint.translationConstraint.x(), values[0] * 16),
-                    Math.max(constraint.translationConstraint.y(), values[1] * 16),
-                    Math.max(constraint.translationConstraint.z(), values[2] * 16)
+                    Math.max(constraint.translationConstraint.x(), x),
+                    Math.max(constraint.translationConstraint.y(), y),
+                    Math.max(constraint.translationConstraint.z(), z)
             );
         } else {
-            constraint.translationConstraint.set(
-                    values[0] * 16,
-                    values[1] * 16,
-                    values[2] * 16
-            );
+            constraint.translationConstraint.set(x, y, z);
         }
     }
 

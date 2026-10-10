@@ -145,7 +145,12 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
 
     @Override
     public boolean chargeShoot(boolean isCharge) {
-        return tac$shoot.chargeShoot(isCharge);
+        boolean canShoot = tac$shoot.chargeShoot(isCharge);
+        if (isCharge && !canShoot) {
+            // 蓄力检查拒绝开火时仍响应装弹中断；允许开火时由 shoot() 处理。
+            tac$reload.cancelReload();
+        }
+        return canShoot;
     }
 
     @Override

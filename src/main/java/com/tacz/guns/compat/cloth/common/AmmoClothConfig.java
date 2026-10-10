@@ -43,6 +43,10 @@ public class AmmoClothConfig {
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.common.ammo.ignite_entity.desc"))
                 .setSaveConsumer(AmmoConfig.IGNITE_ENTITY::set).build());
 
+        ammo.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.ammo.ignore_team_friendly_fire"), AmmoConfig.IGNORE_TEAM_FRIENDLY_FIRE.get())
+                .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.common.ammo.ignore_team_friendly_fire.desc"))
+                .setSaveConsumer(AmmoConfig.IGNORE_TEAM_FRIENDLY_FIRE::set).build());
+
         ammo.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.common.ammo.global_speed_modifier"), AmmoConfig.GLOBAL_BULLET_SPEED_MODIFIER.get())
                 .setDefaultValue(2.0).setTooltip(Component.translatable("config.tacz.common.ammo.global_speed_modifier.desc"))
                 .setSaveConsumer(AmmoConfig.GLOBAL_BULLET_SPEED_MODIFIER::set).build());

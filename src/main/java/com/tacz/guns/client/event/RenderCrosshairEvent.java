@@ -48,7 +48,7 @@ public class RenderCrosshairEvent {
     public static void onRenderOverlay(RenderGuiOverlayEvent.Pre event) {
         if (event.getOverlay().id().equals(VanillaGuiOverlay.CROSSHAIR.id())) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) {
+            if (player == null || player.isSpectator()) {
                 return;
             }
             if (!IGun.mainHandHoldGun(player)) {

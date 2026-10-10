@@ -16,17 +16,17 @@ public class ConstraintRotateListener implements AnimationListener {
         if (values.length == 4) {
             values = MathUtil.toEulerAngles(values);
         }
+        float x = (float) Math.abs(Math.toDegrees(values[0]));
+        float y = (float) Math.abs(Math.toDegrees(values[1]));
+        float z = (float) Math.abs(Math.toDegrees(values[2]));
         if (blend) {
             constraint.rotationConstraint.set(
-                    (float) Math.max(constraint.rotationConstraint.x(), MathUtil.toDegreePositive(values[0])),
-                    (float) Math.max(constraint.rotationConstraint.y(), MathUtil.toDegreePositive(values[1])),
-                    (float) Math.max(constraint.rotationConstraint.z(), MathUtil.toDegreePositive(values[2]))
+                    Math.max(constraint.rotationConstraint.x(), x),
+                    Math.max(constraint.rotationConstraint.y(), y),
+                    Math.max(constraint.rotationConstraint.z(), z)
             );
         } else {
-            constraint.rotationConstraint.set(
-                    (float) MathUtil.toDegreePositive(values[0]),
-                    (float) MathUtil.toDegreePositive(values[1]),
-                    (float) MathUtil.toDegreePositive(values[2]));
+            constraint.rotationConstraint.set(x, y, z);
         }
     }
 

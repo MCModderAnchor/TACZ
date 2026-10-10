@@ -344,6 +344,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "Whether a ammo can ignite the block",
   "config.tacz.common.ammo.ignite_entity": "Ignite Entity",
   "config.tacz.common.ammo.ignite_entity.desc": "Whether a ammo can ignite the entity",
+  "config.tacz.common.ammo.ignore_team_friendly_fire": "Pass Through Team Members",
+  "config.tacz.common.ammo.ignore_team_friendly_fire.desc": "Bullets pass through members of the shooter's scoreboard team without consuming pierce count when friendly fire is disabled. Explosion area damage is unchanged.",
   "config.tacz.common.ammo.global_speed_modifier": "Global Bullet Speed Modifier",
   "config.tacz.common.ammo.global_speed_modifier.desc": "The init speed of all bullet will be multiplied by this value",
   "config.tacz.common.other": "Other",

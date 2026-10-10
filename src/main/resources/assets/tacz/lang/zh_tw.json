@@ -304,6 +304,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "彈藥是否可以點燃方塊",
   "config.tacz.common.ammo.ignite_entity": "點燃實體",
   "config.tacz.common.ammo.ignite_entity.desc": "彈藥是否可以點燃實體",
+  "config.tacz.common.ammo.ignore_team_friendly_fire": "子彈穿過隊伍友軍",
+  "config.tacz.common.ammo.ignore_team_friendly_fire.desc": "隊伍關閉友傷時，子彈穿過同隊成員且不消耗穿透次數。爆炸範圍傷害保持原規則。",
   "config.tacz.common.ammo.global_speed_modifier": "全域子彈速度加乘器",
   "config.tacz.common.ammo.global_speed_modifier.desc": "槍枝的原有子彈速度會乘上在此設置的加乘數值",
   "config.tacz.common.other": "其他",

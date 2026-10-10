@@ -133,6 +133,8 @@
   "config.tacz.common.ammo.ignite_block.desc": "燃烧弹是否可以引燃方块",
   "config.tacz.common.ammo.ignite_entity": "引燃实体",
   "config.tacz.common.ammo.ignite_entity.desc": "燃烧弹是否可以引燃实体",
+  "config.tacz.common.ammo.ignore_team_friendly_fire": "子弹穿过队伍友军",
+  "config.tacz.common.ammo.ignore_team_friendly_fire.desc": "队伍关闭友伤时，子弹穿过同队成员且不消耗穿透次数。爆炸范围伤害保持原规则。",
   "config.tacz.common.ammo.pass_through_blocks": "穿透方块",
   "config.tacz.common.ammo.pass_through_blocks.desc": "弹药可以穿透的方块",
   "config.tacz.common.ammo.global_speed_modifier": "全局弹速修正",
