@@ -30,7 +30,6 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessageCraft;
 import com.tacz.guns.resource.filter.RecipeFilter;
 import com.tacz.guns.resource.pojo.data.block.TabConfig;
-import com.tacz.guns.util.RenderDistance;
 import com.tacz.guns.util.RenderHelper;
 import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
@@ -755,9 +754,6 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
     @SuppressWarnings("deprecation")
     private void renderLeftModel(GunSmithTableRecipe recipe) {
-        // 先标记一下，渲染高模
-        RenderDistance.markGuiRenderTimestamp();
-
         float rotationPeriod = 8f;
         int xPos = leftPos + 60;
         int yPos = topPos + 50;
