@@ -76,10 +76,24 @@ public class GunDisplayInstance {
     private String thirdPersonAnimation = "empty";
     private BedrockGunModel gunModel;
     private @Nullable Pair<BedrockGunModel, ResourceLocation> lodModel;
-    private @Nullable ExternalGunModel externalGunModel;
-    private @Nullable Pair<ExternalGunModel, ResourceLocation> externalLodModel;
-    private boolean externalModelAttempted;
-    private boolean externalLodAttempted;
+
+    private final ExternalModelAssets externalModels = new ExternalModelAssets();
+    private final ClientAssetLoadTask<ExternalGunModel> externalGunModel = externalModels.add(
+            this::externalModelResource,
+            this::bakeExternalGunModel,
+            failure -> {
+                GunMod.LOGGER.warn("Failed to bake SBM external gun model for {}", getDisplayId(), failure);
+            }
+    );
+
+    private final ClientAssetLoadTask<Pair<ExternalGunModel, ResourceLocation>> externalLodModel =
+            externalModels.add(
+                    this::externalLodResource,
+                    this::bakeExternalLodModel,
+                    failure -> {
+                        GunMod.LOGGER.warn("Failed to bake SBM external gun LOD for {}", getDisplayId(), failure);
+                    }
+            );
 
     private LuaAnimationStateMachine<GunAnimationStateContext> animationStateMachine;
     private @Nullable LuaTable stateMachineParam;
@@ -133,6 +147,11 @@ public class GunDisplayInstance {
 
     // 后台预热
     public void warmUpModel() {
+        warmUpLegacyModel();
+        externalGunModel.warmUp();
+    }
+
+    private void warmUpLegacyModel() {
         if (!ResourceConfig.ENABLE_LAZY_CLIENT_ASSET_LOAD.get()) {
             ensureModelLoaded();
             return;
@@ -149,6 +168,11 @@ public class GunDisplayInstance {
     }
 
     public void warmUpLod() {
+        warmUpLegacyLod();
+        externalLodModel.warmUp();
+    }
+
+    private void warmUpLegacyLod() {
         if (!ResourceConfig.ENABLE_LAZY_CLIENT_ASSET_LOAD.get()) {
             ensureLodLoaded();
             return;
@@ -676,23 +700,32 @@ public class GunDisplayInstance {
         return gunModel;
     }
 
-    /** 外部视角使用 SBM 烘焙模型；资源或自定义旧模型类型不支持时返回 null，调用方回退。 */
+    /** 外部视角模型在后台烘焙；未就绪或不支持时返回 null，渲染线程不等待。 */
     public @Nullable ExternalGunModel getExternalGunModel() {
-        ensureModelLoaded();
-        if (!modelLoaded || gunModel == null || gunModel.getClass() != BedrockGunModel.class) return null;
-        synchronized (loadLock) {
-            if (!externalModelAttempted) {
-                externalModelAttempted = true;
-                try {
-                    BedrockModelPOJO pojo = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(display.getModelLocation());
-                    if (pojo != null) externalGunModel = ExternalGunModel.bake(pojo,
-                            getExternalHiddenTextBones(), DisplayGunModelInstance.Kind.GUN);
-                } catch (RuntimeException exception) {
-                    GunMod.LOGGER.warn("Failed to bake SBM external gun model for {}", displayId, exception);
-                }
-            }
-            return externalGunModel;
+        return externalGunModel.getIfReady();
+    }
+
+    private @Nullable ExternalGunModel bakeExternalGunModel() {
+        if (modelLoadFailed) {
+            return null;
         }
+
+        try {
+            loadModelIfNecessary();
+        } catch (RuntimeException failure) {
+            handleModelLoadFailure(failure);
+            return null;
+        }
+
+        if (gunModel == null || gunModel.getClass() != BedrockGunModel.class) {
+            return null;
+        }
+
+        BedrockModelPOJO pojo = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(display.getModelLocation());
+        if (pojo == null) {
+            return null;
+        }
+        return ExternalGunModel.bake(pojo, getExternalHiddenTextBones(), DisplayGunModelInstance.Kind.GUN);
     }
 
     /** 第一人称文本功能节点在 FIXED 上不输出模型几何。 */
@@ -708,24 +741,51 @@ public class GunDisplayInstance {
 
     /** 与旧 LOD 选择对应的独立 SBM 模型，仍由调用方按距离选择。 */
     public @Nullable Pair<ExternalGunModel, ResourceLocation> getExternalLodModel() {
-        ensureLodLoaded();
-        if (!lodLoaded || lodModel == null) return null;
-        synchronized (loadLock) {
-            if (!externalLodAttempted) {
-                externalLodAttempted = true;
-                try {
-                    GunLod lod = display.getGunLod();
-                    if (lod != null && lod.getModelLocation() != null && lod.getModelTexture() != null) {
-                        BedrockModelPOJO pojo = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(lod.getModelLocation());
-                        if (pojo != null) externalLodModel = Pair.of(ExternalGunModel.bake(pojo,
-                                getExternalHiddenTextBones(), DisplayGunModelInstance.Kind.GUN), lod.getModelTexture());
-                    }
-                } catch (RuntimeException exception) {
-                    GunMod.LOGGER.warn("Failed to bake SBM external gun LOD for {}", displayId, exception);
-                }
-            }
-            return externalLodModel;
+        return externalLodModel.getIfReady();
+    }
+
+    private @Nullable Pair<ExternalGunModel, ResourceLocation> bakeExternalLodModel() {
+        if (lodLoadFailed) {
+            return null;
         }
+
+        try {
+            loadLodIfNecessary();
+        } catch (RuntimeException failure) {
+            handleLodLoadFailure(failure);
+            return null;
+        }
+
+        if (lodModel == null) {
+            return null;
+        }
+
+        GunLod lod = display.getGunLod();
+        BedrockModelPOJO pojo = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(lod.getModelLocation());
+        if (pojo == null) {
+            return null;
+        }
+        ExternalGunModel model = ExternalGunModel.bake(
+                pojo, getExternalHiddenTextBones(), DisplayGunModelInstance.Kind.GUN
+        );
+        return Pair.of(model, lod.getModelTexture());
+    }
+
+    public ExternalModelAssets getExternalModels() {
+        return externalModels;
+    }
+
+    private ResourceLocation externalModelResource() {
+        return display.getModelLocation();
+    }
+
+    private ResourceLocation externalLodResource() {
+        GunLod lod = display.getGunLod();
+        if (lod != null && lod.getModelLocation() != null) {
+            return lod.getModelLocation();
+        }
+        // 没有 LOD 的默认模型也提前结束空任务，首次展示不必等待一次空的准备。
+        return display.getModelLocation();
     }
 
     public @Nullable LuaAnimationStateMachine<GunAnimationStateContext> getAnimationStateMachine() {

@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-public class GunDisplayCaseBlockEntity extends BlockEntity {
+public class GunDisplayCaseBlockEntity extends BlockEntity implements GunDisplayBlockEntity {
     public static final int GRID_SIZE = 4;
     public static final int SLOT_COUNT = GRID_SIZE * GRID_SIZE;
     public static final BlockEntityType<GunDisplayCaseBlockEntity> TYPE = BlockEntityType.Builder.of(GunDisplayCaseBlockEntity::new, ModBlocks.GUN_DISPLAY_CASE.get()).build(null);
@@ -37,19 +37,37 @@ public class GunDisplayCaseBlockEntity extends BlockEntity {
         }
     }
 
+    @Override
     public ItemStack getItem(int slot) {
         return isValidSlot(slot) ? items[slot] : ItemStack.EMPTY;
     }
 
+    @Override
     public int getRotation(int slot) {
         return isValidSlot(slot) ? rotations[slot] & 7 : 0;
     }
 
+    @Override
     public DisplayGunSlot getDisplaySlot(int slot) {
         if (!isValidSlot(slot)) throw new IndexOutOfBoundsException(slot);
         DisplayGunSlot handle = displaySlots[slot];
         if (handle == null) displaySlots[slot] = handle = new DisplayGunSlot(this, slot);
         return handle;
+    }
+
+    @Override
+    public int getGridSize() {
+        return GRID_SIZE;
+    }
+
+    @Override
+    public Direction getSlotFacing(int slot) {
+        return getBlockState().getValue(GunDisplayCaseBlock.FACING);
+    }
+
+    @Override
+    public boolean isDisplayGlowing() {
+        return true;
     }
 
     private void displaySlotChanged(int slot) {

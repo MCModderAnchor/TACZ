@@ -1,23 +1,29 @@
 package com.tacz.guns.block.entity;
 
-import net.minecraft.world.level.block.entity.BlockEntity;
-
 /** 由方块实体持有的稳定槽位身份；不保存渲染资源或物品副本。 */
 public final class DisplayGunSlot {
-    private final BlockEntity owner;
+    private final GunDisplayBlockEntity owner;
     private final int index;
     private long revision;
     private long appearanceRevision;
     private long notifiedRevision = Long.MIN_VALUE;
 
-    public DisplayGunSlot(BlockEntity owner, int index) {
+    public DisplayGunSlot(GunDisplayBlockEntity owner, int index) {
         this.owner = owner;
         this.index = index;
     }
 
-    public BlockEntity owner() { return owner; }
-    public int index() { return index; }
-    public long appearanceRevision() { return appearanceRevision; }
+    public GunDisplayBlockEntity owner() {
+        return owner;
+    }
+
+    public int index() {
+        return index;
+    }
+
+    public long appearanceRevision() {
+        return appearanceRevision;
+    }
 
     public void changed() {
         revision++;

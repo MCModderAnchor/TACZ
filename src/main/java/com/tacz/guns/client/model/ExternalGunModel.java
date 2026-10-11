@@ -24,14 +24,23 @@ public class ExternalGunModel {
     private static final Gson SOURCE_GSON = new GsonBuilder()
             .registerTypeAdapter(CubesItem.class, (JsonSerializer<CubesItem>) (cube, type, context) -> {
                 JsonObject json = new JsonObject();
-                if (cube.getUv() != null) json.add("uv", context.serialize(cube.getUv()));
-                else if (cube.getFaceUv() != null) json.add("uv", context.serialize(cube.getFaceUv()));
+                if (cube.getUv() != null) {
+                    json.add("uv", context.serialize(cube.getUv()));
+                } else if (cube.getFaceUv() != null) {
+                    json.add("uv", context.serialize(cube.getFaceUv()));
+                }
                 json.add("size", context.serialize(cube.getSize()));
                 json.add("origin", context.serialize(cube.getOrigin()));
-                if (cube.getRotation() != null) json.add("rotation", context.serialize(cube.getRotation()));
-                if (cube.getPivot() != null) json.add("pivot", context.serialize(cube.getPivot()));
+                if (cube.getRotation() != null) {
+                    json.add("rotation", context.serialize(cube.getRotation()));
+                }
+                if (cube.getPivot() != null) {
+                    json.add("pivot", context.serialize(cube.getPivot()));
+                }
                 json.addProperty("inflate", cube.getInflate());
-                if (cube.isHasMirror()) json.addProperty("mirror", cube.isMirror());
+                if (cube.isHasMirror()) {
+                    json.addProperty("mirror", cube.isMirror());
+                }
                 return json;
             })
             .create();
@@ -46,7 +55,7 @@ public class ExternalGunModel {
     }
 
     /**
-     * 在资源加载阶段执行一次。首版保留全部命名骨骼，以便外观显隐、挂点和动画边界可查询。
+     * 由资源后台任务执行一次。保留全部命名骨骼，以便外观显隐、挂点和动画边界可查询。
      * 后续按测量结果收窄 preservedBones，合并确定不变的枪身部分。
      */
     public static ExternalGunModel bake(BedrockModelPOJO source, Set<String> hiddenTextBones,
@@ -54,7 +63,9 @@ public class ExternalGunModel {
         Objects.requireNonNull(source, "source");
         var sbmSource = GsonUtil.CLIENT_GSON.fromJson(SOURCE_GSON.toJsonTree(source),
                 com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.BedrockModelPOJO.class);
-        if (sbmSource == null) throw new IllegalArgumentException("Missing Bedrock model");
+        if (sbmSource == null) {
+            throw new IllegalArgumentException("Missing Bedrock model");
+        }
 
         Set<String> preserved = new LinkedHashSet<>();
         BonesItem[] bones;
@@ -67,7 +78,10 @@ public class ExternalGunModel {
         } else {
             throw new IllegalArgumentException("No Bedrock geometry in gun model");
         }
-        Arrays.stream(bones).map(BonesItem::getName).filter(Objects::nonNull).forEach(preserved::add);
+
+        Arrays.stream(bones).map(BonesItem::getName).filter(Objects::nonNull)
+                .forEach(preserved::add);
+
         var options = new BakerOptions(Set.of(), preserved, true, false);
         return new ExternalGunModel(BakedBedrockModel.bake(sbmSource, options), hiddenTextBones, kind);
     }

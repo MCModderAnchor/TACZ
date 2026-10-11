@@ -21,7 +21,7 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.Map;
 
-public class GunPegboardBlockEntity extends BlockEntity {
+public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlockEntity {
     public static final int GRID_SIZE = 4;
     public static final int SLOTS_PER_FACE = GRID_SIZE * GRID_SIZE;
     // 原有 0..15 槽位保持不变，16..31 属于折面；转角时每面仅启用三列。
@@ -48,6 +48,7 @@ public class GunPegboardBlockEntity extends BlockEntity {
         }
     }
 
+    @Override
     public ItemStack getItem(int slot) {
         return GunPegboardSlotHelper.isSlotActive(getBlockState(), slot) ? items[slot] : ItemStack.EMPTY;
     }
@@ -72,15 +73,32 @@ public class GunPegboardBlockEntity extends BlockEntity {
         update();
     }
 
+    @Override
     public int getRotation(int slot) {
         return isValidSlot(slot) ? rotations[slot] & 7 : 0;
     }
 
+    @Override
     public DisplayGunSlot getDisplaySlot(int slot) {
         if (!isValidSlot(slot)) throw new IndexOutOfBoundsException(slot);
         DisplayGunSlot handle = displaySlots[slot];
         if (handle == null) displaySlots[slot] = handle = new DisplayGunSlot(this, slot);
         return handle;
+    }
+
+    @Override
+    public int getGridSize() {
+        return GRID_SIZE;
+    }
+
+    @Override
+    public Direction getSlotFacing(int slot) {
+        return GunPegboardSlotHelper.getSlotFacing(getBlockState(), slot);
+    }
+
+    @Override
+    public boolean isDisplayGlowing() {
+        return getBlockState().getBlock() instanceof GunPegboardBlock pegboard && pegboard.isGlowing();
     }
 
     private void displaySlotChanged(int slot) {

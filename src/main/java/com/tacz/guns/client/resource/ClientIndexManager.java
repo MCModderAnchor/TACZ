@@ -21,8 +21,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
 @OnlyIn(Dist.CLIENT)
@@ -39,6 +42,7 @@ public class ClientIndexManager {
     public static final Map<ResourceLocation, ClientBlockIndex> BLOCK_INDEX = Maps.newHashMap();
 
     public static void clear() {
+        ClientAssetLoadDispatcher.invalidate();
         RESOURCE_REVISION.incrementAndGet();
         GUN_DISPLAY.clear();
         GUN_INDEX.clear();
@@ -63,6 +67,7 @@ public class ClientIndexManager {
             loadAttachmentVariantIndex();
             loadSlotAdapterIndex();
             loadBlockIndex();
+            preloadExternalModels();
             warmUpInventoryModels();
         } finally {
             // 使重载过程中暂时解析失败的展示槽位在资源就绪后再次解析。
@@ -191,6 +196,26 @@ public class ClientIndexManager {
 
     public static Set<Map.Entry<ResourceLocation, ClientBlockIndex>> getAllBlocks() {
         return BLOCK_INDEX.entrySet();
+    }
+
+    /** 重载时预加载默认命名空间的模型，其他枪包继续按需加载并由背包预热。 */
+    private static void preloadExternalModels() {
+        List<CompletableFuture<?>> tasks = new ArrayList<>();
+        for (GunDisplayInstance display : GUN_DISPLAY.values()) {
+            tasks.add(display.getExternalModels().preload());
+        }
+        for (ClientAttachmentIndex index : ATTACHMENT_INDEX.values()) {
+            tasks.add(index.getExternalModels().preload());
+        }
+        for (ClientAttachmentVariantIndex index : ATTACHMENT_VARIANT_INDEX.values()) {
+            tasks.add(index.getExternalModels().preload());
+        }
+        for (ClientSlotAdapterIndex index : SLOT_ADAPTER_INDEX.values()) {
+            tasks.add(index.getExternalModels().preload());
+        }
+
+        // 只在资源重载阶段等待；外部模型的渲染入口不会等待后台任务。
+        CompletableFuture.allOf(tasks.toArray(CompletableFuture<?>[]::new)).join();
     }
 
     public static void warmUpInventoryModels() {

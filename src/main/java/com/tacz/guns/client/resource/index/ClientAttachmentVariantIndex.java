@@ -6,7 +6,9 @@ import com.tacz.guns.client.model.BedrockAttachmentModel;
 import com.tacz.guns.client.model.DisplayGunModelInstance;
 import com.tacz.guns.client.model.ExternalGunModel;
 import com.tacz.guns.client.resource.ClientAssetLoadDispatcher;
+import com.tacz.guns.client.resource.ClientAssetLoadTask;
 import com.tacz.guns.client.resource.ClientAssetsManager;
+import com.tacz.guns.client.resource.ExternalModelAssets;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.resource.index.CommonAttachmentVariantIndex;
@@ -26,8 +28,16 @@ public class ClientAttachmentVariantIndex {
     private AttachmentDisplay display;
     private @Nullable BedrockAttachmentModel attachmentModel;
     private @Nullable ResourceLocation modelTexture;
-    private @Nullable ExternalGunModel externalModel;
-    private boolean externalModelAttempted;
+
+    private final ExternalModelAssets externalModels = new ExternalModelAssets();
+    private final ClientAssetLoadTask<ExternalGunModel> externalModel = externalModels.add(
+            () -> display.getModel(),
+            this::bakeExternalModel,
+            failure -> {
+                GunMod.LOGGER.warn("Failed to bake SBM attachment variant model {}", display.getModel(), failure);
+            }
+    );
+
     private float[] viewsFov;
     private float @Nullable [] zoom;
     private int[] views;
@@ -75,6 +85,11 @@ public class ClientAttachmentVariantIndex {
     }
 
     public void warmUp() {
+        warmUpLegacyModels();
+        externalModel.warmUp();
+    }
+
+    private void warmUpLegacyModels() {
         if (modelsLoaded || modelsLoadFailed || warmUpTask != null) {
             return;
         }
@@ -153,22 +168,36 @@ public class ClientAttachmentVariantIndex {
     }
 
     public @Nullable ExternalGunModel getExternalModel() {
-        ensureModelsLoaded();
-        if (!modelsLoaded || attachmentModel == null || display.getModel() == null) return null;
-        synchronized (modelLoadLock) {
-            if (!externalModelAttempted) {
-                externalModelAttempted = true;
-                try {
-                    BedrockModelPOJO source = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(display.getModel());
-                    if (source != null) externalModel = ExternalGunModel.bake(source,
-                            display.getTextShows() == null ? Set.of() : Set.copyOf(display.getTextShows().keySet()),
-                            DisplayGunModelInstance.Kind.ATTACHMENT);
-                } catch (RuntimeException exception) {
-                    GunMod.LOGGER.warn("Failed to bake SBM attachment variant model {}", display.getModel(), exception);
-                }
-            }
-            return externalModel;
+        return externalModel.getIfReady();
+    }
+
+    private @Nullable ExternalGunModel bakeExternalModel() {
+        if (modelsLoadFailed) {
+            return null;
         }
+
+        try {
+            loadModelsIfNecessary();
+        } catch (RuntimeException failure) {
+            handleModelsLoadFailure(failure);
+            return null;
+        }
+
+        if (attachmentModel == null || display.getModel() == null) {
+            return null;
+        }
+
+        BedrockModelPOJO source = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(display.getModel());
+        if (source == null) {
+            return null;
+        }
+        Set<String> hiddenTextBones = display.getTextShows() == null
+                ? Set.of() : Set.copyOf(display.getTextShows().keySet());
+        return ExternalGunModel.bake(source, hiddenTextBones, DisplayGunModelInstance.Kind.ATTACHMENT);
+    }
+
+    public ExternalModelAssets getExternalModels() {
+        return externalModels;
     }
 
     public @Nullable ResourceLocation getModelTexture() {
