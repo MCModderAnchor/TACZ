@@ -1,4 +1,4 @@
-local default = require("tacz_default_state_machine")
+local default = require("tacz_default_state_machine_v2")
 
 local gun_kick_state = setmetatable({
     acceleration_count = 0

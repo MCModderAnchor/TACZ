@@ -10,7 +10,7 @@
   "slot": "tacz:gun/slot/m9a4",
   "animation": "tacz:m9a4",
   "use_default_animation": "pistol",
-  "state_machine": "tacz:default_state_machine",
+  "state_machine": "tacz:default_state_machine_v2",
   "player_animator_3rd": "tacz:pistol_default.player_animation",
   "transform": {
     "scale": {

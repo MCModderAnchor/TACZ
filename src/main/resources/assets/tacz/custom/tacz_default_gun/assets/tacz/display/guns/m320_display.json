@@ -1,4 +1,5 @@
 {
+  "state_machine": "tacz:default_state_machine_v2",
   "model": "tacz:gun/m320_geo",
   "texture": "tacz:gun/uv/m320",
   "hud": "tacz:gun/hud/m320",

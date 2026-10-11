@@ -1,7 +1,7 @@
 -- M1866 杠杆步枪状态机
 -- 继承自 default_state_machine，参考 m1897 的 bolt_caught 设计
 -- 逐发装填，弹仓 5 发 + 枪膛 1 发，共 6 发
-local default = require("tacz_default_state_machine")
+local default = require("tacz_default_state_machine_v2")
 local STATIC_TRACK_LINE = default.STATIC_TRACK_LINE
 local MAIN_TRACK = default.MAIN_TRACK
 local BOLT_CAUGHT_TRACK = default.BOLT_CAUGHT_TRACK

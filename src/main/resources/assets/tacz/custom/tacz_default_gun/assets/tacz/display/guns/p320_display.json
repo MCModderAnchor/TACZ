@@ -1,4 +1,5 @@
 {
+  "state_machine": "tacz:default_state_machine_v2",
   "ads_preset": "tacz:renew",
   "model": "tacz:gun/p320_geo",
   "texture": "tacz:gun/uv/p320",

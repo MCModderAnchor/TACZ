@@ -1,6 +1,6 @@
 -- 脚本的位置是 "{命名空间}:{路径}"，那么 require 的格式为 "{命名空间}_{路径}"
 -- 注意！require 取得的内容不应该被修改，应仅调用
-local default = require("tacz_default_state_machine")
+local default = require("tacz_default_state_machine_v2")
 -- 这个状态机是 manual_action 和 m870 的结合物，因此只要继承自默认状态机即可
 local STATIC_TRACK_LINE = default.STATIC_TRACK_LINE
 local GUN_KICK_TRACK_LINE = default.GUN_KICK_TRACK_LINE
