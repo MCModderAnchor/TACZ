@@ -4692,7 +4692,7 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 10.1875, 12.4375]
+					"pivot": [0, 10.1875, 15]
 				},
 				{
 					"name": "refit_view",

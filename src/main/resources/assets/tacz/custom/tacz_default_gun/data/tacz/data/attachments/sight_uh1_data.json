@@ -1,3 +1,6 @@
 {
-  "weight": 0.3
+  "weight": 0.4,
+    "ads": {
+    "addend": 0.03
+  }
 }

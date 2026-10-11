@@ -6073,12 +6073,12 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 6.8125, 19.275]
+					"pivot": [0, 6.8125, 19.0]
 				},
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [2, 8, 17.5]
+					"pivot": [2, 8, 18.5]
 				},
 				{
 					"name": "refit_view",

@@ -10,9 +10,9 @@
   "bolt": "manual_action",
   "rpm": 151,
   "recoil_push": {
-    "ground_strength": 0.25,
+    "ground_strength": 0.05,
     "air_strength": 0.25,
-    "sneak_strength": 0.1,
+    "sneak_strength": 0.025,
     "crawl_strength": 0.0
   },
   "bullet": {
@@ -56,7 +56,7 @@
   },
   "draw_time": 1.03,
   "put_away_time": 0.87,
-  "aim_time": 0.23,
+  "aim_time": 0.37,
   "sprint_time": 0.2,
   "bolt_action_time": 1.43,
   "weight": 10.7,

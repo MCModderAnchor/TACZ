@@ -3259,7 +3259,7 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 6.175, 14.5],
+					"pivot": [0, 6.175, 14.875],
 					"rotation": [0, 0, -6]
 				},
 				{

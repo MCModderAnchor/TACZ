@@ -41,7 +41,7 @@
   },
   "iron_zoom": 1.66,
   "model_fov": 60,
-  "zoom_model_fov": 30,
+  "zoom_model_fov": 36,
   "sounds": {
     "draw": "tacz:m1866/m1866_draw",
     "shoot": "tacz:m1866/m1866_shoot",

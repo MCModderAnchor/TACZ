@@ -23,13 +23,13 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1, 5.125, 9.9375],
+					"pivot": [1, 4.875, 10],
 					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0.125, 5.1125, 10.175]
+					"pivot": [0.125, 4.05, 7.175]
 				},
 				{
 					"name": "scope_pos",

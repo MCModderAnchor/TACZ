@@ -7325,7 +7325,7 @@
 				{
 					"name": "iron_view",
 					"parent": "refit",
-					"pivot": [0, 12.1875, 24]
+					"pivot": [0, 12.1875, 18.62]
 				},
 				{
 					"name": "idle_view",

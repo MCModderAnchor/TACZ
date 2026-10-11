@@ -36,7 +36,7 @@
   },
   "iron_zoom": 1.2,
   "model_fov": 60,
-  "zoom_model_fov": 55,
+  "zoom_model_fov": 45,
   "sounds": {
     "draw": "tacz:m1911/m1911_draw",
     "put_away": "tacz:m1911/m1911_put_away",

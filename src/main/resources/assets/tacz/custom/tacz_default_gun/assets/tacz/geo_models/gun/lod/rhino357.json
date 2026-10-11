@@ -191,7 +191,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0.975, 7.99375, 2.1375],
+					"pivot": [0.975, 8.025, 2.45],
 					"rotation": [0, 90, 0]
 				},
 				{

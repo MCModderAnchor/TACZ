@@ -68,7 +68,7 @@
   },
   "draw_time": 0.63,
   "put_away_time": 0.75,
-  "aim_time": 0.2,
+  "aim_time": 0.25,
   "sprint_time": 0.22,
   "weight": 4,
   "movement_speed": {

@@ -75,7 +75,7 @@
   },
   "draw_time": 0.46,
   "put_away_time": 0.28,
-  "aim_time": 0.13,
+  "aim_time": 0.16,
   "sprint_time": 0.05,
   "weight": 1.4,
   "movement_speed": {
@@ -119,14 +119,14 @@
   "recoil": {
     "pitch": [
       {"time": 0, "value": [1.5, 1.5]},
-      {"time": 0.15, "value": [1.25, 1.25]},
-      {"time": 0.4, "value": [-0.25, -0.15]},
+      {"time": 0.15, "value": [1.45, 1.45]},
       {"time": 0.6, "value": [0.15, 0.2]},
       {"time": 0.65, "value": [0.05, 0.05]},
       {"time": 0.7, "value": [0, 0]}
     ],
     "yaw": [
       {"time": 0, "value": [-0.3, 0.3]},
+      {"time": 0.3, "value": [0, 0]},
       {"time": 0.45, "value": [0, 0]}
     ]
   },

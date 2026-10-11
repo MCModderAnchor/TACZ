@@ -7,7 +7,7 @@
     "texture": "tacz:attachment/lod/sight_acro_pistol"
   },
   "zoom": [
-    2
+    1.25
   ],
   "scope": false,
   "sight": true,

@@ -21,7 +21,7 @@
   },
   "iron_zoom": 1.2,
   "model_fov": 60,
-  "zoom_model_fov": 60,
+  "zoom_model_fov": 45,
   "shell": {
     "initial_velocity": [5.0, 3.0, 1],
     "random_velocity": [2.5, 2, 0.25],

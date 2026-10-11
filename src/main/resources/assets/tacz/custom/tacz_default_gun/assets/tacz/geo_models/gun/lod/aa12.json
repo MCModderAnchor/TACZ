@@ -23,12 +23,12 @@
 				{
 					"name": "ground",
 					"parent": "positioning",
-					"pivot": [0, 0.1, -0.725]
+					"pivot": [0, -1.9, -0.725]
 				},
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0.9, 8.43125, 0.925],
+					"pivot": [0.9, 11.025, -0.325],
 					"rotation": [0, 90, 0]
 				},
 				{

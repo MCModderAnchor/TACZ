@@ -7,7 +7,7 @@
     "texture": "tacz:attachment/lod/sight_pk06_pistol"
   },
   "zoom": [
-    2
+    1.5
   ],
   "scope": false,
   "sight": true,

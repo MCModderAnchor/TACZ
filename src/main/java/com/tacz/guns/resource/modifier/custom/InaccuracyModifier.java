@@ -135,8 +135,8 @@ public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyTyp
 
         return List.of(
                 buildNormal(gunData, cacheProperty, fireModeAdjustData, InaccuracyType.STAND, "gui.tacz.gun_refit.property_diagrams.hipfire_inaccuracy", 10.0),
-                buildNormal(gunData, cacheProperty, fireModeAdjustData, InaccuracyType.SNEAK, "gui.tacz.gun_refit.property_diagrams.sneak_inaccuracy", 5.0),
-                buildNormal(gunData, cacheProperty, fireModeAdjustData, InaccuracyType.LIE, "gui.tacz.gun_refit.property_diagrams.lie_inaccuracy", 5.0),
+                buildNormal(gunData, cacheProperty, fireModeAdjustData, InaccuracyType.SNEAK, "gui.tacz.gun_refit.property_diagrams.sneak_inaccuracy", 10.0),
+                buildNormal(gunData, cacheProperty, fireModeAdjustData, InaccuracyType.LIE, "gui.tacz.gun_refit.property_diagrams.lie_inaccuracy", 10.0),
                 buildAim(gunData, cacheProperty, fireModeAdjustData)
         );
     }

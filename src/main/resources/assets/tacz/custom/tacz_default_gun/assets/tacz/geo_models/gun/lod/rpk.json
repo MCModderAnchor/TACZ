@@ -597,22 +597,22 @@
 				},
 				{
 					"name": "positioning",
-					"pivot": [8, -11, -1]
+					"pivot": [8, -1, -1]
 				},
 				{
 					"name": "thirdperson_hand",
 					"parent": "positioning",
-					"pivot": [0, -12.4875, 6.35]
+					"pivot": [0, 6.575, 6.35]
 				},
 				{
 					"name": "ground",
 					"parent": "positioning",
-					"pivot": [0, -21.9, -1.35]
+					"pivot": [0, -3.9, -1.35]
 				},
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1.2, -11.9, 4.725],
+					"pivot": [1.2, 7.0375, 5.1625],
 					"rotation": [0, 90, 0]
 				},
 				{

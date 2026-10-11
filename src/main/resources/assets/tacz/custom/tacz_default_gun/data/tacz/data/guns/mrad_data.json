@@ -50,7 +50,7 @@
   },
   "draw_time": 1.04,
   "put_away_time": 0.87,
-  "aim_time": 0.2,
+  "aim_time": 0.28,
   "sprint_time": 0.2,
   "bolt_action_time": 1.05,
   "weight": 6.5,

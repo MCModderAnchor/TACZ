@@ -6,7 +6,7 @@
 				"identifier": "geometry.scar_mk20 - Converted",
 				"texture_width": 256,
 				"texture_height": 256,
-				"visible_bounds_width": 4,
+				"visible_bounds_width": 5,
 				"visible_bounds_height": 2.5,
 				"visible_bounds_offset": [0, 0.75, 0]
 			},
@@ -11623,8 +11623,8 @@
 							}
 						},
 						{
-							"origin": [-0.07813, 12.5625, -14.32812],
-							"size": [0.15625, 0.0625, 0.15625],
+							"origin": [-0.06251, 12.5625, -14.31249],
+							"size": [0.125, 0.0625, 0.125],
 							"pivot": [0, 12.59375, -14.25],
 							"rotation": [0, -45, 0],
 							"uv": {
@@ -11680,8 +11680,8 @@
 					"pivot": [0, 12.6875, -14.25],
 					"cubes": [
 						{
-							"origin": [-0.04688, 12.5625, -14.29686],
-							"size": [0.09375, 0.25, 0.09375],
+							"origin": [-0.03125, 12.5625, -14.28123],
+							"size": [0.0625, 0.25, 0.0625],
 							"pivot": [0, 12.6875, -14.25],
 							"rotation": [0, -45, 0],
 							"uv": {

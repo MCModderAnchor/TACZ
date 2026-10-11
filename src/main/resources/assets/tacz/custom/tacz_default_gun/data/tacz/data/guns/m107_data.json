@@ -8,11 +8,11 @@
   ],
   "can_slide": false,
   "bolt": "closed_bolt",
-  "rpm": 200,
+  "rpm": 250,
   "recoil_push": {
-    "ground_strength": 0.25,
+    "ground_strength": 0.05,
     "air_strength": 0.25,
-    "sneak_strength": 0.1,
+    "sneak_strength": 0.025,
     "crawl_strength": 0.0
   },
   "bullet": {
@@ -56,7 +56,7 @@
   },
   "draw_time": 1.3,
   "put_away_time": 0.87,
-  "aim_time": 0.23,
+  "aim_time": 0.35,
   "sprint_time": 0.33,
   "weight": 10.5,
   "movement_speed": {

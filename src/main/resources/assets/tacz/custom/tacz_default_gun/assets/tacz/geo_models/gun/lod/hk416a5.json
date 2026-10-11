@@ -584,18 +584,18 @@
 				},
 				{
 					"name": "fixed",
-					"parent": "lod",
-					"pivot": [0.875, 7, 5.2875],
+					"parent": "positioning",
+					"pivot": [0.875, 7.04688, 4.6625],
 					"rotation": [0, 90, 0]
 				},
 				{
 					"name": "ground",
-					"parent": "lod",
+					"parent": "positioning",
 					"pivot": [0, -0.9, 4.65]
 				},
 				{
 					"name": "thirdperson_hand",
-					"parent": "lod",
+					"parent": "positioning",
 					"pivot": [0, 7.025, 6.65]
 				},
 				{
@@ -665,6 +665,11 @@
 							}
 						}
 					]
+				}
+,
+				{
+					"name": "positioning",
+					"pivot": [0, 0, 0]
 				}
 			]
 		}

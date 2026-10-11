@@ -483,7 +483,7 @@
 				},
 				{
 					"name": "positioning",
-					"pivot": [-3.025, -8.95, -11.225]
+					"pivot": [0.5, -3.95, -11.225]
 				},
 				{
 					"name": "muzzle_flash",
@@ -493,12 +493,12 @@
 				{
 					"name": "ground",
 					"parent": "positioning",
-					"pivot": [0, 0, 0]
+					"pivot": [0.15, 0.475, -6.825]
 				},
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1.575, 5.24375, 6.5125],
+					"pivot": [2.575, 4.99375, 6.95],
 					"rotation": [0, 90, 0]
 				},
 				{
