@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -39,6 +40,8 @@ public class DisplayGunMeshGroup {
     private static WorldMeshGroup<DisplayGunSlot> group;
     private static boolean configWasEnabled;
     private static final Map<DisplayGunSlot, CachedAppearance> APPEARANCES = new WeakHashMap<>();
+    public static final MeshCachePolicy TTL_300 = new MeshCachePolicy(Duration.ofSeconds(300), 128,
+            512L * 1024L * 1024L);
 
     private DisplayGunMeshGroup() {}
 
@@ -119,7 +122,7 @@ public class DisplayGunMeshGroup {
         ExternalGunAppearance.Snapshot current = snapshot(slot);
         if (current == null) return false;
         if (group == null) group = WorldMeshRenderer.createGroup("tacz:display_guns",
-                WorldMeshStrategy.INSTANCE, Set.of(WorldMeshStrategy.INSTANCE), MeshCachePolicy.DEFAULT);
+                WorldMeshStrategy.INSTANCE, Set.of(WorldMeshStrategy.INSTANCE), TTL_300);
         group.track(slot, ADAPTER);
         if (slot.consumeChange()) group.markDirty(slot);
         CachedAppearance cached = APPEARANCES.get(slot);

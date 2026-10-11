@@ -132,7 +132,19 @@ public class GunRefitScreen extends Screen {
         this.renderables.stream().filter(w -> w instanceof IComponentTooltip).forEach(w -> ((IComponentTooltip) w)
                 .renderTooltip(component -> graphics.renderComponentTooltip(font, component, mouseX, mouseY)));
         this.renderables.stream().filter(w -> w instanceof IStackTooltip).forEach(w -> ((IStackTooltip) w)
-                .renderTooltip(stack -> graphics.renderTooltip(font, stack, mouseX, mouseY)));
+                .renderTooltip(stack -> renderAttachmentTooltip(graphics, stack, mouseX, mouseY)));
+    }
+
+    private void renderAttachmentTooltip(GuiGraphics graphics, ItemStack stack, int mouseX, int mouseY) {
+        if (!isBuiltinOemAttachment(stack)) {
+            graphics.renderTooltip(font, stack, mouseX, mouseY);
+            return;
+        }
+        List<Component> tooltip = getTooltipFromItem(getMinecraft(), stack);
+        if (!tooltip.isEmpty()) {
+            tooltip.set(0, tooltip.get(0).copy().append(Component.translatable("gui.tacz.refit.builtin_suffix")));
+        }
+        graphics.renderTooltip(font, tooltip, stack.getTooltipImage(), stack, mouseX, mouseY);
     }
 
     @Override

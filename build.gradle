@@ -187,8 +187,8 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
 
-    jarJar(implementation(fg.deobf("com.github.mcmodderanchor:simplebedrockmodel:2.5.26-forge-mc1.20.1"))) {
-        jarJar.ranged(it, "[2.5.26,)")
+    jarJar(implementation(fg.deobf("com.github.mcmodderanchor:simplebedrockmodel:2.5.27-forge-mc1.20.1"))) {
+        jarJar.ranged(it, "[2.5.27,)")
     }
     compileOnly("com.maydaymemory:mae:1.1.2") {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'

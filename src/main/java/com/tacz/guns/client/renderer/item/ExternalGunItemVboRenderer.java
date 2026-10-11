@@ -17,7 +17,7 @@ import java.time.Duration;
 public class ExternalGunItemVboRenderer {
     private static final ResourceLocation OWNER = new ResourceLocation("tacz", "external_item_guns");
     private static boolean wasEnabled;
-    private static final Duration IDLE_RETENTION = Duration.ofSeconds(30);
+    private static final Duration IDLE_RETENTION = Duration.ofSeconds(300);
 
     private ExternalGunItemVboRenderer() {}
 
