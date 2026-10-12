@@ -27,6 +27,7 @@ import com.tacz.guns.resource.pojo.data.gun.*;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.CycleTaskHelper;
+import com.tacz.guns.util.GunAmmoUnloadHelper;
 import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
@@ -521,7 +522,7 @@ public class ModernKineticGunScriptAPI {
      * @return 换弹是否需要消耗弹药
      */
     public boolean isReloadingNeedConsumeAmmo() {
-        return IGunOperator.fromLivingEntity(shooter).needCheckAmmo();
+        return IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !gunIndex.getGunData().getReloadData().isInfinite();
     }
 
     /**
@@ -658,6 +659,23 @@ public class ModernKineticGunScriptAPI {
      */
     public int getAmmoCountInMagazine() {
         return abstractGunItem.getCurrentAmmoCount(itemStack);
+    }
+
+    /**
+     * 按数量卸弹，优先返还匹配弹种的普通弹药盒，再返还背包，剩余掉落。
+     * Lua 调用为 unloadAmmo(barrel, amount)，两个参数都必须是整数。
+     * 开膛待击不计算膛内一发，虚拟备弹返还虚拟备弹；创造模式、无限弹药和燃料不生成返还物品。
+     * 仅在服务端结算，脚本自行控制调用时刻以及是否只调用一次。
+     *
+     * @param barrel 0 保留膛内，1 卸出膛内
+     * @param amount 弹匣卸出数量，不含膛内；0 保留弹匣，-1 清空弹匣
+     * @return 实际卸出总数（含膛内）；无效取值、背包直读或客户端调用返回 0
+     */
+    public int unloadAmmo(int barrel, int amount) {
+        if ((barrel != 0 && barrel != 1) || amount < -1) {
+            return 0;
+        }
+        return GunAmmoUnloadHelper.unloadAmmo(shooter, itemStack, abstractGunItem, gunIndex, barrel == 1, amount);
     }
 
     /**

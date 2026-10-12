@@ -50,7 +50,7 @@
     //   "tactical": 0.23
     // }
   },
-  "script": "tacz:m870_gun_logic",
+  "script": "tacz:m870_unload_gun_logic",
   "script_param": {
     "bolt_time": 0.2,
     "bolt_feed_time": 0.2,

@@ -13,7 +13,7 @@
   // tooltip的伤害显示样式，可选值：”total“(总伤害)、”per_projectile“(单发弹丸伤害x弹丸数量)，默认为”per_projectile“
   "damage_style": "per_projectile",
   "animation": "tacz:m870",
-  "state_machine": "tacz:m870_state_machine",
+  "state_machine": "tacz:m870_unload_state_machine",
   "state_machine_param": {
     "bolt_shell_ejecting_time": 0.17,
     "intro_shell_ejecting_time": 0.4

@@ -65,8 +65,8 @@ public interface GunItemDataAccessor extends IGun {
             maxDummyAmmo = getMaxDummyAmmoAmount(gun);
         }
         CompoundTag nbt = gun.getOrCreateTag();
-        amount = Math.min(getDummyAmmoAmount(gun) + amount, maxDummyAmmo);
-        nbt.putInt(GUN_DUMMY_AMMO, Math.max(amount, 0));
+        long updatedAmount = Math.min((long) getDummyAmmoAmount(gun) + amount, maxDummyAmmo);
+        nbt.putInt(GUN_DUMMY_AMMO, (int) Math.max(updatedAmount, 0));
     }
 
     @Override

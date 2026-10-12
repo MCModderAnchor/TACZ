@@ -105,7 +105,7 @@
       "prep": 0.1
     }
   },
-  "script": "tacz:m870_gun_logic",
+  "script": "tacz:m870_unload_gun_logic",
   "script_param": {
     "bolt_time": 0.55,
     "bolt_feed_time": 0.3,
