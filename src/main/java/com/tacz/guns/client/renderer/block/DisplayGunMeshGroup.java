@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -47,8 +48,9 @@ public class DisplayGunMeshGroup {
         @Override
         public boolean isValid(DisplayGunSlot slot) {
             GunDisplayBlockEntity owner = slot.owner();
+            BlockEntity blockEntity = owner.getBlockEntity();
             ItemStack stack = owner.getItem(slot.index());
-            boolean valid = !owner.isRemoved() && owner.getLevel() == Minecraft.getInstance().level
+            boolean valid = !blockEntity.isRemoved() && blockEntity.getLevel() == Minecraft.getInstance().level
                     && !stack.isEmpty() && IGun.getIGunOrNull(stack) != null;
             if (!valid) {
                 APPEARANCES.remove(slot);
@@ -63,7 +65,7 @@ public class DisplayGunMeshGroup {
 
         @Override
         public Vec3 origin(DisplayGunSlot slot) {
-            return Vec3.atLowerCornerOf(slot.owner().getBlockPos());
+            return Vec3.atLowerCornerOf(slot.owner().getBlockEntity().getBlockPos());
         }
 
         @Override
@@ -85,7 +87,8 @@ public class DisplayGunMeshGroup {
             if (owner.isDisplayGlowing()) {
                 return LightTexture.pack(15, 15);
             }
-            return LevelRenderer.getLightColor(owner.getLevel(), owner.getBlockPos());
+            BlockEntity blockEntity = owner.getBlockEntity();
+            return LevelRenderer.getLightColor(blockEntity.getLevel(), blockEntity.getBlockPos());
         }
 
         @Override
@@ -114,7 +117,7 @@ public class DisplayGunMeshGroup {
             return false;
         }
         configWasEnabled = true;
-        if (overlay != OverlayTexture.NO_OVERLAY || owner.getLevel() != Minecraft.getInstance().level) {
+        if (overlay != OverlayTexture.NO_OVERLAY || owner.getBlockEntity().getLevel() != Minecraft.getInstance().level) {
             return false;
         }
 
@@ -151,7 +154,8 @@ public class DisplayGunMeshGroup {
 
     public static ExternalGunAppearance.Snapshot snapshot(DisplayGunSlot slot) {
         GunDisplayBlockEntity owner = slot.owner();
-        if (owner.isRemoved()) {
+        BlockEntity blockEntity = owner.getBlockEntity();
+        if (blockEntity.isRemoved()) {
             return null;
         }
 
@@ -173,7 +177,7 @@ public class DisplayGunMeshGroup {
         }
 
         int range = RenderConfig.GUN_LOD_RENDER_DISTANCE.get();
-        boolean useLod = range == 0 || owner.getBlockPos().distToCenterSqr(
+        boolean useLod = range == 0 || blockEntity.getBlockPos().distToCenterSqr(
                 Minecraft.getInstance().gameRenderer.getMainCamera().getPosition()) >= (double) range * range;
         return variants.select(useLod);
     }

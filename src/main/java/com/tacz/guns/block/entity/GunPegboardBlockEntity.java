@@ -101,6 +101,11 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
         return getBlockState().getBlock() instanceof GunPegboardBlock pegboard && pegboard.isGlowing();
     }
 
+    @Override
+    public BlockEntity getBlockEntity() {
+        return this;
+    }
+
     private void displaySlotChanged(int slot) {
         if (displaySlots[slot] != null) displaySlots[slot].changed();
     }

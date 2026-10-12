@@ -70,6 +70,11 @@ public class GunDisplayCaseBlockEntity extends BlockEntity implements GunDisplay
         return true;
     }
 
+    @Override
+    public BlockEntity getBlockEntity() {
+        return this;
+    }
+
     private void displaySlotChanged(int slot) {
         if (displaySlots[slot] != null) displaySlots[slot].changed();
     }
