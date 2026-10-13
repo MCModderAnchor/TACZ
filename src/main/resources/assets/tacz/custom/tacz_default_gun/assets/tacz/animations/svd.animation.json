@@ -5818,6 +5818,9 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				},
+				"bullet": {
+					"scale": 0
 				}
 			},
 			"sound_effects": {
