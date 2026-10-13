@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.tacz.guns.compat.ar.ARCompat;
+import com.tacz.guns.compat.oculus.OculusCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
@@ -81,8 +83,19 @@ public final class RenderHelper {
         }
     }
 
+    /** Prefer passing the caller's buffer; old overloads must respect an active shader hand pass. */
+    public static MultiBufferSource getBufferSource(ItemDisplayContext context) {
+        if (context.firstPerson()) {
+            MultiBufferSource handBuffer = OculusCompat.getHandBufferSource();
+            if (handBuffer != null) {
+                return handBuffer;
+            }
+        }
+        return Minecraft.getInstance().renderBuffers().bufferSource();
+    }
+
     public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight) {
-        renderFirstPersonArm(player, hand, matrixStack, combinedLight, Minecraft.getInstance().renderBuffers().bufferSource());
+        renderFirstPersonArm(player, hand, matrixStack, combinedLight, getBufferSource(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND));
     }
 
     public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight, MultiBufferSource buffer) {

@@ -252,7 +252,7 @@ dependencies {
     compileOnly fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
 
     //加速渲染相关
-    implementation fg.deobf("curse.maven:accelerated-rendering-1314021:7342975")
+    compileOnly fg.deobf("curse.maven:accelerated-rendering-1314021:7342975")
 
     // create
     runtimeOnly fg.deobf("curse.maven:create-328085:7178761")

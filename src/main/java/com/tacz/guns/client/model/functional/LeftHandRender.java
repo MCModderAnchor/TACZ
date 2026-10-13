@@ -22,7 +22,7 @@ public class LeftHandRender implements IFunctionalRenderer {
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
-        render(poseStack, vertexBuffer, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
+        render(poseStack, vertexBuffer, transformType, light, overlay, RenderHelper.getBufferSource(transformType));
     }
 
     @Override

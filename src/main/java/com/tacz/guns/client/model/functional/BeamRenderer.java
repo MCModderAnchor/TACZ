@@ -17,7 +17,7 @@ import com.tacz.guns.client.resource.pojo.display.LaserConfig;
 import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.util.LaserColorUtil;
-import net.minecraft.client.Minecraft;
+import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -38,7 +38,7 @@ public class BeamRenderer  {
             return;
         }
 
-		if (ARCompat.shouldAccelerate() && renderLaserBeamAccelerated(stack, poseStack, transformType, path)) {
+		if (ARCompat.shouldAccelerate() && renderLaserBeamAccelerated(stack, poseStack, transformType, path, bufferSource)) {
 			return;
 		}
 
@@ -74,12 +74,12 @@ public class BeamRenderer  {
     }
 
 	public static boolean renderLaserBeamAccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path) {
+		return renderLaserBeamAccelerated(stack, poseStack, transformType, path, RenderHelper.getBufferSource(transformType));
+	}
+
+	public static boolean renderLaserBeamAccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path, MultiBufferSource bufferSource) {
 		// 获取VertexConsumer拓展方法
-		var builder = Minecraft
-				.getInstance()
-				.renderBuffers()
-				.bufferSource()
-				.getBuffer(LaserBeamRenderState.getLaserBeamEntity()); //替换为LASER_BEAM_ENTITY确保镭射和枪体在同一个format的同一层
+		var builder = bufferSource.getBuffer(LaserBeamRenderState.getLaserBeamEntity()); //替换为LASER_BEAM_ENTITY确保镭射和枪体在同一个format的同一层
 
 		// 加速渲染的实现机制是每个VertexFormat一个bufferSource, 每个bufferSource维护一个Map<层编号, 层>
 		// 因此如果镭射和枪体不在一个format, 则可能出现镭射无法正确被模板缓冲剔除掉

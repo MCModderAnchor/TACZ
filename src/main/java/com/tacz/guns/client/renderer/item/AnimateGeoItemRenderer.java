@@ -247,7 +247,7 @@ public abstract class AnimateGeoItemRenderer<M extends BedrockAnimatedModel, CTX
                 stateMachine.update();
             }
 
-            model.render(poseStack, ctx, getRenderType(stack), light, OverlayTexture.NO_OVERLAY);
+            model.render(poseStack, ctx, getRenderType(stack), light, OverlayTexture.NO_OVERLAY, bufferSource);
 
             // 渲染结束后清除动画变换
             model.cleanAnimationTransform();
@@ -269,7 +269,7 @@ public abstract class AnimateGeoItemRenderer<M extends BedrockAnimatedModel, CTX
             poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
             model.render(poseStack, ctx, RenderType.entityCutout(
                     getTextureLocation(stack)
-            ), light, overlay);
+            ), light, overlay, bufferSource);
             poseStack.popPose();
         }
     }

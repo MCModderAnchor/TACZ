@@ -47,7 +47,7 @@ public class GunSmithTableItemRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.translate(0.5, 1.5, 0.5);
             poseStack.mulPose(Axis.ZN.rotationDegrees(180));
             RenderType renderType = RenderType.entityTranslucent(texture);
-            model.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay);
+            model.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay, pBuffer);
             poseStack.popPose();
         }, ()->{
             poseStack.translate(0.5, 1.5, 0.5);

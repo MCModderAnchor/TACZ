@@ -122,7 +122,6 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
     @Override
     @SuppressWarnings("unchecked")
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
-//        render(poseStack, vertexBuffer, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
     }
 
     @Override

@@ -6,7 +6,6 @@ import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.resource.pojo.model.*;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.util.RenderHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -366,7 +365,7 @@ public class BedrockModel {
     }
 
     public void render(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha) {
-        render(matrixStack, transformType, renderType, light, overlay, red, green, blue, alpha, Minecraft.getInstance().renderBuffers().bufferSource());
+        render(matrixStack, transformType, renderType, light, overlay, red, green, blue, alpha, RenderHelper.getBufferSource(transformType));
     }
 
     /**

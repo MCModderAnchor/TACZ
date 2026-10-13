@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.bedrock.UnshadedVertexConsumer;
+import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -47,7 +48,7 @@ public class FunctionalBedrockPart extends BedrockPart {
 
     @Override
     public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
-        render(poseStack, transformType, consumer, light, overlay, red, green, blue, alpha, null);
+        render(poseStack, transformType, consumer, light, overlay, red, green, blue, alpha, RenderHelper.getBufferSource(transformType));
     }
 
     @Override

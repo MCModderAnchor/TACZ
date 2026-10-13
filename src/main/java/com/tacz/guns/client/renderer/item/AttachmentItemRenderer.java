@@ -82,7 +82,7 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
             }
             float alpha = ItemPreviewRenderContext.alpha();
             RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
-            model.render(null, null, poseStack, transformType, renderType, pPackedLight, pPackedOverlay, alpha);
+            model.render(null, null, poseStack, transformType, renderType, pPackedLight, pPackedOverlay, alpha, pBuffer);
         }
         // 否则，以 GUI 形式渲染
         else {
@@ -95,11 +95,11 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
             SLOT_ATTACHMENT_MODEL.renderToBuffer(poseStack, buffer, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, ItemPreviewRenderContext.alpha());
         }
         if (variant != null && variant.isOverlayMode()) {
-            renderVariantOverlay(transformType, poseStack, pPackedLight, pPackedOverlay, variant);
+            renderVariantOverlay(transformType, poseStack, pPackedLight, pPackedOverlay, variant, pBuffer);
         }
     }
 
-    private static void renderVariantOverlay(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, int pPackedLight, int pPackedOverlay, ClientAttachmentVariantIndex variant) {
+    private static void renderVariantOverlay(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, int pPackedLight, int pPackedOverlay, ClientAttachmentVariantIndex variant, MultiBufferSource pBuffer) {
         BedrockAttachmentModel model = variant.getAttachmentModel();
         ResourceLocation texture = variant.getModelTexture();
         if (model == null || texture == null) {
@@ -107,6 +107,6 @@ public class AttachmentItemRenderer extends BlockEntityWithoutLevelRenderer {
         }
         float alpha = ItemPreviewRenderContext.alpha();
         RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
-        model.render(null, null, poseStack, transformType, renderType, pPackedLight, pPackedOverlay, alpha);
+        model.render(null, null, poseStack, transformType, renderType, pPackedLight, pPackedOverlay, alpha, pBuffer);
     }
 }

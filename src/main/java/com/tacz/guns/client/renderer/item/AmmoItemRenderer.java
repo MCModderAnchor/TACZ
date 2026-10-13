@@ -87,7 +87,7 @@ public class AmmoItemRenderer extends BlockEntityWithoutLevelRenderer {
             // 渲染子弹盒模型
             float alpha = ItemPreviewRenderContext.alpha();
             RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(modelTexture) : RenderType.entityCutout(modelTexture);
-            ammoModel.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, alpha);
+            ammoModel.render(poseStack, transformType, renderType, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, alpha, pBuffer);
         }, () -> {
             // 没有这个 ammoID，渲染个错误材质提醒别人
             poseStack.translate(0.5, 1.5, 0.5);

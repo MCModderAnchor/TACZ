@@ -13,8 +13,8 @@ import com.tacz.guns.client.renderer.item.ItemPreviewRenderContext;
 import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
 import com.tacz.guns.client.resource.index.ClientSlotAdapterIndex;
 import com.tacz.guns.util.RenderDistance;
+import com.tacz.guns.util.RenderHelper;
 import com.tacz.guns.util.SlotAdapterHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -38,10 +38,10 @@ public class AttachmentRender implements IFunctionalRenderer {
     }
 
     /**
-     * 无 bufferSource 版本：AR 加速渲染等路径调用，回退全局 bufferSource。
+     * 旧入口在光影手部 pass 中选择 hand buffer；内部调用优先显式传递 bufferSource。
      */
     public static void renderAttachment(ItemStack attachmentItem, ItemStack gunItem, AttachmentType type, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay) {
-        renderAttachment(attachmentItem, gunItem, type, poseStack, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
+        renderAttachment(attachmentItem, gunItem, type, poseStack, transformType, light, overlay, RenderHelper.getBufferSource(transformType));
     }
 
     public static void renderAttachment(ItemStack attachmentItem, ItemStack gunItem, AttachmentType type, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
@@ -126,7 +126,7 @@ public class AttachmentRender implements IFunctionalRenderer {
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
-        render(poseStack, vertexBuffer, transformType, light, overlay, Minecraft.getInstance().renderBuffers().bufferSource());
+        render(poseStack, vertexBuffer, transformType, light, overlay, RenderHelper.getBufferSource(transformType));
     }
 
     @Override

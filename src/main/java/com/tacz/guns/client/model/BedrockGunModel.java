@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.animation.AnimationListener;
 import com.tacz.guns.api.client.animation.ObjectAnimationChannel;
@@ -223,16 +224,24 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 
     @NotNull
     private IFunctionalRenderer renderAdditionalMagazine(BedrockPart bedrockPart) {
-        return (poseStack, vertexBuffer, transformType, light, overlay) -> {
-            if (bedrockPart.visible) {
-                bedrockPart.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                for (BedrockPart part : bedrockPart.children) {
-                    part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                }
-                if (magazineNode != null && magazineNode.visible) {
-                    magazineNode.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                    for (BedrockPart part : magazineNode.children) {
-                        part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+        return new IFunctionalRenderer() {
+            @Override
+            public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
+                render(poseStack, vertexBuffer, transformType, light, overlay, RenderHelper.getBufferSource(transformType));
+            }
+
+            @Override
+            public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
+                if (bedrockPart.visible) {
+                    bedrockPart.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    for (BedrockPart part : bedrockPart.children) {
+                        part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
+                    }
+                    if (magazineNode != null && magazineNode.visible) {
+                        magazineNode.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                        for (BedrockPart part : magazineNode.children) {
+                            part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
+                        }
                     }
                 }
             }
@@ -260,7 +269,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     }
 
     public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha) {
-        render(matrixStack, gunItem, transformType, renderType, light, overlay, red, green, blue, alpha, Minecraft.getInstance().renderBuffers().bufferSource());
+        render(matrixStack, gunItem, transformType, renderType, light, overlay, red, green, blue, alpha, RenderHelper.getBufferSource(transformType));
     }
 
     public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha, MultiBufferSource bufferSource) {
