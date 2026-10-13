@@ -394,6 +394,9 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
     }
 
     protected void onHitEntity(TacHitResult result, Vec3 startVec, Vec3 endVec) {
+        if (EntityUtil.isBulletDamageIgnored(result.getEntity())) {
+            return;
+        }
         if (result.getEntity() instanceof ITargetEntity targetEntity) {
             DamageSource source = this.damageSources().thrown(this, this.getOwner());
             targetEntity.onProjectileHit(this, result, source, this.getDamage(result.getLocation()));
@@ -417,6 +420,9 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         }
         // 刷新由Pre事件修改后的参数
         entity = preEvent.getHurtEntity();
+        if (entity == null || EntityUtil.isBulletDamageIgnored(entity)) {
+            return;
+        }
         // 受击目标
         var parts = MaybeMultipartEntity.of(entity);
         attacker = preEvent.getAttacker();
@@ -425,9 +431,6 @@ public class EntityKineticBullet extends Projectile implements IEntityAdditional
         sources = Pair.of(preEvent.getDamageSource(NON_ARMOR_PIERCING), preEvent.getDamageSource(ARMOR_PIERCING));
         headshot = preEvent.isHeadShot();
         headShotMultiplier = preEvent.getHeadshotMultiplier();
-        if (entity == null) {
-            return;
-        }
         // 点燃
         if (this.igniteEntity && AmmoConfig.IGNITE_ENTITY.get()) {
             entity.setSecondsOnFire(this.igniteEntityTime);

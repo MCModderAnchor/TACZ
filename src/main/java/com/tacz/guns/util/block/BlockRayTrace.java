@@ -1,10 +1,9 @@
 package com.tacz.guns.util.block;
 
-import com.tacz.guns.config.common.AmmoConfig;
+import com.tacz.guns.config.util.AmmoBlockConfigRead;
 import com.tacz.guns.init.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -13,10 +12,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -29,9 +26,7 @@ public final class BlockRayTrace {
         return performRayTrace(context, (rayTraceContext, blockPos) -> {
             BlockState blockState = level.getBlockState(blockPos);
             // 这里添加判断方块是否可以穿透，如果可以穿透则返回 null
-            List<String> ids = AmmoConfig.PASS_THROUGH_BLOCKS.get();
-            ResourceLocation blockId = ForgeRegistries.BLOCKS.getKey(blockState.getBlock());
-            if (blockId != null && ids.contains(blockId.toString())) {
+            if (AmmoBlockConfigRead.canPassThrough(blockState)) {
                 return null;
             }
             // tag

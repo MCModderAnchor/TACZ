@@ -25,6 +25,10 @@ public class RenderClothConfig {
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.muzzle_smoke.desc"))
                 .setSaveConsumer(RenderConfig.RENDER_MUZZLE_SMOKE::set).build());
 
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.disable_third_person_offhand_and_hotbar_gun_render"), RenderConfig.DISABLE_THIRD_PERSON_OFFHAND_AND_HOTBAR_GUN_RENDER.get())
+                .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.client.render.disable_third_person_offhand_and_hotbar_gun_render.desc"))
+                .setSaveConsumer(RenderConfig.DISABLE_THIRD_PERSON_OFFHAND_AND_HOTBAR_GUN_RENDER::set).build());
+
         render.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.client.render.gun_lod_render_distance"), RenderConfig.GUN_LOD_RENDER_DISTANCE.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(0).setTooltip(Component.translatable("config.tacz.client.render.gun_lod_render_distance.desc"))
                 .setSaveConsumer(RenderConfig.GUN_LOD_RENDER_DISTANCE::set).build());

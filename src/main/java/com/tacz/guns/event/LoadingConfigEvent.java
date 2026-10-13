@@ -1,7 +1,9 @@
 package com.tacz.guns.event;
 
-import com.tacz.guns.config.util.HeadShotAABBConfigRead;
+import com.tacz.guns.config.CommonConfig;
+import com.tacz.guns.config.util.AmmoBlockConfigRead;
 import com.tacz.guns.config.util.GunPegboardItemConfigRead;
+import com.tacz.guns.config.util.HeadShotAABBConfigRead;
 import com.tacz.guns.config.util.InteractKeyConfigRead;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -16,6 +18,9 @@ public class LoadingConfigEvent {
      */
     @SubscribeEvent
     public static void onLoadingConfig(ModConfigEvent.Loading event) {
+        if (event.getConfig().getSpec() == CommonConfig.COMMON_CONFIG_SPEC) {
+            AmmoBlockConfigRead.init();
+        }
         String fileName = event.getConfig().getFileName();
         if (CONFIG_NAME.equals(fileName)) {
             HeadShotAABBConfigRead.init();
@@ -29,6 +34,9 @@ public class LoadingConfigEvent {
      */
     @SubscribeEvent
     public static void onReloadingConfig(ModConfigEvent.Reloading event) {
+        if (event.getConfig().getSpec() == CommonConfig.COMMON_CONFIG_SPEC) {
+            AmmoBlockConfigRead.init();
+        }
         String fileName = event.getConfig().getFileName();
         if (CONFIG_NAME.equals(fileName)) {
             HeadShotAABBConfigRead.init();
