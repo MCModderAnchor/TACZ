@@ -58,7 +58,7 @@
   // 这里的 bolt_action_time 没作用，因为脚本里重写了 bolt 方法作为示范。请用底下 script_param 中的 bolt_time 和 bolt_feed_time。
   //"bolt_action_time": 0.55,
   //"bolt_feed_time": 0.3,
-  "aim_time": 0.15,
+  "aim_time": 0.18,
   "sprint_time": 0.13,
   "weight": 3.2,
   "movement_speed": {

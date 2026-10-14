@@ -33,7 +33,7 @@
   },
   "iron_zoom": 1.33,
   "model_fov": 60,
-  "zoom_model_fov": 48,
+  "zoom_model_fov": 45,
   "shell": {
     "initial_velocity": [5, 2, 1],
     "random_velocity": [1, 1, 0.25],
@@ -47,7 +47,7 @@
     "draw": "tacz:mcx_spear_lt/mcx_spear_lt_draw",
     "put_away": "tacz:mcx_spear_lt/mcx_spear_lt_put_away",
     "silence": "tacz:mcx_spear_lt/mcx_spear_lt_silence",
-    "silence_3p": "tacz:hmcx_spear_lt/mcx_spear_lt_silence_3p",
+    "silence_3p": "tacz:mcx_spear_lt/mcx_spear_lt_silence_3p",
     "melee_push": "tacz:melee_stock/melee_stock_01",
     "melee_stock": "tacz:melee_stock/melee_stock_02"
   },

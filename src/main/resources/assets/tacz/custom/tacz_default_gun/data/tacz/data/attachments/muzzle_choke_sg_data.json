@@ -11,23 +11,23 @@
     "addend": 0.05
   },
   "inaccuracy": {
-    "multiplier": 0.65
+    "multiplier": 0.6
   },
   "aim_inaccuracy": {
-    "multiplier": 0.65
+    "multiplier": 0.6
   },
   "sneak_inaccuracy": {
-    "multiplier": 0.65
+    "multiplier": 0.6
   },
   "lie_inaccuracy": {
-    "multiplier": 0.65
+    "multiplier": 0.6
   },
   "recoil": {
     "pitch": {
-      "multiplier": 1.45
+      "multiplier": 1.1
     },
     "yaw": {
-        "multiplier": 1.45
+        "multiplier": 1.1
       }
   }
 }

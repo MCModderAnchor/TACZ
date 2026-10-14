@@ -6,17 +6,11 @@
   ],
   "smoke_spread_angle": 45,
   "ads": {
-    "addend": 0.08
-  },
-  "inaccuracy": {
-    "multiplier": 1.25
-  },
-  "aim_inaccuracy": {
-    "multiplier": 1.1
+    "multiplier": 1.15
   },
   "recoil": {
     "pitch": {
-      "multiplier": 0.65
+      "multiplier": 0.6
     },
     "yaw": {
         "multiplier": 0.7
