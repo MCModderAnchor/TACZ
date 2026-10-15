@@ -1,8 +1,10 @@
 package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.entity.ReloadState;
+import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.util.time.GunTime;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.luaj.vm2.LuaValue;
 
@@ -73,6 +75,13 @@ public class ShooterDataHolder {
     @Nullable
     public Supplier<ItemStack> currentGunItem = null;
     /**
+     * draw 时确认的枪械 ID，拿来做简单检查
+     */
+    @Nullable
+    public ResourceLocation currentGunId = null;
+    /** 当前持枪期间的脚本发生异常后暂停执行，下一次初始化或 draw 时恢复。 */
+    public boolean gunScriptFailed = false;
+    /**
      * 缓存当前枪械的收枪时间，以确保下一次切枪的时候使用此时间计算收枪。
      * 此数值不会因 tacz$CurrentGunItem 提供的 ItemStack 改变而改变，因此应当在恰当的时机调用 updatePutAwayTime() 进行更新。
      */
@@ -108,6 +117,23 @@ public class ShooterDataHolder {
     @Nullable
     public AttachmentCacheProperty cacheProperty = null;
 
+    public void setCurrentGunItem(Supplier<ItemStack> gunItemSupplier) {
+        currentGunItem = gunItemSupplier;
+        ItemStack stack = gunItemSupplier.get();
+        IGun gun = IGun.getIGunOrNull(stack);
+        currentGunId = gun == null ? null : gun.getGunId(stack);
+    }
+
+    /** 中止旧枪操作，不调用可能已经属于新枪的脚本，也不重置射击冷却。 */
+    public void cancelGunScriptState() {
+        reloadTimestamp = -1;
+        reloadStateType = ReloadState.StateType.NOT_RELOADING;
+        boltTimestamp = -1;
+        isBolting = false;
+        meleePrepTickCount = -1;
+        scriptData = null;
+    }
+
     public void initialData() {
         // 重置各个状态
         shootTimestamp = -1;
@@ -125,5 +151,7 @@ public class ShooterDataHolder {
         chargeProgress = 0f;
         scriptData = null;
         heatTimestamp = -1;
+        currentGunId = null;
+        gunScriptFailed = false;
     }
 }

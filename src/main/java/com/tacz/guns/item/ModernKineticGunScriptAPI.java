@@ -16,6 +16,7 @@ import com.tacz.guns.api.util.LuaNbtAccessor;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateContext;
 import com.tacz.guns.config.common.AmmoConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
+import com.tacz.guns.entity.shooter.GunScriptGuard;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunFire;
@@ -156,7 +157,7 @@ public class ModernKineticGunScriptAPI {
         // 连发间隔
         long period = modifyProperty(GunProperties.RuntimeOnly.BURST_SHOOT_INTERVAL, Long.class, fireMode == FireMode.BURST ? gunData.getBurstShootInterval() : 1);
 
-        CycleTaskHelper.addCycleTask(() -> {
+        CycleTaskHelper.addCycleTask(() -> GunScriptGuard.run(dataHolder, shooter, gunId, "shoot", () -> {
             // 如果射击者死亡，取消射击
             if (shooter.isDeadOrDying()) {
                 return false;
@@ -208,7 +209,7 @@ public class ModernKineticGunScriptAPI {
                 }
             }
             return true;
-        }, period, cycles);
+        }, false), period, cycles);
     }
 
     private void applyRecoilPush(AttachmentCacheProperty cacheProperty, int bulletAmount, float pitch, float yaw) {
@@ -733,7 +734,8 @@ public class ModernKineticGunScriptAPI {
      */
     public void safeAsyncTask(LuaValue value, long delayMs, long periodMs, int cycles) {
         LuaFunction func = value.checkfunction();
-        CycleTaskHelper.addCycleTask(() -> func.call().checkboolean(), delayMs, periodMs, cycles);
+        CycleTaskHelper.addCycleTask(() -> GunScriptGuard.run(dataHolder, shooter, gunId, "safe_async_task",
+                () -> func.call().checkboolean(), false), delayMs, periodMs, cycles);
     }
 
     /**
