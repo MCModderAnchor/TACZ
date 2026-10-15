@@ -11,7 +11,7 @@
   "animation": "tacz:svd",
   "use_default_animation": "rifle",
   "third_person_animation": "default",
-  "state_machine": "tacz:svd_state_machine",
+  "state_machine": "tacz:default_state_machine_v2",
   "transform": {
     "scale": {
       "thirdperson": [0.6, 0.6, 0.6],

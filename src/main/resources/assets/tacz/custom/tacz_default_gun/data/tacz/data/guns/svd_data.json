@@ -8,7 +8,7 @@
   ],
   "bolt": "closed_bolt",
   "rpm":180,
-  "script": "tacz:xmag_reload_logic",
+  //"script": "tacz:xmag_reload_logic",
   "script_param": {
     "reload_feed": 1.75,
     "reload_cooldown": 2.43,

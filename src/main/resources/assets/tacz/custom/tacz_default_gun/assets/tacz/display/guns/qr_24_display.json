@@ -1,5 +1,5 @@
 {
-  "state_machine": "tacz:default_state_machine_v2",
+  "state_machine": "tacz:qr_24_state_machine",
   "ads_preset": "tacz:renew",
   "model": "tacz:gun/qr_24_geo",
   "texture": "tacz:gun/uv/qr_24",
