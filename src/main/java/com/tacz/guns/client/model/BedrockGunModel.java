@@ -514,18 +514,6 @@ public class BedrockGunModel extends BedrockAnimatedModel {
         return muzzleFlashPosPath;
     }
 
-    /** Draw the existing dynamic laser without traversing or rendering the gun body. */
-    public void renderExternalLaser(PoseStack poseStack, ItemStack stack, ItemDisplayContext context,
-                                    MultiBufferSource bufferSource) {
-        if (laserBeamPaths != null) {
-            BeamRenderer.renderLaserBeamUnaccelerated(stack, poseStack, context, laserBeamPaths, bufferSource);
-        }
-    }
-
-    public @Nullable List<BedrockPart> getAttachmentPositionPath(AttachmentType type) {
-        return getPath(modelMap.get(type.name().toLowerCase() + ATTACHMENT_POS_SUFFIX));
-    }
-
     @Nullable
     public List<BedrockPart> getScopePosPath() {
         return scopePosPath;

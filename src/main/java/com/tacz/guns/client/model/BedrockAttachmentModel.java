@@ -197,15 +197,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         }
     }
 
-    /** Keep dynamic laser beams when the attachment body is drawn from a static VBO. */
-    public void renderExternalLasers(ItemStack attachmentItem, PoseStack poseStack,
-                                     ItemDisplayContext context, MultiBufferSource bufferSource) {
-        if (laserBeamPaths == null) return;
-        for (List<BedrockPart> path : laserBeamPaths) {
-            BeamRenderer.renderLaserBeamUnaccelerated(attachmentItem, poseStack, context, path, bufferSource);
-        }
-    }
-
     private Vector3f getBedrockPartCenter(PoseStack poseStack, @Nonnull List<BedrockPart> path) {
         poseStack.pushPose();
         for (BedrockPart part : path) {

@@ -86,7 +86,6 @@ public final class ThirdPersonMuzzleParticleManager {
         }
         long now = GunTime.nowMillis();
 
-        // 火光：窗口内每帧更新锚点矩阵；窗口结束停止维护（粒子自然消亡）
         Long flashStart = FLASH_START.get(entity);
         if (flashStart != null) {
             if (now < flashStart || now - flashStart >= FLASH_WINDOW_MS) {
@@ -96,9 +95,7 @@ public final class ThirdPersonMuzzleParticleManager {
             } else {
                 ParticleEmitterInstance flashEmitter = FLASH_EMITTERS.get(entity);
                 if (flashEmitter == null) {
-                    // 首次渲染帧：用开火时记录的参数创建发射器，并把当前枪口矩阵设为初始锚点
                     MuzzleParticleManager.MuzzleShot shot = FLASH_PARAMS.get(entity);
-                    // id 为 null 表示 display 显式配置为不生成 3p 火光
                     if (shot != null && shot.thirdPersonFlashId() != null && shot.flashScale() > 0) {
                         ParticleEffectDefinition def = ParticleDefinitionLoader.getInstance().getDefinition(shot.thirdPersonFlashId());
                         if (def != null) {
@@ -109,13 +106,11 @@ public final class ThirdPersonMuzzleParticleManager {
                                 flashEmitter.setVariable("muzzle_speed", shot.speedScale());
                                 flashEmitter.setFollowAnchor(true);
                                 FLASH_EMITTERS.put(entity, flashEmitter);
-                                // 立即写入初始锚点（含旋转），保证首帧粒子就锚定在枪口
                                 WorldEmitterManager.getInstance().updateEmitterAnchor(flashEmitter, muzzleWorld);
                             }
                         }
                     }
                 } else {
-                    // 发射器可能已自然结束并从管理器移除：更新失败则丢弃引用，等待下次开火重建
                     if (!WorldEmitterManager.getInstance().updateEmitterAnchor(flashEmitter, muzzleWorld)) {
                         FLASH_EMITTERS.remove(entity);
                     }
@@ -125,7 +120,7 @@ public final class ThirdPersonMuzzleParticleManager {
 
         // 烟雾：一次性消费（与火光生命周期无关）
         MuzzleParticleManager.MuzzleShot shot = PENDING.remove(entity);
-        // id 为 null 表示 display 显式配置为不生成 3p 烟雾
+
         if (shot != null && RenderConfig.RENDER_MUZZLE_SMOKE.get() && shot.thirdPersonSmokeId() != null && shot.smokeScale() > 0) {
             spawnEffect(level, muzzleWorld,
                     shot.thirdPersonSmokeId(), shot.smokeScale(), shot.speedScale(),
@@ -144,19 +139,14 @@ public final class ThirdPersonMuzzleParticleManager {
         if (definition == null) {
             return;
         }
-        // 交给 SBM 的世界发射器管理器：生命周期/每 tick 驱动/引擎投递全部由其接管
+
         ParticleEmitterInstance emitter = WorldEmitterManager.getInstance()
                 .addEmitter(level, new Vec3(muzzleWorld.m30(), muzzleWorld.m31(), muzzleWorld.m32()), Vec3.ZERO, definition);
         if (emitter == null) {
             return;
         }
-        // addEmitter 只给了位置，旋转要在这里补上：不补的话 emitter 的 worldTransform 停在单位阵，
-        // 粒子方向就落在世界坐标里，不跟随枪口朝向。
-        // 轴系与第一人称一致：第三人称的枪体 poseStack 经过 GunItemTransforms 的 scale(-1, -1, 1)，
-        // 与第一人称那句 rotateZ(180°) 是同一个变换（(x,y,z) → (-x,-y,z)），
-        // 所以 MuzzleShot 里已经抵消过翻转的方向可以直接用，不必再翻一次。
+
         WorldEmitterManager.getInstance().updateEmitterAnchor(emitter, muzzleWorld);
-        // 与枪焰使用互不重叠的 smoke_* 命名空间（见 MuzzleParticleManager#createSmokeEmitter）
         emitter.setVariable("smoke_size", smokeSize);
         emitter.setVariable("smoke_vel", speedScale);
         emitter.setVariable("smoke_count", smokeParticleCount);

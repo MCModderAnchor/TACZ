@@ -5,6 +5,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.StaticMeshRen
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.client.renderer.block.DisplayGunGeometry;
 import com.tacz.guns.client.renderer.external.ExternalGunAppearance;
+import com.tacz.guns.client.renderer.external.ExternalGunEffects;
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
@@ -71,6 +72,9 @@ public class ExternalGunItemVboRenderer {
         );
         if (result.drawn()) {
             ExternalGunAppearance.Snapshot selected = result.usedPrevious() ? previous : appearance;
+            if (context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+                ExternalGunEffects.renderThirdPerson(selected, pose, buffers);
+            }
             return new StaticGunRenderResult(StaticGunRenderResult.Status.SUBMITTED, selected.useLod());
         }
         // 正常准备或可能部分绘制的调用继续接管；明确不支持／已禁用时走旧路径。

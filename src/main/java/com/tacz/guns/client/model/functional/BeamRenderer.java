@@ -45,32 +45,38 @@ public class BeamRenderer  {
         renderLaserBeamUnaccelerated(stack, poseStack, transformType, path, bufferSource);
     }
 
-    /** Used with the static gun VBO, where the AR gun-body layer is intentionally bypassed. */
+    /** Resolve the legacy bone path before drawing an unaccelerated beam. */
     public static void renderLaserBeamUnaccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType,
                                                      @Nonnull List<BedrockPart> path, MultiBufferSource bufferSource) {
         if (stack == null || !transformType.firstPerson() && transformType != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
             return;
         }
 
-        VertexConsumer builder = bufferSource.getBuffer(LaserBeamRenderState.getLaserBeam());
         poseStack.pushPose();
-        {
-            for (int i = 0; i < path.size(); ++i) {
-                path.get(i).translateAndRotateAndScale(poseStack);
-            }
-
-            LaserConfig laserConfig = getLaserConfig(stack);
-
-            int color = LaserColorUtil.getLaserColor(stack, laserConfig);
-            int r = (color >> 16) & 0xFF;
-            int g = (color >> 8) & 0xFF;
-            int b = color & 0xFF;
-
-            stringVertex(transformType.firstPerson() ? -laserConfig.getLength() : -laserConfig.getLengthThird(),
-                    transformType.firstPerson() ? laserConfig.getWidth() : laserConfig.getWidthThird(),
-                    builder, poseStack.last(), r, g, b, RenderConfig.ENABLE_LASER_FADE_OUT.get());
+        for (int i = 0; i < path.size(); ++i) {
+            path.get(i).translateAndRotateAndScale(poseStack);
         }
+        renderLaserBeamUnaccelerated(stack, poseStack, transformType, bufferSource);
         poseStack.popPose();
+    }
+
+    /** Draw at an already resolved emitter pose, including SBM bone anchors. */
+    public static void renderLaserBeamUnaccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType,
+                                                     MultiBufferSource bufferSource) {
+        if (stack == null || !transformType.firstPerson() && transformType != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+            return;
+        }
+        VertexConsumer builder = bufferSource.getBuffer(LaserBeamRenderState.getLaserBeam());
+        LaserConfig laserConfig = getLaserConfig(stack);
+
+        int color = LaserColorUtil.getLaserColor(stack, laserConfig);
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+
+        stringVertex(transformType.firstPerson() ? -laserConfig.getLength() : -laserConfig.getLengthThird(),
+                transformType.firstPerson() ? laserConfig.getWidth() : laserConfig.getWidthThird(),
+                builder, poseStack.last(), r, g, b, RenderConfig.ENABLE_LASER_FADE_OUT.get());
     }
 
 	public static boolean renderLaserBeamAccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path) {

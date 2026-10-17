@@ -11,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import static com.tacz.guns.client.model.GunModelConstant.*;
 
@@ -19,6 +21,7 @@ public class DisplayGunModelInstance extends BakedModelInstance {
     public enum Kind { GUN, ATTACHMENT }
 
     private static final AttachmentType[] TYPES = AttachmentType.values();
+    private static final Pattern LASER_BEAM_PATTERN = Pattern.compile("^laser_beam(_\\d+)?$");
 
     private final BoneState bulletInBarrel;
     private final BoneState bulletInMag;
@@ -36,18 +39,26 @@ public class DisplayGunModelInstance extends BakedModelInstance {
     private final BoneState[] attachmentDefaults = new BoneState[TYPES.length];
     private final int[] attachmentPositions = new int[TYPES.length];
     private final BoneState[] adapterChildren;
+    private final int[] laserBeamBones;
+    private final int muzzleFlashPosition;
 
     public DisplayGunModelInstance(BakedBedrockModel model, Set<String> hiddenTextBones, Kind kind) {
         super(model);
+        var lasers = IntStream.builder();
         for (var definition : model.bones()) {
             String name = definition.name();
             if (name == null) continue;
+            if (kind == Kind.GUN ? name.equals("laser_beam") : LASER_BEAM_PATTERN.matcher(name).matches()) {
+                lasers.add(definition.index());
+            }
             BoneState bone = getBone(definition.index());
             bone.illuminated = name.endsWith("_illuminated");
             if (hiddenTextBones.contains(name) || name.startsWith("laser_beam")
                     || kind == Kind.GUN && isHiddenGunBone(name)
                     || kind == Kind.ATTACHMENT && name.startsWith("division")) bone.visible = false;
         }
+        laserBeamBones = lasers.build().toArray();
+        muzzleFlashPosition = getIndex(MUZZLE_FLASH_ORIGIN_NODE);
 
         bulletInBarrel = getBone(BULLET_IN_BARREL);
         bulletInMag = getBone(BULLET_IN_MAG);
@@ -82,6 +93,14 @@ public class DisplayGunModelInstance extends BakedModelInstance {
 
     public int attachmentPosition(AttachmentType type) {
         return attachmentPositions[type.ordinal()];
+    }
+
+    public int[] laserBeamBones() {
+        return laserBeamBones;
+    }
+
+    public int muzzleFlashPosition() {
+        return muzzleFlashPosition;
     }
 
     public void configureGun(IGun gun, ItemStack stack, Map<AttachmentType, ClientAttachmentIndex> attachments) {

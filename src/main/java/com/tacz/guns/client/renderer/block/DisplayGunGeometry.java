@@ -27,6 +27,11 @@ import java.util.EnumMap;
 public class DisplayGunGeometry {
     private DisplayGunGeometry() {}
 
+    @FunctionalInterface
+    public interface AttachmentModelVisitor {
+        void accept(ExternalGunModel model, ResourceLocation texture, ItemStack stack, PoseStack pose);
+    }
+
     public static EnumMap<AttachmentType, ClientAttachmentIndex> resolveAttachments(IGun gun, ItemStack stack) {
         EnumMap<AttachmentType, ClientAttachmentIndex> indexes = new EnumMap<>(AttachmentType.class);
         for (AttachmentType type : AttachmentType.values()) {
@@ -66,6 +71,16 @@ public class DisplayGunGeometry {
         instance.configureGun(gun, stack, attachments);
 
         PoseStack pose = new PoseStack();
+        if (!applyTransform(snapshot, context, compensateItemRenderer, pose)) return false;
+        renderModel(external, instance, pose, snapshot.texture(), collector);
+        renderAttachments(instance, pose, snapshot.useLod(), gun, stack, attachments, collector);
+        return true;
+    }
+
+    /** 静态几何与动态特效必须使用同一份外观、显示原点和缩放。 */
+    public static boolean applyTransform(ExternalGunAppearance.Snapshot snapshot, ItemDisplayContext context,
+                                         boolean compensateItemRenderer, PoseStack pose) {
+        ExternalGunModel external = snapshot.model();
         var scales = snapshot.display().getTransform().getScale();
         switch (context) {
             case FIXED -> {
@@ -84,8 +99,6 @@ public class DisplayGunGeometry {
             }
             default -> { return false; }
         }
-        renderModel(external, instance, pose, snapshot.texture(), collector);
-        renderAttachments(instance, pose, snapshot.useLod(), gun, stack, attachments, collector);
         return true;
     }
 
@@ -93,6 +106,15 @@ public class DisplayGunGeometry {
                                           IGun gun, ItemStack gunStack,
                                           EnumMap<AttachmentType, ClientAttachmentIndex> attachments,
                                           GeometryCollector collector) {
+        forEachAttachmentModel(instance, pose, useLod, gun, gunStack, attachments,
+                (model, texture, stack, modelPose) -> renderModel(model, model.displayInstance(), modelPose, texture, collector));
+    }
+
+    /** 共用本体与特效的挂点判定、转接口偏移以及变体/LOD 选择。 */
+    public static void forEachAttachmentModel(DisplayGunModelInstance instance, PoseStack pose, boolean useLod,
+                                              IGun gun, ItemStack gunStack,
+                                              EnumMap<AttachmentType, ClientAttachmentIndex> attachments,
+                                              AttachmentModelVisitor visitor) {
         for (var entry : attachments.entrySet()) {
             AttachmentType type = entry.getKey();
             ClientAttachmentIndex index = entry.getValue();
@@ -106,23 +128,19 @@ public class DisplayGunGeometry {
             PoseStack attachmentPose = new PoseStack();
             attachmentPose.last().pose().mul(pose.last().pose());
             attachmentPose.last().normal().mul(pose.last().normal());
-            instance.mulGlobalTransform(attachmentPose, position);
-            // SBM 的骨骼矩阵用于变换已按模型绝对坐标烘焙的顶点；挂点原点还需加上 pivot。
-            // pivot 已由烘焙器从 Blockbench 单位换算为方块单位，配件模型也使用同一坐标系。
-            var mount = instance.getBone(position).definition();
-            attachmentPose.translate(mount.pivotX(), mount.pivotY(), mount.pivotZ());
+            SbmGunTransforms.applyBonePivot(attachmentPose, instance, position);
 
             ResourceLocation adapterId = SlotAdapterHelper.getEffectiveSlotAdapter(gunStack, type, attachmentId);
             ClientSlotAdapterIndex adapter = adapterId == null ? null
                     : TimelessAPI.getClientSlotAdapterIndex(adapterId).orElse(null);
             if (adapter != null) {
-                renderOptionalModel(adapter.getExternalModel(), adapter.getModelTexture(), attachmentPose, collector);
+                visitOptionalModel(adapter.getExternalModel(), adapter.getModelTexture(), ItemStack.EMPTY, attachmentPose, visitor);
                 applyMountOffset(attachmentPose, adapter.getMountOffset());
             }
 
             ClientAttachmentVariantIndex variant = TimelessAPI.getClientAttachmentVariantIndex(attached).orElse(null);
             if (variant != null && variant.isOverlayMode()) {
-                renderOptionalModel(variant.getExternalModel(), variant.getModelTexture(), attachmentPose, collector);
+                visitOptionalModel(variant.getExternalModel(), variant.getModelTexture(), attached, attachmentPose, visitor);
                 applyMountOffset(attachmentPose, variant.getMountOffset());
             }
 
@@ -139,14 +157,14 @@ public class DisplayGunGeometry {
                 attachment = lod.getLeft();
                 attachmentTexture = lod.getRight();
             }
-            renderOptionalModel(attachment, attachmentTexture, attachmentPose, collector);
+            visitOptionalModel(attachment, attachmentTexture, attached, attachmentPose, visitor);
         }
     }
 
-    private static void renderOptionalModel(ExternalGunModel model, ResourceLocation texture,
-                                            PoseStack pose, GeometryCollector collector) {
-        if (model != null && texture != null)
-            renderModel(model, model.displayInstance(), pose, texture, collector);
+    private static void visitOptionalModel(ExternalGunModel model, ResourceLocation texture, ItemStack stack,
+                                           PoseStack pose, AttachmentModelVisitor visitor) {
+        if (model == null || texture == null) return;
+        visitor.accept(model, texture, stack, pose);
     }
 
     private static void applyMountOffset(PoseStack pose, Vector3f offset) {

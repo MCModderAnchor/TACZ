@@ -11,9 +11,7 @@ import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.animation.statemachine.LuaAnimationStateMachine;
 import com.tacz.guns.api.client.event.BeforeRenderHandEvent;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
-import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.animation.screen.RefitTransform;
 import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateContext;
@@ -337,19 +335,23 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
                 renderSlotTexture(poseStack, pBuffer, pPackedLight, pPackedOverlay, gunIndex.getSlotTexture());
                 return;
             }
-            // Static external appearances own the call even while capture/upload is pending.
+
+            // vbo
             boolean outsideHighPolyDistance = !RenderDistance.inRenderHighPolyModelDistance(poseStack);
             StaticGunRenderResult vbo = ExternalGunItemVboRenderer.tryRender(
-                    stack, transformType, outsideHighPolyDistance, poseStack, pBuffer, pPackedLight, pPackedOverlay);
-            if (vbo.status() == StaticGunRenderResult.Status.PENDING
-                    || vbo.submitted() && transformType == GROUND) return;
+                    stack, transformType, outsideHighPolyDistance,
+                    poseStack, pBuffer, pPackedLight, pPackedOverlay
+            );
 
-            // The old model is needed only for fallback or third-person dynamic effects.
+            if (vbo.status() != StaticGunRenderResult.Status.UNSUPPORTED) {
+                return;
+            }
+
+            // 回退
             BedrockGunModel gunModel;
             ResourceLocation gunTexture;
             Pair<BedrockGunModel, ResourceLocation> lodModel = gunIndex.getLodModel();
-            boolean drawnLod = vbo.submitted() ? vbo.selectedLod() : outsideHighPolyDistance;
-            boolean useLod = lodModel != null && drawnLod;
+            boolean useLod = lodModel != null && outsideHighPolyDistance;
             if (!useLod) {
                 gunModel = gunIndex.getGunModel();
                 gunTexture = gunIndex.getModelTexture();
@@ -361,29 +363,17 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
                 renderSlotTexture(poseStack, pBuffer, pPackedLight, pPackedOverlay, gunIndex.getSlotTexture());
                 return;
             }
-            if (vbo.submitted()) {
-                if (transformType == THIRD_PERSON_RIGHT_HAND) {
-                    poseStack.pushPose();
-                    try {
-                        GunItemTransforms.apply(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
-                        
-                        gunModel.renderExternalLaser(poseStack, stack, transformType, pBuffer);
-                        renderExternalAttachmentLasers(stack, gunModel, poseStack, transformType, pBuffer, drawnLod);
-                        captureThirdPersonMuzzle(poseStack, gunModel);
-                    } finally {
-                        poseStack.popPose();
-                    }
-                }
-                return;
-            }
             GunItemTransforms.apply(transformType, gunIndex.getTransform().getScale(), gunModel, poseStack);
             // 渲染枪械模型
             float alpha = ItemPreviewRenderContext.alpha();
             RenderType renderType = ItemPreviewRenderContext.isPreview() ? RenderType.entityTranslucent(gunTexture) : RenderType.entityCutout(gunTexture);
             
             gunModel.render(poseStack, stack, transformType, renderType, pPackedLight, pPackedOverlay, 1.0F, 1.0F, 1.0F, alpha, pBuffer);
+
             // 第三人称持枪渲染：捕获枪口世界坐标，触发第三人称枪口粒子
-            if (transformType == THIRD_PERSON_RIGHT_HAND) captureThirdPersonMuzzle(poseStack, gunModel);
+            if (transformType == THIRD_PERSON_RIGHT_HAND) {
+                captureThirdPersonMuzzle(poseStack, gunModel);
+            }
         }, () -> {
             // 没有这个 gunID，渲染个错误材质提醒别人
             renderSlotTexture(poseStack, pBuffer, pPackedLight, pPackedOverlay, MissingTextureAtlasSprite.getLocation());
@@ -392,64 +382,35 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
         poseStack.popPose();
     }
 
+    // 捕获实际的世界位置
     public static void captureThirdPersonMuzzle(PoseStack poseStack, BedrockGunModel gunModel) {
         if (currentEntity == null) return;
         List<BedrockPart> muzzlePath = gunModel.getMuzzleFlashPosPath();
         if (muzzlePath == null) return;
         poseStack.pushPose();
-        try {
-            for (BedrockPart part : muzzlePath) part.translateAndRotateAndScale(poseStack);
-            Matrix4f pose = poseStack.last().pose();
-            // Undo the camera rotation in the entity pose and restore the camera position.
-            Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-            Vec3 camPos = camera.getPosition();
-            Matrix4f viewRotationInv = new Matrix4f()
-                    .rotationY((float) Math.toRadians(-(camera.getYRot() + 180f)))
-                    .rotateX((float) Math.toRadians(-camera.getXRot()))
-                    .rotateZ(-CameraStateCache.getCameraRollRadians());
-            Matrix4f muzzleWorld = new Matrix4f(viewRotationInv).mul(pose);
-            muzzleWorld.m30(muzzleWorld.m30() + (float) camPos.x);
-            muzzleWorld.m31(muzzleWorld.m31() + (float) camPos.y);
-            muzzleWorld.m32(muzzleWorld.m32() + (float) camPos.z);
-            onMuzzleRendered(currentEntity, muzzleWorld);
-        } finally {
-            poseStack.popPose();
+        for (BedrockPart part : muzzlePath) {
+            part.translateAndRotateAndScale(poseStack);
         }
+        captureThirdPersonMuzzle(poseStack.last().pose());
+        poseStack.popPose();
     }
 
-    public static void renderExternalAttachmentLasers(ItemStack stack, BedrockGunModel gunModel,
-                                                       PoseStack poseStack, ItemDisplayContext context,
-                                                       MultiBufferSource bufferSource) {
-        renderExternalAttachmentLasers(stack, gunModel, poseStack, context, bufferSource,
-                !RenderDistance.inRenderHighPolyModelDistance(poseStack));
-    }
+    public static void captureThirdPersonMuzzle(Matrix4f pose) {
+        if (currentEntity == null) return;
 
-    private static void renderExternalAttachmentLasers(ItemStack stack, BedrockGunModel gunModel,
-                                                       PoseStack poseStack, ItemDisplayContext context,
-                                                       MultiBufferSource bufferSource, boolean useLod) {
-        IGun gun = IGun.getIGunOrNull(stack);
-        if (gun == null) return;
-        for (AttachmentType type : AttachmentType.values()) {
-            if (type == AttachmentType.NONE) continue;
-            ItemStack attached = gun.getAttachment(stack, type);
-            if (attached.isEmpty()) attached = gun.getBuiltinAttachment(stack, type);
-            IAttachment item = IAttachment.getIAttachmentOrNull(attached);
-            if (item == null) continue;
-            var index = TimelessAPI.getClientAttachmentIndex(item.getAttachmentId(attached)).orElse(null);
-            List<BedrockPart> mountPath = gunModel.getAttachmentPositionPath(type);
-            if (index == null || mountPath == null) continue;
-            poseStack.pushPose();
-            try {
-                for (BedrockPart part : mountPath) part.translateAndRotateAndScale(poseStack);
-                poseStack.translate(0, -1.5, 0);
-                var model = index.getAttachmentModel();
-                var lod = index.getLodModel();
-                if (lod != null && useLod) model = lod.getLeft();
-                if (model != null) model.renderExternalLasers(attached, poseStack, context, bufferSource);
-            } finally {
-                poseStack.popPose();
-            }
-        }
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Vec3 camPos = camera.getPosition();
+
+        Matrix4f viewRotationInv = new Matrix4f()
+                .rotationY((float) Math.toRadians(-(camera.getYRot() + 180f)))
+                .rotateX((float) Math.toRadians(-camera.getXRot()))
+                .rotateZ(-CameraStateCache.getCameraRollRadians());
+
+        Matrix4f muzzleWorld = new Matrix4f(viewRotationInv).mul(pose);
+        muzzleWorld.m30(muzzleWorld.m30() + (float) camPos.x);
+        muzzleWorld.m31(muzzleWorld.m31() + (float) camPos.y);
+        muzzleWorld.m32(muzzleWorld.m32() + (float) camPos.z);
+        onMuzzleRendered(currentEntity, muzzleWorld);
     }
 
     private static void renderSlotTexture(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, ResourceLocation texture) {

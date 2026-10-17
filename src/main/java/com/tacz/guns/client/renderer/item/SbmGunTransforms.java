@@ -2,6 +2,7 @@ package com.tacz.guns.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.tacz.guns.client.model.DisplayGunModelInstance;
 import com.tacz.guns.client.model.ExternalGunModel;
 import org.joml.Vector3f;
 
@@ -55,5 +56,11 @@ public class SbmGunTransforms {
     public static void bedrockToSbm(PoseStack pose) {
         pose.translate(0, 1.5, 0);
         pose.scale(-1, -1, 1);
+    }
+
+    public static void applyBonePivot(PoseStack pose, DisplayGunModelInstance instance, int index) {
+        instance.mulGlobalTransform(pose, index);
+        var bone = instance.getBone(index).definition();
+        pose.translate(bone.pivotX(), bone.pivotY(), bone.pivotZ());
     }
 }
