@@ -12,6 +12,7 @@
   "state_machine": "tacz:m1866_state_machine",
   "state_machine_param": {
     "bolt_shell_ejecting_time": 0.13,
+    "bolt_shell_ejecting_time_fast": 0.07,
     "ending_shell_ejecting_time": 0.52,
     "ending_duration": 0.55,
     "ending_empty_duration": 1.28

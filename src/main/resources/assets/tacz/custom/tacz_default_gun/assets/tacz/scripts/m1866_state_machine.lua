@@ -21,7 +21,12 @@ local function isNoAmmo(context)
 end
 
 local function getEjectionTime(context)
-    local ejection_time = context:getStateMachineParams().bolt_shell_ejecting_time
+    local ejection_time = 0
+    if (context:getAimingProgress() < 0.5) then
+        ejection_time = context:getStateMachineParams().bolt_shell_ejecting_time_fast
+    else
+        ejection_time = context:getStateMachineParams().bolt_shell_ejecting_time
+    end
     if (ejection_time) then
         return ejection_time * 1000
     else
@@ -56,10 +61,17 @@ local ending_state = {
 -- idle_state
 function idle_state.transition(this, context, input)
     if (input == INPUT_BOLT) then
-        idle_state.hammer_down = false
-        context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK))
-        context:runAnimation("bolt", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0.2)
-        return this.main_track_states.bolt
+        if (context:getAimingProgress() >= 0.5) then
+            idle_state.hammer_down = false
+            context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK))
+            context:runAnimation("bolt", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0.2)
+            return this.main_track_states.bolt
+        else
+            idle_state.hammer_down = false
+            context:stopAnimation(context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK))
+            context:runAnimation("bolt_fast", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0.2)
+            return this.main_track_states.bolt
+        end
     end
     if (input == INPUT_SHOOT) then
         idle_state.hammer_down = true
@@ -224,9 +236,12 @@ local M = setmetatable({
         reload = reload_state,
         ending = ending_state
     }, {__index = main_track_states}),
+
     INPUT_BOLT_RETREAT = "bolt_retreat",
     INPUT_RELOAD_RETREAT = "reload_retreat",
-    INPUT_ENDING_FINISH = "ending_finish"
+    INPUT_ENDING_FINISH = "ending_finish",
+    INPUT_AIM_IN = "aim_in",
+    INPUT_AIM_OUT = "aim_out"
 }, {__index = default})
 
 function M:initialize(context)
@@ -252,7 +267,6 @@ function M:states()
         self.main_track_states.start,
         self.gun_kick_state,
         self.movement_track_states.idle,
-        self.ADS_states.normal,
         self.slide_states.normal
     }
 end

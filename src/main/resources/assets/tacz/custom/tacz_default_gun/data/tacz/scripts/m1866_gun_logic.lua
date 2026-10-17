@@ -10,8 +10,15 @@ end
 
 function M.tick_bolt(api)
     local params = api:getScriptParams()
-    local total_bolt_time = params.bolt_time * 1000
-    local bolt_feed_time = params.bolt_feed_time * 1000
+    local total_bolt_time = 0
+    local bolt_feed_time = 0
+    if (api:getAimingProgress() < 0.5) then
+        total_bolt_time = params.bolt_fast_time * 1000
+        bolt_feed_time = params.bolt_feed_fast_time * 1000
+    else
+        total_bolt_time = params.bolt_time * 1000
+        bolt_feed_time = params.bolt_feed_time * 1000
+    end
     if (total_bolt_time == nil or bolt_feed_time == nil) then
         return false
     end

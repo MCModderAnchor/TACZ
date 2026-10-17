@@ -7,7 +7,7 @@
     11
   ],
   "bolt": "manual_action",
-  "rpm": 275,
+  "rpm": 350,
   "bullet": {
     "life": 1.2,
     "bullet_amount": 1,
@@ -33,6 +33,8 @@
   "script_param": {
     "bolt_time": 0.45,
     "bolt_feed_time": 0.32,
+    "bolt_fast_time": 0.22,
+    "bolt_feed_fast_time": 0.16,
     "intro_empty": 0.60,
     "intro": 0.60,
     "loop": 0.53,
