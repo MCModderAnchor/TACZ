@@ -1,0 +1,9 @@
+{
+  "slot": "tacz:attachment/slot/oem_barrel_cannon",
+  "adapter": "oem_barrel_cannon",
+  "muzzle_flash_offset": 6,
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_a",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  }
+}

@@ -5,7 +5,7 @@
 	"texture_size": [64, 64],
 	"textures": {
 		"0": "tacz:block/ammo_storage",
-		"particle": "tacz:block/ammo_storage"
+		"particle": "minecraft:block/iron_block"
 	},
 	"elements": [
 		{

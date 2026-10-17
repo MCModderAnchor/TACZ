@@ -2,6 +2,6 @@
   "parent": "tacz:block/ammo_storage",
   "textures": {
     "0": "tacz:block/ammo_storage_diamond",
-    "particle": "tacz:block/ammo_storage_diamond"
+		"particle": "minecraft:block/iron_block"
   }
 }

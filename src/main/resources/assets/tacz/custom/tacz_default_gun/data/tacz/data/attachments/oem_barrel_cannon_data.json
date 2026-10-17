@@ -1,0 +1,9 @@
+{
+  "ads": { "multiplier": 1.1 },
+  "ammo_speed": { "multiplier": 1.25 },
+  "rpm": { "addend": -115 },
+  "effective_range": { "multiplier": 2 },
+  "recoil": {
+    "pitch": { "multiplier": 0.75 }
+  }
+}

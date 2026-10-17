@@ -1,6 +1,11 @@
 {
   "ammo": "tacz:45acp",
-  "ammo_amount": 11,
+  "ammo_amount": 5,
+  "extended_mag_ammo_amount": [
+    7,
+    9,
+    11
+  ],
   "bolt": "manual_action",
   "rpm": 275,
   "bullet": {
@@ -12,15 +17,15 @@
       "armor_ignore": 0.0,
       "head_shot_multiplier": 1.75,
       "damage_adjust": [
-        {"distance": 18, "damage": 12},
-        {"distance": 40, "damage": 9},
+        {"distance": 12, "damage": 12},
+        {"distance": 36, "damage": 9},
         {"distance": "infinite", "damage": 6}
       ]
     },
-    "speed": 210,
+    "speed": 190,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.05,
+    "friction": 0.025,
     "ignite": false,
     "pierce": 1
   },
@@ -41,7 +46,7 @@
   },
   "draw_time": 0.60,
   "put_away_time": 0.57,
-  "aim_time": 0.17,
+  "aim_time": 0.19,
   "sprint_time": 0.10,
   "weight": 4.0,
   "movement_speed": {
@@ -89,6 +94,15 @@
   },
   "can_slide": false,
   "allow_attachment_types": [
+    "muzzle",
+    "scope",
     "extended_mag"
-  ]
+  ],
+  "builtin_attachments": {
+    "muzzle": {
+      "attachments": [
+        "tacz:oem_barrel_cannon"
+      ]
+    }
+  }
 }
