@@ -43,11 +43,6 @@ public final class AmmoStorageHelper {
         return TimelessAPI.getCommonAmmoIndex(id).map(index -> index.getStackSize()).orElse(stack.getMaxStackSize());
     }
 
-    public static int getStorageSlotLimit(ItemStack stack, int slotStacks) {
-        long limit = (long) getStackSize(stack) * slotStacks;
-        return limit > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) limit;
-    }
-
     public static ItemStack createAmmoStack(ResourceLocation ammoId, int count) {
         return AmmoItemBuilder.create().setId(ammoId).setCount(count).build();
     }

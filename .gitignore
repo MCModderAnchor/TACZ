@@ -21,6 +21,8 @@ build
 eclipse
 run
 test
+!/src/test/
+!/src/test/**
 logs
 runclient-logs/
 .luarc.json

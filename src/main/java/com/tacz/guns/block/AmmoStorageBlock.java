@@ -43,24 +43,24 @@ import java.util.List;
 
 public class AmmoStorageBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final int IRON_SLOT_STACKS = 8;
-    public static final int GOLD_SLOT_STACKS = 16;
-    public static final int DIAMOND_SLOT_STACKS = 32;
+    public static final int IRON_CAPACITY_STACKS = 216;
+    public static final int GOLD_CAPACITY_STACKS = 432;
+    public static final int DIAMOND_CAPACITY_STACKS = 864;
 
-    private final int slotStacks;
+    private final int capacityStacks;
 
     public AmmoStorageBlock() {
-        this(IRON_SLOT_STACKS);
+        this(IRON_CAPACITY_STACKS);
     }
 
-    public AmmoStorageBlock(int slotStacks) {
+    public AmmoStorageBlock(int capacityStacks) {
         super(Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0F).requiresCorrectToolForDrops().dynamicShape());
-        this.slotStacks = slotStacks;
+        this.capacityStacks = capacityStacks;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    public int getSlotStacks() {
-        return slotStacks;
+    public int getCapacityStacks() {
+        return capacityStacks;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class AmmoStorageBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            NetworkHooks.openScreen(serverPlayer, storage, buf -> buf.writeBlockPos(pos));
+            NetworkHooks.openScreen(serverPlayer, storage);
         }
         return InteractionResult.CONSUME;
     }

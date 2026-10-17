@@ -14,5 +14,5 @@ public class ModContainer {
 
     public static final RegistryObject<MenuType<GunSmithTableMenu>> GUN_SMITH_TABLE_MENU = CONTAINER_TYPE.register("gun_smith_table_menu", () -> GunSmithTableMenu.TYPE);
     public static final RegistryObject<MenuType<AmmoStorageMenu>> AMMO_STORAGE_MENU = CONTAINER_TYPE.register("ammo_storage_menu",
-            () -> IForgeMenuType.create((windowId, inv, data) -> new AmmoStorageMenu(windowId, inv, data.readBlockPos())));
+            () -> IForgeMenuType.create((windowId, inv, data) -> new AmmoStorageMenu(windowId, inv)));
 }

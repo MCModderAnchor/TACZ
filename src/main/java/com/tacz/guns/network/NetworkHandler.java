@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class NetworkHandler {
-    private static final String VERSION = "1.0.7";
+    private static final String VERSION = "1.0.9";
 
     public static final SimpleChannel HANDSHAKE_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(GunMod.MOD_ID, "handshake"),
             () -> VERSION, it -> it.equals(VERSION), it -> it.equals(VERSION));
@@ -111,6 +111,11 @@ public class NetworkHandler {
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageSetSlotAdapter.class, ClientMessageSetSlotAdapter::encode, ClientMessageSetSlotAdapter::decode, ClientMessageSetSlotAdapter::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
+
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageAmmoStorageClick.class, ClientMessageAmmoStorageClick::encode, ClientMessageAmmoStorageClick::decode, ClientMessageAmmoStorageClick::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageAmmoStorageContents.class, ServerMessageAmmoStorageContents::encode, ServerMessageAmmoStorageContents::decode, ServerMessageAmmoStorageContents::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
         registerAcknowledge();
         registerHandshakeMessage(ServerMessageSyncedEntityDataMapping.class, null);

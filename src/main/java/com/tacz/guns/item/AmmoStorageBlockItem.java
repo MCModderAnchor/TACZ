@@ -1,17 +1,17 @@
 package com.tacz.guns.item;
 
-import com.tacz.guns.inventory.tooltip.AmmoStorageTooltip;
 import com.tacz.guns.init.ModBlocks;
+import com.tacz.guns.inventory.tooltip.AmmoStorageTooltip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +68,7 @@ public class AmmoStorageBlockItem extends BlockItem {
                 continue;
             }
             ItemStack entryStack = ItemStack.of(entryTag.getCompound(STACK_TAG));
-            int count = entryTag.getInt(COUNT_TAG);
+            long count = entryTag.getLong(COUNT_TAG);
             if (entryStack.isEmpty() || count <= 0) {
                 continue;
             }
@@ -82,11 +82,11 @@ public class AmmoStorageBlockItem extends BlockItem {
         return Optional.of(new AmmoStorageTooltip(tooltipEntries, mergedEntries.size() - displayed));
     }
 
-    private static void mergeTooltipEntry(List<AmmoStorageTooltip.Entry> entries, ItemStack stack, int count) {
+    private static void mergeTooltipEntry(List<AmmoStorageTooltip.Entry> entries, ItemStack stack, long count) {
         for (int i = 0; i < entries.size(); i++) {
             AmmoStorageTooltip.Entry entry = entries.get(i);
             if (ItemStack.isSameItemSameTags(entry.ammo(), stack)) {
-                int mergedCount = saturatedAdd(entry.count(), count);
+                long mergedCount = saturatedAdd(entry.count(), count);
                 entries.set(i, new AmmoStorageTooltip.Entry(entry.ammo(), mergedCount));
                 return;
             }
@@ -96,8 +96,7 @@ public class AmmoStorageBlockItem extends BlockItem {
         entries.add(new AmmoStorageTooltip.Entry(sample, count));
     }
 
-    private static int saturatedAdd(int left, int right) {
-        long result = (long) left + right;
-        return result > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) result;
+    private static long saturatedAdd(long left, long right) {
+        return left > Long.MAX_VALUE - right ? Long.MAX_VALUE : left + right;
     }
 }

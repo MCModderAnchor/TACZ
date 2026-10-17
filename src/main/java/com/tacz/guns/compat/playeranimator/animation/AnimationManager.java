@@ -45,8 +45,6 @@ public class AnimationManager {
 
     @SubscribeEvent
     public void onRenderPlayer(RenderPlayerEvent.Pre event) {
-        // Also initialize GUI-only entities, before the renderer evaluates body transforms.
-        // Repeated model/armor/shadow passes in the same entity tick reuse the same state.
         if (event.getEntity() instanceof AbstractClientPlayer player) {
             updateAnimation(player);
         }

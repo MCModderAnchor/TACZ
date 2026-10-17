@@ -23,7 +23,7 @@ public class AmmoStorageTooltip implements TooltipComponent {
         return hidden;
     }
 
-    public record Entry(ItemStack ammo, int count) {
+    public record Entry(ItemStack ammo, long count) {
         public Component getAmmoName() {
             return ammo.getHoverName();
         }
