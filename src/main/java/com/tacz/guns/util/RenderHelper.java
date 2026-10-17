@@ -3,6 +3,8 @@ package com.tacz.guns.util;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.tacz.guns.client.animation.third.AnimationRenderContext;
+import com.tacz.guns.client.animation.third.PlayerModelRenderState;
 import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import net.minecraft.client.Minecraft;
@@ -103,19 +105,23 @@ public final class RenderHelper {
         EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
         PlayerRenderer renderer = (PlayerRenderer) renderManager.getRenderer(player);
 
-		if (ARCompat.shouldAccelerate()) {
-			ARCompat.setRenderingLevel();
-		}
-
-        if (hand == HumanoidArm.RIGHT) {
-            renderer.renderRightHand(matrixStack, buffer, combinedLight, player);
-        } else {
-            renderer.renderLeftHand(matrixStack, buffer, combinedLight, player);
+        boolean accelerated = ARCompat.shouldAccelerate();
+        if (accelerated) {
+            ARCompat.setRenderingLevel();
         }
-
-		if (ARCompat.shouldAccelerate()) {
-			ARCompat.resetRenderingLevel();
-		}
+        // 在第一人称持枪渲染手臂期间，屏蔽我们自己的pa调用
+        try (var state = new PlayerModelRenderState(renderer.getModel());
+             var scope = AnimationRenderContext.hand(player)) {
+            if (hand == HumanoidArm.RIGHT) {
+                renderer.renderRightHand(matrixStack, buffer, combinedLight, player);
+            } else {
+                renderer.renderLeftHand(matrixStack, buffer, combinedLight, player);
+            }
+        } finally {
+            if (accelerated) {
+                ARCompat.resetRenderingLevel();
+            }
+        }
 
         // RenderSystem.setShaderTexture(0, oldId);
     }
