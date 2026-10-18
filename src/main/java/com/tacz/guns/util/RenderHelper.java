@@ -112,6 +112,7 @@ public final class RenderHelper {
         // 在第一人称持枪渲染手臂期间，屏蔽我们自己的pa调用
         try (var state = new PlayerModelRenderState(renderer.getModel());
              var scope = AnimationRenderContext.hand(player)) {
+            state.prepareArm(hand, !player.isSpectator());
             if (hand == HumanoidArm.RIGHT) {
                 renderer.renderRightHand(matrixStack, buffer, combinedLight, player);
             } else {

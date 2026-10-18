@@ -5,6 +5,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.world.entity.HumanoidArm;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -36,6 +37,18 @@ public final class PlayerModelRenderState implements AutoCloseable {
         leftArmPose = model.leftArmPose;
         rightArmPose = model.rightArmPose;
         restoreAnimation = PlayerAnimatorCompat.captureModelState(model);
+    }
+
+    public void prepareArm(HumanoidArm arm, boolean visible) {
+        // A RenderArmEvent replacement can draw sleeve geometry before vanilla initializes it.
+        // Vanilla's fallback still applies the player's skin-part settings in renderHand().
+        if (arm == HumanoidArm.RIGHT) {
+            model.rightArm.visible = visible;
+            model.rightSleeve.visible = visible;
+        } else {
+            model.leftArm.visible = visible;
+            model.leftSleeve.visible = visible;
+        }
     }
 
     @Override

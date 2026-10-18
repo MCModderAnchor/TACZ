@@ -245,6 +245,9 @@ dependencies {
 
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animation_lib}")
 
+    // 拔刀剑
+    runtimeOnly fg.deobf("curse.maven:slashblade-resharped-1022428:8090912")
+
     runtimeOnly fg.deobf("curse.maven:sound-physics-remastered-535489:7032235")
 
     // kubejs开发环境引入
