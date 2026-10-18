@@ -4,7 +4,19 @@
       "item": {
         "tag": "forge:ingots/iron"
       },
-      "count": 10
+      "count": 9
+    },
+    {
+      "item": {
+        "tag": "minecraft:planks"
+      },
+      "count": 4
+    },
+    {
+      "item": {
+        "tag": "forge:rods/wooden"
+      },
+      "count": 3
     }
   ],
   "result": {
