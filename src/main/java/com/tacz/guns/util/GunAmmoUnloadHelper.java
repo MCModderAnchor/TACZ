@@ -19,7 +19,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 /**
- * 枪械逻辑脚本的卸弹结算，不改变拆卸弹匣配件时的既有退弹规则。
+ * 枪械物品的基础卸弹结算，不改变拆卸弹匣配件时的既有退弹规则。
  */
 public final class GunAmmoUnloadHelper {
     private GunAmmoUnloadHelper() {

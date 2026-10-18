@@ -19,6 +19,7 @@ import static com.tacz.guns.util.InputExtraCheck.isInGame;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public final class GunInputHandler {
     private static final List<PressBinding> PRESS_BINDINGS = List.of(
+            new PressBinding(UnloadKey.UNLOAD_KEY, UnloadKey::onUnloadPress),
             new PressBinding(AimKey.AIM_KEY, AimKey::onAimPress),
             new PressBinding(CrawlKey.CRAWL_KEY, CrawlKey::onCrawlPress),
             new PressBinding(ReloadKey.RELOAD_KEY, ReloadKey::onReloadPress),
@@ -83,6 +84,10 @@ public final class GunInputHandler {
             }
             if (binding.keyMapping().isActiveAndMatches(key)) {
                 binding.action().run();
+                // 即使卸弹条件不满足，也不能让 Alt+R 穿透成普通换弹。
+                if (binding.keyMapping() == UnloadKey.UNLOAD_KEY) {
+                    return;
+                }
             }
         }
     }

@@ -79,6 +79,9 @@ public interface IGunOperator {
      */
     void reload();
 
+    /** 服务端主动卸弹，仅在逻辑空闲时结算。 */
+    void unloadAmmo();
+
     /**
      * 服务端取消换弹逻辑
      */

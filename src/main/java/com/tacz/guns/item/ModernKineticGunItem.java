@@ -206,6 +206,27 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
 
 
     @Override
+    public void unloadAmmo(ShooterDataHolder dataHolder, ItemStack gunItem, LivingEntity shooter) {
+        if (shooter.level().isClientSide() || useInventoryAmmo(gunItem)) {
+            return;
+        }
+        ModernKineticGunScriptAPI api = new ModernKineticGunScriptAPI();
+        api.setItemStack(gunItem);
+        api.setShooter(shooter);
+        api.setDataHolder(dataHolder);
+
+        CommonGunIndex gunIndex = api.getGunIndex();
+        if (gunIndex == null) {
+            return;
+        }
+        Optional.ofNullable(gunIndex.getScript())
+                .map(script -> checkFunction(script.get("unload_ammo")))
+                .ifPresentOrElse(
+                        func -> func.call(CoerceJavaToLua.coerce(api)),
+                        () -> super.unloadAmmo(dataHolder, gunItem, shooter));
+    }
+
+    @Override
     public void melee(ShooterDataHolder dataHolder, LivingEntity user, ItemStack gunItem) {
         ResourceLocation gunId = this.getGunId(gunItem);
         TimelessAPI.getCommonGunIndex(gunId).ifPresent(gunIndex -> {

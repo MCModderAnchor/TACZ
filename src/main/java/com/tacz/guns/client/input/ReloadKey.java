@@ -69,6 +69,9 @@ public class ReloadKey {
         if (player == null || player.isSpectator() || player.tickCount % 5 != 0) {
             return;
         }
+        if (IClientPlayerGunOperator.fromLocalPlayer(player).getDataHolder().autoReloadSuppressed) {
+            return;
+        }
         ItemStack currentGunItem = player.getMainHandItem();
         if (player.getMainHandItem().getItem() instanceof IGun iGun) {
             // 如果使用背包直读，且没有换弹冷却机制，则在输入时就屏蔽换弹

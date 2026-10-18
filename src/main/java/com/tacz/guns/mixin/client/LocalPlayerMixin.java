@@ -26,12 +26,17 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     private final @Unique LocalPlayerMelee tac$melee = new LocalPlayerMelee(tac$data, tac$player);
     private final @Unique LocalPlayerInspect tac$inspect = new LocalPlayerInspect(tac$data, tac$player);
     private final @Unique LocalPlayerReload tac$reload = new LocalPlayerReload(tac$data, tac$player);
+    private final @Unique LocalPlayerUnload tac$unload = new LocalPlayerUnload(tac$data, tac$player);
     private final @Unique LocalPlayerShoot tac$shoot = new LocalPlayerShoot(tac$data, tac$player);
     private final @Unique LocalPlayerSprint tac$sprint = new LocalPlayerSprint(tac$data, tac$player);
 
     @Unique
     @Override
     public ShootResult shoot() {
+        if (tac$data.isTimedStateLocked()) {
+            return ShootResult.COOL_DOWN;
+        }
+        tac$data.autoReloadSuppressed = false;
         tac$reload.cancelReload();
         return tac$shoot.shoot();
     }
@@ -51,7 +56,17 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
     @Unique
     @Override
     public void reload() {
+        if (tac$data.isTimedStateLocked()) {
+            return;
+        }
+        tac$data.autoReloadSuppressed = false;
         tac$reload.reload();
+    }
+
+    @Unique
+    @Override
+    public void unloadAmmo() {
+        tac$unload.unloadAmmo();
     }
 
     @Unique
@@ -145,6 +160,12 @@ public abstract class LocalPlayerMixin implements IClientPlayerGunOperator {
 
     @Override
     public boolean chargeShoot(boolean isCharge) {
+        if (tac$data.isTimedStateLocked()) {
+            return false;
+        }
+        if (isCharge) {
+            tac$data.autoReloadSuppressed = false;
+        }
         boolean canShoot = tac$shoot.chargeShoot(isCharge);
         if (isCharge && !canShoot) {
             // 蓄力检查拒绝开火时仍响应装弹中断；允许开火时由 shoot() 处理。

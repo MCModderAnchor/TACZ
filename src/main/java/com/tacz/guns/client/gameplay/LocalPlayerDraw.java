@@ -103,6 +103,7 @@ public class LocalPlayerDraw {
     }
 
     private void resetData() {
+        data.autoReloadSuppressed = false;
         // 锁上状态锁
         data.lockState(operator -> operator.getSynDrawCoolDown() > 0);
         // 重置客户端的 shoot 时间戳

@@ -16,6 +16,7 @@ import com.tacz.guns.resource.pojo.data.gun.FeedType;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.util.AttachmentDataUtils;
 import com.tacz.guns.util.DefaultGunAttachments;
+import com.tacz.guns.util.GunAmmoUnloadHelper;
 import com.tacz.guns.util.SlotAdapterHelper;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
@@ -80,6 +81,27 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
      * 尝试打断换弹时调用
      */
     public abstract void interruptReload(ShooterDataHolder dataHolder, ItemStack gunItem, LivingEntity shooter);
+
+    /**
+     * 主动卸弹的行为入口，由操作者完成空闲检查后调用。
+     * 默认清空弹匣和膛内弹；枪械实现可覆写此方法或分发到逻辑脚本。
+     */
+    public void unloadAmmo(ShooterDataHolder dataHolder, ItemStack gunItem, LivingEntity shooter) {
+        unloadAmmo(gunItem, shooter, true, -1);
+    }
+
+    /**
+     * 按数量结算卸弹，不触发主动卸弹回调，供默认行为和脚本 API 复用。
+     *
+     * @param unloadBarrel 是否同时卸出闭膛枪的膛内一发
+     * @param amount 弹匣卸出数量；0 保留弹匣，-1 清空弹匣
+     * @return 实际卸出总数（含膛内）；无效取值、缺少枪械定义、背包直读或客户端调用返回 0
+     */
+    public int unloadAmmo(ItemStack gunItem, LivingEntity shooter, boolean unloadBarrel, int amount) {
+        return TimelessAPI.getCommonGunIndex(getGunId(gunItem))
+                .map(index -> GunAmmoUnloadHelper.unloadAmmo(shooter, gunItem, this, index, unloadBarrel, amount))
+                .orElse(0);
+    }
 
     /**
      * 切换开火模式时调用

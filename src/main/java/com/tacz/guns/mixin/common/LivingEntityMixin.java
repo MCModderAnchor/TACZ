@@ -37,6 +37,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     private final @Unique LivingEntityShoot tacz$shoot = new LivingEntityShoot(tacz$shooter, this.tacz$data, this.tacz$draw);
     private final @Unique LivingEntityBolt tacz$bolt = new LivingEntityBolt(this.tacz$data, this.tacz$shooter, this.tacz$draw, this.tacz$shoot);
     private final @Unique LivingEntityReload tacz$reload = new LivingEntityReload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot);
+    private final @Unique LivingEntityUnload tacz$unload = new LivingEntityUnload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot, this.tacz$melee);
     private final @Unique LivingEntitySpeedModifier tacz$speed = new LivingEntitySpeedModifier(tacz$shooter, tacz$data);
     private final @Unique LivingEntitySprint tacz$sprint = new LivingEntitySprint(tacz$shooter, this.tacz$data);
     private final @Unique LivingEntityHeat tacz$heat = new LivingEntityHeat(tacz$shooter, this.tacz$data);
@@ -120,6 +121,12 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Override
     public void reload() {
         tacz$runGunAction("start_reload", () -> this.tacz$reload.reload());
+    }
+
+    @Unique
+    @Override
+    public void unloadAmmo() {
+        tacz$runGunAction("unload_ammo", () -> this.tacz$unload.unloadAmmo());
     }
     @Unique
     @Override

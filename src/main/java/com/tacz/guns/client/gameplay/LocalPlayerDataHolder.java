@@ -19,6 +19,10 @@ public class LocalPlayerDataHolder {
     public static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(2);
     private final Set<ScheduledFuture<?>> shootFutures = ConcurrentHashMap.newKeySet();
     private static final long AMMO_COUNT_CACHE_MILLIS = 50L;
+    private static final long STATE_LOCK_TIMEOUT_MILLIS = 250L;
+    private static final Predicate<IGunOperator> TIMED_LOCKED_CONDITION = operator -> false;
+    /** 主动卸弹后暂停自动换弹，主动换弹、尝试开火或切枪时解除。 */
+    public boolean autoReloadSuppressed = false;
     private ItemStack cachedAmmoGun;
     private long cachedAmmoTimestamp = -1L;
     private long cachedAmmoEpoch = -1L;
@@ -117,6 +121,16 @@ public class LocalPlayerDataHolder {
         this.lockedCondition = lockedCondition;
     }
 
+    /** 复用状态锁的响应超时窗口，为瞬时操作持锁 250 ms。 */
+    public void lockState() {
+        lockState(TIMED_LOCKED_CONDITION);
+    }
+
+    /** 射击、蓄力等允许绕过普通状态锁的入口仍需遵守此限时锁。 */
+    public boolean isTimedStateLocked() {
+        return clientStateLock && lockedCondition == TIMED_LOCKED_CONDITION;
+    }
+
     /**
      * 此方法每 tick 执行一次，判断是否应当释放状态锁。
      */
@@ -125,9 +139,9 @@ public class LocalPlayerDataHolder {
         ReloadState reloadState = gunOperator.getSynReloadState();
         // 如果还没完成上锁，则不能释放状态锁
         // 上锁允许的最大响应时间，毫秒
-        long maxLockTime = 250;
         long lockTime = GunTime.nowMillis() - lockTimestamp;
-        if (lockTime < maxLockTime && lockedCondition != null && !lockedCondition.test(gunOperator)) {
+        if (lockTime >= 0 && lockTime < STATE_LOCK_TIMEOUT_MILLIS
+                && lockedCondition != null && !lockedCondition.test(gunOperator)) {
             return;
         }
         lockedCondition = null;
@@ -157,6 +171,12 @@ public class LocalPlayerDataHolder {
         shootFutures.add(future);
     }
 
+    public boolean hasPendingShoot() {
+        // 完成/取消与注册可能来自不同线程，不让残留的 future 永久阻止卸弹。
+        shootFutures.removeIf(ScheduledFuture::isDone);
+        return !shootFutures.isEmpty();
+    }
+
     public void unregisterShootFuture(ScheduledFuture<?> future) {
         shootFutures.remove(future);
     }
@@ -172,6 +192,9 @@ public class LocalPlayerDataHolder {
     public void reset() {
         cancelShootFutures();
         resetAmmoCountCache();
+        lockedCondition = null;
+        lockTimestamp = -1L;
+        autoReloadSuppressed = false;
         // 重置客户端的 shoot 时间戳
         isShootRecorded = true;
         clientShootTimestamp = -1;

@@ -272,7 +272,7 @@ public class LocalPlayerShoot {
         };
 
         ScheduledFuture<?> future = LocalPlayerDataHolder.SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
-            if (GunTime.epoch() != scheduledEpoch || Minecraft.getInstance().player != player) {
+            if (GunTime.epoch() != scheduledEpoch || Minecraft.getInstance().player != player || data.isTimedStateLocked()) {
                 stop.run();
                 return;
             }
@@ -313,7 +313,8 @@ public class LocalPlayerShoot {
             // todo 需要检查
             // 播放声音和状态机触发需要从异步线程上传到主线程执行，否则会引起cme
             Minecraft.getInstance().submitAsync(() -> {
-                if (GunTime.epoch() != scheduledEpoch || Minecraft.getInstance().player != player || !GunTime.shouldTick()) {
+                if (GunTime.epoch() != scheduledEpoch || Minecraft.getInstance().player != player || !GunTime.shouldTick()
+                        || data.isTimedStateLocked()) {
                     return;
                 }
                 // 本机预测效果也区分可取消的前置事件与成功后的通知。

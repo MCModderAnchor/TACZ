@@ -99,7 +99,7 @@ public class LocalPlayerAim {
         boolean isReloading = operator.getSynReloadState().getStateType().isReloading();
         boolean isReloadStarting = data.clientReloadStarting;
         boolean isBolting = data.isBolting || operator.getSynIsBolting();
-        return (gunData.isForceAimExitOnReload() && (isReloading || isReloadStarting)) ||
+        return data.isTimedStateLocked() || (gunData.isForceAimExitOnReload() && (isReloading || isReloadStarting)) ||
                 (gunData.isForceAimExitOnBolt() && isBolting);
     }
 
