@@ -6,6 +6,7 @@ import com.tacz.guns.api.GunProperty;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
+import com.tacz.guns.api.event.common.GunFirePostEvent;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.api.item.attachment.AttachmentType;
@@ -20,6 +21,7 @@ import com.tacz.guns.entity.shooter.GunScriptGuard;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.event.ServerMessageGunFire;
+import com.tacz.guns.network.message.event.ServerMessageGunFirePost;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.RecoilPushModifier;
@@ -207,6 +209,9 @@ public class ModernKineticGunScriptAPI {
                     String soundId = useSilenceSound ? SoundManager.SILENCE_3P_SOUND : SoundManager.SHOOT_3P_SOUND;
                     SoundManager.sendSoundToNearby(shooter, soundDistance, gunId, gunDisplayId, soundId, 0.8f, 0.9f + shooter.getRandom().nextFloat() * 0.125f);
                 }
+                // 仅成功击发才发布后置事件并通知旁观客户端。
+                MinecraftForge.EVENT_BUS.post(new GunFirePostEvent(shooter, itemStack, LogicalSide.SERVER));
+                NetworkHandler.sendToTrackingEntity(new ServerMessageGunFirePost(shooter.getId(), itemStack), shooter);
             }
             return true;
         }, false), period, cycles);

@@ -6,6 +6,7 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.api.event.common.GunFireEvent;
+import com.tacz.guns.api.event.common.GunFirePostEvent;
 import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
@@ -315,7 +316,7 @@ public class LocalPlayerShoot {
                 if (GunTime.epoch() != scheduledEpoch || Minecraft.getInstance().player != player || !GunTime.shouldTick()) {
                     return;
                 }
-                // 触发击发事件
+                // 本机预测效果也区分可取消的前置事件与成功后的通知。
                 boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(player, mainHandItem, LogicalSide.CLIENT));
                 if (fire) {
                     // 动画和声音循环播放
@@ -332,6 +333,7 @@ public class LocalPlayerShoot {
                     } else {
                         SoundPlayManager.playShootSound(player, display, gunData);
                     }
+                    MinecraftForge.EVENT_BUS.post(new GunFirePostEvent(player, mainHandItem, LogicalSide.CLIENT));
                 }
             });
 
