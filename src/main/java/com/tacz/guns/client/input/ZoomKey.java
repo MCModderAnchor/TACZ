@@ -9,17 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
 import static com.tacz.guns.util.InputExtraCheck.isInGame;
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class ZoomKey {
     public static final KeyMapping ZOOM_KEY = new KeyMapping("key.tacz.zoom.desc",
             KeyConflictContext.IN_GAME,
@@ -28,43 +24,23 @@ public class ZoomKey {
             GLFW.GLFW_KEY_V,
             "key.category.tacz");
 
-    @SubscribeEvent
-    public static void onZoomKeyPress(InputEvent.Key event) {
-        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && ZOOM_KEY.matches(event.getKey(), event.getScanCode())) {
-            doZoomLogic();
-        }
-    }
-
-    @SubscribeEvent
-    public static void onZoomMousePress(InputEvent.MouseButton.Post event) {
-        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && ZOOM_KEY.matchesMouse(event.getButton())) {
-            doZoomLogic();
-        }
-    }
-
     public static boolean onZoomControllerPress(boolean isPress) {
-        if (isInGame() && isPress) {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null || player.isSpectator()) {
-                return false;
-            }
-            IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
-            if (operator.isAim()) {
-                NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerZoom());
-                return true;
-            }
-        }
-        return false;
+        return isPress && onZoomPress();
     }
 
-    private static void doZoomLogic() {
+    public static boolean onZoomPress() {
+        if (!isInGame()) {
+            return false;
+        }
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || player.isSpectator()) {
-            return;
+            return false;
         }
         IClientPlayerGunOperator operator = IClientPlayerGunOperator.fromLocalPlayer(player);
         if (operator.isAim()) {
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerZoom());
+            return true;
         }
+        return false;
     }
 }

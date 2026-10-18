@@ -12,7 +12,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.event.TickEvent;
@@ -33,35 +32,26 @@ public class ReloadKey {
             GLFW.GLFW_KEY_R,
             "key.category.tacz");
 
-    @SubscribeEvent
-    public static void onReloadPress(InputEvent.Key event) {
-        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && RELOAD_KEY.matches(event.getKey(), event.getScanCode())) {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null || player.isSpectator()) {
-                return;
-            }
-            if (player.getMainHandItem().getItem() instanceof IGun iGun) {
-                // 如果使用背包直读，且没有换弹冷却机制，则在输入时就屏蔽换弹
-                if (iGun.useInventoryAmmo(player.getMainHandItem())) {
-                    return;
-                }
-                IClientPlayerGunOperator.fromLocalPlayer(player).reload();
-            }
-        }
-    }
-
-    public static boolean onReloadControllerPress(boolean isPress) {
-        if (isInGame() && isPress) {
+    public static boolean onReloadPress() {
+        if (isInGame()) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null || player.isSpectator()) {
                 return false;
             }
-            if (IGun.mainHandHoldGun(player)) {
+            if (player.getMainHandItem().getItem() instanceof IGun iGun) {
+                // 如果使用背包直读，且没有换弹冷却机制，则在输入时就屏蔽换弹
+                if (iGun.useInventoryAmmo(player.getMainHandItem())) {
+                    return false;
+                }
                 IClientPlayerGunOperator.fromLocalPlayer(player).reload();
                 return true;
             }
         }
         return false;
+    }
+
+    public static boolean onReloadControllerPress(boolean isPress) {
+        return isPress && onReloadPress();
     }
 
     @OnlyIn(Dist.CLIENT)

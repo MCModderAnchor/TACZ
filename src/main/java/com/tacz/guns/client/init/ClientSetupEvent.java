@@ -3,7 +3,7 @@ package com.tacz.guns.client.init;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.client.gui.overlay.*;
-import com.tacz.guns.client.input.*;
+import com.tacz.guns.client.input.GunInputHandler;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.client.tooltip.*;
@@ -35,17 +35,7 @@ public class ClientSetupEvent {
     @SubscribeEvent
     public static void onClientSetup(RegisterKeyMappingsEvent event) {
         // 注册键位
-        event.register(InspectKey.INSPECT_KEY);
-        event.register(ReloadKey.RELOAD_KEY);
-        event.register(ShootKey.SHOOT_KEY);
-        event.register(InteractKey.INTERACT_KEY);
-        event.register(FireSelectKey.FIRE_SELECT_KEY);
-        event.register(AimKey.AIM_KEY);
-        event.register(CrawlKey.CRAWL_KEY);
-        event.register(RefitKey.REFIT_KEY);
-        event.register(ZoomKey.ZOOM_KEY);
-        event.register(MeleeKey.MELEE_KEY);
-        event.register(ConfigKey.OPEN_CONFIG_KEY);
+        GunInputHandler.registerKeyMappings(event);
     }
 
     @SubscribeEvent

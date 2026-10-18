@@ -80,14 +80,11 @@ public class ControllableInner {
     }
 
     public static void onClientTickEnd() {
-        if (!GUN_KEY_CONFLICT.isActive()) {
-            return;
-        }
         Controller controller = Controllable.getController();
-        if (controller == null) {
-            return;
-        }
-        ShootKey.shootControllerTick(controller.isButtonPressed(SHOOT.getButton()));
+        boolean active = controller != null && GUN_KEY_CONFLICT.isActive();
+        AimKey.setControllerAimDown(active && controller.isButtonPressed(AIM.getButton()));
+        CrawlKey.setControllerCrawlDown(active && controller.isButtonPressed(CRAWL.getButton()));
+        ShootKey.shootControllerTick(active && controller.isButtonPressed(SHOOT.getButton()));
     }
 
     public static void rumbleShoot(ItemStack mainHandItem, FireMode fireMode) {
