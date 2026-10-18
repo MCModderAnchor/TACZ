@@ -184,7 +184,7 @@ public interface GunItemDataAccessor extends IGun {
     default FireMode getFireMode(ItemStack gun) {
         CompoundTag nbt = gun.getOrCreateTag();
         if (nbt.contains(GUN_FIRE_MODE_TAG, Tag.TAG_STRING)) {
-            return FireMode.valueOf(nbt.getString(GUN_FIRE_MODE_TAG));
+            return FireMode.fromName(nbt.getString(GUN_FIRE_MODE_TAG));
         }
         return FireMode.UNKNOWN;
     }
