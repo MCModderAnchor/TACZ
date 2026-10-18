@@ -20,6 +20,10 @@ public class DestroyGlassBlock {
         Level level = event.getLevel();
         BlockState state = event.getState();
         BlockPos pos = event.getHitResult().getBlockPos();
+        float hardness = state.getDestroySpeed(level, pos);
+        if (hardness < 0 || hardness > AmmoConfig.DESTROY_BLOCK_HARDNESS_THRESHOLD.get()) {
+            return;
+        }
         EntityKineticBullet ammo = event.getAmmo();
         if (AmmoBlockConfigRead.canDestroy(state)) {
             level.destroyBlock(pos, false, ammo.getOwner());

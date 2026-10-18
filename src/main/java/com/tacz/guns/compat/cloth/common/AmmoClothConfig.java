@@ -39,6 +39,10 @@ public class AmmoClothConfig {
                 .setDefaultValue(Lists.newArrayList(AmmoConfig.DEFAULT_DESTROY_BLOCKS)).setTooltip(Component.translatable("config.tacz.common.ammo.destroy_blocks.desc"))
                 .setSaveConsumer(AmmoConfig.DESTROY_BLOCKS::set).build());
 
+        ammo.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.common.ammo.destroy_block_hardness_threshold"), AmmoConfig.DESTROY_BLOCK_HARDNESS_THRESHOLD.get())
+                .setMin(0).setMax(Double.MAX_VALUE).setDefaultValue(4).setTooltip(Component.translatable("config.tacz.common.ammo.destroy_block_hardness_threshold.desc"))
+                .setSaveConsumer(AmmoConfig.DESTROY_BLOCK_HARDNESS_THRESHOLD::set).build());
+
         ammo.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.ammo.ignite_block"), AmmoConfig.IGNITE_BLOCK.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.common.ammo.ignite_block.desc"))
                 .setSaveConsumer(AmmoConfig.IGNITE_BLOCK::set).build());

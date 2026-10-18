@@ -18,6 +18,7 @@ public class AmmoConfig {
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> PASS_THROUGH_BLOCKS;
     public static ForgeConfigSpec.BooleanValue DESTROY_GLASS;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> DESTROY_BLOCKS;
+    public static ForgeConfigSpec.DoubleValue DESTROY_BLOCK_HARDNESS_THRESHOLD;
     public static ForgeConfigSpec.BooleanValue IGNITE_BLOCK;
     public static ForgeConfigSpec.BooleanValue IGNITE_ENTITY;
     public static ForgeConfigSpec.BooleanValue IGNORE_TEAM_FRIENDLY_FIRE;
@@ -46,8 +47,11 @@ public class AmmoConfig {
         builder.comment("Allow bullets to destroy blocks listed in DestroyBlocks without drops. The name is retained for compatibility; the list is not limited to glass.");
         DESTROY_GLASS = builder.define("DestroyGlass", true);
 
-        builder.comment("Blocks that bullets can destroy when DestroyGlass is enabled. Accepts block IDs and tags prefixed with #, e.g. minecraft:glass or #forge:glass.");
+        builder.comment("Blocks that bullets can destroy when DestroyGlass is enabled, subject to DestroyBlockHardnessThreshold. Accepts block IDs and tags prefixed with #, e.g. minecraft:glass or #forge:glass.");
         DESTROY_BLOCKS = builder.defineListAllowEmpty("DestroyBlocks", Lists.newArrayList(DEFAULT_DESTROY_BLOCKS), value -> value instanceof String);
+
+        builder.comment("Maximum block hardness for direct bullet destruction. Blocks above this threshold or with negative hardness (unbreakable) are never destroyed, even if listed in DestroyBlocks. Default: 1.0; vanilla glass has hardness 0.3.");
+        DESTROY_BLOCK_HARDNESS_THRESHOLD = builder.defineInRange("DestroyBlockHardnessThreshold", 1.0, 0.0, Double.MAX_VALUE);
 
         builder.comment("Whether a ammo can ignite the block");
         IGNITE_BLOCK = builder.define("IgniteBlock", true);
