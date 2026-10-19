@@ -11,6 +11,7 @@ import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.config.client.ZoomConfig;
+import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,7 @@ import net.minecraft.client.MouseHandler;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -68,26 +70,18 @@ public class MouseHandlerMixin {
         double denominator = MathUtil.zoomSensitivityRatio(currentFov, originalFov, coefficient) * sensitivityMultiplier;
         // 最终结果
         double finalYaw = yaw * denominator;
-        double finalPitch = getCrawlPitch(player, pitch, denominator);
+        double finalPitch = pitch * denominator;
         original.call(player, finalYaw, finalPitch);
+        clampCrawlPitch(player);
     }
 
     @Unique
-    private static double getCrawlPitch(LocalPlayer player, double pitch, double denominator) {
-        double finalPitch = pitch * denominator;
-        // 如果是趴下，那么还需要限制 pitch 范围
+    private static void clampCrawlPitch(LocalPlayer player) {
         if (!player.isSwimming() && player.getPose() == Pose.SWIMMING) {
-            // 仰角正负是反的
-            float playerPitch = -player.getXRot();
-            // 如果玩家上仰超过 25 度，不允许上
-            if (playerPitch > 45) {
-                finalPitch = Math.max(finalPitch, 0);
-            }
-            // 下俯超过 25 度，不允许下
-            if (playerPitch < -30) {
-                finalPitch = Math.min(finalPitch, 0);
-            }
+            float minPitch = -SyncConfig.CRAWL_MAX_UP_ANGLE.get().floatValue();
+            float maxPitch = SyncConfig.CRAWL_MAX_DOWN_ANGLE.get().floatValue();
+            player.setXRot(Mth.clamp(player.getXRot(), minPitch, maxPitch));
+            player.xRotO = Mth.clamp(player.xRotO, minPitch, maxPitch);
         }
-        return finalPitch;
     }
 }

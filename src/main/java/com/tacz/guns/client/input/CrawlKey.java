@@ -64,8 +64,11 @@ public class CrawlKey {
         }
         boolean holdToCrawl = KeyConfig.HOLD_TO_CRAWL.get();
         IGun iGun = IGun.getIGunOrNull(player.getMainHandItem());
-        if (!isInGame() || !SyncConfig.ENABLE_CRAWL.get() || player.isSpectator() || player.isPassenger()
-                || iGun == null || !iGun.isCanCrawl(player.getMainHandItem())) {
+        boolean inputEnabled = isInGame() && SyncConfig.ENABLE_CRAWL.get();
+        boolean playerAllowed = inputEnabled && !player.isSpectator() && !player.isPassenger();
+        boolean crawlAllowed = playerAllowed && (iGun == null
+                ? SyncConfig.ENABLE_CRAWL_WITHOUT_GUN.get() : iGun.isCanCrawl(player.getMainHandItem()));
+        if (!crawlAllowed) {
             if (holdToCrawl && operator.isCrawl()) {
                 operator.crawl(false);
             }

@@ -1,7 +1,6 @@
 package com.tacz.guns.network.message;
 
 import com.tacz.guns.api.entity.IGunOperator;
-import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -31,9 +30,7 @@ public class ClientMessagePlayerCrawl {
                 if (entity == null) {
                     return;
                 }
-                if (!SyncConfig.ENABLE_CRAWL.get()) {
-                    return;
-                }
+                // 进入条件由服务端趴下逻辑统一验证；禁用功能后仍允许退出。
                 IGunOperator.fromLivingEntity(entity).crawl(message.isCrawl);
             });
         }

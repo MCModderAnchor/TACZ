@@ -14,6 +14,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.input.*;
 import com.tacz.guns.client.resource.pojo.display.gun.ControllableData;
+import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -23,12 +24,24 @@ import java.util.EnumMap;
 
 public class ControllableInner {
     public static final IBindingContext GUN_KEY_CONFLICT = new GunKeyConflict();
+    public static final IBindingContext CRAWL_KEY_CONFLICT = new GunKeyConflict() {
+        @Override
+        public boolean isActive() {
+            LocalPlayer player = Minecraft.getInstance().player;
+            boolean inputEnabled = !KeyConflictContext.GUI.isActive() && player != null;
+            if (!inputEnabled || !SyncConfig.ENABLE_CRAWL.get()) {
+                return false;
+            }
+            boolean itemAllowsCrawl = IGun.mainHandHoldGun(player) || SyncConfig.ENABLE_CRAWL_WITHOUT_GUN.get();
+            return itemAllowsCrawl;
+        }
+    };
     public static final ButtonBinding AIM = new ButtonBinding(Buttons.LEFT_TRIGGER, "key.tacz.aim.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding SHOOT = new ButtonBinding(Buttons.RIGHT_TRIGGER, "key.tacz.shoot.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding RELOAD = new ButtonBinding(Buttons.B, "key.tacz.reload.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding MELEE = new ButtonBinding(Buttons.X, "key.tacz.melee.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding ZOOM = new ButtonBinding(Buttons.X, "key.tacz.zoom.desc", "key.category.tacz", GUN_KEY_CONFLICT);
-    public static final ButtonBinding CRAWL = new ButtonBinding(Buttons.LEFT_THUMB_STICK, "key.tacz.crawl.desc", "key.category.tacz", GUN_KEY_CONFLICT);
+    public static final ButtonBinding CRAWL = new ButtonBinding(Buttons.LEFT_THUMB_STICK, "key.tacz.crawl.desc", "key.category.tacz", CRAWL_KEY_CONFLICT);
     public static final ButtonBinding FIRE_SELECT = new ButtonBinding(Buttons.DPAD_LEFT, "key.tacz.fire_select.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding INTERACT = new ButtonBinding(-1, "key.tacz.interact.desc", "key.category.tacz", GUN_KEY_CONFLICT);
     public static final ButtonBinding INSPECT = new ButtonBinding(-1, "key.tacz.inspect.desc", "key.category.tacz", GUN_KEY_CONFLICT);
@@ -50,7 +63,8 @@ public class ControllableInner {
 
     public static boolean onButtonInput(Controller controller, Value<Integer> newButton, int originalButton, boolean isPress) {
         if (!GUN_KEY_CONFLICT.isActive()) {
-            return false;
+            boolean crawlInput = CRAWL_KEY_CONFLICT.isActive() && CRAWL.getButton() == newButton.get();
+            return crawlInput && CrawlKey.onCrawlControllerPress(isPress);
         }
         if (AIM.getButton() == newButton.get() && AimKey.onAimControllerPress(isPress)) {
             return true;
@@ -83,7 +97,8 @@ public class ControllableInner {
         Controller controller = Controllable.getController();
         boolean active = controller != null && GUN_KEY_CONFLICT.isActive();
         AimKey.setControllerAimDown(active && controller.isButtonPressed(AIM.getButton()));
-        CrawlKey.setControllerCrawlDown(active && controller.isButtonPressed(CRAWL.getButton()));
+        boolean crawlActive = controller != null && CRAWL_KEY_CONFLICT.isActive();
+        CrawlKey.setControllerCrawlDown(crawlActive && controller.isButtonPressed(CRAWL.getButton()));
         ShootKey.shootControllerTick(active && controller.isButtonPressed(SHOOT.getButton()));
     }
 
@@ -121,7 +136,7 @@ public class ControllableInner {
 
         @Override
         public boolean conflicts(IBindingContext other) {
-            return this == other;
+            return other instanceof GunKeyConflict;
         }
     }
 }

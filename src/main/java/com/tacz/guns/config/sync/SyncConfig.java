@@ -32,6 +32,10 @@ public class SyncConfig {
     public static ForgeConfigSpec.ConfigValue<List<List<String>>> CLIENT_GUN_PACK_DOWNLOAD_URLS;
     // 禁用趴下战术动作
     public static ForgeConfigSpec.BooleanValue ENABLE_CRAWL;
+    public static ForgeConfigSpec.BooleanValue ENABLE_CRAWL_WITHOUT_GUN;
+    // 持枪趴下时的最大仰角和俯角，单位为度，需要同步到客户端。
+    public static ForgeConfigSpec.DoubleValue CRAWL_MAX_UP_ANGLE;
+    public static ForgeConfigSpec.DoubleValue CRAWL_MAX_DOWN_ANGLE;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         interactKey(builder);
@@ -103,6 +107,15 @@ public class SyncConfig {
 
         builder.comment("Whether or not players are allowed to use the crawl feature");
         ENABLE_CRAWL = builder.define("EnableCrawl", true);
+
+        builder.comment("Allow players to crawl without holding a TACZ gun. EnableCrawl must also be enabled");
+        ENABLE_CRAWL_WITHOUT_GUN = builder.define("EnableCrawlWithoutGun", true);
+
+        builder.comment("Maximum upward look angle in degrees while crawling with a gun. Set both crawl angle limits to 90 for the full vanilla pitch range");
+        CRAWL_MAX_UP_ANGLE = builder.defineInRange("CrawlMaxUpAngle", 45.0D, 0.0D, 90.0D);
+
+        builder.comment("Maximum downward look angle in degrees while crawling with a gun");
+        CRAWL_MAX_DOWN_ANGLE = builder.defineInRange("CrawlMaxDownAngle", 30.0D, 0.0D, 90.0D);
 
         builder.comment("Enable the recipe limit of default gunsmith table or not");
         ENABLE_TABLE_FILTER = builder.define("EnableDefaultGunSmithTableFilter", true);
