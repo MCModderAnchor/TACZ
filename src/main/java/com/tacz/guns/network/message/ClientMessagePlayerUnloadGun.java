@@ -62,10 +62,11 @@ public class ClientMessagePlayerUnloadGun {
                     player.displayClientMessage(Component.translatable("message.tacz.unload.no_ammo"), true);
                     return;
                 }
+                var gunDisplayId = gun.getGunDisplayId(stack);
                 IGunOperator.fromLivingEntity(player).unloadAmmo();
                 player.inventoryMenu.broadcastChanges();
                 if (getLoadedAmmoCount(gun, stack, bolt) < ammoBefore) {
-                    NetworkHandler.sendToClientPlayer(new ServerMessageGunUnload(), player);
+                    NetworkHandler.sendToClientPlayer(new ServerMessageGunUnload(message.gunId, gunDisplayId), player);
                 } else {
                     showCannotUnload(player);
                 }

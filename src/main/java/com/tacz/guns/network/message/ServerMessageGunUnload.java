@@ -1,8 +1,6 @@
 package com.tacz.guns.network.message;
 
-import com.tacz.guns.GunMod;
 import com.tacz.guns.client.sound.SoundPlayManager;
-import com.tacz.guns.config.common.GunConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -15,30 +13,36 @@ import java.util.function.Supplier;
 
 /** 仅在服务端确认本次主动卸弹实际减少了枪内弹药后发送给操作者。 */
 public class ServerMessageGunUnload {
-    private static final ResourceLocation UNLOAD_SOUND = new ResourceLocation(GunMod.MOD_ID,
-            "attachments/attachment_general_uninstall");
+    private final ResourceLocation gunId;
+    private final ResourceLocation gunDisplayId;
+
+    public ServerMessageGunUnload(ResourceLocation gunId, ResourceLocation gunDisplayId) {
+        this.gunId = gunId;
+        this.gunDisplayId = gunDisplayId;
+    }
 
     public static void encode(ServerMessageGunUnload message, FriendlyByteBuf buf) {
+        buf.writeResourceLocation(message.gunId);
+        buf.writeResourceLocation(message.gunDisplayId);
     }
 
     public static ServerMessageGunUnload decode(FriendlyByteBuf buf) {
-        return new ServerMessageGunUnload();
+        return new ServerMessageGunUnload(buf.readResourceLocation(), buf.readResourceLocation());
     }
 
     public static void handle(ServerMessageGunUnload message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide().isClient()) {
-            context.enqueueWork(ServerMessageGunUnload::playSound);
+            context.enqueueWork(() -> playSound(message));
         }
         context.setPacketHandled(true);
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void playSound() {
+    private static void playSound(ServerMessageGunUnload message) {
         Player player = Minecraft.getInstance().player;
         if (player != null) {
-            SoundPlayManager.playClientSound(player, UNLOAD_SOUND, 1.0F, 1.0F,
-                    GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
+            SoundPlayManager.playUnloadSound(player, message.gunId, message.gunDisplayId);
         }
     }
 }

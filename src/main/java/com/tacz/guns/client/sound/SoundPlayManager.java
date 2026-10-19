@@ -35,6 +35,8 @@ import java.util.*;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class SoundPlayManager {
     private static final FileToIdConverter TACZ_SOUND_LISTER = new FileToIdConverter("tacz_sounds", ".ogg");
+    private static final SoundData DEFAULT_UNLOAD_SOUND = SoundData.of(new ResourceLocation(GunMod.MOD_ID,
+            "attachments/attachment_general_uninstall"));
 
     private static final Map<SoundKey, ArrayDeque<TrackedGunSound>> TRACKED_GUN_SOUNDS = new HashMap<>();
     private static final Map<ResourceLocation, Boolean> SOUND_RESOURCE_EXISTS_CACHE = new HashMap<>();
@@ -215,6 +217,13 @@ public class SoundPlayManager {
 
     public static void playMeleeStockSound(LivingEntity entity, GunDisplayInstance display) {
         playClientSound(entity, display.getSounds(SoundManager.MELEE_STOCK), 1.0f, 0.9f + entity.getRandom().nextFloat() * 0.125f, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
+    }
+
+    public static void playUnloadSound(LivingEntity entity, ResourceLocation gunId, ResourceLocation gunDisplayId) {
+        SoundData sound = TimelessAPI.getGunDisplay(gunDisplayId, gunId)
+                .map(display -> display.getSounds(SoundManager.UNLOAD_SOUND))
+                .orElse(DEFAULT_UNLOAD_SOUND);
+        playClientSound(entity, sound, 1.0F, 1.0F, GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE.get());
     }
 
     public static void playHeadHitSound(LivingEntity entity, GunDisplayInstance display) {
