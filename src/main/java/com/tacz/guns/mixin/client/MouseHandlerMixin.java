@@ -70,18 +70,21 @@ public class MouseHandlerMixin {
         double denominator = MathUtil.zoomSensitivityRatio(currentFov, originalFov, coefficient) * sensitivityMultiplier;
         // 最终结果
         double finalYaw = yaw * denominator;
-        double finalPitch = pitch * denominator;
+        double finalPitch = getCrawlPitch(player, pitch * denominator);
         original.call(player, finalYaw, finalPitch);
-        clampCrawlPitch(player);
     }
 
     @Unique
-    private static void clampCrawlPitch(LocalPlayer player) {
-        if (!player.isSwimming() && player.getPose() == Pose.SWIMMING) {
-            float minPitch = -SyncConfig.CRAWL_MAX_UP_ANGLE.get().floatValue();
-            float maxPitch = SyncConfig.CRAWL_MAX_DOWN_ANGLE.get().floatValue();
-            player.setXRot(Mth.clamp(player.getXRot(), minPitch, maxPitch));
-            player.xRotO = Mth.clamp(player.xRotO, minPitch, maxPitch);
+    private static double getCrawlPitch(LocalPlayer player, double pitch) {
+        boolean crawling = !player.isSwimming() && player.getPose() == Pose.SWIMMING;
+        if (!crawling) {
+            return pitch;
         }
+        double minPitch = -SyncConfig.CRAWL_MAX_UP_ANGLE.get();
+        double maxPitch = SyncConfig.CRAWL_MAX_DOWN_ANGLE.get();
+        double currentPitch = player.getXRot();
+        double minInput = Math.min(0, (minPitch - currentPitch) / 0.15F);
+        double maxInput = Math.max(0, (maxPitch - currentPitch) / 0.15F);
+        return Mth.clamp(pitch, minInput, maxInput);
     }
 }
