@@ -19,6 +19,7 @@ import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.DisplayGunModelInstance;
 import com.tacz.guns.client.model.ExternalGunModel;
+import com.tacz.guns.client.renderer.external.ExternalShellRenderer;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
 import com.tacz.guns.client.resource.pojo.display.SoundData;
@@ -109,6 +110,7 @@ public class GunDisplayInstance {
     private @Nullable ResourceLocation hudEmptyTexture;
 
     private @Nullable ShellEjection shellEjection;
+    private final ExternalShellRenderer externalShellRenderer = new ExternalShellRenderer();
     private @Nullable BedrockAmmoModel shellModel;
     private @Nullable ResourceLocation shellTextureLocation;
     private @Nullable MuzzleFlash muzzleFlash;
@@ -832,6 +834,10 @@ public class GunDisplayInstance {
     @Nullable
     public ShellEjection getShellEjection() {
         return shellEjection;
+    }
+
+    public ExternalShellRenderer getExternalShellRenderer() {
+        return externalShellRenderer;
     }
 
     @Nullable

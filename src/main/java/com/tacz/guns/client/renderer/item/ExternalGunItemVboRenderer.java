@@ -73,7 +73,7 @@ public class ExternalGunItemVboRenderer {
         if (result.drawn()) {
             ExternalGunAppearance.Snapshot selected = result.usedPrevious() ? previous : appearance;
             if (context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
-                ExternalGunEffects.renderThirdPerson(selected, pose, buffers);
+                ExternalGunEffects.renderThirdPerson(selected, pose, buffers, packedLight, packedOverlay);
             }
             return new StaticGunRenderResult(StaticGunRenderResult.Status.SUBMITTED, selected.useLod());
         }

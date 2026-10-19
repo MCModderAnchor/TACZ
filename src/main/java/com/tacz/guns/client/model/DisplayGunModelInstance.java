@@ -41,6 +41,7 @@ public class DisplayGunModelInstance extends BakedModelInstance {
     private final BoneState[] adapterChildren;
     private final int[] laserBeamBones;
     private final int muzzleFlashPosition;
+    private final int[] shellOriginBones;
 
     public DisplayGunModelInstance(BakedBedrockModel model, Set<String> hiddenTextBones, Kind kind) {
         super(model);
@@ -59,6 +60,17 @@ public class DisplayGunModelInstance extends BakedModelInstance {
         }
         laserBeamBones = lasers.build().toArray();
         muzzleFlashPosition = getIndex(MUZZLE_FLASH_ORIGIN_NODE);
+        var shells = IntStream.builder();
+        if (kind == Kind.GUN) {
+            int shell = getIndex(SHELL_ORIGIN_NODE);
+            int index = 1;
+            // 抛壳窗依次命名为 shell、shell_1、shell_2，遇到缺失的挂点即停止。
+            while (shell >= 0) {
+                shells.add(shell);
+                shell = getIndex(SHELL_ORIGIN_NODE_PREFIX + index++);
+            }
+        }
+        shellOriginBones = shells.build().toArray();
 
         bulletInBarrel = getBone(BULLET_IN_BARREL);
         bulletInMag = getBone(BULLET_IN_MAG);
@@ -101,6 +113,10 @@ public class DisplayGunModelInstance extends BakedModelInstance {
 
     public int muzzleFlashPosition() {
         return muzzleFlashPosition;
+    }
+
+    public int[] shellOriginBones() {
+        return shellOriginBones;
     }
 
     public void configureGun(IGun gun, ItemStack stack, Map<AttachmentType, ClientAttachmentIndex> attachments) {

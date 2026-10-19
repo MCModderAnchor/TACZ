@@ -362,10 +362,11 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
      */
     public void popShellFrom(int index) {
         if (display.getShellEjection() != null) {
+            Vector3f velocity = display.getShellEjection().getRandomVelocity();
+            display.getExternalShellRenderer().addShell(index, velocity);
             BedrockGunModel gunModel = display.getGunModel();
             if (gunModel != null) {
                 ShellRender shellRender = gunModel.getShellRender(index);
-                Vector3f velocity = display.getShellEjection().getRandomVelocity();
                 if (shellRender != null) {
                     shellRender.addShell(velocity);
                 }
