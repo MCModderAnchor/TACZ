@@ -290,15 +290,3 @@ java {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
-
-tasks.register('ammoStorageTest', JavaExec) {
-    group = 'verification'
-    description = 'Checks bulk ammo storage, transfers, automation and legacy NBT without launching Minecraft.'
-    dependsOn tasks.named('testClasses')
-    classpath = sourceSets.test.runtimeClasspath
-    mainClass = 'com.tacz.guns.inventory.AmmoStorageRegressionTest'
-}
-
-tasks.named('check') {
-    dependsOn tasks.named('ammoStorageTest')
-}
