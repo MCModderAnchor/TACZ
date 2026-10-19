@@ -6,10 +6,10 @@
       "nbt": "{GunId:\"tacz:rpg7\"}"
     },
     "title": {
-      "translate": "advancement.tacz.rendezook.title"
+      "translate": "advancement.tacz.wings_of_theve.title"
     },
     "description": {
-      "translate": "advancement.tacz.rendezook.description"
+      "translate": "advancement.tacz.wings_of_theve.description"
     },
     "frame": "challenge",
     "show_toast": true,
