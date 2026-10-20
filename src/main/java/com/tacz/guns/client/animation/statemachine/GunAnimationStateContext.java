@@ -467,7 +467,7 @@ public class GunAnimationStateContext extends ItemAnimationStateContext {
                     .map(ClientGunIndex::getGunData).orElse(null);
         }
         if (currentGunItem.has(DataComponents.CUSTOM_DATA)) {
-            nbtUtil = new LuaNbtAccessor(currentGunItem.get(DataComponents.CUSTOM_DATA).copyTag());
+            nbtUtil = LuaNbtAccessor.from(currentGunItem);
         }
     }
 }

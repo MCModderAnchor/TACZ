@@ -1,6 +1,5 @@
 package com.tacz.guns.client.model.functional;
 
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -117,9 +116,6 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
                 MUZZLE_FLASH_MODEL.renderToBuffer(poseStack2, multiBufferSource.getBuffer(renderTypeLight), light, overlay);
             }
             poseStack2.popPose();
-            if (IrisCompat.isPackInUseQuick()) {
-                com.tacz.guns.util.RenderHelper.endBatch(multiBufferSource);
-            }
         }
     }
 

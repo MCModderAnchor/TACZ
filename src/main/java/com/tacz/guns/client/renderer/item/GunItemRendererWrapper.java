@@ -4,7 +4,6 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.client.handler.FirstPerso
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.firstperson.FirstPersonParticleSystem;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.render.CameraStateCache;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -61,7 +60,6 @@ import static net.minecraft.world.item.ItemDisplayContext.*;
  * 负责主要的枪械动画模型渲染。额外的效果见 {@link com.tacz.guns.client.event.FirstPersonRenderGunEvent}
  */
 public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunModel, GunAnimationStateContext> {
-    public static GunItemRendererWrapper INSTANCE;
     private static final SlotModel SLOT_GUN_MODEL = new SlotModel();
     private static BedrockGunModel lastModel = null;
     public static final Vector3f muzzleRenderOffset = new Vector3f();
@@ -172,7 +170,7 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
     }
 
     @Override
-    protected void renderFirstPersonInner(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx, PoseStack poseStack, MultiBufferSource bufferSource,
+    public void renderFirstPerson(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx, PoseStack poseStack, MultiBufferSource bufferSource,
                                   int light, float partialTick) {
         if (!(stack.getItem() instanceof IGun)) {
             return;
@@ -286,7 +284,6 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
         if (gunModel.getMuzzleFlashPosPath() != null) {
             // 计算出枪口相对于摄像机中心的坐标
             poseStack.pushPose();
-            poseStack.last().pose().mulLocal(RenderSystem.getModelViewMatrix());
             for (BedrockPart bedrockPart : gunModel.getMuzzleFlashPosPath()) {
                 bedrockPart.translateAndRotateAndScale(poseStack);
             }

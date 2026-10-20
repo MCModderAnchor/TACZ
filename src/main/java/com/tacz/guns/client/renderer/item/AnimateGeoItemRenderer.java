@@ -212,13 +212,9 @@ public abstract class AnimateGeoItemRenderer<M extends BedrockAnimatedModel, CTX
     /**
      * 渲染第一人称，暂时只用于玩家，入口参见 {@link com.tacz.guns.client.event.FirstPersonRenderEvent}
      */
+    @Override
     public void renderFirstPerson(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx, PoseStack poseStack, MultiBufferSource bufferSource,
                                   int light, float partialTick) {
-        renderFirstPersonInner(player, stack, ctx, poseStack, bufferSource, light, partialTick);
-    }
-
-    protected void renderFirstPersonInner(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx, PoseStack poseStack, MultiBufferSource bufferSource,
-                                          int light, float partialTick) {
         M model = getModel(stack);
         if (model != null) {
             poseStack.pushPose();
@@ -317,7 +313,8 @@ public abstract class AnimateGeoItemRenderer<M extends BedrockAnimatedModel, CTX
 
         // 应用变换到 PoseStack
         poseStack.translate(0, 1.5f, 0);
-        poseStack.mulPose(transformMatrix);
+        // 保持 1.20.1 mulPoseMatrix 只更新位置矩阵的语义。
+        poseStack.last().pose().mul(transformMatrix);
         poseStack.translate(0, -1.5f, 0);
     }
 

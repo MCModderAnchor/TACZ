@@ -1,6 +1,5 @@
 package com.tacz.guns.client.init;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.client.gui.overlay.*;
@@ -12,7 +11,6 @@ import com.tacz.guns.client.gui.overlay.KillAmountOverlay;
 import com.tacz.guns.client.input.*;
 import com.tacz.guns.client.renderer.item.AmmoItemRenderer;
 import com.tacz.guns.client.renderer.item.AttachmentItemRenderer;
-import com.tacz.guns.client.renderer.item.GunItemRendererWrapper;
 import com.tacz.guns.client.renderer.item.GunSmithTableItemRenderer;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.sound.SoundPlayManager;
@@ -100,20 +98,9 @@ public class ClientSetupEvent {
 		event.enqueueWork(ARCompat::init);
 
         Minecraft minecraft = Minecraft.getInstance();
-        RenderSystem.recordRenderCall(() -> minecraft.getMainRenderTarget().enableStencil());
-        GunItemRendererWrapper.INSTANCE = new GunItemRendererWrapper();
         AmmoItemRenderer.INSTANCE = new AmmoItemRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
         AttachmentItemRenderer.INSTANCE = new AttachmentItemRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
         GunSmithTableItemRenderer.INSTANCE = new GunSmithTableItemRenderer(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
-    }
-
-    @SubscribeEvent
-    public static void onRegisterGuiLayers(RegisterGuiLayersEvent event) {
-        // 注册 HUD
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "tac_gun_hud_overlay"), new GunHudOverlay());
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID,  "tac_heat_bar"), new HeatBarOverlay());
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID,  "tac_kill_amount_overlay"), new KillAmountOverlay());
-        event.registerAbove(CROSSHAIR, ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "tac_interact_key_overlay"), new InteractKeyTextOverlay());
     }
 
     @SubscribeEvent

@@ -199,8 +199,6 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     private Vector3f getBedrockPartCenter(PoseStack poseStack, @Nonnull List<BedrockPart> path) {
         poseStack.pushPose();
-		poseStack.last().pose().mulLocal(RenderSystem.getModelViewMatrix());
-
         for (BedrockPart part : path) {
             part.translateAndRotateAndScale(poseStack);
         }
@@ -283,12 +281,12 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
                 float centerX = ocularCenter.x() * 16 * 90;
                 float centerY = ocularCenter.y() * 16 * 90;
                 BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
-                builder.addVertex(matrixStack.last(), centerX, centerY, -90.0F).setColor(255, 255, 255, 255);
+                builder.addVertex(centerX, centerY, -90.0F).setColor(255, 255, 255, 255);
                 for (int j = 0; j <= 90; j++) {
                     float angle = (float) j * ((float) Math.PI * 2F) / 90.0F;
                     float sin = Mth.sin(angle);
                     float cos = Mth.cos(angle);
-                    builder.addVertex(matrixStack.last(), centerX + cos * rad, centerY + sin * rad, -90.0F).setColor(255, 255, 255, 255);
+                    builder.addVertex(centerX + cos * rad, centerY + sin * rad, -90.0F).setColor(255, 255, 255, 255);
                 }
                 BufferUploader.drawWithShader(builder.buildOrThrow());
             }
