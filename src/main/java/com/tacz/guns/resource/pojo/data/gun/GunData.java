@@ -127,6 +127,9 @@ public class GunData {
     @SerializedName("script")
     private ResourceLocation script = null;
 
+    @SerializedName("allow_ammo_unload")
+    private boolean allowAmmoUnload = false;
+
     @SerializedName("script_param")
     private Map<String, Object> scriptParam = null;
 
@@ -312,6 +315,10 @@ public class GunData {
     @Nullable
     public ResourceLocation getScript() {
         return script;
+    }
+
+    public boolean isAllowAmmoUnload() {
+        return allowAmmoUnload;
     }
 
     @Nullable

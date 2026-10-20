@@ -29,7 +29,7 @@ public class LocalPlayerUnload {
             return;
         }
         ItemStack stack = player.getMainHandItem();
-        if (!(stack.getItem() instanceof AbstractGunItem gun) || gun.useInventoryAmmo(stack)) {
+        if (!(stack.getItem() instanceof AbstractGunItem gun)) {
             showCannotUnload();
             return;
         }
@@ -39,9 +39,13 @@ public class LocalPlayerUnload {
             return;
         }
         var gunId = gun.getGunId(stack);
-        var index = TimelessAPI.getClientGunIndex(gunId).orElse(null);
+        var index = TimelessAPI.getCommonGunIndex(gunId).orElse(null);
         if (index == null) {
             showCannotUnload();
+            return;
+        }
+        if (!index.canUnloadAmmo() || gun.useInventoryAmmo(stack)) {
+            player.displayClientMessage(Component.translatable("message.tacz.unload.unsupported"), true);
             return;
         }
         if (gun.getCurrentAmmoCount(stack) <= 0

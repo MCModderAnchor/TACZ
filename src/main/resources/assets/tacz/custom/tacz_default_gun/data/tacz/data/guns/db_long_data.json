@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:12g",
   "force_aim_exit_on_reload": true,
   "rpm": 200,

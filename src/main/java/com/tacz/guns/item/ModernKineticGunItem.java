@@ -216,7 +216,7 @@ public class ModernKineticGunItem extends AbstractGunItem implements GunItemData
         api.setDataHolder(dataHolder);
 
         CommonGunIndex gunIndex = api.getGunIndex();
-        if (gunIndex == null) {
+        if (gunIndex == null || !gunIndex.canUnloadAmmo()) {
             return;
         }
         Optional.ofNullable(gunIndex.getScript())

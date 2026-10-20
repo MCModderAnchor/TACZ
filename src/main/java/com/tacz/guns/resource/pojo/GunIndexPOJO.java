@@ -28,6 +28,10 @@ public class GunIndexPOJO {
     @SerializedName("sort")
     private int sort;
 
+    // 仅供同步，由服务端计算
+    @SerializedName("has_unload_ammo_script")
+    private boolean hasUnloadAmmoScript;
+
     public String getName() {
         return name;
     }
@@ -55,5 +59,9 @@ public class GunIndexPOJO {
 
     public int getSort() {
         return sort;
+    }
+
+    public boolean hasUnloadAmmoScript() {
+        return hasUnloadAmmoScript;
     }
 }

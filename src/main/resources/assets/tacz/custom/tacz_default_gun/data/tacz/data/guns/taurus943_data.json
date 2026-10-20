@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:22wmr",
   "ammo_amount": 8,
   "force_aim_exit_on_reload": true,

@@ -273,6 +273,7 @@
   "key.tacz.reload.desc": "换弹",
   "key.tacz.unload.desc": "卸弹",
   "message.tacz.unload.cannot": "当前不能卸载",
+  "message.tacz.unload.unsupported": "该武器不支持快速卸载弹药",
   "message.tacz.unload.no_ammo": "没有可卸载的弹药",
   "key.tacz.shoot.desc": "射击",
   "key.tacz.zoom.desc": "缩放",

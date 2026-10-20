@@ -49,6 +49,7 @@
   "key.tacz.reload.desc": "Reload",
   "key.tacz.unload.desc": "Unload Ammo",
   "message.tacz.unload.cannot": "Cannot unload right now",
+  "message.tacz.unload.unsupported": "This weapon does not support quick ammo unloading",
   "message.tacz.unload.no_ammo": "No ammo to unload",
   "key.tacz.inspect.desc": "Inspect",
   "key.tacz.interact.desc": "Interact With Gun",

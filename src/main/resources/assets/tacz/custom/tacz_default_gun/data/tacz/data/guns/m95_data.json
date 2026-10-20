@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:50bmg",
   "ammo_amount": 5,
   "extended_mag_ammo_amount": [

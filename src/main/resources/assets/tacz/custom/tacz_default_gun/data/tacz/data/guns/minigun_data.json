@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:308",
   "can_crawl": false,
   "bolt": "open_bolt",

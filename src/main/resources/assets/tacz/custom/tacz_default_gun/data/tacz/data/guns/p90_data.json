@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:57x28",
   "rpm": 850,
   "bullet": {

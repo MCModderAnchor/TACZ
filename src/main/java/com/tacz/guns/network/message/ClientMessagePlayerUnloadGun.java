@@ -52,8 +52,12 @@ public class ClientMessagePlayerUnloadGun {
                     return;
                 }
                 var index = TimelessAPI.getCommonGunIndex(message.gunId).orElse(null);
-                if (index == null || gun.useInventoryAmmo(stack)) {
+                if (index == null) {
                     showCannotUnload(player);
+                    return;
+                }
+                if (!index.canUnloadAmmo() || gun.useInventoryAmmo(stack)) {
+                    player.displayClientMessage(Component.translatable("message.tacz.unload.unsupported"), true);
                     return;
                 }
                 Bolt bolt = index.getGunData().getBolt();

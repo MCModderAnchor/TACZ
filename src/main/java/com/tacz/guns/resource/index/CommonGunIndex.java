@@ -25,6 +25,7 @@ public class CommonGunIndex {
     private int sort;
     private LuaTable script;
     private LuaTable scriptParam;
+    private boolean hasUnloadAmmoScript;
 
     private CommonGunIndex() {
     }
@@ -109,6 +110,10 @@ public class CommonGunIndex {
                 GunMod.LOGGER.warn(MARKER, "script '{}' not found", scriptId);
             }
         }
+        // 多人客户端没有逻辑脚本，使用服务端同步的回调能力。
+        index.hasUnloadAmmoScript = commonAssetsManager == null
+                ? index.pojo.hasUnloadAmmoScript()
+                : index.script != null && index.script.get("unload_ammo").isfunction();
         // 加载脚本参数
         Map<String, Object> params = data.getScriptParam();
         if (params != null) {
@@ -137,6 +142,16 @@ public class CommonGunIndex {
 
     public LuaTable getScript() {
         return script;
+    }
+
+    public boolean hasUnloadAmmoScript() {
+        return hasUnloadAmmoScript;
+    }
+
+    public boolean canUnloadAmmo() {
+        GunReloadData reload = gunData.getReloadData();
+        return !reload.isInfinite() && reload.getType() != FeedType.FUEL && reload.getType() != FeedType.INVENTORY
+                && (gunData.getScript() == null || gunData.isAllowAmmoUnload() || hasUnloadAmmoScript);
     }
 
     public LuaTable getScriptParam() {
