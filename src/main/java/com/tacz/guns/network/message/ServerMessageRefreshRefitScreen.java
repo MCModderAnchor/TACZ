@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class ServerMessageRefreshRefitScreen implements CustomPacketPayload {
-    public static final ServerMessageRefreshRefitScreen INSTANCE = ServerMessageRefreshRefitScreen.INSTANCE;
+    public static final ServerMessageRefreshRefitScreen INSTANCE = new ServerMessageRefreshRefitScreen();
     public static final CustomPacketPayload.Type<ServerMessageRefreshRefitScreen> TYPE = new CustomPacketPayload.Type<>(
         ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "server_refresh_refit_screen")
     );

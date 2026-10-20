@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class ClientMessagePlayerReloadGun implements CustomPacketPayload {
-    public static final ClientMessagePlayerReloadGun INSTANCE = ClientMessagePlayerReloadGun.INSTANCE;
+    public static final ClientMessagePlayerReloadGun INSTANCE = new ClientMessagePlayerReloadGun();
     public static final CustomPacketPayload.Type<ClientMessagePlayerReloadGun> TYPE = new CustomPacketPayload.Type<>(
         ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "client_player_reload")
     );

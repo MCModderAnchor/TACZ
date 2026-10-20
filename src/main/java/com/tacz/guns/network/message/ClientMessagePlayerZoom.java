@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class ClientMessagePlayerZoom implements CustomPacketPayload {
-    public static final ClientMessagePlayerZoom INSTANCE = ClientMessagePlayerZoom.INSTANCE;
+    public static final ClientMessagePlayerZoom INSTANCE = new ClientMessagePlayerZoom();
     public static final CustomPacketPayload.Type<ClientMessagePlayerZoom> TYPE = new CustomPacketPayload.Type<>(
         ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "client_player_zoom")
     );
