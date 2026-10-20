@@ -6,6 +6,11 @@ import net.irisshaders.iris.shadows.ShadowRenderingState;
 import net.minecraft.client.renderer.MultiBufferSource;
 
 public class IrisCompatInner {
+    public static MultiBufferSource getHandBufferSource() {
+        var renderer = net.irisshaders.iris.pathways.HandRenderer.INSTANCE;
+        return Iris.isPackInUseQuick() && renderer.isActive() ? renderer.getBufferSource() : null;
+    }
+
     public static boolean isPackInUseQuick() {
         return Iris.isPackInUseQuick();
     }

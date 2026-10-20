@@ -309,7 +309,7 @@ public class GunRefitScreen extends Screen {
                         if (freeSlot != -1 || VirtualOemAttachment.isMarked(attachmentItem)) {
                             SoundPlayManager.playerRefitSound(attachmentItem, player, SoundManager.UNINSTALL_SOUND);
                             ClientMessageUnloadAttachment message = new ClientMessageUnloadAttachment(inventory.selected, RefitTransform.getCurrentTransformType());
-                            PacketDistributor.sendToServer(message);
+                            net.neoforged.neoforge.network.PacketDistributor.sendToServer(message);
                         } else {
                             player.sendSystemMessage(Component.translatable("gui.tacz.gun_refit.unload.no_space"));
                         }
@@ -435,7 +435,7 @@ public class GunRefitScreen extends Screen {
             ItemStack gun = player.getMainHandItem();
             if (player.getMainHandItem().getItem() instanceof IGun) {
                 ClientMessageLaserColor message = new ClientMessageLaserColor(gun, player.getInventory().selected);
-                PacketDistributor.sendToServer(message);
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer(message);
             }
         }
         super.onClose();

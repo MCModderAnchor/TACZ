@@ -66,8 +66,7 @@ public enum GunPackLoader implements RepositorySource {
             }
         }
 
-        // 确保配置文件加载，这个阶段将比标准的forge配置文件加载早
-        PreLoadConfig.load(resourcePacksPath);
+        // NeoForge loads STARTUP configuration before pack discovery.
 
         // 仅在启动后的第一次加载时检查默认资源包是否需要导出；后续重载不重新导出
         if (firstLoad) {

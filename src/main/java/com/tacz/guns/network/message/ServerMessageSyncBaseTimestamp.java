@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class ServerMessageSyncBaseTimestamp implements CustomPacketPayload {
+    private static final Marker MARKER = MarkerManager.getMarker("SYNC_BASE_TIMESTAMP");
     public static final ServerMessageSyncBaseTimestamp INSTANCE = new ServerMessageSyncBaseTimestamp();
     public static final CustomPacketPayload.Type<ServerMessageSyncBaseTimestamp> TYPE = new CustomPacketPayload.Type<>(
         ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "server_sync_base_timestamp")
@@ -40,7 +41,7 @@ public class ServerMessageSyncBaseTimestamp implements CustomPacketPayload {
             long timestamp = GunTime.nowMillis();
             context.enqueueWork(() -> updateBaseTimestamp(timestamp));
         }
-        NetworkHandler.CHANNEL.reply(ClientMessageSyncBaseTimestamp.INSTANCE, context);
+        context.reply(ClientMessageSyncBaseTimestamp.INSTANCE);
     }
 
     @OnlyIn(Dist.CLIENT)

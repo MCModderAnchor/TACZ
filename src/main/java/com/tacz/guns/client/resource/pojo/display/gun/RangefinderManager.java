@@ -105,7 +105,7 @@ public final class RangefinderManager {
             showImpactPrediction = false;
             return false;
         }
-        if (!(player instanceof IClientPlayerGunOperator operator) || operator.getClientAimingProgress(mc.getFrameTime()) < 0.9f) {
+        if (!(player instanceof IClientPlayerGunOperator operator) || operator.getClientAimingProgress(mc.getTimer().getGameTimeDeltaPartialTick(true)) < 0.9f) {
             showImpactPrediction = false;
             return false;
         }
@@ -131,14 +131,14 @@ public final class RangefinderManager {
             clearResult();
             return;
         }
-        if (operator.getClientAimingProgress(Minecraft.getInstance().getFrameTime()) < 0.9f) {
+        if (operator.getClientAimingProgress(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true)) < 0.9f) {
             clearResult();
             return;
         }
 
         float maxDistance = config.getMaxDistance();
-        Vec3 start = player.getEyePosition(Minecraft.getInstance().getFrameTime());
-        Vec3 look = player.getViewVector(Minecraft.getInstance().getFrameTime());
+        Vec3 start = player.getEyePosition(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true));
+        Vec3 look = player.getViewVector(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true));
         Vec3 end = start.add(look.scale(maxDistance));
 
         BlockHitResult blockResult = BlockRayTrace.rayTraceBlocks(player.level(), new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
@@ -205,7 +205,7 @@ public final class RangefinderManager {
         if (speed <= 0.0f) {
             return;
         }
-        Vec3 look = player.getViewVector(Minecraft.getInstance().getFrameTime());
+        Vec3 look = player.getViewVector(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true));
         double drop = calculateDrop(distance, look.y, speed / 20.0f, bulletData.getGravity(), bulletData.getFriction());
         if (!Double.isFinite(drop)) {
             return;
@@ -232,7 +232,7 @@ public final class RangefinderManager {
 
     private static float getCurrentFov(LocalPlayer player, ItemStack stack, IGun iGun) {
         float configuredFov = Minecraft.getInstance().options.fov().get().floatValue();
-        float aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getFrameTime());
+        float aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true));
         AdsFov.Channel curve = TimelessAPI.getGunDisplay(stack)
                 .map(GunDisplayInstance::getAdsFov).map(AdsFov::getWorld).orElse(null);
         float fovProgress = curve == null ? (float) Easing.easeInExpo(aimingProgress)

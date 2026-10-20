@@ -232,8 +232,8 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         color = tag.contains(COLOR_TAG, Tag.TAG_INT) ? tag.getInt(COLOR_TAG) & 0xFFFFFF : -1;
         inheritedColor = color >= 0 && tag.getBoolean(INHERITED_COLOR_TAG);
         ItemStack[] previousItems = items.clone();
@@ -248,7 +248,7 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
                 CompoundTag entry = list.getCompound(i);
                 int slot = entry.getByte(SLOT_TAG) & 255;
                 if (isValidSlot(slot) && entry.contains(ITEM_TAG, Tag.TAG_COMPOUND)) {
-                    items[slot] = ItemStack.of(entry.getCompound(ITEM_TAG));
+                    items[slot] = ItemStack.parseOptional(registries, entry.getCompound(ITEM_TAG));
                 }
             }
         }
@@ -281,8 +281,8 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putString(SLOT_SHAPE_TAG, getBlockState().getValue(GunPegboardBlock.SHAPE).getSerializedName());
         if (color >= 0) tag.putInt(COLOR_TAG, color);
         if (inheritedColor) tag.putBoolean(INHERITED_COLOR_TAG, true);
@@ -291,7 +291,7 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
             if (!items[i].isEmpty()) {
                 CompoundTag entry = new CompoundTag();
                 entry.putByte(SLOT_TAG, (byte) i);
-                entry.put(ITEM_TAG, items[i].save(new CompoundTag()));
+                entry.put(ITEM_TAG, items[i].saveOptional(registries));
                 list.add(entry);
             }
         }
@@ -300,9 +300,9 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
+        saveAdditional(tag, registries);
         // 网络更新不能按结构镜像解释，客户端可能尚未收到对应的方块状态。
         tag.remove(SLOT_SHAPE_TAG);
         return tag;
@@ -313,8 +313,7 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    @Override
-    public AABB getRenderBoundingBox() {
-        return new AABB(worldPosition.offset(-2, -2, -2), worldPosition.offset(3, 3, 3));
+    public AABB getDisplayRenderBoundingBox() {
+        return new AABB(net.minecraft.world.phys.Vec3.atLowerCornerOf(worldPosition.offset(-2, -2, -2)), net.minecraft.world.phys.Vec3.atLowerCornerOf(worldPosition.offset(3, 3, 3)));
     }
 }

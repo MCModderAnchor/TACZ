@@ -38,6 +38,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GunDisplayCaseBlock extends BaseEntityBlock {
+    public static final com.mojang.serialization.MapCodec<GunDisplayCaseBlock> CODEC = simpleCodec(GunDisplayCaseBlock::new);
+    @Override
+    protected com.mojang.serialization.MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LOCKED = BooleanProperty.create("locked");
     public static final BooleanProperty LEFT = BooleanProperty.create("left");
@@ -85,7 +89,11 @@ public class GunDisplayCaseBlock extends BaseEntityBlock {
     );
 
     public GunDisplayCaseBlock() {
-        super(Properties.of().mapColor(MapColor.METAL).sound(SoundType.GLASS).strength(0.5F, 1200.0F).noOcclusion());
+        this(Properties.of().mapColor(MapColor.METAL).sound(SoundType.GLASS).strength(0.5F, 1200.0F).noOcclusion());
+    }
+
+    public GunDisplayCaseBlock(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(LOCKED, true)
@@ -142,7 +150,24 @@ public class GunDisplayCaseBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
+            BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        InteractionResult result = interact(state, level, pos, player, hand, hit);
+        return switch (result) {
+            case SUCCESS, SUCCESS_NO_ITEM_USED -> net.minecraft.world.ItemInteractionResult.SUCCESS;
+            case CONSUME -> net.minecraft.world.ItemInteractionResult.CONSUME;
+            case CONSUME_PARTIAL -> net.minecraft.world.ItemInteractionResult.CONSUME_PARTIAL;
+            case FAIL -> net.minecraft.world.ItemInteractionResult.FAIL;
+            default -> net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        };
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        return interact(state, level, pos, player, InteractionHand.MAIN_HAND, hit);
+    }
+
+    private InteractionResult interact(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ItemStack held = player.getItemInHand(hand);
         boolean holdingGun = held.getItem() instanceof IGun;
         if (player.isShiftKeyDown()) {

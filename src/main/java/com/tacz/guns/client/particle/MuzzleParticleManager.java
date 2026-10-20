@@ -500,7 +500,7 @@ public final class MuzzleParticleManager {
         if (gun == null) {
             return MuzzleAttachmentEffect.NONE;
         }
-        ItemStack muzzleAttachment = gun.getAttachment(gunItem, AttachmentType.MUZZLE);
+        ItemStack muzzleAttachment = gun.getAttachment(com.tacz.guns.client.util.ClientRegistryAccess.registries(), gunItem, AttachmentType.MUZZLE);
         if (muzzleAttachment.isEmpty()) {
             muzzleAttachment = gun.getBuiltinAttachment(gunItem, AttachmentType.MUZZLE);
         }

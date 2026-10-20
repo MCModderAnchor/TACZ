@@ -155,8 +155,8 @@ public class GunDisplayCaseBlockEntity extends BlockEntity implements GunDisplay
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         ItemStack[] previousItems = items.clone();
         byte[] previousRotations = rotations.clone();
         for (int i = 0; i < items.length; i++) {
@@ -169,7 +169,7 @@ public class GunDisplayCaseBlockEntity extends BlockEntity implements GunDisplay
                 CompoundTag entry = list.getCompound(i);
                 int slot = entry.getByte(SLOT_TAG) & 255;
                 if (isValidSlot(slot) && entry.contains(ITEM_TAG, Tag.TAG_COMPOUND)) {
-                    items[slot] = ItemStack.of(entry.getCompound(ITEM_TAG));
+                    items[slot] = ItemStack.parseOptional(registries, entry.getCompound(ITEM_TAG));
                 }
             }
         }
@@ -186,14 +186,14 @@ public class GunDisplayCaseBlockEntity extends BlockEntity implements GunDisplay
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         ListTag list = new ListTag();
         for (int i = 0; i < items.length; i++) {
             if (!items[i].isEmpty()) {
                 CompoundTag entry = new CompoundTag();
                 entry.putByte(SLOT_TAG, (byte) i);
-                entry.put(ITEM_TAG, items[i].save(new CompoundTag()));
+                entry.put(ITEM_TAG, items[i].saveOptional(registries));
                 list.add(entry);
             }
         }
@@ -202,9 +202,9 @@ public class GunDisplayCaseBlockEntity extends BlockEntity implements GunDisplay
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
+        saveAdditional(tag, registries);
         return tag;
     }
 
@@ -213,8 +213,7 @@ public class GunDisplayCaseBlockEntity extends BlockEntity implements GunDisplay
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    @Override
-    public AABB getRenderBoundingBox() {
-        return new AABB(worldPosition.offset(-2, -2, -2), worldPosition.offset(3, 3, 3));
+    public AABB getDisplayRenderBoundingBox() {
+        return new AABB(net.minecraft.world.phys.Vec3.atLowerCornerOf(worldPosition.offset(-2, -2, -2)), net.minecraft.world.phys.Vec3.atLowerCornerOf(worldPosition.offset(3, 3, 3)));
     }
 }

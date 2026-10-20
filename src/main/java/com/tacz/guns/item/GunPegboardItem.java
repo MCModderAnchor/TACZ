@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -17,7 +16,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class GunPegboardItem extends BlockItem implements DyeableLeatherItem {
+public class GunPegboardItem extends BlockItem {
+    public static boolean hasCustomColor(ItemStack stack) { return stack.has(net.minecraft.core.component.DataComponents.DYED_COLOR); }
+    public static int getColor(ItemStack stack) { return stack.getOrDefault(net.minecraft.core.component.DataComponents.DYED_COLOR, new net.minecraft.world.item.component.DyedItemColor(-1, false)).rgb(); }
+    public static void setColor(ItemStack stack, int color) { stack.set(net.minecraft.core.component.DataComponents.DYED_COLOR, new net.minecraft.world.item.component.DyedItemColor(color, false)); }
+
     public GunPegboardItem(Block block, Properties properties) {
         super(block, properties);
     }
@@ -45,8 +48,8 @@ public class GunPegboardItem extends BlockItem implements DyeableLeatherItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
         tooltip.add(Component.translatable("tooltip.tacz.gun_pegboard.dye").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.tacz.gun_pegboard.link_color").withStyle(ChatFormatting.GRAY));
     }

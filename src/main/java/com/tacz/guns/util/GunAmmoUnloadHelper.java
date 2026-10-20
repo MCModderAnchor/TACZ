@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
@@ -63,7 +62,7 @@ public final class GunAmmoUnloadHelper {
             return unloaded;
         }
 
-        IItemHandler inventory = shooter.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElse(null);
+        IItemHandler inventory = shooter.getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.ENTITY);
         int remaining = inventory == null ? unloaded : returnToAmmoBoxes(inventory, ammoId, ammoIndex.getStackSize(), unloaded);
         while (remaining > 0) {
             int count = Math.min(remaining, ammoIndex.getStackSize());

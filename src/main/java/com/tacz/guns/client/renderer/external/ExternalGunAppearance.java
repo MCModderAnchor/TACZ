@@ -179,7 +179,7 @@ public class ExternalGunAppearance {
                 continue;
             }
 
-            ItemStack attached = gun.getAttachment(stack, type);
+            ItemStack attached = gun.getAttachment(com.tacz.guns.client.util.ClientRegistryAccess.registries(), stack, type);
             if (attached.isEmpty()) {
                 attached = gun.getBuiltinAttachment(stack, type);
             }

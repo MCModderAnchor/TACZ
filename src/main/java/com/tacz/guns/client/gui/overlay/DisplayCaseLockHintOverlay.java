@@ -6,13 +6,11 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.gui.overlay.ForgeGui;
-import net.neoforged.neoforge.client.gui.overlay.IGuiOverlay;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 
 @net.neoforged.fml.common.EventBusSubscriber(value = Dist.CLIENT)
-public class DisplayCaseLockHintOverlay implements IGuiOverlay {
+public class DisplayCaseLockHintOverlay implements net.minecraft.client.gui.LayeredDraw.Layer {
     private static final int DISPLAY_TICKS = 40;
     private static final int Y_OFFSET = 32;
     private static Component message = Component.empty();
@@ -24,7 +22,9 @@ public class DisplayCaseLockHintOverlay implements IGuiOverlay {
     }
 
     @Override
-    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+    public void render(GuiGraphics graphics, net.minecraft.client.DeltaTracker delta) {
+        int width = graphics.guiWidth();
+        int height = graphics.guiHeight();
         if (ticksRemaining <= 0) {
             return;
         }
@@ -34,8 +34,8 @@ public class DisplayCaseLockHintOverlay implements IGuiOverlay {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && ticksRemaining > 0) {
+    public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
+        if (ticksRemaining > 0) {
             ticksRemaining--;
         }
     }

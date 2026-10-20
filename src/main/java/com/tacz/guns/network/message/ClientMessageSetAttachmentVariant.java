@@ -68,7 +68,7 @@ public class ClientMessageSetAttachmentVariant implements net.minecraft.network.
         if (gun == null || gun.hasAttachmentLock(gunItem)) {
             return;
         }
-        ItemStack attachmentItem = gun.getAttachment(gunItem, message.attachmentType);
+        ItemStack attachmentItem = gun.getAttachment(player.registryAccess(), gunItem, message.attachmentType);
         IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentItem);
         if (attachment == null || attachmentItem.isEmpty()) {
             return;
@@ -86,7 +86,7 @@ public class ClientMessageSetAttachmentVariant implements net.minecraft.network.
             }
             VariantHelper.setVariant(attachmentItem, message.variantId);
         }
-        gun.installAttachment(gunItem, attachmentItem);
+        gun.installAttachment(player.registryAccess(), gunItem, attachmentItem);
         GunRefitTrigger.INSTANCE.trigger(player, beforeRefit, gunItem);
         AttachmentPropertyManager.postChangeEvent(player, gunItem);
         player.inventoryMenu.broadcastChanges();

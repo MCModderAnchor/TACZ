@@ -41,6 +41,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class AmmoStorageBlock extends BaseEntityBlock {
+    public static final com.mojang.serialization.MapCodec<AmmoStorageBlock> CODEC = com.mojang.serialization.codecs.RecordCodecBuilder.mapCodec(instance -> instance.group(
+            com.mojang.serialization.Codec.INT.fieldOf("capacityStacks").forGetter((AmmoStorageBlock block) -> block.capacityStacks),
+            propertiesCodec()).apply(instance, AmmoStorageBlock::new));
+    @Override
+    protected com.mojang.serialization.MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final int IRON_CAPACITY_STACKS = 216;
     public static final int GOLD_CAPACITY_STACKS = 432;
@@ -53,7 +59,11 @@ public class AmmoStorageBlock extends BaseEntityBlock {
     }
 
     public AmmoStorageBlock(int capacityStacks) {
-        super(Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0F).requiresCorrectToolForDrops().dynamicShape());
+        this(capacityStacks, Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0F).requiresCorrectToolForDrops().dynamicShape());
+    }
+
+    public AmmoStorageBlock(int capacityStacks, Properties properties) {
+        super(properties);
         this.capacityStacks = capacityStacks;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
@@ -80,7 +90,24 @@ public class AmmoStorageBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
+            BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        InteractionResult result = interact(state, level, pos, player, hand, hit);
+        return switch (result) {
+            case SUCCESS, SUCCESS_NO_ITEM_USED -> net.minecraft.world.ItemInteractionResult.SUCCESS;
+            case CONSUME -> net.minecraft.world.ItemInteractionResult.CONSUME;
+            case CONSUME_PARTIAL -> net.minecraft.world.ItemInteractionResult.CONSUME_PARTIAL;
+            case FAIL -> net.minecraft.world.ItemInteractionResult.FAIL;
+            default -> net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        };
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        return interact(state, level, pos, player, InteractionHand.MAIN_HAND, hit);
+    }
+
+    private InteractionResult interact(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (!(blockEntity instanceof AmmoStorageBlockEntity storage)) {
             return InteractionResult.PASS;
@@ -99,7 +126,7 @@ public class AmmoStorageBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            NetworkHooks.openScreen(serverPlayer, storage);
+            serverPlayer.openMenu(storage);
         }
         return InteractionResult.CONSUME;
     }
@@ -124,7 +151,7 @@ public class AmmoStorageBlock extends BaseEntityBlock {
         }
         ammoBox.setAmmoCount(boxStack, current + extracted.getCount());
         player.displayClientMessage(Component.translatable("message.tacz.ammo_storage.picked", extracted.getHoverName(), extracted.getCount()), true);
-        player.level().playSound(null, player.blockPosition(), SoundEvents.ARMOR_EQUIP_IRON, SoundSource.PLAYERS, 0.8F, 1.0F);
+        player.level().playSound(null, player.blockPosition(), SoundEvents.ARMOR_EQUIP_IRON.value(), SoundSource.PLAYERS, 0.8F, 1.0F);
         return InteractionResult.CONSUME;
     }
 
@@ -133,7 +160,7 @@ public class AmmoStorageBlock extends BaseEntityBlock {
         BlockEntity blockEntity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         ItemStack stack = new ItemStack(state.getBlock());
         if (blockEntity instanceof AmmoStorageBlockEntity storage) {
-            CompoundTag tag = storage.saveWithoutMetadata();
+            CompoundTag tag = storage.saveWithoutMetadata(builder.getLevel().registryAccess());
             if (!tag.isEmpty()) {
                 BlockItem.setBlockEntityData(stack, ModBlocks.AMMO_STORAGE_BE.get(), tag);
             }

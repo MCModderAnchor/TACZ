@@ -165,7 +165,7 @@ public class FirstPersonRenderGunEvent {
             scopeId = iGun.getBuiltInAttachmentId(stack, AttachmentType.SCOPE);
         }
         Optional<ClientAttachmentIndex> scopeIndexOptional = DefaultAssets.isEmptyAttachmentId(scopeId) ? Optional.empty() : TimelessAPI.getClientAttachmentIndex(scopeId);
-        Optional<ClientAttachmentVariantIndex> scopeVariantOptional = TimelessAPI.getClientAttachmentVariantIndex(iGun.getAttachment(stack, AttachmentType.SCOPE));
+        Optional<ClientAttachmentVariantIndex> scopeVariantOptional = TimelessAPI.getClientAttachmentVariantIndex(iGun.getAttachment(com.tacz.guns.client.util.ClientRegistryAccess.registries(), stack, AttachmentType.SCOPE));
         CompoundTag scopeTag = iGun.getAttachmentTag(stack, AttachmentType.SCOPE);
         int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
         int viewIndex = 1;

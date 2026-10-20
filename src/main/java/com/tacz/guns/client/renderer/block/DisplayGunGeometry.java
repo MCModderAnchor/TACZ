@@ -49,7 +49,7 @@ public class DisplayGunGeometry {
     }
 
     public static ItemStack effectiveAttachment(IGun gun, ItemStack stack, AttachmentType type) {
-        ItemStack attached = gun.getAttachment(stack, type);
+        ItemStack attached = gun.getAttachment(com.tacz.guns.client.util.ClientRegistryAccess.registries(), stack, type);
         return attached.isEmpty() ? gun.getBuiltinAttachment(stack, type) : attached;
     }
 

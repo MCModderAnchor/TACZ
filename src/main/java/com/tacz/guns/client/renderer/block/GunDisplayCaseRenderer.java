@@ -130,4 +130,8 @@ public class GunDisplayCaseRenderer implements BlockEntityRenderer<GunDisplayCas
     public boolean shouldRender(GunDisplayCaseBlockEntity blockEntity, Vec3 cameraPos) {
         return Vec3.atCenterOf(blockEntity.getBlockPos()).closerThan(cameraPos, this.getViewDistance());
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(GunDisplayCaseBlockEntity blockEntity) {
+        return blockEntity.getDisplayRenderBoundingBox();
+    }
 }

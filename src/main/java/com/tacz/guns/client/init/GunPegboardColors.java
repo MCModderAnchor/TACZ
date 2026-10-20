@@ -6,7 +6,7 @@ import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.init.ModItems;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.DyeableLeatherItem;
+import com.tacz.guns.item.GunPegboardItem;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,15 +24,15 @@ public final class GunPegboardColors {
 
     @SubscribeEvent
     public static void itemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tint) -> ((DyeableLeatherItem) stack.getItem()).hasCustomColor(stack)
-                ? ((DyeableLeatherItem) stack.getItem()).getColor(stack) : -1, ModItems.GUN_PEGBOARD.get(), ModItems.GLOW_GUN_PEGBOARD.get());
+        event.register((stack, tint) -> GunPegboardItem.hasCustomColor(stack)
+                ? net.minecraft.util.FastColor.ARGB32.opaque(GunPegboardItem.getColor(stack)) : -1, ModItems.GUN_PEGBOARD.get(), ModItems.GLOW_GUN_PEGBOARD.get());
     }
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> ItemProperties.register(ModItems.GUN_PEGBOARD.get(), ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "dyed"),
-                (stack, level, entity, seed) -> ((DyeableLeatherItem) stack.getItem()).hasCustomColor(stack) ? 1 : 0));
+                (stack, level, entity, seed) -> GunPegboardItem.hasCustomColor(stack) ? 1 : 0));
         event.enqueueWork(() -> ItemProperties.register(ModItems.GLOW_GUN_PEGBOARD.get(), ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "dyed"),
-                (stack, level, entity, seed) -> ((DyeableLeatherItem) stack.getItem()).hasCustomColor(stack) ? 1 : 0));
+                (stack, level, entity, seed) -> GunPegboardItem.hasCustomColor(stack) ? 1 : 0));
     }
 }

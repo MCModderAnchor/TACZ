@@ -171,7 +171,7 @@ public final class HitSurfaceParticleSpawner {
         boolean hasArguments = trimmedName.split("\\s+", 2).length > 1;
         if (hasArguments) {
             try {
-                return ParticleArgument.readParticle(new StringReader(trimmedName), BuiltInRegistries.PARTICLE_TYPE.asLookup());
+                return ParticleArgument.readParticle(new StringReader(trimmedName), com.tacz.guns.client.util.ClientRegistryAccess.registries());
             } catch (CommandSyntaxException ignored) {
                 return null;
             }
@@ -197,7 +197,7 @@ public final class HitSurfaceParticleSpawner {
             return null;
         }
         try {
-            return ParticleArgument.readParticle(new StringReader(trimmedName), BuiltInRegistries.PARTICLE_TYPE.asLookup());
+            return ParticleArgument.readParticle(new StringReader(trimmedName), com.tacz.guns.client.util.ClientRegistryAccess.registries());
         } catch (CommandSyntaxException ignored) {
             return null;
         }

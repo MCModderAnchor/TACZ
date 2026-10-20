@@ -4,9 +4,9 @@ import com.tacz.guns.item.GunPegboardItem;
 import com.tacz.guns.init.ModRecipe;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.DyeableLeatherItem;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -17,15 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GunPegboardDyeRecipe extends CustomRecipe {
-    public GunPegboardDyeRecipe(ResourceLocation id, CraftingBookCategory category) {
-        super(id, category);
+    public GunPegboardDyeRecipe(CraftingBookCategory category) {
+        super(category);
     }
 
     @Override
-    public boolean matches(CraftingContainer container, Level level) {
+    public boolean matches(CraftingInput container, Level level) {
         boolean pegboard = false;
         boolean dye = false;
-        for (int slot = 0; slot < container.getContainerSize(); slot++) {
+        for (int slot = 0; slot < container.size(); slot++) {
             ItemStack stack = container.getItem(slot);
             if (stack.isEmpty()) continue;
             if (stack.getItem() instanceof GunPegboardItem) {
@@ -41,10 +41,10 @@ public class GunPegboardDyeRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
+    public ItemStack assemble(CraftingInput container, net.minecraft.core.HolderLookup.Provider registryAccess) {
         ItemStack pegboard = ItemStack.EMPTY;
         List<DyeItem> dyes = new ArrayList<>();
-        for (int slot = 0; slot < container.getContainerSize(); slot++) {
+        for (int slot = 0; slot < container.size(); slot++) {
             ItemStack stack = container.getItem(slot);
             if (stack.isEmpty()) continue;
             if (stack.getItem() instanceof GunPegboardItem && pegboard.isEmpty()) {
@@ -55,7 +55,7 @@ public class GunPegboardDyeRecipe extends CustomRecipe {
                 return ItemStack.EMPTY;
             }
         }
-        return pegboard.isEmpty() || dyes.isEmpty() ? ItemStack.EMPTY : DyeableLeatherItem.dyeArmor(pegboard, dyes);
+        return pegboard.isEmpty() || dyes.isEmpty() ? ItemStack.EMPTY : DyedItemColor.applyDyes(pegboard, dyes);
     }
 
     @Override

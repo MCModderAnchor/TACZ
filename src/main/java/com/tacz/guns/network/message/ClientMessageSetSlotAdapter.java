@@ -72,7 +72,7 @@ public class ClientMessageSetSlotAdapter implements net.minecraft.network.protoc
             return;
         }
 
-        ItemStack attachmentItem = gun.getAttachment(gunItem, message.attachmentType);
+        ItemStack attachmentItem = gun.getAttachment(player.registryAccess(), gunItem, message.attachmentType);
         ResourceLocation attachmentId = null;
         if (!attachmentItem.isEmpty()) {
             IAttachment attachment = IAttachment.getIAttachmentOrNull(attachmentItem);

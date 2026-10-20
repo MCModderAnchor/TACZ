@@ -142,7 +142,7 @@ public class CameraSetupEvent {
                     .orElse((float) event.getFOV());
             CompoundTag scopeTag = iGun.getAttachmentTag(stack, AttachmentType.SCOPE);
             int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
-            Optional<ClientAttachmentVariantIndex> scopeVariant = TimelessAPI.getClientAttachmentVariantIndex(iGun.getAttachment(stack, AttachmentType.SCOPE));
+            Optional<ClientAttachmentVariantIndex> scopeVariant = TimelessAPI.getClientAttachmentVariantIndex(iGun.getAttachment(com.tacz.guns.client.util.ClientRegistryAccess.registries(), stack, AttachmentType.SCOPE));
             ResourceLocation resolvedScopeItemId = scopeItemId;
             // 常驻状态使用枪械本身 model_fov；开镜状态优先使用配件 fov，若无则使用枪械本身 zoom_model_fov。
             float modifiedFov = scopeVariant

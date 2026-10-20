@@ -118,7 +118,7 @@ public class MuzzleFlashRender implements IFunctionalRenderer {
             }
             poseStack2.popPose();
             if (IrisCompat.isPackInUseQuick()) {
-                multiBufferSource.endBatch();
+                com.tacz.guns.util.RenderHelper.endBatch(multiBufferSource);
             }
         }
     }

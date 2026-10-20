@@ -108,10 +108,10 @@ public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
 
     private static void quad(VertexConsumer consumer, Matrix4f pose, float minX, float minY, float maxX, float maxY,
                              int r, int g, int b, int a) {
-        consumer.vertex(pose, minX, minY, 0.0f).color(r, g, b, a).uv(0.0f, 0.0f).uv2(FULL_BRIGHT).endVertex();
-        consumer.vertex(pose, minX, maxY, 0.0f).color(r, g, b, a).uv(0.0f, 1.0f).uv2(FULL_BRIGHT).endVertex();
-        consumer.vertex(pose, maxX, maxY, 0.0f).color(r, g, b, a).uv(1.0f, 1.0f).uv2(FULL_BRIGHT).endVertex();
-        consumer.vertex(pose, maxX, minY, 0.0f).color(r, g, b, a).uv(1.0f, 0.0f).uv2(FULL_BRIGHT).endVertex();
+        consumer.addVertex(pose, minX, minY, 0.0f).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(FULL_BRIGHT);
+        consumer.addVertex(pose, minX, maxY, 0.0f).setColor(r, g, b, a).setUv(0.0f, 1.0f).setLight(FULL_BRIGHT);
+        consumer.addVertex(pose, maxX, maxY, 0.0f).setColor(r, g, b, a).setUv(1.0f, 1.0f).setLight(FULL_BRIGHT);
+        consumer.addVertex(pose, maxX, minY, 0.0f).setColor(r, g, b, a).setUv(1.0f, 0.0f).setLight(FULL_BRIGHT);
     }
 
     private static class ImpactPredictionRenderState extends RenderStateShard {

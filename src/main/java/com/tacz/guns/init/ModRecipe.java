@@ -21,5 +21,5 @@ public class ModRecipe {
     public static DeferredHolder<RecipeType<?>, RecipeType<GunSmithTableRecipe>> GUN_SMITH_TABLE_CRAFTING = RECIPE_TYPES.register("gun_smith_table_crafting", () ->
         RecipeType.simple(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "gun_smith_table_crafting")));
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<GunPegboardDyeRecipe>> GUN_PEGBOARD_DYE_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("gun_pegboard_dye", () -> new SimpleCraftingRecipeSerializer<>(GunPegboardDyeRecipe::new));
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<AmmoStorageUpgradeRecipe>> AMMO_STORAGE_UPGRADE_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("ammo_storage_upgrade", () -> new SimpleCraftingRecipeSerializer<>(AmmoStorageUpgradeRecipe::new));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AmmoStorageUpgradeRecipe>> AMMO_STORAGE_UPGRADE_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("ammo_storage_upgrade", AmmoStorageUpgradeRecipe.Serializer::new);
 }

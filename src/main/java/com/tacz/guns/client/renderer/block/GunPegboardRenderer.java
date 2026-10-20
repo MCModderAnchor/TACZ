@@ -130,4 +130,8 @@ public class GunPegboardRenderer implements BlockEntityRenderer<GunPegboardBlock
     public boolean shouldRender(GunPegboardBlockEntity blockEntity, Vec3 cameraPos) {
         return Vec3.atCenterOf(blockEntity.getBlockPos()).closerThan(cameraPos, this.getViewDistance());
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(GunPegboardBlockEntity blockEntity) {
+        return blockEntity.getDisplayRenderBoundingBox();
+    }
 }

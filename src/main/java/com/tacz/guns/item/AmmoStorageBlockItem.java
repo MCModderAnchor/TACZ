@@ -48,15 +48,17 @@ public class AmmoStorageBlockItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
-        super.appendHoverText(stack, level, components, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag flag) {
+        super.appendHoverText(stack, context, components, flag);
         components.add(Component.translatable("tooltip.tacz.ammo_storage.description").withStyle(ChatFormatting.GRAY));
         components.add(Component.translatable("tooltip.tacz.ammo_storage.description.extra").withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-        CompoundTag blockEntityTag = BlockItem.getBlockEntityData(stack);
+        CompoundTag blockEntityTag = stack.getOrDefault(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        var level = net.minecraft.client.Minecraft.getInstance().level;
+        if (level == null) return Optional.empty();
         if (blockEntityTag == null || !blockEntityTag.contains(ENTRIES_TAG, Tag.TAG_LIST)) {
             return Optional.empty();
         }
@@ -67,7 +69,7 @@ public class AmmoStorageBlockItem extends BlockItem {
             if (!entryTag.contains(STACK_TAG, Tag.TAG_COMPOUND)) {
                 continue;
             }
-            ItemStack entryStack = ItemStack.of(entryTag.getCompound(STACK_TAG));
+            ItemStack entryStack = ItemStack.parseOptional(level.registryAccess(), entryTag.getCompound(STACK_TAG));
             long count = entryTag.getLong(COUNT_TAG);
             if (entryStack.isEmpty() || count <= 0) {
                 continue;

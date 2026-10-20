@@ -60,13 +60,13 @@ public class ClientSetupEvent {
     }
 
     @SubscribeEvent
-    public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event) {
+    public static void onRegisterGuiOverlays(RegisterGuiLayersEvent event) {
         // 注册 HUD
-        event.registerAboveAll("tac_gun_hud_overlay", new GunHudOverlay());
-        event.registerAboveAll("tac_heat_bar", new HeatBarOverlay());
-        event.registerAboveAll("tac_kill_amount_overlay", new KillAmountOverlay());
-        event.registerAbove(CROSSHAIR.id(), "tac_interact_key_overlay", new InteractKeyTextOverlay());
-        event.registerAbove(CROSSHAIR.id(), "tac_display_case_lock_hint", new DisplayCaseLockHintOverlay());
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "tac_gun_hud_overlay"), new GunHudOverlay());
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "tac_heat_bar"), new HeatBarOverlay());
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "tac_kill_amount_overlay"), new KillAmountOverlay());
+        event.registerAbove(CROSSHAIR, ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "tac_interact_key_overlay"), new InteractKeyTextOverlay());
+        event.registerAbove(CROSSHAIR, ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "tac_display_case_lock_hint"), new DisplayCaseLockHintOverlay());
 
     }
 

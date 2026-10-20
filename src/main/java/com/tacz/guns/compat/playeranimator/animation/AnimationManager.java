@@ -32,9 +32,9 @@ public class AnimationManager {
     private static final Map<AbstractClientPlayer, Integer> LAST_UPDATE_TICK = new WeakHashMap<>();
 
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event) {
+    public void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (event.phase != TickEvent.Phase.END || minecraft.level == null || minecraft.isPaused()) {
+        if (minecraft.level == null || minecraft.isPaused()) {
             return;
         }
         for (AbstractClientPlayer player : minecraft.level.players()) {

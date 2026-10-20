@@ -1,3 +1,4 @@
 {
-  "type": "tacz:ammo_storage_upgrade"
+  "type": "tacz:ammo_storage_upgrade",
+  "diamond": true
 }

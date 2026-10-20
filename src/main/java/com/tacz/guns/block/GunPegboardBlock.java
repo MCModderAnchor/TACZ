@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -44,6 +43,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class GunPegboardBlock extends BaseEntityBlock {
+    public static final com.mojang.serialization.MapCodec<GunPegboardBlock> CODEC = com.mojang.serialization.codecs.RecordCodecBuilder.mapCodec(instance -> instance.group(
+            com.mojang.serialization.Codec.BOOL.fieldOf("glowing").forGetter((GunPegboardBlock block) -> block.glowing),
+            propertiesCodec()).apply(instance, GunPegboardBlock::new));
+    @Override
+    protected com.mojang.serialization.MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty DYED = BooleanProperty.create("dyed");
     public static final EnumProperty<PegboardShape> SHAPE = EnumProperty.create("shape", PegboardShape.class);
@@ -58,7 +63,11 @@ public class GunPegboardBlock extends BaseEntityBlock {
     }
 
     public GunPegboardBlock(boolean glowing) {
-        super(Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0F, 6.0F).noOcclusion().lightLevel(state -> glowing ? 10 : 0));
+        this(glowing, Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0F, 6.0F).noOcclusion().lightLevel(state -> glowing ? 10 : 0));
+    }
+
+    public GunPegboardBlock(boolean glowing, Properties properties) {
+        super(properties.lightLevel(state -> glowing ? 10 : 0));
         this.glowing = glowing;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(DYED, false).setValue(SHAPE, PegboardShape.STRAIGHT));
     }
@@ -149,7 +158,24 @@ public class GunPegboardBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
+            BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        InteractionResult result = interact(state, level, pos, player, hand, hit);
+        return switch (result) {
+            case SUCCESS, SUCCESS_NO_ITEM_USED -> net.minecraft.world.ItemInteractionResult.SUCCESS;
+            case CONSUME -> net.minecraft.world.ItemInteractionResult.CONSUME;
+            case CONSUME_PARTIAL -> net.minecraft.world.ItemInteractionResult.CONSUME_PARTIAL;
+            case FAIL -> net.minecraft.world.ItemInteractionResult.FAIL;
+            default -> net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        };
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        return interact(state, level, pos, player, InteractionHand.MAIN_HAND, hit);
+    }
+
+    private InteractionResult interact(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (player.getItemInHand(hand).is(Items.DEBUG_STICK)) return InteractionResult.PASS;
         if (player.getItemInHand(hand).getItem() instanceof GunPegboardItem) {
             return InteractionResult.PASS;
@@ -233,7 +259,7 @@ public class GunPegboardBlock extends BaseEntityBlock {
         if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof GunPegboardBlockEntity pegboard) {
             for (ItemStack drop : drops) {
                 if (drop.is(asItem()) && pegboard.getColor() >= 0 && !pegboard.hasInheritedColor()) {
-                    ((DyeableLeatherItem) drop.getItem()).setColor(drop, pegboard.getColor());
+                    GunPegboardItem.setColor(drop, pegboard.getColor());
                 }
             }
         }
@@ -241,10 +267,10 @@ public class GunPegboardBlock extends BaseEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, net.minecraft.world.level.LevelReader level, BlockPos pos, Player player) {
         ItemStack stack = new ItemStack(asItem());
         if (level.getBlockEntity(pos) instanceof GunPegboardBlockEntity pegboard && pegboard.getColor() >= 0) {
-            ((DyeableLeatherItem) stack.getItem()).setColor(stack, pegboard.getColor());
+            GunPegboardItem.setColor(stack, pegboard.getColor());
         }
         return stack;
     }

@@ -22,5 +22,9 @@ public enum DataType implements StringRepresentable {
     ATTACHMENT_VARIANT_DATA,
     ATTACHMENT_VARIANT_INDEX,
     SLOT_ADAPTER_DATA,
-    SLOT_ADAPTER_INDEX,
+    SLOT_ADAPTER_INDEX;
+
+    public static final Codec<DataType> CODEC = StringRepresentable.fromEnum(DataType::values);
+    @Override
+    public String getSerializedName() { return name(); }
 }

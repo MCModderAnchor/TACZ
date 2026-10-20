@@ -32,7 +32,7 @@ public class ServerMessageGunFinishReload implements net.minecraft.network.proto
 
     public static void encode(ServerMessageGunFinishReload message, RegistryFriendlyByteBuf buf) {
         buf.writeVarInt(message.shooterId);
-        buf.writeItem(message.gunItemStack);
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, message.gunItemStack);
     }
 
     public static ServerMessageGunFinishReload decode(RegistryFriendlyByteBuf buf) {

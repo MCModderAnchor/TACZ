@@ -32,7 +32,7 @@ public class ServerMessageGunFirePost implements net.minecraft.network.protocol.
 
     public static void encode(ServerMessageGunFirePost message, RegistryFriendlyByteBuf buf) {
         buf.writeVarInt(message.shooterId);
-        buf.writeItem(message.gunItemStack);
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, message.gunItemStack);
     }
 
     public static ServerMessageGunFirePost decode(RegistryFriendlyByteBuf buf) {

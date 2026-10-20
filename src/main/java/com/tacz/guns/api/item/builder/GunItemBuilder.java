@@ -96,6 +96,8 @@ public final class GunItemBuilder {
         return gun;
     }
 
+    public ItemStack build() { return build(null); }
+
     public ItemStack build(HolderLookup.Provider provider) {
         if (!this.attachments.isEmpty() && provider == null) throw new IllegalArgumentException("'provider' must not be null if attachments are present");
         String itemType = TimelessAPI.getCommonGunIndex(gunId).map(index -> index.getPojo().getItemType()).orElse(null);
@@ -126,11 +128,11 @@ public final class GunItemBuilder {
             }
             ItemStack attachmentStack = AttachmentItemBuilder.create().setId(id).build();
             VirtualOemAttachment.mark(attachmentStack);
-            iGun.installAttachment(provider, gun, attachmentStack);
+            iGun.installAttachment(provider == null ? net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY) : provider, gun, attachmentStack);
         });
         this.attachments.forEach((type, id) -> {
             ItemStack attachmentStack = AttachmentItemBuilder.create().setId(id).build();
-            iGun.installAttachment(provider, gun, attachmentStack);
+            iGun.installAttachment(provider == null ? net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY) : provider, gun, attachmentStack);
         });
     }
 }

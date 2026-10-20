@@ -20,9 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +33,6 @@ public class AmmoStorageBlockEntity extends BlockEntity implements MenuProvider 
 
     private final AmmoStorageInventory inventory = new AmmoStorageInventory(MAX_AMMO_TYPES, this::getCapacityStacks,
             AmmoStorageHelper::isValidAmmo, AmmoStorageHelper::getStackSize, this::onInventoryChanged);
-    private LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> inventory);
 
     public AmmoStorageBlockEntity(BlockPos pos, BlockState state) {
         super(TYPE, pos, state);
@@ -111,24 +107,8 @@ public class AmmoStorageBlockEntity extends BlockEntity implements MenuProvider 
         return new AmmoStorageMenu(id, inventory, this);
     }
 
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        itemHandler.invalidate();
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        itemHandler = LazyOptional.of(() -> inventory);
-    }
-
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (!isRemoved() && cap == ForgeCapabilities.ITEM_HANDLER) {
-            return itemHandler.cast();
-        }
-        return super.getCapability(cap, side);
+    public IItemHandler getItemHandler() {
+        return inventory;
     }
 
     private void onInventoryChanged() {

@@ -33,7 +33,7 @@ public class ModBlocks {
     public static net.neoforged.neoforge.registries.DeferredBlock<Block> AMMO_STORAGE = BLOCKS.register("ammo_storage", () -> new AmmoStorageBlock(AmmoStorageBlock.IRON_CAPACITY_STACKS));
     public static net.neoforged.neoforge.registries.DeferredBlock<Block> AMMO_STORAGE_GOLD = BLOCKS.register("ammo_storage_gold", () -> new AmmoStorageBlock(AmmoStorageBlock.GOLD_CAPACITY_STACKS));
     public static net.neoforged.neoforge.registries.DeferredBlock<Block> AMMO_STORAGE_DIAMOND = BLOCKS.register("ammo_storage_diamond", () -> new AmmoStorageBlock(AmmoStorageBlock.DIAMOND_CAPACITY_STACKS));
-    public static net.neoforged.neoforge.registries.DeferredBlock<Block> GUN_DISPLAY_CASE = BLOCKS.register("gun_display_case", GunDisplayCaseBlock::new);
+    public static net.neoforged.neoforge.registries.DeferredBlock<Block> GUN_DISPLAY_CASE = BLOCKS.register("gun_display_case", () -> new GunDisplayCaseBlock());
 
     public static net.neoforged.neoforge.registries.DeferredHolder<BlockEntityType<?>, BlockEntityType<GunSmithTableBlockEntity>> GUN_SMITH_TABLE_BE = TILE_ENTITIES.register("gun_smith_table", () -> GunSmithTableBlockEntity.TYPE);
     public static net.neoforged.neoforge.registries.DeferredHolder<BlockEntityType<?>, BlockEntityType<TargetBlockEntity>> TARGET_BE = TILE_ENTITIES.register("target", () -> TargetBlockEntity.TYPE);

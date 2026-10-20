@@ -76,9 +76,9 @@ public class GunModPlugin implements IModPlugin {
             });
         }
 
-        List<CraftingRecipe> ammoStorageUpgradeRecipes = recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream()
-                .filter(AmmoStorageUpgradeRecipe.class::isInstance)
-                .map(recipe -> expandToShapedRecipe((AmmoStorageUpgradeRecipe) recipe))
+        List<RecipeHolder<CraftingRecipe>> ammoStorageUpgradeRecipes = recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream()
+                .filter(recipe -> recipe.value() instanceof AmmoStorageUpgradeRecipe)
+                .map(GunModPlugin::expandToShapedRecipe)
                 .toList();
         registration.addRecipes(RecipeTypes.CRAFTING, ammoStorageUpgradeRecipes);
 
@@ -94,17 +94,13 @@ public class GunModPlugin implements IModPlugin {
      * 其 isSpecial() 返回 true。JEI 无法处理特殊配方（不会读取其布局与产物，导致无法通过物品检索到配方）。
      * 这里参照原版 JEI 内置插件对特殊配方的处理方式，将其展开为一个等价的、JEI 能够识别的 {@link ShapedRecipe}。
      */
-    private static CraftingRecipe expandToShapedRecipe(AmmoStorageUpgradeRecipe recipe) {
+    private static RecipeHolder<CraftingRecipe> expandToShapedRecipe(RecipeHolder<CraftingRecipe> holder) {
+        AmmoStorageUpgradeRecipe recipe = (AmmoStorageUpgradeRecipe) holder.value();
         RegistryAccess registryAccess = Minecraft.getInstance().level.registryAccess();
-        return new ShapedRecipe(
-                recipe.getId(),
-                "",
-                CraftingBookCategory.MISC,
-                recipe.getRecipeWidth(),
-                recipe.getRecipeHeight(),
-                recipe.getIngredients(),
-                recipe.getResultItem(registryAccess)
-        );
+        var pattern = new net.minecraft.world.item.crafting.ShapedRecipePattern(recipe.getRecipeWidth(),
+                recipe.getRecipeHeight(), recipe.getIngredients(), java.util.Optional.empty());
+        return new RecipeHolder<>(holder.id(), new ShapedRecipe("", CraftingBookCategory.MISC, pattern,
+                recipe.getResultItem(registryAccess)));
     }
 
     @Override
@@ -121,7 +117,7 @@ public class GunModPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-        for (RecipeType<GunSmithTableRecipe> type : recipeTypeMap.values()) {
+        for (RecipeType<RecipeHolder<GunSmithTableRecipe>> type : recipeTypeMap.values()) {
             registration.addRecipeTransferHandler(new GunSmithTableTransferHandler(type, registration.getTransferHelper()), type);
         }
     }

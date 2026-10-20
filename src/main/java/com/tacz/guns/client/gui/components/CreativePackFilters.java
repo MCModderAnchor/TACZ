@@ -256,7 +256,7 @@ public class CreativePackFilters {
             RenderSystem.enableBlend();
             // Native left-side tabs keep highlights above/left and shadows below.
             // Preserve the corners and the selected tab's join to the panel; only tile the center.
-            graphics.blitNineSliced(TAB_TEXTURE, getX(), getY(), selected ? 31 : 28, TAB_HEIGHT,
+            com.tacz.guns.client.gui.components.GuiTextureHelper.blitNineSliced(graphics, TAB_TEXTURE, getX(), getY(), selected ? 31 : 28, TAB_HEIGHT,
                     3, selected ? 35 : 30, TAB_HEIGHT, selected ? 188 : 153, 2);
             if (option.logo() != null) {
                 // UVs cover the full image, independently of its pixel dimensions.

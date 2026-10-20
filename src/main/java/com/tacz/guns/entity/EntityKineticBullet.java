@@ -64,7 +64,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.entity.PartEntity;
-import net.neoforged.fml.DistExecutor;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -527,7 +526,7 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
             if (maxDistance > 0 && player != owner && player.distanceToSqr(hitVec) > maxDistanceSqr) {
                 continue;
             }
-            NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), message);
+            NetworkHandler.sendToClientPlayer(message, player);
         }
     }
 

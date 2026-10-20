@@ -21,8 +21,8 @@ public class MenuIntegration implements IExtensionPoint {
     public static ConfigBuilder getConfigBuilder() {
         ConfigBuilder root = ConfigBuilder.create().setTitle(Component.literal("Timeless and Classics Guns"));
         root.setSavingRunnable(() -> {
-            CommonConfig.spec.save();
-            ClientConfig.spec.save();
+            CommonConfig.COMMON_CONFIG_SPEC.save();
+            ClientConfig.CLIENT_CONFIG_SPEC.save();
         });
         root.setGlobalized(true);
         root.setGlobalizedExpanded(false);

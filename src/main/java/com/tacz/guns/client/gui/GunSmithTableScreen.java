@@ -256,11 +256,11 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 || !this.menu.canSelectRecipe(recipeId, this.minecraft.level.getRecipeManager())) {
             return;
         }
-        GunSmithTableRecipe recipe = this.getSelectedRecipe(recipeId);
+        RecipeHolder<GunSmithTableRecipe> recipe = this.getSelectedRecipe(recipeId);
         if (recipe == null) {
             return;
         }
-        ResourceLocation type = recipe.getTab();
+        ResourceLocation type = recipe.value().getTab();
         List<ResourceLocation> recipeList = this.recipes.get(type);
         if (recipeList == null || !recipeList.contains(recipeId)) {
             // User filters can hide a valid recipe; table restrictions still apply in classifyRecipes.
@@ -546,10 +546,10 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     }
 
     @Override
-    public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
         if (selectedRecipeList != null && !selectedRecipeList.isEmpty()
                 && pMouseX > leftPos + 143 && pMouseX < leftPos + 143 + 94 && pMouseY > topPos + 66 && pMouseY < topPos + 66 + 85) {
-            if (pDelta > 0) {
+            if (pScrollY > 0) {
                 this.indexPage = Math.max(0, this.indexPage - 1);
             } else {
                 int maxIndexPage = (selectedRecipeList.size() - 1) / 6;
@@ -717,7 +717,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         if (this.selectedRecipe == null) {
             return;
         }
-        List<GunSmithTableIngredient> inputs = this.selectedRecipe.getInputs();
+        List<GunSmithTableIngredient> inputs = this.selectedRecipe.value().getInputs();
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 2; j++) {
                 int index = i * 2 + j;
@@ -747,7 +747,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
     private List<Component> getIngredientTooltip(ItemStack item) {
         LocalPlayer player = Minecraft.getInstance().player;
         TooltipFlag tooltipFlag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
-        List<Component> tooltip = new ArrayList<>(item.getTooltipLines(player, tooltipFlag));
+        List<Component> tooltip = new ArrayList<>(item.getTooltipLines(net.minecraft.world.item.Item.TooltipContext.of(player.level()), player, tooltipFlag));
         for (CreativeModeTab tab : CreativeModeTabRegistry.getSortedCreativeModeTabs()) {
             if (!tab.hasSearchBar() && tab.contains(item)) {
                 tooltip.add(Math.min(1, tooltip.size()), tab.getDisplayName().copy().withStyle(ChatFormatting.BLUE));
@@ -788,8 +788,8 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         posestack.scale(1.0F, -1.0F, 1.0F);
         posestack.scale(scale, scale, scale);
         float rot = (GunTime.nowMillis() % (int) (rotationPeriod * 1000)) * (360f / (rotationPeriod * 1000));
-        posestack.mulPose(Axis.XP.rotationDegrees(rotPitch));
-        posestack.mulPose(Axis.YP.rotationDegrees(rot));
+        posestack.rotate(Axis.XP.rotationDegrees(rotPitch));
+        posestack.rotate(Axis.YP.rotationDegrees(rot));
         RenderSystem.applyModelViewMatrix();
         PoseStack tmpPose = new PoseStack();
         MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
@@ -815,7 +815,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         gui.blit(SIDE, leftPos, topPos, 0, 0, 134, 187);
         if (!this.emptyByHandFilterMessage.isEmpty()) {
             // Reuse the ingredient panel's frame as one panel without interior dividers.
-            gui.blitNineSliced(TEXTURE, leftPos + 136, topPos, 208, this.imageHeight + 1, 4, 96, 107, 112, 19);
+            com.tacz.guns.client.gui.components.GuiTextureHelper.blitNineSliced(gui, TEXTURE, leftPos + 136, topPos, 208, this.imageHeight + 1, 4, 96, 107, 112, 19);
         } else {
             gui.blit(TEXTURE, leftPos + 136, topPos + 27, 0, 0, 208, 160);
         }

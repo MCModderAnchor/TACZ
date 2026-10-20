@@ -369,7 +369,10 @@ public interface GunItemDataAccessor extends IGun {
             CompoundTag attachmentTag = this.getAttachmentTag(gunItem, AttachmentType.SCOPE);
             int zoomNumber = builtin ? 0 : AttachmentItemDataAccessor.getZoomNumberFromTag(attachmentTag);
             ResourceLocation resolvedScopeId = scopeId;
-            float[] zooms = TimelessAPI.getClientAttachmentVariantIndex(getAttachment(gunItem, AttachmentType.SCOPE))
+            ResourceLocation variantId = attachmentTag == null ? null : ResourceLocation.tryParse(attachmentTag.getString("Variant"));
+            float[] zooms = java.util.Optional.ofNullable(variantId)
+                    .filter(id -> TimelessAPI.getCommonAttachmentVariantIndex(id).map(index -> index.appliesTo(resolvedScopeId)).orElse(false))
+                    .flatMap(TimelessAPI::getClientAttachmentVariantIndex)
                     .map(ClientAttachmentVariantIndex::getZoom)
                     .orElseGet(() -> TimelessAPI.getClientAttachmentIndex(resolvedScopeId).map(ClientAttachmentIndex::getZoom).orElse(null));
             if (zooms != null) {
