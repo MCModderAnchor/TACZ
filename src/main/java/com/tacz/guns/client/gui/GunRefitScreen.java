@@ -122,6 +122,11 @@ public class GunRefitScreen extends Screen {
     protected void renderBlurredBackground(float partialTick) { }
 
     @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+
+    }
+
+    @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         super.render(graphics, mouseX, mouseY, pPartialTick);
 
