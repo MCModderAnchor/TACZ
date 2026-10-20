@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "tacz.refmap.json",
   "client": [
+    "AcceleratedParticleRendererMixin",
     "BedrockPartMixin"
   ],
   "injectors": {

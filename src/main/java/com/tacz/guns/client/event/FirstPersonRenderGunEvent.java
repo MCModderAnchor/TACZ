@@ -1,5 +1,6 @@
 package com.tacz.guns.client.event;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.tacz.guns.GunMod;
@@ -22,6 +23,7 @@ import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
 import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
 import com.tacz.guns.client.resource.index.ClientSlotAdapterIndex;
 import com.tacz.guns.client.resource.pojo.display.gun.AdsPath;
+import com.tacz.guns.client.util.FirstPersonConstraintMath;
 import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.util.SlotAdapterHelper;
 import com.tacz.guns.util.math.Easing;
@@ -456,11 +458,10 @@ public class FirstPersonRenderGunEvent {
         Vector3f translationICA = gunModel.getConstraintObject().translationConstraint;
         Vector3f rotationICA = gunModel.getConstraintObject().rotationConstraint;
         getAnimationConstraintTransform(nodePath, originTranslation, animatedTranslation, rotation);
-        // 配合约束系数，计算约束位移需要的反向位移
-        Vector3f inverseTranslation = new Vector3f(originTranslation);
-        inverseTranslation.sub(animatedTranslation);
-        inverseTranslation.mulDirection(poseStack.last().pose());
-        inverseTranslation.mul(translationICA.x() - 1, translationICA.y() - 1, 1 - translationICA.z()); // 基岩版模型的旋转导致 xy 轴要反过来
+        // 在主线使用的视图空间计算三轴约束，再转回当前绘制空间写入位置矩阵。
+        Vector3f difference = new Vector3f(originTranslation).sub(animatedTranslation);
+        Vector3f translationCorrection = FirstPersonConstraintMath.translationCorrection(
+                RenderSystem.getModelViewMatrix(), poseStack.last().pose(), difference, translationICA, weight);
         // 计算约束旋转需要的反向旋转。因需要插值，获取的是欧拉角
         Vector3f inverseRotation = new Vector3f(rotation);
         inverseRotation.mul(rotationICA.x() - 1, rotationICA.y() - 1, rotationICA.z() - 1);
@@ -472,8 +473,8 @@ public class FirstPersonRenderGunEvent {
         poseStack.translate(-animatedTranslation.x(), -animatedTranslation.y() - 1.5f, -animatedTranslation.z());
         // 约束位移
         Matrix4f poseMatrix = poseStack.last().pose();
-        poseMatrix.m30(poseMatrix.m30() - inverseTranslation.x() * weight);
-        poseMatrix.m31(poseMatrix.m31() - inverseTranslation.y() * weight);
-        poseMatrix.m32(poseMatrix.m32() + inverseTranslation.z() * weight);
+        poseMatrix.m30(poseMatrix.m30() + translationCorrection.x());
+        poseMatrix.m31(poseMatrix.m31() + translationCorrection.y());
+        poseMatrix.m32(poseMatrix.m32() + translationCorrection.z());
     }
 }

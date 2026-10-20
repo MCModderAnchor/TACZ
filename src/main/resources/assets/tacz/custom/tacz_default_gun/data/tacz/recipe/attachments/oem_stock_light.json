@@ -4,18 +4,18 @@
       "item": {
         "tag": "c:ingots/iron"
       },
-      "count": 12
+      "count": 8
     },
     {
       "item": {
-        "tag": "c:dusts/redstone"
+        "tag": "c:leathers"
       },
-      "count": 4
+      "count": 2
     }
   ],
   "result": {
     "type": "attachment",
-    "id": "tacz:laser_ngal"
+    "id": "tacz:oem_stock_light"
   },
   "type": "tacz:gun_smith_table_crafting"
 }

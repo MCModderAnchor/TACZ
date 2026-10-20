@@ -11,6 +11,7 @@ import com.tacz.guns.client.model.functional.TextShowRender;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
+import com.tacz.guns.client.util.FirstPersonRenderMath;
 import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.compat.iris.IrisCompat;
 import com.tacz.guns.util.RenderHelper;
@@ -21,6 +22,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -202,7 +204,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         for (BedrockPart part : path) {
             part.translateAndRotateAndScale(poseStack);
         }
-        Vector3f result = new Vector3f(poseStack.last().pose().m30(), poseStack.last().pose().m31(), poseStack.last().pose().m32());
+        Vector3f result = FirstPersonRenderMath.viewPosition(RenderSystem.getModelViewMatrix(), poseStack.last().pose());
         poseStack.popPose();
         return result;
     }
@@ -272,6 +274,8 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             if (player != null) {
                 rad *= IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
             }
+            // 圆形在视图空间生成；提交前抵消 shader 稍后施加的 ModelView。
+            Matrix4f viewToRender = FirstPersonRenderMath.viewToRender(RenderSystem.getModelViewMatrix());
             for (int i = 0; i < ocularNodePaths.size(); i++) {
                 if (selective && !isScopeOcular.get(i)) {
                     continue;
@@ -281,12 +285,12 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
                 float centerX = ocularCenter.x() * 16 * 90;
                 float centerY = ocularCenter.y() * 16 * 90;
                 BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
-                builder.addVertex(centerX, centerY, -90.0F).setColor(255, 255, 255, 255);
+                builder.addVertex(viewToRender, centerX, centerY, -90.0F).setColor(255, 255, 255, 255);
                 for (int j = 0; j <= 90; j++) {
                     float angle = (float) j * ((float) Math.PI * 2F) / 90.0F;
                     float sin = Mth.sin(angle);
                     float cos = Mth.cos(angle);
-                    builder.addVertex(centerX + cos * rad, centerY + sin * rad, -90.0F).setColor(255, 255, 255, 255);
+                    builder.addVertex(viewToRender, centerX + cos * rad, centerY + sin * rad, -90.0F).setColor(255, 255, 255, 255);
                 }
                 BufferUploader.drawWithShader(builder.buildOrThrow());
             }

@@ -7,9 +7,9 @@
       "id": "tacz:scope",
       "name": "tacz.type.scope.name",
       "icon": {
-        "item": "tacz:attachment",
-        "nbt": {
-          "AttachmentId": "tacz:scope_acog_ta31"
+        "id": "tacz:attachment",
+        "components": {
+          "minecraft:custom_data": "{AttachmentId: \"tacz:scope_acog_ta31\"}"
         }
       }
     },
@@ -17,9 +17,9 @@
       "id": "tacz:muzzle",
       "name": "tacz.type.muzzle.name",
       "icon": {
-        "item": "tacz:attachment",
-        "nbt": {
-          "AttachmentId": "tacz:muzzle_compensator_trident"
+        "id": "tacz:attachment",
+        "components": {
+          "minecraft:custom_data": "{AttachmentId: \"tacz:muzzle_compensator_trident\"}"
         }
       }
     },
@@ -27,9 +27,9 @@
       "id": "tacz:stock",
       "name": "tacz.type.stock.name",
       "icon": {
-        "item": "tacz:attachment",
-        "nbt": {
-          "AttachmentId": "tacz:stock_militech_b5"
+        "id": "tacz:attachment",
+        "components": {
+          "minecraft:custom_data": "{AttachmentId: \"tacz:stock_militech_b5\"}"
         }
       }
     },
@@ -37,9 +37,9 @@
       "id": "tacz:grip",
       "name": "tacz.type.grip.name",
       "icon": {
-        "item": "tacz:attachment",
-        "nbt": {
-          "AttachmentId": "tacz:grip_magpul_afg_2"
+        "id": "tacz:attachment",
+        "components": {
+          "minecraft:custom_data": "{AttachmentId: \"tacz:grip_magpul_afg_2\"}"
         }
       }
     },
@@ -47,9 +47,9 @@
       "id": "tacz:extended_mag",
       "name": "tacz.type.extended_mag.name",
       "icon": {
-        "item": "tacz:attachment",
-        "nbt": {
-          "AttachmentId": "tacz:extended_mag_3"
+        "id": "tacz:attachment",
+        "components": {
+          "minecraft:custom_data": "{AttachmentId: \"tacz:extended_mag_3\"}"
         }
       }
     },
@@ -57,9 +57,9 @@
       "id": "tacz:laser",
       "name": "tacz.type.laser.name",
       "icon": {
-        "item": "tacz:attachment",
-        "nbt": {
-          "AttachmentId": "tacz:laser_compact"
+        "id": "tacz:attachment",
+        "components": {
+          "minecraft:custom_data": "{AttachmentId: \"tacz:laser_compact\"}"
         }
       }
     }

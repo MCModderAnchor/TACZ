@@ -6,6 +6,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.firstperson.Firs
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.render.CameraStateCache;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.resource.ParticleDefinitionLoader;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleEmitterInstance;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
@@ -16,6 +17,7 @@ import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.pojo.display.gun.MuzzleFlash;
+import com.tacz.guns.client.util.FirstPersonRenderMath;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.modifier.custom.SilenceModifier;
 import com.tacz.guns.resource.pojo.data.SmokeDirectionData;
@@ -289,7 +291,7 @@ public final class MuzzleParticleManager {
             }
         }
 
-        // 3. 计算枪口骨骼在视图空间中的矩阵（含当前动画变换）。
+        // 3. 计算枪口骨骼的提交空间矩阵（含当前动画变换，尚未合并全局 ModelView）。
         poseStack.pushPose();
         List<BedrockPart> muzzlePath = model.getMuzzleFlashPosPath();
         if (muzzlePath != null) {
@@ -301,12 +303,6 @@ public final class MuzzleParticleManager {
         poseStack.popPose();
 
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        float cameraRoll = CameraStateCache.getCameraRollRadians();
-        Matrix4f cameraRotationInv = new Matrix4f()
-                .rotationX((float) Math.toRadians(camera.getXRot()))
-                .rotateY((float) Math.toRadians(camera.getYRot() + 180f))
-                .rotateZ(cameraRoll)
-                .invert();
 
         // 4. 为本手所有存活发射器刷新变换。
         for (BoundEmitter be : bound) {
@@ -323,7 +319,8 @@ public final class MuzzleParticleManager {
             // 投递到世界空间的粒子（枪烟等）尺寸按手部 FOV 的观感缩放，与枪体/枪焰保持一致
             emitter.setWorldParticleScale(getWorldParticleScale());
             emitter.setEmitterTransform(new Matrix4f(basePoseInv).mul(muzzleView),
-                    new Matrix4f(cameraRotationInv).mul(toWorldMuzzleView(muzzleView)));
+                    FirstPersonRenderMath.worldParticlePose(RenderSystem.getModelViewMatrix(), muzzleView,
+                            camera.rotation(), getHandToWorldTanRatio()));
         }
 
         // 5. 新发射器立即 tick(0) 触发 instant 发射，本帧即可见。
@@ -346,33 +343,9 @@ public final class MuzzleParticleManager {
     }
 
     /**
-     * 构造"世界对齐"的枪口矩阵（相对摄像机、未叠加相机世界坐标）。
-     * <p>
-     * 手部 pass 用枪械 {@code model_fov}、世界 pass 用玩家 FOV：同一个世界点在世界 pass 中投到
-     * {@code x / (d·tan(worldFov/2))}，在手部 pass 中投到 {@code x / (d·tan(modelFov/2))}。
-     * 要让投递到原版 {@code ParticleEngine} 的世界空间粒子落在手部枪口的屏幕位置上，
-     * 只需把整个局部空间的横向 (x, y) 乘 {@code tan(worldFov/2) / tan(modelFov/2)}，深度 z 保持真实：
-     * 粒子的世界深度因此不变，尺寸、遮挡、透视都跟随世界 FOV（与第三人称枪烟一致），
-     * 不会被旧实现的深度压缩（z 乘 tan(modelFov/2)/tan(worldFov/2)）锁死在模型 FOV 上，
-     * 也不会被搬到更近/更远的深度上；整段局部空间一起缩放还保证云团的横向铺开在屏幕上也与
-     * 手部 FOV 下的观感一致（发射形状偏移、跟随锚点的局部偏移同一套映射）。
-     * <p>
-     * 注意：这里连矩阵基一起缩放。SBM 侧从定位器变换读取出生尺寸，并在世界粒子
-     * 绘制和后续加速度更新时处理 FOV 比例，避免旧粒子尺寸混杂或粒子群散布不一致。
-     */
-    private static Matrix4f toWorldMuzzleView(Matrix4f muzzleView) {
-        float fovRatio = getHandToWorldTanRatio();
-        if (fovRatio <= 1.0e-4f || Math.abs(fovRatio - 1.0f) <= 1.0e-4f) {
-            return new Matrix4f(muzzleView);
-        }
-        float lateral = 1.0f / fovRatio;
-        return new Matrix4f().scaling(lateral, lateral, 1.0f).mul(muzzleView);
-    }
-
-    /**
      * 世界空间粒子（投递到原版 {@code ParticleEngine} 的部分，如枪烟）的尺寸/初速度缩放。
      * <p>
-     * 这批粒子的屏幕位置由 {@link #toWorldMuzzleView} 补偿到手部 FOV 的枪口、深度保持真实，
+     * 这批粒子的屏幕位置由 {@link FirstPersonRenderMath#worldParticlePose} 补偿到手部 FOV 的枪口、深度保持真实，
      * 但"真实深度 + 世界 FOV"会让它们的屏幕大小随玩家 FOV 变化：世界 FOV 很小时（如 30）
      * 会明显胀大糊满屏幕。而枪体与枪焰都按 {@code model_fov} 绘制，尺寸不随玩家 FOV 变化，
      * 因此这里按 {@code tan(worldFov/2) / tan(modelFov/2)} 缩放，让世界空间粒子在屏幕上

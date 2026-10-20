@@ -8,6 +8,7 @@ import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.renderer.item.GunItemRendererWrapper;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.InternalAssetLoader;
+import com.tacz.guns.client.util.FirstPersonRenderMath;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.entity.EntityKineticBullet;
 import net.minecraft.client.Camera;
@@ -28,6 +29,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.Objects;
@@ -56,9 +58,9 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
             BedrockAmmoModel ammoEntityModel = ammoIndex.getAmmoEntityModel();
             ResourceLocation textureLocation = ammoIndex.getAmmoEntityTextureLocation();
             if (ammoEntityModel != null && textureLocation != null) {
+                poseStack.pushPose();
                 poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, bullet.yRotO, bullet.getYRot()) - 180.0F));
                 poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, bullet.xRotO, bullet.getXRot())));
-                poseStack.pushPose();
                 poseStack.translate(0, 1.5, 0);
                 poseStack.scale(-1, -1, 1);
                 ammoEntityModel.render(poseStack, ItemDisplayContext.GROUND, RenderType.entityTranslucentCull(textureLocation), packedLight, OverlayTexture.NO_OVERLAY);
@@ -99,18 +101,20 @@ public class EntityBulletRenderer extends EntityRenderer<EntityKineticBullet> {
                         offset = new Vector3f(GunItemRendererWrapper.muzzleRenderOffset);
                         bullet.setCameraXRot(camera.getXRot());
                         bullet.setCameraYRot(camera.getYRot());
+                        bullet.setFirstPersonCameraRotation(camera.rotation());
                         bullet.setFirstPersonRenderOffset(offset);
                     }
                     // 按照生存时间减少曳光弹的偏移，避免渲染位置距离落点太远
                     double offsetReducer = Math.max(0, (50 - disToEye)) / 50;
-                    // 摄像机旋转
-                    poseStack.mulPose(Axis.YN.rotationDegrees(bullet.getCameraYRot() + 180f));
-                    poseStack.mulPose(Axis.XN.rotationDegrees(bullet.getCameraXRot()));
-                    // 应用偏移
-                    poseStack.translate(offset.x * offsetReducer, offset.y * offsetReducer, offset.z * offsetReducer);
-                    // 逆转摄像机旋转
-                    poseStack.mulPose(Axis.XP.rotationDegrees(bullet.getCameraXRot()));
-                    poseStack.mulPose(Axis.YP.rotationDegrees(bullet.getCameraYRot() + 180f));
+                    Quaternionf cameraRotation = bullet.getFirstPersonCameraRotation();
+                    if (cameraRotation == null) {
+                        // 兼容通过原有偏移及欧拉角 API 初始化曳光弹的调用方。
+                        cameraRotation = new Quaternionf().rotationY((float) Math.toRadians(-bullet.getCameraYRot() - 180f))
+                                .rotateX((float) Math.toRadians(-bullet.getCameraXRot()));
+                    }
+                    // 完整相机旋转包含 roll；只转换位移，不改变曳光弹自身的姿态。
+                    Vector3f worldOffset = FirstPersonRenderMath.worldOffset(cameraRotation, offset);
+                    poseStack.translate(worldOffset.x * offsetReducer, worldOffset.y * offsetReducer, worldOffset.z * offsetReducer);
                 }
                 // 说是 override 其实默认值是 1
                 // 所以这里直接乘也没关系

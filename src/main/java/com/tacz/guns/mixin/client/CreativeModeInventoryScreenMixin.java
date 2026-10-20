@@ -62,9 +62,9 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
     }
 
     @Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-    private void tacz$scrollPackFilters(double mouseX, double mouseY, double delta, CallbackInfoReturnable<Boolean> cir) {
-        if (tacz$packFilters != null && tacz$packFilters.mouseScrolled(mouseX, mouseY, delta)) {
-            cir.setReturnValue(true);
-        }
+    private void tacz$scrollPackFilters(double mouseX, double mouseY, double scrollX, double scrollY, CallbackInfoReturnable<Boolean> cir) {
+//        if (tacz$packFilters != null && tacz$packFilters.mouseScrolled(mouseX, mouseY, delta)) {
+//            cir.setReturnValue(true);
+//        }
     }
 }

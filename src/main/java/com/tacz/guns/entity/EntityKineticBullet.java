@@ -62,10 +62,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.entity.PartEntity;
 import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
@@ -73,6 +70,7 @@ import net.neoforged.neoforge.entity.PartEntity;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -141,6 +139,7 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
     // 以下几个是只对客户端有用的曳光弹数据
     private float cameraXRot;
     private float cameraYRot;
+    private Quaternionf firstPersonCameraRotation;
     private Vector3f firstPersonRenderOffset;
     // 发射的枪械 ID
     private ResourceLocation gunId = DefaultAssets.EMPTY_GUN_ID;
@@ -682,6 +681,7 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
 
     public void setCameraYRot(float cameraYRot) {
         this.cameraYRot = cameraYRot;
+        this.firstPersonCameraRotation = null;
     }
 
     public float getCameraXRot() {
@@ -690,6 +690,16 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
 
     public void setCameraXRot(float cameraXRot) {
         this.cameraXRot = cameraXRot;
+        this.firstPersonCameraRotation = null;
+    }
+
+    @Nullable
+    public Quaternionf getFirstPersonCameraRotation() {
+        return firstPersonCameraRotation;
+    }
+
+    public void setFirstPersonCameraRotation(Quaternionf cameraRotation) {
+        this.firstPersonCameraRotation = new Quaternionf(cameraRotation);
     }
 
     public Vector3f getFirstPersonRenderOffset() {

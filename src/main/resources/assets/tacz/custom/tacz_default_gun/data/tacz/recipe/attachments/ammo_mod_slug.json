@@ -8,7 +8,7 @@
     },
     {
       "item": {
-        "item": "minecraft:copper_block"
+        "tag": "c:ores/netherite_scrap"
       }
     }
   ],

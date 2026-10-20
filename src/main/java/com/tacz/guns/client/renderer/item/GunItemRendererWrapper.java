@@ -3,7 +3,7 @@ package com.tacz.guns.client.renderer.item;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.handler.FirstPersonRenderHandler;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.firstperson.FirstPersonParticleSystem;
-import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.render.CameraStateCache;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -25,6 +25,8 @@ import com.tacz.guns.client.model.functional.MuzzleFlashRender;
 import com.tacz.guns.client.model.functional.ShellRender;
 import com.tacz.guns.client.particle.MuzzleParticleManager;
 import com.tacz.guns.client.resource.GunDisplayInstance;
+import com.tacz.guns.client.util.FirstPersonRenderMath;
+import com.tacz.guns.client.util.ParticleRenderMath;
 import com.tacz.guns.util.RenderDistance;
 import com.tacz.guns.util.math.MathUtil;
 import net.minecraft.client.Camera;
@@ -287,21 +289,12 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
             for (BedrockPart bedrockPart : gunModel.getMuzzleFlashPosPath()) {
                 bedrockPart.translateAndRotateAndScale(poseStack);
             }
-            Matrix4f pose = poseStack.last().pose();
             double itemRenderFov = CameraSetupEvent.ITEM_MODEL_FOV_DYNAMICS.get();
             double levelRenderFov = CameraSetupEvent.WORLD_FOV_DYNAMICS.get();
+            // PoseStack 包含相机逆旋转；先合并 shader 的 ModelView，再按视图轴补偿 FOV。
+            muzzleRenderOffset.set(FirstPersonRenderMath.muzzleOffset(
+                    RenderSystem.getModelViewMatrix(), poseStack.last().pose(), itemRenderFov, levelRenderFov));
             poseStack.popPose();
-            // 缓存转换后的偏移坐标。手部与世界的投影 FOV 不同，这里与枪口粒子使用同一套补偿：
-            // 横向偏移 (x, y) 乘 tan(worldFov/2)/tan(modelFov/2)，让曳光弹起点落在模型 FOV 下枪口的
-            // 屏幕位置上，而深度 z 保持真实，不再把起点搬到更近/更远的深度上。
-            double itemTan = Math.tan(itemRenderFov / 2 * Math.PI / 180);
-            double levelTan = Math.tan(levelRenderFov / 2 * Math.PI / 180);
-            float lateral = itemTan > 1.0e-6 ? (float) (levelTan / itemTan) : 1.0f;
-            muzzleRenderOffset.set(
-                    pose.m30() * lateral,
-                    pose.m31() * lateral,
-                    pose.m32()
-            );
         }
     }
 
@@ -401,15 +394,8 @@ public class GunItemRendererWrapper extends AnimateGeoItemRenderer<BedrockGunMod
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vec3 camPos = camera.getPosition();
 
-        Matrix4f viewRotationInv = new Matrix4f()
-                .rotationY((float) Math.toRadians(-(camera.getYRot() + 180f)))
-                .rotateX((float) Math.toRadians(-camera.getXRot()))
-                .rotateZ(-CameraStateCache.getCameraRollRadians());
-
-        Matrix4f muzzleWorld = new Matrix4f(viewRotationInv).mul(pose);
-        muzzleWorld.m30(muzzleWorld.m30() + (float) camPos.x);
-        muzzleWorld.m31(muzzleWorld.m31() + (float) camPos.y);
-        muzzleWorld.m32(muzzleWorld.m32() + (float) camPos.z);
+        // 实体物品的 PoseStack 已是世界朝向，相机旋转由全局 ModelView 处理。
+        Matrix4f muzzleWorld = ParticleRenderMath.worldPose(pose, camPos.x, camPos.y, camPos.z);
         onMuzzleRendered(currentEntity, muzzleWorld);
     }
 

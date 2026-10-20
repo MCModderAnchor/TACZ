@@ -4,24 +4,18 @@
       "item": {
         "tag": "c:ingots/iron"
       },
-      "count": 18
+      "count": 14
     },
     {
       "item": {
-        "tag": "c:ingots/gold"
-      },
-      "count": 4
-    },
-    {
-      "item": {
-        "tag": "forge:leather"
+        "tag": "c:leathers"
       },
       "count": 4
     }
   ],
   "result": {
     "type": "attachment",
-    "id": "tacz:stock_heavy_ctr"
+    "id": "tacz:oem_stock_tactical"
   },
   "type": "tacz:gun_smith_table_crafting"
 }

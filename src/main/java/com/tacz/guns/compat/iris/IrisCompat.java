@@ -34,8 +34,13 @@ public final class IrisCompat {
     }
 
     public static boolean endBatch(MultiBufferSource bufferSource) {
-        if (ModList.get().isLoaded(CompatRegistry.IRIS) && bufferSource instanceof MultiBufferSource.BufferSource source) {
-            return IrisCompatInner.endBatch(source);
+        if (ModList.get().isLoaded(CompatRegistry.IRIS)) {
+            // Iris 的手部 pass 使用 UnflushableWrapper，其 endBatch 是空操作。
+            // 取出实际缓冲，确保模板状态切换前完成绘制。
+            if (bufferSource instanceof IUnflushableWrapper wrapper) {
+                bufferSource = wrapper.tacz$getWrapped();
+            }
+            return IrisCompatInner.endBatch(bufferSource);
         }
         return false;
     }

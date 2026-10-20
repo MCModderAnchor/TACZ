@@ -4,18 +4,18 @@
       "item": {
         "tag": "c:ingots/iron"
       },
-      "count": 9
+      "count": 12
     },
     {
       "item": {
-        "tag": "forge:leather"
+        "tag": "c:leathers"
       },
-      "count": 4
+      "count": 6
     }
   ],
   "result": {
     "type": "attachment",
-    "id": "tacz:grip_magpul_afg"
+    "id": "tacz:oem_stock_heavy"
   },
   "type": "tacz:gun_smith_table_crafting"
 }

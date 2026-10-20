@@ -8,9 +8,9 @@
       "id": "tacz:ammo",
       "name": "tacz.type.ammo.name",
       "icon": {
-        "item": "tacz:ammo",
-        "nbt": {
-          "AmmoId": "tacz:762x39"
+        "id": "tacz:ammo",
+        "components": {
+          "minecraft:custom_data": "{AmmoId: \"tacz:762x39\"}"
         }
       }
     },
@@ -18,9 +18,9 @@
       "id": "tacz:pd_cartridges",
       "name": "tacz.type.pd_cartridges.name",
       "icon": {
-        "item": "tacz:ammo",
-        "nbt": {
-          "AmmoId": "tacz:9mm"
+        "id": "tacz:ammo",
+        "components": {
+          "minecraft:custom_data": "{AmmoId: \"tacz:9mm\"}"
         }
       }
     },
@@ -28,9 +28,9 @@
       "id": "tacz:ifp_rifle_cartridges",
       "name": "tacz.type.ifp_rifle_cartridges.name",
       "icon": {
-        "item": "tacz:ammo",
-        "nbt": {
-          "AmmoId": "tacz:556x45"
+        "id": "tacz:ammo",
+        "components": {
+          "minecraft:custom_data": "{AmmoId: \"tacz:556x45\"}"
         }
       }
     },
@@ -38,9 +38,9 @@
       "id": "tacz:lc_specialized",
       "name": "tacz.type.lc_specialized.name",
       "icon": {
-        "item": "tacz:ammo",
-        "nbt": {
-          "AmmoId": "tacz:50bmg"
+        "id": "tacz:ammo",
+        "components": {
+          "minecraft:custom_data": "{AmmoId: \"tacz:50bmg\"}"
         }
       }
     },
@@ -48,9 +48,9 @@
       "id": "tacz:explosives",
       "name": "tacz.type.explosives.name",
       "icon": {
-        "item": "tacz:ammo",
-        "nbt": {
-          "AmmoId": "tacz:rpg_rocket"
+        "id": "tacz:ammo",
+        "components": {
+          "minecraft:custom_data": "{AmmoId: \"tacz:rpg_rocket\"}"
         }
       }
     },
@@ -58,9 +58,9 @@
       "id": "tacz:shotgun_shells",
       "name": "tacz.type.shotgun_shells.name",
       "icon": {
-        "item": "tacz:ammo",
-        "nbt": {
-          "AmmoId": "tacz:12g"
+        "id": "tacz:ammo",
+        "components": {
+          "minecraft:custom_data": "{AmmoId: \"tacz:12g\"}"
         }
       }
     },
@@ -68,7 +68,7 @@
       "id": "tacz:alternative_proj",
       "name": "tacz.type.alternative_proj.name",
       "icon": {
-        "item": "minecraft:arrow"
+        "id": "minecraft:arrow"
       }
     }
   ]

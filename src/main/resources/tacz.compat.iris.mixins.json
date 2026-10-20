@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.tacz.guns.mixin.client.iris",
+  "plugin": "com.tacz.guns.mixin.client.iris.IrisMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "UnflushableWrapperAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

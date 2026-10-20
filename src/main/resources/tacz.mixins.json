@@ -11,6 +11,7 @@
   ],
   "client": [
     "client.AbstractButtonMixin",
+    "client.BillboardHelperMixin",
     "client.CreativeModeInventoryScreenMixin",
     "client.GameRendererMixin",
     "client.HumanoidModelMixin",
@@ -21,8 +22,8 @@
     "client.MouseHandlerMixin",
     "client.PlayerModelMixin",
     "client.RenderSystemAccessor",
-    "client.SoundManagerPreparationsMixin",
-    "client.StairBlockAccessor"
+    "client.SnowStormParticleMixin",
+    "client.SoundManagerPreparationsMixin"
   ],
   "injectors": {
     "defaultRequire": 1
