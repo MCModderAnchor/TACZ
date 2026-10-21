@@ -31,6 +31,12 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue BLOCK_ENTITY_TRANSLUCENT;
     public static ForgeConfigSpec.BooleanValue DISPLAY_GUN_VBO;
     public static ForgeConfigSpec.BooleanValue STATIC_ITEM_GUN_VBO;
+    public static ForgeConfigSpec.BooleanValue EXPERIMENTAL_SCOPE_LENS;
+    public static ForgeConfigSpec.DoubleValue SCOPE_LENS_DISTORTION;
+    public static ForgeConfigSpec.DoubleValue SCOPE_LENS_ABERRATION;
+    public static ForgeConfigSpec.DoubleValue SCOPE_LENS_EDGE_WIDTH;
+    public static ForgeConfigSpec.IntValue SCOPE_LENS_TINT;
+    public static ForgeConfigSpec.DoubleValue SCOPE_LENS_TINT_STRENGTH;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -115,6 +121,24 @@ public class RenderConfig {
 
         builder.comment("Experimental SBM VBO rendering for third-person held, dropped and fixed guns outside GUI screens.");
         STATIC_ITEM_GUN_VBO = builder.define("EnableStaticItemGunVbo", true);
+
+        builder.comment("Experimental scope lens tint, chromatic aberration and edge distortion. Uses the existing scope window and keeps the normal aiming magnification.");
+        EXPERIMENTAL_SCOPE_LENS = builder.define("EnableExperimentalScopeLens", true);
+
+        builder.comment("Radial distortion at the edge of a scope lens. 0 disables distortion.");
+        SCOPE_LENS_DISTORTION = builder.defineInRange("ScopeLensDistortion", 0.05, 0, 0.2);
+
+        builder.comment("Radial RGB separation at the edge of a scope lens. 0 disables chromatic aberration.");
+        SCOPE_LENS_ABERRATION = builder.defineInRange("ScopeLensAberration", 0.007, 0, 0.03);
+
+        builder.comment("Scope lens vignette width. Also controls how far edge distortion and aberration extend into the lens. 0 disables all edge effects.");
+        SCOPE_LENS_EDGE_WIDTH = builder.defineInRange("ScopeLensEdgeWidth", 0.35, 0, 2);
+
+        builder.comment("Scope lens RGB tint, as a decimal integer. Default 7384808 is #70AEE8.");
+        SCOPE_LENS_TINT = builder.defineInRange("ScopeLensTint", 0x70AEE8, 0, 0xFFFFFF);
+
+        builder.comment("Scope lens tint strength. 0 preserves the original scene colour, 1 applies the full tint.");
+        SCOPE_LENS_TINT_STRENGTH = builder.defineInRange("ScopeLensTintStrength", 0.2, 0, 1);
 
         builder.pop();
     }

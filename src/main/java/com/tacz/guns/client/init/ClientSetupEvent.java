@@ -4,6 +4,7 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.client.other.ThirdPersonManager;
 import com.tacz.guns.client.gui.overlay.*;
 import com.tacz.guns.client.input.GunInputHandler;
+import com.tacz.guns.client.renderer.scope.ScopeLensRenderer;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.client.tooltip.*;
@@ -20,10 +21,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -32,6 +30,11 @@ import static net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.CROSSHAIR;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class ClientSetupEvent {
+    @SubscribeEvent
+    public static void onRegisterShaders(RegisterShadersEvent event) {
+        ScopeLensRenderer.registerShader(event);
+    }
+
     @SubscribeEvent
     public static void onClientSetup(RegisterKeyMappingsEvent event) {
         // 注册键位

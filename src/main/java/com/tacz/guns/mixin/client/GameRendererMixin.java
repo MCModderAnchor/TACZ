@@ -3,9 +3,10 @@ package com.tacz.guns.mixin.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tacz.guns.api.client.event.RenderLevelBobEvent;
-import com.tacz.guns.client.renderer.other.GunHurtBobTweak;
-import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
+import com.tacz.guns.client.renderer.other.GunHurtBobTweak;
+import com.tacz.guns.client.renderer.scope.ScopeLensRenderer;
+import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -25,6 +26,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class GameRendererMixin {
     @Unique
     private boolean tacz$useFovSetting;
+
+    @Inject(method = "renderLevel", at = @At("HEAD"))
+    private void tacz$beginScopeFrame(float partialTicks, long finishTime, PoseStack poseStack, CallbackInfo ci) {
+        ScopeLensRenderer.beginFrame();
+    }
+
+    // After AFTER_LEVEL and Oculus' composite, before hand depth is cleared and colour space converted.
+    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", ordinal = 2))
+    private void tacz$drawShaderScopeLenses(float partialTicks, long finishTime, PoseStack poseStack, CallbackInfo ci) {
+        ScopeLensRenderer.render();
+    }
+
+    // AR flushes hands in an AFTER callback on renderHandsWithItems, which also captures lenses.
+    // Use a later vanilla call so that flush always finishes first, with screen overlays still on top.
+    @Inject(method = "renderItemInHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;renderScreenEffect(Lnet/minecraft/client/Minecraft;Lcom/mojang/blaze3d/vertex/PoseStack;)V"))
+    private void tacz$drawVanillaScopeLenses(PoseStack poseStack, Camera camera, float partialTicks, CallbackInfo ci) {
+        ScopeLensRenderer.render();
+    }
 
     @Shadow
     public abstract Minecraft getMinecraft();
