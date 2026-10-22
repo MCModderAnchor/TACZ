@@ -1,6 +1,7 @@
 package com.tacz.guns.config.client;
 
 import com.tacz.guns.client.renderer.crosshair.CrosshairType;
+import com.tacz.guns.client.renderer.scope.ScopeVisionMode;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class RenderConfig {
@@ -37,6 +38,9 @@ public class RenderConfig {
     public static ForgeConfigSpec.DoubleValue SCOPE_LENS_EDGE_WIDTH;
     public static ForgeConfigSpec.IntValue SCOPE_LENS_TINT;
     public static ForgeConfigSpec.DoubleValue SCOPE_LENS_TINT_STRENGTH;
+    public static ForgeConfigSpec.EnumValue<ScopeVisionMode> SCOPE_VISION_MODE;
+    public static ForgeConfigSpec.DoubleValue SCOPE_VISION_GAIN;
+    public static ForgeConfigSpec.DoubleValue SCOPE_VISION_NOISE;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -139,6 +143,15 @@ public class RenderConfig {
 
         builder.comment("Scope lens tint strength. 0 preserves the original scene colour, 1 applies the full tint.");
         SCOPE_LENS_TINT_STRENGTH = builder.defineInRange("ScopeLensTintStrength", 0.2, 0, 1);
+
+        builder.comment("Experimental vision preset for all scope lenses. Thermal modes highlight visible living entity models with scene depth occlusion; they do not simulate temperature. NORMAL preserves the optical lens.");
+        SCOPE_VISION_MODE = builder.defineEnum("ScopeVisionMode", ScopeVisionMode.NORMAL);
+
+        builder.comment("Night vision luminance gain. Enhances existing scene detail; cannot recover detail from completely black pixels.");
+        SCOPE_VISION_GAIN = builder.defineInRange("ScopeVisionGain", 3.0, 1.0, 12.0);
+
+        builder.comment("Sensor grain strength for night vision and thermal presets. 0 disables grain.");
+        SCOPE_VISION_NOISE = builder.defineInRange("ScopeVisionNoise", 0.025, 0, 0.2);
 
         builder.pop();
     }

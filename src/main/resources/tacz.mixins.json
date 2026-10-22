@@ -11,19 +11,9 @@
     "common.ServerPlayNetHandlerMixin"
   ],
   "client": [
-    "client.AbstractButtonMixin",
-    "client.CreativeModeInventoryScreenMixin",
-    "client.GameRendererMixin",
-    "client.HumanoidModelMixin",
-    "client.ItemInHandLayerMixin",
-    "client.ItemInHandRendererMixin",
-    "client.LanguageMixin",
-    "client.LocalPlayerMixin",
-    "client.MouseHandlerMixin",
-    "client.PlayerModelMixin",
-    "client.RenderSystemAccessor",
-    "client.SoundManagerPreparationsMixin",
-    "client.StairBlockAccessor"
+    "client.AbstractButtonMixin", "client.CreativeModeInventoryScreenMixin", "client.GameRendererMixin", "client.HumanoidModelMixin", "client.ItemInHandLayerMixin", "client.ItemInHandRendererMixin",
+    "client.LanguageMixin", "client.LivingEntityRendererMixin", "client.LocalPlayerMixin", "client.MouseHandlerMixin", "client.PlayerModelMixin", "client.RenderSystemAccessor",
+    "client.SoundManagerPreparationsMixin", "client.StairBlockAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

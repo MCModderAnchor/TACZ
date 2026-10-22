@@ -2,7 +2,7 @@
   "vertex": "tacz:scope_lens",
   "fragment": "tacz:scope_lens",
   "attributes": ["Position"],
-  "samplers": [{"name": "Sampler0"}],
+  "samplers": [{"name": "Sampler0"}, {"name": "Sampler1"}],
   "uniforms": [
     {"name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]},
     {"name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]},
@@ -12,6 +12,11 @@
     {"name": "Distortion", "type": "float", "count": 1, "values": [0.05]},
     {"name": "Aberration", "type": "float", "count": 1, "values": [0.007]},
     {"name": "EdgeWidth", "type": "float", "count": 1, "values": [0.35]},
-    {"name": "LensTint", "type": "float", "count": 3, "values": [1, 1, 1]}
+    {"name": "LensTint", "type": "float", "count": 3, "values": [1, 1, 1]},
+    {"name": "VisionMode", "type": "int", "count": 1, "values": [0]},
+    {"name": "ThermalReady", "type": "int", "count": 1, "values": [0]},
+    {"name": "VisionGain", "type": "float", "count": 1, "values": [3]},
+    {"name": "VisionNoise", "type": "float", "count": 1, "values": [0.025]},
+    {"name": "SensorTime", "type": "float", "count": 1, "values": [0]}
   ]
 }

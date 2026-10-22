@@ -1,6 +1,7 @@
 package com.tacz.guns.compat.cloth.client;
 
 import com.tacz.guns.client.renderer.crosshair.CrosshairType;
+import com.tacz.guns.client.renderer.scope.ScopeVisionMode;
 import com.tacz.guns.compat.cloth.widget.CrosshairDropdown;
 import com.tacz.guns.config.client.RenderConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -126,5 +127,42 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.static_item_gun_vbo"), RenderConfig.STATIC_ITEM_GUN_VBO.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.static_item_gun_vbo.desc"))
                 .setSaveConsumer(RenderConfig.STATIC_ITEM_GUN_VBO::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.scope_lens_enable"), RenderConfig.EXPERIMENTAL_SCOPE_LENS.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.scope_lens_enable.desc"))
+                .setSaveConsumer(RenderConfig.EXPERIMENTAL_SCOPE_LENS::set).build());
+
+        render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.scope_lens_distortion"), RenderConfig.SCOPE_LENS_DISTORTION.get())
+                .setMin(0).setMax(0.2).setDefaultValue(0.05).setTooltip(Component.translatable("config.tacz.client.render.scope_lens_distortion.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_LENS_DISTORTION::set).build());
+
+        render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.scope_lens_aberration"), RenderConfig.SCOPE_LENS_ABERRATION.get())
+                .setMin(0).setMax(0.03).setDefaultValue(0.007).setTooltip(Component.translatable("config.tacz.client.render.scope_lens_aberration.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_LENS_ABERRATION::set).build());
+
+        render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.scope_lens_edge_width"), RenderConfig.SCOPE_LENS_EDGE_WIDTH.get())
+                .setMin(0).setMax(2).setDefaultValue(0.35).setTooltip(Component.translatable("config.tacz.client.render.scope_lens_edge_width.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_LENS_EDGE_WIDTH::set).build());
+
+        render.addEntry(entryBuilder.startColorField(Component.translatable("config.tacz.client.render.scope_lens_tint"), RenderConfig.SCOPE_LENS_TINT.get())
+                .setDefaultValue(0x70AEE8).setTooltip(Component.translatable("config.tacz.client.render.scope_lens_tint.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_LENS_TINT::set).build());
+
+        render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.scope_lens_tint_strength"), RenderConfig.SCOPE_LENS_TINT_STRENGTH.get())
+                .setMin(0).setMax(1).setDefaultValue(0.2).setTooltip(Component.translatable("config.tacz.client.render.scope_lens_tint_strength.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_LENS_TINT_STRENGTH::set).build());
+
+        render.addEntry(entryBuilder.startEnumSelector(Component.translatable("config.tacz.client.render.scope_vision_mode"), ScopeVisionMode.class, RenderConfig.SCOPE_VISION_MODE.get())
+                .setDefaultValue(ScopeVisionMode.NORMAL).setEnumNameProvider(value -> Component.translatable(((ScopeVisionMode) value).translationKey()))
+                .setTooltip(Component.translatable("config.tacz.client.render.scope_vision_mode.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_VISION_MODE::set).build());
+
+        render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.scope_vision_gain"), RenderConfig.SCOPE_VISION_GAIN.get())
+                .setMin(1).setMax(12).setDefaultValue(3).setTooltip(Component.translatable("config.tacz.client.render.scope_vision_gain.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_VISION_GAIN::set).build());
+
+        render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.scope_vision_noise"), RenderConfig.SCOPE_VISION_NOISE.get())
+                .setMin(0).setMax(0.2).setDefaultValue(0.025).setTooltip(Component.translatable("config.tacz.client.render.scope_vision_noise.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_VISION_NOISE::set).build());
     }
 }

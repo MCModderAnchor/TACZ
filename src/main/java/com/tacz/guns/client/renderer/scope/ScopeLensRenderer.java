@@ -44,6 +44,7 @@ public final class ScopeLensRenderer {
 
     public static void registerShader(RegisterShadersEvent event) {
         beginFrame();
+        ScopeThermalRenderer.registerShader(event);
         shader = null;
         try {
             event.registerShader(new ShaderInstance(event.getResourceProvider(),
@@ -56,6 +57,7 @@ public final class ScopeLensRenderer {
 
     /** Drop unfinished draws too, e.g. after a resize, hidden hands or an interrupted frame. */
     public static void beginFrame() {
+        ScopeThermalRenderer.beginFrame();
         for (Lens lens : LENSES) {
             if (lens.surface != null) lens.surface.release();
             for (Draw draw : lens.reticle) {
@@ -220,6 +222,8 @@ public final class ScopeLensRenderer {
         // Copy first: sampling main's colour texture while drawing back into it is undefined.
         GlStateManager._glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
         RenderSystem.setShaderTexture(0, screenTexture);
+        // Bind a valid black/scene texture even without a thermal capture; ThermalReady gates sampling.
+        RenderSystem.setShaderTexture(1, ScopeThermalRenderer.textureOr(screenTexture, width, height));
         RenderSystem.setShader(() -> shader);
         shader.safeGetUniform("ScreenSize").set((float) width, (float) height);
         shader.safeGetUniform("LensCenter").set(lens.centerU, lens.centerV);
@@ -233,6 +237,11 @@ public final class ScopeLensRenderer {
                 1 + (((tint >> 16) & 0xFF) / 255f - 1) * strength,
                 1 + (((tint >> 8) & 0xFF) / 255f - 1) * strength,
                 1 + ((tint & 0xFF) / 255f - 1) * strength);
+        shader.safeGetUniform("VisionMode").set(RenderConfig.SCOPE_VISION_MODE.get().ordinal());
+        shader.safeGetUniform("VisionGain").set(RenderConfig.SCOPE_VISION_GAIN.get().floatValue());
+        shader.safeGetUniform("VisionNoise").set(RenderConfig.SCOPE_VISION_NOISE.get().floatValue());
+        shader.safeGetUniform("SensorTime").set((net.minecraft.Util.getMillis() % 60000L) / 1000f);
+        shader.safeGetUniform("ThermalReady").set(ScopeThermalRenderer.isReady(width, height) ? 1 : 0);
         RenderSystem.disableDepthTest();
         RenderSystem.depthMask(false);
         RenderSystem.disableCull();
@@ -261,6 +270,7 @@ public final class ScopeLensRenderer {
             return;
         }
         beginFrame();
+        ScopeThermalRenderer.close();
         // Reuse BufferBuilders: their native storage is not released by the GC.
         for (Capture capture : CAPTURES) capture.target.destroyBuffers();
     }
@@ -386,7 +396,7 @@ public final class ScopeLensRenderer {
     }
 
     /** Scope drawing must not leak its framebuffer, projection or GL state into later renderers. */
-    private static final class RenderState implements AutoCloseable {
+    static final class RenderState implements AutoCloseable {
         final int drawFbo = GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING);
         final int readFbo = GL11.glGetInteger(GL30.GL_READ_FRAMEBUFFER_BINDING);
         final int vao = GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING);
@@ -401,6 +411,9 @@ public final class ScopeLensRenderer {
         final int[] shaderTextures = new int[12];
         final boolean depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
         final boolean depthMask = GL11.glGetBoolean(GL11.GL_DEPTH_WRITEMASK);
+        final int depthFunc = GL11.glGetInteger(GL11.GL_DEPTH_FUNC);
+        final double clearDepth = GL11.glGetDouble(GL11.GL_DEPTH_CLEAR_VALUE);
+        final FloatBuffer clearColor;
         final boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
         final boolean cull = GL11.glIsEnabled(GL11.GL_CULL_FACE);
         final boolean scissor = GL11.glIsEnabled(GL11.GL_SCISSOR_TEST);
@@ -419,8 +432,10 @@ public final class ScopeLensRenderer {
         RenderState(MemoryStack stack) {
             viewport = stack.mallocInt(4);
             colorMask = stack.malloc(4);
+            clearColor = stack.mallocFloat(4);
             GL11.glGetIntegerv(GL11.GL_VIEWPORT, viewport);
             GL11.glGetBooleanv(GL11.GL_COLOR_WRITEMASK, colorMask);
+            GL11.glGetFloatv(GL11.GL_COLOR_CLEAR_VALUE, clearColor);
             for (int i = 0; i < shaderTextures.length; i++) shaderTextures[i] = RenderSystem.getShaderTexture(i);
             for (int i = 0; i < textures.length; i++) {
                 RenderSystem.activeTexture(GL13.GL_TEXTURE0 + i);
@@ -447,6 +462,9 @@ public final class ScopeLensRenderer {
             RenderSystem.activeTexture(activeTexture);
             if (depthTest) RenderSystem.enableDepthTest(); else RenderSystem.disableDepthTest();
             RenderSystem.depthMask(depthMask);
+            RenderSystem.depthFunc(depthFunc);
+            RenderSystem.clearDepth(clearDepth);
+            RenderSystem.clearColor(clearColor.get(0), clearColor.get(1), clearColor.get(2), clearColor.get(3));
             RenderSystem.colorMask(colorMask.get(0) != 0, colorMask.get(1) != 0, colorMask.get(2) != 0, colorMask.get(3) != 0);
             if (blend) RenderSystem.enableBlend(); else RenderSystem.disableBlend();
             RenderSystem.blendFuncSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
