@@ -10,6 +10,7 @@ import com.tacz.guns.client.model.functional.BeamRenderer;
 import com.tacz.guns.client.model.functional.RangefinderImpactPredictionRender;
 import com.tacz.guns.client.model.functional.TextShowRender;
 import com.tacz.guns.client.renderer.scope.ScopeLensRenderer;
+import com.tacz.guns.client.resource.pojo.display.attachment.ScopeLensConfig;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
@@ -60,6 +61,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     private boolean isScope = false;
     private boolean isSight = false;
+    private ScopeLensConfig scopeLens = new ScopeLensConfig();
     private float scopeViewRadiusModifier = 1;
 
     public BedrockAttachmentModel(BedrockModelPOJO pojo, BedrockVersion version) {
@@ -140,6 +142,10 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     public boolean isSight() {
         return isSight;
+    }
+
+    public void setScopeLens(ScopeLensConfig scopeLens) {
+        this.scopeLens = scopeLens;
     }
 
     public void setScopeViewRadiusModifier(float scopeViewRadiusModifier) {
@@ -313,7 +319,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
                     Vector3f center = getBedrockPartCenter(matrixStack, ocularNodePaths.get(i));
                     List<BedrockPart> ocular = ocularNodePaths.get(i);
                     List<BedrockPart> division = divisionNodePaths.get(i);
-                    if (ScopeLensRenderer.capture(center.x() * 16 * 90, center.y() * 16 * 90, rad, b,
+                    if (ScopeLensRenderer.capture(center.x() * 16 * 90, center.y() * 16 * 90, rad, b, scopeLens,
                             bounds -> captureLensBounds(matrixStack, ocular, bounds),
                             buffers -> captureLensDivision(matrixStack, transformType, renderType, light, overlay, division, buffers))) {
                         continue;

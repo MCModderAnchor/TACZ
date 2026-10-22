@@ -14,6 +14,7 @@ import com.tacz.guns.client.resource.pojo.display.LaserConfig;
 import com.tacz.guns.client.resource.pojo.display.SoundData;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentLod;
+import com.tacz.guns.client.resource.pojo.display.attachment.ScopeLensConfig;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
@@ -194,6 +195,7 @@ public class ClientAttachmentIndex {
         if (index.attachmentModel != null) {
             index.attachmentModel.setIsScope(display.isScope());
             index.attachmentModel.setIsSight(display.isSight());
+            index.attachmentModel.setScopeLens(display.getScopeLens());
         }
         index.modelTexture = display.getTexture();
     }
@@ -466,6 +468,10 @@ public class ClientAttachmentIndex {
 
     public boolean isScope() {
         return isScope;
+    }
+
+    public ScopeLensConfig getScopeLens() {
+        return display.getScopeLens();
     }
 
     public boolean isSight() {

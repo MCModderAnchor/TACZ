@@ -2,9 +2,13 @@
 
 uniform sampler2D Sampler0;
 uniform sampler2D Sampler1;
+uniform sampler2D Sampler2;
 uniform vec2 ScreenSize;
 uniform vec2 LensCenter;
 uniform vec2 LensRadius;
+uniform int ContourReady;
+uniform vec4 ContourRect;
+uniform vec2 ContourSize;
 uniform float Distortion;
 uniform float Aberration;
 uniform float EdgeWidth;
@@ -43,18 +47,36 @@ vec3 ironbow(float heat) {
     return mix(yellow, vec3(1.0), (heat - 0.85) / 0.15);
 }
 
+float distanceToEdge(vec2 uv) {
+    if (ContourReady == 0) {
+        // Shader/resource failures retain the previous elliptical approximation.
+        return 1.0 - clamp(length((uv - LensCenter) / max(LensRadius, vec2(0.00001))), 0.0, 1.0);
+    }
+    vec2 cellSize = ContourRect.zw / ContourSize;
+    ivec2 cell = ivec2(clamp(floor((gl_FragCoord.xy - ContourRect.xy) / cellSize),
+            vec2(0.0), ContourSize - 1.0));
+    vec4 bytes = floor(texelFetch(Sampler2, cell, 0) * 255.0 + 0.5);
+    vec2 seed = vec2(bytes.r * 256.0 + bytes.g, bytes.b * 256.0 + bytes.a) - 1.0;
+    // No exterior in the visible image means no visible lens boundary (e.g. a lens filling the screen).
+    if (seed.x < 0.0) return 1e6;
+    vec2 exterior = ContourRect.xy + (seed + 0.5) * cellSize;
+    float pixels = max(length(gl_FragCoord.xy - exterior) - 0.5 * min(cellSize.x, cellSize.y), 0.0);
+    // Relative to the short half-size, so the transition scales with the lens instead of resolution.
+    return pixels / max(min(LensRadius.x * ScreenSize.x, LensRadius.y * ScreenSize.y), 1.0);
+}
+
 void main() {
     vec2 uv = gl_FragCoord.xy / ScreenSize;
     vec2 relative = uv - LensCenter;
-    float distance = clamp(length(relative / max(LensRadius, vec2(0.00001))), 0.0, 1.0);
 
     float ramp = 0.0;
     float edge = 0.0;
     if (EdgeWidth > 0.0) {
         float width = 0.155 * EdgeWidth;
-        float falloff = (1.0 - distance) / width;
+        float distance = distanceToEdge(uv);
+        float falloff = distance / width;
         edge = exp(-falloff * falloff);
-        ramp = smoothstep(max(1.0 - width * 3.0, 0.0), 1.0, distance);
+        ramp = 1.0 - smoothstep(0.0, min(width * 3.0, 1.0), distance);
     }
 
     // Sample in screen space so hand FOV cannot magnify the scene a second time.

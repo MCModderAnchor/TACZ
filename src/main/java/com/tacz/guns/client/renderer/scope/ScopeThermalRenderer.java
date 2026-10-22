@@ -4,8 +4,11 @@ import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
+import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.util.ThermalImagingHelper;
@@ -15,6 +18,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -41,6 +45,7 @@ public class ScopeThermalRenderer {
     private static Matrix4f modelView;
     private static boolean collecting;
     private static boolean ready;
+    private static Boolean thermalScope;
 
     private ScopeThermalRenderer() {
     }
@@ -63,17 +68,38 @@ public class ScopeThermalRenderer {
         modelView = null;
         collecting = true;
         ready = false;
+        thermalScope = null;
     }
 
     public static boolean enabled() {
         Minecraft mc = Minecraft.getInstance();
-        return shader != null && RenderConfig.EXPERIMENTAL_SCOPE_LENS.get()
-                && RenderConfig.SCOPE_VISION_MODE.get().isThermal()
-                && mc.level != null && mc.player != null && mc.getCameraEntity() == mc.player
-                && mc.options.getCameraType().isFirstPerson() && !mc.options.hideGui
-                && IGun.getIGunOrNull(mc.player.getMainHandItem()) != null
-                && IClientPlayerGunOperator.fromLocalPlayer(mc.player).getClientAimingProgress(mc.getFrameTime()) > 0.001f
-                && !OculusCompat.isRenderShadow();
+        if (shader == null || !RenderConfig.EXPERIMENTAL_SCOPE_LENS.get() || !RenderConfig.SCOPE_THERMAL_ENABLE.get()
+                || mc.level == null || mc.player == null || mc.getCameraEntity() != mc.player
+                || !mc.options.getCameraType().isFirstPerson() || mc.options.hideGui
+                || IClientPlayerGunOperator.fromLocalPlayer(mc.player).getClientAimingProgress(mc.getFrameTime()) <= 0.001f
+                || OculusCompat.isRenderShadow()) return false;
+        // Resolve attachment NBT and variants once per frame, rather than once per entity draw.
+        if (thermalScope == null) thermalScope = hasThermalScope(mc.player.getMainHandItem());
+        return thermalScope;
+    }
+
+    private static boolean hasThermalScope(ItemStack gunItem) {
+        IGun gun = IGun.getIGunOrNull(gunItem);
+        if (gun == null) return false;
+        ItemStack scope = gun.getAttachment(gunItem, AttachmentType.SCOPE);
+        if (scope.isEmpty()) scope = gun.getBuiltinAttachment(gunItem, AttachmentType.SCOPE);
+        IAttachment attachment = IAttachment.getIAttachmentOrNull(scope);
+        if (attachment == null) return false;
+        var index = TimelessAPI.getClientAttachmentIndex(attachment.getAttachmentId(scope)).orElse(null);
+        if (index == null) return false;
+        var variant = TimelessAPI.getClientAttachmentVariantIndex(scope).orElse(null);
+        // Match AttachmentRender's replacement/overlay selection, including unavailable model fallback.
+        if (variant != null && variant.getAttachmentModel() != null && variant.getModelTexture() != null) {
+            boolean variantThermal = variant.isScope() && variant.getScopeLens().getVisionMode().isThermal();
+            if (variant.isReplaceMode()) return variantThermal;
+            if (variantThermal) return true;
+        }
+        return index.isScope() && index.getScopeLens().getVisionMode().isThermal();
     }
 
     public static MultiBufferSource wrap(MultiBufferSource source, Entity entity) {

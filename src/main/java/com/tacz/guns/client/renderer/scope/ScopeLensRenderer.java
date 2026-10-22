@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.client.resource.pojo.display.attachment.ScopeLensConfig;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
@@ -45,6 +46,7 @@ public final class ScopeLensRenderer {
     public static void registerShader(RegisterShadersEvent event) {
         beginFrame();
         ScopeThermalRenderer.registerShader(event);
+        ScopeLensContour.registerShaders(event);
         shader = null;
         try {
             event.registerShader(new ShaderInstance(event.getResourceProvider(),
@@ -68,7 +70,7 @@ public final class ScopeLensRenderer {
     }
 
     /** Called with the live scope stencil/pose; callbacks record geometry, without submitting draws. */
-    public static boolean capture(float centerX, float centerY, float radius, int stencil,
+    public static boolean capture(float centerX, float centerY, float radius, int stencil, ScopeLensConfig config,
                                   Consumer<VertexConsumer> ocular,
                                   Consumer<MultiBufferSource> reticle) {
         if (shader == null || !RenderConfig.EXPERIMENTAL_SCOPE_LENS.get() || radius <= 0.001f
@@ -113,7 +115,7 @@ public final class ScopeLensRenderer {
                     throw exception;
                 }
                 LENSES.add(new Lens(capture, stencil, projection, modelView,
-                        bounds,
+                        config, bounds,
                         buildSurface(capture.surface, centerX, centerY, radius), capture.reticle.finish()));
                 return true;
             } finally {
@@ -168,6 +170,11 @@ public final class ScopeLensRenderer {
                 for (Lens lens : LENSES) {
                     TextureTarget target = lens.capture.target;
                     if (target.width != main.width || target.height != main.height || main.getColorTextureId() < 0) continue;
+                    ScopeLensContour.Lookup contour = shader != null && RenderConfig.EXPERIMENTAL_SCOPE_LENS.get()
+                            && lens.config.getEdgeWidth() > 0
+                            ? ScopeLensContour.prepare(target, lens.stencil, main.width, main.height,
+                            lens.centerU - lens.radiusU, lens.centerV - lens.radiusV,
+                            lens.centerU + lens.radiusU, lens.centerV + lens.radiusV) : null;
                     target.bindWrite(false);
                     // Pair the saved stencil with the final scene, leaving main's depth/stencil untouched.
                     GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0,
@@ -183,7 +190,7 @@ public final class ScopeLensRenderer {
                         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
                         RenderSystem.colorMask(true, true, true, true);
                         if (shader != null && RenderConfig.EXPERIMENTAL_SCOPE_LENS.get()) {
-                            drawLens(lens, main.width, main.height);
+                            drawLens(lens, main.width, main.height, contour);
                         }
                         // Reticle and functional readouts retain their original geometry and colours.
                         for (Draw draw : lens.reticle) {
@@ -214,7 +221,7 @@ public final class ScopeLensRenderer {
         }
     }
 
-    private static void drawLens(Lens lens, int width, int height) {
+    private static void drawLens(Lens lens, int width, int height, ScopeLensContour.Lookup contour) {
         RenderSystem.activeTexture(GL13.GL_TEXTURE0);
         // Its own colour texture is detached while this FBO writes into main, so reuse it as the snapshot.
         int screenTexture = lens.capture.target.getColorTextureId();
@@ -224,22 +231,32 @@ public final class ScopeLensRenderer {
         RenderSystem.setShaderTexture(0, screenTexture);
         // Bind a valid black/scene texture even without a thermal capture; ThermalReady gates sampling.
         RenderSystem.setShaderTexture(1, ScopeThermalRenderer.textureOr(screenTexture, width, height));
+        RenderSystem.setShaderTexture(2, contour != null ? contour.texture() : screenTexture);
         RenderSystem.setShader(() -> shader);
         shader.safeGetUniform("ScreenSize").set((float) width, (float) height);
         shader.safeGetUniform("LensCenter").set(lens.centerU, lens.centerV);
         shader.safeGetUniform("LensRadius").set(lens.radiusU, lens.radiusV);
-        shader.safeGetUniform("Distortion").set(RenderConfig.SCOPE_LENS_DISTORTION.get().floatValue());
-        shader.safeGetUniform("Aberration").set(RenderConfig.SCOPE_LENS_ABERRATION.get().floatValue());
-        shader.safeGetUniform("EdgeWidth").set(RenderConfig.SCOPE_LENS_EDGE_WIDTH.get().floatValue());
-        int tint = RenderConfig.SCOPE_LENS_TINT.get();
-        float strength = RenderConfig.SCOPE_LENS_TINT_STRENGTH.get().floatValue();
+        shader.safeGetUniform("ContourReady").set(contour != null ? 1 : 0);
+        if (contour != null) {
+            shader.safeGetUniform("ContourRect").set((float) contour.x(), (float) contour.y(),
+                    (float) contour.width(), (float) contour.height());
+            shader.safeGetUniform("ContourSize").set((float) contour.mapWidth(), (float) contour.mapHeight());
+        }
+        ScopeLensConfig config = lens.config;
+        shader.safeGetUniform("Distortion").set(config.getDistortion());
+        shader.safeGetUniform("Aberration").set(config.getAberration());
+        shader.safeGetUniform("EdgeWidth").set(config.getEdgeWidth());
+        int tint = config.getTint();
+        float strength = config.getTintStrength();
         shader.safeGetUniform("LensTint").set(
                 1 + (((tint >> 16) & 0xFF) / 255f - 1) * strength,
                 1 + (((tint >> 8) & 0xFF) / 255f - 1) * strength,
                 1 + ((tint & 0xFF) / 255f - 1) * strength);
-        shader.safeGetUniform("VisionMode").set(RenderConfig.SCOPE_VISION_MODE.get().ordinal());
-        shader.safeGetUniform("VisionGain").set(RenderConfig.SCOPE_VISION_GAIN.get().floatValue());
-        shader.safeGetUniform("VisionNoise").set(RenderConfig.SCOPE_VISION_NOISE.get().floatValue());
+        ScopeVisionMode mode = config.getVisionMode();
+        if (mode.isThermal() && !RenderConfig.SCOPE_THERMAL_ENABLE.get()) mode = ScopeVisionMode.NORMAL;
+        shader.safeGetUniform("VisionMode").set(mode.ordinal());
+        shader.safeGetUniform("VisionGain").set(config.getVisionGain());
+        shader.safeGetUniform("VisionNoise").set(config.getVisionNoise());
         shader.safeGetUniform("SensorTime").set((net.minecraft.Util.getMillis() % 60000L) / 1000f);
         shader.safeGetUniform("ThermalReady").set(ScopeThermalRenderer.isReady(width, height) ? 1 : 0);
         RenderSystem.disableDepthTest();
@@ -271,6 +288,7 @@ public final class ScopeLensRenderer {
         }
         beginFrame();
         ScopeThermalRenderer.close();
+        ScopeLensContour.close();
         // Reuse BufferBuilders: their native storage is not released by the GC.
         for (Capture capture : CAPTURES) capture.target.destroyBuffers();
     }
@@ -324,6 +342,7 @@ public final class ScopeLensRenderer {
 
     private static final class Lens {
         final Capture capture;
+        final ScopeLensConfig config;
         final int stencil;
         final Matrix4f projection;
         final Matrix4f modelView;
@@ -335,8 +354,9 @@ public final class ScopeLensRenderer {
         final List<Draw> reticle;
 
         Lens(Capture capture, int stencil, Matrix4f projection, Matrix4f modelView,
-             Bounds bounds, BufferBuilder.RenderedBuffer surface, List<Draw> reticle) {
+             ScopeLensConfig config, Bounds bounds, BufferBuilder.RenderedBuffer surface, List<Draw> reticle) {
             this.capture = capture;
+            this.config = config;
             this.stencil = stencil;
             this.projection = projection;
             this.modelView = modelView;
@@ -402,6 +422,7 @@ public final class ScopeLensRenderer {
         final int vao = GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING);
         final int arrayBuffer = GL11.glGetInteger(GL15.GL_ARRAY_BUFFER_BINDING);
         final IntBuffer viewport;
+        final IntBuffer scissorBox;
         final ByteBuffer colorMask;
         final Matrix4f projection = new Matrix4f(RenderSystem.getProjectionMatrix());
         final VertexSorting sorting = RenderSystem.getVertexSorting();
@@ -416,6 +437,7 @@ public final class ScopeLensRenderer {
         final FloatBuffer clearColor;
         final boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
         final boolean cull = GL11.glIsEnabled(GL11.GL_CULL_FACE);
+        final boolean dither = GL11.glIsEnabled(GL11.GL_DITHER);
         final boolean scissor = GL11.glIsEnabled(GL11.GL_SCISSOR_TEST);
         final boolean stencil = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
         final int blendSrc = GL11.glGetInteger(GL14.GL_BLEND_SRC_RGB);
@@ -431,9 +453,11 @@ public final class ScopeLensRenderer {
 
         RenderState(MemoryStack stack) {
             viewport = stack.mallocInt(4);
+            scissorBox = stack.mallocInt(4);
             colorMask = stack.malloc(4);
             clearColor = stack.mallocFloat(4);
             GL11.glGetIntegerv(GL11.GL_VIEWPORT, viewport);
+            GL11.glGetIntegerv(GL11.GL_SCISSOR_BOX, scissorBox);
             GL11.glGetBooleanv(GL11.GL_COLOR_WRITEMASK, colorMask);
             GL11.glGetFloatv(GL11.GL_COLOR_CLEAR_VALUE, clearColor);
             for (int i = 0; i < shaderTextures.length; i++) shaderTextures[i] = RenderSystem.getShaderTexture(i);
@@ -469,9 +493,9 @@ public final class ScopeLensRenderer {
             if (blend) RenderSystem.enableBlend(); else RenderSystem.disableBlend();
             RenderSystem.blendFuncSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
             if (cull) RenderSystem.enableCull(); else RenderSystem.disableCull();
-            // This pass only toggles the test; neither it nor the reticle RenderTypes change the box.
-            if (scissor) GlStateManager._enableScissorTest();
-            else RenderSystem.disableScissor();
+            if (dither) GL11.glEnable(GL11.GL_DITHER); else GL11.glDisable(GL11.GL_DITHER);
+            RenderSystem.enableScissor(scissorBox.get(0), scissorBox.get(1), scissorBox.get(2), scissorBox.get(3));
+            if (!scissor) RenderSystem.disableScissor();
             RenderSystem.stencilFunc(stencilFunc, stencilRef, stencilValueMask);
             RenderSystem.stencilOp(stencilFail, stencilDepthFail, stencilPass);
             if (stencil) GL11.glEnable(GL11.GL_STENCIL_TEST); else GL11.glDisable(GL11.GL_STENCIL_TEST);

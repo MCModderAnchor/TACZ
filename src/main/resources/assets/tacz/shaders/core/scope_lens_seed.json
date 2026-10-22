@@ -1,0 +1,11 @@
+{
+  "vertex": "tacz:scope_lens_quad",
+  "fragment": "tacz:scope_lens_seed",
+  "attributes": ["Position"],
+  "samplers": [{"name": "Sampler0"}],
+  "uniforms": [
+    {"name": "SourceSize", "type": "float", "count": 2, "values": [1, 1]},
+    {"name": "MapSize", "type": "float", "count": 2, "values": [1, 1]},
+    {"name": "MaskRect", "type": "float", "count": 4, "values": [0, 0, 1, 1]}
+  ]
+}

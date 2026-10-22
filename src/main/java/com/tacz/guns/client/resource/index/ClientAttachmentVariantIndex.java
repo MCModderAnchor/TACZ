@@ -10,6 +10,7 @@ import com.tacz.guns.client.resource.ClientAssetLoadTask;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.ExternalModelAssets;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
+import com.tacz.guns.client.resource.pojo.display.attachment.ScopeLensConfig;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.resource.index.CommonAttachmentVariantIndex;
 import com.tacz.guns.resource.pojo.AttachmentVariantIndexPOJO;
@@ -138,6 +139,7 @@ public class ClientAttachmentVariantIndex {
             if (attachmentModel != null) {
                 attachmentModel.setIsScope(display.isScope());
                 attachmentModel.setIsSight(display.isSight());
+                attachmentModel.setScopeLens(display.getScopeLens());
             }
             modelTexture = display.getTexture();
             modelsLoaded = true;
@@ -219,6 +221,10 @@ public class ClientAttachmentVariantIndex {
 
     public boolean isScope() {
         return scope;
+    }
+
+    public ScopeLensConfig getScopeLens() {
+        return display.getScopeLens();
     }
 
     public boolean isSight() {

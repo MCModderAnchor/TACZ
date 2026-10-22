@@ -1,0 +1,11 @@
+{
+  "vertex": "tacz:scope_lens_quad",
+  "fragment": "tacz:scope_lens_distance",
+  "attributes": ["Position"],
+  "samplers": [{"name": "Sampler0"}],
+  "uniforms": [
+    {"name": "MapSize", "type": "float", "count": 2, "values": [1, 1]},
+    {"name": "PixelScale", "type": "float", "count": 2, "values": [1, 1]},
+    {"name": "JumpStep", "type": "int", "count": 1, "values": [1]}
+  ]
+}

@@ -1,6 +1,6 @@
 package com.tacz.guns.client.renderer.scope;
 
-/** Experimental, client-wide presets for the existing scope window. */
+/** Per-attachment imaging presets for the existing scope window. Order matches scope_lens.fsh. */
 public enum ScopeVisionMode {
     NORMAL,
     NIGHT_VISION_GREEN,
@@ -11,9 +11,5 @@ public enum ScopeVisionMode {
 
     public boolean isThermal() {
         return this == THERMAL_WHITE_HOT || this == THERMAL_BLACK_HOT || this == THERMAL_IRONBOW;
-    }
-
-    public String translationKey() {
-        return "config.tacz.client.render.scope_vision_mode." + name().toLowerCase(java.util.Locale.ROOT);
     }
 }
