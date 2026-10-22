@@ -144,7 +144,7 @@ public class RenderConfig {
         builder.comment("Scope lens tint strength. 0 preserves the original scene colour, 1 applies the full tint.");
         SCOPE_LENS_TINT_STRENGTH = builder.defineInRange("ScopeLensTintStrength", 0.2, 0, 1);
 
-        builder.comment("Experimental vision preset for all scope lenses. Thermal modes highlight visible living entity models with scene depth occlusion; they do not simulate temperature. NORMAL preserves the optical lens.");
+        builder.comment("Experimental vision preset for all scope lenses. Thermal modes highlight living entities and types in tacz:thermal_imaging/whitelist, excluding tacz:thermal_imaging/blacklist, with scene depth occlusion. They do not simulate temperature. NORMAL preserves the optical lens.");
         SCOPE_VISION_MODE = builder.defineEnum("ScopeVisionMode", ScopeVisionMode.NORMAL);
 
         builder.comment("Night vision luminance gain. Enhances existing scene detail; cannot recover detail from completely black pixels.");

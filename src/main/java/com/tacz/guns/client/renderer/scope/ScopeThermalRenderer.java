@@ -8,13 +8,13 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.util.ThermalImagingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -32,7 +32,7 @@ import java.util.Map;
 
 /** Records the existing entity draws; never renders or animates an entity a second time. */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
-public final class ScopeThermalRenderer {
+public class ScopeThermalRenderer {
     private static final Map<RenderType, BufferBuilder> BUILDERS = new LinkedHashMap<>();
     private static final Map<RenderType, BufferBuilder> ACTIVE = new LinkedHashMap<>();
     private static TextureTarget target;
@@ -45,7 +45,7 @@ public final class ScopeThermalRenderer {
     private ScopeThermalRenderer() {
     }
 
-    static void registerShader(RegisterShadersEvent event) {
+    public static void registerShader(RegisterShadersEvent event) {
         shader = null;
         try {
             event.registerShader(new ShaderInstance(event.getResourceProvider(),
@@ -56,7 +56,7 @@ public final class ScopeThermalRenderer {
         }
     }
 
-    static void beginFrame() {
+    public static void beginFrame() {
         for (BufferBuilder builder : ACTIVE.values()) builder.end().release();
         ACTIVE.clear();
         projection = null;
@@ -65,7 +65,7 @@ public final class ScopeThermalRenderer {
         ready = false;
     }
 
-    private static boolean enabled() {
+    public static boolean enabled() {
         Minecraft mc = Minecraft.getInstance();
         return shader != null && RenderConfig.EXPERIMENTAL_SCOPE_LENS.get()
                 && RenderConfig.SCOPE_VISION_MODE.get().isThermal()
@@ -76,9 +76,13 @@ public final class ScopeThermalRenderer {
                 && !OculusCompat.isRenderShadow();
     }
 
-    public static MultiBufferSource wrap(MultiBufferSource source, LivingEntity entity) {
-        if (!collecting || !enabled() || source instanceof ThermalBuffers || !entity.isAlive()
-                || entity.isInvisible() || entity.isSpectator() || entity instanceof ArmorStand) return source;
+    public static MultiBufferSource wrap(MultiBufferSource source, Entity entity) {
+        // Nested entity renders evaluate their own tags instead of inheriting the parent's heat mask.
+        // Unwrap only our source; other mods' buffer wrappers remain in the chain.
+        while (source instanceof ThermalBuffers thermal) source = thermal.source();
+        if (!collecting || !enabled() || !entity.isAlive()
+                || entity.isInvisible() || entity.isSpectator() || entity == Minecraft.getInstance().getCameraEntity()
+                || !ThermalImagingHelper.isHeatSource(entity)) return source;
         return new ThermalBuffers(source);
     }
 
@@ -162,7 +166,7 @@ public final class ScopeThermalRenderer {
         }
     }
 
-    private static void attachSceneDepth(int type, int object, int level) {
+    public static void attachSceneDepth(int type, int object, int level) {
         if (type == GL11.GL_TEXTURE) {
             GL32.glFramebufferTexture(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, object, level);
         } else {
@@ -170,15 +174,15 @@ public final class ScopeThermalRenderer {
         }
     }
 
-    static boolean isReady(int width, int height) {
+    public static boolean isReady(int width, int height) {
         return ready && target != null && target.width == width && target.height == height;
     }
 
-    static int textureOr(int fallback, int width, int height) {
+    public static int textureOr(int fallback, int width, int height) {
         return isReady(width, height) ? target.getColorTextureId() : fallback;
     }
 
-    static void close() {
+    public static void close() {
         beginFrame();
         if (target != null) {
             target.destroyBuffers();
@@ -187,7 +191,7 @@ public final class ScopeThermalRenderer {
         // Keep BufferBuilders for reuse: their native allocations are not freed by the GC.
     }
 
-    private record ThermalBuffers(MultiBufferSource source) implements MultiBufferSource {
+    public record ThermalBuffers(MultiBufferSource source) implements MultiBufferSource {
         @Override
         public VertexConsumer getBuffer(RenderType type) {
             VertexConsumer original = source.getBuffer(type);
@@ -207,7 +211,7 @@ public final class ScopeThermalRenderer {
     }
 
     /** Equivalent to vanilla's outline generator: keep texture cutouts, ignore lighting and hurt tint. */
-    private static final class MaskVertices implements VertexConsumer {
+    public static final class MaskVertices implements VertexConsumer {
         private final VertexConsumer output;
         private double x, y, z;
         private float u, v;
@@ -216,14 +220,46 @@ public final class ScopeThermalRenderer {
             this.output = output;
         }
 
-        @Override public VertexConsumer vertex(double x, double y, double z) { this.x = x; this.y = y; this.z = z; return this; }
-        @Override public VertexConsumer uv(float u, float v) { this.u = u; this.v = v; return this; }
-        @Override public VertexConsumer color(int r, int g, int b, int a) { return this; }
-        @Override public VertexConsumer overlayCoords(int u, int v) { return this; }
-        @Override public VertexConsumer uv2(int u, int v) { return this; }
-        @Override public VertexConsumer normal(float x, float y, float z) { return this; }
-        @Override public void defaultColor(int r, int g, int b, int a) { }
-        @Override public void unsetDefaultColor() { }
+        @Override
+        public VertexConsumer vertex(double x, double y, double z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            return this;
+        }
+
+        @Override
+        public VertexConsumer uv(float u, float v) {
+            this.u = u; this.v = v; return this;
+        }
+
+        @Override
+        public VertexConsumer color(int r, int g, int b, int a) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer overlayCoords(int u, int v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer uv2(int u, int v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer normal(float x, float y, float z) {
+            return this;
+        }
+
+        @Override
+        public void defaultColor(int r, int g, int b, int a) { }
+
+        @Override
+        public void unsetDefaultColor() {
+
+        }
 
         @Override
         public void endVertex() {

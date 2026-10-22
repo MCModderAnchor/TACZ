@@ -12,7 +12,7 @@
   "config.tacz.client.render.scope_lens_tint_strength": "光学镜片偏色强度",
   "config.tacz.client.render.scope_lens_tint_strength.desc": "设为 0 保留画面原色，设为 1 完整应用偏色。",
   "config.tacz.client.render.scope_vision_mode": "实验性瞄准镜成像模式",
-  "config.tacz.client.render.scope_vision_mode.desc": "临时应用到所有镜片。热成像按场景深度高亮可见生物模型，不模拟实际温度；无法捕获时使用普通镜片。",
+  "config.tacz.client.render.scope_vision_mode.desc": "临时应用到所有镜片。热成像默认高亮生物，以及 tacz:thermal_imaging/whitelist 中的实体类型；tacz:thermal_imaging/blacklist 优先排除。保留场景深度遮挡，无法捕获时使用普通镜片。",
   "config.tacz.client.render.scope_vision_mode.normal": "普通光学镜片",
   "config.tacz.client.render.scope_vision_mode.night_vision_green": "夜视（绿磷）",
   "config.tacz.client.render.scope_vision_mode.night_vision_white": "夜视（白磷）",
