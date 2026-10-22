@@ -15,6 +15,8 @@
     {"name": "Distortion", "type": "float", "count": 1, "values": [0.05]},
     {"name": "Aberration", "type": "float", "count": 1, "values": [0.007]},
     {"name": "EdgeWidth", "type": "float", "count": 1, "values": [0.35]},
+    {"name": "VignetteStrength", "type": "float", "count": 1, "values": [1]},
+    {"name": "VignetteWidth", "type": "float", "count": 1, "values": [0.35]},
     {"name": "LensTint", "type": "float", "count": 3, "values": [1, 1, 1]},
     {"name": "VisionMode", "type": "int", "count": 1, "values": [0]},
     {"name": "ThermalReady", "type": "int", "count": 1, "values": [0]},

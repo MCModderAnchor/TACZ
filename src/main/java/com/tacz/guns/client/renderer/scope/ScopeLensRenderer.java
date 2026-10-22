@@ -171,7 +171,7 @@ public final class ScopeLensRenderer {
                     TextureTarget target = lens.capture.target;
                     if (target.width != main.width || target.height != main.height || main.getColorTextureId() < 0) continue;
                     ScopeLensContour.Lookup contour = shader != null && RenderConfig.EXPERIMENTAL_SCOPE_LENS.get()
-                            && lens.config.getEdgeWidth() > 0
+                            && lens.config.hasEdgeEffects()
                             ? ScopeLensContour.prepare(target, lens.stencil, main.width, main.height,
                             lens.centerU - lens.radiusU, lens.centerV - lens.radiusV,
                             lens.centerU + lens.radiusU, lens.centerV + lens.radiusV) : null;
@@ -246,6 +246,8 @@ public final class ScopeLensRenderer {
         shader.safeGetUniform("Distortion").set(config.getDistortion());
         shader.safeGetUniform("Aberration").set(config.getAberration());
         shader.safeGetUniform("EdgeWidth").set(config.getEdgeWidth());
+        shader.safeGetUniform("VignetteStrength").set(config.getVignetteStrength());
+        shader.safeGetUniform("VignetteWidth").set(config.getVignetteWidth());
         int tint = config.getTint();
         float strength = config.getTintStrength();
         shader.safeGetUniform("LensTint").set(

@@ -15,6 +15,12 @@ public class ScopeLensConfig {
     @SerializedName("edge_width")
     private float edgeWidth = 0.35f;
 
+    @SerializedName("vignette_strength")
+    private float vignetteStrength = 1.0f;
+
+    @SerializedName("vignette_width")
+    private float vignetteWidth = 0.35f;
+
     @SerializedName("tint")
     private String tint = "#70AEE8";
 
@@ -36,6 +42,8 @@ public class ScopeLensConfig {
         distortion = clamp(distortion, 0.05f, 0, 0.2f);
         aberration = clamp(aberration, 0.007f, 0, 0.03f);
         edgeWidth = clamp(edgeWidth, 0.35f, 0, 2);
+        vignetteStrength = clamp(vignetteStrength, 1.0f, 0, 1);
+        vignetteWidth = clamp(vignetteWidth, 0.35f, 0, 2);
         tintColor = ColorHex.colorTextToRbgInt(tint == null ? "#70AEE8" : tint);
         tintStrength = clamp(tintStrength, 0.2f, 0, 1);
         visionGain = clamp(visionGain, 3.0f, 1, 12);
@@ -57,6 +65,19 @@ public class ScopeLensConfig {
 
     public float getEdgeWidth() {
         return edgeWidth;
+    }
+
+    public float getVignetteStrength() {
+        return vignetteStrength;
+    }
+
+    public float getVignetteWidth() {
+        return vignetteWidth;
+    }
+
+    public boolean hasEdgeEffects() {
+        return edgeWidth > 0 && (distortion > 0 || aberration > 0)
+                || vignetteStrength > 0 && vignetteWidth > 0;
     }
 
     public int getTint() {

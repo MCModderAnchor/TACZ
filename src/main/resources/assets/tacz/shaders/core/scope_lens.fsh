@@ -12,6 +12,8 @@ uniform vec2 ContourSize;
 uniform float Distortion;
 uniform float Aberration;
 uniform float EdgeWidth;
+uniform float VignetteStrength;
+uniform float VignetteWidth;
 uniform vec3 LensTint;
 uniform int VisionMode;
 uniform int ThermalReady;
@@ -71,12 +73,16 @@ void main() {
 
     float ramp = 0.0;
     float edge = 0.0;
-    if (EdgeWidth > 0.0) {
-        float width = 0.155 * EdgeWidth;
+    if (EdgeWidth > 0.0 || (VignetteStrength > 0.0 && VignetteWidth > 0.0)) {
         float distance = distanceToEdge(uv);
-        float falloff = distance / width;
-        edge = exp(-falloff * falloff);
-        ramp = 1.0 - smoothstep(0.0, min(width * 3.0, 1.0), distance);
+        if (EdgeWidth > 0.0) {
+            float width = 0.155 * EdgeWidth;
+            ramp = 1.0 - smoothstep(0.0, min(width * 3.0, 1.0), distance);
+        }
+        if (VignetteStrength > 0.0 && VignetteWidth > 0.0) {
+            float falloff = distance / (0.155 * VignetteWidth);
+            edge = exp(-falloff * falloff) * VignetteStrength;
+        }
     }
 
     // Sample in screen space so hand FOV cannot magnify the scene a second time.
