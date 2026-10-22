@@ -1,25 +1,24 @@
 {
-  "allow_ammo_unload": true,
   "ammo": "tacz:22wmr",
   "ammo_amount": 8,
   "force_aim_exit_on_reload": true,
-  "rpm": 180,
+  "rpm": 200,
   "bullet": {
-    "life": 0.85,
+    "life": 1,
     "bullet_amount": 1,
-    "damage": 6,
+    "damage": 8,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.0,
       "head_shot_multiplier": 2.0,
       "damage_adjust": [
-        {"distance": 16, "damage": 6},
-        {"distance": 25, "damage": 5},
-        {"distance": 30, "damage": 3},
+        {"distance": 12, "damage": 8},
+        {"distance": 25, "damage": 6},
+        {"distance": 32, "damage": 4},
         {"distance": "infinite", "damage": 3}
       ]
     },
-    "speed": 135,
+    "speed": 150,
     "gravity": 0.125,
     "knockback": 0.005,
     "friction": 0.015,
@@ -95,22 +94,30 @@
       {"time": 0, "value": [0.6, 0.6]},
       {"time": 0.05, "value": [0.8, 0.8]},
       {"time": 0.1, "value": [0.65, 0.65]},
-      {"time": 0.25, "value": [-0.115, -0.115]},
-      {"time": 0.5, "value": [0.1, 0.1]},
-      {"time": 0.7, "value": [0, 0]},
-      {"time": 1.0, "value": [0, 0]}
+      {"time": 0.25, "value": [0, 0]},
+      {"time": 0.5, "value": [0, 0]}
     ],
     "yaw": [
       {"time": 0, "value": [-0.15, 0.15]},
-      {"time": 0.5, "value": [0, 0]}
+      {"time": 0.2, "value": [0, 0]}
     ]
   },
   "can_slide": false,
   "inaccuracy": {
     "stand": 1.25,
-    "move": 1.5,
+    "move": 1.25,
     "sneak": 0.5,
     "lie": 0.5,
     "aim": 0.1
+  },  
+  "script": "tacz:taurus943_gun_logic",
+  "script_param": {
+    "intro": 1.45,
+    "loop": 0.45,
+    "loop_feed": 0.10,
+    "ending": 0.75,
+    "unload_magazine": true,
+    "unload_amount": 8,
+    "unload_time": 0.8
   }
 }

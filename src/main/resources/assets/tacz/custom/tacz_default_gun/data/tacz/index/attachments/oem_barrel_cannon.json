@@ -5,5 +5,5 @@
   "data": "tacz:oem_barrel_cannon_data",
   "type": "muzzle",
   "sort": 1,
-  "hidden": false
+  "hidden": true
 }
