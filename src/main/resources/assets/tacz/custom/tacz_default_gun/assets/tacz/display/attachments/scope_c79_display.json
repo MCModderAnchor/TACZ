@@ -15,5 +15,15 @@
   "sounds": {
     "install": "tacz:attachments/scope_general_b",
     "uninstall": "tacz:attachments/scope_general_b"
+  },
+  "scope_lens": {
+    "distortion": 0.05,
+    "aberration": 0.007,
+    "edge_width": 0.35,
+    "vignette_strength": 1,
+    "vignette_width": 0.35,
+    "tint": "#DAB3B3",
+    "tint_strength": 0.2,
+    "vision_mode": "NORMAL"
   }
 }
