@@ -54,7 +54,7 @@ public class AmmoStorageBlock extends BaseEntityBlock {
     }
 
     public AmmoStorageBlock(int capacityStacks) {
-        super(Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0F).requiresCorrectToolForDrops().dynamicShape());
+        super(Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(2.0F).dynamicShape());
         this.capacityStacks = capacityStacks;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
