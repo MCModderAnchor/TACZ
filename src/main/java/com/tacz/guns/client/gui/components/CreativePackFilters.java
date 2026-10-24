@@ -26,7 +26,8 @@ import java.util.function.Consumer;
 
 /** A screen-local content pack filter; the registered creative tabs keep their full contents. */
 public class CreativePackFilters {
-    private static final ResourceLocation TAB_TEXTURE = ResourceLocation.parse("textures/gui/recipe_book.png");
+    private static final ResourceLocation TAB_SPRITE = ResourceLocation.withDefaultNamespace("recipe_book/tab");
+    private static final ResourceLocation SELECTED_TAB_SPRITE = ResourceLocation.withDefaultNamespace("recipe_book/tab_selected");
     private static final ResourceLocation ALL_PACKS_ICON = ResourceLocation.fromNamespaceAndPath(GunMod.MOD_ID, "textures/gui/creative_pack_all.png");
     private static final int VISIBLE_PACKS = 3;
     private static final int TAB_HEIGHT = 26;
@@ -254,10 +255,15 @@ public class CreativePackFilters {
             }
             boolean selected = Objects.equals(option.namespace(), selections.get(currentTab));
             RenderSystem.enableBlend();
-            // Native left-side tabs keep highlights above/left and shadows below.
-            // Preserve the corners and the selected tab's join to the panel; only tile the center.
-            com.tacz.guns.client.gui.components.GuiTextureHelper.blitNineSliced(graphics, TAB_TEXTURE, getX(), getY(), selected ? 31 : 28, TAB_HEIGHT,
-                    3, selected ? 35 : 30, TAB_HEIGHT, selected ? 188 : 153, 2);
+            ResourceLocation background = selected ? SELECTED_TAB_SPRITE : TAB_SPRITE;
+            int backgroundWidth = selected ? 31 : 28;
+            int sourceWidth = selected ? 35 : 30;
+            // Both sprites are 35x27; the unselected tab has five transparent columns on the right.
+            // Crop only the flat center to preserve the borders and the selected tab's panel join.
+            graphics.blitSprite(background, 35, 27, 0, 0,
+                    getX(), getY(), backgroundWidth - 3, TAB_HEIGHT);
+            graphics.blitSprite(background, 35, 27, sourceWidth - 3, 0,
+                    getX() + backgroundWidth - 3, getY(), 3, TAB_HEIGHT);
             if (option.logo() != null) {
                 // UVs cover the full image, independently of its pixel dimensions.
                 graphics.blit(option.logo(), getX() + 8, getY() + 5, 0, 0, 16, 16, 16, 16);
