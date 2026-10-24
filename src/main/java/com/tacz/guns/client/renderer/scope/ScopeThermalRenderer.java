@@ -37,6 +37,9 @@ import java.util.Map;
 /** Records the existing entity draws; never renders or animates an entity a second time. */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class ScopeThermalRenderer {
+    // One pixel of depth slope covers subpixel TAA jitter; units cover depth rounding.
+    static final float DEPTH_BIAS_FACTOR = -1.0f;
+    static final float DEPTH_BIAS_UNITS = -2.0f;
     private static final Map<RenderType, BufferBuilder> BUILDERS = new LinkedHashMap<>();
     private static final Map<RenderType, BufferBuilder> ACTIVE = new LinkedHashMap<>();
     private static TextureTarget target;
@@ -170,6 +173,10 @@ public class ScopeThermalRenderer {
                         RenderSystem.enableDepthTest();
                         RenderSystem.depthFunc(GL11.GL_LEQUAL);
                         RenderSystem.depthMask(false);
+                        // Bias only mask depth: keep cutout silhouettes and scene occlusion intact.
+                        // Apply after the material state, which may set its own polygon offset.
+                        RenderSystem.enablePolygonOffset();
+                        RenderSystem.polygonOffset(DEPTH_BIAS_FACTOR, DEPTH_BIAS_UNITS);
                         RenderSystem.disableBlend();
                         RenderSystem.colorMask(true, true, true, true);
                         BufferBuilder.RenderedBuffer submitted = vertices;

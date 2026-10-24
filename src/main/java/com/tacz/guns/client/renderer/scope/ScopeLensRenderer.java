@@ -435,6 +435,9 @@ public final class ScopeLensRenderer {
         final boolean depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
         final boolean depthMask = GL11.glGetBoolean(GL11.GL_DEPTH_WRITEMASK);
         final int depthFunc = GL11.glGetInteger(GL11.GL_DEPTH_FUNC);
+        final boolean polygonOffset = GL11.glIsEnabled(GL11.GL_POLYGON_OFFSET_FILL);
+        final float polygonOffsetFactor = GL11.glGetFloat(GL11.GL_POLYGON_OFFSET_FACTOR);
+        final float polygonOffsetUnits = GL11.glGetFloat(GL11.GL_POLYGON_OFFSET_UNITS);
         final double clearDepth = GL11.glGetDouble(GL11.GL_DEPTH_CLEAR_VALUE);
         final FloatBuffer clearColor;
         final boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
@@ -489,6 +492,8 @@ public final class ScopeLensRenderer {
             if (depthTest) RenderSystem.enableDepthTest(); else RenderSystem.disableDepthTest();
             RenderSystem.depthMask(depthMask);
             RenderSystem.depthFunc(depthFunc);
+            RenderSystem.polygonOffset(polygonOffsetFactor, polygonOffsetUnits);
+            if (polygonOffset) RenderSystem.enablePolygonOffset(); else RenderSystem.disablePolygonOffset();
             RenderSystem.clearDepth(clearDepth);
             RenderSystem.clearColor(clearColor.get(0), clearColor.get(1), clearColor.get(2), clearColor.get(3));
             RenderSystem.colorMask(colorMask.get(0) != 0, colorMask.get(1) != 0, colorMask.get(2) != 0, colorMask.get(3) != 0);
