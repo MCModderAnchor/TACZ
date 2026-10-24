@@ -10,6 +10,7 @@ import com.tacz.guns.resource.pojo.data.block.TabConfig;
 import com.tacz.guns.resource.pojo.data.recipe.GunResult;
 import com.tacz.guns.util.DefaultGunAttachments;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -35,6 +36,7 @@ public class RawGunTableResult {
     private GunResult extraData;
     @Nullable
     private CompoundTag nbt;
+    private DataComponentPatch components = DataComponentPatch.EMPTY;
 
     public RawGunTableResult(@NotNull String type, @NotNull ResourceLocation id, int count) {
         this.type = type;
@@ -48,6 +50,26 @@ public class RawGunTableResult {
 
     public void setNbt(@Nullable CompoundTag nbt) {
         this.nbt = nbt;
+    }
+
+    public void setComponents(DataComponentPatch components) {
+        this.components = components;
+    }
+
+    public static void applyComponents(ItemStack stack, DataComponentPatch patch) {
+        if (stack.isEmpty() || patch.isEmpty()) return;
+        var customData = patch.get(DataComponents.CUSTOM_DATA);
+        stack.applyComponents(patch.forget(type -> type == DataComponents.CUSTOM_DATA));
+        if (customData != null) {
+            if (customData.isEmpty()) {
+                stack.remove(DataComponents.CUSTOM_DATA);
+            } else {
+                CompoundTag extra = customData.get().copyTag();
+                stack.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, data -> data.update(tag -> {
+                    for (String key : extra.getAllKeys()) tag.put(key, extra.get(key).copy());
+                }));
+            }
+        }
     }
 
     public static GunSmithTableResult init(HolderLookup.Provider provider, RawGunTableResult raw) {
@@ -67,6 +89,7 @@ public class RawGunTableResult {
                 }
             }));
         }
+        applyComponents(result.getResult(), raw.components);
         return result;
     }
 

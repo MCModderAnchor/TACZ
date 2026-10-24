@@ -463,5 +463,11 @@
   "advancement.tacz.target_minecart.title": "Target Minecart",
   "advancement.tacz.target_minecart.description": "Obtain a target minecart",
   "advancement.tacz.target_hit.title": "Parameter Calibration",
-  "advancement.tacz.target_hit.description": "Hit a target from 128 meters away"
+  "advancement.tacz.target_hit.description": "Hit a target from 128 meters away",
+  "message.tacz.converter.universal.busy": "This pack is already being converted, or the conversion queue is full.",
+  "message.tacz.converter.universal.exported": "Universal gun pack exported: %s (%s overlay files). Install it in place of the original pack and validate both game versions.",
+  "message.tacz.converter.universal.rejected": "Conversion needs manual changes. Report: %s",
+  "message.tacz.converter.universal.checked": "Check completed. Report: %s (%s overlay files planned). Game validation is still required.",
+  "message.tacz.converter.universal.queued": "Checking gun pack %s in the background...",
+  "message.tacz.converter.universal.failed": "Gun pack conversion failed: %s"
 }

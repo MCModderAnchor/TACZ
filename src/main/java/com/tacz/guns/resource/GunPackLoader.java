@@ -8,7 +8,10 @@ import com.tacz.guns.config.PreLoadConfig;
 import com.tacz.guns.util.GetJarResources;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.packs.*;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackSelectionConfig;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
@@ -34,7 +37,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -84,14 +90,12 @@ public enum GunPackLoader implements RepositorySource {
         List<PackResources> extensionPacks = new ArrayList<>();
 
         for(GunPack gunPack : gunPacks) {
-            /* FIXME: I'm not sure why the previous code don't work anymore and how it's supposed to work, so I'll just do this*/
-            PackResources packResources;
-            if (Files.isDirectory(gunPack.path)) {
-                packResources = new PathPackResources.PathResourcesSupplier(gunPack.path).openPrimary(new PackLocationInfo(gunPack.name, Component.literal(gunPack.name), PackSource.BUILT_IN, Optional.empty()));
-            } else {
-                packResources = new FilePackResources.FileResourcesSupplier(gunPack.path).openPrimary(new PackLocationInfo(gunPack.name, Component.literal(gunPack.name), PackSource.BUILT_IN, Optional.empty()));
+            try {
+                PackLocationInfo location = new PackLocationInfo(gunPack.name, Component.literal(gunPack.name), PackSource.BUILT_IN, Optional.empty());
+                extensionPacks.add(GunPackOverlayResolver.open(gunPack.path, location, gunPack.overlays));
+            } catch (IOException e) {
+                GunMod.LOGGER.error(MARKER, "Failed to open gun pack {}: {}", gunPack.path, e.getMessage());
             }
-            extensionPacks.add(packResources);
         }
 
         PackLocationInfo info = new PackLocationInfo("tacz_resources", Component.literal("TACZ Resources"), PackSource.BUILT_IN, Optional.empty());
@@ -164,8 +168,8 @@ public enum GunPackLoader implements RepositorySource {
                 return null;
             }
 
-            return new GunPack(path, info.getName());
-        } catch (IOException | JsonSyntaxException | JsonIOException | InvalidVersionSpecificationException exception) {
+            return createGunPack(path, info);
+        } catch (IOException | JsonSyntaxException | JsonIOException | InvalidVersionSpecificationException | IllegalArgumentException exception) {
             GunMod.LOGGER.warn(MARKER, "Failed to read info json: {}", packInfoFilePath.getFileName());
             GunMod.LOGGER.warn(exception.getMessage());
         }
@@ -193,8 +197,8 @@ public enum GunPackLoader implements RepositorySource {
                     return null;
                 }
 
-                return new GunPack(path, info.getName());
-            } catch (IOException | JsonSyntaxException | JsonIOException | InvalidVersionSpecificationException e) {
+                return createGunPack(path, info);
+            } catch (IOException | JsonSyntaxException | JsonIOException | InvalidVersionSpecificationException | IllegalArgumentException e) {
                 GunMod.LOGGER.error(MARKER,"Failed to load extension from ZIP {}. Error: {}", path.getFileName(), e);
                 return null;
             }
@@ -246,6 +250,13 @@ public enum GunPackLoader implements RepositorySource {
     }
 
 
-    public record GunPack(Path path, String name) {
+    private static GunPack createGunPack(Path path, PackMeta info) throws IOException {
+        if (info.getName() == null || info.getName().isBlank()) throw new IOException("Missing gun pack namespace");
+        List<String> overlays = GunPackOverlayResolver.resolve(info, SharedConstants.getCurrentVersion().getName());
+        GunPackOverlayResolver.validate(path, overlays);
+        return new GunPack(path, info.getName(), overlays);
+    }
+
+    public record GunPack(Path path, String name, List<String> overlays) {
     }
 }

@@ -58,6 +58,11 @@ neoForge {
             sourceSet(sourceSets["main"])
         }
     }
+
+    unitTest {
+        enable()
+        testedMod.set(mods[id])
+    }
 }
 
 repositories {
@@ -113,6 +118,8 @@ repositories {
 }
 
 dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
     implementation("com.github.mcmodderanchor:simplebedrockmodel:2.6.0-neoforge-mc1.21.1")
     jarJar("com.github.mcmodderanchor:simplebedrockmodel:2.6.0-neoforge-mc1.21.1")
     compileOnly(libs.com.maydaymemory.mae)
@@ -161,4 +168,23 @@ tasks.processResources {
     filteringCharset = "UTF-8"
     inputs.properties(properties)
     filesMatching("META-INF/neoforge.mods.toml") { expand(properties) }
+}
+
+tasks.test {
+    useJUnitPlatform()
+    providers.gradleProperty("gunPackLegacyFixture").orNull?.let {
+        systemProperty("tacz.gunpack.legacyFixture", file(it).absolutePath)
+    }
+    providers.gradleProperty("gunPackBatchDirectory").orNull?.let {
+        systemProperty("tacz.gunpack.batchDirectory", file(it).absolutePath)
+        systemProperty("tacz.gunpack.batchOutput", layout.buildDirectory.dir("gunpack-client-a-batch").get().asFile.absolutePath)
+    }
+    workingDir = layout.buildDirectory.dir("gunpack-compatibility-tests").get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.register("gunPackCompatibilityTest") {
+    group = "verification"
+    description = "Runs gun-pack overlays and universal conversion regression checks."
+    dependsOn(tasks.test)
 }

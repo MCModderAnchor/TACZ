@@ -5,14 +5,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.tacz.guns.GunMod;
+import com.tacz.guns.resource.pojo.data.block.TabConfig;
 import com.tacz.guns.resource.pojo.data.recipe.GunResult;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import com.tacz.guns.resource.pojo.data.block.TabConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
@@ -37,6 +38,11 @@ public class GunSmithTableResult {
             String typeName = Codec.STRING.fieldOf("type").decode(ops, map).getOrThrow();
             int count = Codec.INT.optionalFieldOf("count", 1).decode(ops, map).getOrThrow();
             CompoundTag extraTag = CompoundTag.CODEC.optionalFieldOf("nbt", null).decode(ops, map).getOrThrow();
+            if (map.get("nbt") != null && map.get("components") != null) {
+                throw new IllegalArgumentException("Recipe result cannot specify both nbt and components");
+            }
+            DataComponentPatch components = DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY)
+                .decode(ops, map).getOrThrow();
             ResourceLocation tabOverride = Codec.STRING.optionalFieldOf("group").decode(ops, map).getOrThrow()
                 .map(raw -> raw.contains(":") ? raw : GunMod.MOD_ID + ":" + raw)
                 .map(ResourceLocation::tryParse).orElse(null);
@@ -49,6 +55,7 @@ public class GunSmithTableResult {
                     ResourceLocation id = ResourceLocation.CODEC.fieldOf("id").decode(ops, map).getOrThrow();
                     RawGunTableResult raw = new RawGunTableResult(typeName, id, count);
                     if (extraTag != null) raw.setNbt(extraTag);
+                    raw.setComponents(components);
                     if (typeName.equals(GunSmithTableResult.GUN)) {
                         GunResult.CODEC.parse(ops, input).result().ifPresent(raw::setExtraData);
                     }
@@ -57,6 +64,7 @@ public class GunSmithTableResult {
                 case GunSmithTableResult.CUSTOM -> {
                     ItemStack itemStack = ItemStack.OPTIONAL_CODEC.fieldOf("item").decode(ops, map).getOrThrow();
                     result = new GunSmithTableResult(itemStack, tabOverride);
+                    RawGunTableResult.applyComponents(itemStack, components);
                     if (extraTag != null) {
                         result.getResult().update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, data -> data.update(tag -> {
                             for (String key : extraTag.getAllKeys()) {

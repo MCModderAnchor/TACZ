@@ -465,5 +465,11 @@
   "advancement.tacz.target_minecart.title": "标靶车",
   "advancement.tacz.target_minecart.description": "获得标靶车",
   "advancement.tacz.target_hit.title": "校正参数",
-  "advancement.tacz.target_hit.description": "用枪械击中128米外的标靶"
+  "advancement.tacz.target_hit.description": "用枪械击中128米外的标靶",
+  "message.tacz.converter.universal.busy": "此枪包正在转换，或转换队列已满。",
+  "message.tacz.converter.universal.exported": "通用枪包已导出：%s（%s 个覆盖文件）。请替换原包安装，并验证两个游戏版本。",
+  "message.tacz.converter.universal.rejected": "转换需要人工处理，详见报告：%s",
+  "message.tacz.converter.universal.checked": "检查完成，报告：%s（计划生成 %s 个覆盖文件）。仍需进行游戏内验证。",
+  "message.tacz.converter.universal.queued": "正在后台检查枪包 %s……",
+  "message.tacz.converter.universal.failed": "枪包转换失败：%s"
 }

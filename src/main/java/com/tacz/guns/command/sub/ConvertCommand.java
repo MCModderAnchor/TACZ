@@ -15,6 +15,7 @@ public class ConvertCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         LiteralArgumentBuilder<CommandSourceStack> reload = Commands.literal(CONVERT_NAME);
         reload.executes(ConvertCommand::convert);
+        reload.then(UniversalConvertCommand.get());
         return reload;
     }
 
