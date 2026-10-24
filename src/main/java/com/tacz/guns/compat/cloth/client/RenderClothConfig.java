@@ -126,5 +126,13 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.static_item_gun_vbo"), RenderConfig.STATIC_ITEM_GUN_VBO.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.static_item_gun_vbo.desc"))
                 .setSaveConsumer(RenderConfig.STATIC_ITEM_GUN_VBO::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.scope_lens_enable"), RenderConfig.EXPERIMENTAL_SCOPE_LENS.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.scope_lens_enable.desc"))
+                .setSaveConsumer(RenderConfig.EXPERIMENTAL_SCOPE_LENS::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.scope_thermal_enable"), RenderConfig.SCOPE_THERMAL_ENABLE.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.scope_thermal_enable.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_THERMAL_ENABLE::set).build());
     }
 }

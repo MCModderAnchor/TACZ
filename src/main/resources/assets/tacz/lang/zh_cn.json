@@ -1,4 +1,8 @@
 {
+  "config.tacz.client.render.scope_lens_enable": "实验性镜片效果",
+  "config.tacz.client.render.scope_lens_enable.desc": "在现有瞄准镜窗口内启用各配件 display 配置指定的镜片效果。",
+  "config.tacz.client.render.scope_thermal_enable": "瞄准镜热成像",
+  "config.tacz.client.render.scope_thermal_enable.desc": "允许配置了热成像的配件使用热成像。关闭后使用普通光学镜片，并停止热源捕获。需要开启镜片效果总开关。",
   "config.tacz.client.render.creative_pack_sidebar": "创造模式内容包侧栏",
   "config.tacz.client.render.creative_pack_sidebar.desc": "是否显示 TACZ 创造模式物品栏的内容包侧栏。关闭后同时清除内容包筛选，显示当前分类的全部物品。",
   "gui.tacz.creative_pack_filter.all": "全部",

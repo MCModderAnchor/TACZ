@@ -173,7 +173,7 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
         this(type, throwerIn.getX(), throwerIn.getEyeY() - (double) 0.1F, throwerIn.getZ(), worldIn);
         this.setOwner(throwerIn);
         // gunId 提前赋值，以让 modifyProperty 可以在构造函数中运行
-        this.gunId = gunId;
+        this.gunId = Objects.requireNonNullElse(gunId, DefaultAssets.EMPTY_GUN_ID);
         AttachmentCacheProperty cacheProperty = Objects.requireNonNull(IGunOperator.fromLivingEntity(throwerIn).getCacheProperty());
         float armorIgnore = modifyProperty(GunProperties.ARMOR_IGNORE, Float.class, cacheProperty.getCache(GunProperties.ARMOR_IGNORE));
         float headshot = modifyProperty(GunProperties.HEADSHOT_MULTIPLIER, Float.class, cacheProperty.getCache(GunProperties.HEADSHOT_MULTIPLIER));
@@ -181,7 +181,7 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
         this.armorIgnore = Mth.clamp(armorIgnore, 0f, 1f);
         this.headShot = Math.max(headshot, 0f);
         this.knockback = Math.max(knockback, 0f);
-        this.ammoId = ammoId;
+        this.ammoId = Objects.requireNonNullElse(ammoId, DefaultAssets.EMPTY_AMMO_ID);
         float lifeSecond = modifyProperty(BULLET_LIFE, Float.class, bulletData.getLifeSecond());
         this.life = Mth.clamp((int) (lifeSecond * 20), 1, Integer.MAX_VALUE);
         // speed 字段是无效的，实际生效的速度是 shootOnce 里传给 doBulletSpread 的速度
@@ -220,7 +220,7 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
         this.setPos(posX, posY, posZ);
         this.startPos = this.position();
         this.isTracerAmmo = isTracerAmmo;
-        this.gunDisplayId = gunDisplayId;
+        this.gunDisplayId = Objects.requireNonNullElse(gunDisplayId, DefaultAssets.DEFAULT_GUN_DISPLAY_ID);
     }
 
     @ApiStatus.Internal
@@ -614,7 +614,7 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
         buffer.writeDouble(getDeltaMovement().z);
         Entity entity = getOwner();
         buffer.writeInt(entity != null ? entity.getId() : 0);
-        buffer.writeResourceLocation(ammoId);
+        buffer.writeResourceLocation(Objects.requireNonNullElse(this.ammoId, DefaultAssets.EMPTY_AMMO_ID));
         buffer.writeFloat(this.gravity);
         buffer.writeBoolean(this.explosion);
         buffer.writeBoolean(this.igniteEntity);
@@ -626,8 +626,8 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
         buffer.writeFloat(this.friction);
         buffer.writeInt(this.pierce);
         buffer.writeBoolean(this.isTracerAmmo);
-        buffer.writeResourceLocation(this.gunId);
-        buffer.writeResourceLocation(this.gunDisplayId);
+        buffer.writeResourceLocation(Objects.requireNonNullElse(this.gunId, DefaultAssets.EMPTY_GUN_ID));
+        buffer.writeResourceLocation(Objects.requireNonNullElse(this.gunDisplayId, DefaultAssets.DEFAULT_GUN_DISPLAY_ID));
     }
 
     @Override

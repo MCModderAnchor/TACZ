@@ -3,11 +3,14 @@ package com.tacz.guns.client.model;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
+import com.tacz.guns.client.model.bedrock.BedrockCube;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tacz.guns.client.model.functional.BeamRenderer;
 import com.tacz.guns.client.model.functional.RangefinderImpactPredictionRender;
 import com.tacz.guns.client.model.functional.TextShowRender;
+import com.tacz.guns.client.renderer.scope.ScopeLensRenderer;
+import com.tacz.guns.client.resource.pojo.display.attachment.ScopeLensConfig;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
@@ -60,6 +63,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     private boolean isScope = false;
     private boolean isSight = false;
+    private ScopeLensConfig scopeLens = new ScopeLensConfig();
     private float scopeViewRadiusModifier = 1;
 
     public BedrockAttachmentModel(BedrockModelPOJO pojo, BedrockVersion version) {
@@ -140,6 +144,10 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     public boolean isSight() {
         return isSight;
+    }
+
+    public void setScopeLens(ScopeLensConfig scopeLens) {
+        this.scopeLens = scopeLens;
     }
 
     public void setScopeViewRadiusModifier(float scopeViewRadiusModifier) {
@@ -311,9 +319,51 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
                     // 渲染划分
                     int b = ~(i+1) & 0xFF;
                     RenderSystem.stencilFunc(GL11.GL_EQUAL, b, 0xFF);
+                    Vector3f center = getBedrockPartCenter(matrixStack, ocularNodePaths.get(i));
+                    List<BedrockPart> ocular = ocularNodePaths.get(i);
+                    List<BedrockPart> division = divisionNodePaths.get(i);
+                    if (ScopeLensRenderer.capture(center.x() * 16 * 90, center.y() * 16 * 90, rad, b, scopeLens,
+                            bounds -> captureLensBounds(matrixStack, ocular, bounds),
+                            buffers -> captureLensDivision(matrixStack, transformType, renderType, light, overlay, division, buffers))) {
+                        continue;
+                    }
                     renderTempPart(matrixStack, transformType, renderType, light, overlay, divisionNodePaths.get(i), bufferSource);
                 }
             }
+        }
+    }
+
+    private void captureLensBounds(PoseStack poseStack, List<BedrockPart> path, VertexConsumer bounds) {
+        poseStack.pushPose();
+        try {
+            for (int i = 0; i < path.size() - 1; i++) path.get(i).translateAndRotateAndScale(poseStack);
+            captureLensPartBounds(poseStack, path.get(path.size() - 1), bounds);
+        } finally {
+            poseStack.popPose();
+        }
+    }
+
+    /** Inspect geometry only; functional renderers must not run a second time for the bounds probe. */
+    private void captureLensPartBounds(PoseStack poseStack, BedrockPart part, VertexConsumer bounds) {
+        poseStack.pushPose();
+        part.translateAndRotateAndScale(poseStack);
+        for (BedrockCube cube : part.cubes) cube.compile(poseStack.last(), bounds, 0, 0, 1, 1, 1, 1);
+        for (BedrockPart child : part.children) captureLensPartBounds(poseStack, child, bounds);
+        poseStack.popPose();
+    }
+
+    /** Resolve functional readouts now, before the shared model is animated/reset for another draw. */
+    private void captureLensDivision(PoseStack poseStack, ItemDisplayContext context, RenderType type,
+                                     int light, int overlay, List<BedrockPart> division, MultiBufferSource buffers) {
+        List<IFunctionalRenderer> previous = delegateRenderers;
+        delegateRenderers = new ArrayList<>();
+        try {
+            renderTempPart(poseStack, context, type, light, overlay, division, buffers);
+            for (int i = 0; i < delegateRenderers.size(); i++) {
+                delegateRenderers.get(i).render(poseStack, buffers.getBuffer(type), context, light, overlay, buffers);
+            }
+        } finally {
+            delegateRenderers = previous;
         }
     }
 

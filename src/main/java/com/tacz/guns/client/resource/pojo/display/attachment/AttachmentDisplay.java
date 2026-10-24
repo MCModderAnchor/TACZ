@@ -60,6 +60,9 @@ public class AttachmentDisplay implements IDisplay {
     @SerializedName("scope")
     private boolean isScope = false;
 
+    @SerializedName("scope_lens")
+    private ScopeLensConfig scopeLens = new ScopeLensConfig();
+
     @SerializedName("sight")
     private boolean isSight = false;
 
@@ -135,6 +138,10 @@ public class AttachmentDisplay implements IDisplay {
         return isScope;
     }
 
+    public ScopeLensConfig getScopeLens() {
+        return scopeLens;
+    }
+
     public boolean isSight() {
         return isSight;
     }
@@ -172,6 +179,8 @@ public class AttachmentDisplay implements IDisplay {
 
     @Override
     public void init() {
+        if (scopeLens == null) scopeLens = new ScopeLensConfig();
+        scopeLens.init();
         if (!Float.isFinite(muzzleFlashOffset) || muzzleFlashOffset < 0.0f) {
             muzzleFlashOffset = 0.0f;
         }

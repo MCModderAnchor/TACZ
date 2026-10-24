@@ -31,6 +31,8 @@ public class RenderConfig {
     public static ModConfigSpec.BooleanValue BLOCK_ENTITY_TRANSLUCENT;
     public static ModConfigSpec.BooleanValue DISPLAY_GUN_VBO;
     public static ModConfigSpec.BooleanValue STATIC_ITEM_GUN_VBO;
+    public static ModConfigSpec.BooleanValue EXPERIMENTAL_SCOPE_LENS;
+    public static ModConfigSpec.BooleanValue SCOPE_THERMAL_ENABLE;
 
     public static void init(ModConfigSpec.Builder builder) {
         builder.push("render");
@@ -115,6 +117,12 @@ public class RenderConfig {
 
         builder.comment("Experimental SBM VBO rendering for third-person held, dropped and fixed guns outside GUI screens.");
         STATIC_ITEM_GUN_VBO = builder.define("EnableStaticItemGunVbo", true);
+
+        builder.comment("Enable scope lens effects configured by each attachment display. Uses the existing scope window and keeps the normal aiming magnification.");
+        EXPERIMENTAL_SCOPE_LENS = builder.define("EnableExperimentalScopeLens", true);
+
+        builder.comment("Allow thermal imaging for attachments whose display selects a thermal vision mode. Disabling this uses their normal optical lens and skips thermal entity capture. Requires EnableExperimentalScopeLens.");
+        SCOPE_THERMAL_ENABLE = builder.define("EnableScopeThermal", true);
 
         builder.pop();
     }

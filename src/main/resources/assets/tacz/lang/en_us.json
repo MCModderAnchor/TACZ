@@ -1,4 +1,8 @@
 {
+  "config.tacz.client.render.scope_lens_enable": "Experimental scope lens",
+  "config.tacz.client.render.scope_lens_enable.desc": "Enable lens effects configured by each attachment display inside existing scope windows.",
+  "config.tacz.client.render.scope_thermal_enable": "Scope thermal imaging",
+  "config.tacz.client.render.scope_thermal_enable.desc": "Allow thermal imaging on attachments configured for it. Disabling this uses their optical lens and skips thermal capture. Requires scope lens effects.",
   "config.tacz.client.render.creative_pack_sidebar": "Creative Content Pack Sidebar",
   "config.tacz.client.render.creative_pack_sidebar.desc": "Show the content pack sidebar in TACZ creative tabs. Disabling it also clears the pack filter and shows all items in the current tab.",
   "gui.tacz.creative_pack_filter.all": "All",

@@ -1,0 +1,7 @@
+{
+  "vertex": "tacz:scope_lens_quad",
+  "fragment": "tacz:scope_lens_mask",
+  "attributes": ["Position"],
+  "samplers": [],
+  "uniforms": []
+}

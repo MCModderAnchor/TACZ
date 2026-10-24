@@ -10,6 +10,7 @@ import com.tacz.guns.client.model.functional.MuzzleFlashRender;
 import com.tacz.guns.client.particle.MuzzleParticleManager;
 import com.tacz.guns.client.particle.ThirdPersonMuzzleParticleManager;
 import com.tacz.guns.client.renderer.other.GunHurtBobTweak;
+import com.tacz.guns.client.renderer.scope.ScopeLensRenderer;
 import com.tacz.guns.client.resource.pojo.display.gun.RangefinderManager;
 import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
@@ -28,6 +29,7 @@ public final class ClientGunTimeResetEvent {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        ScopeLensRenderer.close();
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
             LocalPlayerDataHolder dataHolder = IClientPlayerGunOperator.fromLocalPlayer(player).getDataHolder();
