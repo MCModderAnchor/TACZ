@@ -14,13 +14,21 @@ public final class PackConversionPlan {
     public int overlayFiles;
     public int convertedFields;
     public boolean targetFormatValidated;
+    public boolean registryValidationDeferred;
+    public String status = "checking";
+    public String rulesSource;
+    public int convertedRecipes;
+    public int skippedRecipes;
+    public final Set<String> missingItemIds = new TreeSet<>();
+    public final List<SkippedFile> skippedFiles = new ArrayList<>();
     public final boolean gameValidated = false;
     public String output;
     public final List<Diagnostic> diagnostics = new ArrayList<>();
     public final List<ChangedField> changedFields = new ArrayList<>();
     public final List<String> generatedFiles = new ArrayList<>();
     private transient String currentFile = "";
-    private final transient Set<String> legacyTags = new TreeSet<>();
+    private final transient Set<String> deferredWarnings = new TreeSet<>();
+    private transient int fileChangeStart;
 
     public PackConversionPlan(String source) {
         this.source = source;
@@ -34,15 +42,37 @@ public final class PackConversionPlan {
         diagnostics.add(new Diagnostic("warning", file.isEmpty() ? currentFile : file, path, code, message));
     }
 
-    public void beginFile(String file) { currentFile = file; }
+    public void beginFile(String file) {
+        currentFile = file;
+        fileChangeStart = changedFields.size();
+    }
 
     public void converted(String path, String action) {
         convertedFields++;
         changedFields.add(new ChangedField(currentFile, path, action));
     }
 
-    public void requireLegacyTag(String id) { legacyTags.add(id); }
-    public Set<String> legacyTags() { return Set.copyOf(legacyTags); }
+    public void skipRecipe(String file, String path, String code, String message) {
+        convertedFields -= changedFields.size() - fileChangeStart;
+        changedFields.subList(fileChangeStart, changedFields.size()).clear();
+        skippedRecipes++;
+        skippedFiles.add(new SkippedFile(file, path, code, message));
+        diagnostics.add(new Diagnostic("skipped", file, path, code, message));
+    }
+
+    public void deferItem(String id, String path) {
+        registryValidationDeferred = true;
+        missingItemIds.add(id);
+        if (deferredWarnings.add(currentFile + "\n" + path + "\n" + id)) {
+            warn("", path, "MISSING_ITEM_DEFERRED", "Preserved item ID not installed in this environment: " + id);
+        }
+    }
+
+    public boolean isPartial() { return skippedRecipes > 0; }
+
+    public void finish() {
+        status = hasErrors() ? "failed" : isPartial() ? "partial" : "complete";
+    }
 
     public boolean hasErrors() {
         return diagnostics.stream().anyMatch(d -> d.severity.equals("error"));
@@ -50,4 +80,5 @@ public final class PackConversionPlan {
 
     public record Diagnostic(String severity, String file, String path, String code, String message) { }
     public record ChangedField(String file, String path, String action) { }
+    public record SkippedFile(String file, String path, String code, String message) { }
 }

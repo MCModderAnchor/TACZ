@@ -44,9 +44,6 @@ public final class UniversalPackConverter {
     private static final Map<String, String> TAG_DIRECTORIES = Map.of(
         "items", "item", "blocks", "block", "fluids", "fluid", "entity_types", "entity_type",
         "game_events", "game_event", "functions", "function");
-    private static final List<String> COLORS = List.of("white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black");
-    private static final Map<String, String> COMMON_TAGS = commonTags();
-    private static final Map<String, List<String>> LEGACY_COMMON_TAGS = legacyCommonTags();
     private static final Set<String> EMBEDDED_ATTACHMENTS = java.util.Arrays.stream(AttachmentType.values())
         .filter(type -> type != AttachmentType.NONE).map(type -> "Attachment" + type.name()).collect(java.util.stream.Collectors.toUnmodifiableSet());
     private static final Set<String> VANILLA_NBT = Set.of("Damage", "RepairCost", "Unbreakable", "HideFlags", "display",
@@ -60,10 +57,16 @@ public final class UniversalPackConverter {
         "minecraft:stonecutting", "minecraft:smithing_transform", "minecraft:smithing_trim");
     private final LegacyItemStackUpgrader items;
     private final Map<String, String> installedVersions;
+    private final PackConversionRules rules;
 
     public UniversalPackConverter(HolderLookup.Provider registries, Map<String, String> installedVersions) {
+        this(registries, installedVersions, PackConversionRules.defaults());
+    }
+
+    public UniversalPackConverter(HolderLookup.Provider registries, Map<String, String> installedVersions, PackConversionRules rules) {
         items = new LegacyItemStackUpgrader(registries);
         this.installedVersions = Map.copyOf(installedVersions);
+        this.rules = rules;
     }
 
     public record Result(PackConversionPlan report, Path reportPath, Path packPath) { }
@@ -74,6 +77,7 @@ public final class UniversalPackConverter {
             throw new IOException("Conversion output must be outside the source gun pack");
         }
         PackConversionPlan plan = new PackConversionPlan(source.getFileName().toString());
+        plan.rulesSource = rules.source();
         Map<String, byte[]> generated = new TreeMap<>();
         String stem = source.getFileName().toString().replaceFirst("(?i)\\.zip$", "");
         Files.createDirectories(outputDirectory);
@@ -105,19 +109,14 @@ public final class UniversalPackConverter {
                             throw fail("$", "OUTPUT_COLLISION", "Both old and new resource paths exist: " + target);
                         }
                         convertFile(name, entry.getValue(), generated, plan);
+                        if (isLegacyRecipe(name)) plan.convertedRecipes++;
                     } catch (MigrationException e) {
-                        plan.error(name, e.path, e.code, e.getMessage());
+                        if (isLegacyRecipe(name) && !e.code.equals("OUTPUT_COLLISION")) plan.skipRecipe(name, e.path, e.code, e.getMessage());
+                        else plan.error(name, e.path, e.code, e.getMessage());
                     } catch (Exception e) {
-                        plan.error(name, "$", "INVALID_DATA", message(e));
+                        if (isLegacyRecipe(name)) plan.skipRecipe(name, "$", "INVALID_DATA", message(e));
+                        else plan.error(name, "$", "INVALID_DATA", message(e));
                     }
-                }
-            }
-            for (String id : plan.legacyTags()) {
-                String path = OVERLAY + "/data/forge/tags/item/" + id.substring("forge:".length()) + ".json";
-                if (!generated.containsKey(path)) {
-                    JsonObject definition = new JsonObject();
-                    definition.add("values", GSON.toJsonTree(LEGACY_COMMON_TAGS.get(id)));
-                    generated.put(path, GSON.toJson(definition).getBytes(StandardCharsets.UTF_8));
                 }
             }
             if (generated.isEmpty() && !plan.hasErrors()) {
@@ -238,32 +237,32 @@ public final class UniversalPackConverter {
             } else if (local.startsWith("data/blocks/")) {
                 convertTabs(converted.getAsJsonObject(), plan);
             } else if (segments[2].equals("loot_tables") || segments[2].equals("tacz_loot_injectors")) {
-                rejectOldPredicates(converted, "$");
+                convertOldPredicates(converted, "$", plan);
                 convertLoot(converted, null, "$", plan);
-                LootTable.DIRECT_CODEC.parse(items.ops(), converted).getOrThrow(IllegalArgumentException::new);
+                ConversionValidation.validate(LootTable.DIRECT_CODEC, items.ops(), converted, plan, "$");
             } else if (segments[2].equals("tags")) {
                 convertTagFile(converted.getAsJsonObject(), plan);
             } else if (segments[2].equals("advancements")) {
                 JsonObject advancement = converted.getAsJsonObject();
                 if (advancement.has("display") && advancement.getAsJsonObject("display").has("icon")) {
                     JsonObject display = advancement.getAsJsonObject("display");
-                    display.add("icon", items.upgrade(display.getAsJsonObject("icon")));
+                    display.add("icon", items.upgrade(display.getAsJsonObject("icon"), plan, "$.display.icon"));
                     plan.converted("$.display.icon", "upgrade_item_stack");
                 }
-                rejectOldPredicates(converted, "$");
-                Advancement.CODEC.parse(items.ops(), converted).getOrThrow(IllegalArgumentException::new);
+                convertOldPredicates(converted, "$", plan);
+                ConversionValidation.validate(Advancement.CODEC, items.ops(), converted, plan, "$");
             } else if (segments[2].equals("predicates")) {
-                rejectOldPredicates(converted, "$");
-                LootItemCondition.DIRECT_CODEC.parse(items.ops(), converted).getOrThrow(IllegalArgumentException::new);
+                convertOldPredicates(converted, "$", plan);
+                ConversionValidation.validate(LootItemCondition.DIRECT_CODEC, items.ops(), converted, plan, "$");
             } else if (segments[2].equals("item_modifiers")) {
-                rejectOldPredicates(converted, "$");
+                convertOldPredicates(converted, "$", plan);
                 JsonObject wrapper = new JsonObject();
                 JsonArray functions = converted.isJsonArray() ? converted.getAsJsonArray() : new JsonArray();
                 if (!converted.isJsonArray()) functions.add(converted);
                 wrapper.add("functions", functions);
                 convertLoot(wrapper, null, "$", plan);
                 converted = wrapper.get("functions");
-                LootItemFunctions.ROOT_CODEC.parse(items.ops(), converted).getOrThrow(IllegalArgumentException::new);
+                ConversionValidation.validate(LootItemFunctions.ROOT_CODEC, items.ops(), converted, plan, "$");
             }
             if (converted.isJsonObject()) convertConditions(converted.getAsJsonObject(), "$", plan);
             rejectUnconvertedForge(converted, "$");
@@ -279,6 +278,7 @@ public final class UniversalPackConverter {
     }
 
     private void convertRecipe(JsonObject recipe, PackConversionPlan plan) {
+        if (!recipe.has("type")) throw fail("$.type", "RECIPE_TYPE", "Recipe is missing its type");
         String type = recipe.get("type").getAsString();
         convertConditions(recipe, "$", plan);
         if (type.equals("tacz:gun_smith_table_crafting")) {
@@ -289,9 +289,10 @@ public final class UniversalPackConverter {
                 material.add("item", ingredient(material.get("item"), "$.materials[" + i + "].item", plan));
             }
             JsonObject result = recipe.getAsJsonObject("result");
+            if (!result.has("type")) throw fail("$.result.type", "RESULT_TYPE", "TACZ recipe result is missing its type");
             String resultType = result.get("type").getAsString();
             if (resultType.equals("custom")) {
-                result.add("item", items.upgrade(result.getAsJsonObject("item")));
+                result.add("item", items.upgrade(result.getAsJsonObject("item"), plan, "$.result.item"));
                 plan.converted("$.result.item", "upgrade_item_stack");
                 if (result.remove("nbt") != null) {
                     plan.warn("", "$.result.nbt", "IGNORED_LEGACY_FIELD", "Removed outer custom-result NBT which 1.20.1 did not apply");
@@ -305,11 +306,11 @@ public final class UniversalPackConverter {
                         case "ammo" -> "tacz:ammo";
                         default -> "tacz:attachment";
                     };
-                    result.add("components", items.upgradeComponents(itemId, result.remove("nbt")));
+                    result.add("components", items.upgradeComponents(itemId, result.remove("nbt"), plan, "$.result"));
                     plan.converted("$.result.components", "upgrade_typed_result_components");
                 }
             } else throw fail("$.result.type", "RESULT_TYPE", "Unknown TACZ recipe result type: " + resultType);
-            TableRecipe.CODEC.codec().parse(items.ops(), recipe).getOrThrow(IllegalArgumentException::new);
+            ConversionValidation.validate(TableRecipe.CODEC.codec(), items.ops(), recipe, plan, "$");
         } else if (VANILLA_RECIPES.contains(type) || type.startsWith("minecraft:crafting_special_")) {
             if (recipe.has("key")) {
                 JsonObject key = recipe.getAsJsonObject("key");
@@ -326,10 +327,10 @@ public final class UniversalPackConverter {
                 JsonElement result = recipe.get("result");
                 JsonObject oldItem = result.isJsonObject() ? result.getAsJsonObject() : new JsonObject();
                 if (result.isJsonPrimitive()) oldItem.addProperty("item", result.getAsString());
-                recipe.add("result", items.upgrade(oldItem));
+                recipe.add("result", items.upgrade(oldItem, plan, "$.result"));
                 plan.converted("$.result", "upgrade_item_stack");
             }
-            Recipe.CODEC.parse(items.ops(), recipe).getOrThrow(IllegalArgumentException::new);
+            ConversionValidation.validate(Recipe.CODEC, items.ops(), recipe, plan, "$");
         } else throw fail("$.type", "RECIPE_ADAPTER", "Recipe serializer requires an adapter: " + type);
     }
 
@@ -344,12 +345,7 @@ public final class UniversalPackConverter {
         String type = object.has("type") ? object.get("type").getAsString() : "minecraft:item";
         if (type.equals("forge:nbt")) throw fail(path, "STRICT_NBT", "Strict Forge share-tag matching has no verified component equivalent");
         if (type.equals("forge:partial_nbt")) {
-            CompoundTag nbt = LegacyItemStackUpgrader.readNbt(object.get("nbt"));
-            for (String key : nbt.getAllKeys()) {
-                if (VANILLA_NBT.contains(key) || EMBEDDED_ATTACHMENTS.contains(key)) {
-                    throw fail(path + ".nbt." + key, "NBT_PREDICATE", "This NBT predicate requires a component predicate adapter");
-                }
-            }
+            CompoundTag nbt = upgradeCustomPredicate(LegacyItemStackUpgrader.readNbt(object.get("nbt")), path + ".nbt", 0);
             JsonObject out = new JsonObject();
             out.addProperty("type", "tacz:nbt");
             JsonArray accepted = new JsonArray();
@@ -373,11 +369,28 @@ public final class UniversalPackConverter {
         }
         if (object.has("tag")) {
             String before = object.get("tag").getAsString();
-            String after = tag(before, path + ".tag", plan);
-            object.addProperty("tag", after);
-            if (!before.equals(after)) plan.converted(path + ".tag", "map_common_tag");
+            PackConversionRules.Rule rule = rule(before, path + ".tag", plan);
+            if (rule != null) {
+                object.remove("tag");
+                if (rule.tag() != null) object.addProperty("tag", rule.tag());
+                else if (rule.item() != null) {
+                    object.remove("type");
+                    object.addProperty("item", rule.item());
+                    plan.warn("", path, "TAG_ITEM_FALLBACK", "Mapped " + before + " to the single item " + rule.item());
+                } else {
+                    object.addProperty("type", "neoforge:intersection");
+                    JsonArray children = new JsonArray();
+                    for (String tag : rule.allOf()) {
+                        JsonObject child = new JsonObject();
+                        child.addProperty("tag", tag);
+                        children.add(child);
+                    }
+                    object.add("children", children);
+                }
+                plan.converted(path + ".tag", "apply_item_tag_rule");
+            }
         }
-        Ingredient.CODEC.parse(items.ops(), object).getOrThrow(IllegalArgumentException::new);
+        ConversionValidation.validate(Ingredient.CODEC, items.ops(), object, plan, path);
         return object;
     }
 
@@ -386,7 +399,7 @@ public final class UniversalPackConverter {
         JsonArray tabs = block.getAsJsonArray("tabs");
         for (int i = 0; i < tabs.size(); i++) {
             JsonObject entry = tabs.get(i).getAsJsonObject();
-            entry.add("icon", items.upgrade(entry.getAsJsonObject("icon")));
+            entry.add("icon", items.upgrade(entry.getAsJsonObject("icon"), plan, "$.tabs[" + i + "].icon"));
             plan.converted("$.tabs[" + i + "].icon", "upgrade_item_stack");
         }
     }
@@ -416,7 +429,7 @@ public final class UniversalPackConverter {
                             if (oldTag.getAllKeys().stream().anyMatch(VANILLA_NBT::contains)) {
                                 throw fail(path + ".functions", "LOOT_NBT_SEMANTICS", "set_nbt with vanilla fields requires a context-preserving component adapter");
                             }
-                            JsonObject components = items.upgradeComponents(item == null ? "minecraft:stick" : item, fn.get("tag"));
+                            JsonObject components = items.upgradeComponents(item == null ? "minecraft:stick" : item, fn.get("tag"), plan, path + ".functions");
                             JsonElement custom = components.remove("minecraft:custom_data");
                             if (!components.isEmpty()) {
                                 JsonObject output = fn.deepCopy();
@@ -450,7 +463,7 @@ public final class UniversalPackConverter {
         JsonArray conditions = object.remove("forge:conditions").getAsJsonArray();
         for (JsonElement condition : conditions) convertCondition(condition.getAsJsonObject(), path + ".forge:conditions", plan);
         object.add("neoforge:conditions", conditions);
-        ICondition.LIST_CODEC.parse(items.ops(), conditions).getOrThrow(IllegalArgumentException::new);
+        ConversionValidation.validate(ICondition.LIST_CODEC, items.ops(), conditions, plan, path + ".neoforge:conditions");
     }
 
     private void convertCondition(JsonObject condition, String path, PackConversionPlan plan) {
@@ -462,76 +475,72 @@ public final class UniversalPackConverter {
         if (type.equals("forge:mod_loaded") && condition.has("modid") && condition.get("modid").getAsString().equals("forge")) {
             throw fail(path + ".modid", "LOADER_CONDITION", "Forge-specific loader condition requires manual migration");
         }
-        if (condition.has("tag")) condition.addProperty("tag", tag(condition.get("tag").getAsString(), path + ".tag", plan));
+        if (condition.has("tag")) {
+            String id = condition.get("tag").getAsString();
+            PackConversionRules.Rule rule = rule(id, path + ".tag", plan);
+            if (rule != null) {
+                if (rule.tag() != null) condition.addProperty("tag", rule.tag());
+                else {
+                    JsonObject exists = new JsonObject();
+                    exists.addProperty("type", "neoforge:item_exists");
+                    exists.addProperty("item", fallbackItem(rule, id, path + ".tag", plan));
+                    condition.remove("tag");
+                    condition.addProperty("type", "neoforge:not");
+                    condition.add("value", exists);
+                    return;
+                }
+            }
+        }
         if (condition.has("value")) convertCondition(condition.getAsJsonObject("value"), path + ".value", plan);
         for (String key : List.of("values", "children")) {
             if (condition.has(key)) for (JsonElement child : condition.getAsJsonArray(key)) convertCondition(child.getAsJsonObject(), path + "." + key, plan);
         }
     }
 
-    private static void convertTagFile(JsonObject object, PackConversionPlan plan) {
+    private void convertTagFile(JsonObject object, PackConversionPlan plan) {
         JsonArray values = object.getAsJsonArray("values");
         if (values == null) throw fail("$.values", "TAG_VALUES", "Tag file is missing values");
         for (int i = 0; i < values.size(); i++) {
             JsonElement entry = values.get(i);
-            if (entry.isJsonPrimitive()) values.set(i, new JsonPrimitive(tagReference(entry.getAsString(), plan)));
+            String path = "$.values[" + i + "]";
+            if (entry.isJsonPrimitive()) values.set(i, new JsonPrimitive(tagReference(entry.getAsString(), path, plan)));
             else {
                 JsonObject reference = entry.getAsJsonObject();
-                reference.addProperty("id", tagReference(reference.get("id").getAsString(), plan));
+                reference.addProperty("id", tagReference(reference.get("id").getAsString(), path + ".id", plan));
             }
         }
     }
 
-    private static String tagReference(String value, PackConversionPlan plan) {
-        return value.startsWith("#") ? "#" + tag(value.substring(1), "$.values", plan) : value;
+    private String tagReference(String value, String path, PackConversionPlan plan) {
+        if (!value.startsWith("#")) {
+            ResourceLocation.parse(value);
+            return value;
+        }
+        String id = value.substring(1);
+        PackConversionRules.Rule rule = rule(id, path, plan);
+        if (rule == null) return value;
+        if (rule.tag() != null) return "#" + rule.tag();
+        return fallbackItem(rule, id, path, plan);
     }
 
-    private static String tag(String id, String path, PackConversionPlan plan) {
-        if (!id.startsWith("forge:")) return id;
-        String mapped = COMMON_TAGS.get(id);
-        if (mapped == null && LEGACY_COMMON_TAGS.containsKey(id)) {
-            plan.requireLegacyTag(id);
-            return id;
+    private PackConversionRules.Rule rule(String id, String path, PackConversionPlan plan) {
+        ResourceLocation.parse(id);
+        PackConversionRules.Rule rule = rules.get(id);
+        if (rule == null && id.startsWith("forge:")) {
+            plan.warn("", path, "UNMAPPED_TAG", "Preserved tag without a mapping; it may be supplied by an optional mod or datapack: " + id);
         }
-        if (mapped == null) throw fail(path, "COMMON_TAG", "No verified common-tag mapping for " + id);
-        return mapped;
+        return rule;
     }
 
-    private static Map<String, String> commonTags() {
-        Map<String, String> tags = new HashMap<>();
-        for (String metal : List.of("iron", "gold", "copper", "netherite")) {
-            for (String form : List.of("ingots", "storage_blocks")) tags.put("forge:" + form + "/" + metal, "c:" + form + "/" + metal);
-        }
-        for (String metal : List.of("iron", "gold")) tags.put("forge:nuggets/" + metal, "c:nuggets/" + metal);
-        tags.put("forge:rods/blaze", "c:rods/blaze");
-        tags.put("forge:rods/wooden", "c:rods/wooden");
-        for (String gem : List.of("diamond", "emerald", "quartz", "amethyst", "lapis", "prismarine")) tags.put("forge:gems/" + gem, "c:gems/" + gem);
-        tags.put("forge:dusts/redstone", "c:dusts/redstone");
-        tags.put("forge:dusts/glowstone", "c:dusts/glowstone");
-        tags.put("forge:gunpowder", "c:gunpowders");
-        tags.put("forge:leather", "c:leathers");
-        tags.put("forge:string", "c:strings");
-        tags.put("forge:glass", "c:glass_blocks");
-        tags.put("forge:glass/colorless", "c:glass_blocks/colorless");
-        tags.put("forge:slimeballs", "c:slime_balls");
-        tags.put("forge:obsidian", "c:obsidians/normal");
-        tags.put("forge:nether_stars", "c:nether_stars");
-        tags.put("forge:feathers", "c:feathers");
-        tags.put("forge:sandstone", "c:sandstone/blocks");
-        tags.put("forge:ores/coal", "c:ores/coal");
-        tags.put("forge:tools/crossbows", "c:tools/crossbow");
-        for (String material : List.of("coal", "diamond", "emerald", "lapis", "redstone", "raw_iron", "raw_gold", "raw_copper", "slime", "wheat", "bone_meal", "dried_kelp")) {
-            tags.put("forge:storage_blocks/" + material, "c:storage_blocks/" + material);
-        }
-        for (String color : COLORS) tags.put("forge:dyes/" + color, "c:dyes/" + color);
-        return Map.copyOf(tags);
+    private static String fallbackItem(PackConversionRules.Rule rule, String id, String path, PackConversionPlan plan) {
+        String item = rule.item() != null ? rule.item() : rule.fallbackItem();
+        if (item == null) throw fail(path, "TAG_REFERENCE", "This context requires a single tag or an explicit fallback_item: " + id);
+        plan.warn("", path, "TAG_ITEM_FALLBACK", "Mapped " + id + " to the single item " + item);
+        return item;
     }
 
-    private static Map<String, List<String>> legacyCommonTags() {
-        Map<String, List<String>> tags = new HashMap<>();
-        tags.put("forge:storage_blocks/amethyst", List.of("minecraft:amethyst_block"));
-        for (String color : COLORS) tags.put("forge:glass/" + color, List.of("minecraft:" + color + "_stained_glass"));
-        return Map.copyOf(tags);
+    private static boolean isLegacyRecipe(String name) {
+        return name.matches("data/[^/]+/recipes/.+\\.json");
     }
 
     public static String targetPath(String source) {
@@ -543,18 +552,67 @@ public final class UniversalPackConverter {
         return String.join("/", parts);
     }
 
-    private static void rejectOldPredicates(JsonElement json, String path) {
+    private static void convertOldPredicates(JsonElement json, String path, PackConversionPlan plan) {
         if (json.isJsonArray()) {
-            for (int i = 0; i < json.getAsJsonArray().size(); i++) rejectOldPredicates(json.getAsJsonArray().get(i), path + "[" + i + "]");
+            for (int i = 0; i < json.getAsJsonArray().size(); i++) convertOldPredicates(json.getAsJsonArray().get(i), path + "[" + i + "]", plan);
         } else if (json.isJsonObject()) {
+            JsonObject object = json.getAsJsonObject();
+            if (object.has("nbt") && object.has("items")) {
+                CompoundTag nbt = LegacyItemStackUpgrader.readNbt(object.get("nbt"));
+                if (nbt.isEmpty()) throw fail(path + ".nbt", "VANILLA_PREDICATE", "Empty legacy NBT presence tests require a dedicated adapter");
+                nbt = upgradeCustomPredicate(nbt, path + ".nbt", 0);
+                JsonObject predicates = object.has("predicates") ? object.getAsJsonObject("predicates") : new JsonObject();
+                if (predicates.has("minecraft:custom_data")) throw fail(path, "PREDICATE_CONFLICT", "Both old and new custom-data predicates are present");
+                predicates.addProperty("minecraft:custom_data", nbt.toString());
+                object.remove("nbt");
+                object.add("predicates", predicates);
+                plan.converted(path + ".nbt", "convert_custom_data_item_predicate");
+            }
             for (var field : json.getAsJsonObject().entrySet()) {
                 if (Set.of("nbt", "durability", "potion", "stored_enchantments").contains(field.getKey())
                     || (Set.of("tag", "enchantments").contains(field.getKey()) && !json.getAsJsonObject().has("function"))) {
                     throw fail(path + "." + field.getKey(), "VANILLA_PREDICATE", "Legacy item predicate requires a component-aware adapter");
                 }
-                if (!field.getKey().equals("components")) rejectOldPredicates(field.getValue(), path + "." + field.getKey());
+                if (!field.getKey().equals("components")) convertOldPredicates(field.getValue(), path + "." + field.getKey(), plan);
             }
         }
+    }
+
+    /** Rewrite only specified attachment fields; full-stack DFU would introduce extra predicate constraints. */
+    private static CompoundTag upgradeCustomPredicate(CompoundTag input, String path, int depth) {
+        if (depth > 16) throw fail(path, "NBT_PREDICATE", "Embedded predicate nesting exceeds 16 levels");
+        CompoundTag output = input.copy();
+        for (String key : input.getAllKeys()) {
+            if (VANILLA_NBT.contains(key)) throw fail(path + "." + key, "NBT_PREDICATE", "Vanilla component fields require a dedicated predicate adapter");
+            if (!EMBEDDED_ATTACHMENTS.contains(key)) continue;
+            if (!input.contains(key, net.minecraft.nbt.Tag.TAG_COMPOUND)) throw fail(path + "." + key, "NBT_PREDICATE", "Attachment predicate must be a compound");
+            CompoundTag oldStack = input.getCompound(key);
+            CompoundTag newStack = new CompoundTag();
+            for (String field : oldStack.getAllKeys()) {
+                switch (field) {
+                    case "id" -> {
+                        if (!oldStack.contains(field, net.minecraft.nbt.Tag.TAG_STRING)) throw fail(path, "NBT_PREDICATE", "Attachment ID must be a string");
+                        ResourceLocation.parse(oldStack.getString(field));
+                        newStack.putString("id", oldStack.getString(field));
+                    }
+                    case "Count" -> {
+                        if (!oldStack.contains(field, net.minecraft.nbt.Tag.TAG_ANY_NUMERIC)) throw fail(path, "NBT_PREDICATE", "Attachment Count must be numeric");
+                        newStack.putInt("count", oldStack.getInt(field));
+                    }
+                    case "tag" -> {
+                        if (!oldStack.contains(field, net.minecraft.nbt.Tag.TAG_COMPOUND) || oldStack.getCompound(field).isEmpty()) {
+                            throw fail(path, "NBT_PREDICATE", "Attachment NBT presence tests require a dedicated adapter");
+                        }
+                        CompoundTag components = new CompoundTag();
+                        components.put("minecraft:custom_data", upgradeCustomPredicate(oldStack.getCompound(field), path + "." + key + ".tag", depth + 1));
+                        newStack.put("components", components);
+                    }
+                    default -> throw fail(path + "." + key + "." + field, "NBT_PREDICATE", "Unsupported legacy attachment predicate field");
+                }
+            }
+            output.put(key, newStack);
+        }
+        return output;
     }
 
     private static void rejectUnconvertedForge(JsonElement json, String path) {
@@ -562,9 +620,8 @@ public final class UniversalPackConverter {
             for (int i = 0; i < json.getAsJsonArray().size(); i++) rejectUnconvertedForge(json.getAsJsonArray().get(i), path + "[" + i + "]");
         } else if (json.isJsonObject()) {
             for (var field : json.getAsJsonObject().entrySet()) {
-                if (field.getKey().startsWith("forge:") || (Set.of("type", "condition", "function", "tag").contains(field.getKey())
-                    && field.getValue().isJsonPrimitive() && field.getValue().getAsString().startsWith("forge:")
-                    && !(field.getKey().equals("tag") && LEGACY_COMMON_TAGS.containsKey(field.getValue().getAsString())))) {
+                if (field.getKey().startsWith("forge:") || (Set.of("type", "condition", "function").contains(field.getKey())
+                    && field.getValue().isJsonPrimitive() && field.getValue().getAsString().startsWith("forge:"))) {
                     throw fail(path + "." + field.getKey(), "FORGE_ADAPTER", "Unconverted Forge data requires an adapter");
                 }
                 rejectUnconvertedForge(field.getValue(), path + "." + field.getKey());
@@ -637,6 +694,7 @@ public final class UniversalPackConverter {
     }
 
     private static Result finish(PackConversionPlan plan, Path report, Path pack) throws IOException {
+        plan.finish();
         // Reports are snapshots; choose a new filename so check/export never destroy an earlier report.
         Path destination = report;
         int sequence = 1;

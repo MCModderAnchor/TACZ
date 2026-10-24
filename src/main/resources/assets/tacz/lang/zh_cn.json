@@ -466,10 +466,17 @@
   "advancement.tacz.target_minecart.description": "获得标靶车",
   "advancement.tacz.target_hit.title": "校正参数",
   "advancement.tacz.target_hit.description": "用枪械击中128米外的标靶",
-  "message.tacz.converter.universal.busy": "此枪包正在转换，或转换队列已满。",
+  "message.tacz.converter.universal.busy": "所选枪包中有正在转换的包，或转换队列已满。",
+  "message.tacz.converter.universal.batch_empty": "tacz/ 根目录下没有可处理的枪包（ZIP 或带 gunpack.meta.json 的文件夹）。",
+  "message.tacz.converter.universal.batch_queued": "正在后台处理 tacz/ 下的 %s 个枪包……",
+  "message.tacz.converter.universal.batch_checked": "批量检查结束：共 %s 个，完成 %s 个，部分完成 %s 个，失败 %s 个。报告目录：%s",
+  "message.tacz.converter.universal.batch_exported": "批量导出结束：共 %s 个，完成 %s 个，部分完成 %s 个，失败 %s 个。输出目录：%s",
   "message.tacz.converter.universal.exported": "通用枪包已导出：%s（%s 个覆盖文件）。请替换原包安装，并验证两个游戏版本。",
   "message.tacz.converter.universal.rejected": "转换需要人工处理，详见报告：%s",
   "message.tacz.converter.universal.checked": "检查完成，报告：%s（计划生成 %s 个覆盖文件）。仍需进行游戏内验证。",
   "message.tacz.converter.universal.queued": "正在后台检查枪包 %s……",
-  "message.tacz.converter.universal.failed": "枪包转换失败：%s"
+  "message.tacz.converter.universal.failed": "枪包转换失败：%s",
+  "message.tacz.converter.universal.partial_exported": "部分完成：已导出 %s，跳过 %s 个无法自动转换的配方。报告：%s",
+  "message.tacz.converter.universal.partial_checked": "检查部分完成：%s，计划跳过 %s 个无法自动转换的配方。报告：%s",
+  "message.tacz.converter.universal.deferred_items": "已保留 %s 个当前未安装的物品 ID；相关配方需要安装对应模组后才能生效。"
 }

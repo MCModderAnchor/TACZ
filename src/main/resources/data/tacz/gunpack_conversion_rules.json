@@ -1,0 +1,710 @@
+{
+  "schema_version": 1,
+  "source_minecraft": "1.20.1",
+  "target_minecraft": "1.21.1",
+  "reference": "https://github.com/MinecraftForge/MinecraftForge/pull/9955",
+  "reference_head": "1d973b03358e7da0988c384d225c8c3098f48c56",
+  "legacy_catalog": "MinecraftForge 1.20.1-47.4.13 item tags",
+  "target_catalog": "NeoForge 21.1.233 item tags",
+  "item_tags": {
+    "forge:armors": {
+      "tag": "c:armors"
+    },
+    "forge:armors/boots": {
+      "tag": "minecraft:foot_armor"
+    },
+    "forge:armors/chestplates": {
+      "tag": "minecraft:chest_armor"
+    },
+    "forge:armors/helmets": {
+      "tag": "minecraft:head_armor"
+    },
+    "forge:armors/leggings": {
+      "tag": "minecraft:leg_armor"
+    },
+    "forge:barrels": {
+      "tag": "c:barrels"
+    },
+    "forge:barrels/wooden": {
+      "tag": "c:barrels/wooden"
+    },
+    "forge:bones": {
+      "tag": "c:bones"
+    },
+    "forge:bookshelves": {
+      "tag": "c:bookshelves"
+    },
+    "forge:chests": {
+      "tag": "c:chests"
+    },
+    "forge:chests/ender": {
+      "tag": "c:chests/ender"
+    },
+    "forge:chests/trapped": {
+      "tag": "c:chests/trapped"
+    },
+    "forge:chests/wooden": {
+      "tag": "c:chests/wooden"
+    },
+    "forge:cobblestone": {
+      "tag": "c:cobblestones"
+    },
+    "forge:cobblestone/deepslate": {
+      "tag": "c:cobblestones/deepslate"
+    },
+    "forge:cobblestone/infested": {
+      "tag": "c:cobblestones/infested"
+    },
+    "forge:cobblestone/mossy": {
+      "tag": "c:cobblestones/mossy"
+    },
+    "forge:cobblestone/normal": {
+      "tag": "c:cobblestones/normal"
+    },
+    "forge:crops": {
+      "tag": "c:crops"
+    },
+    "forge:crops/beetroot": {
+      "tag": "c:crops/beetroot"
+    },
+    "forge:crops/carrot": {
+      "tag": "c:crops/carrot"
+    },
+    "forge:crops/nether_wart": {
+      "tag": "c:crops/nether_wart"
+    },
+    "forge:crops/potato": {
+      "tag": "c:crops/potato"
+    },
+    "forge:crops/wheat": {
+      "tag": "c:crops/wheat"
+    },
+    "forge:dusts": {
+      "tag": "c:dusts"
+    },
+    "forge:dusts/glowstone": {
+      "tag": "c:dusts/glowstone"
+    },
+    "forge:dusts/prismarine": {
+      "item": "minecraft:prismarine_shard",
+      "note": "No accurate single target tag in NeoForge 21.1.233; representative item from the legacy tag definition."
+    },
+    "forge:dusts/redstone": {
+      "tag": "c:dusts/redstone"
+    },
+    "forge:dyes": {
+      "tag": "c:dyes"
+    },
+    "forge:dyes/black": {
+      "tag": "c:dyes/black"
+    },
+    "forge:dyes/blue": {
+      "tag": "c:dyes/blue"
+    },
+    "forge:dyes/brown": {
+      "tag": "c:dyes/brown"
+    },
+    "forge:dyes/cyan": {
+      "tag": "c:dyes/cyan"
+    },
+    "forge:dyes/gray": {
+      "tag": "c:dyes/gray"
+    },
+    "forge:dyes/green": {
+      "tag": "c:dyes/green"
+    },
+    "forge:dyes/light_blue": {
+      "tag": "c:dyes/light_blue"
+    },
+    "forge:dyes/light_gray": {
+      "tag": "c:dyes/light_gray"
+    },
+    "forge:dyes/lime": {
+      "tag": "c:dyes/lime"
+    },
+    "forge:dyes/magenta": {
+      "tag": "c:dyes/magenta"
+    },
+    "forge:dyes/orange": {
+      "tag": "c:dyes/orange"
+    },
+    "forge:dyes/pink": {
+      "tag": "c:dyes/pink"
+    },
+    "forge:dyes/purple": {
+      "tag": "c:dyes/purple"
+    },
+    "forge:dyes/red": {
+      "tag": "c:dyes/red"
+    },
+    "forge:dyes/white": {
+      "tag": "c:dyes/white"
+    },
+    "forge:dyes/yellow": {
+      "tag": "c:dyes/yellow"
+    },
+    "forge:eggs": {
+      "tag": "c:eggs"
+    },
+    "forge:enchanting_fuels": {
+      "tag": "c:gems/lapis",
+      "note": "Legacy enchanting fuel is lapis lazuli."
+    },
+    "forge:end_stones": {
+      "tag": "c:end_stones"
+    },
+    "forge:ender_pearls": {
+      "tag": "c:ender_pearls"
+    },
+    "forge:feathers": {
+      "tag": "c:feathers"
+    },
+    "forge:fence_gates": {
+      "tag": "c:fence_gates"
+    },
+    "forge:fence_gates/wooden": {
+      "tag": "c:fence_gates/wooden"
+    },
+    "forge:fences": {
+      "tag": "c:fences"
+    },
+    "forge:fences/nether_brick": {
+      "tag": "c:fences/nether_brick"
+    },
+    "forge:fences/wooden": {
+      "tag": "c:fences/wooden"
+    },
+    "forge:gems": {
+      "tag": "c:gems"
+    },
+    "forge:gems/amethyst": {
+      "tag": "c:gems/amethyst"
+    },
+    "forge:gems/diamond": {
+      "tag": "c:gems/diamond"
+    },
+    "forge:gems/emerald": {
+      "tag": "c:gems/emerald"
+    },
+    "forge:gems/lapis": {
+      "tag": "c:gems/lapis"
+    },
+    "forge:gems/prismarine": {
+      "tag": "c:gems/prismarine"
+    },
+    "forge:gems/quartz": {
+      "tag": "c:gems/quartz"
+    },
+    "forge:glass": {
+      "tag": "c:glass_blocks"
+    },
+    "forge:glass_panes": {
+      "tag": "c:glass_panes"
+    },
+    "forge:glass_panes/black": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/black"
+      ],
+      "fallback_item": "minecraft:black_stained_glass_pane"
+    },
+    "forge:glass_panes/blue": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/blue"
+      ],
+      "fallback_item": "minecraft:blue_stained_glass_pane"
+    },
+    "forge:glass_panes/brown": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/brown"
+      ],
+      "fallback_item": "minecraft:brown_stained_glass_pane"
+    },
+    "forge:glass_panes/colorless": {
+      "tag": "c:glass_panes/colorless"
+    },
+    "forge:glass_panes/cyan": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/cyan"
+      ],
+      "fallback_item": "minecraft:cyan_stained_glass_pane"
+    },
+    "forge:glass_panes/gray": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/gray"
+      ],
+      "fallback_item": "minecraft:gray_stained_glass_pane"
+    },
+    "forge:glass_panes/green": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/green"
+      ],
+      "fallback_item": "minecraft:green_stained_glass_pane"
+    },
+    "forge:glass_panes/light_blue": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/light_blue"
+      ],
+      "fallback_item": "minecraft:light_blue_stained_glass_pane"
+    },
+    "forge:glass_panes/light_gray": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/light_gray"
+      ],
+      "fallback_item": "minecraft:light_gray_stained_glass_pane"
+    },
+    "forge:glass_panes/lime": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/lime"
+      ],
+      "fallback_item": "minecraft:lime_stained_glass_pane"
+    },
+    "forge:glass_panes/magenta": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/magenta"
+      ],
+      "fallback_item": "minecraft:magenta_stained_glass_pane"
+    },
+    "forge:glass_panes/orange": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/orange"
+      ],
+      "fallback_item": "minecraft:orange_stained_glass_pane"
+    },
+    "forge:glass_panes/pink": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/pink"
+      ],
+      "fallback_item": "minecraft:pink_stained_glass_pane"
+    },
+    "forge:glass_panes/purple": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/purple"
+      ],
+      "fallback_item": "minecraft:purple_stained_glass_pane"
+    },
+    "forge:glass_panes/red": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/red"
+      ],
+      "fallback_item": "minecraft:red_stained_glass_pane"
+    },
+    "forge:glass_panes/white": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/white"
+      ],
+      "fallback_item": "minecraft:white_stained_glass_pane"
+    },
+    "forge:glass_panes/yellow": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed/yellow"
+      ],
+      "fallback_item": "minecraft:yellow_stained_glass_pane"
+    },
+    "forge:glass/black": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/black"
+      ],
+      "fallback_item": "minecraft:black_stained_glass"
+    },
+    "forge:glass/blue": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/blue"
+      ],
+      "fallback_item": "minecraft:blue_stained_glass"
+    },
+    "forge:glass/brown": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/brown"
+      ],
+      "fallback_item": "minecraft:brown_stained_glass"
+    },
+    "forge:glass/colorless": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "forge:glass/cyan": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/cyan"
+      ],
+      "fallback_item": "minecraft:cyan_stained_glass"
+    },
+    "forge:glass/gray": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/gray"
+      ],
+      "fallback_item": "minecraft:gray_stained_glass"
+    },
+    "forge:glass/green": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/green"
+      ],
+      "fallback_item": "minecraft:green_stained_glass"
+    },
+    "forge:glass/light_blue": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/light_blue"
+      ],
+      "fallback_item": "minecraft:light_blue_stained_glass"
+    },
+    "forge:glass/light_gray": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/light_gray"
+      ],
+      "fallback_item": "minecraft:light_gray_stained_glass"
+    },
+    "forge:glass/lime": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/lime"
+      ],
+      "fallback_item": "minecraft:lime_stained_glass"
+    },
+    "forge:glass/magenta": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/magenta"
+      ],
+      "fallback_item": "minecraft:magenta_stained_glass"
+    },
+    "forge:glass/orange": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/orange"
+      ],
+      "fallback_item": "minecraft:orange_stained_glass"
+    },
+    "forge:glass/pink": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/pink"
+      ],
+      "fallback_item": "minecraft:pink_stained_glass"
+    },
+    "forge:glass/purple": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/purple"
+      ],
+      "fallback_item": "minecraft:purple_stained_glass"
+    },
+    "forge:glass/red": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/red"
+      ],
+      "fallback_item": "minecraft:red_stained_glass"
+    },
+    "forge:glass/silica": {
+      "tag": "c:glass_blocks/cheap"
+    },
+    "forge:glass/tinted": {
+      "tag": "c:glass_blocks/tinted"
+    },
+    "forge:glass/white": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/white"
+      ],
+      "fallback_item": "minecraft:white_stained_glass"
+    },
+    "forge:glass/yellow": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed/yellow"
+      ],
+      "fallback_item": "minecraft:yellow_stained_glass"
+    },
+    "forge:gravel": {
+      "tag": "c:gravels"
+    },
+    "forge:gunpowder": {
+      "tag": "c:gunpowders"
+    },
+    "forge:heads": {
+      "item": "minecraft:creeper_head",
+      "note": "No accurate single target tag in NeoForge 21.1.233; representative item from the legacy tag definition."
+    },
+    "forge:ingots": {
+      "tag": "c:ingots"
+    },
+    "forge:ingots/brick": {
+      "tag": "c:bricks/normal"
+    },
+    "forge:ingots/copper": {
+      "tag": "c:ingots/copper"
+    },
+    "forge:ingots/gold": {
+      "tag": "c:ingots/gold"
+    },
+    "forge:ingots/iron": {
+      "tag": "c:ingots/iron"
+    },
+    "forge:ingots/nether_brick": {
+      "tag": "c:bricks/nether"
+    },
+    "forge:ingots/netherite": {
+      "tag": "c:ingots/netherite"
+    },
+    "forge:ingots/orange_dye": {
+      "item": "minecraft:orange_dye",
+      "note": "Compatibility alias used by legacy gun packs."
+    },
+    "forge:leather": {
+      "tag": "c:leathers"
+    },
+    "forge:mushrooms": {
+      "tag": "c:mushrooms"
+    },
+    "forge:nether_stars": {
+      "tag": "c:nether_stars"
+    },
+    "forge:netherrack": {
+      "tag": "c:netherracks"
+    },
+    "forge:nuggets": {
+      "tag": "c:nuggets"
+    },
+    "forge:nuggets/gold": {
+      "tag": "c:nuggets/gold"
+    },
+    "forge:nuggets/iron": {
+      "tag": "c:nuggets/iron"
+    },
+    "forge:obsidian": {
+      "tag": "c:obsidians/normal",
+      "note": "Keep the 1.20.1 Forge contents; c:obsidians also contains crying obsidian."
+    },
+    "forge:ore_bearing_ground/deepslate": {
+      "tag": "c:ore_bearing_ground/deepslate"
+    },
+    "forge:ore_bearing_ground/netherrack": {
+      "tag": "c:ore_bearing_ground/netherrack"
+    },
+    "forge:ore_bearing_ground/stone": {
+      "tag": "c:ore_bearing_ground/stone"
+    },
+    "forge:ore_rates/dense": {
+      "tag": "c:ore_rates/dense"
+    },
+    "forge:ore_rates/singular": {
+      "tag": "c:ore_rates/singular"
+    },
+    "forge:ore_rates/sparse": {
+      "tag": "c:ore_rates/sparse"
+    },
+    "forge:ores": {
+      "tag": "c:ores"
+    },
+    "forge:ores_in_ground/deepslate": {
+      "tag": "c:ores_in_ground/deepslate"
+    },
+    "forge:ores_in_ground/netherrack": {
+      "tag": "c:ores_in_ground/netherrack"
+    },
+    "forge:ores_in_ground/stone": {
+      "tag": "c:ores_in_ground/stone"
+    },
+    "forge:ores/coal": {
+      "tag": "c:ores/coal"
+    },
+    "forge:ores/copper": {
+      "tag": "c:ores/copper"
+    },
+    "forge:ores/diamond": {
+      "tag": "c:ores/diamond"
+    },
+    "forge:ores/emerald": {
+      "tag": "c:ores/emerald"
+    },
+    "forge:ores/gold": {
+      "tag": "c:ores/gold"
+    },
+    "forge:ores/iron": {
+      "tag": "c:ores/iron"
+    },
+    "forge:ores/lapis": {
+      "tag": "c:ores/lapis"
+    },
+    "forge:ores/netherite_scrap": {
+      "tag": "c:ores/netherite_scrap"
+    },
+    "forge:ores/quartz": {
+      "tag": "c:ores/quartz"
+    },
+    "forge:ores/redstone": {
+      "tag": "c:ores/redstone"
+    },
+    "forge:paper": {
+      "item": "minecraft:paper",
+      "note": "Compatibility alias used by legacy gun packs."
+    },
+    "forge:raw_materials": {
+      "tag": "c:raw_materials"
+    },
+    "forge:raw_materials/copper": {
+      "tag": "c:raw_materials/copper"
+    },
+    "forge:raw_materials/gold": {
+      "tag": "c:raw_materials/gold"
+    },
+    "forge:raw_materials/iron": {
+      "tag": "c:raw_materials/iron"
+    },
+    "forge:rods": {
+      "tag": "c:rods"
+    },
+    "forge:rods/blaze": {
+      "tag": "c:rods/blaze"
+    },
+    "forge:rods/wooden": {
+      "tag": "c:rods/wooden"
+    },
+    "forge:sand": {
+      "tag": "c:sands"
+    },
+    "forge:sand/colorless": {
+      "tag": "c:sands/colorless"
+    },
+    "forge:sand/red": {
+      "tag": "c:sands/red"
+    },
+    "forge:sandstone": {
+      "tag": "c:sandstone/blocks"
+    },
+    "forge:seeds": {
+      "tag": "c:seeds"
+    },
+    "forge:seeds/beetroot": {
+      "tag": "c:seeds/beetroot"
+    },
+    "forge:seeds/melon": {
+      "tag": "c:seeds/melon"
+    },
+    "forge:seeds/pumpkin": {
+      "tag": "c:seeds/pumpkin"
+    },
+    "forge:seeds/wheat": {
+      "tag": "c:seeds/wheat"
+    },
+    "forge:shears": {
+      "tag": "c:tools/shear"
+    },
+    "forge:slimeballs": {
+      "tag": "c:slime_balls"
+    },
+    "forge:stained_glass": {
+      "all_of": [
+        "c:glass_blocks",
+        "c:dyed"
+      ],
+      "fallback_item": "minecraft:white_stained_glass"
+    },
+    "forge:stained_glass_panes": {
+      "all_of": [
+        "c:glass_panes",
+        "c:dyed"
+      ],
+      "fallback_item": "minecraft:white_stained_glass_pane"
+    },
+    "forge:stone": {
+      "tag": "c:stones"
+    },
+    "forge:storage_blocks": {
+      "tag": "c:storage_blocks"
+    },
+    "forge:storage_blocks/amethyst": {
+      "item": "minecraft:amethyst_block",
+      "note": "No accurate single target tag in NeoForge 21.1.233; representative item from the legacy tag definition."
+    },
+    "forge:storage_blocks/coal": {
+      "tag": "c:storage_blocks/coal"
+    },
+    "forge:storage_blocks/copper": {
+      "tag": "c:storage_blocks/copper"
+    },
+    "forge:storage_blocks/diamond": {
+      "tag": "c:storage_blocks/diamond"
+    },
+    "forge:storage_blocks/emerald": {
+      "tag": "c:storage_blocks/emerald"
+    },
+    "forge:storage_blocks/gold": {
+      "tag": "c:storage_blocks/gold"
+    },
+    "forge:storage_blocks/iron": {
+      "tag": "c:storage_blocks/iron"
+    },
+    "forge:storage_blocks/lapis": {
+      "tag": "c:storage_blocks/lapis"
+    },
+    "forge:storage_blocks/netherite": {
+      "tag": "c:storage_blocks/netherite"
+    },
+    "forge:storage_blocks/quartz": {
+      "item": "minecraft:quartz_block",
+      "note": "No accurate single target tag in NeoForge 21.1.233; representative item from the legacy tag definition."
+    },
+    "forge:storage_blocks/raw_copper": {
+      "tag": "c:storage_blocks/raw_copper"
+    },
+    "forge:storage_blocks/raw_gold": {
+      "tag": "c:storage_blocks/raw_gold"
+    },
+    "forge:storage_blocks/raw_iron": {
+      "tag": "c:storage_blocks/raw_iron"
+    },
+    "forge:storage_blocks/redstone": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "forge:string": {
+      "tag": "c:strings"
+    },
+    "forge:tools": {
+      "tag": "c:tools"
+    },
+    "forge:tools/bows": {
+      "tag": "c:tools/bow"
+    },
+    "forge:tools/crossbows": {
+      "tag": "c:tools/crossbow"
+    },
+    "forge:tools/fishing_rods": {
+      "tag": "c:tools/fishing_rod"
+    },
+    "forge:tools/shields": {
+      "tag": "c:tools/shield"
+    },
+    "forge:tools/tridents": {
+      "tag": "c:tools/spear"
+    },
+    "minecraft:music_discs": {
+      "tag": "c:music_discs"
+    },
+    "minecraft:tools": {
+      "tag": "c:tools"
+    }
+  }
+}
