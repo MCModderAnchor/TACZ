@@ -24,6 +24,7 @@ import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.util.ColorHex;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -472,6 +473,17 @@ public class ClientAttachmentIndex {
 
     public ScopeLensConfig getScopeLens() {
         return display.getScopeLens();
+    }
+
+    public boolean hasThermalImaging() {
+        ScopeLensConfig lens = getScopeLens();
+        return lens != null && lens.getVisionMode() != null && lens.getVisionMode().isThermal();
+    }
+
+    public boolean hasAmmoCounter() {
+        return display.getTextShows().values().stream()
+                .anyMatch(textShow -> textShow.getTextKey() != null
+                        && I18n.get(textShow.getTextKey()).contains("%ammo_count%"));
     }
 
     public boolean isSight() {
