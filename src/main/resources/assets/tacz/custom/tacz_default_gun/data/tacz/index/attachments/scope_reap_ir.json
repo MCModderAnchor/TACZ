@@ -1,0 +1,8 @@
+{
+  "hidden": false,
+  "name": "tacz.attachment.scope_reap_ir.name",
+  "display": "tacz:scope_reap_ir_display",
+  "data": "tacz:scope_reap_ir_data",
+  "type": "scope",
+  "sort": 40
+}
