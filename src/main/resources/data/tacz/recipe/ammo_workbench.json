@@ -1,10 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
   "result": {
-    "nbt": {
-      "BlockId": "tacz:ammo_workbench"
-    },
-    "id": "tacz:workbench_a"
+    "id": "tacz:workbench_a",
+    "count": 1,
+    "components": {
+      "minecraft:custom_data": "{BlockId:\"tacz:ammo_workbench\"}"
+    }
   },
   "pattern": [
     "CC",

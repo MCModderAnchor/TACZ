@@ -1,0 +1,21 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 20
+    },
+    {
+      "item": {
+        "tag": "c:gems/lapis"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:tec_9"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

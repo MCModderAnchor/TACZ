@@ -1,10 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
   "result": {
-    "nbt": {
-      "Level": 1
-    },
-    "id": "tacz:ammo_box"
+    "id": "tacz:ammo_box",
+    "count": 1,
+    "components": {
+      "minecraft:custom_data": "{Level:1}"
+    }
   },
   "pattern": [
     "PIP",

@@ -1,7 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
   "result": {
-    "id": "tacz:target"
+    "id": "tacz:target",
+    "count": 1
   },
   "pattern": [
     "III",

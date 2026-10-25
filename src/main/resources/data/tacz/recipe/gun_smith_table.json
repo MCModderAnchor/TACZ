@@ -1,7 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
   "result": {
-    "id": "tacz:gun_smith_table"
+    "id": "tacz:gun_smith_table",
+    "count": 1
   },
   "pattern": [
     "LLL",

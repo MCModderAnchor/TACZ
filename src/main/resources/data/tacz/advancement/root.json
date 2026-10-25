@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "tacz:gun_smith_table",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancement.tacz.root.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.root.description"
+    },
+    "background": "tacz:textures/block/uv/pegboard_background.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "auto": {
+      "trigger": "minecraft:location"
+    }
+  }
+}

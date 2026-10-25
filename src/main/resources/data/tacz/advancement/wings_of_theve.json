@@ -1,0 +1,44 @@
+{
+  "parent": "tacz:gunship",
+  "display": {
+    "icon": {
+      "id": "tacz:modern_kinetic_gun",
+      "count": 1,
+      "components": {
+        "minecraft:custom_data": "{GunId:\"tacz:rpg7\"}"
+      }
+    },
+    "title": {
+      "translate": "advancement.tacz.wings_of_theve.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.wings_of_theve.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "kill": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "player": {
+          "equipment": {
+            "mainhand": {
+              "items": [
+                "tacz:modern_kinetic_gun"
+              ],
+              "predicates": {
+                "minecraft:custom_data": "{GunId:\"tacz:rpg7\"}"
+              }
+            }
+          },
+          "nbt": "{FallFlying: 1b}"
+        },
+        "entity": {
+          "type": "minecraft:phantom"
+        }
+      }
+    }
+  }
+}

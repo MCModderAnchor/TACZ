@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
   "result": {
-    "count": 4,
-    "id": "tacz:gun_display_case"
+    "id": "tacz:gun_display_case",
+    "count": 4
   },
   "pattern": [
     "III",
@@ -14,7 +14,7 @@
       "tag": "c:ingots/iron"
     },
     "G": {
-      "tag": "forge:glass"
+      "tag": "c:glass_blocks"
     }
   }
 }

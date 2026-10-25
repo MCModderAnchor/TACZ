@@ -1,0 +1,38 @@
+{
+  "parent": "tacz:craft_first_gun",
+  "display": {
+    "icon": {
+      "id": "tacz:modern_kinetic_gun",
+      "count": 1,
+      "components": {
+        "minecraft:custom_data": "{GunId:\"tacz:timeless50\"}"
+      }
+    },
+    "title": {
+      "translate": "advancement.tacz.timeless_zero.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.timeless_zero.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "obtain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tacz:modern_kinetic_gun"
+            ],
+            "predicates": {
+              "minecraft:custom_data": "{GunId:\"tacz:timeless50\"}"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

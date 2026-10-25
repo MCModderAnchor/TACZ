@@ -1,10 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
   "result": {
-    "nbt": {
-      "BlockId": "tacz:attachment_workbench"
-    },
-    "id": "tacz:workbench_c"
+    "id": "tacz:workbench_c",
+    "count": 1,
+    "components": {
+      "minecraft:custom_data": "{BlockId:\"tacz:attachment_workbench\"}"
+    }
   },
   "pattern": [
     "GCG",
@@ -13,7 +14,7 @@
   ],
   "key": {
     "G": {
-      "tag": "forge:glass"
+      "tag": "c:glass_blocks"
     },
     "I": {
       "tag": "c:ingots/iron"

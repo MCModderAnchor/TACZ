@@ -1,0 +1,26 @@
+{
+  "parent": "tacz:root",
+  "display": {
+    "icon": {
+      "id": "tacz:gun_smith_table",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancement.tacz.gun_smith_table.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.gun_smith_table.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "craft": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "tacz:gun_smith_table"
+      }
+    }
+  }
+}

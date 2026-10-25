@@ -1,0 +1,26 @@
+{
+  "materials": [
+    {
+      "item": {
+        "item": "minecraft:crying_obsidian"
+      },
+      "count": 2
+    },
+    {
+      "item": {
+        "item": "minecraft:fire_charge"
+      }
+    },
+    {
+      "item": {
+        "tag": "forge:rods/blaze"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "type": "attachment",
+    "id": "tacz:ammo_mod_i"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

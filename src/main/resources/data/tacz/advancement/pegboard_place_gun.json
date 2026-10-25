@@ -1,0 +1,46 @@
+{
+  "parent": "tacz:arms_exhibition",
+  "display": {
+    "icon": {
+      "id": "tacz:gun_pegboard",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancement.tacz.pegboard_place_gun.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.pegboard_place_gun.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "dye": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "tacz:gun_pegboard_dye"
+      }
+    },
+    "vanilla_dye": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "minecraft:armor_dye",
+        "ingredients": [
+          {
+            "items": [
+              "tacz:gun_pegboard",
+              "tacz:glow_gun_pegboard"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dye",
+      "vanilla_dye"
+    ]
+  ]
+}

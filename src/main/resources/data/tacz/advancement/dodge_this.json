@@ -1,0 +1,37 @@
+{
+  "parent": "tacz:times_changed",
+  "display": {
+    "icon": {
+      "id": "minecraft:ender_pearl",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancement.tacz.dodge_this.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.dodge_this.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "kill": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "player": {
+          "equipment": {
+            "mainhand": {
+              "items": [
+                "tacz:modern_kinetic_gun"
+              ]
+            }
+          }
+        },
+        "entity": {
+          "type": "minecraft:enderman"
+        }
+      }
+    }
+  }
+}

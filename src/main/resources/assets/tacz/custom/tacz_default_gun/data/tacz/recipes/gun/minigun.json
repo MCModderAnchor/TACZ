@@ -1,0 +1,39 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "forge:gems/diamond"
+      },
+      "count": 40
+    },
+    {
+      "item": {
+        "tag": "forge:ingots/gold"
+      },
+      "count": 80
+    },
+    {
+      "item": {
+        "tag": "forge:ingots/netherite"
+      },
+      "count": 10
+    },
+    {
+      "item": {
+        "tag": "forge:ingots/iron"
+      },
+      "count": 320
+    },
+    {
+      "item": {
+        "tag": "forge:rods/blaze"
+      },
+      "count": 10
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "tacz:minigun"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

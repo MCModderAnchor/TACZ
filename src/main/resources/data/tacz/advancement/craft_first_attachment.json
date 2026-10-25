@@ -1,0 +1,26 @@
+{
+  "parent": "tacz:attachment_workbench",
+  "display": {
+    "icon": {
+      "id": "tacz:attachment",
+      "count": 1,
+      "components": {
+        "minecraft:custom_data": "{AttachmentId:\"tacz:scope_acog_ta31\"}"
+      }
+    },
+    "title": {
+      "translate": "advancement.tacz.craft_first_attachment.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.craft_first_attachment.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "refit": {
+      "trigger": "tacz:gun_refit"
+    }
+  }
+}

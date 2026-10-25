@@ -1,0 +1,33 @@
+{
+  "parent": "tacz:root",
+  "display": {
+    "icon": {
+      "id": "tacz:target",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancement.tacz.range_time.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.range_time.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "obtain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tacz:target",
+              "tacz:target_minecart"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

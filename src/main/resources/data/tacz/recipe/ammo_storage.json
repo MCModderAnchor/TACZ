@@ -11,6 +11,7 @@
     }
   },
   "result": {
-    "id": "tacz:ammo_storage"
+    "id": "tacz:ammo_storage",
+    "count": 1
   }
 }

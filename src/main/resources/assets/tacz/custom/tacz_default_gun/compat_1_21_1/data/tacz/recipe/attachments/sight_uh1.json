@@ -1,0 +1,45 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 15
+    },
+    {
+      "item": {
+        "tag": "c:ingots/gold"
+      },
+      "count": 6
+    },
+    {
+      "item": {
+        "tag": "c:dusts/redstone"
+      },
+      "count": 8
+    },
+    {
+      "item": {
+        "tag": "c:glass_blocks"
+      },
+      "count": 4
+    },
+    {
+      "item": {
+        "item": "minecraft:observer"
+      },
+      "count": 2
+    },
+    {
+      "item": {
+        "item": "minecraft:ender_eye"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "type": "attachment",
+    "id": "tacz:sight_uh1"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

@@ -1,3 +1,14 @@
 {
-  "namespace": "tacz"
+  "namespace": "tacz",
+  "dependencies": {
+    "minecraft": "[1.20.1],[1.21.1]"
+  },
+  "overlays": {
+    "entries": [
+      {
+        "directory": "compat_1_21_1",
+        "minecraft": "[1.21.1]"
+      }
+    ]
+  }
 }

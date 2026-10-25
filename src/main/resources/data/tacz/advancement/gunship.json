@@ -1,0 +1,35 @@
+{
+  "parent": "tacz:times_changed",
+  "display": {
+    "icon": {
+      "id": "minecraft:elytra",
+      "count": 1
+    },
+    "title": {
+      "translate": "advancement.tacz.gunship.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.gunship.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "kill": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "player": {
+          "equipment": {
+            "mainhand": {
+              "items": [
+                "tacz:modern_kinetic_gun"
+              ]
+            }
+          },
+          "nbt": "{FallFlying: 1b}"
+        }
+      }
+    }
+  }
+}

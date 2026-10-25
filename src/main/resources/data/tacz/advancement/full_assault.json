@@ -1,0 +1,38 @@
+{
+  "parent": "tacz:craft_first_attachment",
+  "display": {
+    "icon": {
+      "id": "tacz:attachment",
+      "count": 1,
+      "components": {
+        "minecraft:custom_data": "{AttachmentId:\"tacz:stock_militech_b5\"}"
+      }
+    },
+    "title": {
+      "translate": "advancement.tacz.full_assault.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.full_assault.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "equip": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tacz:modern_kinetic_gun"
+            ],
+            "predicates": {
+              "minecraft:custom_data": "{AttachmentSCOPE:{components:{\"minecraft:custom_data\":{}}},AttachmentMUZZLE:{components:{\"minecraft:custom_data\":{}}},AttachmentSTOCK:{components:{\"minecraft:custom_data\":{}}},AttachmentGRIP:{components:{\"minecraft:custom_data\":{}}},AttachmentLASER:{components:{\"minecraft:custom_data\":{}}},AttachmentEXTENDED_MAG:{components:{\"minecraft:custom_data\":{}}}}"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

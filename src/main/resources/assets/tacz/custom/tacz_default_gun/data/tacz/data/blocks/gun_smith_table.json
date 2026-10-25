@@ -13,9 +13,9 @@
       "name": "tacz.type.pistol.name",
       // tab的图标，可以指定任意一个物品作为图标
       "icon": {
-        "id": "tacz:modern_kinetic_gun",
-        "components": {
-          "minecraft:custom_data": "{GunId: \"tacz:glock_17\"}"
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "tacz:glock_17"
         }
       }
     },
@@ -23,9 +23,19 @@
       "id": "tacz:sniper",
       "name": "tacz.type.sniper.name",
       "icon": {
-        "id": "tacz:modern_kinetic_gun",
-        "components": {
-          "minecraft:custom_data": "{GunId: \"tacz:ai_awp\"}"
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "tacz:ai_awp"
+        }
+      }
+    },
+    {
+      "id": "tacz:dmr",
+      "name": "tacz.type.dmr.name",
+      "icon": {
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "tacz:mk14"
         }
       }
     },
@@ -33,9 +43,9 @@
       "id": "tacz:rifle",
       "name": "tacz.type.rifle.name",
       "icon": {
-        "id": "tacz:modern_kinetic_gun",
-        "components": {
-          "minecraft:custom_data": "{GunId: \"tacz:ak47\"}"
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "tacz:ak47"
         }
       }
     },
@@ -43,9 +53,9 @@
       "id": "tacz:shotgun",
       "name": "tacz.type.shotgun.name",
       "icon": {
-        "id": "tacz:modern_kinetic_gun",
-        "components": {
-          "minecraft:custom_data": "{GunId: \"tacz:db_short\"}"
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "tacz:db_short"
         }
       }
     },
@@ -53,9 +63,9 @@
       "id": "tacz:smg",
       "name": "tacz.type.smg.name",
       "icon": {
-        "id": "tacz:modern_kinetic_gun",
-        "components": {
-          "minecraft:custom_data": "{GunId: \"tacz:hk_mp5a5\"}"
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "tacz:hk_mp5a5"
         }
       }
     },
@@ -63,9 +73,9 @@
       "id": "tacz:rpg",
       "name": "tacz.type.rpg.name",
       "icon": {
-        "id": "tacz:modern_kinetic_gun",
-        "components": {
-          "minecraft:custom_data": "{GunId: \"tacz:rpg7\"}"
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "tacz:rpg7"
         }
       }
     },
@@ -73,9 +83,9 @@
       "id": "tacz:mg",
       "name": "tacz.type.mg.name",
       "icon": {
-        "id": "tacz:modern_kinetic_gun",
-        "components": {
-          "minecraft:custom_data": "{GunId: \"tacz:m249\"}"
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "tacz:m249"
         }
       }
     },
@@ -83,7 +93,7 @@
       "id": "tacz:misc",
       "name": "tacz.type.misc.name",
       "icon": {
-        "id": "tacz:gun_smith_table"
+        "item": "tacz:gun_smith_table"
       }
     }
   ]
