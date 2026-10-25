@@ -120,8 +120,8 @@ repositories {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
-    implementation("com.github.mcmodderanchor:simplebedrockmodel:2.6.0-neoforge-mc1.21.1")
-    jarJar("com.github.mcmodderanchor:simplebedrockmodel:2.6.0-neoforge-mc1.21.1")
+    implementation(libs.com.github.mcmodderanchor.simplebedrockmodel)
+    jarJar(libs.com.github.mcmodderanchor.simplebedrockmodel)
     compileOnly(libs.com.maydaymemory.mae)
 
     implementation(libs.org.apache.commons.math3)

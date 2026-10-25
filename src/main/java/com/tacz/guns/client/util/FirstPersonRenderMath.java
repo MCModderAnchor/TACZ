@@ -46,11 +46,4 @@ public final class FirstPersonRenderMath {
         return new Matrix4f().rotation(cameraRotation).scale(lateral, lateral, 1.0f).mul(modelView).mul(pose);
     }
 
-    /** AR submits a local quad: give it view-aligned unit axes while retaining the transformed center. */
-    public static Matrix4f billboardPose(Matrix4fc modelView, Matrix4fc effectivePose, Vector3fc particlePosition) {
-        Vector3f center = effectivePose.transformPosition(particlePosition, new Vector3f());
-        Matrix4f billboard = viewToRender(modelView);
-        Vector3f localCenter = billboard.transformDirection(particlePosition, new Vector3f());
-        return billboard.setTranslation(center.sub(localCenter));
-    }
 }

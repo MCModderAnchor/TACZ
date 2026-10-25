@@ -11,7 +11,6 @@
   ],
   "client": [
     "client.AbstractButtonMixin",
-    "client.BillboardHelperMixin",
     "client.CreativeModeInventoryScreenMixin",
     "client.EntityRenderDispatcherMixin",
     "client.GameRendererMixin",
@@ -20,11 +19,9 @@
     "client.ItemInHandRendererMixin",
     "client.LanguageMixin",
     "client.LocalPlayerMixin",
-    "client.MeshIntegerAttributesMixin",
     "client.MouseHandlerMixin",
     "client.PlayerModelMixin",
     "client.RenderSystemAccessor",
-    "client.SnowStormParticleMixin",
     "client.SoundManagerPreparationsMixin"
   ],
   "injectors": {

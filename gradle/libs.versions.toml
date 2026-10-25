@@ -6,7 +6,7 @@ parchment = "2024.11.17"
 minecraft = "1.21.1"
 minecraft-range = "[1.21.1]"
 
-simplebedrockmodel = "2.6.0-neoforge-mc1.21.1"
+simplebedrockmodel = "2.6.1-neoforge-mc1.21.1"
 mae = "1.1.4"
 commons-math = "3.6.1"
 luaj = "3.0.8-figura"
