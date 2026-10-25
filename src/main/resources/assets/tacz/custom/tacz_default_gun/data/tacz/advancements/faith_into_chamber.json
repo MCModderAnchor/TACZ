@@ -1,0 +1,37 @@
+{
+  "parent": "tacz:arms_exhibition",
+  "display": {
+    "icon": {
+      "item": "tacz:statue"
+    },
+    "title": {
+      "translate": "advancement.tacz.faith_into_chamber.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.faith_into_chamber.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "place": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": ["tacz:statue"]
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": ["tacz:modern_kinetic_gun"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "parent": "tacz:craft_first_gun",
+  "display": {
+    "icon": {
+      "item": "tacz:modern_kinetic_gun",
+      "nbt": "{GunId:\"tacz:m1911\"}"
+    },
+    "title": {
+      "translate": "advancement.tacz.times_changed.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.times_changed.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "kill": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "player": {
+          "equipment": {
+            "mainhand": {
+              "items": ["tacz:modern_kinetic_gun"]
+            }
+          }
+        },
+        "entity": {}
+      }
+    }
+  }
+}

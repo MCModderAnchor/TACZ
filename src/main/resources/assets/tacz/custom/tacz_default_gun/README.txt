@@ -17,8 +17,10 @@ Minecraft 1.21.1. The old 1.20.1 loader reads the base files as before.
 目录结构：
   gunpack.meta.json                         根元数据，声明版本与覆盖目录
   assets/tacz/...                           两个版本共用的客户端资源
+  data/tacz/advancements/...                1.20.1 成就（NBT 图标与条件）
   data/tacz/recipes/...                     1.20.1 基础配方（Forge 标签、NBT）
   data/tacz/data/blocks/...                 1.20.1 分类图标
+  compat_1_21_1/data/tacz/advancement/...     1.21.1 成就（组件图标与条件）
   compat_1_21_1/data/tacz/recipe/...          1.21.1 配方（NeoForge 标签、组件）
   compat_1_21_1/data/tacz/data/blocks/...     同路径覆盖分类图标
   compat_1_21_1/data/tacz/tacz_loot_injectors/...  覆盖旧版战利品函数
@@ -28,8 +30,9 @@ Minecraft 1.21.1. The old 1.20.1 loader reads the base files as before.
    不要把整个包复制进去。覆盖目录内仍从 assets/ 或 data/ 开始。
 2. 同路径文件整体替换，不合并 JSON；未提供的文件回落到基础层。
    例如修改工作台分类时，需要在覆盖层保留完整 tabs 数组。
-3. 配方目录从 recipes 改为 recipe，因此覆盖层中的新路径是新增资源，
-   旧目录保留给 1.20.1。TACZ 自定义的 data/blocks、tacz_loot_injectors
+3. 配方目录从 recipes 改为 recipe，成就从 advancements 改为 advancement，
+   因此覆盖层中的新路径是新增资源，旧目录保留给 1.20.1。
+   TACZ 自定义的 data/blocks、tacz_loot_injectors
    等目录不改名。同一个资源 ID 在两个版本中保持一致。
 4. 可对照 gun_smith_table.json 的图标、gun/taurus943.json 的配方和
    spawn_bonus_chest_taurus943.json 的战利品查看真实差异。
