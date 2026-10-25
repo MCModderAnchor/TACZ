@@ -1,4 +1,9 @@
+import java.text.SimpleDateFormat
+import java.util.*
 
+// 设置日期格式，用于填充快照版版本号
+val dateFormat = SimpleDateFormat("MMdd-HHmmss")
+dateFormat.timeZone = TimeZone.getTimeZone("UTC")
 
 plugins {
     alias(libs.plugins.moddev)
@@ -6,7 +11,8 @@ plugins {
 
 val id = project.property("mod_id") as String
 group = project.property("maven_group") as String
-version = project.property("mod_version") as String
+version = dateFormat.format(Date())
+//version = project.property("mod_version") as String
 
 base {
     archivesName.set(project.property("archives_base_name") as String)
