@@ -109,6 +109,14 @@
     "muzzle",
     "stock"
   ],
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:stock_psg"
+      ],
+      "default_attached": "tacz:stock_psg"
+    }
+  },
   "exclusive_attachments": {
   }
 }

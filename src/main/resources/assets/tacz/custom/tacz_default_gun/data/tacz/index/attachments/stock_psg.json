@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.stock_psg.name",
+  "display": "tacz:stock_psg_display",
+  "data": "tacz:stock_psg_data",
+  "type": "stock",
+  "sort": 11
+}
