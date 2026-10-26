@@ -221,16 +221,9 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                 components.add(Component.translatable("tooltip.tacz.attachment.fire_control").withStyle(ChatFormatting.AQUA));
             }
 
-            if (type == AttachmentType.SCOPE && index.hasThermalImaging()) {
-                String thermalTooltipKey = switch (index.getScopeLens().getVisionMode()) {
-                    case THERMAL_WHITE_HOT -> "tooltip.tacz.attachment.thermal_imaging.white_hot";
-                    case THERMAL_BLACK_HOT -> "tooltip.tacz.attachment.thermal_imaging.black_hot";
-                    case THERMAL_IRONBOW -> "tooltip.tacz.attachment.thermal_imaging.ironbow";
-                    default -> null;
-                };
-                if (thermalTooltipKey != null) {
-                    components.add(Component.translatable(thermalTooltipKey).withStyle(ChatFormatting.AQUA));
-                }
+            String thermalTooltipKey = index.getThermalImagingTooltipKey();
+            if (type == AttachmentType.SCOPE && thermalTooltipKey != null) {
+                components.add(Component.translatable(thermalTooltipKey).withStyle(ChatFormatting.AQUA));
             }
             if (type == AttachmentType.SCOPE && index.hasAmmoCounter()) {
                 components.add(Component.translatable("tooltip.tacz.attachment.ammo_counter").withStyle(ChatFormatting.AQUA));
