@@ -340,6 +340,7 @@
 
   "tacz.variant.deltapoint_rifle.name": "Rifle Riser Mount",
   "tacz.slot_adapter.riser_pistol_low.name": "Pistol Low Riser",
+  "tacz.slot_adapter.riser_pistol_mid.name": "Pistol Mid Riser",
   "tacz.slot_adapter.riser_pistol_high.name": "Pistol High Riser",
   "tacz.slot_adapter.riser_rail_mid.name": "Rail Mid Riser",
   "tacz.slot_adapter.riser_rail_high.name": "Rail High Riser",

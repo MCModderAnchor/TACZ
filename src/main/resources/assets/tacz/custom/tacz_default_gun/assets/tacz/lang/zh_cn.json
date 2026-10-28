@@ -341,6 +341,7 @@
 
   "tacz.variant.deltapoint_rifle.name": "步枪增高座",
   "tacz.slot_adapter.riser_pistol_low.name": "手枪低增高座",
+  "tacz.slot_adapter.riser_pistol_mid.name": "手枪中增高座",
   "tacz.slot_adapter.riser_pistol_high.name": "手枪高增高座",
   "tacz.slot_adapter.riser_rail_mid.name": "导轨中增高座",
   "tacz.slot_adapter.riser_rail_high.name": "导轨高增高座",
