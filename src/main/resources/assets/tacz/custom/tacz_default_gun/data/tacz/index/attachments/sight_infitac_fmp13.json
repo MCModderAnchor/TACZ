@@ -1,0 +1,7 @@
+{
+  "name": "tacz.attachment.sight_infitac_fmp13.name",
+  "display": "tacz:sight_infitac_fmp13_display",
+  "data": "tacz:sight_rmr_dot_data",
+  "type": "scope",
+  "sort": 40
+}
