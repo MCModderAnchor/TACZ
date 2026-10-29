@@ -13,6 +13,7 @@ import com.tacz.guns.api.DefaultAssets;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAttachment;
+import com.tacz.guns.api.item.IBlock;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.gui.components.FlatColorButton;
 import com.tacz.guns.client.gui.components.GunPackList;
@@ -30,6 +31,7 @@ import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessageCraft;
 import com.tacz.guns.resource.filter.RecipeFilter;
 import com.tacz.guns.resource.pojo.data.block.TabConfig;
+import com.tacz.guns.util.ContentPackOrder;
 import com.tacz.guns.util.RenderHelper;
 import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
@@ -65,6 +67,10 @@ import java.util.*;
 public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/gun_smith_table.png");
     private static final ResourceLocation SIDE = new ResourceLocation(GunMod.MOD_ID, "textures/gui/gun_smith_table_side.png");
+    private static final Comparator<RecipeSortKey> RECIPE_ORDER = Comparator
+            .comparing(RecipeSortKey::namespace, ContentPackOrder.NAMESPACE_ORDER)
+            .thenComparingInt(RecipeSortKey::sort)
+            .thenComparing(RecipeSortKey::recipeId);
 
     private final LinkedHashMap<ResourceLocation, TabConfig> recipeKeys = Maps.newLinkedHashMap();
     private final Map<ResourceLocation, List<ResourceLocation>> recipes = Maps.newLinkedHashMap();
@@ -122,6 +128,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         });
 
         List<Pair<ResourceLocation, ResourceLocation>> recipeIds = Lists.newArrayList();
+        Map<ResourceLocation, RecipeSortKey> recipeSortKeys = new HashMap<>();
 
         if (Minecraft.getInstance().level != null) {
             RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
@@ -142,6 +149,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
                 ResourceLocation groupName = recipe.getResult().getGroup();
                 if (recipeKeys.containsKey(groupName)) {
                     recipeIds.add(Pair.of(groupName, id));
+                    recipeSortKeys.put(id, getRecipeSortKey(recipe));
                 }
             }
         }
@@ -162,8 +170,10 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
             }
         });
 
+        Comparator<ResourceLocation> recipeOrder = Comparator.comparing(recipeSortKeys::get, Comparator.nullsLast(RECIPE_ORDER));
         for (var entry : recipes.entrySet()) {
             if (!entry.getValue().isEmpty()) {
+                entry.getValue().sort(recipeOrder);
                 this.recipes.put(entry.getKey(), entry.getValue());
                 this.recipeKeys.put(entry.getKey(), recipeKeys.get(entry.getKey()));
             }
@@ -184,6 +194,36 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
         if (selectedType != null) {
             selectedRecipeList = this.recipes.get(selectedType);
         }
+    }
+
+    @Nullable
+    private static RecipeSortKey getRecipeSortKey(GunSmithTableRecipe recipe) {
+        ItemStack output = recipe.getOutput();
+        if (output.getItem() instanceof IGun gun) {
+            ResourceLocation id = gun.getGunId(output);
+            return TimelessAPI.getCommonGunIndex(id)
+                    .map(index -> new RecipeSortKey(id.getNamespace(), index.getSort(), recipe.getId().toString())).orElse(null);
+        }
+        if (output.getItem() instanceof IAmmo ammo) {
+            ResourceLocation id = ammo.getAmmoId(output);
+            return TimelessAPI.getCommonAmmoIndex(id)
+                    .map(index -> new RecipeSortKey(id.getNamespace(), index.getSort(), recipe.getId().toString())).orElse(null);
+        }
+        if (output.getItem() instanceof IAttachment attachment) {
+            ResourceLocation id = attachment.getAttachmentId(output);
+            return TimelessAPI.getCommonAttachmentIndex(id)
+                    .map(index -> new RecipeSortKey(id.getNamespace(), index.getSort(), recipe.getId().toString())).orElse(null);
+        }
+        if (output.getItem() instanceof IBlock block) {
+            ResourceLocation id = block.getBlockId(output);
+            // Block indexes have no sort field; use recipe IDs within each namespace.
+            return TimelessAPI.getCommonBlockIndex(id)
+                    .map(index -> new RecipeSortKey(id.getNamespace(), 0, recipe.getId().toString())).orElse(null);
+        }
+        return null;
+    }
+
+    private record RecipeSortKey(String namespace, int sort, String recipeId) {
     }
 
     private boolean isNameMatch(GunSmithTableRecipe recipe) {

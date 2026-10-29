@@ -14,10 +14,7 @@ import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.FeedType;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
-import com.tacz.guns.util.AttachmentDataUtils;
-import com.tacz.guns.util.DefaultGunAttachments;
-import com.tacz.guns.util.GunAmmoUnloadHelper;
-import com.tacz.guns.util.SlotAdapterHelper;
+import com.tacz.guns.util.*;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -46,7 +43,7 @@ public abstract class AbstractGunItem extends Item implements IGun, IAnimationIt
     }
 
     private static Comparator<Map.Entry<ResourceLocation, CommonGunIndex>> idNameSort() {
-        return Comparator.comparingInt(m -> m.getValue().getSort());
+        return ContentPackOrder.<CommonGunIndex>byNamespace().thenComparingInt(m -> m.getValue().getSort());
     }
 
     /**
