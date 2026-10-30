@@ -237,8 +237,9 @@
   "tacz.attachment.scope_98k.name": "§5Mauser 4x Scope",
   "tacz.attachment.scope_mk4ert.name": "§5Mark 4 ER/T 8x Scope",
   "tacz.attachment.scope_amg_10.name": "§6Vortex AMG 10 Scope",
-  "tacz.attachment.scope_reap_ir.name": "§bREAP-IR 2x Thermal Scope",
+  "tacz.attachment.scope_reap_ir.name": "§bREAP-IR 2-4x Thermal Scope",
   "tacz.attachment.sight_infitac_fmp13.name":  "§bFMP13 Mini Thermal Sight",
+  "tacz.attachment.scope_xl50.name": "§bPulsar XL50 6-10x Thermal Scope",
 
   "tacz.attachment.laser_compact": "§aMilitech Compact Laser",
   "tacz.attachment.laser_lopro":"§5Lopro Tactical Laser",

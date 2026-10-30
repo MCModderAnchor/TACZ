@@ -238,8 +238,9 @@
   "tacz.attachment.scope_mk4ert.name": "§5Mark 4 ER/T 8x 光学瞄具",
   "tacz.attachment.scope_amg_10.name": "§6旋涡 AMG 10 组合式光学瞄具",
   "tacz.attachment.sight_1p87.name": "1P87 反射式瞄具",
-  "tacz.attachment.scope_reap_ir.name": "§bREAP-IR 2x 热成像瞄具",
+  "tacz.attachment.scope_reap_ir.name": "§bREAP-IR 2-4x 热成像瞄具",
   "tacz.attachment.sight_infitac_fmp13.name":  "§bFMP13 微型热成像瞄具",
+  "tacz.attachment.scope_xl50.name": "§b脉冲星 XL50 6-10x 热成像瞄具",
 
   "tacz.attachment.laser_compact": "§a米利泰克 小型激光指示器",
   "tacz.attachment.laser_lopro": "§5低姿战术激光指示器",

@@ -7,8 +7,8 @@
     "texture": "tacz:attachment/lod/scope_reap_ir"
   },
   "zoom": [
-    1.5,
-    2.5
+    2.5,
+    4
   ],
   "idle_scope_height_adjust": 0.5,
   "scope": true,

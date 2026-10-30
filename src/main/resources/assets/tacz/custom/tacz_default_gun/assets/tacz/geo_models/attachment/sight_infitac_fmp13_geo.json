@@ -816,21 +816,8 @@
 					]
 				},
 				{
-					"name": "division",
-					"pivot": [0, 1.125, -3.9375],
-					"cubes": [
-						{
-							"origin": [-2.5, -0.875, -2],
-							"size": [5, 3.675, 2],
-							"uv": {
-								"south": {"uv": [5.5, 28.5], "uv_size": [1.5, 1.5]}
-							}
-						}
-					]
-				},
-				{
 					"name": "division_illuminated",
-					"parent": "division",
+					"parent": "ocular_ring",
 					"pivot": [0, 1.125, -0.9875],
 					"cubes": [
 						{
@@ -852,6 +839,19 @@
 							"size": [0.25, 0.25, 2],
 							"uv": {
 								"south": {"uv": [40, 40], "uv_size": [24, 24]}
+							}
+						}
+					]
+				},
+				{
+					"name": "division",
+					"pivot": [0, 1.125, -3.9375],
+					"cubes": [
+						{
+							"origin": [-2.5, -0.875, -2],
+							"size": [5, 3.675, 2],
+							"uv": {
+								"south": {"uv": [5.5, 28.5], "uv_size": [1.5, 1.5]}
 							}
 						}
 					]
