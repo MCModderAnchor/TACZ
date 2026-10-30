@@ -1,8 +1,8 @@
 {
-  "config.tacz.client.render.scope_lens_enable": "Experimental scope lens",
-  "config.tacz.client.render.scope_lens_enable.desc": "Enable lens effects configured by each attachment display inside existing scope windows.",
-  "config.tacz.client.render.scope_thermal_enable": "Scope thermal imaging",
-  "config.tacz.client.render.scope_thermal_enable.desc": "Allow thermal imaging on attachments configured for it. Disabling this uses their optical lens and skips thermal capture. Requires scope lens effects.",
+  "config.tacz.client.render.scope_lens_enable": "실험용 조준경 광학 렌즈 효과",
+  "config.tacz.client.render.scope_lens_enable.desc": "기존 조준경 창 내에서 각 첨부 디스플레이별로 구성된 렌즈 효과를 활성화합니다.",
+  "config.tacz.client.render.scope_thermal_enable": "조준경 열화상 형상",
+  "config.tacz.client.render.scope_thermal_enable.desc": "열화상이 활성화된 부착물에서 열화상 촬영을 허용합니다. 이 기능을 비활성화하면 해당 부착물의 광학 렌즈가 사용되며 열화상은 생략됩니다. 조준경 광학 렌즈 효과가 필요합니다.",
   "config.tacz.client.render.creative_pack_sidebar": "Creative Content Pack Sidebar",
   "config.tacz.client.render.creative_pack_sidebar.desc": "Show the content pack sidebar in TACZ creative tabs. Disabling it also clears the pack filter and shows all items in the current tab.",
   "gui.tacz.creative_pack_filter.all": "전부",
