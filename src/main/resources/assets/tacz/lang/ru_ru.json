@@ -1,6 +1,6 @@
 {
   "config.tacz.client.render.scope_lens_enable": "Экспериментальные линзы прицелов",
-  "config.tacz.client.render.scope_lens_enable.desc": "Включение эффектов линз, настроенных на каждом обвесе, отображающих в линзах существующих прицелов.",
+  "config.tacz.client.render.scope_lens_enable.desc": "Включение эффектов линз, настроенных на каждом обвесе, отображающихся в линзах существующих прицелов.",
   "config.tacz.client.render.scope_thermal_enable": "Тепловизионное отображение прицелов",
   "config.tacz.client.render.scope_thermal_enable.desc": "Разрешение тепловизионного отображения на обвесах, настроенных для этого. Отключение этой функции использует их оптику и не затрагивает тепловизионный захват. Требует эффекты линз прицелов.",
   "config.tacz.client.render.creative_pack_sidebar": "Творческая боковая панель паков",
