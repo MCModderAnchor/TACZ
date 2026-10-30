@@ -17,7 +17,7 @@
   "custom.tacz.error.no_name": "Ошибка: нет имени",
   "commands.tacz.reload.success": "§a§l[TACZ]§r Паки перезагружены. Время: %.3f ms",
   "commands.tacz.debug.pegboard.no_guns": "[TACZ] Не загруженное оружие не может быть создано",
-  "commands.tacz.debug.pegboard.blocked": "[TACZ] Невозможно установить пегборд: %s занят, разгружен или находится вне лимита высоты",
+  "commands.tacz.debug.pegboard.blocked": "[TACZ] Невозможно установить пег борд: %s занят, разгружен или находится вне лимита высоты",
   "commands.tacz.debug.pegboard.failed": "[TACZ] Создано %s единиц, но не удалось разместить пегборд на %s",
   "commands.tacz.debug.pegboard.success": "[TACZ] Создано %1$s единиц оружия на %2$s пегбордах с типами оружия %3$s, начиная с %4$s",
   "commands.tacz.reload.overwrite_on": "§a§l●§r Автоматическое обновление стандартного пака включено. Обновления будут проверены при следующем запуске.",
