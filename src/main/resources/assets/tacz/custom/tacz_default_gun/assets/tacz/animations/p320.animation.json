@@ -1192,26 +1192,6 @@
 				"additional_magazine": {
 					"scale": 0
 				},
-				"bullet_in_barrel": {
-					"position": {
-						"4.625": {
-							"pre": [0, 0, 0],
-							"post": [0, 0, 0],
-							"lerp_mode": "catmullrom"
-						},
-						"4.6667": {
-							"post": [0, 0, 0.83],
-							"lerp_mode": "catmullrom"
-						},
-						"4.75": {
-							"post": [0, 0, 1.25],
-							"lerp_mode": "catmullrom"
-						},
-						"4.875": [0, 0, 1.25],
-						"5.125": [0, 0, 1.25],
-						"5.1667": [0, 0, 0]
-					}
-				},
 				"barrel": {
 					"rotation": {
 						"4.625": [0, 0, 0],
@@ -1388,6 +1368,9 @@
 						"3.7083": [0, -5.8125, 1.375],
 						"3.75": [0, 0, 0]
 					}
+				},
+				"bullet": {
+					"scale": 0
 				}
 			},
 			"sound_effects": {
