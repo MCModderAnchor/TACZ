@@ -21,10 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -32,6 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ClientIndexManager {
     private static final int HOTBAR_SLOT_COUNT = 9;
     private static final AtomicLong RESOURCE_REVISION = new AtomicLong();
+    private static final Set<ResourceLocation> WARNED_MISSING_GUN_DISPLAYS = new HashSet<>();
 
     public static final Map<ResourceLocation, GunDisplayInstance> GUN_DISPLAY = Maps.newHashMap();
     public static final Map<ResourceLocation, ClientGunIndex> GUN_INDEX = Maps.newHashMap();
@@ -45,6 +43,7 @@ public class ClientIndexManager {
         ClientAssetLoadDispatcher.invalidate();
         RESOURCE_REVISION.incrementAndGet();
         GUN_DISPLAY.clear();
+        WARNED_MISSING_GUN_DISPLAYS.clear();
         GUN_INDEX.clear();
         AMMO_INDEX.clear();
         ATTACHMENT_INDEX.clear();
@@ -112,7 +111,10 @@ public class ClientIndexManager {
         if (instance != null) {
             return instance;
         }
-        GunMod.LOGGER.warn("{} display instance is missing from cache", displayId);
+        if (WARNED_MISSING_GUN_DISPLAYS.add(displayId)) {
+            GunMod.LOGGER.warn("Gun display {} is unavailable (assets/{}/display/guns/{}.json);",
+                    displayId, displayId.getNamespace(), displayId.getPath());
+        }
         return null;
     }
 

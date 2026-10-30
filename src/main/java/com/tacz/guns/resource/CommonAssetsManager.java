@@ -72,6 +72,7 @@ public class CommonAssetsManager implements ICommonResourceProvider {
             .create();
 
     private final List<INetworkCacheReloadListener> listeners = new ArrayList<>();
+    private List<ServerMessageSyncGunPack> networkSyncMessages = List.of();
     private CommonDataManager<GunData> gunData;
     private CommonDataManager<AttachmentData> attachmentData;
     private CommonDataManager<VariantData> attachmentVariantData;
@@ -124,7 +125,10 @@ public class CommonAssetsManager implements ICommonResourceProvider {
         register.accept((barrier, resourceManager, preparationProfiler, reloadProfiler, backgroundExecutor, gameExecutor) -> {
             return barrier
                     .wait(Void.TYPE)
-                    .thenRunAsync(AllowAttachmentTagMatcher::resetCache, gameExecutor);
+                    .thenRunAsync(() -> {
+                        AllowAttachmentTagMatcher.resetCache();
+                        networkSyncMessages = ServerMessageSyncGunPack.createMessages(getNetworkCache());
+                    }, gameExecutor);
         });
     }
 
@@ -325,14 +329,15 @@ public class CommonAssetsManager implements ICommonResourceProvider {
 
     @SubscribeEvent
     public static void OnDatapackSync(OnDatapackSyncEvent event) {
-        if (getInstance() == null) {
+        CommonAssetsManager manager = getInstance();
+        if (manager == null) {
             return;
         }
-        ServerMessageSyncGunPack message = new ServerMessageSyncGunPack(getInstance().getNetworkCache());
         if (event.getPlayer() != null) {
-            NetworkHandler.sendToClientPlayer(message, event.getPlayer());
+            manager.networkSyncMessages.forEach(message -> NetworkHandler.sendToClientPlayer(message, event.getPlayer()));
         } else {
-            event.getPlayerList().getPlayers().forEach(player -> NetworkHandler.sendToClientPlayer(message, player));
+            event.getPlayerList().getPlayers().forEach(player ->
+                    manager.networkSyncMessages.forEach(message -> NetworkHandler.sendToClientPlayer(message, player)));
         }
     }
 
