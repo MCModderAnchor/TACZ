@@ -1,3 +1,14 @@
+-- ============================================================================
+-- 默认状态机 v2（现行版本）
+--
+-- 与旧版 default_state_machine.lua 的唯一差别：调整了主轨道动画与移动轨道的衔接逻辑
+-- （allow_run_overlay）。掏枪、换弹、拉栓允许与 run 叠加；检视、近战自带 root 旋转，
+-- 仍降级到 walk。详见 allow_run_overlay 与 updateRunOverlay 处的注释。
+--
+-- 旧版已冻结，仅作未指定 state_machine 的第三方枪包兜底。第三方包要用本版本，需在
+-- display JSON 中写 "state_machine": "tacz:default_state_machine_v2"。
+-- ============================================================================
+
 -- 这些栈顶指针在分配新的轨道行和轨道时起作用
 -- 轨道行 栈顶指针
 local track_line_top = {value = 0}
@@ -185,21 +196,10 @@ end
 -- 检视状态需要被射击输入打断，此外，进入检视时，需要隐藏准心，退出检视时恢复准心。
 -- 除了上文的那三个方法，检视还需要 exit 方法，用于恢复准心渲染
 local main_track_states = {
-    -- 主轨道当前这个动画是否允许与 run 叠加。
-    --
-    -- 主轨道动画分两类，区别在于它自带的关键帧会不会和 run 的 root 旋转打架：
-    --   允许叠加：掏枪、换弹、拉栓。它们没有会冲突的 root 旋转；而且换弹的功能时长
-    --     (战术 2.0s / 空仓 2.6s)比动画(2.4s / 3.05s)短，玩家恢复奔跑时动画还剩一截尾巴，
-    --     让 run 当场接上、与尾巴叠着播，动画才不会比 FOV 慢半拍
-    --     (冲刺在 FEEDING 阶段被禁、一进 FINISHING 就解禁，FOV 当场就变，
-    --      动画却要等主轨道播完才跟，观感就是慢半拍)。
-    --   不允许叠加：检视、近战。它们自带 root 旋转，和 run 叠在一起枪械会拧得异常，
-    --     只能降级到 walk 去和 walk 叠加。
-    --
-    -- 置位：updateRunOverlay 收到掏枪/换弹/拉栓输入时（start.transition 里还有一份冗余的
-    --     掏枪置位，理由见那里的注释）。
-    -- 清除：updateRunOverlay 收到上表"不允许"的那几个输入时；以及下面的 idle.update 在
-    --     主轨道动画播完时（这一处是兜底，有脚本重写 idle.update 而不调父级，所以不能只靠它）。
+    -- 主轨道当前动画是否允许与 run 叠加。
+    -- 允许（掏枪/换弹/拉栓）：没有会和 run 冲突的 root 旋转；叠加可避免动画比 FOV 慢半拍。
+    -- 不允许（检视/近战）：自带 root 旋转，叠加会拧坏枪身，只能降级到 walk。
+    -- 置位/清除见 updateRunOverlay；idle.update 在主轨道播完时兜底清除。
     allow_run_overlay = false,
     -- 起始
     start = {},
@@ -224,13 +224,7 @@ function main_track_states.start.transition(this, context, input)
         -- 收到 draw 信号后在主轨道行的主轨道上播放掏枪动画,然后转到闲置态
         this.main_track_states.final.isfinal = -1
         context:runAnimation("draw", context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK), false, PLAY_ONCE_STOP, 0)
-        -- 掏枪允许与 run 叠加：玩家常常是边跑边切枪，此时不该把移动轨道降级成行走，
-        -- 而应让 run(含 run_start) 和 draw 在各自的轨道上叠加。
-        -- 掏枪结束时移动轨道早已在跑循环段，不需要任何转换，自然也就不会重播起手式或硬切。
-        --
-        -- 这里和 updateRunOverlay 的 INPUT_DRAW 分支是双保险：两边都设同一个值，不会冲突。
-        -- 之所以留两份，是因为枪械脚本覆盖状态函数防不胜防——重写 start_state.transition
-        -- 的脚本(如 spas_12)绕过这里，重写 movement 的脚本绕过那边，任一边存活即可生效。
+        -- 掏枪允许与 run 叠加；这里与 updateRunOverlay 各置一次，防止脚本重写本函数后漏置
         this.main_track_states.allow_run_overlay = true
         return this.main_track_states.idle
     end
@@ -238,8 +232,7 @@ end
 
 -- 更新闲置态
 function main_track_states.idle.update(this, context)
-    -- 主轨道动画播完后轨道恢复空闲，叠加许可随之失效。
-    -- 必须等动画真正停止才清，否则移动轨道会在动画还没播完时就被降级成行走。
+    -- 主轨道动画播完后清除叠加许可（须等动画真正停止，否则会提前降级成 walk）
     if (this.main_track_states.allow_run_overlay
         and context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))) then
         this.main_track_states.allow_run_overlay = false
@@ -248,8 +241,7 @@ end
 
 -- 转出闲置态
 function main_track_states.idle.transition(this, context, input)
-    -- 注意：叠加许可的同步不在这里，而在 movement 那边的 updateRunOverlay。
-    -- 原因是各枪械脚本重写了 idle_state.transition 并会提前 return，这个函数常被绕过。
+    -- 叠加许可在 movement 的 updateRunOverlay 中同步（本函数常被枪械脚本重写绕过）
     -- 玩家从枪切到其他物品的时候会自动输入丢枪的信号,不用手动触发,只要检测就好了
     if (input == INPUT_PUT_AWAY) then
         runPutAwayAnimation(context)
@@ -362,20 +354,10 @@ function gun_kick_state.transition(this, context, input)
 end
 
 -- 移动轨道的状态,这部分到 450 行结束
--- 同步主轨道动画的"允许与 run 叠加"许可(allow_run_overlay)。
+-- 同步主轨道动画的"允许与 run 叠加"许可：掏枪/换弹/拉栓置位，检视/近战清除。
 --
--- 主轨道会被一批输入抢占，收到这些输入时就该重新判定新动画属于哪一类：
---   掏枪 / 换弹 / 拉栓 —— 允许叠加，理由见 main_track_states.allow_run_overlay 的注释
---   检视 / 近战 —— 不允许，必须降级到 walk
---
--- 为什么判定写在这里，而不是 main_track_states 那边：
--- 各枪械脚本普遍重写了自己的 main_track_states 状态，并在自行处理完后直接 return，根本
--- 不会走到默认实现。已经踩过两次：
---   ak47 等重写 idle_state.transition，自行处理换弹/检视/丢枪后 return
---   spas_12 重写 start_state.transition，自行播放掏枪动画后 return
--- 而 movement_track_states 没有被任何枪械脚本重写过（只有 hk_mk23 / minigun 这类整份
--- 复制的状态机自带一套），且状态机 trigger 时会把同一个输入广播给所有轨道行的当前状态，
--- 所以这里是唯一稳定能收到这些输入的地方。
+-- 写在这里而不是主轨道状态里：枪械脚本普遍重写主轨道状态并提前 return，而 movement
+-- 轨道未被重写，且输入会广播给所有轨道行的当前状态，只有这里能稳定收到。
 local function updateRunOverlay(this, input)
     if (input == INPUT_DRAW or input == INPUT_RELOAD or input == INPUT_BOLT) then
         this.main_track_states.allow_run_overlay = true
@@ -421,14 +403,12 @@ function movement_track_states.idle.transition(this, context, input)
     updateRunOverlay(this, input)
     -- 如果玩家在奔跑则转去奔跑态
     if (input == INPUT_RUN) then
-        -- 主轨道允许叠加时视同空闲：玩家本来就在跑，让 run 正常起手，
-        -- 与主轨道上的掏枪/换弹尾巴叠加播放，而不是降级成行走。
+        -- 主轨道允许叠加时视同空闲，让 run 与其尾巴叠着播
         if (context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))
             or this.main_track_states.allow_run_overlay) then
             return this.movement_track_states.run
         else
-            -- 玩家确实在跑，只是主轨道正忙且不允许叠加(检视/近战等)而被降级为行走。
-            -- 主轨道空出来后重新进入 run 会正常播 run_start 起手式，这是预期行为
+            -- 主轨道忙碌且不允许叠加（检视/近战）时降级为行走
             return this.movement_track_states.walk
         end
     -- 如果玩家在行走则转去行走态
@@ -488,8 +468,7 @@ function movement_track_states.run.transition(this, context, input)
     -- 收到闲置输入则转去闲置态
     if (input == INPUT_IDLE) then
         return this.movement_track_states.idle
-    -- 收到行走输入则转去行走态
-    -- 主轨道忙碌时通常要降级为行走，但允许叠加的动画(掏枪/换弹)例外：run 就该和它叠着播
+    -- 收到行走输入则转去行走态；主轨道忙碌且不允许叠加时同样降级
     elseif (input == INPUT_WALK or (not context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))
         and not this.main_track_states.allow_run_overlay)) then
         return this.movement_track_states.walk
@@ -568,7 +547,7 @@ function movement_track_states.walk.transition(this, context, input)
     -- 收到闲置信号则转到闲置态
     if (input == INPUT_IDLE) then
         return this.movement_track_states.idle
-    -- 收到奔跑信号则转到奔跑态，允许叠加的动画期间同样放行(理由见 idle.transition)
+    -- 收到奔跑信号则转到奔跑态；允许叠加时同样放行
     elseif (input == INPUT_RUN) then
         if (context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))
             or this.main_track_states.allow_run_overlay) then

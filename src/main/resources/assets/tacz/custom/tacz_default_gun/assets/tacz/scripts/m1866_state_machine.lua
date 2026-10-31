@@ -86,6 +86,14 @@ end
 
 -- idle 状态每帧维护击锤状态（进存档时也能正确显示）
 function idle_state.update(this, context)
+    -- 空膛时补正击锤状态：卸弹由服务端结算后同步，触发时膛内弹可能尚未刷新，
+    -- 这里按实际状态兜底，避免击锤停留在待击位置。
+    -- 仅在主轨道空闲时兜底：bolt 等一次性动画自身带击锤关键帧，
+    -- 且本轨道优先级高于主轨道，提前覆盖会把关键帧盖掉。
+    local mainTrackStopped = context:isStopped(context:getTrack(STATIC_TRACK_LINE, MAIN_TRACK))
+    if (mainTrackStopped and not context:hasBulletInBarrel()) then
+        idle_state.hammer_down = true
+    end
     if (idle_state.hammer_down) then
         context:runAnimation("static_hammer", context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK), false, LOOP, 0)
     end
@@ -248,6 +256,10 @@ function M:initialize(context)
     default.initialize(self, context)
     -- 进存档时根据枪膛是否为空初始化击锤状态（空膛则击锤落下）
     idle_state.hammer_down = not context:hasBulletInBarrel()
+    -- 空膛时直接把击锤置为落下，避免掏枪动画期间先显示待击、回到 idle 才跳变落下
+    if (idle_state.hammer_down) then
+        context:runAnimation("static_hammer", context:getTrack(STATIC_TRACK_LINE, HAMMER_TRACK), false, LOOP, 0)
+    end
     self.main_track_states.reload.need_ammo = 0
     self.main_track_states.reload.loaded_ammo = 0
     self.main_track_states.reload.was_empty = false
