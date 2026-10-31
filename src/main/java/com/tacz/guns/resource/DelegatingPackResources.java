@@ -50,11 +50,9 @@ public class DelegatingPackResources extends AbstractPackResources implements Pa
 
     @Override
     public void listResources(PackType type, String resourceNamespace, String paths, ResourceOutput resourceOutput) {
-        Set<ResourceLocation> seen = new HashSet<>();
-        for (PackResources delegate : this.delegates)
-            delegate.listResources(type, resourceNamespace, paths, (id, supplier) -> {
-                if (seen.add(id)) resourceOutput.accept(id, supplier);
-            });
+        for (int i = this.delegates.size() - 1; i >= 0; i--) {
+            this.delegates.get(i).listResources(type, resourceNamespace, paths, resourceOutput);
+        }
     }
 
     @Override

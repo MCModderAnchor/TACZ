@@ -196,7 +196,7 @@ public class InaccuracyModifier implements IAttachmentModifier<Map<InaccuracyTyp
     @Override
     @OnlyIn(Dist.CLIENT)
     public int getDiagramsDataSize() {
-        return 3;
+        return 4;
     }
 
     public static class InaccuracyJsonProperty extends JsonProperty<Map<InaccuracyType, Modifier>> {

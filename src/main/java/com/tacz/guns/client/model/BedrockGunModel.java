@@ -331,12 +331,9 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             if (iAttachment != null) {
                 Optional<ClientAttachmentIndex> attachmentIndex = TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(attachmentItem));
                 attachmentIndex.ifPresent(index -> {
-                    if (index.isScope() && index.isSight()) { // 组合镜
+                    if (index.isScope()) { // 组合镜
                         RenderHelper.enableItemEntityStencilTest();
                         RenderSystem.stencilFunc(GL11.GL_GREATER, 127, 0xFF);
-                    } else if (index.isScope()) { // 长筒镜
-                        RenderHelper.enableItemEntityStencilTest();
-                        RenderSystem.stencilFunc(GL11.GL_EQUAL, 0, 0xFF);
                     }
                 });
             }
@@ -382,12 +379,9 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 						// 获取实际的attachmentIndex
 						var index = attachmentIndex.get();
 
-						if (index.isScope() && index.isSight()) { // 组合镜
+						if (index.isScope()) { // 组合镜
 							RenderHelper.enableItemEntityStencilTest();
 							RenderSystem.stencilFunc(GL11.GL_GREATER, 127, 0xFF);
-						} else if (index.isScope()) { // 长筒镜
-							RenderHelper.enableItemEntityStencilTest();
-							RenderSystem.stencilFunc(GL11.GL_EQUAL, 0, 0xFF);
 						}
 
 						// 设置不改变任何模板值, 这里本来是无论是否有attachment都要执行的, 但是如果不执行到这里模板测试自然不会开启

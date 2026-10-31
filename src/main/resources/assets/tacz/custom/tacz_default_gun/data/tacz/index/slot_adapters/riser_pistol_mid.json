@@ -1,0 +1,10 @@
+{
+  "name": "tacz.slot_adapter.riser_pistol_mid.name",
+  "display": "tacz:riser_pistol_mid_adapter_display",
+  "data": "tacz:riser_pistol_mid_data",
+  "slot": "scope",
+  "allowed_attachments": [
+    "#tacz:pistol_sight"
+  ],
+  "sort": 10
+}

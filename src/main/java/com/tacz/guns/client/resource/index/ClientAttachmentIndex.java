@@ -24,6 +24,7 @@ import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
 import com.tacz.guns.util.ColorHex;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -76,6 +77,8 @@ public class ClientAttachmentIndex {
     private float muzzleFlashOffset;
     private boolean hasRangefinder;
     private boolean hasImpactPrediction;
+    private @Nullable String thermalImagingTooltipKey;
+    private boolean hasAmmoCounter;
     private @Nullable String adapterNodeName;
     private @Nullable String tooltipKey;
     private Map<String, SoundData> sounds;
@@ -151,6 +154,15 @@ public class ClientAttachmentIndex {
         index.hasRangefinder = display.getTextShows().values().stream().anyMatch(textShow -> textShow.getRangefinder() != null);
         index.hasImpactPrediction = display.getTextShows().values().stream()
                 .anyMatch(textShow -> textShow.getRangefinder() != null && textShow.getRangefinder().isShowImpactPrediction());
+        index.thermalImagingTooltipKey = switch (display.getScopeLens().getVisionMode()) {
+            case THERMAL_WHITE_HOT -> "tooltip.tacz.attachment.thermal_imaging.white_hot";
+            case THERMAL_BLACK_HOT -> "tooltip.tacz.attachment.thermal_imaging.black_hot";
+            case THERMAL_IRONBOW -> "tooltip.tacz.attachment.thermal_imaging.ironbow";
+            default -> null;
+        };
+        index.hasAmmoCounter = display.getTextShows().values().stream()
+                .anyMatch(textShow -> textShow.getTextKey() != null
+                        && I18n.language.getOrDefault(textShow.getTextKey()).contains("%ammo_count%"));
         index.laserConfig = display.getLaserConfig();
         return display;
     }
@@ -472,6 +484,14 @@ public class ClientAttachmentIndex {
 
     public ScopeLensConfig getScopeLens() {
         return display.getScopeLens();
+    }
+
+    public @Nullable String getThermalImagingTooltipKey() {
+        return thermalImagingTooltipKey;
+    }
+
+    public boolean hasAmmoCounter() {
+        return hasAmmoCounter;
     }
 
     public boolean isSight() {

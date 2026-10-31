@@ -2,6 +2,7 @@ package com.tacz.guns.client.event;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.client.resource.ClientIndexManager;
+import com.tacz.guns.network.message.ServerMessageSyncGunPack;
 import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.network.CommonNetworkCache;
 import net.neoforged.api.distmarker.Dist;
@@ -13,11 +14,17 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 public class CommonNetworkCacheEvent {
     @SubscribeEvent
     public static void onClientPlayerLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
+        ServerMessageSyncGunPack.clearPendingSync();
         if (event.getConnection().isMemoryConnection()) {
             return;
         }
         CommonAssetsManager.clearInstance();
         CommonNetworkCache.INSTANCE.clear();
         ClientIndexManager.clear();
+    }
+
+    @SubscribeEvent
+    public static void onClientPlayerLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        ServerMessageSyncGunPack.clearPendingSync();
     }
 }

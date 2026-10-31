@@ -17,6 +17,7 @@ public class SyncConfig {
     public static ModConfigSpec.IntValue BULLET_HIT_BLOCK_EFFECT_SEND_DISTANCE;
     public static ModConfigSpec.BooleanValue SERVER_SHOOT_NETWORK_V;
     public static ModConfigSpec.BooleanValue SERVER_SHOOT_COOLDOWN_V;
+    public static ModConfigSpec.BooleanValue USE_HIP_FIRE_INACCURACY_WHILE_AIRBORNE;
 
     // 三个全局系数，用于客户端枪械文本提示，需要同步
     public static ModConfigSpec.DoubleValue DAMAGE_BASE_MULTIPLIER;
@@ -116,6 +117,9 @@ public class SyncConfig {
 
         builder.comment("Maximum downward look angle in degrees while crawling with a gun");
         CRAWL_MAX_DOWN_ANGLE = builder.defineInRange("CrawlMaxDownAngle", 30.0D, 0.0D, 90.0D);
+
+        builder.comment("Use only move or stand hip-fire inaccuracy while not on the ground, including jumping and falling. Ignore aiming, prone, and sneaking inaccuracy");
+        USE_HIP_FIRE_INACCURACY_WHILE_AIRBORNE = builder.define("UseHipFireInaccuracyWhileAirborne", false);
 
         builder.comment("Enable the recipe limit of default gunsmith table or not");
         ENABLE_TABLE_FILTER = builder.define("EnableDefaultGunSmithTableFilter", true);

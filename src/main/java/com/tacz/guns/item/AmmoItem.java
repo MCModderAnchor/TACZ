@@ -8,6 +8,7 @@ import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.index.ClientAmmoIndex;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.resource.index.CommonAmmoIndex;
+import com.tacz.guns.util.ContentPackOrder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
@@ -55,7 +56,7 @@ public class AmmoItem extends Item implements AmmoItemDataAccessor {
     }
 
     private static Comparator<Map.Entry<ResourceLocation, CommonAmmoIndex>> idNameSort() {
-        return Comparator.comparingInt(m -> m.getValue().getSort());
+        return ContentPackOrder.<CommonAmmoIndex>byNamespace().thenComparingInt(m -> m.getValue().getSort());
     }
 
     public static NonNullList<ItemStack> fillItemCategory() {

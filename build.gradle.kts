@@ -52,6 +52,7 @@ neoForge {
         create("server") {
             server()
             gameDirectory = file("run/server")
+            jvmArguments.addAll("-Xmx4G", "-Xms4G")
         }
 
         create("data") {
