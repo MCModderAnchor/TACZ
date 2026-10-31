@@ -77,7 +77,7 @@
   "block.tacz.statue": "석상",
   "block.tacz.gun_pegboard": "타공판",
   "tooltip.tacz.gun_pegboard.dye": "염료를 사용해 염색하거나, 가마솥을 이용해 색을 제거할 수 있습니다.",
-  "tooltip.tacz.gun_pegboard.link_color": "염색되지 않은 타공판는 염색된 타공판 옆에 배치되면 자동으로 색상을 물려받습니다.",
+  "tooltip.tacz.gun_pegboard.link_color": "염색되지 않은 타공판은 염색된 타공판 옆에 배치되면 자동으로 색상을 물려받습니다.",
   "block.tacz.glow_gun_pegboard": "발광 타공판",
   "block.tacz.gun_display_case": "총기 진열장",
   "item.tacz.gun_display_case": "총기 진열장",
