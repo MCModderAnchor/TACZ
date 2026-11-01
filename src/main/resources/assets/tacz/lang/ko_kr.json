@@ -336,7 +336,7 @@
   "config.tacz.common.gun.default_gun_other_sound_distance": "기타 총기 소리 도달거리",
   "config.tacz.common.gun.default_gun_other_sound_distance.desc": "기타 총기 소리의 범위(블록)",
   "config.tacz.common.gun.enable_gun_sound_anger": "총성에 의한 몹 분노",
-  "config.tacz.common.gun.enable_gun_sound_anger.desc": "총성이 주변의 중립적 몹이나 적대접 몹을 화나게 하는지에 대한 여부를 결정합니다",
+  "config.tacz.common.gun.enable_gun_sound_anger.desc": "총성이 주변의 중립적 몹의 주의를 돌리거나 적대적 몹을 화나게 하는지의 여부를 결정합니다",
   "config.tacz.common.gun.default_gun_sound_neutral_mob_anger_distance": "총성 중립 몹 분노 거리",
   "config.tacz.common.gun.default_gun_sound_neutral_mob_anger_distance.desc": "중립 및 공격적인 몹을 총성으로 분노시키기 위한 기본 범위(블록)이며, 최대 64까지 설정할 수 있습니다",
   "config.tacz.common.gun.default_gun_sound_hostile_mob_anger_distance": "총성 공격적 몹 유인 거리",
