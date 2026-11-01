@@ -87,20 +87,51 @@ public enum GunPackLoader implements RepositorySource {
         GunMod.LOGGER.info(MARKER, "Start scanning for gun packs in {}", resourcePacksPath);
         List<GunPack> gunPacks = scanExtensions(resourcePacksPath);
         GunMod.LOGGER.info(MARKER, "Found {} possible gunpack(s) and added them to resource set.", gunPacks.size());
-        List<PackResources> extensionPacks = new ArrayList<>();
-
-        for(GunPack gunPack : gunPacks) {
-            try {
-                PackLocationInfo location = new PackLocationInfo(gunPack.name, Component.literal(gunPack.name), PackSource.BUILT_IN, Optional.empty());
-                extensionPacks.add(GunPackOverlayResolver.open(gunPack.path, location, gunPack.overlays));
-            } catch (IOException e) {
-                GunMod.LOGGER.error(MARKER, "Failed to open gun pack {}: {}", gunPack.path, e.getMessage());
-            }
-        }
-
         PackLocationInfo info = new PackLocationInfo("tacz_resources", Component.literal("TACZ Resources"), PackSource.BUILT_IN, Optional.empty());
         PackMetadataSection meta = new PackMetadataSection(Component.translatable("tacz.resources.modresources"), SharedConstants.getCurrentVersion().getPackVersion(packType), Optional.empty());
-        DelegatingPackResources pack = new DelegatingPackResources(info, meta, extensionPacks) {
+        PackSelectionConfig config = new PackSelectionConfig(true, Pack.Position.BOTTOM, false);
+        return Pack.readMetaAndCreate(info, createResourcesSupplier(meta, gunPacks), packType, config);
+    }
+
+    static Pack.ResourcesSupplier createResourcesSupplier(PackMetadataSection meta, List<GunPack> gunPacks) {
+        List<GunPack> packs = List.copyOf(gunPacks);
+        return new Pack.ResourcesSupplier() {
+            @Override
+            public PackResources openPrimary(PackLocationInfo info) {
+                // Pack.readPackMetadata closes this instance before the pack is used.
+                return createResources(info, meta, List.of());
+            }
+
+            @Override
+            public PackResources openFull(PackLocationInfo info, Pack.Metadata metadata) {
+                List<PackResources> resources = new ArrayList<>();
+                try {
+                    for (GunPack gunPack : packs) {
+                        try {
+                            PackLocationInfo location = new PackLocationInfo(gunPack.name, Component.literal(gunPack.name), PackSource.BUILT_IN, Optional.empty());
+                            resources.add(GunPackOverlayResolver.open(gunPack.path, location, gunPack.overlays));
+                        } catch (IOException e) {
+                            GunMod.LOGGER.error(MARKER, "Failed to open gun pack {}: {}", gunPack.path, e.getMessage());
+                        }
+                    }
+                    return createResources(info, meta, resources);
+                } catch (RuntimeException | Error e) {
+                    for (PackResources resource : resources) {
+                        try {
+                            resource.close();
+                        } catch (RuntimeException closeException) {
+                            e.addSuppressed(closeException);
+                        }
+                    }
+                    throw e;
+                }
+            }
+        };
+    }
+
+    private static PackResources createResources(PackLocationInfo info, PackMetadataSection meta, List<PackResources> resources) {
+        return new DelegatingPackResources(info, meta, resources) {
+            @Override
             public IoSupplier<InputStream> getRootResource(String... paths) {
                 if (paths.length == 1 && paths[0].equals("pack.png")) {
                     Path logoPath = getModIcon("tacz");
@@ -111,8 +142,6 @@ public enum GunPackLoader implements RepositorySource {
                 return null;
             }
         };
-        PackSelectionConfig config = new PackSelectionConfig(true, Pack.Position.BOTTOM, false);
-        return Pack.readMetaAndCreate(info, pack, packType, config);
     }
 
     public static @Nullable Path getModIcon(String modId) {

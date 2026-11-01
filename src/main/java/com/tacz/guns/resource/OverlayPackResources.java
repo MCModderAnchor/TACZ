@@ -1,25 +1,33 @@
 package com.tacz.guns.resource;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.server.packs.CompositePackResources;
-import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackResources;
+import org.slf4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
-/** Uses vanilla overlay precedence while giving the shared ZIP a single owner. */
+/** Uses vanilla overlay precedence while giving the shared archive a single owner. */
 public final class OverlayPackResources extends CompositePackResources {
-    private final FilePackResources.SharedZipFileAccess zip;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    @Nullable
+    private final AutoCloseable archive;
 
     public OverlayPackResources(PackResources base, List<PackResources> overlays,
-                                FilePackResources.SharedZipFileAccess zip) {
+                                @Nullable AutoCloseable archive) {
         super(base, overlays);
-        this.zip = zip;
+        this.archive = archive;
     }
 
     @Override
     public void close() {
-        if (zip != null) {
-            zip.close();
+        if (archive != null) {
+            try {
+                archive.close();
+            } catch (Exception e) {
+                LOGGER.error("Failed to close gun pack archive {}", packId(), e);
+            }
         } else {
             super.close();
         }
