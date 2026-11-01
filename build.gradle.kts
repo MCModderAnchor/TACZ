@@ -177,18 +177,6 @@ tasks.processResources {
     filesMatching("META-INF/neoforge.mods.toml") { expand(properties) }
 }
 
-tasks.test {
-    useJUnitPlatform()
-    providers.gradleProperty("gunPackLegacyFixture").orNull?.let {
-        systemProperty("tacz.gunpack.legacyFixture", file(it).absolutePath)
-    }
-    providers.gradleProperty("gunPackBatchDirectory").orNull?.let {
-        systemProperty("tacz.gunpack.batchDirectory", file(it).absolutePath)
-        systemProperty("tacz.gunpack.batchOutput", layout.buildDirectory.dir("gunpack-client-a-batch").get().asFile.absolutePath)
-    }
-    workingDir = layout.buildDirectory.dir("gunpack-compatibility-tests").get().asFile
-    doFirst { workingDir.mkdirs() }
-}
 
 tasks.register("gunPackCompatibilityTest") {
     group = "verification"

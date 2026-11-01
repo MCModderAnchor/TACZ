@@ -5,6 +5,7 @@ import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.index.CommonSlotAdapterIndex;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +26,7 @@ public final class SlotAdapterHelper {
         if (holder.isEmpty() || type == null || adapterId == null) {
             return;
         }
-        holder.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+        holder.update(DataComponents.CUSTOM_DATA,
                 net.minecraft.world.item.component.CustomData.EMPTY, data -> data.update(root -> {
             CompoundTag adapters = root.getCompound(SLOT_ADAPTERS_TAG);
             adapters.putString(slotKey(type), adapterId.toString());
@@ -34,12 +35,14 @@ public final class SlotAdapterHelper {
     }
 
     @Nullable
+    @SuppressWarnings("deprecation")
     public static ResourceLocation getSlotAdapter(ItemStack holder, AttachmentType type) {
         if (holder.isEmpty() || type == null) {
             return null;
         }
-        CompoundTag root = holder.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
-        if (root == null || !root.contains(SLOT_ADAPTERS_TAG, Tag.TAG_COMPOUND)) {
+        // This getter only reads NBT; compatibility checks do not need a defensive copy.
+        CompoundTag root = holder.getOrDefault(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).getUnsafe();
+        if (!root.contains(SLOT_ADAPTERS_TAG, Tag.TAG_COMPOUND)) {
             return null;
         }
         CompoundTag adapters = root.getCompound(SLOT_ADAPTERS_TAG);
@@ -54,11 +57,11 @@ public final class SlotAdapterHelper {
         if (holder.isEmpty() || type == null) {
             return;
         }
-        CompoundTag root = holder.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        CompoundTag root = holder.getOrDefault(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
         if (root == null || !root.contains(SLOT_ADAPTERS_TAG, Tag.TAG_COMPOUND)) {
             return;
         }
-        holder.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+        holder.update(DataComponents.CUSTOM_DATA,
                 net.minecraft.world.item.component.CustomData.EMPTY, data -> data.update(current -> {
             CompoundTag adapters = current.getCompound(SLOT_ADAPTERS_TAG);
             adapters.remove(slotKey(type));
