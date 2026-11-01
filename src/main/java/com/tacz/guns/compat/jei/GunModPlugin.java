@@ -6,9 +6,8 @@ import com.tacz.guns.api.item.builder.BlockItemBuilder;
 import com.tacz.guns.api.item.gun.GunItemManager;
 import com.tacz.guns.compat.jei.category.*;
 import com.tacz.guns.compat.jei.entry.AmmoQueryEntry;
-import com.tacz.guns.compat.jei.entry.AttachmentQueryEntry;
+import com.tacz.guns.compat.jei.entry.AttachmentQueryData;
 import com.tacz.guns.compat.jei.entry.GunAmmoQueryEntry;
-import com.tacz.guns.compat.jei.entry.GunAttachmentQueryEntry;
 import com.tacz.guns.compat.jei.transfer.GunSmithTableTransferHandler;
 import com.tacz.guns.crafting.AmmoStorageUpgradeRecipe;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
@@ -34,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @JeiPlugin
 public class GunModPlugin implements IModPlugin {
@@ -64,6 +64,7 @@ public class GunModPlugin implements IModPlugin {
         RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
         List<GunSmithTableRecipe> recipes = recipeManager.getAllRecipesFor(ModRecipe.GUN_SMITH_TABLE_CRAFTING.get());
 
+        long workbenchStart = System.nanoTime();
         for (var entry : recipeTypeMap.entrySet()) {
             TimelessAPI.getCommonBlockIndex(entry.getKey()).ifPresent(blockIndex -> {
                 List<GunSmithTableRecipe> recipeList = blockIndex.getFilter().filter(recipes, GunSmithTableRecipe::getId);
@@ -79,12 +80,36 @@ public class GunModPlugin implements IModPlugin {
                 .map(recipe -> expandToShapedRecipe((AmmoStorageUpgradeRecipe) recipe))
                 .toList();
         registration.addRecipes(RecipeTypes.CRAFTING, ammoStorageUpgradeRecipes);
+        long workbenchNanos = System.nanoTime() - workbenchStart;
 
-        registration.addRecipes(AttachmentQueryCategory.ATTACHMENT_QUERY, AttachmentQueryEntry.getAllAttachmentQueryEntries());
-        registration.addRecipes(GunAttachmentQueryCategory.GUN_ATTACHMENT_QUERY, GunAttachmentQueryEntry.getAllGunAttachmentQueryEntries());
+        long attachmentStart = System.nanoTime();
+        AttachmentQueryData attachmentQueries = AttachmentQueryData.load();
+        long attachmentBuildNanos = System.nanoTime() - attachmentStart;
+        long attachmentRegisterNanos = registerTimed(registration, AttachmentQueryCategory.ATTACHMENT_QUERY, attachmentQueries.attachmentQueries());
+        long gunAttachmentRegisterNanos = registerTimed(registration, GunAttachmentQueryCategory.GUN_ATTACHMENT_QUERY, attachmentQueries.gunAttachmentQueries());
+
+        long gunAmmoStart = System.nanoTime();
         List<GunAmmoQueryEntry> gunAmmoEntries = GunAmmoQueryEntry.getAllGunAmmoQueryEntries();
-        registration.addRecipes(GunAmmoQueryCategory.GUN_AMMO_QUERY, gunAmmoEntries);
-        registration.addRecipes(AmmoQueryCategory.AMMO_QUERY, AmmoQueryEntry.getAllAmmoQueryEntries(gunAmmoEntries));
+        long gunAmmoBuildNanos = System.nanoTime() - gunAmmoStart;
+        long gunAmmoRegisterNanos = registerTimed(registration, GunAmmoQueryCategory.GUN_AMMO_QUERY, gunAmmoEntries);
+        long ammoStart = System.nanoTime();
+        List<AmmoQueryEntry> ammoEntries = AmmoQueryEntry.getAllAmmoQueryEntries(gunAmmoEntries);
+        long ammoBuildNanos = System.nanoTime() - ammoStart;
+        long ammoRegisterNanos = registerTimed(registration, AmmoQueryCategory.AMMO_QUERY, ammoEntries);
+
+        GunMod.LOGGER.info("JEI query timings (ms): workbench/crafting={}, attachment build={} ({} guns, {} attachments, {} checks), " +
+                        "attachment register={}, gun-attachment register={}, gun-ammo build={}, gun-ammo register={}, ammo build={}, ammo register={}",
+                TimeUnit.NANOSECONDS.toMillis(workbenchNanos), TimeUnit.NANOSECONDS.toMillis(attachmentBuildNanos),
+                attachmentQueries.gunCount(), attachmentQueries.attachmentCount(), attachmentQueries.compatibilityChecks(),
+                TimeUnit.NANOSECONDS.toMillis(attachmentRegisterNanos), TimeUnit.NANOSECONDS.toMillis(gunAttachmentRegisterNanos),
+                TimeUnit.NANOSECONDS.toMillis(gunAmmoBuildNanos), TimeUnit.NANOSECONDS.toMillis(gunAmmoRegisterNanos),
+                TimeUnit.NANOSECONDS.toMillis(ammoBuildNanos), TimeUnit.NANOSECONDS.toMillis(ammoRegisterNanos));
+    }
+
+    private static <T> long registerTimed(IRecipeRegistration registration, RecipeType<T> type, List<T> recipes) {
+        long start = System.nanoTime();
+        registration.addRecipes(type, recipes);
+        return System.nanoTime() - start;
     }
 
     /**

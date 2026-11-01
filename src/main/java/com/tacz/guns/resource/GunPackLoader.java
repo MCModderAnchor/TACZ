@@ -22,7 +22,6 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.DelegatingPackResources;
 import net.minecraftforge.resource.PathPackResources;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -119,7 +118,7 @@ public enum GunPackLoader implements RepositorySource {
 
 
         return Pack.readMetaAndCreate("tacz_resources", Component.literal("TACZ Resources"), true, (id) -> {
-            return new DelegatingPackResources(id, false, new PackMetadataSection(Component.translatable("tacz.resources.modresources"),
+            return new NamespaceFilteredPackResources(id, false, new PackMetadataSection(Component.translatable("tacz.resources.modresources"),
                     SharedConstants.getCurrentVersion().getPackVersion(packType)), extensionPacks) {
                 public IoSupplier<InputStream> getRootResource(String... paths) {
                     if (paths.length == 1 && paths[0].equals("pack.png")) {

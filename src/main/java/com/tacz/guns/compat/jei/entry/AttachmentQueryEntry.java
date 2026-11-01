@@ -36,19 +36,14 @@ public class AttachmentQueryEntry {
     }
 
     public static List<AttachmentQueryEntry> getAllAttachmentQueryEntries() {
-        List<AttachmentQueryEntry> entries = Lists.newArrayList();
-        TimelessAPI.getAllCommonAttachmentIndex().forEach(entry -> {
-            if (entry.getValue().getPojo().isHidden()) {
-                return;
-            }
-            for (GunTabType tabType : GunTabType.values()) {
-                AttachmentQueryEntry queryEntry = new AttachmentQueryEntry(entry.getKey(), tabType);
-                if (!queryEntry.getAllowGunStacks().isEmpty()) {
-                    entries.add(queryEntry);
-                }
-            }
-        });
-        return entries;
+        return AttachmentQueryData.load().attachmentQueries();
+    }
+
+    AttachmentQueryEntry(ItemStack attachmentStack, List<ItemStack> guns) {
+        this.attachmentStack = attachmentStack;
+        this.allowGunStacks = guns;
+        this.extraAllowGunStacks = List.of();
+        this.dividedGuns();
     }
 
     public ItemStack getAttachmentStack() {

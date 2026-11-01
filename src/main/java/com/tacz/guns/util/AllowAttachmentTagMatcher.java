@@ -4,18 +4,17 @@ import com.tacz.guns.resource.CommonAssetsManager;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public final class AllowAttachmentTagMatcher {
     private static final String TAG_PREFIX = "#";
-    private static final Cache CACHE = new Cache();
+    private static volatile Cache cache = new Cache();
 
     public record Cache(
-            Map<Pair<ResourceLocation, ResourceLocation>, Boolean> allowAttachmentCache,
-            Map<Pair<ResourceLocation, ResourceLocation>, Boolean> tagMatchCache
+            Map<ResourceLocation, Set<ResourceLocation>> allowAttachmentCache,
+            Map<ResourceLocation, Set<ResourceLocation>> tagMatchCache
     ) {
         public Cache() {
             this(new ConcurrentHashMap<>(), new ConcurrentHashMap<>());
@@ -23,20 +22,16 @@ public final class AllowAttachmentTagMatcher {
     }
 
     public static boolean match(ResourceLocation gunId, ResourceLocation attachmentId) {
-        var key = Pair.of(gunId, attachmentId);
-        return CACHE.allowAttachmentCache().computeIfAbsent(key, AllowAttachmentTagMatcher::match0);
+        return cache.allowAttachmentCache().computeIfAbsent(gunId, AllowAttachmentTagMatcher::resolveAllowed).contains(attachmentId);
     }
 
     public static boolean match0(Pair<ResourceLocation, ResourceLocation> record) {
-        ResourceLocation gunId = record.getLeft();
-        ResourceLocation attachmentId = record.getRight();
-        Set<String> allowAttachmentTags = CommonAssetsManager.get().getAllowAttachmentTags(gunId);
-        // 如果枪械对应的 allowAttachmentTags 为空，说明目前没有任何可以装的配件
-        if (allowAttachmentTags == null || allowAttachmentTags.isEmpty()) {
-            return false;
-        }
-        // 按 allow_attachments 声明顺序遍历，原有布尔匹配语义不变
-        return treeSearch(allowAttachmentTags, attachmentId, new HashSet<>());
+        return resolveAllowed(record.getLeft()).contains(record.getRight());
+    }
+
+    private static Set<ResourceLocation> resolveAllowed(ResourceLocation gunId) {
+        var provider = CommonAssetsManager.get();
+        return expand(provider.getAllowAttachmentTags(gunId), null, provider::getAttachmentTags);
     }
 
     /**
@@ -50,46 +45,59 @@ public final class AllowAttachmentTagMatcher {
      * @since 1.1.7
      */
     public static boolean matchTag(ResourceLocation tag, ResourceLocation attachmentId) {
-        var key = Pair.of(tag, attachmentId);
-        return CACHE.tagMatchCache().computeIfAbsent(key, AllowAttachmentTagMatcher::matchTag0);
+        return cache.tagMatchCache().computeIfAbsent(tag, AllowAttachmentTagMatcher::resolveTag).contains(attachmentId);
     }
 
     public static boolean matchTag0(Pair<ResourceLocation, ResourceLocation> record) {
-        ResourceLocation tag = record.getLeft();
-        ResourceLocation attachmentId = record.getRight();
-        Set<String> tagContent = CommonAssetsManager.get().getAttachmentTags(tag);
-        // 如果 tag 对应的内容集为空，说明目前没有任何内容
-        if (tagContent == null || tagContent.isEmpty()) {
-            return false;
-        }
-        Set<ResourceLocation> visited = new HashSet<>();
-        visited.add(tag);
-        return treeSearch(tagContent, attachmentId, visited);
+        return resolveTag(record.getLeft()).contains(record.getRight());
     }
 
-    private static boolean treeSearch(Set<String> tags, ResourceLocation attachmentId, Set<ResourceLocation> visited) {
-        for (String tag : tags) {
-            if (tag.startsWith(TAG_PREFIX)) {
-                ResourceLocation tagId = ResourceLocation.tryParse(tag.substring(TAG_PREFIX.length()));
+    private static Set<ResourceLocation> resolveTag(ResourceLocation tag) {
+        var provider = CommonAssetsManager.get();
+        return expand(provider.getAttachmentTags(tag), tag, provider::getAttachmentTags);
+    }
+
+    /** Expand a complete root independently; caching partial child results is incorrect for cycles. */
+    static Set<ResourceLocation> expand(Set<String> content, ResourceLocation rootTag,
+                                        Function<ResourceLocation, Set<String>> getTag) {
+        if (content == null || content.isEmpty()) {
+            return Set.of();
+        }
+        Set<ResourceLocation> attachments = new HashSet<>();
+        Set<ResourceLocation> visited = new HashSet<>();
+        if (rootTag != null) {
+            visited.add(rootTag);
+        }
+        var pending = new ArrayDeque<Iterator<String>>();
+        pending.push(content.iterator());
+        while (!pending.isEmpty()) {
+            Iterator<String> entries = pending.peek();
+            if (!entries.hasNext()) {
+                pending.pop();
+                continue;
+            }
+            String entry = entries.next();
+            if (entry.startsWith(TAG_PREFIX)) {
+                ResourceLocation tagId = ResourceLocation.tryParse(entry.substring(TAG_PREFIX.length()));
                 if (tagId == null || !visited.add(tagId)) {
                     continue;
                 }
-                Set<String> attachmentTags = CommonAssetsManager.get().getAttachmentTags(tagId);
-                if (attachmentTags != null && !attachmentTags.isEmpty() && treeSearch(attachmentTags, attachmentId, visited)) {
-                    return true;
+                Set<String> child = getTag.apply(tagId);
+                if (child != null && !child.isEmpty()) {
+                    pending.push(child.iterator());
                 }
             } else {
-                ResourceLocation matchAttachmentId = ResourceLocation.tryParse(tag);
-                if (attachmentId.equals(matchAttachmentId)) {
-                    return true;
+                ResourceLocation id = ResourceLocation.tryParse(entry);
+                if (id != null) {
+                    attachments.add(id);
                 }
             }
         }
-        return false;
+        return Set.copyOf(attachments);
     }
 
     public static void resetCache() {
-        CACHE.allowAttachmentCache().clear();
-        CACHE.tagMatchCache().clear();
+        // In-flight computations may finish in the old cache, but cannot repopulate the new one.
+        cache = new Cache();
     }
 }
