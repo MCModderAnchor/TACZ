@@ -4,7 +4,7 @@
   "config.tacz.client.render.scope_thermal_enable": "瞄具熱成像效果",
   "config.tacz.client.render.scope_thermal_enable.desc": "啟用瞄具的熱成像效果 (如果有的話)",
   "config.tacz.client.render.creative_pack_sidebar": "創造模式物品欄內容包側欄",
-  "config.tacz.client.render.creative_pack_sidebar.desc": "是否顯示創造模式物品欄的TACZ內容包側欄，關閉此功能同時清除內容包過濾，僅顯示當前類別內的所有物品",
+  "config.tacz.client.render.creative_pack_sidebar.desc": "是否顯示創造模式物品欄的TACZ內容包過濾器側欄，關閉此功能將清除內容包過濾器，僅顯示當前類別內的所有物品",
   "gui.tacz.creative_pack_filter.all": "全部物品",
   "gui.tacz.creative_pack_filter.previous": "上一個內容包",
   "gui.tacz.creative_pack_filter.next": "下一個內容包",
