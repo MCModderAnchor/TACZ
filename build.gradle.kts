@@ -78,6 +78,7 @@ repositories {
     maven("https://jitpack.io") {
         content {
             includeGroup("com.github.rtyley")
+            includeGroup("com.github.mcmodderanchor")
             includeGroup("com.github.FiguraMC.luaj")
         }
     }
