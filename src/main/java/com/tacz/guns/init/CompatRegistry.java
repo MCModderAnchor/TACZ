@@ -7,6 +7,7 @@ import com.tacz.guns.compat.oculus.OculusCompat;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
@@ -20,6 +21,9 @@ public class CompatRegistry {
 
     @SubscribeEvent
     public static void onEnqueue(final InterModEnqueueEvent event) {
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            InterModComms.sendTo(OCULUS, "register_translucent_hand_item", ModItems.MODERN_KINETIC_GUN::getId);
+        }
         event.enqueueWork(() -> checkModLoad(CLOTH_CONFIG, () -> DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> MenuIntegration::registerModsPage)));
         event.enqueueWork(() -> {
             if (FMLEnvironment.dist == Dist.CLIENT) {
