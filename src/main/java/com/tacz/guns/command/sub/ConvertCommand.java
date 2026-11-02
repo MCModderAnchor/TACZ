@@ -9,6 +9,8 @@ import net.minecraft.commands.Commands;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 
+import java.util.concurrent.CompletableFuture;
+
 public class ConvertCommand {
     private static final String CONVERT_NAME = "convert";
 
@@ -19,7 +21,9 @@ public class ConvertCommand {
     }
 
     private static int convert(CommandContext<CommandSourceStack> context) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> PackConvertor.convert(context.getSource()));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CompletableFuture.runAsync(
+                () -> PackConvertor.convert(context.getSource())
+        ));
         return Command.SINGLE_SUCCESS;
     }
 }
