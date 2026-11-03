@@ -33,10 +33,3 @@ type = "REQUIRED"
 versionRange = "${minecraft_version}"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies."${id}"]]
-modId = "tacz_internal_sbm"
-type = "REQUIRED"
-versionRange = "[2.6.1-tacz.1,)"
-ordering = "AFTER"
-side = "CLIENT"

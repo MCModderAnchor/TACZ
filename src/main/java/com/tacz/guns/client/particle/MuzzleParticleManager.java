@@ -1,11 +1,11 @@
 package com.tacz.guns.client.particle;
 
-import com.tacz.internal.sbm.v1.common.resource.pojo.ParticleEffectData;
-import com.tacz.internal.sbm.v1.particle.data.ParticleEffectDefinition;
-import com.tacz.internal.sbm.v1.particle.firstperson.FirstPersonParticleSystem;
-import com.tacz.internal.sbm.v1.particle.render.CameraStateCache;
-import com.tacz.internal.sbm.v1.particle.resource.ParticleDefinitionLoader;
-import com.tacz.internal.sbm.v1.particle.runtime.ParticleEmitterInstance;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleEffectDefinition;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.firstperson.FirstPersonParticleSystem;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.render.CameraStateCache;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.resource.ParticleDefinitionLoader;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleEmitterInstance;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.GunMod;

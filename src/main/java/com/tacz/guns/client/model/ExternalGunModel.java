@@ -1,8 +1,8 @@
 package com.tacz.guns.client.model;
 
-import com.tacz.internal.sbm.v1.common.resource.GsonUtil;
-import com.tacz.internal.sbm.v2.common.model.baked.BakedBedrockModel;
-import com.tacz.internal.sbm.v2.common.model.baked.BakerOptions;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.GsonUtil;
+import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.baked.BakedBedrockModel;
+import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.baked.BakerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -62,7 +62,7 @@ public class ExternalGunModel {
                                         DisplayGunModelInstance.Kind kind) {
         Objects.requireNonNull(source, "source");
         var sbmSource = GsonUtil.CLIENT_GSON.fromJson(SOURCE_GSON.toJsonTree(source),
-                com.tacz.internal.sbm.v1.common.resource.pojo.BedrockModelPOJO.class);
+                com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.BedrockModelPOJO.class);
         if (sbmSource == null) {
             throw new IllegalArgumentException("Missing Bedrock model");
         }

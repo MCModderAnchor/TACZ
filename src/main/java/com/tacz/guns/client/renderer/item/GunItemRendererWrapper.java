@@ -1,8 +1,8 @@
 package com.tacz.guns.client.renderer.item;
 
-import com.tacz.internal.sbm.v1.client.handler.FirstPersonRenderHandler;
-import com.tacz.internal.sbm.v1.common.resource.pojo.ParticleEffectData;
-import com.tacz.internal.sbm.v1.particle.firstperson.FirstPersonParticleSystem;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.client.handler.FirstPersonRenderHandler;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.firstperson.FirstPersonParticleSystem;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

@@ -1,6 +1,6 @@
 package com.tacz.guns.client.resource.serialize;
 
-import com.tacz.internal.sbm.v1.common.resource.pojo.ParticleEffectData;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
 import com.google.gson.*;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.ParticleEffectKeyframes;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;

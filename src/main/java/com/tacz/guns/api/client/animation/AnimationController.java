@@ -1,6 +1,6 @@
 package com.tacz.guns.api.client.animation;
 
-import com.tacz.internal.sbm.v1.common.resource.pojo.ParticleEffectData;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
 import com.google.common.collect.Maps;
 
 import javax.annotation.Nullable;
