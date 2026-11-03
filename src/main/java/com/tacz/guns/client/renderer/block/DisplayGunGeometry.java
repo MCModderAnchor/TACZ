@@ -1,6 +1,6 @@
 package com.tacz.guns.client.renderer.block;
 
-import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.capture.GeometryCollector;
+import com.tacz.internal.sbm.v2.client.mesh.capture.GeometryCollector;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.tacz.guns.api.TimelessAPI;

@@ -1,7 +1,7 @@
 package com.tacz.guns.client.renderer.item;
 
-import com.github.mcmodderanchor.simplebedrockmodel.v1.client.animation.IFPAnimationInstance;
-import com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.IFPGeoItemRenderer;
+import com.tacz.internal.sbm.v1.client.animation.IFPAnimationInstance;
+import com.tacz.internal.sbm.v1.client.renderer.IFPGeoItemRenderer;
 import com.maydaymemory.mae.basic.DummyPose;
 import com.maydaymemory.mae.basic.Pose;
 import com.mojang.blaze3d.vertex.PoseStack;

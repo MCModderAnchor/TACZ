@@ -1,8 +1,8 @@
 package com.tacz.guns.client.model;
 
-import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.baked.BakedBedrockModel;
-import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime.BakedModelInstance;
-import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime.BoneState;
+import com.tacz.internal.sbm.v2.common.model.baked.BakedBedrockModel;
+import com.tacz.internal.sbm.v2.common.model.runtime.BakedModelInstance;
+import com.tacz.internal.sbm.v2.common.model.runtime.BoneState;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;

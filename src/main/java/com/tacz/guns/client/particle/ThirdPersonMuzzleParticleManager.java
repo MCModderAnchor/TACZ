@@ -1,9 +1,9 @@
 package com.tacz.guns.client.particle;
 
-import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleEffectDefinition;
-import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.resource.ParticleDefinitionLoader;
-import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleEmitterInstance;
-import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.world.WorldEmitterManager;
+import com.tacz.internal.sbm.v1.particle.data.ParticleEffectDefinition;
+import com.tacz.internal.sbm.v1.particle.resource.ParticleDefinitionLoader;
+import com.tacz.internal.sbm.v1.particle.runtime.ParticleEmitterInstance;
+import com.tacz.internal.sbm.v1.particle.world.WorldEmitterManager;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;

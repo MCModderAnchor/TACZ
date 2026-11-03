@@ -1,7 +1,7 @@
 package com.tacz.guns.util.time;
 
-import com.github.mcmodderanchor.simplebedrockmodel.v1.common.time.AnimationClock;
-import com.github.mcmodderanchor.simplebedrockmodel.v1.common.time.AnimationClocks;
+import com.tacz.internal.sbm.v1.common.time.AnimationClock;
+import com.tacz.internal.sbm.v1.common.time.AnimationClocks;
 
 /**
  * The time source for gun gameplay and animation. On a physical client this

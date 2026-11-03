@@ -1,6 +1,6 @@
 package com.tacz.guns.api.client.animation;
 
-import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.ParticleEffectData;
+import com.tacz.internal.sbm.v1.common.resource.pojo.ParticleEffectData;
 import com.tacz.guns.api.client.animation.gltf.AccessorModel;
 import com.tacz.guns.api.client.animation.gltf.AnimationModel;
 import com.tacz.guns.api.client.animation.gltf.AnimationStructure;

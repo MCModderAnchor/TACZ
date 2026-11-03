@@ -1,7 +1,7 @@
 package com.tacz.guns.client.renderer.item;
 
-import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.MeshDrawResult;
-import com.github.mcmodderanchor.simplebedrockmodel.v2.client.mesh.StaticMeshRenderer;
+import com.tacz.internal.sbm.v2.client.mesh.MeshDrawResult;
+import com.tacz.internal.sbm.v2.client.mesh.StaticMeshRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.client.renderer.block.DisplayGunGeometry;
 import com.tacz.guns.client.renderer.external.ExternalGunAppearance;
