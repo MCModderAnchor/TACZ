@@ -85,6 +85,11 @@ repositories {
     maven("https://maven.shedaniel.me")
     maven("https://maven.kosmx.dev")
     maven("https://maven.blamejared.com")
+    maven("https://repo.sleeping.town") {
+        content {
+            includeGroup("dev.emi")
+        }
+    }
     maven {
         url = uri("https://maven.architectury.dev")
         content {
@@ -151,6 +156,8 @@ dependencies {
     compileOnly(libs.mezz.jei.common.api)
     compileOnly(libs.mezz.jei.neoforge.api)
     runtimeOnly(libs.mezz.jei.neoforge)
+    compileOnly("dev.emi:emi-neoforge:${libs.versions.emi.get()}:api")
+    runtimeOnly(libs.emi.neoforge)
     compileOnly(libs.curse.maven.framework)
     compileOnly(libs.curse.maven.controllable)
 }
