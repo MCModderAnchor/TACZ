@@ -79,6 +79,7 @@ repositories {
         content {
             includeGroup("com.github.rtyley")
             includeGroup("com.github.FiguraMC.luaj")
+            includeGroup("com.github.mcmodderanchor")
         }
     }
     maven("https://maven.shedaniel.me")
