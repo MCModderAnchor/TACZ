@@ -42,6 +42,9 @@ public interface IClientPlayerGunOperator {
      */
     void reload();
 
+    /** 客户端主动卸弹，仅在逻辑空闲时执行。 */
+    void unloadAmmo();
+
     /**
      * 客户端检视
      */

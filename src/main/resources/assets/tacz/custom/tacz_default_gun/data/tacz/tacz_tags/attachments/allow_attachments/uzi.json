@@ -1,8 +1,11 @@
 [
   "#tacz:scope_sight",
   "#tacz:scope_scope",
+  "tacz:oem_stock_unfolded",
   "#tacz:light_extended_mag",
   "#tacz:muzzle",
   "#tacz:pistol_muzzle",
-  "#tacz:ammo_mod_no_he"
+  "#tacz:ammo_mod_no_he",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

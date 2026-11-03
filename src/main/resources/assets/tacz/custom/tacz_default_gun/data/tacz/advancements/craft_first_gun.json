@@ -1,0 +1,30 @@
+{
+  "parent": "tacz:gun_smith_table",
+  "display": {
+    "icon": {
+      "item": "tacz:modern_kinetic_gun",
+      "nbt": "{GunId:\"tacz:ak47\"}"
+    },
+    "title": {
+      "translate": "advancement.tacz.craft_first_gun.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.craft_first_gun.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "obtain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["tacz:modern_kinetic_gun"]
+          }
+        ]
+      }
+    }
+  }
+}

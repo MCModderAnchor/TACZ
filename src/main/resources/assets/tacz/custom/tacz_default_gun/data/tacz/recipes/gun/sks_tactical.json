@@ -21,10 +21,7 @@
   ],
   "result": {
     "type": "gun",
-    "id": "tacz:sks_tactical",
-    "attachments": {
-      "stock": "tacz:stock_m4ss"
-    }
+    "id": "tacz:sks_tactical"
   },
   "type": "tacz:gun_smith_table_crafting"
 }

@@ -1,5 +1,6 @@
 {
   // 默认的模型，在包目录下的 models 文件夹中寻找，不可为空
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/ak47_geo",
   // 默认材质，不可为空
   "texture": "tacz:gun/uv/ak47",
@@ -45,16 +46,32 @@
       "fixed": [1.2, 1.2, 1.2]
     }
   },
+  // 枪口火焰与枪烟，不填则不显示枪口火焰
   "muzzle_flash": {
+    // 效果类型：renew 为新版粒子系统，default 为旧版贴图火光
+    "type": "renew",
+    // 枪焰贴图，仅 default 模式使用
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.75
+    // 枪焰大小缩放，不影响枪烟
+    "scale": 0.75,
+    // 枪烟大小缩放，与 scale 独立
+    "smoke_scale": 1.65,
+    // 枪烟扩散速度倍率，初速度 = 6 × 该值
+    "initial_speed_scale": 1.7,
+    // 单次开火的枪烟粒子数量，不填则用内置默认 15
+    "smoke_particle_count": 16
   },
   // 机瞄的放大倍数，默认 1.2
   "iron_zoom": 1.33,
-  // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
+  // 常驻持枪状态的手部模型 FOV，测试先拉开一点，方便观察
+  "model_fov": 60,
+  // 开镜时手部模型的 FOV
   "zoom_model_fov": 45,
   // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
   "shell": {
+    // 抛壳模型，会覆盖掉ammo的抛壳模型，不填默认调用ammo的抛壳模型
+     //"model": "tacz:gun/lod/m4a1",
+     //"texture": "tacz:gun/lod/m4a1",
     // 抛壳的初速度
     "initial_velocity": [5, 2, 1],
     // 抛壳随机变化的运动速度
@@ -70,7 +87,31 @@
   "ammo": {
     // 曳光弹颜色，没有则为 #FFFFFF，没有此字段时，会调用 ammo 的相关字段
     // 严格遵循 RGB 颜色代码
-    "tracer_color": "#FF8888"
+    "tracer_color": "#FF8888",
+    // 是否覆盖 ammo display 的弹孔贴花开关。没有该字段时，会调用 ammo 的 enable_bullet_hole。
+    "enable_bullet_hole": true
+    // 命中方块表面时额外播放的粒子效果。取消注释后可用 AK47 测试火焰和烟雾命中特效。
+    //    ,"hit_surface_particles": [
+    //      {
+    //        "name": "minecraft:flame",
+    //        "count": 10,
+    //        "life_time": 12,
+    //        "surface_offset": 0.04,
+    //        "random_offset": 0.015,
+    //        "normal_speed": 0.07,
+    //        "random_speed": 0.025,
+    //        "spread_angle": 30
+    //      },
+    //      {
+    //        "name": "minecraft:smoke",
+    //        "count": 4,
+    //        "life_time": 24,
+    //        "surface_offset": 0.04,
+    //        "normal_speed": 0.025,
+    //        "random_speed": 0.02,
+    //        "spread_angle": 45
+    //      }
+    //    ]
     // 粒子效果，部分参数和原版指令完全一致，具体可参考 wiki：https://minecraft.fandom.com/zh/wiki/%E5%91%BD%E4%BB%A4/particle
     // 没有此字段时，会调用 ammo 的相关字段
     //    "particle": {
@@ -90,7 +131,7 @@
     //      "count": 5
     //    }
   },
-  // 枪械音效，在包目录下 sounds 文件夹内寻找，不建议为空
+  // 枪械音效，优先在包目录下 tacz_sounds 文件夹内寻找；无对应音源时回退到同 ID 的声音事件，不建议为空
   "sounds": {
     "shoot": "tacz:ak47/ak47_shoot",
     "shoot_3p": "tacz:ak47/ak47_shoot_3p",
@@ -112,12 +153,20 @@
     "melee_bayonet": "tacz:melee_bayonet/melee_bayonet_01",
     "melee_push": "tacz:melee_stock/melee_stock_01",
     "melee_stock": "tacz:melee_stock/melee_stock_02"
+    // 替代写法
+//    "shoot": {
+//      "id": "minecraft:entity.cat.ambient",                 // 音效 id，优先尝试 tacz_sounds 下的音源；不存在时回退到sounds.json里面注册的sound event
+//      "volume": 0.8,                                        // 响度，未填写时使用对应情景默认值
+//      "pitch": 0.9,                                         // 音调，未填写时使用对应情景默认值
+//      "volume_random_range": 0.05,                          // 播放时响度在 ±0.05 内随机
+//      "pitch_random_range": 0.1                             // 播放时音调在 ±0.1 内随机
+//    }
   },
   // 副手枪械显示
   "offhand_show": {
     // 位置，和基岩版的数值显示一致
     // 默认是 [-2, 20, 3.5]
-    "pos": [1, 20, 3.5],
+    "pos": [3, 20, 3.5],
     // 旋转，单位为角度，默认就是 [0, 0, -30]
     "rotate": [0, 0, 60],
     // 缩放，默认就是 [0.6, 0.6, 0.6]
@@ -129,7 +178,7 @@
     // 快捷栏索引，默认是 0-8，共九个，但是实际上除去主手，只能显示八个
     // 没有的，则不会显示
     "0": {
-      "pos": [-1, 20, 3],
+      "pos": [-3, 20, 3],
       "rotate": [-180, 0, 120],
       "scale": [0.5, 0.5, 0.5]
     }

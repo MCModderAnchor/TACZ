@@ -8,17 +8,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
 import static com.tacz.guns.util.InputExtraCheck.isInGame;
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class FireSelectKey {
     public static final KeyMapping FIRE_SELECT_KEY = new KeyMapping("key.tacz.fire_select.desc",
             KeyConflictContext.IN_GAME,
@@ -27,41 +23,22 @@ public class FireSelectKey {
             GLFW.GLFW_KEY_G,
             "key.category.tacz");
 
-    @SubscribeEvent
-    public static void onFireSelectKeyPress(InputEvent.Key event) {
-        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && FIRE_SELECT_KEY.matches(event.getKey(), event.getScanCode())) {
-            doFireSelectLogic();
-        }
-    }
-
-    @SubscribeEvent
-    public static void onFireSelectMousePress(InputEvent.MouseButton.Post event) {
-        if (isInGame() && event.getAction() == GLFW.GLFW_PRESS && FIRE_SELECT_KEY.matchesMouse(event.getButton())) {
-            doFireSelectLogic();
-        }
-    }
-
     public static boolean onFireSelectControllerPress(boolean isPress) {
-        if (isInGame() && isPress) {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null || player.isSpectator()) {
-                return false;
-            }
-            if (IGun.mainHandHoldGun(player)) {
-                IClientPlayerGunOperator.fromLocalPlayer(player).fireSelect();
-                return true;
-            }
-        }
-        return false;
+        return isPress && onFireSelectPress();
     }
 
-    private static void doFireSelectLogic() {
+    public static boolean onFireSelectPress() {
+        if (!isInGame()) {
+            return false;
+        }
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || player.isSpectator()) {
-            return;
+            return false;
         }
         if (IGun.mainHandHoldGun(player)) {
             IClientPlayerGunOperator.fromLocalPlayer(player).fireSelect();
+            return true;
         }
+        return false;
     }
 }

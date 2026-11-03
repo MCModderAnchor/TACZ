@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:338",
   "ammo_amount": 5,
   "extended_mag_ammo_amount": [
@@ -11,15 +12,15 @@
   "bullet": {
     "life": 0.9,
     "bullet_amount": 1,
-    "damage": 42,
+    "damage": 50,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.60,
       "head_shot_multiplier": 2,
       "damage_adjust": [
-        {"distance": 80, "damage": 42},
-        {"distance": 160, "damage": 36},
-        {"distance": "infinite", "damage": 26}
+        {"distance": 80, "damage": 50},
+        {"distance": 160, "damage": 45},
+        {"distance": "infinite", "damage": 40}
       ]
     },
     "speed": 575,
@@ -30,10 +31,10 @@
     "pierce": 4,
     "explosion": {
       "explode": false,
-      "damage": 60,
+      "damage": 25,
       "radius": 1.25,
       "knockback": true,
-      "delay": 1
+      "delay": 0.2
     }
   },
   "reload": {
@@ -49,7 +50,7 @@
   },
   "draw_time": 0.35,
   "put_away_time": 0.75,
-  "aim_time": 0.25,
+  "aim_time": 0.33,
   "sprint_time": 0.2,
   "bolt_action_time": 0.9,
   "weight": 6.9,
@@ -112,6 +113,7 @@
       "prep": 0.1
     }
   },
+  "can_slide": false,
   "allow_attachment_types": [
     "extended_mag",
     "scope",

@@ -9,6 +9,7 @@ import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.entity.sync.core.SyncedEntityData;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,6 +38,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     private final @Unique LivingEntityShoot tacz$shoot = new LivingEntityShoot(tacz$shooter, this.tacz$data, this.tacz$draw);
     private final @Unique LivingEntityBolt tacz$bolt = new LivingEntityBolt(this.tacz$data, this.tacz$shooter, this.tacz$draw, this.tacz$shoot);
     private final @Unique LivingEntityReload tacz$reload = new LivingEntityReload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot);
+    private final @Unique LivingEntityUnload tacz$unload = new LivingEntityUnload(tacz$shooter, this.tacz$data, this.tacz$draw, this.tacz$shoot, this.tacz$melee);
     private final @Unique LivingEntitySpeedModifier tacz$speed = new LivingEntitySpeedModifier(tacz$shooter, tacz$data);
     private final @Unique LivingEntitySprint tacz$sprint = new LivingEntitySprint(tacz$shooter, this.tacz$data);
     private final @Unique LivingEntityHeat tacz$heat = new LivingEntityHeat(tacz$shooter, this.tacz$data);
@@ -99,7 +101,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         // 初始化 ShooterDataHolder
         this.tacz$data.initialData();
         // 刷新当前武器
-        this.tacz$data.currentGunItem = () -> tacz$shooter.getMainHandItem();
+        this.tacz$data.setCurrentGunItem(() -> tacz$shooter.getMainHandItem());
         // 刷新配件属性缓存
         AttachmentPropertyManager.postChangeEvent(tacz$shooter, tacz$shooter.getMainHandItem());
     }
@@ -113,41 +115,47 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     @Override
     public void bolt() {
-        this.tacz$bolt.bolt();
+        tacz$runGunAction("start_bolt", () -> this.tacz$bolt.bolt());
     }
 
     @Unique
     @Override
     public void reload() {
-        this.tacz$reload.reload();
+        tacz$runGunAction("start_reload", () -> this.tacz$reload.reload());
+    }
+
+    @Unique
+    @Override
+    public void unloadAmmo() {
+        tacz$runGunAction("unload_ammo", () -> this.tacz$unload.unloadAmmo());
     }
     @Unique
     @Override
     public void cancelReload(){
-        this.tacz$reload.cancelReload();
+        tacz$runGunAction("interrupt_reload", () -> this.tacz$reload.cancelReload());
     }
 
     @Override
     public void melee() {
-        this.tacz$melee.melee();
+        tacz$runGunAction("melee", () -> this.tacz$melee.melee());
     }
 
     @Unique
     @Override
     public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw) {
-        return this.shoot(pitch, yaw, System.currentTimeMillis() - tacz$data.baseTimestamp);
+        return this.shoot(pitch, yaw, GunTime.nowMillis() - tacz$data.baseTimestamp);
     }
 
     @Unique
     @Override
     public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp) {
-        return tacz$shoot.shoot(pitch, yaw, timestamp);
+        return tacz$runGunAction("shoot", () -> tacz$shoot.shoot(pitch, yaw, timestamp), ShootResult.UNKNOWN_FAIL);
     }
 
     @Unique
     @Override
     public ShootResult shoot(Supplier<Float> pitch, Supplier<Float> yaw, long timestamp, float chargeProgress) {
-        return tacz$shoot.shoot(pitch, yaw, timestamp, chargeProgress);
+        return tacz$runGunAction("shoot", () -> tacz$shoot.shoot(pitch, yaw, timestamp, chargeProgress), ShootResult.UNKNOWN_FAIL);
     }
 
     @Unique
@@ -207,7 +215,7 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
     @Unique
     @Override
     public void fireSelect() {
-        this.tacz$fireSelect.fireSelect();
+        tacz$runGunAction("fire_select", () -> this.tacz$fireSelect.fireSelect());
     }
 
     @Unique
@@ -216,25 +224,40 @@ public abstract class LivingEntityMixin extends Entity implements IGunOperator, 
         this.tacz$aim.zoom();
     }
 
+    @Unique
+    private void tacz$runGunAction(String operation, Runnable action) {
+        GunScriptGuard.run(tacz$data, tacz$shooter, tacz$data.currentGunId, operation, action);
+    }
+
+    @Unique
+    private <T> T tacz$runGunAction(String operation, Supplier<T> action, T fallback) {
+        return GunScriptGuard.run(tacz$data, tacz$shooter, tacz$data.currentGunId, operation, action, fallback);
+    }
+
     @Inject(method = "tick", at = @At(value = "RETURN"))
     private void onTickServerSide(CallbackInfo ci) {
         // 仅在服务端调用
         if (!level().isClientSide()) {
             // 完成各种 tick 任务
-            ReloadState reloadState = this.tacz$reload.tickReloadState();
+            ReloadState reloadState = tacz$runGunAction("tick_reload", () -> this.tacz$reload.tickReloadState(), new ReloadState());
             this.tacz$aim.tickAimingProgress();
             this.tacz$aim.tickSprint();
             this.tacz$crawl.tickCrawling();
-            this.tacz$bolt.tickBolt();
-            this.tacz$melee.scheduleTickMelee();
+            tacz$runGunAction("tick_bolt", () -> this.tacz$bolt.tickBolt());
+            tacz$runGunAction("tick_melee", () -> this.tacz$melee.scheduleTickMelee());
             this.tacz$speed.updateSpeedModifier();
-            this.tacz$heat.tickHeat();
+            tacz$runGunAction("tick_heat", () -> this.tacz$heat.tickHeat());
+            // 后续脚本也可能中止换弹，不能同步本 tick 较早取得的旧结果。
+            if (!this.tacz$data.reloadStateType.isReloading()) {
+                reloadState = new ReloadState();
+            }
             tacz$shooter.setSprinting(getProcessedSprintStatus(tacz$shooter.isSprinting()));
             // 从服务端同步数据，八次写入共用一次 DataHolder 查询
             SyncedEntityData syncedData = SyncedEntityData.instance();
             syncedData.beginHolderScope(tacz$shooter);
             try {
-                ModSyncedEntityData.SHOOT_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$shoot.getShootCoolDown());
+                ModSyncedEntityData.SHOOT_COOL_DOWN_KEY.setValue(tacz$shooter,
+                        tacz$runGunAction("shoot_cooldown", () -> this.tacz$shoot.getShootCoolDown(), 0L));
                 ModSyncedEntityData.MELEE_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$melee.getMeleeCoolDown());
                 ModSyncedEntityData.DRAW_COOL_DOWN_KEY.setValue(tacz$shooter, this.tacz$draw.getDrawCoolDown());
                 ModSyncedEntityData.IS_BOLTING_KEY.setValue(tacz$shooter, this.tacz$data.isBolting);

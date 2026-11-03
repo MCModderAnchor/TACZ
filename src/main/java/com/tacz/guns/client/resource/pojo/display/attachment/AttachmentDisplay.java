@@ -4,8 +4,10 @@ import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
+import com.tacz.guns.client.resource.pojo.display.SoundData;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -37,6 +39,13 @@ public class AttachmentDisplay implements IDisplay {
     @SerializedName("show_mount")
     private boolean showMount = true;
 
+    /**
+     * Blockbench 模型单位，指向枪口前方；16 单位等于一格。
+     * 用于将第一人称枪口粒子发射原点沿枪口方向前移（如加装长消音器/制退器时）。
+     */
+    @SerializedName("muzzle_flash_offset")
+    private float muzzleFlashOffset = 0.0f;
+
     @SerializedName("text_show")
     private Map<String, TextShow> textShows = Maps.newHashMap();
 
@@ -51,6 +60,9 @@ public class AttachmentDisplay implements IDisplay {
     @SerializedName("scope")
     private boolean isScope = false;
 
+    @SerializedName("scope_lens")
+    private ScopeLensConfig scopeLens = new ScopeLensConfig();
+
     @SerializedName("sight")
     private boolean isSight = false;
 
@@ -61,8 +73,18 @@ public class AttachmentDisplay implements IDisplay {
     @Nullable
     private float[] viewsFov;
 
+    @SerializedName("idle_scope_height_adjust")
+    private float idleScopeHeightAdjust = 0;
+
     @SerializedName("sounds")
-    private Map<String, ResourceLocation> sounds = Maps.newHashMap();
+    private Map<String, SoundData> sounds = Maps.newHashMap();
+
+    @SerializedName("mode")
+    private String variantMode = "replace";
+
+    @SerializedName("mount_offset")
+    @Nullable
+    private Vector3f mountOffset;
 
     public ResourceLocation getSlotTextureLocation() {
         return slotTextureLocation;
@@ -94,6 +116,10 @@ public class AttachmentDisplay implements IDisplay {
         return showMount;
     }
 
+    public float getMuzzleFlashOffset() {
+        return muzzleFlashOffset;
+    }
+
     public Map<String, TextShow> getTextShows() {
         return textShows;
     }
@@ -112,6 +138,10 @@ public class AttachmentDisplay implements IDisplay {
         return isScope;
     }
 
+    public ScopeLensConfig getScopeLens() {
+        return scopeLens;
+    }
+
     public boolean isSight() {
         return isSight;
     }
@@ -125,8 +155,21 @@ public class AttachmentDisplay implements IDisplay {
         return viewsFov;
     }
 
-    public Map<String, ResourceLocation> getSounds() {
+    public float getIdleScopeHeightAdjust() {
+        return idleScopeHeightAdjust;
+    }
+
+    public Map<String, SoundData> getSounds() {
         return sounds;
+    }
+
+    public String getVariantMode() {
+        return variantMode == null ? "replace" : variantMode;
+    }
+
+    @Nullable
+    public Vector3f getMountOffset() {
+        return mountOffset;
     }
 
     @Nullable
@@ -136,6 +179,11 @@ public class AttachmentDisplay implements IDisplay {
 
     @Override
     public void init() {
+        if (scopeLens == null) scopeLens = new ScopeLensConfig();
+        scopeLens.init();
+        if (!Float.isFinite(muzzleFlashOffset) || muzzleFlashOffset < 0.0f) {
+            muzzleFlashOffset = 0.0f;
+        }
         if (slotTextureLocation != null) {
             slotTextureLocation = converter.idToFile(slotTextureLocation);
         }

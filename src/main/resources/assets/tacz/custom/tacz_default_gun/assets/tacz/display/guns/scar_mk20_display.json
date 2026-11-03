@@ -1,0 +1,115 @@
+{
+  "ads_preset": "tacz:renew",
+  "model": "tacz:gun/scar_mk20_geo",
+  "texture": "tacz:gun/uv/scar_mk20",
+  "lod": {
+    "model": "tacz:gun/lod/scar_mk20",
+    "texture": "tacz:gun/lod/scar_mk20"
+  },
+  "hud": "tacz:gun/hud/scar_mk20",
+  "slot": "tacz:gun/slot/scar_mk20",
+  "animation": "tacz:scar_mk20",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "state_machine": "tacz:scar_mk20_state_machine",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "type": "renew",
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1.25,
+    "smoke_scale": 2,
+    "initial_speed_scale": 2.45,
+    "smoke_particle_count": 30,
+    "smoke_directions": [
+      { "plane_angle": -150, "out_angle": 20 },
+      { "plane_angle": -30, "out_angle": 20 },
+      { "plane_angle": 90, "out_angle": 15 }
+    ],
+    "smoke_spread_angle": 25
+  },
+  "iron_zoom": 1.5,
+  "model_fov": 60,
+  "zoom_model_fov": 35,
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "ammo": {
+    // 曳光弹颜色，没有则为 #FFFFFF，没有此字段时，会调用 ammo 的相关字段
+    // 严格遵循 RGB 颜色代码
+    "tracer_color": "#FF8888",
+    // 是否覆盖 ammo display 的弹孔贴花开关。没有该字段时，会调用 ammo 的 enable_bullet_hole。
+    //"enable_bullet_hole": true,
+    // 命中方块表面时额外播放的粒子效果。取消注释后可用 AK47 测试火焰和烟雾命中特效。
+    "hit_surface_particles": [
+      {
+        "name": "minecraft:cloud",
+        "count": 5,
+        "count_range": [4, 6],
+        "life_time": 13,
+        "color": "#8A8175",
+        "scale": 1.15,
+        "surface_offset": 0.055,
+        "random_offset": 0.025,
+        "normal_speed": 0.16,
+        "random_speed": 0.03,
+        "spread_angle": 18
+      },
+      {
+        "name": "minecraft:campfire_cosy_smoke",
+        "count": 3,
+        "count_range": [2, 5],
+        "life_time": 60,
+        "scale": 1.1,
+        "surface_offset": 0.06,
+        "random_offset": 0.035,
+        "normal_speed": 0.04,
+        "random_speed": 0.02,
+        "spread_angle": 45
+      }
+    ]
+  },
+  "sounds": {
+    "shoot": "tacz:mk20/mk20_shoot",
+    "shoot_3p": "tacz:mk20/mk20_shoot_3p",
+    "silence": "tacz:mk20/mk20_silence",
+    "silence_3p": "tacz:mk20/mk20_silence_3p",
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  // 副手枪械显示
+  "offhand_show": {
+    // 位置，和基岩版的数值显示一致
+    // 默认是 [-2, 20, 3.5]
+    "pos": [3, 22.5, 3.5],
+    // 旋转，单位为角度，默认就是 [0, 0, -30]
+    "rotate": [0, 0, 60],
+    // 缩放，默认就是 [0.6, 0.6, 0.6]
+    "scale": [0.5, 0.5, 0.5]
+  },
+  // 快捷栏枪械显示
+  // 没有此字段，不显示快捷栏枪械
+  "hotbar_show": {
+    // 快捷栏索引，默认是 0-8，共九个，但是实际上除去主手，只能显示八个
+    // 没有的，则不会显示
+    "0": {
+      "pos": [-3, 22.5, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

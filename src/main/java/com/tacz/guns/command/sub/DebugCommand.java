@@ -19,6 +19,7 @@ public class DebugCommand {
         LiteralArgumentBuilder<CommandSourceStack> debugCommand = Commands.literal(DEBUG_NAME);
         RequiredArgumentBuilder<CommandSourceStack, Boolean> enable = Commands.argument(ENABLE, BoolArgumentType.bool());
         debugCommand.then(enable.executes(DebugCommand::setValue));
+        debugCommand.then(PegboardStressCommand.get());
         return debugCommand;
     }
 

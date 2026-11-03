@@ -3,17 +3,22 @@ package com.tacz.guns.mixin.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.client.event.RenderItemInHandBobEvent;
 import com.tacz.guns.api.client.event.RenderLevelBobEvent;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.client.renderer.other.GunHurtBobTweak;
+import com.tacz.guns.client.renderer.scope.ScopeLensRenderer;
+import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.Mth;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -21,6 +26,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class GameRendererMixin {
     @Unique
     private boolean tacz$useFovSetting;
+
+    @Inject(method = "renderLevel", at = @At("HEAD"))
+    private void tacz$beginScopeFrame(float partialTicks, long finishTime, PoseStack poseStack, CallbackInfo ci) {
+        ScopeLensRenderer.beginFrame();
+    }
+
+    // After AFTER_LEVEL and Oculus' composite, before hand depth is cleared and colour space converted.
+    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", ordinal = 2))
+    private void tacz$drawShaderScopeLenses(float partialTicks, long finishTime, PoseStack poseStack, CallbackInfo ci) {
+        ScopeLensRenderer.render();
+    }
+
+    // AR flushes hands in an AFTER callback on renderHandsWithItems, which also captures lenses.
+    // Use a later vanilla call so that flush always finishes first, with screen overlays still on top.
+    @Inject(method = "renderItemInHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;renderScreenEffect(Lnet/minecraft/client/Minecraft;Lcom/mojang/blaze3d/vertex/PoseStack;)V"))
+    private void tacz$drawVanillaScopeLenses(PoseStack poseStack, Camera camera, float partialTicks, CallbackInfo ci) {
+        ScopeLensRenderer.render();
+    }
 
     @Shadow
     public abstract Minecraft getMinecraft();
@@ -47,6 +70,22 @@ public abstract class GameRendererMixin {
         if (cancel) {
             ci.cancel();
         }
+    }
+
+    // 第三个旋转是受伤倾斜；保持死亡旋转及受击方向的前后旋转不变。
+    @ModifyArg(method = "bobHurt", at = @At(value = "INVOKE", target = "Lcom/mojang/math/Axis;rotationDegrees(F)Lorg/joml/Quaternionf;", ordinal = 2), index = 0)
+    private float tacz$scaleHeldGunHurtTilt(float angle) {
+        Minecraft minecraft = this.getMinecraft();
+        if (minecraft.options.getCameraType().isFirstPerson()
+                && minecraft.getCameraEntity() instanceof LocalPlayer player
+                && !player.isDeadOrDying()
+                && player.getMainHandItem().getItem() instanceof AbstractGunItem) {
+            // 正面和背面受击以俯仰为主，额外减半；侧面保持配置倍率，斜向平滑过渡。
+            float frontBackWeight = Math.abs(Mth.sin(player.getHurtDir() * Mth.DEG_TO_RAD));
+            float directionMultiplier = 1.0F - 0.5F * frontBackWeight;
+            return angle * RenderConfig.GUN_HURT_BOB_MULTIPLIER.get().floatValue() * directionMultiplier;
+        }
+        return angle;
     }
 
     @Inject(method = "bobView", at = @At("HEAD"), cancellable = true)

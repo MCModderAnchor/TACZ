@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:308",
   "ammo_amount": 20,
   "extended_mag_ammo_amount": [
@@ -28,7 +29,7 @@
     "empty_xmag_3_cooldown": 2.93
   },
   "bullet": {
-    "life": 0.8,
+    "life": 1,
     "bullet_amount": 1,
     "damage": 14,
     "tracer_count_interval": 0,
@@ -41,18 +42,18 @@
         {"distance": "infinite", "damage": 9}
       ]
     },
-    "speed": 320,
+    "speed": 333,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.0125,
+    "friction": 0.025,
     "ignite": false,
     "pierce": 2,
     "explosion": {
       "explode": false,
-      "damage": 25,
-      "radius": 0.75,
+      "damage": 10,
+      "radius": 1,
       "knockback": true,
-      "delay": 1
+      "delay": 0.15
     }
   },
   "reload": {
@@ -68,7 +69,7 @@
   },
   "draw_time": 0.43,
   "put_away_time": 0.43,
-  "aim_time": 0.21,
+  "aim_time": 0.24,
   "sprint_time": 0.19,
   "weight": 4.6,
   "movement_speed": {
@@ -133,6 +134,20 @@
     "extended_mag",
     "laser"
   ],
+  "builtin_attachments": {
+    "laser": {
+      "attachments": [
+        "tacz:oem_side_cover"
+      ],
+      "default_attached": "tacz:oem_side_cover"
+    },
+    "grip": {
+      "attachments": [
+        "tacz:oem_grip_cover"
+      ],
+      "default_attached": "tacz:oem_grip_cover"
+    }
+  },
   "exclusive_attachments": {
     "tacz:scope_standard_8x": {
       "weight": 2.0,

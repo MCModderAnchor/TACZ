@@ -6,27 +6,39 @@
     "model": "tacz:shell/30_06_shell",
     "texture": "tacz:shell/30_06_shell"
   },
+  "hit_block_particle_count": 5,
+  "hit_surface_particles": [
+    {
+      "name": "minecraft:cloud",
+      "count": 6,
+      "count_range": [4, 8],
+      "life_time": 13,
+      "color": "#8A8175",
+      "scale": 0.8,
+      "surface_offset": 0.055,
+      "random_offset": 0.025,
+      "normal_speed": 0.16,
+      "random_speed": 0.03,
+      "spread_angle": 18
+    }
+  ],
   "transform": {
     "scale": {
-      // 第三人称手部
       "thirdperson": [
-        0.75,
-        0.75,
-        0.75
+        0.4,
+        0.4,
+        0.4
       ],
-      // 地面实体
       "ground": [
+        0.4,
+        0.4,
+        0.4
+      ],
+      "fixed": [
         0.75,
         0.75,
         0.75
-      ],
-      // 展示框
-      "fixed": [
-        1.5,
-        1.5,
-        1.5
       ]
     }
   }
 }
-    

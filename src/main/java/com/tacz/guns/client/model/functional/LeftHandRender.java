@@ -5,8 +5,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.tacz.guns.client.model.BedrockAnimatedModel;
 import com.tacz.guns.client.model.IFunctionalRenderer;
+import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.joml.Matrix3f;
@@ -21,6 +23,11 @@ public class LeftHandRender implements IFunctionalRenderer {
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
+        render(poseStack, vertexBuffer, transformType, light, overlay, RenderHelper.getBufferSource(transformType));
+    }
+
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
         if (transformType.firstPerson()) {
             if (!bedrockGunModel.getRenderHand()) {
                 return;
@@ -33,8 +40,10 @@ public class LeftHandRender implements IFunctionalRenderer {
                 PoseStack poseStack2 = new PoseStack();
                 poseStack2.last().normal().mul(normal);
                 poseStack2.last().pose().mul(pose);
-                RenderHelper.renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, light1);
-                Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+                RenderHelper.renderFirstPersonArm(Minecraft.getInstance().player, HumanoidArm.LEFT, poseStack2, light1, bufferSource);
+                if (!OculusCompat.endBatch(bufferSource)) {
+                    RenderHelper.endBatch(bufferSource);
+                }
             });
         }
     }

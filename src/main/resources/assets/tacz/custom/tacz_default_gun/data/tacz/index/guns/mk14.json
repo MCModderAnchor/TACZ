@@ -3,6 +3,6 @@
   "display": "tacz:mk14_display",
   "data": "tacz:mk14_data",
   "tooltip": "tacz.gun.mk14.desc",
-  "type": "rifle",
+  "type": "dmr",
   "sort": 11
 }

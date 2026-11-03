@@ -1,4 +1,6 @@
 {
+  "state_machine": "tacz:default_state_machine_v2",
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/aa12_geo",
   "texture": "tacz:gun/uv/aa12",
   "lod": {
@@ -18,9 +20,16 @@
     }
   },
   "muzzle_flash": {
+    "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.75
+    "scale": 0.75,
+    "initial_speed_scale": 1.7,
+    "smoke_scale": 2,
+    "smoke_particle_count": 20
   },
+  "iron_zoom": 1.2,
+  "model_fov": 60,
+  "zoom_model_fov": 45,
   "shell": {
     "initial_velocity": [5, 2, 1],
     "random_velocity": [1, 1, 0.25],

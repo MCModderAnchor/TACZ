@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.animation.AnimationListener;
 import com.tacz.guns.api.client.animation.ObjectAnimationChannel;
@@ -21,6 +22,7 @@ import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
 import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -35,6 +37,8 @@ import java.util.function.Predicate;
 import static com.tacz.guns.client.model.GunModelConstant.*;
 
 public class BedrockGunModel extends BedrockAnimatedModel {
+    private static final String RANGEFINDER_IMPACT_PREDICTION_NODE = "rangefinder_impact_prediction_pos";
+
     protected final EnumMap<AttachmentType, List<BedrockPart>> refitAttachmentViewPath = Maps.newEnumMap(AttachmentType.class);
     private final EnumMap<AttachmentType, ItemStack> currentAttachmentItem = Maps.newEnumMap(AttachmentType.class);
     private final Set<String> adapterToRender = Sets.newHashSet();
@@ -220,16 +224,24 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 
     @NotNull
     private IFunctionalRenderer renderAdditionalMagazine(BedrockPart bedrockPart) {
-        return (poseStack, vertexBuffer, transformType, light, overlay) -> {
-            if (bedrockPart.visible) {
-                bedrockPart.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                for (BedrockPart part : bedrockPart.children) {
-                    part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                }
-                if (magazineNode != null && magazineNode.visible) {
-                    magazineNode.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
-                    for (BedrockPart part : magazineNode.children) {
-                        part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+        return new IFunctionalRenderer() {
+            @Override
+            public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
+                render(poseStack, vertexBuffer, transformType, light, overlay, RenderHelper.getBufferSource(transformType));
+            }
+
+            @Override
+            public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
+                if (bedrockPart.visible) {
+                    bedrockPart.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                    for (BedrockPart part : bedrockPart.children) {
+                        part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
+                    }
+                    if (magazineNode != null && magazineNode.visible) {
+                        magazineNode.compile(poseStack.last(), vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+                        for (BedrockPart part : magazineNode.children) {
+                            part.render(poseStack, transformType, vertexBuffer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
+                        }
                     }
                 }
             }
@@ -241,9 +253,26 @@ public class BedrockGunModel extends BedrockAnimatedModel {
      */
     public void setTextShowList(Map<String, TextShow> textShowList) {
         textShowList.forEach((name, textShow) -> this.setFunctionalRenderer(name, bedrockPart -> new TextShowRender(this, textShow, currentGunItem)));
+        boolean hasRangefinder = textShowList.values().stream().anyMatch(textShow -> textShow.getRangefinder() != null);
+        if (hasRangefinder && modelMap.containsKey(RANGEFINDER_IMPACT_PREDICTION_NODE)) {
+            this.setFunctionalRenderer(RANGEFINDER_IMPACT_PREDICTION_NODE,
+                    bedrockPart -> new RangefinderImpactPredictionRender(this));
+        }
     }
 
     public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+        render(matrixStack, gunItem, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
+        render(matrixStack, gunItem, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
+    }
+
+    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha) {
+        render(matrixStack, gunItem, transformType, renderType, light, overlay, red, green, blue, alpha, RenderHelper.getBufferSource(transformType));
+    }
+
+    public void render(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float red, float green, float blue, float alpha, MultiBufferSource bufferSource) {
         IGun iGun = IGun.getIGunOrNull(gunItem);
         if (iGun == null) {
             return;
@@ -280,11 +309,11 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             }
         }
         if (laserBeamPaths != null) {
-            BeamRenderer.renderLaserBeam(gunItem, matrixStack, transformType, laserBeamPaths);
+            BeamRenderer.renderLaserBeam(gunItem, matrixStack, transformType, laserBeamPaths, bufferSource);
         }
 
-		if (ARCompat.shouldAccelerate()) {
-			renderAccelerated(matrixStack, gunItem, transformType, renderType, light, overlay);
+		if (alpha >= 1.0F && ARCompat.shouldAccelerate()) {
+			renderAccelerated(matrixStack, gunItem, transformType, renderType, light, overlay, bufferSource);
 			return;
 		}
 
@@ -296,34 +325,35 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             for (BedrockPart bedrockPart : scopePosPath) {
                 bedrockPart.translateAndRotateAndScale(matrixStack);
             }
-            AttachmentRender.renderAttachment(attachmentItem, currentGunItem, matrixStack, transformType, light, overlay);
+            AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay, bufferSource);
             matrixStack.popPose();
             // 开启模板测试，因为镜内不渲染枪体
             if (iAttachment != null) {
                 Optional<ClientAttachmentIndex> attachmentIndex = TimelessAPI.getClientAttachmentIndex(iAttachment.getAttachmentId(attachmentItem));
                 attachmentIndex.ifPresent(index -> {
-                    if (index.isScope() && index.isSight()) { // 组合镜
+                    if (index.isScope()) { // 组合镜
                         RenderHelper.enableItemEntityStencilTest();
                         RenderSystem.stencilFunc(GL11.GL_GREATER, 127, 0xFF);
-                    } else if (index.isScope()) { // 长筒镜
-                        RenderHelper.enableItemEntityStencilTest();
-                        RenderSystem.stencilFunc(GL11.GL_EQUAL, 0, 0xFF);
                     }
                 });
             }
         }
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-        super.render(matrixStack, transformType, renderType, light, overlay);
+        super.render(matrixStack, transformType, renderType, light, overlay, red, green, blue, alpha, bufferSource);
         RenderHelper.disableItemEntityStencilTest();
         RenderSystem.clearStencil(0);
         RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
     }
 
-	public void renderAccelerated(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+	public void renderAccelerated(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		// 镜子需要先渲染，写入模板值
 		var attachmentItem = currentAttachmentItem.get(AttachmentType.SCOPE);
 		var iAttachment = IAttachment.getIAttachmentOrNull(attachmentItem);
 		var useStencil = false;
+
+		// 获取先前的层前/层后任务, 防止覆盖
+		Runnable before = ARCompat.getRenderBeforeFunction();
+		Runnable after = ARCompat.getRenderAfterFunction();
 
 		if (scopePosPath != null && attachmentItem != null && !attachmentItem.isEmpty()) {
 			matrixStack.pushPose();
@@ -332,7 +362,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 				bedrockPart.translateAndRotateAndScale(matrixStack);
 			}
 
-			AttachmentRender.renderAttachment(attachmentItem, currentGunItem, matrixStack, transformType, light, overlay);
+			AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay, bufferSource);
 			matrixStack.popPose();
 
 			// 开启模板测试，因为镜内不渲染枪体
@@ -343,15 +373,15 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 				if (attachmentIndex.isPresent()) {
 					// 如果有attachment, 则设置层前任务开启模板缓冲区设置对应的模板函数
 					ARCompat.setRenderBeforeFunction(() -> {
+						// 先执行被覆盖的层前方法
+						before.run();
+
 						// 获取实际的attachmentIndex
 						var index = attachmentIndex.get();
 
-						if (index.isScope() && index.isSight()) { // 组合镜
+						if (index.isScope()) { // 组合镜
 							RenderHelper.enableItemEntityStencilTest();
 							RenderSystem.stencilFunc(GL11.GL_GREATER, 127, 0xFF);
-						} else if (index.isScope()) { // 长筒镜
-							RenderHelper.enableItemEntityStencilTest();
-							RenderSystem.stencilFunc(GL11.GL_EQUAL, 0, 0xFF);
 						}
 
 						// 设置不改变任何模板值, 这里本来是无论是否有attachment都要执行的, 但是如果不执行到这里模板测试自然不会开启
@@ -374,9 +404,12 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 			// 重置模板缓冲区
 			RenderSystem.clearStencil(0);
 			RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
+
+			// 最后执行被覆盖的层后方法
+			after.run();
 		});
 
-		super.render(matrixStack, transformType, renderType, light, overlay);
+		super.render(matrixStack, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F, bufferSource);
 
 		// 重置层和层后任务, 还原现场
 		ARCompat.resetRenderLayer();

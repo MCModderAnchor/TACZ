@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -38,6 +39,9 @@ public class ClientAmmoIndex {
     private @Nullable ResourceLocation shellTextureLocation;
     private int stackSize;
     private @Nullable AmmoParticle particle;
+    private @Nullable List<HitSurfaceParticle> hitSurfaceParticles;
+    private @Nullable Integer hitBlockParticleCount;
+    private boolean bulletHoleEnabled = true;
     private float[] tracerColor = new float[]{1f, 1f, 1f};
     private AmmoTransform transform;
     private @Nullable String tooltipKey;
@@ -56,6 +60,9 @@ public class ClientAmmoIndex {
         checkSlotTexture(display, index);
         checkStackSize(clientPojo, index);
         checkParticle(display, index);
+        checkHitSurfaceParticles(display, index);
+        checkHitBlockParticleCount(display, index);
+        checkBulletHoleEnabled(display, index);
         checkTracerColor(display, index);
         checkTransform(display, index);
         if (!ResourceConfig.ENABLE_LAZY_CLIENT_ASSET_LOAD.get()) {
@@ -239,6 +246,19 @@ public class ClientAmmoIndex {
         }
     }
 
+    private static void checkHitSurfaceParticles(AmmoDisplay display, ClientAmmoIndex index) {
+        index.hitSurfaceParticles = display.getHitSurfaceParticles();
+    }
+
+    private static void checkHitBlockParticleCount(AmmoDisplay display, ClientAmmoIndex index) {
+        Integer count = display.getHitBlockParticleCount();
+        index.hitBlockParticleCount = count == null ? null : Math.max(count, 0);
+    }
+
+    private static void checkBulletHoleEnabled(AmmoDisplay display, ClientAmmoIndex index) {
+        index.bulletHoleEnabled = display.isBulletHoleEnabled();
+    }
+
     private static void checkTracerColor(AmmoDisplay display, ClientAmmoIndex index) {
         String tracerColorText = display.getTracerColor();
         if (StringUtils.isNoneBlank(tracerColorText)) {
@@ -315,6 +335,20 @@ public class ClientAmmoIndex {
     @Nullable
     public AmmoParticle getParticle() {
         return particle;
+    }
+
+    @Nullable
+    public List<HitSurfaceParticle> getHitSurfaceParticles() {
+        return hitSurfaceParticles;
+    }
+
+    @Nullable
+    public Integer getHitBlockParticleCount() {
+        return hitBlockParticleCount;
+    }
+
+    public boolean isBulletHoleEnabled() {
+        return bulletHoleEnabled;
     }
 
     public float[] getTracerColor() {

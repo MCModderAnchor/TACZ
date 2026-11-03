@@ -28,9 +28,6 @@ public class HumanoidModelMixin<T extends LivingEntity> {
 
     @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "TAIL"))
     private void setRotationAnglesHead(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
-        if (ageInTicks == 0) {
-            return;
-        }
         InnerThirdPersonManager.setRotationAnglesHead(entityIn, rightArm, leftArm, body, head, limbSwingAmount);
     }
 }

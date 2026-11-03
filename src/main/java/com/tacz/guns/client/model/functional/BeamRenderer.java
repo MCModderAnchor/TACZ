@@ -17,7 +17,7 @@ import com.tacz.guns.client.resource.pojo.display.LaserConfig;
 import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.util.LaserColorUtil;
-import net.minecraft.client.Minecraft;
+import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -33,44 +33,59 @@ public class BeamRenderer  {
     public static final ResourceLocation LASER_BEAM_TEXTURE = new ResourceLocation(GunMod.MOD_ID, "textures/entity/beam.png");
     private static final LaserConfig DEFAULT_LASER_CONFIG = new LaserConfig();
 
-    public static void renderLaserBeam(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path) {
+    public static void renderLaserBeam(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path, MultiBufferSource bufferSource) {
         if (stack == null || !transformType.firstPerson() && !(transformType == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)) {
             return;
         }
 
-		if (ARCompat.shouldAccelerate() && renderLaserBeamAccelerated(stack, poseStack, transformType, path)) {
+		if (ARCompat.shouldAccelerate() && renderLaserBeamAccelerated(stack, poseStack, transformType, path, bufferSource)) {
 			return;
 		}
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer builder = bufferSource.getBuffer(LaserBeamRenderState.getLaserBeam());
-        poseStack.pushPose();
-        {
-            for (int i = 0; i < path.size(); ++i) {
-                path.get(i).translateAndRotateAndScale(poseStack);
-            }
+        renderLaserBeamUnaccelerated(stack, poseStack, transformType, path, bufferSource);
+    }
 
-            LaserConfig laserConfig = getLaserConfig(stack);
-
-            int color = LaserColorUtil.getLaserColor(stack, laserConfig);
-            int r = (color >> 16) & 0xFF;
-            int g = (color >> 8) & 0xFF;
-            int b = color & 0xFF;
-
-            stringVertex(transformType.firstPerson() ? -laserConfig.getLength() : -laserConfig.getLengthThird(),
-                    transformType.firstPerson() ? laserConfig.getWidth() : laserConfig.getWidthThird(),
-                    builder, poseStack.last(), r, g, b, RenderConfig.ENABLE_LASER_FADE_OUT.get());
+    /** Resolve the legacy bone path before drawing an unaccelerated beam. */
+    public static void renderLaserBeamUnaccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType,
+                                                     @Nonnull List<BedrockPart> path, MultiBufferSource bufferSource) {
+        if (stack == null || !transformType.firstPerson() && transformType != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+            return;
         }
+
+        poseStack.pushPose();
+        for (int i = 0; i < path.size(); ++i) {
+            path.get(i).translateAndRotateAndScale(poseStack);
+        }
+        renderLaserBeamUnaccelerated(stack, poseStack, transformType, bufferSource);
         poseStack.popPose();
     }
 
+    /** Draw at an already resolved emitter pose, including SBM bone anchors. */
+    public static void renderLaserBeamUnaccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType,
+                                                     MultiBufferSource bufferSource) {
+        if (stack == null || !transformType.firstPerson() && transformType != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+            return;
+        }
+        VertexConsumer builder = bufferSource.getBuffer(LaserBeamRenderState.getLaserBeam());
+        LaserConfig laserConfig = getLaserConfig(stack);
+
+        int color = LaserColorUtil.getLaserColor(stack, laserConfig);
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+
+        stringVertex(transformType.firstPerson() ? -laserConfig.getLength() : -laserConfig.getLengthThird(),
+                transformType.firstPerson() ? laserConfig.getWidth() : laserConfig.getWidthThird(),
+                builder, poseStack.last(), r, g, b, RenderConfig.ENABLE_LASER_FADE_OUT.get());
+    }
+
 	public static boolean renderLaserBeamAccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path) {
+		return renderLaserBeamAccelerated(stack, poseStack, transformType, path, RenderHelper.getBufferSource(transformType));
+	}
+
+	public static boolean renderLaserBeamAccelerated(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nonnull List<BedrockPart> path, MultiBufferSource bufferSource) {
 		// 获取VertexConsumer拓展方法
-		var builder = Minecraft
-				.getInstance()
-				.renderBuffers()
-				.bufferSource()
-				.getBuffer(LaserBeamRenderState.getLaserBeamEntity()); //替换为LASER_BEAM_ENTITY确保镭射和枪体在同一个format的同一层
+		var builder = bufferSource.getBuffer(LaserBeamRenderState.getLaserBeamEntity()); //替换为LASER_BEAM_ENTITY确保镭射和枪体在同一个format的同一层
 
 		// 加速渲染的实现机制是每个VertexFormat一个bufferSource, 每个bufferSource维护一个Map<层编号, 层>
 		// 因此如果镭射和枪体不在一个format, 则可能出现镭射无法正确被模板缓冲剔除掉

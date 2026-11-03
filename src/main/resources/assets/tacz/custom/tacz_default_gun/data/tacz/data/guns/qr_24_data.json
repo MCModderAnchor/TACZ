@@ -1,0 +1,165 @@
+{
+  "allow_ammo_unload": true,
+  "ammo": "tacz:545x39",
+  "ammo_amount": 32,
+  "extended_mag_ammo_amount": [
+    40,
+    52,
+    72
+  ],
+  "bolt": "closed_bolt",
+  "rpm": 880,
+  "bullet": {
+    "life": 0.85,
+    "bullet_amount": 1,
+    "damage": 7,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.1,
+      "head_shot_multiplier": 1.5,
+      "damage_adjust": [
+        {"distance": 25, "damage": 7},
+        {"distance": 50, "damage": 6},
+        {"distance": "infinite", "damage": 5}
+      ]
+    },
+    "speed": 325,
+    "gravity": 0.15,
+    "knockback": 0,
+    "friction": 0.02,
+    "ignite": false,
+    "pierce": 1
+  },
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 1.97,
+      "tactical": 1.25
+    },
+    "cooldown": {
+      "empty": 2.75,
+      "tactical": 2.2
+    }
+  },
+  "draw_time": 0.6,
+  "put_away_time": 0.47,
+  "aim_time": 0.21,
+  "sprint_time": 0.18,
+  "weight": 3.25,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.15,
+    "reload": -0.1
+  },
+  "crawl_recoil_multiplier": 0.5,
+  "fire_mode": [
+    "auto",
+    "burst",
+    "semi"
+  ],
+  "burst_data": {
+    "continuous_shoot": true,
+    "count": 4,
+    "bpm": 1000,
+    "min_interval": 0.55
+  },
+  "fire_mode_adjust": {
+    // 全自动状态的数值调整，如无调整可不写
+    "burst": {
+      // 加算，全自动模式的开火数值调整，如无调整可不写
+      "armor_ignore": 0,
+      "head_shot_multiplier": -0.25,
+      "aim_inaccuracy": 0.23,
+      "other_inaccuracy": -1.5
+    }
+  },
+  // 开火模式调整（如无调整可不写）
+  /*
+
+    // 半自动状态的数值调整，如无调整可不写
+    "semi": {
+      // 加算，半自动模式的开火数值调整，如无调整可不写
+      "damage": 9,
+      "rpm": -400,
+      "speed": 20,
+      "knockback": 0.1,
+      "armor_ignore": 0.1,
+      "head_shot_multiplier": 0.1,
+      "aim_inaccuracy": -0.1,
+      "other_inaccuracy": -0.5
+    }
+    // 多连发状态的数值调整，如无调整可不写
+    // "burst": {
+    // 加算，多连发模式的开火数值调整，如无调整可不写
+    // "damage": 0,
+    // "rpm": 0,
+    // "speed": 0,
+    // "knockback": 0,
+    // "armor_ignore": 0,
+    // "head_shot_multiplier": 0,
+    // "aim_inaccuracy": 0,
+    // "other_inaccuracy": 0
+    // }
+  },
+  "burst_data": {
+    "continuous_shoot": false,
+    "count": 3,
+    "bpm": 900,
+    "min_interval": 0.3
+  },
+  */
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [0.55, 0.55]},
+      {"time": 0.3, "value": [0.55, 0.55]},
+      {"time": 0.5, "value": [0.0, 0.0]},
+      {"time": 0.65, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-0.25, 0.15]},
+      {"time": 0.3, "value": [-0.25, 0.15]},
+      {"time": 0.5, "value": [0, 0]},
+      {"time": 0.6, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 4,
+    "move": 4.5,
+    "sneak": 3.75,
+    "lie": 3.75,
+    "aim": 0.1
+  },
+  // 近战相关
+  "melee": {
+    // 枪械距离参数，用来延升近战攻击范围
+    // 会与刺刀等配件的距离做加和
+    "distance": 1,
+    // 使用时的冷却时间
+    "cooldown": 0.6,
+    // 默认近战数据，会被配件的数据替换掉
+    "default": {
+      // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
+      "animation_type": "melee_stock",
+      // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
+      "distance": 1,
+      // 刺刀范围角度
+      "range_angle": 30,
+      // 伤害值
+      "damage": 2,
+      // 击退效果
+      "knockback": 0.5,
+      // 前摇时长，单位：秒
+      "prep": 0.1
+    }
+  },
+  "allow_attachment_types": [ 
+    "scope",
+    "stock",
+    "muzzle",
+    "grip",
+    "laser",
+    "extended_mag"
+  ],
+  "exclusive_attachments": {
+  }
+}

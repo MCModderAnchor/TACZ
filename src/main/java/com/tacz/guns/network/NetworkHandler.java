@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class NetworkHandler {
-    private static final String VERSION = "1.0.5";
+    private static final String VERSION = "1.0.14";
 
     public static final SimpleChannel HANDSHAKE_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(GunMod.MOD_ID, "handshake"),
             () -> VERSION, it -> it.equals(VERSION), it -> it.equals(VERSION));
@@ -53,6 +53,8 @@ public class NetworkHandler {
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageSound.class, ServerMessageSound::encode, ServerMessageSound::decode, ServerMessageSound::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageBulletHitBlock.class, ServerMessageBulletHitBlock::encode, ServerMessageBulletHitBlock::decode, ServerMessageBulletHitBlock::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageCraft.class, ClientMessageCraft::encode, ClientMessageCraft::decode, ClientMessageCraft::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageCraft.class, ServerMessageCraft::encode, ServerMessageCraft::decode, ServerMessageCraft::handle,
@@ -60,6 +62,8 @@ public class NetworkHandler {
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessagePlayerZoom.class, ClientMessagePlayerZoom::encode, ClientMessagePlayerZoom::decode, ClientMessagePlayerZoom::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageRefitGun.class, ClientMessageRefitGun::encode, ClientMessageRefitGun::decode, ClientMessageRefitGun::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageInstallVirtualAttachment.class, ClientMessageInstallVirtualAttachment::encode, ClientMessageInstallVirtualAttachment::decode, ClientMessageInstallVirtualAttachment::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageRefreshRefitScreen.class, ServerMessageRefreshRefitScreen::encode, ServerMessageRefreshRefitScreen::decode, ServerMessageRefreshRefitScreen::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
@@ -101,6 +105,26 @@ public class NetworkHandler {
 
         CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageLaserColor.class, ClientMessageLaserColor::encode, ClientMessageLaserColor::decode, ClientMessageLaserColor::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageAmmoStorageInteract.class, ClientMessageAmmoStorageInteract::encode, ClientMessageAmmoStorageInteract::decode, ClientMessageAmmoStorageInteract::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageSetAttachmentVariant.class, ClientMessageSetAttachmentVariant::encode, ClientMessageSetAttachmentVariant::decode, ClientMessageSetAttachmentVariant::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageSetSlotAdapter.class, ClientMessageSetSlotAdapter::encode, ClientMessageSetSlotAdapter::decode, ClientMessageSetSlotAdapter::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
+
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageAmmoStorageClick.class, ClientMessageAmmoStorageClick::encode, ClientMessageAmmoStorageClick::decode, ClientMessageAmmoStorageClick::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageAmmoStorageContents.class, ServerMessageAmmoStorageContents::encode, ServerMessageAmmoStorageContents::decode, ServerMessageAmmoStorageContents::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunFinishReload.class, ServerMessageGunFinishReload::encode, ServerMessageGunFinishReload::decode, ServerMessageGunFinishReload::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunFirePost.class, ServerMessageGunFirePost::encode, ServerMessageGunFirePost::decode, ServerMessageGunFirePost::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ClientMessagePlayerUnloadGun.class, ClientMessagePlayerUnloadGun::encode, ClientMessagePlayerUnloadGun::decode, ClientMessagePlayerUnloadGun::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(ID_COUNT.getAndIncrement(), ServerMessageGunUnload.class, ServerMessageGunUnload::encode, ServerMessageGunUnload::decode, ServerMessageGunUnload::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
         registerAcknowledge();
         registerHandshakeMessage(ServerMessageSyncedEntityDataMapping.class, null);

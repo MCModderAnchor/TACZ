@@ -1,0 +1,41 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "1": "tacz:block/display_case_all",
+    "particle": "minecraft:block/iron_block"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        5
+      ],
+      "to": [
+        16,
+        16,
+        5
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          7.5,
+          9
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            2.125,
+            0,
+            4.125,
+            2
+          ],
+          "texture": "#1"
+        }
+      }
+    }
+  ]
+}

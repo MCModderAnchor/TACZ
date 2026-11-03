@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:308",
   "ammo_amount": 20,
   "extended_mag_ammo_amount": [
@@ -39,11 +40,11 @@
       "head_shot_multiplier": 1.8,
       "damage_adjust": [
         {"distance": 45, "damage": 13},
-        {"distance": 90, "damage": 9.5},
+        {"distance": 90, "damage": 10},
         {"distance": "infinite", "damage": 8}
       ]
     },
-    "speed": 330,
+    "speed": 350,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.02,
@@ -87,30 +88,28 @@
   "fire_mode_adjust": {
     "auto": {
       // 加算，全自动模式的开火数值调整，如无调整可不写
-      "damage": -2,
+      "damage": -1,
       "rpm": 300,
       "speed": 0,
       "knockback": 0,
       "armor_ignore": -0.1,
       "head_shot_multiplier": -0.3,
-      "aim_inaccuracy": 0.1,
+      "aim_inaccuracy": 0.05,
       "other_inaccuracy": 0.3
     }
   },
   "crawl_recoil_multiplier": 0.5,
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [1.55, 1.75]},
-      {"time": 0.05, "value": [1.75, 1.8]},
-      {"time": 0.12, "value": [1.4, 1.5]},
-      {"time": 0.25, "value": [-0.1, -0.05]},
-      {"time": 0.5, "value": [0, 0]},
-      {"time": 0.7, "value": [0.15, 0.25]},
-      {"time": 0.9, "value": [0, 0]}
+      {"time": 0, "value": [1.25, 1.35]},
+      {"time": 0.05, "value": [1.35, 1.4]},
+      {"time": 0.12, "value": [1.3, 1.4]},
+      {"time": 0.3, "value": [-0.025, 0.025]},
+      {"time": 0.5, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.5, 0.5]},
-      {"time": 0.25, "value": [0, 0]}
+      {"time": 0, "value": [-0.3, 0.3]},
+      {"time": 0.27, "value": [0, 0]}
     ]
   },
   "hurt_bob_tweak_multiplier": 0.05,

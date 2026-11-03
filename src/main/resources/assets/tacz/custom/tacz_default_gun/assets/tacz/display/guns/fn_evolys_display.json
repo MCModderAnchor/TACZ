@@ -1,4 +1,5 @@
 {
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/fn_evolys_geo",
   "texture": "tacz:gun/uv/fn_evolys",
   "lod": {
@@ -19,10 +20,15 @@
     }
   },
   "muzzle_flash": {
+    "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 1.125
+    "scale": 1.125,
+    "initial_speed_scale": 1.7,
+    "smoke_scale": 1.65,
+    "smoke_particle_count": 18
   },
   "iron_zoom": 1.33,
+  "model_fov": 60,
   "zoom_model_fov": 45,
   "shell": {
     // 抛壳的初速度
@@ -52,14 +58,14 @@
     "melee_stock": "tacz:melee_stock/melee_stock_03"
   },
   "offhand_show": {
-    "pos": [0, 19, 4],
-    "rotate": [0, 0, 60],
+    "pos": [6, 20, 4],
+    "rotate": [-90, -5, -90],
     "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [0, 19, 3],
-      "rotate": [-180, 0, 120],
+      "pos": [-4, 20, 4],
+      "rotate": [-90, -5, -90],
       "scale": [0.5, 0.5, 0.5]
     }
   }

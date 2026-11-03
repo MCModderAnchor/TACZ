@@ -1,0 +1,97 @@
+{
+  "ads_preset": "tacz:renew",
+  "model": "tacz:gun/ak74m_geo",
+  "texture": "tacz:gun/uv/ak74m",
+  "lod": {
+    "model": "tacz:gun/lod/ak74m",
+    "texture": "tacz:gun/lod/ak74m"
+  },
+  "hud": "tacz:gun/hud/ak74m",
+  "slot": "tacz:gun/slot/ak74m",
+  "ammo_count_style": "normal",
+  "damage_style": "per_projectile",
+  "animation": "tacz:ak74m",
+  "state_machine": "tacz:ak47_state_machine",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "player_animator_3rd": "tacz:rifle_default.player_animation",
+  "show_crosshair": false,
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "type": "renew",
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.75,
+    "smoke_scale": 1.45,
+    "initial_speed_scale": 1.5,
+    "smoke_directions": [
+      { "plane_angle": 0, "out_angle": 0 },
+      { "plane_angle": 180, "out_angle": 0 }
+    ],
+    "smoke_spread_angle": 50
+  },
+  "iron_zoom": 1.33,
+  "model_fov": 60,
+  "zoom_model_fov": 40,
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "ammo": {
+    "tracer_color": "#FF8888",
+    "enable_bullet_hole": true
+  },
+  "sounds": {
+    "shoot": "tacz:ak74m/ak74m_shoot",
+    "shoot_3p": "tacz:ak74m/ak74m_shoot_3p",
+    "draw": "tacz:ak74m/ak74m_draw",
+    "put_away": "tacz:ak74m/ak74m_put_away",
+    "silence": "tacz:ak74m/ak74m_silence",
+    "silence_3p": "tacz:ak74m/ak74m_silence_3p",
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill",
+    "melee_bayonet": "tacz:melee_bayonet/melee_bayonet_01",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_02"
+  },
+  "offhand_show": {
+    "pos": [3, 20, 3.5],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-3, 20, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  },
+  "controllable": {
+    "semi": {
+      "low_frequency": 0.25,
+      "high_frequency": 0.5,
+      "time": 100
+    },
+    "auto": {
+      "low_frequency": 0.15,
+      "high_frequency": 0.25,
+      "time": 80
+    },
+    "burst": {
+      "low_frequency": 0.25,
+      "high_frequency": 0.5,
+      "time": 100
+    }
+  }
+}

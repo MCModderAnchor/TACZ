@@ -1,4 +1,5 @@
 {
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/spas_12_geo",
   "texture": "tacz:gun/uv/spas_12",
   "lod": {
@@ -29,10 +30,16 @@
     }
   },
   "muzzle_flash": {
+    "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 1.2
+    "scale": 1.2,
+    "initial_speed_scale": 1.7,
+    "smoke_scale": 2,
+    "smoke_particle_count": 25
   },
   "iron_zoom": 1.5,
+  "model_fov": 60,
+  "zoom_model_fov": 60,
   "shell": {
     "initial_velocity": [5, 0.5, 1],
     "random_velocity": [1, 0.5, 0.25],
@@ -55,13 +62,13 @@
   },
   // 副手枪械显示
   "offhand_show": {
-    "pos": [1, 20, 3.5],
+    "pos": [2, 22, 3.5],
     "rotate": [0, 0, 60],
     "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [-1, 20, 3],
+      "pos": [-2, 22, 3],
       "rotate": [-180, 0, 120],
       "scale": [0.5, 0.5, 0.5]
     }

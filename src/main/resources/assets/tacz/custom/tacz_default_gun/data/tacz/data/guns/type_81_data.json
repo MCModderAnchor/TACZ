@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:762x39",
   "ammo_amount": 30,
   "extended_mag_ammo_amount": [
@@ -7,9 +8,9 @@
     40
   ],
   "bolt": "closed_bolt",
-  "rpm": 630,
+  "rpm": 650,
   "bullet": {
-    "life": 0.75,
+    "life": 0.8,
     "bullet_amount": 1,
     "damage": 9,
     "tracer_count_interval": 0,
@@ -22,10 +23,10 @@
         {"distance": "infinite", "damage": 4.5}
       ]
     },
-    "speed": 245,
+    "speed": 325,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.02,
+    "friction": 0.025,
     "ignite": false,
     "pierce": 1
   },
@@ -42,7 +43,7 @@
   },
   "draw_time": 0.71,
   "put_away_time": 0.43,
-  "aim_time": 0.15,
+  "aim_time": 0.2,
   "sprint_time": 0.18,
   "weight": 3.5,
   "movement_speed": {

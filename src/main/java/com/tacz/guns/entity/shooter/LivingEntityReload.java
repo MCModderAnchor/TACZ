@@ -3,11 +3,14 @@ package com.tacz.guns.entity.shooter;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
+import com.tacz.guns.api.event.common.GunFinishReloadEvent;
 import com.tacz.guns.api.event.common.GunReloadEvent;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.network.NetworkHandler;
+import com.tacz.guns.network.message.event.ServerMessageGunFinishReload;
 import com.tacz.guns.network.message.event.ServerMessageGunReload;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -58,7 +61,8 @@ public class LivingEntityReload {
                 return;
             }
             // 检查弹药
-            if (IGunOperator.fromLivingEntity(shooter).needCheckAmmo() && !gunItem.canReload(shooter, currentGunItem)) {
+            IGunOperator gunOperator = IGunOperator.fromLivingEntity(shooter);
+            if (gunOperator.needCheckAmmo() && !gunItem.canReload(shooter, currentGunItem)) {
                 return;
             }
             // 触发装弹事件
@@ -75,11 +79,13 @@ public class LivingEntityReload {
                 // 初始化战术换弹的 tick 的状态
                 data.reloadStateType = ReloadState.StateType.TACTICAL_RELOAD_FEEDING;
             }
-            data.reloadTimestamp = System.currentTimeMillis();
+            data.reloadTimestamp = GunTime.nowMillis();
             // 调用枪械逻辑
             if (!gunItem.startReload(data, currentGunItem, shooter)) {
                 data.reloadStateType = ReloadState.StateType.NOT_RELOADING;
                 data.reloadTimestamp = -1;
+            } else if (gunIndex.getGunData().isForceAimExitOnReload()) {
+                gunOperator.aim(false);
             }
         });
     }
@@ -105,17 +111,24 @@ public class LivingEntityReload {
         if (data.reloadTimestamp == -1) {
             return result;
         }
-        // 调用枪械逻辑
-        if (data.currentGunItem != null) {
-            ItemStack currentGunItem = data.currentGunItem.get();
-            if (currentGunItem != null && currentGunItem.getItem() instanceof AbstractGunItem abstractGunItem) {
-                 result = abstractGunItem.tickReload(data, currentGunItem, shooter);
-            }
+        ItemStack currentGunItem = data.currentGunItem == null ? ItemStack.EMPTY : data.currentGunItem.get();
+        boolean finishedReload = false;
+        // 调用枪械逻辑，默认换弹和脚本换弹共用结束事件。
+        if (currentGunItem != null && currentGunItem.getItem() instanceof AbstractGunItem abstractGunItem
+                && TimelessAPI.getCommonGunIndex(abstractGunItem.getGunId(currentGunItem)).isPresent()) {
+            result = abstractGunItem.tickReload(data, currentGunItem, shooter);
+            finishedReload = data.reloadTimestamp != -1 && data.reloadStateType.isReloading()
+                    && !result.getStateType().isReloading() && !currentGunItem.isEmpty();
         }
         // 将 tick 的结果保存到 data holder
         data.reloadStateType = result.getStateType();
         if (!result.getStateType().isReloading()) {
             data.reloadTimestamp = -1;
+        }
+        // 状态更新后再通知监听器。
+        if (finishedReload) {
+            MinecraftForge.EVENT_BUS.post(new GunFinishReloadEvent(shooter, currentGunItem, LogicalSide.SERVER));
+            NetworkHandler.sendToTrackingEntityAndSelf(shooter, new ServerMessageGunFinishReload(shooter.getId(), currentGunItem));
         }
         return result;
     }

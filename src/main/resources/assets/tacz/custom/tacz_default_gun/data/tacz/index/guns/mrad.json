@@ -1,0 +1,8 @@
+{
+  "name": "tacz.gun.mrad.name",
+  "display": "tacz:mrad_display",
+  "data": "tacz:mrad_data",
+  "tooltip": "tacz.gun.mrad.desc",
+  "type": "sniper",
+  "sort": 8
+}

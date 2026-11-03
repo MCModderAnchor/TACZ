@@ -11,7 +11,7 @@
     "texture": "tacz:attachment/lod/sight_rmr_dot"
   },
   "zoom": [
-    1.5
+    1.25
   ],
   // 如果配件是瞄具，且为筒状放大瞄具，此选项应为true
   "scope": false,
@@ -19,7 +19,7 @@
   "sight": true,
   // 只有 瞄具 配件需要设置这个属性，表示开镜后，枪身和瞄具渲染的fov。
   // 默认情况下，mc 渲染手部模型的 fov 为 70。
-  "fov": 40.0,
+  "fov": 45.0,
   // 音效，只在装卸配件时自己能听到
   "sounds": {
     "install": "tacz:attachments/scope_general_e",

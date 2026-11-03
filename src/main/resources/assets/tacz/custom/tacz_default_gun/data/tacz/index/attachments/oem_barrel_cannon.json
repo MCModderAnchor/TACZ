@@ -1,0 +1,9 @@
+{
+  "name": "tacz.attachment.oem_barrel_cannon.name",
+  "builtin_attachment": true,
+  "display": "tacz:oem_barrel_cannon_display",
+  "data": "tacz:oem_barrel_cannon_data",
+  "type": "muzzle",
+  "sort": 1,
+  "hidden": true
+}

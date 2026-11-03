@@ -3,6 +3,7 @@ package com.tacz.guns.network.message;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -25,7 +26,7 @@ public class ClientMessageSyncBaseTimestamp {
     public static void handle(ClientMessageSyncBaseTimestamp message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide().isServer()) {
-            long timestamp = System.currentTimeMillis();
+            long timestamp = GunTime.nowMillis();
             context.enqueueWork(() -> {
                 ServerPlayer entity = context.getSender();
                 if (entity == null) {

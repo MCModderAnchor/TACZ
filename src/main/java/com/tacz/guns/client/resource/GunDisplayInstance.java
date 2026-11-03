@@ -15,14 +15,19 @@ import com.tacz.guns.api.client.animation.statemachine.LuaStateMachineFactory;
 import com.tacz.guns.api.client.other.GunModelTypeManager;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.animation.statemachine.GunAnimationStateContext;
+import com.tacz.guns.client.model.BedrockAmmoModel;
 import com.tacz.guns.client.model.BedrockGunModel;
+import com.tacz.guns.client.model.DisplayGunModelInstance;
+import com.tacz.guns.client.model.ExternalGunModel;
+import com.tacz.guns.client.renderer.external.ExternalShellRenderer;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
+import com.tacz.guns.client.resource.pojo.display.SoundData;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoParticle;
+import com.tacz.guns.client.resource.pojo.display.ammo.HitSurfaceParticle;
 import com.tacz.guns.client.resource.pojo.display.gun.*;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
-import com.tacz.guns.client.sound.GunSoundPreload;
 import com.tacz.guns.config.client.ResourceConfig;
 import com.tacz.guns.sound.SoundManager;
 import com.tacz.guns.util.ColorHex;
@@ -51,6 +56,7 @@ import java.util.function.BiFunction;
 public class GunDisplayInstance {
     private final ResourceLocation displayId;
     private final GunDisplay display;
+    private @Nullable AdsPreset adsPreset;
     private final Object loadLock = new Object();
 
     // 加载标志位
@@ -72,13 +78,30 @@ public class GunDisplayInstance {
     private BedrockGunModel gunModel;
     private @Nullable Pair<BedrockGunModel, ResourceLocation> lodModel;
 
+    private final ExternalModelAssets externalModels = new ExternalModelAssets();
+    private final ClientAssetLoadTask<ExternalGunModel> externalGunModel = externalModels.add(
+            this::externalModelResource,
+            this::bakeExternalGunModel,
+            failure -> {
+                GunMod.LOGGER.warn("Failed to bake SBM external gun model for {}", getDisplayId(), failure);
+            }
+    );
+
+    private final ClientAssetLoadTask<Pair<ExternalGunModel, ResourceLocation>> externalLodModel =
+            externalModels.add(
+                    this::externalLodResource,
+                    this::bakeExternalLodModel,
+                    failure -> {
+                        GunMod.LOGGER.warn("Failed to bake SBM external gun LOD for {}", getDisplayId(), failure);
+                    }
+            );
+
     private LuaAnimationStateMachine<GunAnimationStateContext> animationStateMachine;
     private @Nullable LuaTable stateMachineParam;
 
     private @Nullable ResourceLocation playerAnimator3rd = new ResourceLocation(GunMod.MOD_ID, "rifle_default.player_animation");
     private boolean is3rdFixedHand = false;
-    private Map<String, ResourceLocation> sounds = Maps.newHashMap();
-    private List<ResourceLocation> preloadSounds = Lists.newArrayList();
+    private Map<String, SoundData> sounds = Maps.newHashMap();
     private GunTransform transform = GunTransform.getDefault();
 
     private ResourceLocation modelTexture;
@@ -87,13 +110,19 @@ public class GunDisplayInstance {
     private @Nullable ResourceLocation hudEmptyTexture;
 
     private @Nullable ShellEjection shellEjection;
+    private final ExternalShellRenderer externalShellRenderer = new ExternalShellRenderer();
+    private @Nullable BedrockAmmoModel shellModel;
+    private @Nullable ResourceLocation shellTextureLocation;
     private @Nullable MuzzleFlash muzzleFlash;
     private LayerGunShow offhandShow = new LayerGunShow();
     private @Nullable Int2ObjectArrayMap<LayerGunShow> hotbarShow;
     private float ironZoom;
+    private float modelFov;
     private float zoomModelFov;
     private boolean showCrosshair = false;
     private @Nullable AmmoParticle particle;
+    private @Nullable List<HitSurfaceParticle> hitSurfaceParticles;
+    private @Nullable Boolean bulletHoleEnabled;
     private float @Nullable [] tracerColor = null;
     private EnumMap<FireMode, ControllableData> controllableData = new EnumMap<>(FireMode.class);
     private AmmoCountStyle ammoCountStyle = AmmoCountStyle.NORMAL;
@@ -114,8 +143,17 @@ public class GunDisplayInstance {
         return new GunDisplayInstance(displayId, display);
     }
 
+    public ResourceLocation getDisplayId() {
+        return displayId;
+    }
+
     // 后台预热
     public void warmUpModel() {
+        warmUpLegacyModel();
+        externalGunModel.warmUp();
+    }
+
+    private void warmUpLegacyModel() {
         if (!ResourceConfig.ENABLE_LAZY_CLIENT_ASSET_LOAD.get()) {
             ensureModelLoaded();
             return;
@@ -132,6 +170,11 @@ public class GunDisplayInstance {
     }
 
     public void warmUpLod() {
+        warmUpLegacyLod();
+        externalLodModel.warmUp();
+    }
+
+    private void warmUpLegacyLod() {
         if (!ResourceConfig.ENABLE_LAZY_CLIENT_ASSET_LOAD.get()) {
             ensureLodLoaded();
             return;
@@ -244,6 +287,7 @@ public class GunDisplayInstance {
                 return;
             }
             checkTextureAndModel(display);
+            checkShellModel(display);
             checkTextShow(display);
             modelLoaded = true;
         }
@@ -354,6 +398,13 @@ public class GunDisplayInstance {
 
     // 基础数据直接读
     private void initBase(GunDisplay display) {
+        ResourceLocation presetId = display.getAdsPreset();
+        ResourceLocation legacyId = new ResourceLocation(GunMod.MOD_ID, "legacy");
+        adsPreset = ClientAssetsManager.INSTANCE.getAdsPreset(presetId == null ? legacyId : presetId);
+        if (adsPreset == null && presetId != null) {
+            GunMod.LOGGER.warn("Missing ADS preset {} referenced by gun display {}; falling back to {}", presetId, displayId, legacyId);
+            adsPreset = ClientAssetsManager.INSTANCE.getAdsPreset(legacyId);
+        }
         checkSlotTexture(display);
         checkHUDTexture(display);
         checkSounds(display);
@@ -363,6 +414,7 @@ public class GunDisplayInstance {
         checkMuzzleFlash(display);
         checkLayerGunShow(display);
         checkIronZoom(display);
+        checkModelFov(display);
         checkZoomModelFov(display);
         thirdPersonAnimation = StringUtils.defaultIfBlank(display.getThirdPersonAnimation(), "empty");
         if (display.getPlayerAnimator3rd() != null) {
@@ -384,9 +436,16 @@ public class GunDisplayInstance {
         }
     }
 
+    private void checkModelFov(GunDisplay display) {
+        modelFov = display.getModelFov();
+        if (modelFov <= 0) {
+            modelFov = 70;
+        }
+    }
+
     private void checkZoomModelFov(GunDisplay display) {
         zoomModelFov = display.getZoomModelFov();
-        if (zoomModelFov > 70) {
+        if (zoomModelFov <= 0) {
             zoomModelFov = 70;
         }
     }
@@ -527,43 +586,20 @@ public class GunDisplayInstance {
 
     private void checkSounds(GunDisplay display) {
         sounds = Maps.newHashMap();
-        preloadSounds = Lists.newArrayList();
-        Map<String, ResourceLocation> soundMaps = display.getSounds();
+        Map<String, SoundData> soundMaps = display.getSounds();
         if (soundMaps == null || soundMaps.isEmpty()) {
             return;
         }
         // 部分音效为默认音效，不存在则需要添加默认音效
-        soundMaps.putIfAbsent(SoundManager.DRY_FIRE_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.DRY_FIRE_SOUND));
-        soundMaps.putIfAbsent(SoundManager.FIRE_SELECT, new ResourceLocation(GunMod.MOD_ID, SoundManager.FIRE_SELECT));
-        soundMaps.putIfAbsent(SoundManager.HEAD_HIT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.HEAD_HIT_SOUND));
-        soundMaps.putIfAbsent(SoundManager.FLESH_HIT_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.FLESH_HIT_SOUND));
-        soundMaps.putIfAbsent(SoundManager.KILL_SOUND, new ResourceLocation(GunMod.MOD_ID, SoundManager.KILL_SOUND));
-        soundMaps.putIfAbsent(SoundManager.MELEE_BAYONET, new ResourceLocation(GunMod.MOD_ID, "melee_bayonet/melee_bayonet_01"));
-        soundMaps.putIfAbsent(SoundManager.MELEE_STOCK, new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_01"));
-        soundMaps.putIfAbsent(SoundManager.MELEE_PUSH, new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_02"));
+        soundMaps.putIfAbsent(SoundManager.DRY_FIRE_SOUND, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.DRY_FIRE_SOUND)));
+        soundMaps.putIfAbsent(SoundManager.FIRE_SELECT, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.FIRE_SELECT)));
+        soundMaps.putIfAbsent(SoundManager.HEAD_HIT_SOUND, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.HEAD_HIT_SOUND)));
+        soundMaps.putIfAbsent(SoundManager.FLESH_HIT_SOUND, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.FLESH_HIT_SOUND)));
+        soundMaps.putIfAbsent(SoundManager.KILL_SOUND, SoundData.of(new ResourceLocation(GunMod.MOD_ID, SoundManager.KILL_SOUND)));
+        soundMaps.putIfAbsent(SoundManager.MELEE_BAYONET, SoundData.of(new ResourceLocation(GunMod.MOD_ID, "melee_bayonet/melee_bayonet_01")));
+        soundMaps.putIfAbsent(SoundManager.MELEE_STOCK, SoundData.of(new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_01")));
+        soundMaps.putIfAbsent(SoundManager.MELEE_PUSH, SoundData.of(new ResourceLocation(GunMod.MOD_ID, "melee_stock/melee_stock_02")));
         sounds.putAll(soundMaps);
-
-        Set<ResourceLocation> preloadSet = new LinkedHashSet<>();
-        for (String name : GunSoundPreload.DEFAULT_PRELOAD_NAMES) {
-            addPreloadSound(preloadSet, name);
-        }
-        List<String> configuredPreloadSounds = display.getPreloadSounds();
-        if (configuredPreloadSounds != null) {
-            for (String name : configuredPreloadSounds) {
-                addPreloadSound(preloadSet, name);
-            }
-        }
-        preloadSounds.addAll(preloadSet);
-    }
-
-    private void addPreloadSound(Set<ResourceLocation> preloadSet, String name) {
-        if (StringUtils.isBlank(name)) {
-            return;
-        }
-        ResourceLocation soundId = sounds.get(name);
-        if (soundId != null) {
-            preloadSet.add(soundId);
-        }
     }
 
     private void checkTransform(GunDisplay display) {
@@ -589,6 +625,24 @@ public class GunDisplayInstance {
         shellEjection = display.getShellEjection();
     }
 
+    private void checkShellModel(GunDisplay display) {
+        ShellEjection shell = display.getShellEjection();
+        if (shell == null || shell.getModelLocation() == null || shell.getModelTexture() == null) {
+            return;
+        }
+        shellTextureLocation = shell.getModelTexture();
+        BedrockModelPOJO modelPOJO = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(shell.getModelLocation());
+        if (modelPOJO == null) {
+            return;
+        }
+        if (BedrockVersion.isLegacyVersion(modelPOJO) && modelPOJO.getGeometryModelLegacy() != null) {
+            shellModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.LEGACY);
+        }
+        if (BedrockVersion.isNewVersion(modelPOJO) && modelPOJO.getGeometryModelNew() != null) {
+            shellModel = new BedrockAmmoModel(modelPOJO, BedrockVersion.NEW);
+        }
+    }
+
     private void checkGunAmmo(GunDisplay display) {
         GunAmmo displayGunAmmo = display.getGunAmmo();
         if (displayGunAmmo == null) {
@@ -612,11 +666,14 @@ public class GunDisplayInstance {
                 e.fillInStackTrace();
             }
         }
+        hitSurfaceParticles = displayGunAmmo.getHitSurfaceParticles();
+        bulletHoleEnabled = displayGunAmmo.getBulletHoleEnabled();
     }
 
     private void checkMuzzleFlash(GunDisplay display) {
         muzzleFlash = display.getMuzzleFlash();
-        if (muzzleFlash != null && muzzleFlash.getTexture() == null) {
+        // renew 模式走第一人称 snowstorm 粒子，无需四边形贴图
+        if (muzzleFlash != null && !muzzleFlash.isRenew() && muzzleFlash.getTexture() == null) {
             muzzleFlash = null;
         }
     }
@@ -645,10 +702,92 @@ public class GunDisplayInstance {
         return gunModel;
     }
 
+    /** 外部视角模型在后台烘焙；未就绪或不支持时返回 null，渲染线程不等待。 */
+    public @Nullable ExternalGunModel getExternalGunModel() {
+        return externalGunModel.getIfReady();
+    }
+
+    private @Nullable ExternalGunModel bakeExternalGunModel() {
+        if (modelLoadFailed) {
+            return null;
+        }
+
+        try {
+            loadModelIfNecessary();
+        } catch (RuntimeException failure) {
+            handleModelLoadFailure(failure);
+            return null;
+        }
+
+        if (gunModel == null || gunModel.getClass() != BedrockGunModel.class) {
+            return null;
+        }
+
+        BedrockModelPOJO pojo = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(display.getModelLocation());
+        if (pojo == null) {
+            return null;
+        }
+        return ExternalGunModel.bake(pojo, getExternalHiddenTextBones(), DisplayGunModelInstance.Kind.GUN);
+    }
+
+    /** 第一人称文本功能节点在 FIXED 上不输出模型几何。 */
+    public Set<String> getExternalHiddenTextBones() {
+        return display.getTextShows() == null ? Set.of() : Set.copyOf(display.getTextShows().keySet());
+    }
+
     @Nullable
     public Pair<BedrockGunModel, ResourceLocation> getLodModel() {
         ensureLodLoaded();
         return lodModel;
+    }
+
+    /** 与旧 LOD 选择对应的独立 SBM 模型，仍由调用方按距离选择。 */
+    public @Nullable Pair<ExternalGunModel, ResourceLocation> getExternalLodModel() {
+        return externalLodModel.getIfReady();
+    }
+
+    private @Nullable Pair<ExternalGunModel, ResourceLocation> bakeExternalLodModel() {
+        if (lodLoadFailed) {
+            return null;
+        }
+
+        try {
+            loadLodIfNecessary();
+        } catch (RuntimeException failure) {
+            handleLodLoadFailure(failure);
+            return null;
+        }
+
+        if (lodModel == null) {
+            return null;
+        }
+
+        GunLod lod = display.getGunLod();
+        BedrockModelPOJO pojo = ClientAssetsManager.INSTANCE.getBedrockModelPOJO(lod.getModelLocation());
+        if (pojo == null) {
+            return null;
+        }
+        ExternalGunModel model = ExternalGunModel.bake(
+                pojo, getExternalHiddenTextBones(), DisplayGunModelInstance.Kind.GUN
+        );
+        return Pair.of(model, lod.getModelTexture());
+    }
+
+    public ExternalModelAssets getExternalModels() {
+        return externalModels;
+    }
+
+    private ResourceLocation externalModelResource() {
+        return display.getModelLocation();
+    }
+
+    private ResourceLocation externalLodResource() {
+        GunLod lod = display.getGunLod();
+        if (lod != null && lod.getModelLocation() != null) {
+            return lod.getModelLocation();
+        }
+        // 没有 LOD 的默认模型也提前结束空任务，首次展示不必等待一次空的准备。
+        return display.getModelLocation();
     }
 
     public @Nullable LuaAnimationStateMachine<GunAnimationStateContext> getAnimationStateMachine() {
@@ -662,12 +801,8 @@ public class GunDisplayInstance {
     }
 
     @Nullable
-    public ResourceLocation getSounds(String name) {
+    public SoundData getSounds(String name) {
         return sounds.get(name);
-    }
-
-    public List<ResourceLocation> getPreloadSounds() {
-        return preloadSounds;
     }
 
     public GunTransform getTransform() {
@@ -701,6 +836,22 @@ public class GunDisplayInstance {
         return shellEjection;
     }
 
+    public ExternalShellRenderer getExternalShellRenderer() {
+        return externalShellRenderer;
+    }
+
+    @Nullable
+    public BedrockAmmoModel getShellModel() {
+        ensureModelLoaded();
+        return shellModel;
+    }
+
+    @Nullable
+    public ResourceLocation getShellTextureLocation() {
+        ensureModelLoaded();
+        return shellTextureLocation;
+    }
+
     public float @Nullable [] getTracerColor() {
         return tracerColor;
     }
@@ -708,6 +859,16 @@ public class GunDisplayInstance {
     @Nullable
     public AmmoParticle getParticle() {
         return particle;
+    }
+
+    @Nullable
+    public List<HitSurfaceParticle> getHitSurfaceParticles() {
+        return hitSurfaceParticles;
+    }
+
+    @Nullable
+    public Boolean getBulletHoleEnabled() {
+        return bulletHoleEnabled;
     }
 
     @Nullable
@@ -728,8 +889,25 @@ public class GunDisplayInstance {
         return ironZoom;
     }
 
+    public float getModelFov() {
+        return modelFov;
+    }
+
     public float getZoomModelFov() {
         return zoomModelFov;
+    }
+
+    public @Nullable AdsPath getAdsPath() {
+        AdsPath path = display.getAdsPath();
+        if (path == null && adsPreset != null) {
+            path = adsPreset.getPath();
+        }
+        return path != null && path.isValid() ? path : null;
+    }
+
+    public @Nullable AdsFov getAdsFov() {
+        AdsFov fov = display.getAdsFov();
+        return fov != null ? fov : adsPreset == null ? null : adsPreset.getFov();
     }
 
     public boolean isShowCrosshair() {

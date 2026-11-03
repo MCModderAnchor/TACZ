@@ -1,0 +1,17 @@
+{
+  "weight": -0.5,
+  "ads": {
+    "addend": -0.1
+  },
+  "aim_inaccuracy": {
+    "multiplier": 1.1
+  },
+  "melee": {
+    "distance": 2,
+    "range_angle": 40,
+    "cooldown": 0.1,
+    "damage": 3,
+    "knockback": 0.4,
+    "prep": 0.1
+  }
+}

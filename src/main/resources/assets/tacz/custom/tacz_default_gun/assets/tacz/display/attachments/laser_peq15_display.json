@@ -1,6 +1,7 @@
 {
   "slot": "tacz:attachment/slot/grip_td",
   "model": "tacz:attachment/laser_peq15_geo",
+  "adapter": "laser_adapter",
   "texture": "tacz:attachment/uv/laser_peq15",
   "sounds": {
     "install": "tacz:attachments/attachment_general_b",

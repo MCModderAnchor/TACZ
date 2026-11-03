@@ -21,6 +21,13 @@ public class RenderClothConfig {
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.laser_fadeout.desc"))
                 .setSaveConsumer(RenderConfig.ENABLE_LASER_FADE_OUT::set).build());
 
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.muzzle_smoke"), RenderConfig.RENDER_MUZZLE_SMOKE.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.muzzle_smoke.desc"))
+                .setSaveConsumer(RenderConfig.RENDER_MUZZLE_SMOKE::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.disable_third_person_offhand_and_hotbar_gun_render"), RenderConfig.DISABLE_THIRD_PERSON_OFFHAND_AND_HOTBAR_GUN_RENDER.get())
+                .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.client.render.disable_third_person_offhand_and_hotbar_gun_render.desc"))
+                .setSaveConsumer(RenderConfig.DISABLE_THIRD_PERSON_OFFHAND_AND_HOTBAR_GUN_RENDER::set).build());
 
         render.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.client.render.gun_lod_render_distance"), RenderConfig.GUN_LOD_RENDER_DISTANCE.get())
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(0).setTooltip(Component.translatable("config.tacz.client.render.gun_lod_render_distance.desc"))
@@ -33,6 +40,18 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.bullet_hole_particle_fade_threshold"), RenderConfig.BULLET_HOLE_PARTICLE_FADE_THRESHOLD.get())
                 .setMin(0).setMax(1).setDefaultValue(0.98).setTooltip(Component.translatable("config.tacz.client.render.bullet_hole_particle_fade_threshold.desc"))
                 .setSaveConsumer(RenderConfig.BULLET_HOLE_PARTICLE_FADE_THRESHOLD::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.hit_particle_enable"), RenderConfig.HIT_PARTICLE_ENABLE.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.hit_particle_enable.desc"))
+                .setSaveConsumer(RenderConfig.HIT_PARTICLE_ENABLE::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.hit_extra_particle_enable"), RenderConfig.HIT_EXTRA_PARTICLE_ENABLE.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.hit_extra_particle_enable.desc"))
+                .setSaveConsumer(RenderConfig.HIT_EXTRA_PARTICLE_ENABLE::set).build());
+
+        render.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.client.render.hit_particle_max_distance"), RenderConfig.HIT_PARTICLE_MAX_DISTANCE.get())
+                .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(64).setTooltip(Component.translatable("config.tacz.client.render.hit_particle_max_distance.desc"))
+                .setSaveConsumer(RenderConfig.HIT_PARTICLE_MAX_DISTANCE::set).build());
 
         render.addEntry(entryBuilder.startDropdownMenu(Component.translatable("config.tacz.client.render.crosshair_type"),
                         CrosshairDropdown.of(RenderConfig.CROSSHAIR_TYPE.get()), CrosshairDropdown.of())
@@ -76,6 +95,10 @@ public class RenderClothConfig {
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.auto_select_gun_smith_table_filter.desc"))
                 .setSaveConsumer(RenderConfig.AUTO_SELECT_GUN_SMITH_TABLE_FILTER::set).build());
 
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.creative_pack_sidebar"), RenderConfig.RENDER_CREATIVE_PACK_SIDEBAR.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.creative_pack_sidebar.desc"))
+                .setSaveConsumer(RenderConfig.RENDER_CREATIVE_PACK_SIDEBAR::set).build());
+
         render.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.client.render.damage_counter_reset_time"), RenderConfig.DAMAGE_COUNTER_RESET_TIME.get())
                 .setMin(10).setMax(Integer.MAX_VALUE).setDefaultValue(2000).setTooltip(Component.translatable("config.tacz.client.render.damage_counter_reset_time.desc"))
                 .setSaveConsumer(RenderConfig.DAMAGE_COUNTER_RESET_TIME::set).build());
@@ -84,6 +107,10 @@ public class RenderClothConfig {
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.disable_movement_fov.desc"))
                 .setSaveConsumer(RenderConfig.DISABLE_MOVEMENT_ATTRIBUTE_FOV::set).build());
 
+        render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.gun_hurt_bob_multiplier"), RenderConfig.GUN_HURT_BOB_MULTIPLIER.get())
+                .setMin(0).setMax(1).setDefaultValue(0.1).setTooltip(Component.translatable("config.tacz.client.render.gun_hurt_bob_multiplier.desc"))
+                .setSaveConsumer(RenderConfig.GUN_HURT_BOB_MULTIPLIER::set).build());
+
         render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.enable_tooltip_id"), RenderConfig.ENABLE_TACZ_ID_IN_TOOLTIP.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.enable_tooltip_id.desc"))
                 .setSaveConsumer(RenderConfig.ENABLE_TACZ_ID_IN_TOOLTIP::set).build());
@@ -91,5 +118,21 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.enable_translucent"), RenderConfig.BLOCK_ENTITY_TRANSLUCENT.get())
                 .setDefaultValue(false).setTooltip(Component.translatable("config.tacz.client.render.enable_translucent.desc"))
                 .setSaveConsumer(RenderConfig.BLOCK_ENTITY_TRANSLUCENT::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.display_gun_vbo"), RenderConfig.DISPLAY_GUN_VBO.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.display_gun_vbo.desc"))
+                .setSaveConsumer(RenderConfig.DISPLAY_GUN_VBO::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.static_item_gun_vbo"), RenderConfig.STATIC_ITEM_GUN_VBO.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.static_item_gun_vbo.desc"))
+                .setSaveConsumer(RenderConfig.STATIC_ITEM_GUN_VBO::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.scope_lens_enable"), RenderConfig.EXPERIMENTAL_SCOPE_LENS.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.scope_lens_enable.desc"))
+                .setSaveConsumer(RenderConfig.EXPERIMENTAL_SCOPE_LENS::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.scope_thermal_enable"), RenderConfig.SCOPE_THERMAL_ENABLE.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.scope_thermal_enable.desc"))
+                .setSaveConsumer(RenderConfig.SCOPE_THERMAL_ENABLE::set).build());
     }
 }

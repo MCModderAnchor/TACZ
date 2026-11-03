@@ -1,0 +1,94 @@
+{
+  "variants": {
+    "facing=north,dyed=false,shape=straight": {
+      "model": "tacz:block/gun_pegboard"
+    },
+    "facing=north,dyed=true,shape=straight": {
+      "model": "tacz:block/gun_pegboard_dyed"
+    },
+    "facing=north,dyed=false,shape=corner_left": {
+      "model": "tacz:block/gun_pegboard_corner"
+    },
+    "facing=north,dyed=true,shape=corner_left": {
+      "model": "tacz:block/gun_pegboard_corner_dyed"
+    },
+    "facing=north,dyed=false,shape=corner_right": {
+      "model": "tacz:block/gun_pegboard_corner",
+      "y": 90
+    },
+    "facing=north,dyed=true,shape=corner_right": {
+      "model": "tacz:block/gun_pegboard_corner_dyed",
+      "y": 90
+    },
+    "facing=east,dyed=false,shape=straight": {
+      "model": "tacz:block/gun_pegboard",
+      "y": 90
+    },
+    "facing=east,dyed=true,shape=straight": {
+      "model": "tacz:block/gun_pegboard_dyed",
+      "y": 90
+    },
+    "facing=east,dyed=false,shape=corner_left": {
+      "model": "tacz:block/gun_pegboard_corner",
+      "y": 90
+    },
+    "facing=east,dyed=true,shape=corner_left": {
+      "model": "tacz:block/gun_pegboard_corner_dyed",
+      "y": 90
+    },
+    "facing=east,dyed=false,shape=corner_right": {
+      "model": "tacz:block/gun_pegboard_corner",
+      "y": 180
+    },
+    "facing=east,dyed=true,shape=corner_right": {
+      "model": "tacz:block/gun_pegboard_corner_dyed",
+      "y": 180
+    },
+    "facing=south,dyed=false,shape=straight": {
+      "model": "tacz:block/gun_pegboard",
+      "y": 180
+    },
+    "facing=south,dyed=true,shape=straight": {
+      "model": "tacz:block/gun_pegboard_dyed",
+      "y": 180
+    },
+    "facing=south,dyed=false,shape=corner_left": {
+      "model": "tacz:block/gun_pegboard_corner",
+      "y": 180
+    },
+    "facing=south,dyed=true,shape=corner_left": {
+      "model": "tacz:block/gun_pegboard_corner_dyed",
+      "y": 180
+    },
+    "facing=south,dyed=false,shape=corner_right": {
+      "model": "tacz:block/gun_pegboard_corner",
+      "y": 270
+    },
+    "facing=south,dyed=true,shape=corner_right": {
+      "model": "tacz:block/gun_pegboard_corner_dyed",
+      "y": 270
+    },
+    "facing=west,dyed=false,shape=straight": {
+      "model": "tacz:block/gun_pegboard",
+      "y": 270
+    },
+    "facing=west,dyed=true,shape=straight": {
+      "model": "tacz:block/gun_pegboard_dyed",
+      "y": 270
+    },
+    "facing=west,dyed=false,shape=corner_left": {
+      "model": "tacz:block/gun_pegboard_corner",
+      "y": 270
+    },
+    "facing=west,dyed=true,shape=corner_left": {
+      "model": "tacz:block/gun_pegboard_corner_dyed",
+      "y": 270
+    },
+    "facing=west,dyed=false,shape=corner_right": {
+      "model": "tacz:block/gun_pegboard_corner"
+    },
+    "facing=west,dyed=true,shape=corner_right": {
+      "model": "tacz:block/gun_pegboard_corner_dyed"
+    }
+  }
+}

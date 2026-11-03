@@ -1,0 +1,163 @@
+{
+  "credit": "Made by NekoCrane",
+  "texture_size": [
+    64,
+    64
+  ],
+  "textures": {
+    "1": "tacz:block/peg_board_cornor_grayscale",
+    "particle": "#1"
+  },
+  "elements": [
+    {
+      "from": [
+        13,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        13
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            4,
+            0,
+            7.25,
+            4
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        },
+        "north": {
+          "uv": [
+            7.25,
+            0,
+            8,
+            4
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
+            7.25,
+            8
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        },
+        "south": {
+          "uv": [
+            7.25,
+            4,
+            8,
+            8
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            8.75,
+            4.75,
+            8
+          ],
+          "texture": "#1",
+          "rotation": 270,
+          "tintindex": 0
+        },
+        "down": {
+          "uv": [
+            11.25,
+            4.75,
+            8,
+            5.5
+          ],
+          "texture": "#1",
+          "rotation": 90,
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        13
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            0.75,
+            12
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            8.75,
+            4
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        },
+        "up": {
+          "uv": [
+            4.75,
+            8.75,
+            0.75,
+            8
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            4,
+            8,
+            4.75
+          ],
+          "texture": "#1",
+          "tintindex": 0
+        }
+      }
+    }
+  ]
+}

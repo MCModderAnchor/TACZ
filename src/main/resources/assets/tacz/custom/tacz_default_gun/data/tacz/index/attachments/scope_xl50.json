@@ -1,0 +1,8 @@
+{
+  "hidden": false,
+  "name": "tacz.attachment.scope_xl50.name",
+  "display": "tacz:scope_xl50_display",
+  "data": "tacz:scope_xl50_data",
+  "type": "scope",
+  "sort": 40
+}

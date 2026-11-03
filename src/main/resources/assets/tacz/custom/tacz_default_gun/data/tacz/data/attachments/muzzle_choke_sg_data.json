@@ -1,25 +1,33 @@
 {
+  "weight": 0.3,
+  "smoke_directions": [
+    { "plane_angle": 30, "out_angle": 0 },
+    { "plane_angle": -30, "out_angle": 0 },
+    { "plane_angle": 150, "out_angle": 0 },
+    { "plane_angle": -150, "out_angle": 0 }
+  ],
+  "smoke_spread_angle": 15,
   "ads": {
     "addend": 0.05
   },
   "inaccuracy": {
-    "multiplier": 0.65
+    "multiplier": 0.6
   },
   "aim_inaccuracy": {
-    "multiplier": 0.65
+    "multiplier": 0.6
   },
   "sneak_inaccuracy": {
-    "multiplier": 0.65
+    "multiplier": 0.6
   },
   "lie_inaccuracy": {
-    "multiplier": 0.65
+    "multiplier": 0.6
   },
   "recoil": {
     "pitch": {
-      "multiplier": 1.45
+      "multiplier": 1.1
     },
     "yaw": {
-        "multiplier": 1.45
+        "multiplier": 1.1
       }
   }
 }

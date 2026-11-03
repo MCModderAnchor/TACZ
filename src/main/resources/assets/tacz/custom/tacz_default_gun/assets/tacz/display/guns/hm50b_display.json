@@ -1,0 +1,77 @@
+{
+  "ads_preset": "tacz:renew",
+  "model": "tacz:gun/hm50b_geo",
+  "texture": "tacz:gun/uv/hm50b",
+  "lod": {
+    "model": "tacz:gun/lod/hm50b",
+    "texture": "tacz:gun/lod/hm50b"
+  },
+  "hud": "tacz:gun/hud/hm50b",
+  "slot": "tacz:gun/slot/hm50b",
+  "animation": "tacz:hm50b",
+  "use_default_animation": "rifle",
+  "state_machine": "tacz:hm50b_state_machine",
+  "state_machine_param": {
+    "bolt_shell_ejecting_time": 0.43
+  },
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "type": "renew",
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 2,
+    "smoke_scale": 2.5,
+    "initial_speed_scale": 3,
+    "smoke_particle_count": 40,
+    "smoke_directions": [
+      { "plane_angle": 0, "out_angle": 0 },
+      { "plane_angle": 180, "out_angle": 0 }
+    ],
+    "smoke_spread_angle": 45
+  },
+  // 机瞄的放大倍数，默认 1.2
+  "iron_zoom": 1.5,
+  // 机瞄模型缩放fov，默认70
+  "zoom_model_fov": 50,
+  "shell": {
+    "initial_velocity": [8, 2, -7],
+    "random_velocity": [2, 1, 0.5],
+    "acceleration": [0.0, -20, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "draw": "tacz:hm50b/hm50b_draw",
+    "put_away": "tacz:hm50b/hm50b_put_away",
+    "shoot": "tacz:hm50b/hm50b_shoot",
+    "shoot_3p": "tacz:hm50b/hm50b_shoot_3p",
+    "silence": "tacz:hm50b/hm50b_silence",
+    "silence_3p": "tacz:hm50b/hm50b_silence_3p",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  "offhand_show": {
+    "pos": [6, 20, 5],
+    "rotate": [-90, -5, -90],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-3.5, 20, 5],
+      "rotate": [-90, -5, -90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  },
+  "controllable": {
+    "semi": {
+      "low_frequency": 1,
+      "high_frequency": 1,
+      "time": 200
+    }
+  }
+}

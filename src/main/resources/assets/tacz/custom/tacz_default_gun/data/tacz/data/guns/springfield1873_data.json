@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:45_70",
   "bolt": "open_bolt",
   "ammo_amount": 1,
@@ -46,7 +47,7 @@
   },
   "draw_time": 0.45,
   "put_away_time": 0.4,
-  "aim_time": 0.15,
+  "aim_time": 0.22,
   "sprint_time": 0.25,
   "bolt_action_time": 2.5,
   "weight": 3.5,
@@ -89,6 +90,7 @@
     "lie": 1,
     "aim": 0.21
   },
+  "can_slide": false,
   // 近战相关
   "melee": {
     // 枪械距离参数，用来延升近战攻击范围

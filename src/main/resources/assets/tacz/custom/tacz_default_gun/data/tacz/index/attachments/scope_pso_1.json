@@ -1,0 +1,9 @@
+{
+  "name": "tacz.attachment.scope_pso_1.name",
+  "builtin_attachment": true,
+  "display": "tacz:scope_pso_1_display",
+  "data": "tacz:scope_pso_1_data",
+  "type": "scope",
+  "hidden": true,
+  "sort": 32
+}

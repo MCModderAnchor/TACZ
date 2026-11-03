@@ -1,5 +1,6 @@
 package com.tacz.guns.compat.ar;
 
+import com.google.common.util.concurrent.Runnables;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraftforge.fml.ModList;
@@ -40,6 +41,14 @@ public class ARCompat {
 
 	public static void setRenderAfterFunction(Runnable runnable) {
 		if (LOADED) ARCompatImpl.setRenderAfterFunction(runnable);
+	}
+
+	public static Runnable getRenderBeforeFunction() {
+		return LOADED ? ARCompatImpl.getRenderBeforeFunction() : Runnables.doNothing();
+	}
+
+	public static Runnable getRenderAfterFunction() {
+		return LOADED ? ARCompatImpl.getRenderAfterFunction() : Runnables.doNothing();
 	}
 
 	public static void resetRenderLayer() {

@@ -2,6 +2,7 @@ package com.tacz.guns.util.block;
 
 import com.google.common.collect.Sets;
 import com.tacz.guns.config.common.AmmoConfig;
+import com.tacz.guns.util.EntityUtil;
 import com.tacz.guns.util.HitboxHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -56,6 +57,10 @@ public class ProjectileExplosion extends Explosion {
 
     @Override
     public void explode() {
+        // 防止直接调用时使用无效半径进行爆炸计算
+        if (!Float.isFinite(this.radius) || this.radius <= 0) {
+            return;
+        }
         this.level.gameEvent(this.exploder, GameEvent.EXPLODE, BlockPos.containing(this.x, this.y, this.z));
         Set<BlockPos> set = Sets.newHashSet();
         int i = 16;
@@ -116,7 +121,7 @@ public class ProjectileExplosion extends Explosion {
         Vec3 explosionPos = new Vec3(this.x, this.y, this.z);
 
         for (Entity entity : entities) {
-            if (entity.ignoreExplosion()) {
+            if (entity.ignoreExplosion() || EntityUtil.isBulletDamageIgnored(entity)) {
                 continue;
             }
 

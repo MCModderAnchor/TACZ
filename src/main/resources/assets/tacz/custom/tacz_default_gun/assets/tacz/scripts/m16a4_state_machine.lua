@@ -1,14 +1,13 @@
 -- 脚本的位置是 "{命名空间}:{路径}"，那么 require 的格式为 "{命名空间}_{路径}"
 -- 注意！require 取得的内容不应该被修改，应仅调用
-local default = require("tacz_default_state_machine")
+local default = require("tacz_default_state_machine_v2")
 local GUN_KICK_TRACK_LINE = default.GUN_KICK_TRACK_LINE
 
 local function isEaster()
     local flag = math.random(1, 1000)
     -- 改下面一行的数字决定概率，概率是千分之 x
     if (flag <= 100) then
-        return true,
-        print('eastertrue')
+        return true
     end
     return false
 end

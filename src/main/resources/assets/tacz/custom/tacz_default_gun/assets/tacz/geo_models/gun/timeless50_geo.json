@@ -5802,7 +5802,7 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "positioning2",
-					"pivot": [0, 9.25, -5.6875]
+					"pivot": [0, 9.29688, -4.4375]
 				},
 				{
 					"name": "laser_pos",
@@ -7221,7 +7221,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1, 8, 0],
+					"pivot": [1, 7.85938, 1.0625],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -7231,12 +7231,12 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0.00005, 9.9277, 12.28197]
+					"pivot": [0.00005, 9.9277, 14.5]
 				},
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [2, 11, 13]
+					"pivot": [2, 11, 14]
 				},
 				{
 					"name": "refit_view",

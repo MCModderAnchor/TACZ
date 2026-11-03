@@ -22,6 +22,7 @@
     "minecraft:ender_chest",
     "minecraft:furnace",
     "minecraft:grindstone",
+    "minecraft:hopper",
     "minecraft:loom",
     "minecraft:smithing_table",
     "minecraft:smoker",
@@ -32,6 +33,13 @@
     "tacz:workbench_a",
     "tacz:workbench_b",
     "tacz:workbench_c",
-    "tacz:statue"
+    "tacz:statue",
+    "tacz:gun_pegboard",
+    "tacz:glow_gun_pegboard",
+    "tacz:gun_display_case",
+    "tacz:glow_gun_pegboard",
+    "tacz:ammo_storage",
+    "tacz:ammo_storage_gold",
+    "tacz:ammo_storage_diamond"
   ]
 }

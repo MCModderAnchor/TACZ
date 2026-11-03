@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "tacz:ammo_storage",
+    "tacz:ammo_storage_gold",
+    "tacz:ammo_storage_diamond",
+    "tacz:gun_display_case",
+    "tacz:gun_pegboard",
+    "tacz:glow_gun_pegboard"
+  ]
+}

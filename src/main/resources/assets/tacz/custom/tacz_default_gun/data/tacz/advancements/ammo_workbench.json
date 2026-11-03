@@ -1,0 +1,26 @@
+{
+  "parent": "tacz:root",
+  "display": {
+    "icon": {
+      "item": "tacz:workbench_a",
+      "nbt": "{BlockId:\"tacz:ammo_workbench\"}"
+    },
+    "title": {
+      "translate": "advancement.tacz.ammo_workbench.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.ammo_workbench.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "craft": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "tacz:ammo_workbench"
+      }
+    }
+  }
+}

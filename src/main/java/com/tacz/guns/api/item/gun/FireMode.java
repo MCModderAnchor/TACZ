@@ -2,6 +2,9 @@ package com.tacz.guns.api.item.gun;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
+import java.util.Locale;
+
 public enum FireMode {
     /**
      * 全自动
@@ -22,5 +25,18 @@ public enum FireMode {
      * 未知的其他情况？
      */
     @SerializedName("unknown")
-    UNKNOWN
+    UNKNOWN;
+
+    public static FireMode fromName(@Nullable String name) {
+        if (name == null) {
+            return UNKNOWN;
+        }
+        String n = name.toUpperCase(Locale.ENGLISH);
+        return switch (n) {
+            case "AUTO" -> AUTO;
+            case "SEMI" -> SEMI;
+            case "BURST" -> BURST;
+            default -> UNKNOWN;
+        };
+    }
 }

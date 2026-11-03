@@ -1,0 +1,14 @@
+{
+  "slot": "tacz:attachment/slot/oem_sight_hk",
+  "model": "tacz:attachment/oem_sight_hk_geo",
+  "texture": "tacz:attachment/uv/oem_sight_hk",
+  "sight": true,
+  "fov": 40.0,
+  "zoom": [
+    1.33
+  ],
+  "sounds": {
+    "install": "tacz:attachments/scope_general_c",
+    "uninstall": "tacz:attachments/scope_general_c"
+  }
+}

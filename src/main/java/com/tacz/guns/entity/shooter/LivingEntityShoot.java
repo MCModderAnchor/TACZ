@@ -15,6 +15,7 @@ import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.ChargeData;
 import com.tacz.guns.resource.pojo.data.gun.ChargeType;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -77,7 +78,7 @@ public class LivingEntityShoot {
             // 根据 tick time 和 允许的网络延迟波动 计算 时间戳的接受窗口
             MinecraftServer server = Objects.requireNonNull(shooter.getServer());
             double tickTime = Math.max(server.tickTimes[server.getTickCount() % 100] * 1.0E-6D, 50);
-            long alpha = System.currentTimeMillis() - data.baseTimestamp - timestamp;
+            long alpha = GunTime.nowMillis() - data.baseTimestamp - timestamp;
             if (alpha < -300 || alpha > 300 + tickTime * 2) { // 允许 +- 300ms 的网络波动、窗口下限再扩大 2 个 tick time 时间(最坏情况射击会延迟2个 tick)
                 if (shooter instanceof ServerPlayer player) {
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new ServerMessageSyncBaseTimestamp());
@@ -148,7 +149,7 @@ public class LivingEntityShoot {
 
         NetworkHandler.sendToTrackingEntity(new ServerMessageGunShoot(shooter.getId(), currentGunItem), shooter);
         data.lastShootTimestamp = data.shootTimestamp;
-        data.heatTimestamp = System.currentTimeMillis();
+        data.heatTimestamp = GunTime.nowMillis();
         data.shootTimestamp = timestamp;
         data.chargeProgress = validateChargeProgress(chargeData, chargeProgress, hasChargeContext);
         // 执行枪械射击逻辑
@@ -203,10 +204,10 @@ public class LivingEntityShoot {
     private long getChargeElapsedMillis() {
         if (data.shootTimestamp >= 0) {
             long startTimestamp = data.baseTimestamp + data.shootTimestamp;
-            return System.currentTimeMillis() - startTimestamp;
+            return GunTime.nowMillis() - startTimestamp;
         }
         if (data.drawTimestamp >= 0) {
-            return System.currentTimeMillis() - data.drawTimestamp;
+            return GunTime.nowMillis() - data.drawTimestamp;
         }
         return 0L;
     }
@@ -226,7 +227,7 @@ public class LivingEntityShoot {
      * @return 射击冷却
      */
     public long getShootCoolDown() {
-        return getShootCoolDown(System.currentTimeMillis() - data.baseTimestamp);
+        return getShootCoolDown(GunTime.nowMillis() - data.baseTimestamp);
     }
 
     /**

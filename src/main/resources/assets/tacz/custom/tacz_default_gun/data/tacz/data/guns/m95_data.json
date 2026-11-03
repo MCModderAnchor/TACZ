@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:50bmg",
   "ammo_amount": 5,
   "extended_mag_ammo_amount": [
@@ -6,8 +7,15 @@
     8,
     10
   ],
+  "can_slide": false,
   "bolt": "manual_action",
   "rpm": 151,
+  "recoil_push": {
+    "ground_strength": 0.05,
+    "air_strength": 0.25,
+    "sneak_strength": 0.025,
+    "crawl_strength": 0.0
+  },
   "bullet": {
     "life": 1.1,
     "bullet_amount": 1,
@@ -30,10 +38,10 @@
     "pierce": 5,
     "explosion": {
       "explode": false,
-      "damage": 140,
+      "damage": 30,
       "radius": 1.8,
       "knockback": true,
-      "delay": 1
+      "delay": 0.25
     }
   },
   "reload": {
@@ -49,7 +57,7 @@
   },
   "draw_time": 1.03,
   "put_away_time": 0.87,
-  "aim_time": 0.23,
+  "aim_time": 0.37,
   "sprint_time": 0.2,
   "bolt_action_time": 1.43,
   "weight": 10.7,
@@ -115,6 +123,7 @@
       "prep": 0.1
     }
   },
+  "can_slide": false,
   "allow_attachment_types": [
     "scope",
     "extended_mag",

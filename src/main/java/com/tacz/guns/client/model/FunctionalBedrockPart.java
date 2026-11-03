@@ -3,7 +3,10 @@ package com.tacz.guns.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
+import com.tacz.guns.client.model.bedrock.UnshadedVertexConsumer;
+import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 
 import javax.annotation.Nonnull;
@@ -45,10 +48,17 @@ public class FunctionalBedrockPart extends BedrockPart {
 
     @Override
     public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
+        render(poseStack, transformType, consumer, light, overlay, red, green, blue, alpha, RenderHelper.getBufferSource(transformType));
+    }
+
+    @Override
+    public void render(PoseStack poseStack, ItemDisplayContext transformType, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha, @Nullable MultiBufferSource bufferSource) {
         int cubePackedLight = light;
+        VertexConsumer cubeConsumer = consumer;
         if (illuminated) {
             // 最大亮度
             cubePackedLight = LightTexture.pack(15, 15);
+            cubeConsumer = UnshadedVertexConsumer.wrap(consumer);
         }
 
         poseStack.pushPose();
@@ -57,20 +67,24 @@ public class FunctionalBedrockPart extends BedrockPart {
         if (functionalRenderer != null) {
             @Nullable IFunctionalRenderer renderer = functionalRenderer.apply(this);
             if (renderer != null) {
-                renderer.render(poseStack, consumer, transformType, cubePackedLight, overlay);
+                if (bufferSource != null) {
+                    renderer.render(poseStack, cubeConsumer, transformType, cubePackedLight, overlay, bufferSource);
+                } else {
+                    renderer.render(poseStack, cubeConsumer, transformType, cubePackedLight, overlay);
+                }
             } else {
                 if (this.visible) {
-                    super.compile(poseStack.last(), consumer, cubePackedLight, overlay, red, green, blue, alpha);
+                    super.compile(poseStack.last(), cubeConsumer, cubePackedLight, overlay, red, green, blue, alpha);
                     for (BedrockPart part : this.children) {
-                        part.render(poseStack, transformType, consumer, cubePackedLight, overlay, red, green, blue, alpha);
+                        part.render(poseStack, transformType, cubeConsumer, cubePackedLight, overlay, red, green, blue, alpha, bufferSource);
                     }
                 }
             }
         } else {
             if (this.visible) {
-                super.compile(poseStack.last(), consumer, cubePackedLight, overlay, red, green, blue, alpha);
+                super.compile(poseStack.last(), cubeConsumer, cubePackedLight, overlay, red, green, blue, alpha);
                 for (BedrockPart part : this.children) {
-                    part.render(poseStack, transformType, consumer, cubePackedLight, overlay, red, green, blue, alpha);
+                    part.render(poseStack, transformType, cubeConsumer, cubePackedLight, overlay, red, green, blue, alpha, bufferSource);
                 }
             }
         }

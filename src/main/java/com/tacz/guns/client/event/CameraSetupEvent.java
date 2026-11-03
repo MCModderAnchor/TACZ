@@ -16,15 +16,20 @@ import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.nbt.AttachmentItemDataAccessor;
 import com.tacz.guns.api.modifier.ParameterizedCachePair;
 import com.tacz.guns.client.renderer.item.AnimateGeoItemRenderer;
+import com.tacz.guns.client.resource.pojo.display.gun.AdsCurve;
+import com.tacz.guns.client.resource.pojo.display.gun.AdsFov;
 import com.tacz.guns.client.resource.GunDisplayInstance;
+import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
 import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.compat.shouldersurfing.ShoulderSurfingCompat;
 import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
 import com.tacz.guns.resource.modifier.custom.RecoilModifier;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.SecondOrderDynamics;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -105,17 +110,12 @@ public class CameraSetupEvent {
                 return;
             }
             float zoom = iGun.getAimingZoom(stack);
-            if (livingEntity instanceof LocalPlayer localPlayer) {
-                IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
-                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
-                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
-                event.setFOV(fov);
-            } else {
-                IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
-                float aimingProgress = gunOperator.getSynAimingProgress();
-                float fov = WORLD_FOV_DYNAMICS.update((float) MathUtil.magnificationToFov(1 + (zoom - 1) * aimingProgress, event.getFOV()));
-                event.setFOV(fov);
-            }
+            AdsFov.Channel curve = TimelessAPI.getGunDisplay(stack)
+                    .map(GunDisplayInstance::getAdsFov).map(AdsFov::getWorld).orElse(null);
+            float fovProgress = getFovProgress(livingEntity, (float) event.getPartialTick(), curve);
+            float targetFov = (float) MathUtil.magnificationToFov(1 + (zoom - 1) * fovProgress, event.getFOV());
+            float smoothedFov = WORLD_FOV_DYNAMICS.update(targetFov);
+            event.setFOV(curve == null || curve.isSmooth() ? smoothedFov : targetFov);
         }
     }
 
@@ -136,31 +136,46 @@ public class CameraSetupEvent {
             if (scopeItemId.equals(DefaultAssets.EMPTY_ATTACHMENT_ID)) {
                 scopeItemId = iGun.getBuiltInAttachmentId(stack, AttachmentType.SCOPE);
             }
+            Optional<GunDisplayInstance> gunDisplay = TimelessAPI.getGunDisplay(stack);
+            float modelFov = gunDisplay
+                    .map(GunDisplayInstance::getModelFov)
+                    .orElse((float) event.getFOV());
             CompoundTag scopeTag = iGun.getAttachmentTag(stack, AttachmentType.SCOPE);
             int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
-            // 尝试使用配件fov修改，若无则尝试使用枪械本身fov修改，否则维持不变
-            float modifiedFov = TimelessAPI.getClientAttachmentIndex(scopeItemId)
+            Optional<ClientAttachmentVariantIndex> scopeVariant = TimelessAPI.getClientAttachmentVariantIndex(iGun.getAttachment(stack, AttachmentType.SCOPE));
+            ResourceLocation resolvedScopeItemId = scopeItemId;
+            // 常驻状态使用枪械本身 model_fov；开镜状态优先使用配件 fov，若无则使用枪械本身 zoom_model_fov。
+            float modifiedFov = scopeVariant
                     .map(index -> {
                         float[] viewsFov = index.getViewsFov();
                         return viewsFov[zoomNumber % viewsFov.length];
                     })
-                    .orElse(
-                        TimelessAPI.getGunDisplay(stack)
-                                .map(GunDisplayInstance::getZoomModelFov)
-                                .orElse((float) event.getFOV())
-                    );
-            if (livingEntity instanceof LocalPlayer localPlayer) {
-                IClientPlayerGunOperator gunOperator = IClientPlayerGunOperator.fromLocalPlayer(localPlayer);
-                float aimingProgress = gunOperator.getClientAimingProgress((float) event.getPartialTick());
-                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, (float) event.getFOV(), modifiedFov));
-                event.setFOV(fov);
-            } else {
-                IGunOperator gunOperator = IGunOperator.fromLivingEntity(livingEntity);
-                float aimingProgress = gunOperator.getSynAimingProgress();
-                float fov = ITEM_MODEL_FOV_DYNAMICS.update(Mth.lerp(aimingProgress, (float) event.getFOV(), modifiedFov));
-                event.setFOV(fov);
-            }
+                    .orElseGet(() -> TimelessAPI.getClientAttachmentIndex(resolvedScopeItemId)
+                            .map(index -> {
+                                float[] viewsFov = index.getViewsFov();
+                                return viewsFov[zoomNumber % viewsFov.length];
+                            })
+                            .orElse(
+                                    gunDisplay
+                                            .map(GunDisplayInstance::getZoomModelFov)
+                                            .orElse(modelFov)
+                            ));
+            AdsFov.Channel curve = gunDisplay.map(GunDisplayInstance::getAdsFov).map(AdsFov::getModel).orElse(null);
+            float fovProgress = getFovProgress(livingEntity, (float) event.getPartialTick(), curve);
+            float targetFov = Mth.lerp(fovProgress, modelFov, modifiedFov);
+            float smoothedFov = ITEM_MODEL_FOV_DYNAMICS.update(targetFov);
+            event.setFOV(curve == null || curve.isSmooth() ? smoothedFov : targetFov);
         }
+    }
+
+    private static float getFovProgress(LivingEntity entity, float partialTick, AdsCurve curve) {
+        float progress = entity instanceof LocalPlayer localPlayer
+                ? IClientPlayerGunOperator.fromLocalPlayer(localPlayer).getClientAimingProgress(partialTick)
+                : IGunOperator.fromLivingEntity(entity).getSynAimingProgress();
+        if (curve == null) {
+            return (float) Easing.easeInExpo(progress);
+        }
+        return curve.evaluate(progress);
     }
 
     @SubscribeEvent
@@ -199,7 +214,7 @@ public class CameraSetupEvent {
             }
             pitchSplineFunction = gunData.getRecoil().genPitchSplineFunction((float) attachmentRecoilModifier.left().eval(aimingRecoilModifier));
             yawSplineFunction = gunData.getRecoil().genYawSplineFunction((float) attachmentRecoilModifier.right().eval(aimingRecoilModifier));
-            shootTimeStamp = System.currentTimeMillis();
+            shootTimeStamp = GunTime.nowMillis();
             xRotO = 0;
             yRotO = 0;
         }
@@ -211,8 +226,8 @@ public class CameraSetupEvent {
         if (player == null) {
             return;
         }
-        long timeTotal = System.currentTimeMillis() - shootTimeStamp;
-        if (pitchSplineFunction != null && pitchSplineFunction.isValidPoint(timeTotal)) {
+        long timeTotal = GunTime.nowMillis() - shootTimeStamp;
+        if (shootTimeStamp >= 0 && timeTotal >= 0 && pitchSplineFunction != null && pitchSplineFunction.isValidPoint(timeTotal)) {
             double value = pitchSplineFunction.value(timeTotal);
             if (ShoulderSurfingCompat.isInstalled() && ShoulderSurfing.getInstance().isShoulderSurfing()) {
                 IShoulderSurfingCamera camera = ShoulderSurfing.getInstance().getCamera();
@@ -222,7 +237,7 @@ public class CameraSetupEvent {
             }
             xRotO = value;
         }
-        if (yawSplineFunction != null && yawSplineFunction.isValidPoint(timeTotal)) {
+        if (shootTimeStamp >= 0 && timeTotal >= 0 && yawSplineFunction != null && yawSplineFunction.isValidPoint(timeTotal)) {
             double value = yawSplineFunction.value(timeTotal);
             if (ShoulderSurfingCompat.isInstalled() && ShoulderSurfing.getInstance().isShoulderSurfing()) {
                 IShoulderSurfingCamera camera = ShoulderSurfing.getInstance().getCamera();
@@ -232,6 +247,14 @@ public class CameraSetupEvent {
             }
             yRotO = value;
         }
+    }
+
+    public static void resetTimestamp() {
+        shootTimeStamp = -1;
+        pitchSplineFunction = null;
+        yawSplineFunction = null;
+        xRotO = 0;
+        yRotO = 0;
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

@@ -1,0 +1,49 @@
+{
+  "slot": "tacz:attachment/slot/scope_amg_10",
+  // 配件的默认模型，不可为空
+  "model": "tacz:attachment/scope_amg_10_geo",
+  // 配件默认模型使用的材质，不可为空
+  "texture": "tacz:attachment/uv/scope_amg_10",
+  // 只有 瞄具 配件需要设置这个属性，表示瞄具的放大倍率。
+  // 玩家可以在数组设置的几个倍率之间切换
+  "lod": {
+    "model": "tacz:attachment/lod/scope_amg_10",
+    "texture": "tacz:attachment/lod/scope_amg_10"
+  },
+  "zoom": [
+    7.25,
+    4.25,
+    1.25
+  ],
+  "views": [
+    1,
+    1,
+    2
+  ],
+  "views_fov": [
+    25.0,
+    40.0,
+    60.0
+  ],
+  // 如果配件是瞄具，且为筒状放大瞄具，此选项应为true
+  "idle_scope_height_adjust": 0.75,
+  "scope": true,
+  // 如果配件是瞄具，且为红点或全息瞄具，此选项应为true
+  "sight": true,
+  // 只有 瞄具 配件需要设置这个属性，表示开镜后，枪身和瞄具渲染的fov。
+  // 默认情况下，mc 渲染手部模型的 fov 为 70。
+  "sounds": {
+    "install": "tacz:attachments/scope_general_c",
+    "uninstall": "tacz:attachments/scope_general_c"
+  },
+  "scope_lens": {
+    "distortion": 0.03,
+    "aberration": 0.003,
+    "edge_width": 0.2,
+    "vignette_strength": 1,
+    "vignette_width": 0.35,
+    "tint": "#D8A376",
+    "tint_strength": 0.2,
+    "vision_mode": "NORMAL"
+  }
+}

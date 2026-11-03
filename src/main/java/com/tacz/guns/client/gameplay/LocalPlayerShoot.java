@@ -6,6 +6,7 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.api.event.common.GunFireEvent;
+import com.tacz.guns.api.event.common.GunFirePostEvent;
 import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
@@ -23,6 +24,7 @@ import com.tacz.guns.resource.pojo.data.gun.ChargeData;
 import com.tacz.guns.resource.pojo.data.gun.ChargeType;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
 import com.tacz.guns.sound.SoundManager;
+import com.tacz.guns.util.time.GunTime;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -36,6 +38,7 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 public class LocalPlayerShoot {
@@ -49,6 +52,8 @@ public class LocalPlayerShoot {
     }
 
     public boolean chargeShoot(boolean isCharging) {
+        // 每次重新计算蓄力状态，避免提前返回或松开扳机后保留状态
+        data.isCharging = false;
         // 因为开火冷却检测用了特别定制的方法，所以不检查状态锁，而是手动检查是否换弹、切枪
         IGunOperator gunOperator = IGunOperator.fromLivingEntity(player);
         ItemStack mainHandItem = player.getMainHandItem();
@@ -61,6 +66,7 @@ public class LocalPlayerShoot {
         Optional<ClientGunIndex> gunIndexOptional = TimelessAPI.getClientGunIndex(gunId);
         GunDisplayInstance display = TimelessAPI.getGunDisplay(mainHandItem).orElse(null);
         if (gunIndexOptional.isEmpty() || display == null) {
+            data.chargeProgress = 0f;
             return false;
         }
         ClientGunIndex gunIndex = gunIndexOptional.get();
@@ -69,6 +75,7 @@ public class LocalPlayerShoot {
 
         ChargeData chargeData = gunData.getChargeData(fireMode);
         if (chargeData == null) {
+            data.chargeProgress = 0f;
             return isCharging;
         }
 
@@ -182,7 +189,7 @@ public class LocalPlayerShoot {
                                            GunDisplayInstance display, GunData gunData, boolean playDrySound) {
         // 按钮冷却时间未到，防止点击按钮后误触开火
         // 默认设置为 50 ms
-        if (System.currentTimeMillis() - LocalPlayerDataHolder.clientClickButtonTimestamp < 50) {
+        if (GunTime.isWithin(LocalPlayerDataHolder.clientClickButtonTimestamp, 50)) {
             return ShootResult.COOL_DOWN;
         }
 
@@ -243,15 +250,35 @@ public class LocalPlayerShoot {
         // 获取余弹数
         boolean consumeAmmo = IGunOperator.fromLivingEntity(player).consumesAmmoOrNot();
         boolean hasAmmoInBarrel = iGun.hasBulletInBarrel(mainHandItem) && boltType != Bolt.OPEN_BOLT;
-        int ammoCount = consumeAmmo ? iGun.getCurrentAmmoCount(mainHandItem) + (hasAmmoInBarrel ? 1 : 0) : Integer.MAX_VALUE;
+        int ammoCount = consumeAmmo
+                ? (iGun.useInventoryAmmo(mainHandItem)
+                    ? ClientAmmoCount.get(player, mainHandItem, iGun) + (hasAmmoInBarrel ? 1 : 0)
+                    : iGun.getCurrentAmmoCount(mainHandItem) + (hasAmmoInBarrel ? 1 : 0))
+                : Integer.MAX_VALUE;
         // 连发射击间隔
         long period = fireMode == FireMode.BURST ? gunData.getBurstShootInterval() : 1;
         // 最大连发数
         final int maxCount = Math.min(ammoCount, fireMode == FireMode.BURST ? gunData.getBurstData().getCount() : 1);
         // 连发计数器
         AtomicInteger count = new AtomicInteger(0);
+        long scheduledEpoch = GunTime.epoch();
+        AtomicReference<ScheduledFuture<?>> futureRef = new AtomicReference<>();
+        Runnable stop = () -> {
+            ScheduledFuture<?> future = futureRef.get();
+            if (future != null) {
+                future.cancel(false);
+                data.unregisterShootFuture(future);
+            }
+        };
 
-        LocalPlayerDataHolder.SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
+        ScheduledFuture<?> future = LocalPlayerDataHolder.SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
+            if (GunTime.epoch() != scheduledEpoch || Minecraft.getInstance().player != player || data.isTimedStateLocked()) {
+                stop.run();
+                return;
+            }
+            if (!GunTime.shouldTick()) {
+                return;
+            }
 
             if (count.get() == 0) {
                 // 转换 isRecord 状态，允许下一个tick的开火检测。
@@ -260,15 +287,13 @@ public class LocalPlayerShoot {
             //Handle Heat Data
             if(gunData.hasHeatData()) {
                 if(iGun.isOverheatLocked(mainHandItem)) {
-                    ScheduledFuture<?> future = (ScheduledFuture<?>) Thread.currentThread();
-                    future.cancel(false); // 取消当前任务
+                    stop.run();
                     return;
                 }
             }
             // 如果达到最大连发次数，或者玩家已经死亡，取消任务
             if (count.get() >= maxCount || player.isDeadOrDying()) {
-                ScheduledFuture<?> future = (ScheduledFuture<?>) Thread.currentThread();
-                future.cancel(false); // 取消当前任务
+                stop.run();
                 return;
             }
 
@@ -280,7 +305,7 @@ public class LocalPlayerShoot {
                 }
                 // 记录新的开火时间戳
                 data.clientLastShootTimestamp = data.clientShootTimestamp;
-                data.clientShootTimestamp = System.currentTimeMillis();
+                data.clientShootTimestamp = GunTime.nowMillis();
                 // 发送开火的数据包，通知服务器
                 NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerShoot(data.clientShootTimestamp - data.clientBaseTimestamp, chargeProgress));
             }
@@ -288,7 +313,11 @@ public class LocalPlayerShoot {
             // todo 需要检查
             // 播放声音和状态机触发需要从异步线程上传到主线程执行，否则会引起cme
             Minecraft.getInstance().submitAsync(() -> {
-                // 触发击发事件
+                if (GunTime.epoch() != scheduledEpoch || Minecraft.getInstance().player != player || !GunTime.shouldTick()
+                        || data.isTimedStateLocked()) {
+                    return;
+                }
+                // 本机预测效果也区分可取消的前置事件与成功后的通知。
                 boolean fire = !MinecraftForge.EVENT_BUS.post(new GunFireEvent(player, mainHandItem, LogicalSide.CLIENT));
                 if (fire) {
                     // 动画和声音循环播放
@@ -305,11 +334,18 @@ public class LocalPlayerShoot {
                     } else {
                         SoundPlayManager.playShootSound(player, display, gunData);
                     }
+                    MinecraftForge.EVENT_BUS.post(new GunFirePostEvent(player, mainHandItem, LogicalSide.CLIENT));
                 }
             });
 
-            count.getAndIncrement();
+            if (count.incrementAndGet() >= maxCount) {
+                stop.run();
+            }
         }, delay, period, TimeUnit.MILLISECONDS);
+        futureRef.set(future);
+        if (!future.isDone()) {
+            data.registerShootFuture(future);
+        }
     }
 
     private boolean useSilenceSound() {
@@ -325,9 +361,9 @@ public class LocalPlayerShoot {
         FireMode fireMode = iGun.getFireMode(mainHandItem);
         long coolDown;
         if (fireMode == FireMode.BURST) {
-            coolDown = (long) (gunData.getBurstData().getMinInterval() * 1000f) - (System.currentTimeMillis() - data.clientShootTimestamp);
+            coolDown = (long) (gunData.getBurstData().getMinInterval() * 1000f) - (GunTime.nowMillis() - data.clientShootTimestamp);
         } else {
-            coolDown = gunData.getShootInterval(this.player, fireMode, mainHandItem) - (System.currentTimeMillis() - data.clientShootTimestamp);
+            coolDown = gunData.getShootInterval(this.player, fireMode, mainHandItem) - (GunTime.nowMillis() - data.clientShootTimestamp);
         }
         return Math.max(coolDown, 0);
     }

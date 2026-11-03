@@ -9807,7 +9807,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1.2, 8.1, -0.775],
+					"pivot": [1.2, 7.0375, 5.1625],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -9817,7 +9817,7 @@
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [24, 7, -2],
+					"pivot": [36, 7, -2],
 					"rotation": [0, 89.9, 0]
 				},
 				{
@@ -9847,16 +9847,12 @@
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [2, 11.75, 13]
+					"pivot": [2.75, 11.75, 14]
 				},
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 10.91875, 10.15]
-				},
-				{
-					"name": "cover2",
-					"pivot": [0.0091, 9.82671, 8.89747]
+					"pivot": [0, 10.78125, 12]
 				}
 			]
 		}

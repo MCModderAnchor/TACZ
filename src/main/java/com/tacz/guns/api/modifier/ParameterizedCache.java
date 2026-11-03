@@ -2,9 +2,8 @@ package com.tacz.guns.api.modifier;
 
 
 import com.google.common.collect.ImmutableList;
-import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
+import com.tacz.guns.resource.manager.AttachmentScriptManager;
 import com.tacz.guns.resource.pojo.data.attachment.Modifier;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 /**
@@ -13,7 +12,7 @@ import java.util.List;
  */
 public class ParameterizedCache<T> {
     private final T defaultValue;
-    private final List<String> scripts;
+    private final List<AttachmentScriptManager.CompiledScript> scripts;
     private final double addend;
     private final double percent;
     private final double multiplier;
@@ -23,13 +22,13 @@ public class ParameterizedCache<T> {
         double percent = 1;
         double multiplier = 1;
 
-        ImmutableList.Builder<String> builder = new ImmutableList.Builder<>();
+        ImmutableList.Builder<AttachmentScriptManager.CompiledScript> builder = new ImmutableList.Builder<>();
         for (Modifier mod : modifiers) {
             addend += mod.getAddend();
             percent += mod.getPercent();
             multiplier *= Math.max(mod.getMultiplier(), 0f);
-            if (StringUtils.isNotEmpty(mod.getFunction())) {
-                builder.add(mod.getFunction());
+            if (mod.getCompiledFunction() != null) {
+                builder.add(mod.getCompiledFunction());
             }
         }
 
@@ -47,11 +46,8 @@ public class ParameterizedCache<T> {
     public double eval(double input) {
         double percent = Math.max(this.percent, 0);
         double value = (input + addend) * percent * multiplier;
-        for (String function : scripts) {
-            if (StringUtils.isEmpty(function)) {
-                continue;
-            }
-            value = AttachmentPropertyManager.functionEval(value, input, function);
+        for (AttachmentScriptManager.CompiledScript function : scripts) {
+            value = function.eval(value, input);
         }
         return value;
     }
@@ -60,11 +56,8 @@ public class ParameterizedCache<T> {
         double percent = Math.max(this.percent + extraPercent, 0);
         extraMultiplier = Math.max(extraMultiplier, 0);
         double value = (input + addend + extraAddend) * percent * multiplier * extraMultiplier;
-        for (String function : scripts) {
-            if (StringUtils.isEmpty(function)) {
-                continue;
-            }
-            value = AttachmentPropertyManager.functionEval(value, input, function);
+        for (AttachmentScriptManager.CompiledScript function : scripts) {
+            value = function.eval(value, input);
         }
         return value;
     }

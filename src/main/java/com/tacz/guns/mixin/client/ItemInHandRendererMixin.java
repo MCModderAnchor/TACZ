@@ -3,6 +3,7 @@ package com.tacz.guns.mixin.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.client.event.BeforeRenderHandEvent;
 import com.tacz.guns.api.client.other.KeepingItemRenderer;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -30,6 +31,8 @@ public class ItemInHandRendererMixin implements KeepingItemRenderer {
     private long tacz$KeepTimeMs;
     @Unique
     private long tacz$KeepTimestamp;
+    @Unique
+    private long tacz$KeepEpoch = -1;
 
     @Inject(method = "renderHandsWithItems", at = @At("HEAD"))
     public void beforeHandRender(float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource.BufferSource pBuffer, LocalPlayer pPlayerEntity, int pCombinedLight, CallbackInfo ci) {
@@ -42,7 +45,7 @@ public class ItemInHandRendererMixin implements KeepingItemRenderer {
 //            return;
 //        }
 //        if (tacz$KeepItem != null) {
-//            long time = System.currentTimeMillis() - tacz$KeepTimestamp;
+//            long time = GunTime.nowMillis() - tacz$KeepTimestamp;
 //            if (time < tacz$KeepTimeMs) {
 //                mainHandHeight = 1.0f;
 //                oMainHandHeight = 1.0f;
@@ -62,12 +65,13 @@ public class ItemInHandRendererMixin implements KeepingItemRenderer {
     @Unique
     @Override
     public void keep(ItemStack itemStack, long timeMs) {
-        long time = System.currentTimeMillis() - tacz$KeepTimestamp;
-        if (time < tacz$KeepTimeMs) {
+        if (tacz$KeepItem != null && tacz$KeepEpoch == GunTime.epoch()
+                && GunTime.isWithin(tacz$KeepTimestamp, tacz$KeepTimeMs)) {
             return;
         }
         this.tacz$KeepTimeMs = timeMs;
-        this.tacz$KeepTimestamp = System.currentTimeMillis();
+        this.tacz$KeepTimestamp = GunTime.nowMillis();
+        this.tacz$KeepEpoch = GunTime.epoch();
         this.tacz$KeepItem = itemStack;
         this.mainHandItem = itemStack;
     }
@@ -78,8 +82,7 @@ public class ItemInHandRendererMixin implements KeepingItemRenderer {
             return mainHandItem;
         }
         if (tacz$KeepItem != null) {
-            long time = System.currentTimeMillis() - tacz$KeepTimestamp;
-            if (time < tacz$KeepTimeMs) {
+            if (tacz$KeepEpoch == GunTime.epoch() && GunTime.isWithin(tacz$KeepTimestamp, tacz$KeepTimeMs)) {
                 return tacz$KeepItem;
             } else {
                 tacz$KeepItem = null;

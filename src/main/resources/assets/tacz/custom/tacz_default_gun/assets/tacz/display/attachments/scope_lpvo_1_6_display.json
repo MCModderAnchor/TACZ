@@ -12,17 +12,21 @@
   },
   "zoom": [
     6.25,
+    3.25,
     1.25
   ],
   "views": [
+    2,
     2,
     2
   ],
   "views_fov": [
     30.0,
+    45.0,
     60.0
   ],
   // 如果配件是瞄具，且为筒状放大瞄具，此选项应为true
+  "idle_scope_height_adjust": 0.75,
   "scope": true,
   // 如果配件是瞄具，且为红点或全息瞄具，此选项应为true
   "sight": false,

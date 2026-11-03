@@ -9,6 +9,7 @@ import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.resource.GunDisplayInstance;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
+import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -64,8 +65,8 @@ public interface GunItemDataAccessor extends IGun {
             maxDummyAmmo = getMaxDummyAmmoAmount(gun);
         }
         CompoundTag nbt = gun.getOrCreateTag();
-        amount = Math.min(getDummyAmmoAmount(gun) + amount, maxDummyAmmo);
-        nbt.putInt(GUN_DUMMY_AMMO, Math.max(amount, 0));
+        long updatedAmount = Math.min((long) getDummyAmmoAmount(gun) + amount, maxDummyAmmo);
+        nbt.putInt(GUN_DUMMY_AMMO, (int) Math.max(updatedAmount, 0));
     }
 
     @Override
@@ -183,7 +184,7 @@ public interface GunItemDataAccessor extends IGun {
     default FireMode getFireMode(ItemStack gun) {
         CompoundTag nbt = gun.getOrCreateTag();
         if (nbt.contains(GUN_FIRE_MODE_TAG, Tag.TAG_STRING)) {
-            return FireMode.valueOf(nbt.getString(GUN_FIRE_MODE_TAG));
+            return FireMode.fromName(nbt.getString(GUN_FIRE_MODE_TAG));
         }
         return FireMode.UNKNOWN;
     }
@@ -249,7 +250,10 @@ public interface GunItemDataAccessor extends IGun {
         if (index != null){
             var builtin = index.getGunData().getBuiltInAttachments();
             if (builtin.containsKey(type)) {
-                return AttachmentItemBuilder.create().setId(builtin.get(type)).build();
+                ResourceLocation attachmentId = builtin.get(type).getDisplayAttachment();
+                if (attachmentId != null) {
+                    return AttachmentItemBuilder.create().setId(attachmentId).build();
+                }
             }
         }
         return ItemStack.EMPTY;
@@ -280,7 +284,10 @@ public interface GunItemDataAccessor extends IGun {
         if (index != null){
             var builtin = index.getGunData().getBuiltInAttachments();
             if (builtin.containsKey(type)) {
-                return builtin.get(type);
+                ResourceLocation attachmentId = builtin.get(type).getDisplayAttachment();
+                if (attachmentId != null) {
+                    return attachmentId;
+                }
             }
         }
         return DefaultAssets.EMPTY_ATTACHMENT_ID;
@@ -305,8 +312,9 @@ public interface GunItemDataAccessor extends IGun {
         if (iAttachment == null) {
             return;
         }
+        AttachmentType attachmentType = iAttachment.getType(attachment);
         CompoundTag nbt = gun.getOrCreateTag();
-        String key = GUN_ATTACHMENT_BASE + iAttachment.getType(attachment).name();
+        String key = GUN_ATTACHMENT_BASE + attachmentType.name();
         CompoundTag attachmentTag = new CompoundTag();
         attachment.save(attachmentTag);
         nbt.put(key, attachmentTag);
@@ -336,7 +344,10 @@ public interface GunItemDataAccessor extends IGun {
         if (!DefaultAssets.isEmptyAttachmentId(scopeId)) {
             CompoundTag attachmentTag = this.getAttachmentTag(gunItem, AttachmentType.SCOPE);
             int zoomNumber = builtin ? 0 : AttachmentItemDataAccessor.getZoomNumberFromTag(attachmentTag);
-            float[] zooms = TimelessAPI.getClientAttachmentIndex(scopeId).map(ClientAttachmentIndex::getZoom).orElse(null);
+            ResourceLocation resolvedScopeId = scopeId;
+            float[] zooms = TimelessAPI.getClientAttachmentVariantIndex(getAttachment(gunItem, AttachmentType.SCOPE))
+                    .map(ClientAttachmentVariantIndex::getZoom)
+                    .orElseGet(() -> TimelessAPI.getClientAttachmentIndex(resolvedScopeId).map(ClientAttachmentIndex::getZoom).orElse(null));
             if (zooms != null) {
                 zoom = zooms[zoomNumber % zooms.length];
             }

@@ -1,4 +1,5 @@
 {
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/glock_17_geo",
   "texture": "tacz:gun/uv/glock_17",
   "lod": {
@@ -18,6 +19,9 @@
       "fixed": [1.2, 1.2, 1.2]
     }
   },
+  "iron_zoom": 1.2,
+  "model_fov": 60,
+  "zoom_model_fov": 45,
   "shell": {
     "initial_velocity": [8.0, 5.0, -0.5],
     "random_velocity": [2.5, 1.5, 0.25],
@@ -26,8 +30,11 @@
     "living_time": 1.0
   },
   "muzzle_flash": {
-    "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.4
+    "type": "renew",
+    "scale": 0.4,
+    "smoke_scale": 1,
+    "initial_speed_scale": 1,
+    "smoke_particle_count": 18
   },
   "sounds": {
     "draw": "tacz:glock_17/glock17_draw",

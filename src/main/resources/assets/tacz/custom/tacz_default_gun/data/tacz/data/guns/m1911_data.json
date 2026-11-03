@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:45acp",
   "rpm": 350,
   "bullet": {
@@ -42,7 +43,7 @@
   },
   "draw_time": 0.49,
   "put_away_time": 0.28,
-  "aim_time": 0.08,
+  "aim_time": 0.16,
   "sprint_time": 0.05,
   "weight": 1.2,
   "movement_speed": {

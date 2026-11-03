@@ -1,0 +1,27 @@
+{
+  "materials": [
+    {
+      "item": {
+        "item": "minecraft:crying_obsidian"
+      },
+      "count": 1
+    },
+    {
+      "item": {
+        "item": "minecraft:gunpowder"
+      },
+      "count": 6
+    },
+    {
+      "item": {
+        "item": "minecraft:blaze_powder"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "type": "attachment",
+    "id": "tacz:ammo_mod_overpressure_recoil"
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

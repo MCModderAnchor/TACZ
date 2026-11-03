@@ -11404,7 +11404,7 @@
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [2.77, 12.19, 13.59]
+					"pivot": [2.77, 12.19, 14.59]
 				},
 				{
 					"name": "refit_view",
@@ -11465,7 +11465,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1.3125, 8.75, -1],
+					"pivot": [1.3125, 7.1875, 5.5],
 					"rotation": [0, 90, 0]
 				}
 			]

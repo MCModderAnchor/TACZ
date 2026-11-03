@@ -8,6 +8,7 @@ import com.tacz.guns.client.sound.SoundPlayManager;
 import com.tacz.guns.network.NetworkHandler;
 import com.tacz.guns.network.message.ClientMessagePlayerDrawGun;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +32,7 @@ public class LocalPlayerDraw {
 
         // 获取各种数据
         ItemStack currentItem = player.getMainHandItem();
-        long drawTime = System.currentTimeMillis() - data.clientDrawTimestamp;
+        long drawTime = GunTime.nowMillis() - data.clientDrawTimestamp;
         IGun currentGun = IGun.getIGunOrNull(currentItem);
         IGun lastGun = IGun.getIGunOrNull(lastItem);
 
@@ -93,30 +94,33 @@ public class LocalPlayerDraw {
             if (drawTime > putAwayTime) {
                 drawTime = putAwayTime;
             }
-            data.clientDrawTimestamp = System.currentTimeMillis() + drawTime;
+            data.clientDrawTimestamp = GunTime.nowMillis() + drawTime;
         } else {
             drawTime = 0;
-            data.clientDrawTimestamp = System.currentTimeMillis();
+            data.clientDrawTimestamp = GunTime.nowMillis();
         }
         return drawTime;
     }
 
     private void resetData() {
+        data.autoReloadSuppressed = false;
         // 锁上状态锁
         data.lockState(operator -> operator.getSynDrawCoolDown() > 0);
         // 重置客户端的 shoot 时间戳
         data.isShootRecorded = true;
         data.clientShootTimestamp = -1;
         data.chargeProgress = 0;
+        data.isCharging = false;
         // 重置客户端瞄准状态
         data.clientIsAiming = false;
         data.clientAimingProgress = 0;
         LocalPlayerDataHolder.oldAimingProgress = 0;
         // 重置拉栓状态
         data.isBolting = false;
+        data.clientReloadStarting = false;
         // 更新切枪时间戳
         if (data.clientDrawTimestamp == -1) {
-            data.clientDrawTimestamp = System.currentTimeMillis();
+            data.clientDrawTimestamp = GunTime.nowMillis();
         }
     }
 }

@@ -3614,8 +3614,8 @@
 					"pivot": [0.85625, 12, 8.688],
 					"cubes": [
 						{
-							"origin": [-0.19675, 5.843, 3.45],
-							"size": [0.406, 0.062, 0.094],
+							"origin": [-0.1655, 5.85863, 3.45],
+							"size": [0.3435, 0.04638, 0.094],
 							"uv": {
 								"north": {"uv": [0, -1], "uv_size": [0, 0]},
 								"east": {"uv": [340, 144], "uv_size": [2, 2]},
@@ -3641,7 +3641,7 @@
 						},
 						{
 							"origin": [0.13225, 5.906, 3.45],
-							"size": [0.078, 0.094, 0.094],
+							"size": [0.04675, 0.094, 0.094],
 							"uv": {
 								"north": {"uv": [0, -1], "uv_size": [0, 0]},
 								"east": {"uv": [340, 176], "uv_size": [2, 2]},
@@ -3652,8 +3652,8 @@
 							}
 						},
 						{
-							"origin": [-0.19675, 5.906, 3.45],
-							"size": [0.078, 0.094, 0.094],
+							"origin": [-0.1655, 5.906, 3.45],
+							"size": [0.04675, 0.094, 0.094],
 							"uv": {
 								"north": {"uv": [0, -1], "uv_size": [0, 0]},
 								"east": {"uv": [340, 192], "uv_size": [2, 2]},
@@ -3701,7 +3701,7 @@
 				{
 					"name": "constraint",
 					"parent": "g17",
-					"pivot": [0, 6.025, -6.825]
+					"pivot": [0, 6.275, 0.175]
 				},
 				{
 					"name": "shell",
@@ -3721,11 +3721,12 @@
 				},
 				{
 					"name": "iron_view",
-					"pivot": [0, 6, 14.75]
+					"pivot": [0, 6, 15.5]
 				},
 				{
 					"name": "idle_view",
-					"pivot": [0.85, 9, 14]
+					"pivot": [0.875, 8.5, 15],
+					"rotation": [0, 0, -5]
 				},
 				{
 					"name": "positioning",
@@ -3744,7 +3745,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0.7, 3.6, -0.175],
+					"pivot": [0.7, 4.02187, -0.6125],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -3754,31 +3755,31 @@
 				{
 					"name": "refit_view",
 					"parent": "refit",
-					"pivot": [13, 5, 0],
+					"pivot": [16, 3, 0],
 					"rotation": [0, 89.9, 0]
 				},
 				{
 					"name": "refit_extended_mag_view",
 					"parent": "refit",
-					"pivot": [7, 1, 0],
+					"pivot": [16, 1, -3],
 					"rotation": [0, 112.5, 0]
 				},
 				{
 					"name": "refit_scope_view",
 					"parent": "refit",
-					"pivot": [5, 7, 6],
+					"pivot": [12, 7, 8],
 					"rotation": [0, 47.5, 0]
 				},
 				{
 					"name": "refit_muzzle_view",
 					"parent": "refit",
-					"pivot": [7, 5.35, -12],
+					"pivot": [16, 5.35, -18],
 					"rotation": [0, 120, 0]
 				},
 				{
 					"name": "refit_laser_view",
 					"parent": "refit",
-					"pivot": [8, 3.375, -10],
+					"pivot": [12, 3.375, -10],
 					"rotation": [0, 120, 0]
 				}
 			]

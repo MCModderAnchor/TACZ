@@ -1,16 +1,17 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:45acp",
   "rpm": 660,
   "bullet": {
     "life": 0.55,
     "bullet_amount": 1,
-    "damage": 9,
+    "damage": 10,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.2,
       "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 30, "damage": 9},
+        {"distance": 30, "damage": 10},
         {"distance": 55, "damage": 7},
         {"distance": "infinite", "damage": 5.5}
       ]
@@ -42,7 +43,7 @@
   },
   "draw_time": 0.53,
   "put_away_time": 0.47,
-  "aim_time": 0.12,
+  "aim_time": 0.18,
   "sprint_time": 0.15,
   "weight": 2.65,
   "movement_speed": {

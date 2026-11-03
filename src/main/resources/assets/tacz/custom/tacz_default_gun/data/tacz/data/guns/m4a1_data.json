@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:556x45",
   "ammo_amount": 30,
   "extended_mag_ammo_amount": [
@@ -7,7 +8,7 @@
     60
   ],
   "bolt": "closed_bolt",
-  "rpm": 810,
+  "rpm": 800,
   "script": "tacz:xmag_reload_logic",
   "script_param": {
     "reload_feed": 1.40,
@@ -30,15 +31,15 @@
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
-    "damage": 6.5,
+    "damage": 7,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.2,
-      "head_shot_multiplier": 1.5,
+      "armor_ignore": 0.20,
+      "head_shot_multiplier": 1.50,
       "damage_adjust": [
-        {"distance": 25, "damage": 6.5},
-        {"distance": 60, "damage": 5.5},
-        {"distance": "infinite", "damage": 4.5}
+        {"distance":32,"damage":7},
+        {"distance":64,"damage":6},
+        {"distance":"infinite","damage":4.5}
       ]
     },
     "speed": 270,
@@ -61,7 +62,7 @@
   },
   "draw_time": 0.3,
   "put_away_time": 0.43,
-  "aim_time": 0.16,
+  "aim_time": 0.2,
   "sprint_time": 0.18,
   "weight": 3.5,
   "movement_speed": {
@@ -172,6 +173,30 @@
     "muzzle",
     "extended_mag"
   ],
+  "builtin_attachments": {
+    "scope": {
+      "attachments": [
+        "tacz:oem_sight_1",
+        "tacz:oem_sight_2"
+      ]
+    },
+    "laser": {
+      "attachments": [
+        "tacz:oem_side_cover"
+      ]
+    },
+    "grip": {
+      "attachments": [
+        "tacz:oem_grip_cover"
+      ]
+    },
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_tactical"
+      ],
+      "default_attached": "tacz:oem_stock_tactical"
+    }
+  },
   "exclusive_attachments": {
   }
 }

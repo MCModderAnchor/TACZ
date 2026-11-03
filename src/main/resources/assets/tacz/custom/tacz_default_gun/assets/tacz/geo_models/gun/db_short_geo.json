@@ -3117,7 +3117,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0, 9.1, 1.6],
+					"pivot": [0, 6.6, 5.6],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -3139,12 +3139,12 @@
 				{
 					"name": "idle_view",
 					"parent": "views",
-					"pivot": [3.38125, 12.15625, 11.525]
+					"pivot": [3.38125, 12.15625, 12.525]
 				},
 				{
 					"name": "iron_view",
 					"parent": "views",
-					"pivot": [0, 10, 8]
+					"pivot": [0, 10, 10]
 				},
 				{
 					"name": "refit_extended_mag_view",

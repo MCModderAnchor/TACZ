@@ -1,7 +1,9 @@
 {
   "name": "tacz.attachment.oem_stock_tactical.name",
+  "builtin_attachment": true,
   "display": "tacz:oem_stock_tactical_display",
   "data": "tacz:oem_stock_tactical_data",
   "type": "stock",
-  "sort": 1
+  "sort": 1,
+  "hidden": false
 }

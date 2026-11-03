@@ -1,0 +1,68 @@
+{
+  "ads_preset": "tacz:renew",
+  "model": "tacz:gun/m1866_geo",
+  "texture": "tacz:gun/uv/m1866",
+  "lod": {
+    "model": "tacz:gun/lod/m1866",
+    "texture": "tacz:gun/lod/m1866"
+  },
+  "hud": "tacz:gun/hud/m1866",
+  "slot": "tacz:gun/slot/m1866",
+  "animation": "tacz:m1866",
+  "state_machine": "tacz:m1866_state_machine",
+  "state_machine_param": {
+    "bolt_shell_ejecting_time": 0.13,
+    "bolt_shell_ejecting_time_fast": 0.07,
+    "ending_shell_ejecting_time": 0.52,
+    "ending_duration": 0.55,
+    "ending_empty_duration": 1.28
+  },
+  "use_default_animation": "rifle",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "type": "renew",
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.35,
+    "smoke_scale": 1.25,
+    "initial_speed_scale": 1.15,
+    "smoke_particle_count": 18
+  },
+  "shell": {
+    "initial_velocity": [-2.5, 4.5, -0.5],
+    "random_velocity": [1, 2.5, 0.5],
+    "acceleration": [0, -15, 0.0],
+    "angular_velocity": [1200, 180, 30],
+    "living_time": 1.5
+  },
+  "iron_zoom": 1.66,
+  "model_fov": 60,
+  "zoom_model_fov": 36,
+  "sounds": {
+    "draw": "tacz:m1866/m1866_draw",
+    "shoot": "tacz:m1866/m1866_shoot",
+    "shoot_3p": "tacz:m1866/m1866_shoot_3p",
+    "silence": "tacz:m1866/m1866_silence",
+    "silence_3p": "tacz:m1866/m1866_silence_3p",
+    "put_away": "tacz:m1866/m1866_put_away",
+    "melee_push": "tacz:melee_stock/melee_stock_02",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  "offhand_show": {
+    "pos": [2, 22, 3.5],
+    "rotate": [0, 0, 60],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-2, 22, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

@@ -48,11 +48,16 @@
     }
   },
   "muzzle_flash": {
+    "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 1.5
+    "scale": 1.5,
+    "initial_speed_scale": 1.7,
+    "smoke_scale": 1.65,
+    "smoke_particle_count": 18
   },
   // 机瞄的放大倍数，默认 1.2
   "iron_zoom": 2,
+  "model_fov": 60,
   // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
   "zoom_model_fov": 55,
   // 抛壳的渲染数据，可为空，若为空，则枪械不抛壳
@@ -112,8 +117,8 @@
   },
   // 副手枪械显示
   "offhand_show": {
-    "pos": [-2, 15, 7],
-    "rotate": [-20, -15, 30],
+    "pos": [6, 24, 4],
+    "rotate": [-90, -5, -90],
     "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {

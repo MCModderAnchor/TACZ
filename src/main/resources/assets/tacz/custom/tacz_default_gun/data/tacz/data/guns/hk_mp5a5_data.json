@@ -1,16 +1,17 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:9mm",
   "rpm": 820,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
-    "damage": 6,
+    "damage": 7,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.15,
       "head_shot_multiplier": 1.25,
       "damage_adjust": [
-        {"distance": 18, "damage": 6},
+        {"distance": 18, "damage": 7},
         {"distance": 40, "damage": 5},
         {"distance": 65, "damage": 4.5},
         {"distance": "infinite", "damage": 3.5}
@@ -63,7 +64,7 @@
   "draw_time": 0.32,
   "put_away_time": 0.35,
   "sprint_time": 0.12,
-  "aim_time": 0.17,
+  "aim_time": 0.18,
   "weight": 2.5,
   "movement_speed": {
     "base": 0.0,
@@ -134,6 +135,16 @@
       "knockback": 0.4,
       // 前摇时长，单位：秒
       "prep": 0.1
+    }
+  },
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_unfolded",
+        "tacz:oem_stock_tactical",
+        "tacz:oem_stock_heavy"
+      ],
+      "default_attached": "tacz:oem_stock_unfolded"
     }
   }
 }

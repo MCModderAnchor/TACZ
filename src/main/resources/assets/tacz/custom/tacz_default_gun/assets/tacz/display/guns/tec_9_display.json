@@ -1,0 +1,61 @@
+{
+  "ads_preset": "tacz:renew",
+  "model": "tacz:gun/tec_9_geo",
+  "texture": "tacz:gun/uv/tec_9",
+  "lod": {
+    "model": "tacz:gun/lod/tec_9",
+    "texture": "tacz:gun/lod/tec_9"
+  },
+  "hud": "tacz:gun/hud/tec_9",
+  "slot": "tacz:gun/slot/tec_9",
+  "animation": "tacz:tec_9",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "state_machine": "tacz:tec_9_state_machine",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "type": "renew",
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.6,
+    "smoke_scale": 1,
+    "initial_speed_scale": 1
+  },
+  "iron_zoom": 1.2,
+  "model_fov": 60,
+  "zoom_model_fov": 45,
+  "shell": {
+    "initial_velocity": [6.5, 3.5, -0.5],
+    "random_velocity": [2.5, 1.5, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "sounds": {
+    "draw": "tacz:tec_9/tec9_draw",
+    "put_away": "tacz:tec_9/tec9_put_away",
+    "shoot": "tacz:tec_9/tec9_shoot",
+    "shoot_3p": "tacz:tec_9/tec9_shoot_3p",
+    "silence": "tacz:tec_9/tec9_silence",
+    "silence_3p": "tacz:tec_9/tec9_silence_3p",
+    "melee_push": "tacz:melee_stock/melee_stock_03",
+    "melee_stock": "tacz:melee_stock/melee_stock_01"
+  },
+  "offhand_show": {
+    "pos": [4, 13, -1],
+    "rotate": [-90, -35, 90],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-5, 13, -1],
+      "rotate": [-90, -35, 90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

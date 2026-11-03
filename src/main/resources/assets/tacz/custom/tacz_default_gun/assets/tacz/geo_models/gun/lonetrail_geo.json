@@ -3909,14 +3909,14 @@
 					"pivot": [-5.875, 5.53128, 13.84758]
 				},
 				{
-					"name": "bullet_in_barrel",
+					"name": "bullet_in_chamber",
 					"parent": "rh_and_bullet",
 					"pivot": [0.00863, 8.1477, 6.37481],
 					"rotation": [90, 0, 0]
 				},
 				{
 					"name": "round_shell",
-					"parent": "bullet_in_barrel",
+					"parent": "bullet_in_chamber",
 					"pivot": [0, -1.875, 8],
 					"cubes": [
 						{
@@ -4270,7 +4270,7 @@
 				},
 				{
 					"name": "head",
-					"parent": "bullet_in_barrel",
+					"parent": "bullet_in_chamber",
 					"pivot": [0.00395, 1.99982, 7.87101],
 					"cubes": [
 						{
@@ -4607,7 +4607,7 @@
 				},
 				{
 					"name": "iron_view",
-					"pivot": [0, 9.14854, 15.5762]
+					"pivot": [0, 9.14854, 18.0]
 				},
 				{
 					"name": "positioning",
@@ -4626,7 +4626,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1.075, 7.6625, -1.4875],
+					"pivot": [1.075, 6.50625, 1.35625],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -4659,7 +4659,7 @@
 				},
 				{
 					"name": "idle_view",
-					"pivot": [3, 10.9375, 16.5]
+					"pivot": [3, 10.9375, 17.5]
 				},
 				{
 					"name": "refit_extended_mag_view",

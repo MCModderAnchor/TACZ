@@ -1,21 +1,23 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:12g",
-  "rpm": 100,
+  "force_aim_exit_on_reload": true,
+  "rpm": 200,
   "bullet": {
-    "life": 0.5,
-    "bullet_amount": 10,
-    "damage": 30,
+    "life": 1,
+    "bullet_amount": 12,
+    "damage": 36,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.33,
-      "head_shot_multiplier": 1.2,
+      "armor_ignore": 0.25,
+      "head_shot_multiplier": 1.5,
       "damage_adjust": [
-        {"distance": 16, "damage": 30},
-        {"distance": 24, "damage": 25},
-        {"distance": "infinite", "damage": 15}
+        {"distance": 24, "damage": 36},
+        {"distance": 36, "damage": 30},
+        {"distance": "infinite", "damage": 24}
       ]
     },
-    "speed": 150,
+    "speed": 190,
     "gravity": 0.15,
     "knockback": 0.35,
     "friction": 0.05,
@@ -46,6 +48,7 @@
     "reload": 0.1
   },
   "crawl_recoil_multiplier": 0.5,
+  "can_slide": false,
   "fire_mode": [
     "semi"
   ],
@@ -68,10 +71,10 @@
   },
   "inaccuracy": {
     "stand": 3.25,
-    "move": 3.75,
-    "sneak": 3,
-    "lie": 3,
-    "aim": 2.25
+    "move": 3.25,
+    "sneak": 3.25,
+    "lie": 3.25,
+    "aim": 2
   },
   // 近战相关
   "melee": {

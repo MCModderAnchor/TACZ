@@ -2,6 +2,7 @@ package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.animation.statemachine.AnimationStateMachine;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.animation.statemachine.GunAnimationConstant;
@@ -24,8 +25,8 @@ public class LocalPlayerBolt {
     }
 
     public void bolt() {
-        // 检查状态锁
-        if (data.clientStateLock) {
+        // 检查状态锁及蓄力状态
+        if (data.clientStateLock || data.isCharging) {
             return;
         }
         if (data.isBolting) {
@@ -74,6 +75,9 @@ public class LocalPlayerBolt {
             if (animationStateMachine != null) {
                 SoundPlayManager.playBoltSound(player, display);
                 animationStateMachine.trigger(GunAnimationConstant.INPUT_BOLT);
+                if (gunData.isForceAimExitOnBolt()) {
+                    IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
+                }
             }
         });
     }

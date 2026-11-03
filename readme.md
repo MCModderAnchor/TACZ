@@ -22,7 +22,24 @@
     <a href="https://tacwiki.mcma.club/zh/">Wiki</a>
 </p>
 
-Timeless and Classics Guns Zero is a gun mod for Minecraft Forge 1.20.1.
+Timeless and Classics Guns Zero is a gun mod for Minecraft with Forge and NeoForge builds.
+
+## Maintenance Status
+
+| Minecraft Version | Mod Loader | Version Series | Latest Version | Maintenance Status |
+| --- | --- | --- | --- | --- |
+| 1.18.2 | Forge | All versions | 1.1.4-hotfix | End of Support |
+| 1.19.2 | Forge | All versions | 1.1.4-hotfix | End of Support |
+| 1.20.1 | Forge | 1.x | 1.2.0 | Long-term Support |
+| 1.21.1 | NeoForge | 1.x | 1.2.0 | Long-term Support |
+| 1.20.1 | Forge | 2.x | TBA | In Development |
+| 1.21.1 | NeoForge | 2.x | TBA | In Development |
+
+- **End of Support**: These Minecraft versions are no longer maintained. `1.1.4-hotfix` is their final mod version.
+- **Long-term Support**: The 1.x series continues to receive maintenance for Minecraft 1.20.1 and 1.21.1. However, there will be no more major updates.
+- **In Development**: The 2.x series is under development. There are currently no builds available. Its release version is to be announced (TBA).
+
+There are currently no plans to support other mod loaders or Minecraft versions.
 
 ## Notice
 

@@ -10,7 +10,6 @@ import com.tacz.guns.api.item.IGun;
 import dev.latvian.mods.kubejs.event.EventExit;
 import dev.latvian.mods.kubejs.event.EventGroup;
 import dev.latvian.mods.kubejs.event.EventJS;
-import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.script.ScriptTypeHolder;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.resources.ResourceLocation;
@@ -155,14 +154,32 @@ public class GunKubeJSEvents {
         }
 
         @HideFromJS
-        @Nullable
+        @Override
         public ScriptTypeHolder getTypeHolder() {
-            return event.getLogicalSide().isClient() ? ScriptType.CLIENT : ScriptType.SERVER;
+            return (ScriptTypeHolder) event.getEntity();
         }
     }
 
     public static class GunFireEventJS extends GunEventJS<GunFireEvent> implements TimelessForgeEventWrappers.GunFireWrapper {
         public GunFireEventJS(GunFireEvent event) {
+            super(event);
+        }
+
+        @Override
+        @Nonnull
+        protected ItemStack getEventItemStack() {
+            return event.getGunItemStack();
+        }
+
+        @HideFromJS
+        @Override
+        public ScriptTypeHolder getTypeHolder() {
+            return (ScriptTypeHolder) event.getShooter();
+        }
+    }
+
+    public static class GunFirePostEventJS extends GunEventJS<GunFirePostEvent> implements TimelessForgeEventWrappers.GunFirePostWrapper {
+        public GunFirePostEventJS(GunFirePostEvent event) {
             super(event);
         }
 

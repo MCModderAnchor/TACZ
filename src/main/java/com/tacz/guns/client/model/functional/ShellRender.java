@@ -13,6 +13,9 @@ import com.tacz.guns.client.resource.index.ClientGunIndex;
 import com.tacz.guns.client.resource.pojo.display.gun.ShellEjection;
 import com.tacz.guns.compat.oculus.OculusCompat;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.util.RenderHelper;
+import com.tacz.guns.util.time.GunTime;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -42,52 +45,55 @@ public class ShellRender implements IFunctionalRenderer {
         double yRandom = Math.random() * randomVelocity.y();
         double zRandom = Math.random() * randomVelocity.z();
         Vector3f vector3f = new Vector3f((float) xRandom, (float) yRandom, (float) zRandom);
-        SHELL_QUEUE.offerLast(new Data(System.currentTimeMillis(), vector3f));
+        SHELL_QUEUE.offerLast(new Data(GunTime.nowMillis(), vector3f));
     }
 
-    private void renderShell(GunDisplayInstance display, GunData gunData, PoseStack poseStack, BedrockGunModel gunModel) {
+    private void renderShell(GunDisplayInstance display, GunData gunData, PoseStack poseStack, BedrockGunModel gunModel, MultiBufferSource bufferSource) {
         ShellEjection shellEjection = display.getShellEjection();
         if (shellEjection == null) {
             SHELL_QUEUE.clear();
             return;
         }
-        TimelessAPI.getClientAmmoIndex(gunData.getAmmoId()).ifPresent(ammoIndex -> {
-            BedrockAmmoModel model = ammoIndex.getShellModel();
-            if (model == null) {
+        BedrockAmmoModel model = display.getShellModel();
+        ResourceLocation location = display.getShellTextureLocation();
+        if (model == null || location == null) {
+            var ammoIndex = TimelessAPI.getClientAmmoIndex(gunData.getAmmoId()).orElse(null);
+            if (ammoIndex == null) {
                 return;
             }
-            ResourceLocation location = ammoIndex.getShellTextureLocation();
-            if (location == null) {
-                return;
+            model = ammoIndex.getShellModel();
+            location = ammoIndex.getShellTextureLocation();
+        }
+        if (model == null || location == null) {
+            return;
+        }
+        BedrockAmmoModel shellModel = model;
+        ResourceLocation shellTexture = location;
+        long lifeTime = (long) (shellEjection.getLivingTime() * 1000);
+
+        checkShellQueue(lifeTime);
+
+        Vector3f initialVelocity = shellEjection.getInitialVelocity();
+        Vector3f acceleration = shellEjection.getAcceleration();
+        Vector3f angularVelocity = shellEjection.getAngularVelocity();
+
+        // 缓存一下 PoseStack
+        for (Data data : SHELL_QUEUE) {
+            if (data.normal == null && data.pose == null) {
+                data.normal = new Matrix3f(poseStack.last().normal());
+                data.pose = new Matrix4f(poseStack.last().pose());
             }
-            long lifeTime = (long) (shellEjection.getLivingTime() * 1000);
+        }
 
-            // 检查有没有需要踢出去的队列
-            checkShellQueue(lifeTime);
-
-            // 各种参数的获取
-            Vector3f initialVelocity = shellEjection.getInitialVelocity();
-            Vector3f acceleration = shellEjection.getAcceleration();
-            Vector3f angularVelocity = shellEjection.getAngularVelocity();
-
-            // 缓存一下 PoseStack
-            for (Data data : SHELL_QUEUE) {
-                if (data.normal == null && data.pose == null) {
-                    data.normal = new Matrix3f(poseStack.last().normal());
-                    data.pose = new Matrix4f(poseStack.last().pose());
-                }
-            }
-
-            // 渲染抛壳
-            gunModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) ->{
-                SHELL_QUEUE.forEach(data -> renderSingleShell(transformType1, light, overlay, data, initialVelocity, acceleration, angularVelocity, model, location));
-            });
+        // 渲染抛壳
+        gunModel.delegateRender((poseStack1, vertexConsumer1, transformType1, light, overlay) ->{
+            SHELL_QUEUE.forEach(data -> renderSingleShell(transformType1, light, overlay, data, initialVelocity, acceleration, angularVelocity, shellModel, shellTexture, bufferSource));
         });
     }
 
-    private void renderSingleShell(ItemDisplayContext transformType1, int light, int overlay, Data data, Vector3f initialVelocity, Vector3f acceleration, Vector3f angularVelocity, BedrockAmmoModel model, ResourceLocation location) {
+    private void renderSingleShell(ItemDisplayContext transformType1, int light, int overlay, Data data, Vector3f initialVelocity, Vector3f acceleration, Vector3f angularVelocity, BedrockAmmoModel model, ResourceLocation location, MultiBufferSource bufferSource) {
         // 再检查一次
-        if (data.normal == null && data.pose == null) {
+        if (data.epoch != GunTime.epoch() || data.normal == null && data.pose == null) {
             return;
         }
         // 先初始化到缓存位置和朝向
@@ -96,7 +102,7 @@ public class ShellRender implements IFunctionalRenderer {
         poseStack2.last().pose().mul(data.pose);
 
         // 获取存留时间和各种参数
-        long remindTime = System.currentTimeMillis() - data.timeStamp;
+        long remindTime = GunTime.nowMillis() - data.timeStamp;
         double time = remindTime / 1000.0;
         Vector3f randomOffset = data.randomOffset;
 
@@ -115,13 +121,13 @@ public class ShellRender implements IFunctionalRenderer {
         poseStack2.mulPose(Axis.ZP.rotationDegrees((float) zw));
         poseStack2.translate(0, -1.5, 0);
 
-        model.render(poseStack2, transformType1, RenderType.entityCutout(location), light, overlay);
+        model.render(poseStack2, transformType1, RenderType.entityCutout(location), light, overlay, bufferSource);
     }
 
     private void checkShellQueue(long lifeTime) {
         if (!SHELL_QUEUE.isEmpty()) {
             Data data = SHELL_QUEUE.peekFirst();
-            if ((System.currentTimeMillis() - data.timeStamp) > lifeTime) {
+            if (data.epoch != GunTime.epoch() || (GunTime.nowMillis() - data.timeStamp) > lifeTime) {
                 SHELL_QUEUE.pollFirst();
                 checkShellQueue(lifeTime);
             }
@@ -130,6 +136,11 @@ public class ShellRender implements IFunctionalRenderer {
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay) {
+        render(poseStack, vertexBuffer, transformType, light, overlay, RenderHelper.getBufferSource(transformType));
+    }
+
+    @Override
+    public void render(PoseStack poseStack, VertexConsumer vertexBuffer, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
         if (OculusCompat.isRenderShadow()) {
             return;
         }
@@ -146,13 +157,14 @@ public class ShellRender implements IFunctionalRenderer {
             return;
         }
         TimelessAPI.getGunDisplay(currentGunItem).ifPresent(display -> {
-            this.renderShell(display, gunData, poseStack, bedrockGunModel);
+            this.renderShell(display, gunData, poseStack, bedrockGunModel, bufferSource);
         });
 
     }
 
     public static class Data {
         public final long timeStamp;
+        public final long epoch;
         public final Vector3f randomOffset;
 
         public Matrix3f normal = null;
@@ -160,6 +172,7 @@ public class ShellRender implements IFunctionalRenderer {
 
         public Data(long timeStamp, Vector3f randomOffset) {
             this.timeStamp = timeStamp;
+            this.epoch = GunTime.epoch();
             this.randomOffset = randomOffset;
         }
     }

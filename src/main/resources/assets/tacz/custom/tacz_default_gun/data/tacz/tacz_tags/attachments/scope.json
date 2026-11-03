@@ -4,10 +4,12 @@
   "tacz:scope_hamr",
   "tacz:sight_552",
   "tacz:sight_exp3",
+  "tacz:sight_1p87",
   "tacz:sight_uh1",
   "tacz:sight_t2",
   "tacz:scope_lpvo_1_6",
   "tacz:scope_acog_ta31",
+  "tacz:scope_c79",
   "tacz:sight_coyote",
   "tacz:sight_acro_rifle",
   "tacz:sight_deltapoint_rifle",
@@ -15,7 +17,13 @@
   "tacz:sight_pk06_rifle",
   "tacz:scope_vudu",
   "tacz:scope_mk5hd",
+  "tacz:scope_xm157",
   "tacz:sight_srs_02",
+  "tacz:sight_apm4s",
   "tacz:scope_qmk152",
-  "tacz:sight_okp7"
+  "tacz:sight_okp7",
+  "tacz:scope_mk4ert",
+  "tacz:scope_amg_10",
+  "tacz:scope_reap_ir",
+  "tacz:scope_xl50"
 ]

@@ -1,0 +1,111 @@
+{
+  "allow_ammo_unload": true,
+  "ammo": "tacz:45acp",
+  "ammo_amount": 5,
+  "extended_mag_ammo_amount": [
+    7,
+    9,
+    11
+  ],
+  "bolt": "manual_action",
+  "rpm": 350,
+  "bullet": {
+    "life": 1.2,
+    "bullet_amount": 1,
+    "damage": 12,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.0,
+      "head_shot_multiplier": 1.75,
+      "damage_adjust": [
+        {"distance": 12, "damage": 12},
+        {"distance": 36, "damage": 9},
+        {"distance": "infinite", "damage": 6}
+      ]
+    },
+    "speed": 190,
+    "gravity": 0.15,
+    "knockback": 0,
+    "friction": 0.025,
+    "ignite": false,
+    "pierce": 1
+  },
+  "script": "tacz:m1866_gun_logic",
+  "script_param": {
+    "bolt_time": 0.45,
+    "bolt_feed_time": 0.32,
+    "bolt_fast_time": 0.22,
+    "bolt_feed_fast_time": 0.16,
+    "intro_empty": 0.60,
+    "intro": 0.60,
+    "loop": 0.53,
+    "loop_feed": 0.2,
+    "ending": 0.27,
+    "ending_empty": 1.05,
+    "ending_empty_feed": 0.75
+  },
+  "reload": {
+    "type": "magazine"
+  },
+  "draw_time": 0.60,
+  "put_away_time": 0.57,
+  "aim_time": 0.19,
+  "sprint_time": 0.10,
+  "weight": 4.0,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.2,
+    "reload": 0.0
+  },
+  "crawl_recoil_multiplier": 0.35,
+  "fire_mode": [
+    "auto"
+  ],
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [2, 2]},
+      {"time": 0.1, "value": [2, 2]},
+      {"time": 0.33, "value": [0.1, 0.1]},
+      {"time": 0.5, "value": [0, 0]},
+      {"time": 0.75, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-0.35, -0.35]},
+      {"time": 0.15, "value": [-0.12, -0.12]},
+      {"time": 0.3, "value": [0.0, 0.0]},
+      {"time": 0.6, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 2.5,
+    "move": 2.5,
+    "sneak": 1,
+    "lie": 1,
+    "aim": 0.12
+  },
+  "melee": {
+    "distance": 1,
+    "cooldown": 1.0,
+    "default": {
+      "animation_type": "melee_stock",
+      "distance": 0,
+      "range_angle": 30,
+      "damage": 2,
+      "knockback": 0.75,
+      "prep": 0.1
+    }
+  },
+  "can_slide": false,
+  "allow_attachment_types": [
+    "muzzle",
+    "scope",
+    "extended_mag"
+  ],
+  "builtin_attachments": {
+    "muzzle": {
+      "attachments": [
+        "tacz:oem_barrel_cannon"
+      ]
+    }
+  }
+}

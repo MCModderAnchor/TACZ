@@ -1,6 +1,7 @@
 package com.tacz.guns.client.gameplay;
 
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.entity.ReloadState;
 import com.tacz.guns.api.event.common.GunReloadEvent;
@@ -15,6 +16,7 @@ import com.tacz.guns.network.message.ClientMessagePlayerCancelReload;
 import com.tacz.guns.network.message.ClientMessagePlayerReloadGun;
 import com.tacz.guns.resource.pojo.data.gun.Bolt;
 import com.tacz.guns.resource.pojo.data.gun.GunData;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -66,11 +68,11 @@ public class LocalPlayerReload {
             if (gunItem.useInventoryAmmo(mainHandItem)) {
                 return;
             }
-            // 检查状态锁
-            if (data.clientStateLock) {
+            // 蓄力期间不接受换弹，避免重置蓄力或覆盖蓄力动画
+            if (data.clientStateLock || data.isCharging) {
                 return;
             }
-            if (System.currentTimeMillis() - data.clientShootTimestamp < 100) {
+            if (GunTime.isWithin(data.clientShootTimestamp, 100)) {
                 return;
             }
             // 弹药简单检查
@@ -80,13 +82,18 @@ public class LocalPlayerReload {
             }
             // 锁上状态锁
             data.lockState(operator -> operator.getSynReloadState().getStateType().isReloading());
+            data.clientReloadStarting = true;
             data.chargeProgress = 0f;
             // 触发换弹事件
             if (MinecraftForge.EVENT_BUS.post(new GunReloadEvent(player, player.getMainHandItem(), LogicalSide.CLIENT))) {
+                data.clientReloadStarting = false;
                 return;
             }
             // 发包通知服务器
             NetworkHandler.CHANNEL.sendToServer(new ClientMessagePlayerReloadGun());
+            if (gunData.isForceAimExitOnReload()) {
+                IClientPlayerGunOperator.fromLocalPlayer(player).aim(false);
+            }
             // 执行客户端 reload 相关内容
             this.doReload(gunItem, display, gunData, mainHandItem);
         });

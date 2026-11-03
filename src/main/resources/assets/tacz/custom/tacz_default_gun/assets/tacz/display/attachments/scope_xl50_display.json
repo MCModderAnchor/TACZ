@@ -1,0 +1,57 @@
+{
+  "slot": "tacz:attachment/slot/scope_xl50",
+  "model": "tacz:attachment/scope_xl50_geo",
+  "texture": "tacz:attachment/uv/scope_xl50",
+  "lod": {
+    "model": "tacz:attachment/lod/scope_xl50",
+    "texture": "tacz:attachment/lod/scope_xl50"
+  },
+  "zoom": [
+    6,
+    10
+  ],
+  "idle_scope_height_adjust": 0.75,
+  "scope": true,
+  "fov": 20,
+  "text_show": {
+    "rangefinder_text_show_pos": {
+      "scale": 0.2,
+      "align": "right",
+      "shadow": false,
+      "color": "#D0D1D2",
+      "light": 15,
+      "text": "%rangefinder%m",
+      "rangefinder": {
+        "max_distance": 256,
+        "refresh_tick": 2,
+        "show_impact_prediction": false,
+        "impact_prediction_color": "#ffff00",
+        "impact_prediction_scale": 1.0
+      }
+    }
+  },
+  "scope_lens":{
+    "distortion": 0,              //  边缘径向畸变强度，范围0-0.2。默认0.05
+    "aberration": 0.007,          //  边缘 RGB分离强度，范围0-0.03。默认0.007
+    "edge_width": 0.35,           //  畸变及色散的边缘过渡宽度，范围0-2;0关闭畸变及色散，不影响暗角。默认0.35
+    "vignette_strength": 1.0,     //  暗角强度，范围0-1；0关闭暗角，不影响畸变及色散。默认1.0
+    "vignette_width": 0.15,       //  暗角过渡宽度，范围0-2；0关闭暗角，不影响畸变及色散。默认0.35
+    "tint": "#1F1F1F",            //  光学偏色，使用#RRGGBB；非法颜色回退白色。默认#70AEE8
+    "tint_strength": 0.2,         //  偏色强度，范围0-1；0为原色。默认0.2
+    "vision_mode": "THERMAL_WHITE_HOT",
+    //  成像模式预设：
+    //  NORMAL                原光学镜片偏色、畸变、色散和暗角
+    //  NIGHT_VISION_GREEN    暗部增强和绿磷色调
+    //  NIGHT_VISION_WHITE    暗部增强和偏冷白磷色调
+    //  THERMAL_WHITE_HOT     冷背景、亮目标
+    //  THERMAL_BLACK_HOT     亮背景、暗目标
+    //  THERMAL_IRONBOW       深紫冷背景、红黄到白色目标
+    //  未知值或 null 回退普通光学效果
+    "vision_gain": 3.0,           //  夜视增益，范围1-12。默认3.0
+    "vision_noise": 0.025          //  夜视及热成像噪点，范围0-0.2;0关闭。默认0.025
+  },
+  "sounds": {
+    "install": "tacz:attachments/scope_general_b",
+    "uninstall": "tacz:attachments/scope_general_b"
+  }
+}

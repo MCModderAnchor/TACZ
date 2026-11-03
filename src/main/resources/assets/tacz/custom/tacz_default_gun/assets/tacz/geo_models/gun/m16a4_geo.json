@@ -13824,7 +13824,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1.05, 9.6, 5.15],
+					"pivot": [1.05, 7.05313, 6.8375],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -13834,17 +13834,18 @@
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 12.65, 13.95]
+					"pivot": [0, 12.65, 16]
 				},
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [3.39375, 13.05, 16.4625]
+					"pivot": [3.25, 13.05, 17.4625],
+					"rotation": [0, 0, -2.5]
 				},
 				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [23, 9, 0],
+					"pivot": [32, 9, 0],
 					"rotation": [0, 89.9, 0]
 				},
 				{

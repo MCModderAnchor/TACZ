@@ -1,4 +1,6 @@
 {
+  "state_machine": "tacz:default_state_machine_v2",
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/lonetrail_geo",
   "texture": "tacz:gun/uv/lonetrail",
   "lod": {
@@ -18,8 +20,12 @@
     }
   },
   "muzzle_flash": {
+    "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 1
+    "scale": 1,
+    "smoke_scale": 1.65,
+    "initial_speed_scale": 1.7,
+    "smoke_particle_count": 20
   },
   "ammo":{
     "particle": {
@@ -40,7 +46,8 @@
     }
   },
   "iron_zoom": 1.5,
-  "zoom_model_fov": 55,
+  "model_fov": 60,
+  "zoom_model_fov": 45,
   "sounds": {
     "draw": "tacz:lonetrail/breach_draw",
     "put_away": "tacz:lonetrail/breach_put_away",

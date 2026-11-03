@@ -40,6 +40,9 @@
 				},
 				"bullet_in_barrel": {
 					"scale": 0
+				},
+				"bullet": {
+					"scale": 0
 				}
 			}
 		},

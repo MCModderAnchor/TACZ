@@ -1,0 +1,86 @@
+{
+  "ads_preset": "tacz:renew",
+  "model": "tacz:gun/hcar_geo",
+  "texture": "tacz:gun/uv/hcar",
+  "lod": {
+    "model": "tacz:gun/lod/hcar",
+    "texture": "tacz:gun/lod/hcar"
+  },
+  "hud": "tacz:gun/hud/hcar",
+  "slot": "tacz:gun/slot/hcar",
+  "animation": "tacz:hcar",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "state_machine": "tacz:hcar_state_machine",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "type": "renew",
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1.125,
+    "smoke_scale": 1.65,
+    "initial_speed_scale": 1.7,
+    "smoke_particle_count": 25,
+    "smoke_directions": [
+      { "plane_angle": 0, "out_angle": 0 },
+      { "plane_angle": 180, "out_angle": 0 }
+    ],
+    "smoke_spread_angle": 40
+  },
+  "iron_zoom": 1.33,
+  "model_fov": 60,
+  "zoom_model_fov": 42,
+  "shell": {
+    // 抛壳的初速度
+    "initial_velocity": [6, 2, -4.5],
+    // 抛壳随机变化的运动速度
+    "random_velocity": [2, 1.5, 0.5],
+    // 抛壳的加速度
+    "acceleration": [0.0, -12.5, 0.0],
+    // 抛壳的三轴角速度
+    "angular_velocity": [360, -1200, 90],
+    // 抛壳渲染存活时间，单位为秒
+    "living_time": 1.0
+  },
+  "sounds": {
+    "draw": "tacz:hcar/hcar_draw",
+    "put_away": "tacz:hcar/hcar_put_away",
+    "shoot": "tacz:hcar/hcar_shoot",
+    "shoot_3p": "tacz:hcar/hcar_shoot_3p",
+    "silence": "tacz:hcar/hcar_silence",
+    "silence_3p": "tacz:hcar/hcar_silence_3p",
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  // 副手枪械显示
+  "offhand_show": {
+    // 位置，和基岩版的数值显示一致
+    // 默认是 [-2, 20, 3.5]
+    "pos": [3, 22.5, 3.5],
+    // 旋转，单位为角度，默认就是 [0, 0, -30]
+    "rotate": [0, 0, 60],
+    // 缩放，默认就是 [0.6, 0.6, 0.6]
+    "scale": [0.5, 0.5, 0.5]
+  },
+  // 快捷栏枪械显示
+  // 没有此字段，不显示快捷栏枪械
+  "hotbar_show": {
+    // 快捷栏索引，默认是 0-8，共九个，但是实际上除去主手，只能显示八个
+    // 没有的，则不会显示
+    "0": {
+      "pos": [-3, 22.5, 3],
+      "rotate": [-180, 0, 120],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

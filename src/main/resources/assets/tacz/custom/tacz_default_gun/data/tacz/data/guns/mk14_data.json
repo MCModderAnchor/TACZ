@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:308",
   "ammo_amount": 10,
   "extended_mag_ammo_amount": [
@@ -6,6 +7,7 @@
     18,
     20
   ],
+  "can_slide": false,
   "bolt": "closed_bolt",
   "rpm": 300,
   "bullet": {
@@ -22,18 +24,18 @@
         {"distance": "infinite", "damage": 10.5}
       ]
     },
-    "speed": 310,
+    "speed": 340,
     "gravity": 0.15,
     "knockback": 0,
-    "friction": 0.01,
+    "friction": 0.015,
     "ignite": false,
     "pierce": 3,
     "explosion": {
       "explode": false,
-      "damage": 28,
-      "radius": 0.75,
+      "damage": 10,
+      "radius": 1,
       "knockback": true,
-      "delay": 1
+      "delay": 0.15
     }
   },
   "reload": {
@@ -65,7 +67,7 @@
   "fire_mode_adjust": {
     "auto": {
       // 加算，全自动模式的开火数值调整，如无调整可不写
-      "damage": -5,
+      "damage": -3,
       "rpm": 380,
       "speed": -30,
       "knockback": 0,
@@ -77,18 +79,16 @@
   },
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [1.75, 1.85]},
-      {"time": 0.05, "value": [1.25, 1.25]},
+      {"time": 0, "value": [1.75, 1.75]},
       {"time": 0.12, "value": [1.5, 1.5]},
-      {"time": 0.25, "value": [-0.15, -0.1]},
-      {"time": 0.5, "value": [0, 0]},
-      {"time": 0.7, "value": [0.15, 0.25]},
-      {"time": 0.9, "value": [0, 0]}
+      {"time": 0.25, "value": [0.1, 0.1]},
+      {"time": 0.35, "value": [0, 0]},
+      {"time": 0.7, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.5, 0.35]},
-      {"time": 0.05, "value": [-0.5, 0.35]},
-      {"time": 0.25, "value": [0, 0]}
+      {"time": 0, "value": [-0.35, 0.35]},
+      {"time": 0.25, "value": [0, 0]},
+      {"time": 0.3, "value": [0, 0]}
     ]
   },
   "inaccuracy": {

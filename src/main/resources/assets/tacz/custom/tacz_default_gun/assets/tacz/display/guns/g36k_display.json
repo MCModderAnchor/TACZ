@@ -1,4 +1,5 @@
 {
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/g36k_geo",
   "texture": "tacz:gun/uv/g36k",
   "lod": {
@@ -19,11 +20,20 @@
     }
   },
   "muzzle_flash": {
+    "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.75
+    "scale": 0.75,
+    "smoke_scale": 1.45,
+    "initial_speed_scale": 1.5,
+    "smoke_directions": [
+      { "plane_angle": 0, "out_angle": 0 },
+      { "plane_angle": 180, "out_angle": 0 }
+    ],
+    "smoke_spread_angle": 25
   },
   "iron_zoom": 1.33,
-  "zoom_model_fov": 60,
+  "model_fov": 60,
+  "zoom_model_fov": 45,
   "shell": {
     "initial_velocity": [5, 2, 1],
     "random_velocity": [1, 1, 0.25],
@@ -46,15 +56,24 @@
     "melee_push": "tacz:melee_stock/melee_stock_01",
     "melee_stock": "tacz:melee_stock/melee_stock_03"
   },
+  // 副手枪械显示
   "offhand_show": {
-    "pos": [1, 19, 4],
-    "rotate": [0, 0, 50],
+    // 位置，和基岩版的数值显示一致
+    // 默认是 [-2, 20, 3.5]
+    "pos": [3, 20, 3.5],
+    // 旋转，单位为角度，默认就是 [0, 0, -30]
+    "rotate": [0, 0, 60],
+    // 缩放，默认就是 [0.6, 0.6, 0.6]
     "scale": [0.5, 0.5, 0.5]
   },
+  // 快捷栏枪械显示
+  // 没有此字段，不显示快捷栏枪械
   "hotbar_show": {
+    // 快捷栏索引，默认是 0-8，共九个，但是实际上除去主手，只能显示八个
+    // 没有的，则不会显示
     "0": {
-      "pos": [-1, 19, 3],
-      "rotate": [-180, 0, 130],
+      "pos": [-3, 20, 3],
+      "rotate": [-180, 0, 120],
       "scale": [0.5, 0.5, 0.5]
     }
   }

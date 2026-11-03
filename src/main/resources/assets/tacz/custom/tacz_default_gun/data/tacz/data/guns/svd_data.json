@@ -1,0 +1,149 @@
+{
+  "allow_ammo_unload": true,
+  "ammo": "tacz:762x54",
+  "ammo_amount": 10,
+  "extended_mag_ammo_amount": [
+    10,
+    10,
+    10
+  ],
+  "bolt": "closed_bolt",
+  "rpm":180,
+  //"script": "tacz:xmag_reload_logic",
+  "script_param": {
+    "reload_feed": 1.75,
+    "reload_cooldown": 2.43,
+    "empty_feed": 2.23,
+    "empty_cooldown": 2.93,
+    "reload_xmag_1_feed": 1.9,
+    "reload_xmag_1_cooldown": 2.62,
+    "empty_xmag_1_feed": 2.32,
+    "empty_xmag_1_cooldown": 3.05,
+    "reload_xmag_2_feed": 2,
+    "reload_xmag_2_cooldown": 2.75,
+    "empty_xmag_2_feed": 2.4,
+    "empty_xmag_2_cooldown": 3.17,
+    "reload_xmag_3_feed": 2.15,
+    "reload_xmag_3_cooldown": 2.88,
+    "empty_xmag_3_feed": 2.5,
+    "empty_xmag_3_cooldown": 3.27
+  },
+  "bullet": {
+    "life": 0.8,
+    "bullet_amount": 1,
+    "damage":19,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.45,
+      "head_shot_multiplier": 1.75,
+      "damage_adjust": [
+        {"distance": 72, "damage": 19},
+        {"distance": 120, "damage": 17},
+        {"distance": "infinite", "damage": 12}
+      ]
+    },
+    "speed": 425,
+    "gravity": 0.15,
+    "knockback": 0,
+    "friction": 0.025,
+    "ignite": false,
+    "pierce": 2,
+    "explosion": {
+      "explode": false,
+      "damage": 12,
+      "radius": 1,
+      "knockback": true,
+      "delay": 0.15
+    }
+  },
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 2.23,
+      "tactical": 1.75
+    },
+    "cooldown": {
+      "empty": 2.93,
+      "tactical": 2.43
+    }
+  },
+  "draw_time": 0.63,
+  "put_away_time": 0.75,
+  "aim_time": 0.25,
+  "sprint_time": 0.22,
+  "weight": 4,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.5,
+    "reload": -0.2
+  },
+  "crawl_recoil_multiplier": 0.25,
+  "fire_mode": [
+    "semi"
+  ],
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [2, 2]},
+      {"time": 0.05, "value": [2.15, 2.15]},
+      {"time": 0.17, "value": [1.95, 1.95]},
+      {"time": 0.23, "value": [1.5, 1.5]},
+      {"time": 0.3, "value": [0.85, 0.85]},
+      {"time": 0.4, "value": [0.3, 0.3]},
+      {"time": 0.5, "value": [0, 0]},
+      {"time": 0.6, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-0.25, 0.25]},
+      {"time": 0.07, "value": [-0.3, 0.3]},
+      {"time": 0.17, "value": [-0.25, 0.25]},
+      {"time": 0.25, "value": [-0.1, 0.1]},
+      {"time": 0.45, "value": [0, 0]},
+      {"time": 0.7, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 7,
+    "move": 8.5,
+    "sneak": 6.5,
+    "lie": 6,
+    "aim": 0.075
+  },
+  // 近战相关
+  "melee": {
+    // 枪械距离参数，用来延升近战攻击范围
+    // 会与刺刀等配件的距离做加和
+    "distance": 1,
+    // 使用时的冷却时间
+    "cooldown": 0.7,
+    // 默认近战数据，会被配件的数据替换掉
+    "default": {
+      // 动画类型：没有枪托的为 melee_push，有枪托的为 melee_stock
+      "animation_type": "melee_stock",
+      // 刺刀距离参数，枪械里还有个刺刀攻击距离参数，两者做加和
+      "distance": 1,
+      // 刺刀范围角度
+      "range_angle": 30,
+      // 伤害值
+      "damage": 2,
+      // 击退效果
+      "knockback": 0.6,
+      // 前摇时长，单位：秒
+      "prep": 0.1
+    }
+  },
+  "allow_attachment_types": [
+    "scope",
+    "muzzle",
+    "extended_mag"
+  ],
+  "builtin_attachments": {
+    "scope": {
+      "attachments": [
+        "tacz:scope_pso_1"
+      ],
+      "default_attached": "tacz:scope_pso_1"
+    }
+  },
+  "exclusive_attachments": {
+  }
+}

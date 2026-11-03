@@ -2,7 +2,7 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"shoot": {
-			"animation_length": 0.76667,
+			"animation_length": 0.7667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -101,11 +101,10 @@
 				"0.0333": {
 					"effect": "weap_rpapa7_fire_plr_mech_01"
 				}
-			},
-			"particle_effects": {}
+			}
 		},
 		"reload_empty": {
-			"animation_length": 3.53333,
+			"animation_length": 3.5333,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -921,7 +920,7 @@
 			}
 		},
 		"put_away": {
-			"animation_length": 0.73333,
+			"animation_length": 0.7333,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -1223,7 +1222,7 @@
 			}
 		},
 		"static_bolt_caught": {
-			"animation_length": 0.03333,
+			"animation_length": 0.0333,
 			"bones": {
 				"root": {
 					"rotation": [0, 0, 0],
@@ -1277,7 +1276,7 @@
 			}
 		},
 		"inspect_empty": {
-			"animation_length": 5.86667,
+			"animation_length": 5.8667,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -1861,7 +1860,7 @@
 			}
 		},
 		"inspect": {
-			"animation_length": 5.86667,
+			"animation_length": 5.8667,
 			"bones": {
 				"root": {
 					"rotation": {

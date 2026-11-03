@@ -1,0 +1,2178 @@
+﻿{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_core"
+      }
+    },
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_back_panel"
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_core",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_back_panel",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_core",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_back_panel",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_core",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_back_panel",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_left_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_corner_right_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_edge_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_center_vertical"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_right_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_right_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_left_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_left_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_center_horizontal"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_center"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_center_vertical",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_right_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_right_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_left_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_left_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_center_horizontal",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_up",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_down",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_center",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_center_vertical",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_right_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_right_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_left_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_left_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_center_horizontal",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_up",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_down",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_center",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "false",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_center_vertical",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "true",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_right_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_right_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "false",
+        "right": "true",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "false",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_left_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_corner_left_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "false",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_single_center_horizontal",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "true",
+        "up": "false",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_up",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "false",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_edge_down",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "left": "true",
+        "right": "true",
+        "up": "true",
+        "down": "true",
+        "locked": "true"
+      },
+      "apply": {
+        "model": "tacz:block/display_case_glass_center",
+        "y": 270
+      }
+    }
+  ]
+}

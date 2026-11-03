@@ -12,6 +12,10 @@ import net.minecraftforge.event.ForgeEventFactory;
 
 public class ExplodeUtil {
     public static void createExplosion(Entity owner, Entity exploder, float damage, float radius, boolean knockback, boolean destroy, Vec3 hitPos) {
+        // 半径无效时跳过爆炸，避免伤害和击退计算出现 NaN
+        if (!Float.isFinite(radius) || radius <= 0) {
+            return;
+        }
         // 客户端不执行
         if (!(exploder.level() instanceof ServerLevel level)) {
             return;

@@ -27,7 +27,7 @@
 		"reload_tactical": {
 			"animation_length": 2.4333,
 			"bones": {
-				"bullet_in_barrel": {
+				"bullet_in_chamber": {
 					"rotation": {
 						"0.2333": [0, 0, 0],
 						"0.3333": [0, 0, 0],
@@ -857,7 +857,7 @@
 		"reload_empty": {
 			"animation_length": 2.5,
 			"bones": {
-				"bullet_in_barrel": {
+				"bullet_in_chamber": {
 					"rotation": {
 						"0.2333": [0, 0, 0],
 						"0.3333": [0, 0, 0],
@@ -1932,7 +1932,7 @@
 					"rotation": [0, 0, 0],
 					"position": [0, 0, 0]
 				},
-				"bullet_in_barrel": {
+				"bullet_in_chamber": {
 					"rotation": {
 						"7.5": [0, 0, 0],
 						"7.6": [0, 0, 0],

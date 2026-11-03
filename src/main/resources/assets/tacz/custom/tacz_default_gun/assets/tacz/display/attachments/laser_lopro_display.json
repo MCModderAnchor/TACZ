@@ -1,6 +1,7 @@
 {
   "slot": "tacz:attachment/slot/laser_lopro_slot",
   "model": "tacz:attachment/laser_lopro_geo",
+  "adapter": "laser_adapter",
   "texture": "tacz:attachment/uv/laser_lopro",
    "lod": {
           "model": "tacz:attachment/lod/laser_lopro",

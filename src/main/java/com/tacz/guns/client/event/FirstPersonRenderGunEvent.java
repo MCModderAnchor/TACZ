@@ -19,11 +19,16 @@ import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.functional.MuzzleFlashRender;
 import com.tacz.guns.client.renderer.item.GunItemRendererWrapper;
 import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
+import com.tacz.guns.client.resource.index.ClientAttachmentVariantIndex;
+import com.tacz.guns.client.resource.index.ClientSlotAdapterIndex;
+import com.tacz.guns.client.resource.pojo.display.gun.AdsPath;
 import com.tacz.guns.entity.EntityKineticBullet;
+import com.tacz.guns.util.SlotAdapterHelper;
 import com.tacz.guns.util.math.Easing;
 import com.tacz.guns.util.math.MathUtil;
 import com.tacz.guns.util.math.PerlinNoise;
 import com.tacz.guns.util.math.SecondOrderDynamics;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -48,7 +53,6 @@ import java.util.Optional;
  */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GunMod.MOD_ID)
 public class FirstPersonRenderGunEvent {
-    // 用于生成瞄准动作的运动曲线，使动作看起来更平滑
     private static final SecondOrderDynamics AIMING_DYNAMICS = new SecondOrderDynamics(1.2f, 1.2f, 0.5f, 0);
     private static SecondOrderDynamics SWITCH_VIEW_DYNAMICS;
     // 用于打开改装界面时枪械运动的平滑
@@ -92,6 +96,11 @@ public class FirstPersonRenderGunEvent {
         if (event.getLogicalSide().isClient()) {
             LivingEntity shooter = event.getShooter();
             LocalPlayer player = Minecraft.getInstance().player;
+            // 第三人称枪口效果：任何射手（本机玩家 + 服务器广播的其他玩家）。
+            // 本机玩家的请求仅在其第三人称持枪渲染时被消费（第一人称不可见）。
+            com.tacz.guns.client.particle.ThirdPersonMuzzleParticleManager.onShoot(shooter, event.getGunItemStack());
+            // 第三人称附着火光：按实体记录开火时间戳（跟随枪口，其他玩家也可见）
+            MuzzleFlashRender.onEntityShoot(shooter);
             if (!shooter.equals(player)) {
                 return;
             }
@@ -102,9 +111,11 @@ public class FirstPersonRenderGunEvent {
             }
             TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItem)).ifPresent(gunIndex -> {
                 // 记录开火时间戳，用于后坐力程序动画
-                shootTimeStamp = System.currentTimeMillis();
+                shootTimeStamp = GunTime.nowMillis();
                 // 记录枪口火焰数据
                 MuzzleFlashRender.onShoot();
+                // 记录 renew 枪口粒子数据
+                com.tacz.guns.client.particle.MuzzleParticleManager.onShoot(mainHandItem);
             });
         }
     }
@@ -120,11 +131,13 @@ public class FirstPersonRenderGunEvent {
         // 配合运动曲线，计算改装枪口的打开进度
         float refitScreenOpeningProgress = REFIT_OPENING_DYNAMICS.update(RefitTransform.getOpeningProgress());
         // 配合运动曲线，计算瞄准进度
-        float aimingProgress = AIMING_DYNAMICS.update(IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks));
+        float rawAimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTicks);
+        float aimingProgress = AIMING_DYNAMICS.update(rawAimingProgress);
+        AdsPath adsPath = TimelessAPI.getGunDisplay(gunItemStack).map(display -> display.getAdsPath()).orElse(null);
         // 应用枪械动态，如后坐力、持枪跳跃等
         applyGunMovements(model, aimingProgress, partialTicks);
         // 应用各种摄像机定位组的变换（默认持枪、瞄准、改装界面等）
-        applyFirstPersonPositioningTransform(poseStack, model, gunItemStack, aimingProgress, refitScreenOpeningProgress);
+        applyFirstPersonPositioningTransform(poseStack, model, gunItemStack, aimingProgress, refitScreenOpeningProgress, adsPath);
         // 应用动画约束变换
         applyAnimationConstraintTransform(poseStack, model, aimingProgress * (1 - refitScreenOpeningProgress));
     }
@@ -137,7 +150,7 @@ public class FirstPersonRenderGunEvent {
     /**
      * 应用瞄具摄像机定位组、机瞄摄像机定位组和 Idle 摄像机定位组的变换。会在几个摄像机定位之间插值。
      */
-    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, ItemStack stack, float aimingProgress, float refitScreenOpeningProgress) {
+    private static void applyFirstPersonPositioningTransform(PoseStack poseStack, BedrockGunModel model, ItemStack stack, float aimingProgress, float refitScreenOpeningProgress, AdsPath adsPath) {
         IGun iGun = IGun.getIGunOrNull(stack);
         if (iGun == null) {
             return;
@@ -151,9 +164,13 @@ public class FirstPersonRenderGunEvent {
         if (scopeId.equals(DefaultAssets.EMPTY_ATTACHMENT_ID)) {
             scopeId = iGun.getBuiltInAttachmentId(stack, AttachmentType.SCOPE);
         }
+        Optional<ClientAttachmentIndex> scopeIndexOptional = DefaultAssets.isEmptyAttachmentId(scopeId) ? Optional.empty() : TimelessAPI.getClientAttachmentIndex(scopeId);
+        Optional<ClientAttachmentVariantIndex> scopeVariantOptional = TimelessAPI.getClientAttachmentVariantIndex(iGun.getAttachment(stack, AttachmentType.SCOPE));
         CompoundTag scopeTag = iGun.getAttachmentTag(stack, AttachmentType.SCOPE);
         int zoomNumber = AttachmentItemDataAccessor.getZoomNumberFromTag(scopeTag);
         int viewIndex = 1;
+        Vector3f scopeMountOffset = null;
+        int mountOffsetInsertIndex = -1;
         if (DefaultAssets.isEmptyAttachmentId(scopeId)) {
             // 未安装瞄具，使用机瞄定位组
             aimingNodePath = model.getIronSightPath();
@@ -162,10 +179,16 @@ public class FirstPersonRenderGunEvent {
             List<BedrockPart> scopeNodePath = model.getScopePosPath();
             if (scopeNodePath != null) {
                 aimingNodePath = new ArrayList<>(scopeNodePath);
-                Optional<ClientAttachmentIndex> indexOptional = TimelessAPI.getClientAttachmentIndex(scopeId);
-                if (indexOptional.isPresent()) {
-                    BedrockAttachmentModel attachmentModel = indexOptional.get().getAttachmentModel();
-                    int[] views = indexOptional.get().getViews();
+                mountOffsetInsertIndex = scopeNodePath.size() - 1;
+                scopeMountOffset = getScopeMountOffset(stack, scopeId, scopeVariantOptional);
+                if (scopeIndexOptional.isPresent()) {
+                    ClientAttachmentIndex scopeIndex = scopeIndexOptional.get();
+                    BedrockAttachmentModel attachmentModel = scopeVariantOptional
+                            .map(ClientAttachmentVariantIndex::getAttachmentModel)
+                            .orElseGet(scopeIndex::getAttachmentModel);
+                    int[] views = scopeVariantOptional
+                            .map(ClientAttachmentVariantIndex::getViews)
+                            .orElseGet(scopeIndex::getViews);
                     viewIndex = views[zoomNumber % views.length] - 1;
                     if (attachmentModel != null) {
                         List<BedrockPart> scopeViewPath = attachmentModel.getScopeViewPath(currentViewIndex == -1 ? viewIndex : currentViewIndex);
@@ -176,7 +199,7 @@ public class FirstPersonRenderGunEvent {
                 }
             }
         }
-        Matrix4f aimingViewMatrix = getPositioningNodeInverse(aimingNodePath);
+        Matrix4f aimingViewMatrix = getPositioningNodeInverse(aimingNodePath, scopeMountOffset, mountOffsetInsertIndex);
         // 执行两个 scope view 之间的插值
         if (currentViewIndex == -1) {
             currentViewIndex = viewIndex;
@@ -194,16 +217,35 @@ public class FirstPersonRenderGunEvent {
             currentViewIndex = viewIndex;
         }
         // 应用瞄准变换
-        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(idleNodePath), transformMatrix, (1 - refitScreenOpeningProgress));
-        MathUtil.applyMatrixLerp(transformMatrix, aimingViewMatrix, transformMatrix, (1 - refitScreenOpeningProgress) * aimingProgress);
+        float idleScopeHeightAdjust = scopeIndexOptional.map(ClientAttachmentIndex::getIdleScopeHeightAdjust).orElse(0f) / 16.0f;
+        Matrix4f idleViewMatrix = getPositioningNodeInverse(idleNodePath);
+        MathUtil.applyMatrixLerp(transformMatrix, idleViewMatrix, transformMatrix, (1 - refitScreenOpeningProgress));
+        float positioningWeight = 1 - refitScreenOpeningProgress;
+        float pathProgress = aimingProgress;
+        float rotationProgress = adsPath == null ? aimingProgress : adsPath.rotation(pathProgress);
+        MathUtil.applyMatrixLerp(transformMatrix, aimingViewMatrix, transformMatrix, positioningWeight * rotationProgress);
+        if (adsPath != null) {
+            // 保留原有旋转插值，位移各轴按自己的时间窗口到达同一瞄准终点。
+            // 共享已有的平滑开镜进度，避免短 ADS 时间导致模型瞬间横移。
+            transformMatrix.m30(transformMatrix.m30() + (aimingViewMatrix.m30() - idleViewMatrix.m30())
+                    * (adsPath.x(pathProgress) - rotationProgress) * positioningWeight);
+            transformMatrix.m31(transformMatrix.m31() + (aimingViewMatrix.m31() - idleViewMatrix.m31())
+                    * (adsPath.y(pathProgress) - rotationProgress) * positioningWeight);
+            transformMatrix.m32(transformMatrix.m32() + (aimingViewMatrix.m32() - idleViewMatrix.m32())
+                    * (adsPath.z(pathProgress) - rotationProgress) * positioningWeight);
+        }
         // 应用改装界面开启时的定位
         float refitTransformProgress = (float) Easing.easeOutCubic(RefitTransform.getTransformProgress());
         AttachmentType oldType = RefitTransform.getOldTransformType();
         AttachmentType currentType = RefitTransform.getCurrentTransformType();
         List<BedrockPart> fromNode = model.getRefitAttachmentViewPath(oldType);
         List<BedrockPart> toNode = model.getRefitAttachmentViewPath(currentType);
-        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(fromNode), transformMatrix, refitScreenOpeningProgress);
-        MathUtil.applyMatrixLerp(transformMatrix, getPositioningNodeInverse(toNode), transformMatrix, refitScreenOpeningProgress * refitTransformProgress);
+        Matrix4f fromViewMatrix = getPositioningNodeInverse(fromNode);
+        Matrix4f toViewMatrix = getPositioningNodeInverse(toNode);
+        MathUtil.applyMatrixLerp(transformMatrix, fromViewMatrix, transformMatrix, refitScreenOpeningProgress);
+        MathUtil.applyMatrixLerp(transformMatrix, toViewMatrix, transformMatrix, refitScreenOpeningProgress * refitTransformProgress);
+        float heightProgress = adsPath == null ? aimingProgress : adsPath.y(pathProgress);
+        transformMatrix.m31(transformMatrix.m31() + idleScopeHeightAdjust * (1 - heightProgress));
         // 应用变换到 PoseStack
         poseStack.translate(0, 1.5f, 0);
         poseStack.mulPoseMatrix(transformMatrix);
@@ -215,10 +257,18 @@ public class FirstPersonRenderGunEvent {
      */
     @Nonnull
     private static Matrix4f getPositioningNodeInverse(List<BedrockPart> nodePath) {
+        return getPositioningNodeInverse(nodePath, null, -1);
+    }
+
+    @Nonnull
+    private static Matrix4f getPositioningNodeInverse(List<BedrockPart> nodePath, Vector3f mountOffset, int mountOffsetInsertIndex) {
         Matrix4f matrix4f = new Matrix4f();
         matrix4f.identity();
         if (nodePath != null) {
             for (int i = nodePath.size() - 1; i >= 0; i--) {
+                if (mountOffset != null && i == mountOffsetInsertIndex) {
+                    matrix4f.translate(-mountOffset.x() / 16.0F, mountOffset.y() / 16.0F, -mountOffset.z() / 16.0F);
+                }
                 BedrockPart part = nodePath.get(i);
                 // 计算反向的旋转
                 matrix4f.rotate(Axis.XN.rotation(part.xRot));
@@ -235,13 +285,36 @@ public class FirstPersonRenderGunEvent {
         return matrix4f;
     }
 
+    private static Vector3f getScopeMountOffset(ItemStack gunItem, ResourceLocation scopeId,
+                                                Optional<ClientAttachmentVariantIndex> scopeVariant) {
+        Vector3f combinedOffset = new Vector3f();
+        boolean hasOffset = false;
+
+        ResourceLocation adapterId = SlotAdapterHelper.getEffectiveSlotAdapter(gunItem, AttachmentType.SCOPE, scopeId);
+        if (adapterId != null) {
+            Vector3f adapterOffset = TimelessAPI.getClientSlotAdapterIndex(adapterId)
+                    .map(ClientSlotAdapterIndex::getMountOffset)
+                    .orElse(null);
+            if (adapterOffset != null) {
+                combinedOffset.add(adapterOffset);
+                hasOffset = true;
+            }
+        }
+
+        Vector3f variantOffset = scopeVariant.map(ClientAttachmentVariantIndex::getMountOffset).orElse(null);
+        if (variantOffset != null) {
+            combinedOffset.add(variantOffset);
+            hasOffset = true;
+        }
+        return hasOffset ? combinedOffset : null;
+    }
+
     private static void applyShootSwayAndRotation(BedrockGunModel model, float aimingProgress) {
         BedrockPart rootNode = model.getRootNode();
         if (rootNode != null) {
-            float progress = 1 - (System.currentTimeMillis() - shootTimeStamp) / (SHOOT_ANIMATION_TIME * 1000);
-            if (progress < 0) {
-                progress = 0;
-            }
+            float progress = GunTime.isWithin(shootTimeStamp, (long) (SHOOT_ANIMATION_TIME * 1000))
+                    ? 1 - (GunTime.nowMillis() - shootTimeStamp) / (SHOOT_ANIMATION_TIME * 1000)
+                    : 0;
             progress = (float) Easing.easeOutCubic(progress);
             rootNode.offsetX += SHOOT_X_SWAY_NOISE.getValue() / 16 * progress * (1 - aimingProgress);
             // 基岩版模型 y 轴上下颠倒，sway 值取相反数
@@ -252,7 +325,7 @@ public class FirstPersonRenderGunEvent {
 
     private static void applyJumpingSway(BedrockGunModel model, float partialTicks) {
         if (jumpingTimeStamp == -1) {
-            jumpingTimeStamp = System.currentTimeMillis();
+            jumpingTimeStamp = GunTime.nowMillis();
         }
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
@@ -266,7 +339,7 @@ public class FirstPersonRenderGunEvent {
                     }
                     lastOnGround = true;
                 } else {
-                    jumpingSwayProgress -= (System.currentTimeMillis() - jumpingTimeStamp) / (LANDING_SWAY_TIME * 1000);
+                    jumpingSwayProgress -= (GunTime.nowMillis() - jumpingTimeStamp) / (LANDING_SWAY_TIME * 1000);
                     if (jumpingSwayProgress < 0) {
                         jumpingSwayProgress = 0;
                     }
@@ -280,20 +353,27 @@ public class FirstPersonRenderGunEvent {
                     }
                     lastOnGround = false;
                 } else {
-                    jumpingSwayProgress -= (System.currentTimeMillis() - jumpingTimeStamp) / (JUMPING_SWAY_TIME * 1000);
+                    jumpingSwayProgress -= (GunTime.nowMillis() - jumpingTimeStamp) / (JUMPING_SWAY_TIME * 1000);
                     if (jumpingSwayProgress < 0) {
                         jumpingSwayProgress = 0;
                     }
                 }
             }
         }
-        jumpingTimeStamp = System.currentTimeMillis();
+        jumpingTimeStamp = GunTime.nowMillis();
         float ySway = JUMPING_DYNAMICS.update(JUMPING_Y_SWAY * jumpingSwayProgress);
         BedrockPart rootNode = model.getRootNode();
         if (rootNode != null) {
             // 基岩版模型 y 轴上下颠倒，sway 值取相反数
             rootNode.offsetY += -ySway / 16;
         }
+    }
+
+    public static void resetTimestamps() {
+        shootTimeStamp = -1;
+        jumpingTimeStamp = -1;
+        jumpingSwayProgress = 0;
+        lastOnGround = false;
     }
 
     /**

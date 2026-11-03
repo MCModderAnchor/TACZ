@@ -23,6 +23,18 @@
         "tag": "forge:glass"
       },
       "count": 4
+    },
+    {
+      "item": {
+        "item": "minecraft:observer"
+      },
+      "count": 2
+    },
+    {
+      "item": {
+        "item": "minecraft:ender_eye"
+      },
+      "count": 1
     }
   ],
   "result": {

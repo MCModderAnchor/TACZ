@@ -71,6 +71,10 @@ public class SoundManager {
      */
     public static String BOLT_SOUND = "bolt";
     /**
+     * 枪械主动卸弹成功音效
+     */
+    public static String UNLOAD_SOUND = "unload";
+    /**
      * 切换开关模式的声音
      */
     public static String FIRE_SELECT = "fire_select";

@@ -3,10 +3,14 @@ package com.tacz.guns.client.model;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
+import com.tacz.guns.client.model.bedrock.BedrockCube;
 import com.tacz.guns.client.model.bedrock.BedrockPart;
 import com.tacz.guns.client.model.bedrock.ModelRendererWrapper;
 import com.tacz.guns.client.model.functional.BeamRenderer;
+import com.tacz.guns.client.model.functional.RangefinderImpactPredictionRender;
 import com.tacz.guns.client.model.functional.TextShowRender;
+import com.tacz.guns.client.renderer.scope.ScopeLensRenderer;
+import com.tacz.guns.client.resource.pojo.display.attachment.ScopeLensConfig;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
@@ -41,6 +45,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     private static final String OCULAR_NODE = "ocular";
     private static final String OCULAR_SIGHT_NODE = "ocular_sight";
     private static final String OCULAR_SCOPE_NODE = "ocular_scope";
+    private static final String RANGEFINDER_IMPACT_PREDICTION_NODE = "rangefinder_impact_prediction_pos";
     private static final Pattern LASER_BEAM_PATTERN = Pattern.compile("^laser_beam(_(\\d+))?$");
 
     protected List<List<BedrockPart>> scopeViewPaths;
@@ -56,6 +61,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
     private boolean isScope = false;
     private boolean isSight = false;
+    private ScopeLensConfig scopeLens = new ScopeLensConfig();
     private float scopeViewRadiusModifier = 1;
 
     public BedrockAttachmentModel(BedrockModelPOJO pojo, BedrockVersion version) {
@@ -138,6 +144,10 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         return isSight;
     }
 
+    public void setScopeLens(ScopeLensConfig scopeLens) {
+        this.scopeLens = scopeLens;
+    }
+
     public void setScopeViewRadiusModifier(float scopeViewRadiusModifier) {
         this.scopeViewRadiusModifier = scopeViewRadiusModifier;
     }
@@ -148,36 +158,49 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     public void setTextShowList(Map<String, TextShow> textShowList) {
         textShowList.forEach((name, textShow) -> this.setFunctionalRenderer(name,
                 bedrockPart -> new TextShowRender(this, textShow, currentGunItem)));
+        boolean hasRangefinder = textShowList.values().stream().anyMatch(textShow -> textShow.getRangefinder() != null);
+        if (hasRangefinder && modelMap.containsKey(RANGEFINDER_IMPACT_PREDICTION_NODE)) {
+            this.setFunctionalRenderer(RANGEFINDER_IMPACT_PREDICTION_NODE,
+                    bedrockPart -> new RangefinderImpactPredictionRender(this));
+        }
     }
 
     public void render(@Nullable ItemStack attachmentItem, ItemStack currentGunItem, PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+        render(attachmentItem, currentGunItem, matrixStack, transformType, renderType, light, overlay, 1.0F);
+    }
+
+    public void render(@Nullable ItemStack attachmentItem, ItemStack currentGunItem, PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float alpha) {
+        render(attachmentItem, currentGunItem, matrixStack, transformType, renderType, light, overlay, alpha, RenderHelper.getBufferSource(transformType));
+    }
+
+    public void render(@Nullable ItemStack attachmentItem, ItemStack currentGunItem, PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, float alpha, MultiBufferSource bufferSource) {
         this.currentGunItem = currentGunItem;
         this.attachmentItem = attachmentItem;
         if (transformType.firstPerson()) {
             if (isScope && isSight) {
-                renderBoth(matrixStack, transformType, renderType, light, overlay);
+                renderBoth(matrixStack, transformType, renderType, light, overlay, bufferSource);
             } else if (isScope) {
-                renderScope(matrixStack, transformType, renderType, light, overlay);
+                renderScope(matrixStack, transformType, renderType, light, overlay, bufferSource);
             } else if (isSight) {
-                renderSight(matrixStack, transformType, renderType, light, overlay);
+                renderSight(matrixStack, transformType, renderType, light, overlay, bufferSource);
             }
         } else {
             if (scopeBodyPath != null) {
-                renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+                renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath, alpha, bufferSource);
             }
             if (ocularRingPath != null) {
-                renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
+                renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath, alpha, bufferSource);
             }
         }
         if (!isScope && !isSight && laserBeamPaths != null) {
             for (var entry : laserBeamPaths) {
-                BeamRenderer.renderLaserBeam(attachmentItem, matrixStack, transformType, entry);
+                BeamRenderer.renderLaserBeam(attachmentItem, matrixStack, transformType, entry, bufferSource);
             }
         }
-        super.render(matrixStack, transformType, renderType, light, overlay);
+        super.render(matrixStack, transformType, renderType, light, overlay, 1.0F, 1.0F, 1.0F, alpha, bufferSource);
         if ((isScope || isSight) && laserBeamPaths != null) {
             for (var entry : laserBeamPaths) {
-                BeamRenderer.renderLaserBeam(attachmentItem, matrixStack, transformType, entry);
+                BeamRenderer.renderLaserBeam(attachmentItem, matrixStack, transformType, entry, bufferSource);
             }
         }
     }
@@ -193,24 +216,28 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     }
 
     private void renderTempPart(PoseStack poseStack, ItemDisplayContext transformType, RenderType renderType,
-                                int light, int overlay, @Nonnull List<BedrockPart> path) {
+                                int light, int overlay, @Nonnull List<BedrockPart> path, MultiBufferSource bufferSource) {
+        renderTempPart(poseStack, transformType, renderType, light, overlay, path, 1.0F, bufferSource);
+    }
+
+    private void renderTempPart(PoseStack poseStack, ItemDisplayContext transformType, RenderType renderType,
+                                int light, int overlay, @Nonnull List<BedrockPart> path, float alpha, MultiBufferSource bufferSource) {
         poseStack.pushPose();
         for (int i = 0; i < path.size() - 1; ++i) {
             path.get(i).translateAndRotateAndScale(poseStack);
         }
         BedrockPart part = path.get(path.size() - 1);
         part.visible = true;
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
-        part.render(poseStack, transformType, vertexConsumer, light, overlay);
+        part.render(poseStack, transformType, vertexConsumer, light, overlay, 1.0F, 1.0F, 1.0F, alpha, bufferSource);
         if (!OculusCompat.endBatch(bufferSource)) {
-            bufferSource.endBatch(renderType);
+            RenderHelper.endBatch(bufferSource, renderType);
         }
         part.visible = false;
         poseStack.popPose();
     }
 
-    private void renderOcularStencil(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, boolean isScope) {
+    private void renderOcularStencil(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, boolean isScope, MultiBufferSource bufferSource) {
         if (!ocularNodePaths.isEmpty()) {
             RenderSystem.colorMask(false, false, false, false);
             RenderSystem.depthMask(false);
@@ -220,7 +247,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             for (int i = ocularNodePaths.size() - 1; i >= 0; i--) {
                 if (isScope == isScopeOcular.get(i)) {
                     RenderSystem.stencilFunc(GL11.GL_GREATER, i + 1, 0xFF);
-                    renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularNodePaths.get(i));
+                    renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularNodePaths.get(i), bufferSource);
                 }
             }
             // 恢复渲染状态
@@ -230,18 +257,18 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         }
     }
 
-    private void renderDivisionOnly(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+    private void renderDivisionOnly(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
         if (!divisionNodePaths.isEmpty()) {
             RenderSystem.disableDepthTest();
             for (int i = 0; i < divisionNodePaths.size(); i++) {
                 RenderSystem.stencilFunc(GL11.GL_EQUAL, i + 1, 0xFF);
-                renderTempPart(matrixStack, transformType, renderType, light, overlay, divisionNodePaths.get(i));
+                renderTempPart(matrixStack, transformType, renderType, light, overlay, divisionNodePaths.get(i), bufferSource);
             }
             RenderSystem.enableDepthTest();
         }
     }
 
-    private void renderOcularAndDivision(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, boolean selective) {
+    private void renderOcularAndDivision(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, boolean selective, MultiBufferSource bufferSource) {
         if (!ocularNodePaths.isEmpty()) {
             BufferBuilder builder = Tesselator.getInstance().getBuilder();
             // 准备渲染圆形模板层
@@ -281,24 +308,66 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
                 }
                 if (selective && !isScopeOcular.get(i)) {
                     RenderSystem.stencilFunc(GL11.GL_EQUAL, i + 1, 0xFF);
-                    renderTempPart(matrixStack, transformType, renderType, light, overlay, divisionNodePaths.get(i));
+                    renderTempPart(matrixStack, transformType, renderType, light, overlay, divisionNodePaths.get(i), bufferSource);
                 } else {
                     // 渲染目镜黑色遮罩
                     RenderSystem.stencilFunc(GL11.GL_EQUAL, i + 1, 0xFF);
-                    renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularNodePaths.get(i));
+                    renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularNodePaths.get(i), bufferSource);
                     // 渲染划分
                     int b = ~(i+1) & 0xFF;
                     RenderSystem.stencilFunc(GL11.GL_EQUAL, b, 0xFF);
-                    renderTempPart(matrixStack, transformType, renderType, light, overlay, divisionNodePaths.get(i));
+                    Vector3f center = getBedrockPartCenter(matrixStack, ocularNodePaths.get(i));
+                    List<BedrockPart> ocular = ocularNodePaths.get(i);
+                    List<BedrockPart> division = divisionNodePaths.get(i);
+                    if (ScopeLensRenderer.capture(center.x() * 16 * 90, center.y() * 16 * 90, rad, b, scopeLens,
+                            bounds -> captureLensBounds(matrixStack, ocular, bounds),
+                            buffers -> captureLensDivision(matrixStack, transformType, renderType, light, overlay, division, buffers))) {
+                        continue;
+                    }
+                    renderTempPart(matrixStack, transformType, renderType, light, overlay, divisionNodePaths.get(i), bufferSource);
                 }
             }
         }
     }
 
-    private void renderBoth(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+    private void captureLensBounds(PoseStack poseStack, List<BedrockPart> path, VertexConsumer bounds) {
+        poseStack.pushPose();
+        try {
+            for (int i = 0; i < path.size() - 1; i++) path.get(i).translateAndRotateAndScale(poseStack);
+            captureLensPartBounds(poseStack, path.get(path.size() - 1), bounds);
+        } finally {
+            poseStack.popPose();
+        }
+    }
+
+    /** Inspect geometry only; functional renderers must not run a second time for the bounds probe. */
+    private void captureLensPartBounds(PoseStack poseStack, BedrockPart part, VertexConsumer bounds) {
+        poseStack.pushPose();
+        part.translateAndRotateAndScale(poseStack);
+        for (BedrockCube cube : part.cubes) cube.compile(poseStack.last(), bounds, 0, 0, 1, 1, 1, 1);
+        for (BedrockPart child : part.children) captureLensPartBounds(poseStack, child, bounds);
+        poseStack.popPose();
+    }
+
+    /** Resolve functional readouts now, before the shared model is animated/reset for another draw. */
+    private void captureLensDivision(PoseStack poseStack, ItemDisplayContext context, RenderType type,
+                                     int light, int overlay, List<BedrockPart> division, MultiBufferSource buffers) {
+        List<IFunctionalRenderer> previous = delegateRenderers;
+        delegateRenderers = new ArrayList<>();
+        try {
+            renderTempPart(poseStack, context, type, light, overlay, division, buffers);
+            for (int i = 0; i < delegateRenderers.size(); i++) {
+                delegateRenderers.get(i).render(poseStack, buffers.getBuffer(type), context, light, overlay, buffers);
+            }
+        } finally {
+            delegateRenderers = previous;
+        }
+    }
+
+    private void renderBoth(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		// 当加速渲染加载则使用加速渲染提供的方法进行加速
 		if (ARCompat.shouldAccelerate()) {
-			renderBothAccelerated(matrixStack, transformType, renderType, light, overlay);
+			renderBothAccelerated(matrixStack, transformType, renderType, light, overlay, bufferSource);
 			return;
 		}
 
@@ -310,29 +379,29 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
             RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
             // 渲染目镜外环
-            renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
+            renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath, bufferSource);
         }
         // 渲染目镜以写入模板桓冲值 (暂时只渲染 ocular_scope)
-        renderOcularStencil(matrixStack, transformType, renderType, light, overlay, true);
+        renderOcularStencil(matrixStack, transformType, renderType, light, overlay, true, bufferSource);
         // 渲染镜身
         if (scopeBodyPath != null) {
             RenderSystem.stencilFunc(GL11.GL_EQUAL, 0, 0xFF);
-            renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+            renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath, bufferSource);
         }
         // 渲染目镜以写入模板桓冲值 (渲染其他的目镜)
-        renderOcularStencil(matrixStack, transformType, renderType, light, overlay, false);
+        renderOcularStencil(matrixStack, transformType, renderType, light, overlay, false, bufferSource);
         // 渲染目镜遮罩和划分
-        renderOcularAndDivision(matrixStack, transformType, renderType, light, overlay, true);
+        renderOcularAndDivision(matrixStack, transformType, renderType, light, overlay, true, bufferSource);
         // 关闭模板缓冲
         RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
         RenderHelper.disableItemEntityStencilTest();
         // 渲染其他部分
-        super.render(matrixStack, transformType, renderType, light, overlay);
+        super.render(matrixStack, transformType, renderType, light, overlay, bufferSource);
     }
 
-    private void renderSight(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+    private void renderSight(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		if (ARCompat.shouldAccelerate()) {
-			renderSightAccelerated(matrixStack, transformType, renderType, light, overlay);
+			renderSightAccelerated(matrixStack, transformType, renderType, light, overlay, bufferSource);
 			return;
 		}
 
@@ -341,22 +410,22 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         RenderSystem.clearStencil(0);
         RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
         // 渲染目镜以写入模板桓冲值
-        renderOcularStencil(matrixStack, transformType, renderType, light, overlay, false);
+        renderOcularStencil(matrixStack, transformType, renderType, light, overlay, false, bufferSource);
         // 渲染划分
-        renderDivisionOnly(matrixStack, transformType, renderType, light, overlay);
+        renderDivisionOnly(matrixStack, transformType, renderType, light, overlay, bufferSource);
         // 关闭模板缓冲
         RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
         RenderHelper.disableItemEntityStencilTest();
         // 渲染其他部分
         if (scopeBodyPath != null) {
-            renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+            renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath, bufferSource);
         }
-        super.render(matrixStack, transformType, renderType, light, overlay);
+        super.render(matrixStack, transformType, renderType, light, overlay, bufferSource);
     }
 
-    private void renderScope(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+    private void renderScope(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		if (ARCompat.shouldAccelerate()) {
-			renderScopeAccelerated(matrixStack, transformType, renderType, light, overlay);
+			renderScopeAccelerated(matrixStack, transformType, renderType, light, overlay, bufferSource);
 			return;
 		}
 
@@ -368,22 +437,22 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
         if (ocularRingPath != null) {
             RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
             RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-            renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
+            renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath, bufferSource);
         }
         // 渲染目镜以写入模板桓冲值
-        renderOcularStencil(matrixStack, transformType, renderType, light, overlay, false);
+        renderOcularStencil(matrixStack, transformType, renderType, light, overlay, false, bufferSource);
         // 渲染镜身
         if (scopeBodyPath != null) {
             RenderSystem.stencilFunc(GL11.GL_EQUAL, 0, 0xFF);
-            renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+            renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath, bufferSource);
         }
         // 渲染目镜遮罩和划分
-        renderOcularAndDivision(matrixStack, transformType, renderType, light, overlay, false);
+        renderOcularAndDivision(matrixStack, transformType, renderType, light, overlay, false, bufferSource);
         // 关闭模板缓冲
         RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
         RenderHelper.disableItemEntityStencilTest();
         // 渲染其他部分
-        super.render(matrixStack, transformType, renderType, light, overlay);
+        super.render(matrixStack, transformType, renderType, light, overlay, bufferSource);
     }
 
 	public void renderBothAccelerated(
@@ -393,15 +462,33 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			int light,
 			int overlay
 	) {
+		renderBothAccelerated(matrixStack, transformType, renderType, light, overlay, RenderHelper.getBufferSource(transformType));
+	}
+
+	public void renderBothAccelerated(
+			PoseStack matrixStack,
+			ItemDisplayContext transformType,
+			RenderType renderType,
+			int light,
+			int overlay,
+			MultiBufferSource bufferSource
+	) {
 		// 缓存PoseStack防止之后坐标变换出现问题
 		var poseStack = new PoseStack();
 		poseStack.last().pose().set(matrixStack.last().pose());
 		poseStack.last().normal().set(matrixStack.last().normal());
 
+		// 获取先前的层前/层后任务, 防止覆盖
+		Runnable before = ARCompat.getRenderBeforeFunction();
+		Runnable after = ARCompat.getRenderAfterFunction();
+
 		// 设置外环的渲染层和渲染前后任务
 		// 清空模板缓冲区、准备绘制模板缓冲
 		ARCompat.setRenderLayer(-943);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 清除上模板残留, 这里其实可以按原始渲染方法移出去, 但为了统一先放入第一层渲染
 			RenderHelper.enableItemEntityStencilTest();
 			RenderSystem.clearStencil(0);
@@ -412,12 +499,17 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 		});
 
-		// 画完目镜外环后, 临时关闭模板缓冲区防止渲染异常
-		ARCompat.setRenderAfterFunction(RenderHelper::disableItemEntityStencilTest);
+		ARCompat.setRenderAfterFunction(() -> {
+			// 画完目镜外环后, 临时关闭模板缓冲区防止渲染异常
+			RenderHelper.disableItemEntityStencilTest();
+
+			// 最后执行被覆盖的层后方法
+			after.run();
+		});
 
 		if (ocularRingPath != null) {
 			// 渲染目镜外环
-			renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
+			renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath, bufferSource);
 		}
 
 		// 重置外环层, 还原现场, 进行下一步绘制
@@ -428,6 +520,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 		// 设置镜身的渲染层和渲染前后任务
 		ARCompat.setRenderLayer(-943 + 1);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 重新启用上一层关闭的模板缓冲区
 			RenderHelper.enableItemEntityStencilTest();
 
@@ -440,7 +535,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			BufferUploader.invalidate();
 
 			// 渲染目镜以写入模板桓冲值 (暂时只渲染 ocular_scope)
-			renderOcularStencil(poseStack, transformType, renderType, light, overlay, true);
+			renderOcularStencil(poseStack, transformType, renderType, light, overlay, true, bufferSource);
 
 			// 重新绑回VAO
 			GL30.glBindVertexArray(vao);
@@ -463,9 +558,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			BufferUploader.invalidate();
 
 			// 渲染目镜以写入模板桓冲值 (渲染其他的目镜)
-			renderOcularStencil(poseStack, transformType, renderType, light, overlay, false);
+			renderOcularStencil(poseStack, transformType, renderType, light, overlay, false, bufferSource);
 			// 渲染目镜遮罩和划分
-			renderOcularAndDivision(poseStack, transformType, renderType, light, overlay, true);
+			renderOcularAndDivision(poseStack, transformType, renderType, light, overlay, true, bufferSource);
 
 			// 重新绑回VAO
 			GL30.glBindVertexArray(vao);
@@ -476,11 +571,14 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			// 关闭模板缓冲
 			RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
 			RenderHelper.disableItemEntityStencilTest();
+
+			// 最后执行被覆盖的层后方法
+			after.run();
 		});
 
 		if (scopeBodyPath != null) {
 			// 渲染镜身
-			renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+			renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath, bufferSource);
 		}
 
 		// 重置镜身层, 还原现场, 进行最后一步其他部分绘制
@@ -492,21 +590,27 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 		ARCompat.setRenderLayer(-943 + 2);
 
 		// 渲染其他部分
-		super.render(matrixStack, transformType, renderType, light, overlay);
+		super.render(matrixStack, transformType, renderType, light, overlay, bufferSource);
 
 		// 重置层, 还原现场, 完成配件渲染
 		ARCompat.resetRenderLayer();
 	}
 
-	private void renderSightAccelerated(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+	private void renderSightAccelerated(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		// 缓存PoseStack防止之后坐标变换出现问题
 		var poseStack = new PoseStack();
 		poseStack.last().pose().set(matrixStack.last().pose());
 		poseStack.last().normal().set(matrixStack.last().normal());
 
+		// 获取先前的层前任务, 防止覆盖
+		Runnable before = ARCompat.getRenderBeforeFunction();
+
 		// 设置层前任务, 清除模板缓冲并绘制目镜和划分
 		ARCompat.setRenderLayer(-943);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 清除上模板残留, 这里其实可以按原始渲染方法移出去, 但为了统一先放入第一层渲染
 			RenderHelper.enableItemEntityStencilTest();
 			RenderSystem.clearStencil(0);
@@ -521,9 +625,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			BufferUploader.invalidate();
 
 			// 渲染目镜以写入模板桓冲值
-			renderOcularStencil(poseStack, transformType, renderType, light, overlay, false);
+			renderOcularStencil(poseStack, transformType, renderType, light, overlay, false, bufferSource);
 			// 渲染划分
-			renderDivisionOnly(poseStack, transformType, renderType, light, overlay);
+			renderDivisionOnly(poseStack, transformType, renderType, light, overlay, bufferSource);
 
 			// 重新绑回VAO
 			GL30.glBindVertexArray(vao);
@@ -538,25 +642,32 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
 		// 渲染其他部分
 		if (scopeBodyPath != null) {
-			renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+			renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath, bufferSource);
 		}
-		super.render(matrixStack, transformType, renderType, light, overlay);
+		super.render(matrixStack, transformType, renderType, light, overlay, bufferSource);
 
 		// 重置层, 还原现场, 完成渲染
 		ARCompat.resetRenderLayer();
 		ARCompat.resetRenderBeforeFunction();
 	}
 
-	private void renderScopeAccelerated(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay) {
+	private void renderScopeAccelerated(PoseStack matrixStack, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, MultiBufferSource bufferSource) {
 		// 缓存PoseStack防止之后坐标变换出现问题
 		var poseStack = new PoseStack();
 		poseStack.last().pose().set(matrixStack.last().pose());
 		poseStack.last().normal().set(matrixStack.last().normal());
 
+		// 获取先前的层前/层后任务, 防止覆盖
+		Runnable before = ARCompat.getRenderBeforeFunction();
+		Runnable after = ARCompat.getRenderAfterFunction();
+
 		// 设置外环的渲染层和渲染前后任务
 		// 清空模板缓冲区、准备绘制模板缓冲
 		ARCompat.setRenderLayer(-943);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 清除上模板残留, 这里其实可以按原始渲染方法移出去, 但为了统一先放入第一层渲染
 			RenderHelper.enableItemEntityStencilTest();
 			RenderSystem.clearStencil(0);
@@ -567,12 +678,17 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 		});
 
-		// 画完目镜外环后, 临时关闭模板缓冲区防止渲染异常
-		ARCompat.setRenderAfterFunction(RenderHelper::disableItemEntityStencilTest);
+		ARCompat.setRenderAfterFunction(() -> {
+			// 画完目镜外环后, 临时关闭模板缓冲区防止渲染异常
+			RenderHelper.disableItemEntityStencilTest();
+
+			// 最后执行被覆盖的层后方法
+			after.run();
+		});
 
 		// 渲染目镜外环
 		if (ocularRingPath != null) {
-			renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath);
+			renderTempPart(matrixStack, transformType, renderType, light, overlay, ocularRingPath, bufferSource);
 		}
 
 		// 重置外环层, 还原现场, 进行下一步绘制
@@ -583,6 +699,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 		// 设置镜身的渲染层和渲染前后任务
 		ARCompat.setRenderLayer(-943 + 1);
 		ARCompat.setRenderBeforeFunction(() -> {
+			// 先执行被覆盖的层前方法
+			before.run();
+
 			// 重新启用上一层关闭的模板缓冲区
 			RenderHelper.enableItemEntityStencilTest();
 
@@ -595,7 +714,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			BufferUploader.invalidate();
 
 			// 渲染目镜以写入模板桓冲值
-			renderOcularStencil(poseStack, transformType, renderType, light, overlay, false);
+			renderOcularStencil(poseStack, transformType, renderType, light, overlay, false, bufferSource);
 
 			// 重新绑回VAO
 			GL30.glBindVertexArray(vao);
@@ -618,7 +737,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			BufferUploader.invalidate();
 
 			// 渲染目镜遮罩和划分
-			renderOcularAndDivision(poseStack, transformType, renderType, light, overlay, false);
+			renderOcularAndDivision(poseStack, transformType, renderType, light, overlay, false, bufferSource);
 
 			// 重新绑回VAO
 			GL30.glBindVertexArray(vao);
@@ -629,11 +748,14 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 			// 关闭模板缓冲
 			RenderSystem.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
 			RenderHelper.disableItemEntityStencilTest();
+
+			// 最后执行被覆盖的层后方法
+			after.run();
 		});
 
 		// 渲染镜身
 		if (scopeBodyPath != null) {
-			renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath);
+			renderTempPart(matrixStack, transformType, renderType, light, overlay, scopeBodyPath, bufferSource);
 		}
 
 		// 重置镜身层, 还原现场, 进行最后一步其他部分绘制
@@ -645,7 +767,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 		ARCompat.setRenderLayer(-943 + 2);
 
 		// 渲染其他部分
-		super.render(matrixStack, transformType, renderType, light, overlay);
+		super.render(matrixStack, transformType, renderType, light, overlay, bufferSource);
 
 		// 重置层, 还原现场, 完成配件渲染
 		ARCompat.resetRenderLayer();

@@ -1,5 +1,7 @@
 package com.tacz.guns.util;
 
+import com.tacz.guns.util.time.GunTime;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -41,6 +43,7 @@ public final class CycleTaskHelper {
 
     private static class CycleTaskTicker {
         private final BooleanSupplier task;
+        private final long epoch = GunTime.epoch();
         private final float periodS;
         private final int cycles;
         private float delayS = 0;
@@ -56,21 +59,24 @@ public final class CycleTaskHelper {
 
         private CycleTaskTicker(BooleanSupplier task, long delayMs, long periodMs, int cycles) {
             this.delayS = delayMs / 1000f;
-            this.timestamp = System.currentTimeMillis();
+            this.timestamp = GunTime.nowMillis();
             this.task = task;
             this.periodS = periodMs / 1000f;
             this.cycles = cycles;
         }
 
         private boolean tick() {
+            if (epoch != GunTime.epoch()) {
+                return false;
+            }
             if (timestamp == -1) {
-                timestamp = System.currentTimeMillis();
+                timestamp = GunTime.nowMillis();
                 if (cycles > 0 && ++count > cycles) {
                     return false;
                 }
                 return task.getAsBoolean();
             }
-            float duration = (System.currentTimeMillis() - timestamp) / 1000f + compensation;
+            float duration = (GunTime.nowMillis() - timestamp) / 1000f + compensation;
             if (delayS > 0) {
                 if (delayS > duration) {
                     // 延迟还没结束，减少延迟，继续tick
@@ -85,7 +91,7 @@ public final class CycleTaskHelper {
             }
             if (duration > periodS) {
                 compensation = duration;
-                timestamp = System.currentTimeMillis();
+                timestamp = GunTime.nowMillis();
                 while (compensation > periodS) {
                     if (cycles > 0 && ++count > cycles) {
                         return false;

@@ -22,6 +22,18 @@ public class GunClothConfig {
                 .setMin(0).setMax(Integer.MAX_VALUE).setDefaultValue(16).setTooltip(Component.translatable("config.tacz.common.gun.default_gun_other_sound_distance.desc"))
                 .setSaveConsumer(GunConfig.DEFAULT_GUN_OTHER_SOUND_DISTANCE::set).build());
 
+        gun.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.gun.enable_gun_sound_anger"), GunConfig.ENABLE_GUN_SOUND_ANGER.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.common.gun.enable_gun_sound_anger.desc"))
+                .setSaveConsumer(GunConfig.ENABLE_GUN_SOUND_ANGER::set).build());
+
+        gun.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.common.gun.default_gun_sound_neutral_mob_anger_distance"), GunConfig.DEFAULT_GUN_SOUND_NEUTRAL_MOB_ANGER_DISTANCE.get())
+                .setMin(0).setMax(GunConfig.MAX_GUN_SOUND_MOB_ANGER_DISTANCE).setDefaultValue(24).setTooltip(Component.translatable("config.tacz.common.gun.default_gun_sound_neutral_mob_anger_distance.desc"))
+                .setSaveConsumer(GunConfig.DEFAULT_GUN_SOUND_NEUTRAL_MOB_ANGER_DISTANCE::set).build());
+
+        gun.addEntry(entryBuilder.startIntField(Component.translatable("config.tacz.common.gun.default_gun_sound_hostile_mob_anger_distance"), GunConfig.DEFAULT_GUN_SOUND_HOSTILE_MOB_ANGER_DISTANCE.get())
+                .setMin(0).setMax(GunConfig.MAX_GUN_SOUND_MOB_ANGER_DISTANCE).setDefaultValue(32).setTooltip(Component.translatable("config.tacz.common.gun.default_gun_sound_hostile_mob_anger_distance.desc"))
+                .setSaveConsumer(GunConfig.DEFAULT_GUN_SOUND_HOSTILE_MOB_ANGER_DISTANCE::set).build());
+
         gun.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.common.gun.creative_player_consume_ammo"), GunConfig.CREATIVE_PLAYER_CONSUME_AMMO.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.common.gun.creative_player_consume_ammo.desc"))
                 .setSaveConsumer(GunConfig.CREATIVE_PLAYER_CONSUME_AMMO::set).build());

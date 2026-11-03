@@ -1,0 +1,22 @@
+{
+  "slot": "tacz:attachment/slot/laser_ngal",
+  "model": "tacz:attachment/laser_ngal_geo",
+  "adapter": "laser_adapter",
+  "texture": "tacz:attachment/uv/laser_ngal",
+   "lod": {
+          "model": "tacz:attachment/lod/laser_ngal",
+          "texture": "tacz:attachment/lod/laser_ngal"
+  },
+  "sounds": {
+    "install": "tacz:attachments/attachment_general_b",
+    "uninstall": "tacz:attachments/attachment_general_uninstall"
+  },
+  "laser": {
+    // 默认的镭射颜色 default laser color, 0x = #
+    "default_color": "0x00FFFF",
+    // 是否允许在改装界面自定义该镭射的颜色 can be customized
+    "can_edit": true,
+    // 激光的长度（因为是渐变，末端可能实际完全看不见）laser length
+    "length": 75
+  }
+}

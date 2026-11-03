@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.client.resource.pojo.display.gun.LayerGunShow;
+import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.util.math.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -19,6 +20,9 @@ import org.joml.Vector3f;
 
 public class HumanoidOffhandRender {
     public static void renderGun(LivingEntity entity, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
+        if (RenderConfig.DISABLE_THIRD_PERSON_OFFHAND_AND_HOTBAR_GUN_RENDER.get()) {
+            return;
+        }
         renderOffhandGun(entity, matrixStack, buffer, packedLight);
         renderHotbarGun(entity, matrixStack, buffer, packedLight);
     }

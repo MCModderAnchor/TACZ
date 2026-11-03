@@ -1,0 +1,9 @@
+{
+  "hidden": false,
+  "name": "tacz.attachment.scope_xm157.name",
+  "tooltip": "tacz.attachment.scope_xm157.desc",
+  "display": "tacz:scope_xm157_display",
+  "data": "tacz:scope_xm157_data",
+  "type": "scope",
+  "sort": 39
+}

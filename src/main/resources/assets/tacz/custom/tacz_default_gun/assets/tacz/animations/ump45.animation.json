@@ -2,7 +2,7 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"static_idle": {
-			"animation_length": 0.06667,
+			"animation_length": 0.0667,
 			"bones": {
 				"lefthand": {
 					"rotation": [97.704, -29.88, -140.639],
@@ -21,7 +21,7 @@
 			}
 		},
 		"static_bolt_caught": {
-			"animation_length": 0.06667,
+			"animation_length": 0.0667,
 			"bones": {
 				"lefthand": {
 					"rotation": [97.704, -29.88, -140.639],
@@ -38,11 +38,14 @@
 				},
 				"bolt_release": {
 					"rotation": [0, 0, 7.5]
+				},
+				"bullet": {
+					"scale": 0
 				}
 			}
 		},
 		"draw": {
-			"animation_length": 1.03333,
+			"animation_length": 1.0333,
 			"bones": {
 				"lefthand": {
 					"rotation": {
@@ -366,7 +369,7 @@
 			}
 		},
 		"put_away": {
-			"animation_length": 0.46667,
+			"animation_length": 0.4667,
 			"bones": {
 				"lefthand": {
 					"rotation": {
@@ -513,7 +516,7 @@
 			}
 		},
 		"reload_tactical": {
-			"animation_length": 2.53333,
+			"animation_length": 2.5333,
 			"bones": {
 				"lefthand": {
 					"rotation": {
@@ -1284,7 +1287,7 @@
 			}
 		},
 		"reload_empty": {
-			"animation_length": 3.13333,
+			"animation_length": 3.1333,
 			"bones": {
 				"lefthand": {
 					"rotation": {
@@ -3606,7 +3609,7 @@
 			}
 		},
 		"inspect_empty": {
-			"animation_length": 4.53333,
+			"animation_length": 4.5333,
 			"bones": {
 				"lefthand": {
 					"rotation": {
@@ -4927,7 +4930,7 @@
 			}
 		},
 		"shoot": {
-			"animation_length": 1.13333,
+			"animation_length": 1.1333,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -5005,6 +5008,23 @@
 						"0.1333": [0, 0, -0.185],
 						"0.1667": [0, 0, 0.2],
 						"0.2": [0, 0, 0]
+					}
+				},
+				"bullet_in_barrel": {
+					"rotation": {
+						"0.0333": [0, 0, 0],
+						"0.05": [-7.25, 0, 0],
+						"0.0667": [0, 0, 0]
+					},
+					"position": {
+						"0.0333": [0, -0.5, 0],
+						"0.05": [0, -0.1875, 0],
+						"0.0667": [0, 0, 0]
+					},
+					"scale": {
+						"0.0": [0, 0, 0],
+						"0.0333": {"pre": [1, 1, 1], "post": [1, 1, 1]},
+						"0.0667": [1, 1, 1]
 					}
 				}
 			}

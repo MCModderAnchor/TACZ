@@ -7,7 +7,7 @@
     "texture": "tacz:attachment/lod/scope_qmk152"
   },
   "zoom": [
-    3
+    3.25
   ],
   "views": [
     2
@@ -15,9 +15,20 @@
    "views_fov": [
     50
   ],
+  "idle_scope_height_adjust": 0.5,
   "scope": true,
   "sounds": {
     "install": "tacz:attachments/scope_general_b",
     "uninstall": "tacz:attachments/scope_general_b"
+  },
+  "scope_lens": {
+    "distortion": 0.05,
+    "aberration": 0.007,
+    "edge_width": 0.35,
+    "vignette_strength": 1,
+    "vignette_width": 0.35,
+    "tint": "#d78780",
+    "tint_strength": 0.2,
+    "vision_mode": "NORMAL"
   }
 }

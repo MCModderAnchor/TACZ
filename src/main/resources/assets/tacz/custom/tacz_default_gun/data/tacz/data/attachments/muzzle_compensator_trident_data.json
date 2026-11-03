@@ -1,4 +1,11 @@
 {
+  "weight": 0.15,
+  "smoke_directions": [
+    { "plane_angle": 150, "out_angle": 20 },
+    { "plane_angle": 30, "out_angle": 20 },
+    { "plane_angle": -90, "out_angle": 15 }
+  ],
+  "smoke_spread_angle": 25,
   "ads": {
     "addend": 0.01
   },

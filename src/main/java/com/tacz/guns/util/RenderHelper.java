@@ -3,15 +3,19 @@ package com.tacz.guns.util;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.tacz.guns.client.animation.third.AnimationRenderContext;
+import com.tacz.guns.client.animation.third.PlayerModelRenderState;
 import com.tacz.guns.compat.ar.ARCompat;
-import com.tacz.guns.compat.optifine.OptifineCompat;
+import com.tacz.guns.compat.oculus.OculusCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
@@ -20,6 +24,8 @@ import org.lwjgl.opengl.GL30;
 
 @OnlyIn(Dist.CLIENT)
 public final class RenderHelper {
+    private static final boolean IS_OPTIFINE_INSTALLED = isClassFound("net.optifine.Config");
+
     public static void blit(PoseStack poseStack, float x, float y, float uOffset, float vOffset, float pWidth, float height, float textureWidth, float textureHeight) {
         blit(poseStack, x, y, pWidth, height, uOffset, vOffset, pWidth, height, textureWidth, textureHeight);
     }
@@ -45,7 +51,7 @@ public final class RenderHelper {
 
     public static void enableItemEntityStencilTest() {
         RenderSystem.assertOnRenderThread();
-        if (OptifineCompat.isOptifineInstalled()) {
+        if (IS_OPTIFINE_INSTALLED) {
             // 以下代码用于应对 使用 optifine 的场景
             int depthTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME);
             int stencilTextureId = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
@@ -70,28 +76,66 @@ public final class RenderHelper {
         GL11.glDisable(GL11.GL_STENCIL_TEST);
     }
 
+    private static boolean isClassFound(String className) {
+        try {
+            Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    /** Prefer passing the caller's buffer; old overloads must respect an active shader hand pass. */
+    public static MultiBufferSource getBufferSource(ItemDisplayContext context) {
+        if (context.firstPerson()) {
+            MultiBufferSource handBuffer = OculusCompat.getHandBufferSource();
+            if (handBuffer != null) {
+                return handBuffer;
+            }
+        }
+        return Minecraft.getInstance().renderBuffers().bufferSource();
+    }
+
     public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight) {
+        renderFirstPersonArm(player, hand, matrixStack, combinedLight, getBufferSource(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND));
+    }
+
+    public static void renderFirstPersonArm(LocalPlayer player, HumanoidArm hand, PoseStack matrixStack, int combinedLight, MultiBufferSource buffer) {
         Minecraft mc = Minecraft.getInstance();
         EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
         PlayerRenderer renderer = (PlayerRenderer) renderManager.getRenderer(player);
-        MultiBufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        // int oldId = RenderSystem.getShaderTexture(0);
-        // RenderSystem.setShaderTexture(0, player.getSkinTextureLocation());
 
-		if (ARCompat.shouldAccelerate()) {
-			ARCompat.setRenderingLevel();
-		}
-
-        if (hand == HumanoidArm.RIGHT) {
-            renderer.renderRightHand(matrixStack, buffer, combinedLight, player);
-        } else {
-            renderer.renderLeftHand(matrixStack, buffer, combinedLight, player);
+        boolean accelerated = ARCompat.shouldAccelerate();
+        if (accelerated) {
+            ARCompat.setRenderingLevel();
+        }
+        // 在第一人称持枪渲染手臂期间，屏蔽我们自己的pa调用
+        try (var state = new PlayerModelRenderState(renderer.getModel());
+             var scope = AnimationRenderContext.hand(player)) {
+            state.prepareArm(hand, !player.isSpectator());
+            if (hand == HumanoidArm.RIGHT) {
+                renderer.renderRightHand(matrixStack, buffer, combinedLight, player);
+            } else {
+                renderer.renderLeftHand(matrixStack, buffer, combinedLight, player);
+            }
+        } finally {
+            if (accelerated) {
+                ARCompat.resetRenderingLevel();
+            }
         }
 
-		if (ARCompat.shouldAccelerate()) {
-			ARCompat.resetRenderingLevel();
-		}
-
         // RenderSystem.setShaderTexture(0, oldId);
+    }
+
+    public static void endBatch(MultiBufferSource buffer, RenderType renderType) {
+        if (buffer instanceof MultiBufferSource.BufferSource source) {
+            source.endBatch(renderType);
+        }
+    }
+
+    public static void endBatch(MultiBufferSource buffer) {
+        if (buffer instanceof MultiBufferSource.BufferSource source) {
+            source.endBatch();
+        }
     }
 }

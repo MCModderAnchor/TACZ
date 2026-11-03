@@ -19,10 +19,11 @@
     2
   ],
   "views_fov": [
-    55.0,
+    40.0,
     25.0
   ],
   // 如果配件是瞄具，且为筒状放大瞄具，此选项应为true
+  "idle_scope_height_adjust": 1,
   "scope": true,
   // 如果配件是瞄具，且为红点或全息瞄具，此选项应为true
   "sight": false,
@@ -31,5 +32,15 @@
   "sounds": {
     "install": "tacz:attachments/scope_general_c",
     "uninstall": "tacz:attachments/scope_general_c"
+  },
+  "scope_lens": {
+    "distortion": 0.05,
+    "aberration": 0.007,
+    "edge_width": 0.35,
+    "vignette_strength": 1,
+    "vignette_width": 0.35,
+    "tint": "#D8A376",
+    "tint_strength": 0.2,
+    "vision_mode": "NORMAL"
   }
 }

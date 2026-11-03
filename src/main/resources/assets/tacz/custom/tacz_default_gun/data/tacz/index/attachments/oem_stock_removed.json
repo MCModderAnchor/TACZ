@@ -1,0 +1,8 @@
+{
+  "name": "tacz.attachment.oem_stock_removed.name",
+  "display": "tacz:oem_stock_removed_display",
+  "data": "tacz:oem_stock_removed_data",
+  "type": "stock",
+  "sort": 1,
+  "hidden": false
+}

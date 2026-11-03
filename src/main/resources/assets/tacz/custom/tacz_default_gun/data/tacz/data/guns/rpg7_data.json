@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:rpg_rocket",
   "rpm": 150,
   "ammo_amount": 1,

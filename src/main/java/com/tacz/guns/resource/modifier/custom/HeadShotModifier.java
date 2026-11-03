@@ -90,9 +90,9 @@ public class HeadShotModifier implements IAttachmentModifier<Modifier, Float> {
         double modifierPercent = Mth.clamp(modifier / 5.0, 0, 1);
 
         String titleKey = "gui.tacz.gun_refit.property_diagrams.head_shot";
-        String positivelyString = String.format("x%.1f §a(+%.1f)", modifiedValue, modifier);
-        String negativelyString = String.format("x%.1f §c(%.1f)", modifiedValue, modifier);
-        String defaultString = String.format("x%.1f", modifiedValue);
+        String positivelyString = String.format("x%.2f §a(+%.2f)", modifiedValue, modifier);
+        String negativelyString = String.format("x%.2f §c(%.2f)", modifiedValue, modifier);
+        String defaultString = String.format("x%.2f", modifiedValue);
         boolean positivelyBetter = true;
 
         DiagramsData diagramsData = new DiagramsData(percent, modifierPercent, modifier, titleKey, positivelyString, negativelyString, defaultString, positivelyBetter);

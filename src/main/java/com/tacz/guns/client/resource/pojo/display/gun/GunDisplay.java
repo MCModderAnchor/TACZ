@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.client.resource.pojo.display.IDisplay;
 import com.tacz.guns.client.resource.pojo.display.LaserConfig;
+import com.tacz.guns.client.resource.pojo.display.SoundData;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,8 +23,19 @@ public class GunDisplay implements IDisplay {
     private ResourceLocation modelTexture;
     @SerializedName("iron_zoom")
     private float ironZoom = 1.2f;
+    @SerializedName("model_fov")
+    private float modelFov = 70f;
     @SerializedName("zoom_model_fov")
     private float zoomModelFov = 70f;
+    @Nullable
+    @SerializedName("ads_path")
+    private AdsPath adsPath;
+    @Nullable
+    @SerializedName("ads_fov")
+    private AdsFov adsFov;
+    @Nullable
+    @SerializedName("ads_preset")
+    private ResourceLocation adsPreset;
     @Nullable
     @SerializedName("lod")
     private GunLod gunLod;
@@ -69,7 +81,7 @@ public class GunDisplay implements IDisplay {
     private boolean playerAnimator3rdFixedHand = false;
     @Nullable
     @SerializedName("sounds")
-    private Map<String, ResourceLocation> sounds;
+    private Map<String, SoundData> sounds;
     @Nullable
     @SerializedName("preload_sounds")
     private List<String> preloadSounds;
@@ -173,7 +185,7 @@ public class GunDisplay implements IDisplay {
     }
 
     @Nullable
-    public Map<String, ResourceLocation> getSounds() {
+    public Map<String, SoundData> getSounds() {
         return sounds;
     }
 
@@ -215,8 +227,25 @@ public class GunDisplay implements IDisplay {
         return ironZoom;
     }
 
+    public float getModelFov() {
+        return modelFov;
+    }
+
     public float getZoomModelFov() {
         return zoomModelFov;
+    }
+
+    @Nullable
+    public AdsPath getAdsPath() {
+        return adsPath;
+    }
+
+    public @Nullable AdsFov getAdsFov() {
+        return adsFov;
+    }
+
+    public @Nullable ResourceLocation getAdsPreset() {
+        return adsPreset;
     }
 
     public Map<String, TextShow> getTextShows() {
@@ -271,6 +300,9 @@ public class GunDisplay implements IDisplay {
         }
         if (muzzleFlash != null && muzzleFlash.texture != null) {
             muzzleFlash.texture = converter.idToFile(muzzleFlash.texture);
+        }
+        if (shellEjection != null) {
+            shellEjection.init();
         }
     }
 }

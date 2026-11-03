@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:308",
   "can_crawl": false,
   "bolt": "open_bolt",
@@ -31,6 +32,8 @@
     // 冷却倍率，过热值的减少速度会随着时间增加
     // t时间(秒)内可以冷却的过热值可以参考: max = cooling_multiplier * t^2
     "cooling_multiplier": 15,
+    // 背包后台每 tick 固定散热，<= 0 时禁用（默认为0）。不建议和脚本一起使用
+    "inventory_cooling_per_tick": 3.25,
     // 冷却延迟，ms
     "cooling_delay": 5,
     // 完全过热后，开始过热的延迟时间，ms

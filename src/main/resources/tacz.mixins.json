@@ -12,6 +12,8 @@
   ],
   "client": [
     "client.AbstractButtonMixin",
+    "client.CreativeModeInventoryScreenMixin",
+    "client.EntityRenderDispatcherMixin",
     "client.GameRendererMixin",
     "client.HumanoidModelMixin",
     "client.ItemInHandLayerMixin",
@@ -20,6 +22,7 @@
     "client.LocalPlayerMixin",
     "client.MouseHandlerMixin",
     "client.PlayerModelMixin",
+    "client.RenderSystemAccessor",
     "client.SoundManagerPreparationsMixin",
     "client.StairBlockAccessor"
   ],

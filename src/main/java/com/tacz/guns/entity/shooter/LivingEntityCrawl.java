@@ -2,7 +2,7 @@ package com.tacz.guns.entity.shooter;
 
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.IGun;
-import net.minecraft.resources.ResourceLocation;
+import com.tacz.guns.config.sync.SyncConfig;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -18,50 +18,51 @@ public class LivingEntityCrawl {
     }
 
     public void crawl(boolean isCrawl) {
-        data.isCrawling = isCrawl;
+        setCrawling(isCrawl && canCrawl());
     }
 
     public void tickCrawling() {
-        // currentGunItem 如果为 null，则取消趴下状态
-        if (data.currentGunItem == null || !(data.currentGunItem.get().getItem() instanceof IGun iGun)) {
-            data.isCrawling = false;
-            this.setCrawlPose();
+        if (!data.isCrawling) {
             return;
         }
-        ItemStack currentGunItem = data.currentGunItem.get();
-        // 不允许趴下的武器，则取消趴下状态
-        if (!iGun.isCanCrawl(currentGunItem)) {
-            data.isCrawling = false;
-            this.setCrawlPose();
-            return;
+        boolean poseChanged = shooter instanceof Player player && player.getForcedPose() != Pose.SWIMMING;
+        if (poseChanged || !canCrawl()) {
+            setCrawling(false);
         }
-        // 如果获取不到 gunIndex，则取消趴下状态
-        ResourceLocation gunId = iGun.getGunId(currentGunItem);
-        if (TimelessAPI.getCommonGunIndex(gunId).isEmpty()) {
-            data.isCrawling = false;
-            this.setCrawlPose();
-            return;
-        }
-        // 如果是观察者模型、骑乘、跳跃、在游泳、不在地上，取消
-        if (shooter.isSpectator() || shooter.isPassenger() || shooter.jumping || shooter.isSwimming() || !shooter.onGround()) {
-            data.isCrawling = false;
-            this.setCrawlPose();
-            return;
-        }
-        this.setCrawlPose();
     }
 
-    private void setCrawlPose() {
-        if (data.isCrawling) {
-            if (shooter instanceof Player player) {
-                player.setForcedPose(Pose.SWIMMING);
-            } else {
-                this.shooter.setPose(Pose.SWIMMING);
+    private boolean canCrawl() {
+        if (!SyncConfig.ENABLE_CRAWL.get()) {
+            return false;
+        }
+        boolean invalidState = !shooter.isAlive() || shooter.isSpectator() || shooter.isPassenger();
+        boolean invalidMovement = shooter.jumping || shooter.isSwimming() || !shooter.onGround();
+        boolean incompatiblePose = shooter.isSleeping() || shooter.isFallFlying() || shooter.isAutoSpinAttack();
+        if (invalidState || invalidMovement || incompatiblePose) {
+            return false;
+        }
+        // 玩家可以从未持过枪，也可能刚切换物品，以实际主手物品为准。
+        ItemStack gunItem = shooter instanceof Player ? shooter.getMainHandItem()
+                : data.currentGunItem == null ? ItemStack.EMPTY : data.currentGunItem.get();
+        if (gunItem.getItem() instanceof IGun gun) {
+            return gun.isCanCrawl(gunItem)
+                    && TimelessAPI.getCommonGunIndex(gun.getGunId(gunItem)).isPresent();
+        }
+        return shooter instanceof Player && SyncConfig.ENABLE_CRAWL_WITHOUT_GUN.get();
+    }
+
+    private void setCrawling(boolean crawling) {
+        if (data.isCrawling == crawling) {
+            return;
+        }
+        data.isCrawling = crawling;
+        // 只在 TACZ 的趴下状态变化时设置或清除一次，不持续写入姿态。
+        if (shooter instanceof Player player) {
+            if (crawling || player.getForcedPose() == Pose.SWIMMING) {
+                player.setForcedPose(crawling ? Pose.SWIMMING : null);
             }
         } else {
-            if (shooter instanceof Player player) {
-                player.setForcedPose(null);
-            }
+            shooter.setPose(crawling ? Pose.SWIMMING : Pose.STANDING);
         }
     }
 }

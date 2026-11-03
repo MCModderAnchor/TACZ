@@ -81,7 +81,7 @@
 				{
 					"name": "constraint",
 					"parent": "m249_default",
-					"pivot": [0, 11, 8.325]
+					"pivot": [0, 11, 0.325]
 				},
 				{
 					"name": "attachment_positioning",
@@ -8377,14 +8377,6 @@
 					]
 				},
 				{
-					"name": "idle_view",
-					"pivot": [3.25625, 12.13125, 17.5]
-				},
-				{
-					"name": "iron_view",
-					"pivot": [0, 11, 16.5]
-				},
-				{
 					"name": "camera",
 					"pivot": [3.25625, 12.13125, 17.5]
 				},
@@ -8405,7 +8397,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [1.1, 6.1, 1.225],
+					"pivot": [1.1, 5.19375, 5.00625],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -8413,9 +8405,19 @@
 					"pivot": [0, 0, 0]
 				},
 				{
+					"name": "idle_view",
+					"parent": "view",
+					"pivot": [3.25625, 12.13125, 18.5]
+				},
+				{
+					"name": "iron_view",
+					"parent": "view",
+					"pivot": [0, 11, 18]
+				},
+				{
 					"name": "refit_view",
 					"parent": "view",
-					"pivot": [23, 10, 0],
+					"pivot": [32, 8, 2],
 					"rotation": [0, 89.9, 0]
 				},
 				{

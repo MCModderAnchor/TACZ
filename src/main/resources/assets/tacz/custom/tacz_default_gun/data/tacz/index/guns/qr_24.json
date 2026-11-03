@@ -1,0 +1,8 @@
+{
+  "name": "tacz.gun.qr_24.name",
+  "display": "tacz:qr_24_display",
+  "data": "tacz:qr_24_data",
+  "tooltip": "tacz.gun.qr_24.desc",
+  "type": "rifle",
+  "sort": 21
+}

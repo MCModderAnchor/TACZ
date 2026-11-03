@@ -11,13 +11,15 @@ import java.nio.file.Path;
 
 public class PreLoadConfig {
     private static ForgeConfigSpec spec;
+    private static PreLoadModConfig loadedConfig;
     public static ForgeConfigSpec.BooleanValue override;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         builder.push("gunpack");
-        builder.comment("When enabled, the mod will not try to overwrite the default pack under .minecraft/tacz\n" +
-                "Since 1.0.4, the overwriting will only run when you start client or a dedicated server");
+        builder.comment("Enable to preserve local default gun pack edits.",
+                "When disabled, changes to the TACZ version or bundled resources trigger replacement at startup.",
+                "To regenerate, disable this option, delete <game directory>/tacz/tacz_default_gun, then restart.");
         override = builder.define("DefaultPackDebug", false);
         builder.pop();
         spec = builder.build();
@@ -38,6 +40,13 @@ public class PreLoadConfig {
         final CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
         config.setConfigData(configData);
         config.fireEvent(IConfigEvent.loading(config));
+        loadedConfig = config;
         config.save();
+    }
+
+    public static void save() {
+        if (loadedConfig != null) {
+            loadedConfig.save();
+        }
     }
 }

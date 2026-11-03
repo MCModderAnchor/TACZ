@@ -1,0 +1,43 @@
+package com.tacz.guns.client.gui.overlay;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+@Mod.EventBusSubscriber(value = Dist.CLIENT)
+public class DisplayCaseLockHintOverlay implements IGuiOverlay {
+    private static final int DISPLAY_TICKS = 40;
+    private static final int Y_OFFSET = 32;
+    private static Component message = Component.empty();
+    private static int ticksRemaining;
+
+    public static void show(Component component) {
+        message = component;
+        ticksRemaining = DISPLAY_TICKS;
+    }
+
+    @Override
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        if (ticksRemaining <= 0) {
+            return;
+        }
+        Minecraft minecraft = Minecraft.getInstance();
+        Font font = minecraft.font;
+        graphics.drawString(font, message, (int) ((width - font.width(message)) / 2.0F), (int) (height / 2.0F + Y_OFFSET), ChatFormatting.YELLOW.getColor(), false);
+    }
+
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && ticksRemaining > 0) {
+            ticksRemaining--;
+        }
+    }
+}

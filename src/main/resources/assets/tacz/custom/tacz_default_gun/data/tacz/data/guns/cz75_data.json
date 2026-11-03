@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:9mm",
   "rpm": 900,
   "bullet": {
@@ -10,12 +11,12 @@
       "armor_ignore": 0.20,
       "head_shot_multiplier": 1.30,
       "damage_adjust": [
-        {"distance": 15, "damage": 5},
-        {"distance": 35, "damage": 4},
+        {"distance": 12, "damage": 5},
+        {"distance": 30, "damage": 4},
         {"distance": "infinite", "damage": 3}
       ]
     },
-    "speed": 180,
+    "speed": 170,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.025,
@@ -42,7 +43,7 @@
   },
   "draw_time": 0.3,
   "put_away_time": 0.3,
-  "aim_time": 0.125,
+  "aim_time": 0.16,
   "sprint_time": 0.08,
   "weight": 1.1,
   "movement_speed": {

@@ -78,7 +78,6 @@ function crosshair_state.update(this, context)
         end
         context:setShouldHideCrossHair(context:shouldHideCrossHair())
     end
-    print(context:shouldHideCrossHair())
 end
 
 local base_state = {

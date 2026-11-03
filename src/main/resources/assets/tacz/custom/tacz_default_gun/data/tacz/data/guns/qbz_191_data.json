@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:58x42",
   "ammo_amount": 30,
   "extended_mag_ammo_amount": [
@@ -41,7 +42,7 @@
         {"distance": "infinite", "damage": 4.5}
       ]
     },
-    "speed": 290,
+    "speed": 325,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.02,
@@ -61,7 +62,7 @@
   },
   "draw_time": 0.73,
   "put_away_time": 0.5,
-  "aim_time": 0.15,
+  "aim_time": 0.2,
   "sprint_time": 0.18,
   "weight": 3.1,
   "movement_speed": {

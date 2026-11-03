@@ -1,0 +1,11 @@
+{
+  "parent": "tacz:block/gun_pegboard",
+  "overrides": [
+    {
+      "predicate": {
+        "tacz:dyed": 1
+      },
+      "model": "tacz:block/gun_pegboard_dyed"
+    }
+  ]
+}

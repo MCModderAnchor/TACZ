@@ -5184,7 +5184,7 @@
 				},
 				{
 					"name": "camera",
-					"pivot": [2, 9.4375, 17.5]
+					"pivot": [3, 8.75, 19.5]
 				},
 				{
 					"name": "positioning",
@@ -5203,7 +5203,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0.875, 4.25, 4.75],
+					"pivot": [0.875, 5.5, 4.0625],
 					"rotation": [0, 90, 0]
 				},
 				{
@@ -5213,12 +5213,12 @@
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [3, 8.75, 18.5]
+					"pivot": [3, 9.25, 19.5]
 				},
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 7.82813, 18.5]
+					"pivot": [0, 7.82813, 20.0]
 				},
 				{
 					"name": "refit_view",

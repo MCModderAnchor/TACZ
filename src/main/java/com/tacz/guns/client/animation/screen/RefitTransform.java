@@ -3,6 +3,7 @@ package com.tacz.guns.client.animation.screen;
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.item.attachment.AttachmentType;
 import com.tacz.guns.client.gui.GunRefitScreen;
+import com.tacz.guns.util.time.GunTime;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
@@ -25,9 +26,26 @@ public class RefitTransform {
 
     public static void init() {
         refitScreenTransformProgress = 1;
-        refitScreenTransformTimestamp = System.currentTimeMillis();
+        refitScreenTransformTimestamp = GunTime.nowMillis();
         oldTransformType = AttachmentType.NONE;
         currentTransformType = AttachmentType.NONE;
+    }
+
+    public static void resetTimestamps() {
+        refitScreenTransformProgress = 1;
+        refitScreenTransformTimestamp = -1;
+        refitScreenOpeningProgress = 0;
+        refitScreenOpeningTimestamp = -1;
+        oldTransformType = AttachmentType.NONE;
+        currentTransformType = AttachmentType.NONE;
+    }
+
+    public static boolean isActive() {
+        return Minecraft.getInstance().screen instanceof GunRefitScreen || refitScreenOpeningProgress > 0;
+    }
+
+    public static boolean shouldSuppressMouseTurn() {
+        return !(Minecraft.getInstance().screen instanceof GunRefitScreen) && refitScreenOpeningProgress > 0;
     }
 
     public static float getOpeningProgress() {
@@ -55,7 +73,7 @@ public class RefitTransform {
         oldTransformType = currentTransformType;
         currentTransformType = attachmentType;
         refitScreenTransformProgress = 0;
-        refitScreenTransformTimestamp = System.currentTimeMillis();
+        refitScreenTransformTimestamp = GunTime.nowMillis();
         return true;
     }
 
@@ -63,28 +81,28 @@ public class RefitTransform {
     public static void tickInterpolation(TickEvent.RenderTickEvent event) {
         // tick opening progress
         if (refitScreenOpeningTimestamp == -1) {
-            refitScreenOpeningTimestamp = System.currentTimeMillis();
+            refitScreenOpeningTimestamp = GunTime.nowMillis();
         }
         if (Minecraft.getInstance().screen instanceof GunRefitScreen) {
-            refitScreenOpeningProgress += (System.currentTimeMillis() - refitScreenOpeningTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
+            refitScreenOpeningProgress += (GunTime.nowMillis() - refitScreenOpeningTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
             if (refitScreenOpeningProgress > 1) {
                 refitScreenOpeningProgress = 1;
             }
         } else {
-            refitScreenOpeningProgress -= (System.currentTimeMillis() - refitScreenOpeningTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
+            refitScreenOpeningProgress -= (GunTime.nowMillis() - refitScreenOpeningTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
             if (refitScreenOpeningProgress < 0) {
                 refitScreenOpeningProgress = 0;
             }
         }
-        refitScreenOpeningTimestamp = System.currentTimeMillis();
+        refitScreenOpeningTimestamp = GunTime.nowMillis();
         // tick transform progress
         if (refitScreenTransformTimestamp == -1) {
-            refitScreenTransformTimestamp = System.currentTimeMillis();
+            refitScreenTransformTimestamp = GunTime.nowMillis();
         }
-        refitScreenTransformProgress += (System.currentTimeMillis() - refitScreenTransformTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
+        refitScreenTransformProgress += (GunTime.nowMillis() - refitScreenTransformTimestamp) / (REFIT_SCREEN_TRANSFORM_TIMES * 1000);
         if (refitScreenTransformProgress > 1) {
             refitScreenTransformProgress = 1;
         }
-        refitScreenTransformTimestamp = System.currentTimeMillis();
+        refitScreenTransformTimestamp = GunTime.nowMillis();
     }
 }

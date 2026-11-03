@@ -1,9 +1,17 @@
 package com.tacz.guns.client.resource.pojo.display.gun;
 
 import com.google.gson.annotations.SerializedName;
+import com.tacz.guns.client.resource.pojo.display.IDisplay;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;
 
 public class ShellEjection {
+    @SerializedName("model")
+    private ResourceLocation modelLocation;
+
+    @SerializedName("texture")
+    private ResourceLocation modelTexture;
+
     @SerializedName("initial_velocity")
     private Vector3f initialVelocity = new Vector3f(8.0f, 5.0f, -0.5f);
 
@@ -18,6 +26,20 @@ public class ShellEjection {
 
     @SerializedName("living_time")
     private float livingTime = 1.0f;
+
+    public void init() {
+        if (modelTexture != null) {
+            modelTexture = IDisplay.converter.idToFile(modelTexture);
+        }
+    }
+
+    public ResourceLocation getModelLocation() {
+        return modelLocation;
+    }
+
+    public ResourceLocation getModelTexture() {
+        return modelTexture;
+    }
 
     public Vector3f getInitialVelocity() {
         return initialVelocity;

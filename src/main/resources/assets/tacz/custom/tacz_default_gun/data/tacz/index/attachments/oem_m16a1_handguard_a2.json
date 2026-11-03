@@ -1,0 +1,9 @@
+{
+  "name": "tacz.attachment.oem_m16a1_handguard_a2.name",
+  "builtin_attachment": true,
+  "display": "tacz:oem_m16a1_handguard_a2_display",
+  "data": "tacz:oem_m16a1_handguard_a2_data",
+  "type": "grip",
+  "sort": 2,
+  "hidden": true
+}

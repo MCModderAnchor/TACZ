@@ -44,6 +44,10 @@ public class GunData {
     @SerializedName("rpm")
     private int roundsPerMinute = 300;
 
+    @SerializedName("recoil_push")
+    @Nullable
+    private GunRecoilPushData recoilPushData = null;
+
     @SerializedName("bullet")
     private BulletData bulletData = new BulletData();
 
@@ -58,6 +62,12 @@ public class GunData {
 
     @SerializedName("aim_time")
     private float aimTime = 0.2f;
+
+    @SerializedName("force_aim_exit_on_reload")
+    private boolean forceAimExitOnReload = false;
+
+    @SerializedName("force_aim_exit_on_bolt")
+    private boolean forceAimExitOnBolt = false;
 
     @SerializedName("bolt_action_time")
     private float boltActionTime = 0;
@@ -112,10 +122,13 @@ public class GunData {
     private float weight = 0f;
 
     @SerializedName("builtin_attachments")
-    private Map<AttachmentType, ResourceLocation> builtInAttachments = Maps.newHashMap();
+    private Map<AttachmentType, BuiltInAttachment> builtInAttachments = Maps.newHashMap();
 
     @SerializedName("script")
     private ResourceLocation script = null;
+
+    @SerializedName("allow_ammo_unload")
+    private boolean allowAmmoUnload = false;
 
     @SerializedName("script_param")
     private Map<String, Object> scriptParam = null;
@@ -172,6 +185,11 @@ public class GunData {
         return rpm;
     }
 
+    @Nullable
+    public GunRecoilPushData getRecoilPushData() {
+        return recoilPushData;
+    }
+
     public BulletData getBulletData() {
         return bulletData;
     }
@@ -186,6 +204,14 @@ public class GunData {
 
     public float getAimTime() {
         return aimTime;
+    }
+
+    public boolean isForceAimExitOnReload() {
+        return forceAimExitOnReload;
+    }
+
+    public boolean isForceAimExitOnBolt() {
+        return forceAimExitOnBolt;
     }
 
     public float getSprintTime() {
@@ -278,7 +304,7 @@ public class GunData {
         return allowAttachments;
     }
 
-    public Map<AttachmentType, ResourceLocation> getBuiltInAttachments() {
+    public Map<AttachmentType, BuiltInAttachment> getBuiltInAttachments() {
         return builtInAttachments;
     }
 
@@ -289,6 +315,10 @@ public class GunData {
     @Nullable
     public ResourceLocation getScript() {
         return script;
+    }
+
+    public boolean isAllowAmmoUnload() {
+        return allowAmmoUnload;
     }
 
     @Nullable

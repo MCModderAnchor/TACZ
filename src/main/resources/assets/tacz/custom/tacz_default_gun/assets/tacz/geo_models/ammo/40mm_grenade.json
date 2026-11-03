@@ -995,7 +995,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0, 6, 0]
+					"pivot": [0, 2.5, 2]
 				},
 				{
 					"name": "thirdperson_hand",

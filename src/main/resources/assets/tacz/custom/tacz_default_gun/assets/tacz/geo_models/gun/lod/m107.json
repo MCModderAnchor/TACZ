@@ -18,12 +18,12 @@
 				{
 					"name": "ground",
 					"parent": "positioning",
-					"pivot": [0, -2, 0]
+					"pivot": [0, -8, 0]
 				},
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0, 9, 0],
+					"pivot": [0, 7, 12.9375],
 					"rotation": [0, 90, 0]
 				},
 				{

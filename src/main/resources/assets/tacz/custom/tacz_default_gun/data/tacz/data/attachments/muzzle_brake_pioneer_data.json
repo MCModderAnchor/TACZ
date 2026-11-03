@@ -1,16 +1,19 @@
 {
+  "weight": 0.25,
+  "smoke_directions": [
+    { "plane_angle": 0, "out_angle": 0 },
+    { "plane_angle": 180, "out_angle": 0 }
+  ],
+  "smoke_spread_angle": 55,
   "ads": {
-    "addend": 0.02
+    "addend": 0.06
   },
-  "inaccuracy": {
-    "multiplier": 1.15
+  "aim_inaccuracy": {
+    "multiplier": 1.33
   },
   "recoil": {
     "pitch": {
-      "multiplier": 0.33
-    },
-    "yaw": {
-      "multiplier": 1.33
+      "multiplier": 0.4
     }
   }
 }

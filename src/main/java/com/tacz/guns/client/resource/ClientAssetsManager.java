@@ -14,19 +14,20 @@ import com.tacz.guns.client.resource.pojo.CommonTransformObject;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.AnimationKeyframes;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.BedrockAnimationFile;
+import com.tacz.guns.client.resource.pojo.animation.bedrock.ParticleEffectKeyframes;
 import com.tacz.guns.client.resource.pojo.animation.bedrock.SoundEffectKeyframes;
+import com.tacz.guns.client.resource.pojo.display.SoundData;
 import com.tacz.guns.client.resource.pojo.display.ammo.AmmoDisplay;
 import com.tacz.guns.client.resource.pojo.display.attachment.AttachmentDisplay;
 import com.tacz.guns.client.resource.pojo.display.block.BlockDisplay;
 import com.tacz.guns.client.resource.pojo.display.gun.GunDisplay;
+import com.tacz.guns.client.resource.pojo.display.gun.AdsPreset;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.CubesItem;
-import com.tacz.guns.client.resource.serialize.AnimationKeyframesSerializer;
-import com.tacz.guns.client.resource.serialize.ItemStackSerializer;
-import com.tacz.guns.client.resource.serialize.SoundEffectKeyframesSerializer;
-import com.tacz.guns.client.resource.serialize.Vector3fSerializer;
+import com.tacz.guns.client.resource.serialize.*;
 import com.tacz.guns.resource.CommonAssetsManager;
 import com.tacz.guns.resource.manager.LazyJsonDataManager;
+import com.tacz.guns.resource.manager.JsonDataManager;
 import com.tacz.guns.resource.manager.ScriptManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransform;
@@ -62,16 +63,21 @@ public enum ClientAssetsManager {
             .registerTypeAdapter(ItemStack.class, new ItemStackSerializer())
             .registerTypeAdapter(AnimationKeyframes.class, new AnimationKeyframesSerializer())
             .registerTypeAdapter(SoundEffectKeyframes.class, new SoundEffectKeyframesSerializer())
+            .registerTypeAdapter(ParticleEffectKeyframes.class, new ParticleEffectKeyframesSerializer())
             .registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
             .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
+            .registerTypeAdapter(SoundData.class, new SoundData.Deserializer())
             .create();
 
     // 枪械展示数据
     private DisplayManager<GunDisplay> gunDisplay;
+    private JsonDataManager<AdsPreset> adsPresets;
     // 弹药展示数据
     private DisplayManager<AmmoDisplay> ammoDisplay;
     // 配件展示数据
     private DisplayManager<AttachmentDisplay> attachmentDisplay;
+    private DisplayManager<AttachmentDisplay> attachmentVariantDisplay;
+    private DisplayManager<AttachmentDisplay> slotAdapterDisplay;
     // 方块展示数据
     private DisplayManager<BlockDisplay> blockDisplay;
     // 原始基岩版模型
@@ -93,8 +99,11 @@ public enum ClientAssetsManager {
         if (listeners == null) {
             listeners = new ArrayList<>();
             gunDisplay = register(new DisplayManager<>(GunDisplay.class, GSON, "display/guns", "GunDisplayLoader"));
+            adsPresets = register(new JsonDataManager<>(AdsPreset.class, GSON, "ads_presets", "AdsPresetLoader"));
             ammoDisplay = register(new DisplayManager<>(AmmoDisplay.class, GSON, "display/ammo", "AmmoDisplayLoader"));
             attachmentDisplay = register(new DisplayManager<>(AttachmentDisplay.class, GSON, "display/attachments", "AttachmentDisplayLoader"));
+            attachmentVariantDisplay = register(new DisplayManager<>(AttachmentDisplay.class, GSON, "display/attachment_variants", "AttachmentVariantDisplayLoader"));
+            slotAdapterDisplay = register(new DisplayManager<>(AttachmentDisplay.class, GSON, "display/slot_adapters", "SlotAdapterDisplayLoader"));
             blockDisplay = register(new DisplayManager<>(BlockDisplay.class, GSON, "display/blocks", "BlockDisplayLoader"));
 
             bedrockModel = register(new LazyJsonDataManager<>(BedrockModelPOJO.class, GSON, "geo_models", "BedrockModelLoader",
@@ -120,6 +129,10 @@ public enum ClientAssetsManager {
         return gunDisplay.getData(id);
     }
 
+    public @Nullable AdsPreset getAdsPreset(ResourceLocation id) {
+        return adsPresets.getData(id);
+    }
+
     public Set<Map.Entry<ResourceLocation, GunDisplay>> getGunDisplays() {
         return gunDisplay.getAllData().entrySet();
     }
@@ -131,6 +144,16 @@ public enum ClientAssetsManager {
     @Nullable
     public AttachmentDisplay getAttachmentDisplay(ResourceLocation id) {
         return attachmentDisplay.getData(id);
+    }
+
+    @Nullable
+    public AttachmentDisplay getAttachmentVariantDisplay(ResourceLocation id) {
+        return attachmentVariantDisplay.getData(id);
+    }
+
+    @Nullable
+    public AttachmentDisplay getSlotAdapterDisplay(ResourceLocation id) {
+        return slotAdapterDisplay.getData(id);
     }
 
     @Nullable
@@ -166,6 +189,10 @@ public enum ClientAssetsManager {
     @Nullable
     public PackInfo getPackInfo(String namespace) {
         return packInfo.getData(namespace);
+    }
+
+    public long getPackInfoReloadVersion() {
+        return packInfo == null ? 0 : packInfo.getReloadVersion();
     }
 
     @Nullable

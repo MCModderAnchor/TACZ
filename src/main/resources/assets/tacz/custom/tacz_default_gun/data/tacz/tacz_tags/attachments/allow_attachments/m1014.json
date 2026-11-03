@@ -3,5 +3,7 @@
   "#tacz:muzzle_shotgun",
   "#tacz:shotgun_extended_mag",
   "#tacz:ammo_mod",
-  "#tacz:ammo_mod_shotgun_exclusive"
+  "#tacz:ammo_mod_shotgun_exclusive",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

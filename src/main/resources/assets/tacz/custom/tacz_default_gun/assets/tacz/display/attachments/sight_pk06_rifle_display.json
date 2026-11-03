@@ -7,11 +7,11 @@
     "texture": "tacz:attachment/lod/sight_pk06_rifle"
   },
   "zoom": [
-    2
+    1.5
   ],
   "scope": false,
   "sight": true,
-  "fov": 40.0,
+  "fov": 45.0,
   "sounds": {
     "install": "tacz:attachments/scope_general_c",
     "uninstall": "tacz:attachments/scope_general_c"

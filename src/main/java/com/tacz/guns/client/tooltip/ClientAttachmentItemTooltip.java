@@ -12,7 +12,10 @@ import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.client.resource.ClientAssetsManager;
 import com.tacz.guns.client.resource.pojo.PackInfo;
 import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
+import com.tacz.guns.resource.modifier.custom.RecoilPushModifier;
 import com.tacz.guns.resource.pojo.data.attachment.AttachmentData;
+import com.tacz.guns.resource.pojo.data.gun.GunRecoilPushData;
+import com.tacz.guns.util.VirtualOemAttachment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
+    private static final String BUILTIN_ATTACHMENT_TOOLTIP_KEY = "tooltip.tacz.attachment.builtin";
     private static final Cache<ResourceLocation, List<ItemStack>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.SECONDS).build();
     private final ResourceLocation attachmentId;
     private final List<Component> components = Lists.newArrayList();
@@ -153,6 +157,9 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
     }
 
     private void addText(AttachmentType type) {
+        if (VirtualOemAttachment.isBuiltinAttachment(attachmentId)) {
+            components.add(Component.translatable(BUILTIN_ATTACHMENT_TOOLTIP_KEY));
+        }
         TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(index -> {
             AttachmentData data = index.getData();
 
@@ -161,6 +168,26 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                 String text = I18n.get(tooltipKey);
                 String[] split = text.split("\n");
                 Arrays.stream(split).forEach(s -> components.add(Component.literal(s).withStyle(ChatFormatting.GRAY)));
+            }
+
+            if (data.getModifier().get(RecoilPushModifier.ID) != null
+                    && data.getModifier().get(RecoilPushModifier.ID).getValue() instanceof GunRecoilPushData) {
+                components.add(Component.translatable("tooltip.tacz.attachment.recoil_push").withStyle(ChatFormatting.AQUA));
+            }
+
+            if (data.hasFlashHider()) {
+                if (data.getFlashHider() < 1.0f) {
+                    components.add(Component.translatable("tooltip.tacz.attachment.flash_hider.decrease").withStyle(ChatFormatting.GREEN));
+                } else if (data.getFlashHider() > 1.0f) {
+                    components.add(Component.translatable("tooltip.tacz.attachment.flash_hider.increase").withStyle(ChatFormatting.RED));
+                }
+            }
+            if (data.hasSmokeHider()) {
+                if (data.getSmokeHider() < 1.0f) {
+                    components.add(Component.translatable("tooltip.tacz.attachment.smoke_hider.decrease").withStyle(ChatFormatting.GREEN));
+                } else if (data.getSmokeHider() > 1.0f) {
+                    components.add(Component.translatable("tooltip.tacz.attachment.smoke_hider.increase").withStyle(ChatFormatting.RED));
+                }
             }
 
             if (attachment.getItem() instanceof IAttachment iAttachment) {
@@ -185,6 +212,21 @@ public class ClientAttachmentItemTooltip implements ClientTooltipComponent {
                     String zoomJoinText = StringUtils.join(zoomText, ", ");
                     components.add(Component.translatable("tooltip.tacz.attachment.zoom", zoomJoinText).withStyle(ChatFormatting.GOLD));
                 }
+            }
+
+            if (index.hasRangefinder()) {
+                components.add(Component.translatable("tooltip.tacz.attachment.rangefinder").withStyle(ChatFormatting.AQUA));
+            }
+            if (index.hasImpactPrediction()) {
+                components.add(Component.translatable("tooltip.tacz.attachment.fire_control").withStyle(ChatFormatting.AQUA));
+            }
+
+            String thermalTooltipKey = index.getThermalImagingTooltipKey();
+            if (type == AttachmentType.SCOPE && thermalTooltipKey != null) {
+                components.add(Component.translatable(thermalTooltipKey).withStyle(ChatFormatting.AQUA));
+            }
+            if (type == AttachmentType.SCOPE && index.hasAmmoCounter()) {
+                components.add(Component.translatable("tooltip.tacz.attachment.ammo_counter").withStyle(ChatFormatting.AQUA));
             }
 
             if (type == AttachmentType.EXTENDED_MAG) {

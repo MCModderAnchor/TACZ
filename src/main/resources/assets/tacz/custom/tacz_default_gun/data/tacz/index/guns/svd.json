@@ -1,0 +1,8 @@
+{
+  "name": "tacz.gun.svd.name",
+  "display": "tacz:svd_display",
+  "data": "tacz:svd_data",
+  "tooltip": "tacz.gun.svd.desc",
+  "type": "sniper",
+  "sort": 7
+}

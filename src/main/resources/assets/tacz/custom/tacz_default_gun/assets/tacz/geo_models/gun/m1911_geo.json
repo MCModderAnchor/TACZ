@@ -3254,12 +3254,12 @@
 				{
 					"name": "idle_view",
 					"parent": "view",
-					"pivot": [2.35, 7.275, 13.375]
+					"pivot": [2.35, 7.275, 14.375]
 				},
 				{
 					"name": "iron_view",
 					"parent": "view",
-					"pivot": [0, 6.175, 14.5],
+					"pivot": [0, 6.175, 14.875],
 					"rotation": [0, 0, -6]
 				},
 				{
@@ -3303,7 +3303,7 @@
 				{
 					"name": "fixed",
 					"parent": "positioning",
-					"pivot": [0.625, 4.9, -0.725],
+					"pivot": [0.625, 4.00938, -0.5375],
 					"rotation": [0, 90, 0]
 				}
 			]

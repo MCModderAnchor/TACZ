@@ -1,0 +1,15 @@
+{
+  "slot": "tacz:attachment/slot/oem_sight_aug",
+  "model": "tacz:attachment/oem_sight_aug_geo",
+  "texture": "tacz:attachment/uv/oem_sight_aug",
+  "sight": true,
+  "fov": 40.0,
+  "zoom": [
+    1.33
+  ],
+  "show_mount": true,
+  "sounds": {
+    "install": "tacz:attachments/scope_general_c",
+    "uninstall": "tacz:attachments/scope_general_c"
+  }
+}

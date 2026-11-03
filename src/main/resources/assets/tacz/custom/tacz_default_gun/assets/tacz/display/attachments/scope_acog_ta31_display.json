@@ -9,10 +9,21 @@
   "zoom": [
     2.5
   ],
+  "idle_scope_height_adjust": 0.5,
   "scope": true,
-  "fov":45.0,
+  "fov": 30.0,
   "sounds": {
     "install": "tacz:attachments/scope_general_b",
     "uninstall": "tacz:attachments/scope_general_b"
+  },
+  "scope_lens": {
+    "distortion": 0.05,
+    "aberration": 0.007,
+    "edge_width": 0.35,
+    "vignette_strength": 1,
+    "vignette_width": 0.35,
+    "tint": "#d78780",
+    "tint_strength": 0.2,
+    "vision_mode": "NORMAL"
   }
 }

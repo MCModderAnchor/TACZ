@@ -1,0 +1,53 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "tacz:muzzle_flash_smoke",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "tacz:particle/smoke_strip"
+      }
+    },
+    "components": {
+      "sbm:fp_emitter_local_space": { "position": true, "rotation": false, "velocity": true, "to_world": true },
+      "minecraft:emitter_rate_instant": { "num_particles": "(v.smoke_count == 0 ? 15 : v.smoke_count) * math.random(0.25, 1)" },
+      "minecraft:emitter_lifetime_once": { "active_time": 0.06 },
+      "minecraft:emitter_shape_sphere": {
+        "offset": [0, 0, 0.12],
+        "radius": 0.12,
+        "direction": [
+          "v.smoke_dir_n == 0 ? 0.0 : (v.smoke_angle_mode == 0 ? ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_dir0_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_dir1_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_dir2_x : v.smoke_dir3_x))) + math.random(-1, 1) * v.smoke_spread) : ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_dir0_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_dir1_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_dir2_x : v.smoke_dir3_x))) * (1 - v.particle_random_3 * (1 - math.cos(v.smoke_spread))) + math.sin(math.acos(1 - v.particle_random_3 * (1 - math.cos(v.smoke_spread)))) * ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_u0_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_u1_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_u2_x : v.smoke_u3_x))) * math.cos(360 * v.particle_random_4) + (math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_v0_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_v1_x : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_v2_x : v.smoke_v3_x))) * math.sin(360 * v.particle_random_4))))",
+          "v.smoke_dir_n == 0 ? 0.0 : (v.smoke_angle_mode == 0 ? ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_dir0_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_dir1_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_dir2_y : v.smoke_dir3_y))) + math.random(-1, 1) * v.smoke_spread) : ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_dir0_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_dir1_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_dir2_y : v.smoke_dir3_y))) * (1 - v.particle_random_3 * (1 - math.cos(v.smoke_spread))) + math.sin(math.acos(1 - v.particle_random_3 * (1 - math.cos(v.smoke_spread)))) * ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_u0_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_u1_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_u2_y : v.smoke_u3_y))) * math.cos(360 * v.particle_random_4) + (math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_v0_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_v1_y : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_v2_y : v.smoke_v3_y))) * math.sin(360 * v.particle_random_4))))",
+          "v.smoke_dir_n == 0 ? 0.0 : (v.smoke_angle_mode == 0 ? ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_dir0_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_dir1_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_dir2_z : v.smoke_dir3_z))) + math.random(-1, 1) * v.smoke_spread) : ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_dir0_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_dir1_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_dir2_z : v.smoke_dir3_z))) * (1 - v.particle_random_3 * (1 - math.cos(v.smoke_spread))) + math.sin(math.acos(1 - v.particle_random_3 * (1 - math.cos(v.smoke_spread)))) * ((math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_u0_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_u1_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_u2_z : v.smoke_u3_z))) * math.cos(360 * v.particle_random_4) + (math.floor(v.particle_random_1 * v.smoke_dir_n) == 0 ? v.smoke_v0_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 1 ? v.smoke_v1_z : (math.floor(v.particle_random_1 * v.smoke_dir_n) == 2 ? v.smoke_v2_z : v.smoke_v3_z))) * math.sin(360 * v.particle_random_4))))"
+        ]
+      },
+      "minecraft:particle_lifetime_expression": { "max_lifetime": "math.random(0.12, 0.25)" },
+      "minecraft:particle_initial_speed": "v.smoke_vel == 0 ? 6 : v.smoke_vel * 6",
+      "minecraft:particle_initial_spin": { "rotation": "math.random(-180, 180)", "rotation_rate": "math.random(-60, 60)" },
+      "minecraft:particle_motion_dynamic": { "linear_drag_coefficient": 1.5},
+      "minecraft:particle_appearance_lighting": {},
+      "minecraft:particle_appearance_billboard": {
+        "size": ["(v.smoke_size == 0 ? 1 : v.smoke_size) * math.lerp(0.1, 0.32, v.particle_age / v.particle_lifetime) * (0.8 + 0.4 * v.particle_random_2)", "(v.smoke_size == 0 ? 1 : v.smoke_size) * math.lerp(0.1, 0.32, v.particle_age / v.particle_lifetime) * (0.8 + 0.4 * v.particle_random_2)"],
+        "facing_camera_mode": "rotate_xyz",
+        "uv": {
+          "texture_width": 384,
+          "texture_height": 64,
+          "flipbook": {
+            "base_UV": [0, 0],
+            "size_UV": [64, 64],
+            "step_UV": [64, 0],
+            "frames_per_second": 6,
+            "max_frame": 6,
+            "stretch_to_lifetime": true
+          }
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": {
+          "interpolant": "v.particle_age / v.particle_lifetime",
+          "gradient": { "0.0": "#808C8C8C", "0.3": "#75808080", "0.6": "#60404040", "0.9": "#00000000", "1.0": "#00000000" }
+        }
+      }
+    }
+  }
+}

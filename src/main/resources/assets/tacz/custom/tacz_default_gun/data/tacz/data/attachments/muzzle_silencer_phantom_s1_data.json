@@ -1,17 +1,20 @@
 {
   "weight": 0.25,
+  "flash_hider": 0.13,
+  "smoke_directions": { "plane_angle": 0, "out_angle": 90 },
+  "smoke_spread_angle": 90,
   "ads": {
     // 加数（多个配件的数值相加，作为第一个乘区）
-    "addend": 0.02
+    "addend": 0.06
   },
   "inaccuracy": {
     "multiplier": 1.1
   },
   "effective_range": {
-    "multiplier": 1.5
+    "multiplier": 1.33
   },
   "rpm": {
-    "multiplier":0.95
+    "multiplier":0.9
   },
   "silence": {
     // 声音传播的范围，如果默认是 50 格，这里填入 -10，那么消音后传播距离为 40 格

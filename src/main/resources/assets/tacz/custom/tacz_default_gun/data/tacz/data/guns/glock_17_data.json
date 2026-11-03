@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:9mm",
   "rpm": 400,
   "script": "tacz:xmag_reload_logic",
@@ -61,7 +62,7 @@
   },
   "draw_time": 0.32,
   "put_away_time": 0.35,
-  "aim_time": 0.13,
+  "aim_time": 0.16,
   "sprint_time": 0.05,
   "weight": 1,
   "movement_speed": {
@@ -82,14 +83,15 @@
   "recoil": {
     "pitch": [
       {"time": 0, "value": [1, 1]},
-      {"time": 0.08, "value": [0.9, 0.9]},
-      {"time": 0.26, "value": [0.1, 0.1]},
+      {"time": 0.1, "value": [1, 1]},
+      {"time": 0.25, "value": [0.1, 0.1]},
       {"time": 0.3, "value": [0.05, 0.05]},
       {"time": 0.35, "value": [0, 0]}
     ],
     "yaw": [
-      {"time": 0, "value": [-0.75, 0.5]},
-      {"time": 0.2, "value": [0, 0]}
+      {"time": 0, "value": [-0.5, 0.5]},
+      {"time": 0.2, "value": [0, 0]},
+      {"time": 0.3, "value": [0, 0]}
     ]
   },
   "inaccuracy": {

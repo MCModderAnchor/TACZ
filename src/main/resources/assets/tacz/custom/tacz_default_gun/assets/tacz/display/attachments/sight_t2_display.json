@@ -11,7 +11,7 @@
     "texture": "tacz:attachment/lod/sight_t2"
   },
   "zoom": [
-    2.5
+    1.5
   ],
   // 如果配件是瞄具，且为筒状放大瞄具，此选项应为true
   "scope": false,

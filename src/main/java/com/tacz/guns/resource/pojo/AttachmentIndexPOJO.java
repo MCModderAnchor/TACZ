@@ -14,6 +14,9 @@ public class AttachmentIndexPOJO {
     @Nullable
     private String tooltip;
 
+    @SerializedName("builtin_attachment")
+    private boolean builtinAttachment = false;
+
     @SerializedName("display")
     private ResourceLocation display;
 
@@ -36,6 +39,10 @@ public class AttachmentIndexPOJO {
     @Nullable
     public String getTooltip() {
         return tooltip;
+    }
+
+    public boolean isBuiltinAttachment() {
+        return builtinAttachment;
     }
 
     public ResourceLocation getDisplay() {

@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:357mag",
   "ammo_amount": 6,
   "extended_mag_ammo_amount": [
@@ -6,20 +7,21 @@
     6,
     6
   ],
+  "force_aim_exit_on_reload": true,
   "rpm": 200,
   "bullet": {
     "life": 0.85,
     "bullet_amount": 1,
-    "damage": 10.5,
+    "damage": 15,
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.30,
-      "head_shot_multiplier": 1.75,
+      "head_shot_multiplier": 2,
       "damage_adjust": [
-        {"distance": 25, "damage": 10.5},
-        {"distance": 35, "damage": 8.5},
-        {"distance": 50, "damage": 6},
-        {"distance": "infinite", "damage": 6}
+        {"distance": 25, "damage": 15},
+        {"distance": 35, "damage": 13},
+        {"distance": 50, "damage": 11},
+        {"distance": "infinite", "damage": 9.5}
       ]
     },
     "speed": 190,
@@ -73,7 +75,7 @@
   },
   "draw_time": 0.53,
   "put_away_time": 0.43,
-  "aim_time": 0.15,
+  "aim_time": 0.16,
   "sprint_time": 0.1,
   "weight": 1.85,
   "movement_speed": {
@@ -107,6 +109,7 @@
       {"time": 0.5, "value": [0, 0]}
     ]
   },
+  "can_slide": false,
   "inaccuracy": {
     "stand": 3.5,
     "move": 5.5,

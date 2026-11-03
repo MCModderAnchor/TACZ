@@ -1,13 +1,14 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:556x45",
   "ammo_amount": 30,
   "extended_mag_ammo_amount": [
-    34,
-    39,
+    35,
+    40,
     50
   ],
   "bolt": "closed_bolt",
-  "rpm": 710,
+  "rpm": 750,
   "bullet": {
     "life": 0.75,
     "bullet_amount": 1,
@@ -15,14 +16,14 @@
     "tracer_count_interval": 0,
     "extra_damage": {
       "armor_ignore": 0.25,
-      "head_shot_multiplier": 1.5,
+      "head_shot_multiplier": 1.50,
       "damage_adjust": [
-        {"distance": 28, "damage": 7},
-        {"distance": 65, "damage": 6},
-        {"distance": "infinite", "damage": 5}
+        {"distance":28,"damage":7},
+        {"distance":65,"damage":6},
+        {"distance":"infinite","damage":5}
       ]
     },
-    "speed": 295,
+    "speed": 350,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.0175,
@@ -42,7 +43,7 @@
   },
   "draw_time": 0.43,
   "put_away_time": 0.33,
-  "aim_time": 0.2,
+  "aim_time": 0.24,
   "sprint_time": 0.2,
   // 拉栓上膛的时间，仅当枪栓类型为 manual_action 时有效
   // "bolt_action_time": 0.9,
@@ -116,7 +117,14 @@
     "scope"
   ],
   "builtin_attachments": {
-    "scope": "tacz:scope_aug_default"
+    "scope": {
+      "attachments": [
+        "tacz:scope_aug_default",
+        "tacz:oem_sight_aug"
+      ],
+      // 未安装瞄具时继续显示原有的 AUG 内置瞄镜。
+      "display_attachment": "tacz:scope_aug_default"
+    }
   },
   "exclusive_attachments": {
   }

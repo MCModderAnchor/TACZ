@@ -11,17 +11,56 @@
     "texture": "tacz:attachment/lod/sight_uh1"
   },
   "zoom": [
-    2.5
+    1.75
   ],
   // 如果配件是瞄具，且为筒状放大瞄具，此选项应为true
-  "scope": false,
+  "scope": true,
   // 如果配件是瞄具，且为红点或全息瞄具，此选项应为true
-  "sight": true,
+  "sight": false,
   // 只有 瞄具 配件需要设置这个属性，表示开镜后，枪身和瞄具渲染的fov。
   // 默认情况下，mc 渲染手部模型的 fov 为 70。
-  "fov":32.0,
+  "fov":35.0,
   "sounds": {
     "install": "tacz:attachments/scope_general_c",
     "uninstall": "tacz:attachments/scope_general_c"
+  },
+    "text_show": {
+    // 作用的组名，该组的旋转点决定文本的位置和朝向
+    "ammo_count_text": {
+      // 文本缩放，默认大小对于 BlockBench 里的 1
+      "scale": 0.15,
+      // 对齐方式：right，center，left
+      "align": "right",
+      // 阴影
+      "shadow": false,
+      // 文本颜色
+      "color": "#ffff80",
+      // 亮度：1-15
+      "light": 15,
+      // 本地化，且支持PlaceholderAPI 风格的占位符
+      // 目前仅支持两个：%player_name% %ammo_count%
+      "text": "%ammo_count%"
+    },
+    "rangefinder_text_show_pos": {
+      // 测距仪示例：在 text 中使用 %rangefinder% 后，rangefinder 配置才会参与刷新。
+      "scale": 0.15,
+      "align": "right",
+      "shadow": false,
+      "color": "#ffff80",
+      "light": 15,
+      "text": "%rangefinder% m",
+      "rangefinder": {
+        // 最大测距距离，单位为 Minecraft 原生距离单位。小于 0 会回退到 512，允许 0。
+        "max_distance": 256,
+        // 每 N tick 刷新一次。小于等于 0 会回退到 2。
+        "refresh_tick": 2,
+        // 仅在测距命中实体时，在 HUD 中绘制基于 ammo_speed/gravity/friction 的 Y 轴落点预测空心点。
+        "show_impact_prediction": false,
+        // 落点预测空心点颜色，默认 #ffffff；支持 "#00ffff" 或 "00ffff"。
+        "impact_prediction_color": "#00ffff",
+        // 落点预测框大小倍率，默认 1；小于等于 0 会回退到 1。
+        "impact_prediction_scale": 1.0
+      }
+    }
   }
 }

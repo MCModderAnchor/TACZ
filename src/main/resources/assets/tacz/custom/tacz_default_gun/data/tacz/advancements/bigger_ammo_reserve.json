@@ -1,0 +1,33 @@
+{
+  "parent": "tacz:ammo_reserve",
+  "display": {
+    "icon": {
+      "item": "tacz:ammo_storage_diamond"
+    },
+    "title": {
+      "translate": "advancement.tacz.bigger_ammo_reserve.title"
+    },
+    "description": {
+      "translate": "advancement.tacz.bigger_ammo_reserve.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "obtain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tacz:ammo_storage",
+              "tacz:ammo_storage_gold",
+              "tacz:ammo_storage_diamond"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

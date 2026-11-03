@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:30_06",
   "ammo_amount": 5,
   "extended_mag_ammo_amount": [
@@ -43,7 +44,7 @@
   },
   "draw_time": 0.35,
   "put_away_time": 0.4,
-  "aim_time": 0.17,
+  "aim_time": 0.3,
   "sprint_time": 0.2,
   "bolt_action_time": 0.75,
   "weight": 6.5,
@@ -107,6 +108,7 @@
       "prep": 0.1
     }
   },
+  "can_slide": false,
   "allow_attachment_types": [
     "extended_mag",
     "scope",

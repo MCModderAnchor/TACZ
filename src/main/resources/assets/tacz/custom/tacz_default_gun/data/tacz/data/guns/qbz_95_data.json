@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:58x42",
   "ammo_amount": 30,
   "extended_mag_ammo_amount": [
@@ -14,15 +15,15 @@
     "damage": 7.5,
     "tracer_count_interval": 0,
     "extra_damage": {
-      "armor_ignore": 0.4,
-      "head_shot_multiplier": 1.5,
+      "armor_ignore": 0.40,
+      "head_shot_multiplier": 1.50,
       "damage_adjust": [
-        {"distance": 25, "damage": 7.5},
-        {"distance": 45, "damage": 6},
-        {"distance": "infinite", "damage": 4.5}
+        {"distance":30,"damage":7.5},
+        {"distance":64,"damage":6},
+        {"distance":"infinite","damage":4.5}
       ]
     },
-    "speed": 265,
+    "speed": 345,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.02,
@@ -42,7 +43,7 @@
   },
   "draw_time": 0.77,
   "put_away_time": 0.7,
-  "aim_time": 0.15,
+  "aim_time": 0.2,
   "sprint_time": 0.18,
   "weight": 3.5,
   "movement_speed": {

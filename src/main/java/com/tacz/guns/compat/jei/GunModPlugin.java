@@ -4,30 +4,36 @@ import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.item.builder.BlockItemBuilder;
 import com.tacz.guns.api.item.gun.GunItemManager;
-import com.tacz.guns.compat.jei.category.AttachmentQueryCategory;
-import com.tacz.guns.compat.jei.category.GunSmithTableCategory;
-import com.tacz.guns.compat.jei.entry.AttachmentQueryEntry;
+import com.tacz.guns.compat.jei.category.*;
+import com.tacz.guns.compat.jei.entry.AmmoQueryEntry;
+import com.tacz.guns.compat.jei.entry.AttachmentQueryData;
+import com.tacz.guns.compat.jei.entry.GunAmmoQueryEntry;
+import com.tacz.guns.compat.jei.transfer.GunSmithTableTransferHandler;
+import com.tacz.guns.crafting.AmmoStorageUpgradeRecipe;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.init.ModRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.recipe.RecipeType;
-import mezz.jei.api.registration.IRecipeCatalystRegistration;
-import mezz.jei.api.registration.IRecipeCategoryRegistration;
-import mezz.jei.api.registration.IRecipeRegistration;
-import mezz.jei.api.registration.ISubtypeRegistration;
+import mezz.jei.api.registration.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @JeiPlugin
 public class GunModPlugin implements IModPlugin {
@@ -47,6 +53,9 @@ public class GunModPlugin implements IModPlugin {
             recipeTypeMap.put(entry.getKey(), type);
         }
         registration.addRecipeCategories(new AttachmentQueryCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new GunAttachmentQueryCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new GunAmmoQueryCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new AmmoQueryCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -55,6 +64,7 @@ public class GunModPlugin implements IModPlugin {
         RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
         List<GunSmithTableRecipe> recipes = recipeManager.getAllRecipesFor(ModRecipe.GUN_SMITH_TABLE_CRAFTING.get());
 
+        long workbenchStart = System.nanoTime();
         for (var entry : recipeTypeMap.entrySet()) {
             TimelessAPI.getCommonBlockIndex(entry.getKey()).ifPresent(blockIndex -> {
                 List<GunSmithTableRecipe> recipeList = blockIndex.getFilter().filter(recipes, GunSmithTableRecipe::getId);
@@ -65,7 +75,59 @@ public class GunModPlugin implements IModPlugin {
             });
         }
 
-        registration.addRecipes(AttachmentQueryCategory.ATTACHMENT_QUERY, AttachmentQueryEntry.getAllAttachmentQueryEntries());
+        List<CraftingRecipe> ammoStorageUpgradeRecipes = recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream()
+                .filter(AmmoStorageUpgradeRecipe.class::isInstance)
+                .map(recipe -> expandToShapedRecipe((AmmoStorageUpgradeRecipe) recipe))
+                .toList();
+        registration.addRecipes(RecipeTypes.CRAFTING, ammoStorageUpgradeRecipes);
+        long workbenchNanos = System.nanoTime() - workbenchStart;
+
+        long attachmentStart = System.nanoTime();
+        AttachmentQueryData attachmentQueries = AttachmentQueryData.load();
+        long attachmentBuildNanos = System.nanoTime() - attachmentStart;
+        long attachmentRegisterNanos = registerTimed(registration, AttachmentQueryCategory.ATTACHMENT_QUERY, attachmentQueries.attachmentQueries());
+        long gunAttachmentRegisterNanos = registerTimed(registration, GunAttachmentQueryCategory.GUN_ATTACHMENT_QUERY, attachmentQueries.gunAttachmentQueries());
+
+        long gunAmmoStart = System.nanoTime();
+        List<GunAmmoQueryEntry> gunAmmoEntries = GunAmmoQueryEntry.getAllGunAmmoQueryEntries();
+        long gunAmmoBuildNanos = System.nanoTime() - gunAmmoStart;
+        long gunAmmoRegisterNanos = registerTimed(registration, GunAmmoQueryCategory.GUN_AMMO_QUERY, gunAmmoEntries);
+        long ammoStart = System.nanoTime();
+        List<AmmoQueryEntry> ammoEntries = AmmoQueryEntry.getAllAmmoQueryEntries(gunAmmoEntries);
+        long ammoBuildNanos = System.nanoTime() - ammoStart;
+        long ammoRegisterNanos = registerTimed(registration, AmmoQueryCategory.AMMO_QUERY, ammoEntries);
+
+        GunMod.LOGGER.info("JEI query timings (ms): workbench/crafting={}, attachment build={} ({} guns, {} attachments, {} checks), " +
+                        "attachment register={}, gun-attachment register={}, gun-ammo build={}, gun-ammo register={}, ammo build={}, ammo register={}",
+                TimeUnit.NANOSECONDS.toMillis(workbenchNanos), TimeUnit.NANOSECONDS.toMillis(attachmentBuildNanos),
+                attachmentQueries.gunCount(), attachmentQueries.attachmentCount(), attachmentQueries.compatibilityChecks(),
+                TimeUnit.NANOSECONDS.toMillis(attachmentRegisterNanos), TimeUnit.NANOSECONDS.toMillis(gunAttachmentRegisterNanos),
+                TimeUnit.NANOSECONDS.toMillis(gunAmmoBuildNanos), TimeUnit.NANOSECONDS.toMillis(gunAmmoRegisterNanos),
+                TimeUnit.NANOSECONDS.toMillis(ammoBuildNanos), TimeUnit.NANOSECONDS.toMillis(ammoRegisterNanos));
+    }
+
+    private static <T> long registerTimed(IRecipeRegistration registration, RecipeType<T> type, List<T> recipes) {
+        long start = System.nanoTime();
+        registration.addRecipes(type, recipes);
+        return System.nanoTime() - start;
+    }
+
+    /**
+     * {@link AmmoStorageUpgradeRecipe} 继承自 {@link net.minecraft.world.item.crafting.CustomRecipe}，
+     * 其 isSpecial() 返回 true。JEI 无法处理特殊配方（不会读取其布局与产物，导致无法通过物品检索到配方）。
+     * 这里参照原版 JEI 内置插件对特殊配方的处理方式，将其展开为一个等价的、JEI 能够识别的 {@link ShapedRecipe}。
+     */
+    private static CraftingRecipe expandToShapedRecipe(AmmoStorageUpgradeRecipe recipe) {
+        RegistryAccess registryAccess = Minecraft.getInstance().level.registryAccess();
+        return new ShapedRecipe(
+                recipe.getId(),
+                "",
+                CraftingBookCategory.MISC,
+                recipe.getRecipeWidth(),
+                recipe.getRecipeHeight(),
+                recipe.getIngredients(),
+                recipe.getResultItem(registryAccess)
+        );
     }
 
     @Override
@@ -78,6 +140,13 @@ public class GunModPlugin implements IModPlugin {
 
         }
 
+    }
+
+    @Override
+    public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
+        for (RecipeType<GunSmithTableRecipe> type : recipeTypeMap.values()) {
+            registration.addRecipeTransferHandler(new GunSmithTableTransferHandler(type, registration.getTransferHelper()), type);
+        }
     }
 
     @Override

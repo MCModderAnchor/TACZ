@@ -66,6 +66,11 @@ end
 
 function M.tick_reload(api)
     local cache = api:getCachedScriptData()
+    -- 缓存由 start_reload 建立。切枪时引擎可能拿着新枪来 tick 上一把枪遗留的换弹状态，
+    -- 此时新枪的 start_reload 从未执行过，缓存为空——直接取字段会抛 LuaError 崩客户端。
+    if (cache == nil) then
+        return NOT_RELOADING, -1
+    end
     local cooldown = cache.cooldown
     local feed = cache.feed
     local reload_time = api:getReloadTime()

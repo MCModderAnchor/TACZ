@@ -22,6 +22,9 @@ public class TextShow {
     @SerializedName("text")
     private String textKey = StringUtils.EMPTY;
 
+    @SerializedName("rangefinder")
+    private Rangefinder rangefinder;
+
     private volatile int colorInt = 0xFFFFFF;
 
     public float getScale() {
@@ -46,6 +49,10 @@ public class TextShow {
 
     public int getTextLight() {
         return textLight;
+    }
+
+    public Rangefinder getRangefinder() {
+        return rangefinder;
     }
 
     public int getColorInt() {

@@ -4,10 +4,13 @@
   "#tacz:muzzle",
   "#tacz:pistol_muzzle",
   "#tacz:light_extended_mag",
+  "tacz:oem_stock_unfolded",
   "#tacz:stock",
   "#tacz:oem_stock",
   "#tacz:grip",
   "#tacz:ammo_mod_no_he",
   "#tacz:pistol_laser",
-  "#tacz:scope_lowsight"
+  "#tacz:scope_lowsight",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

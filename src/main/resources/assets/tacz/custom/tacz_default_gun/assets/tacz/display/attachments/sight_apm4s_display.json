@@ -1,0 +1,19 @@
+{
+  "slot": "tacz:attachment/slot/sight_apm4s",
+  "model": "tacz:attachment/sight_apm4s_geo",
+  "texture": "tacz:attachment/uv/sight_apm4s",
+  "lod": {
+    "model": "tacz:attachment/lod/sight_apm4s",
+    "texture": "tacz:attachment/lod/sight_apm4s"
+  },
+  "zoom": [
+    2
+  ],
+  "idle_scope_height_adjust": 0.5,
+  "scope": true,
+  "fov": 38.0,
+  "sounds": {
+    "install": "tacz:attachments/scope_general_c",
+    "uninstall": "tacz:attachments/scope_general_c"
+  }
+}

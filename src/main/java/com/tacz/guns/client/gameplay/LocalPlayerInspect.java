@@ -31,8 +31,8 @@ public class LocalPlayerInspect {
             }
             return;
         }
-        // 检查状态锁
-        if (data.clientStateLock) {
+        // 检查状态锁及蓄力状态
+        if (data.clientStateLock || data.isCharging) {
             return;
         }
         GunData gunData = TimelessAPI.getClientGunIndex(iGun.getGunId(mainHandItem)).map(ClientGunIndex::getGunData).orElse(null);
@@ -43,7 +43,9 @@ public class LocalPlayerInspect {
             Bolt boltType = gunData.getBolt();
             boolean noAmmo;
             if (boltType == Bolt.OPEN_BOLT) {
-                noAmmo = iGun.getCurrentAmmoCount(mainHandItem) <= 0;
+                noAmmo = iGun.useInventoryAmmo(mainHandItem)
+                        ? ClientAmmoCount.getCached(player, mainHandItem, iGun) <= 0
+                        : iGun.getCurrentAmmoCount(mainHandItem) <= 0;
             } else {
                 noAmmo = !iGun.hasBulletInBarrel(mainHandItem);
             }

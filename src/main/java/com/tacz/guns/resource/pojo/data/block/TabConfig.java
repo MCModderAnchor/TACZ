@@ -22,6 +22,7 @@ public record TabConfig(ResourceLocation id, String name, ItemStack icon) {
 
     public static final ResourceLocation TAB_PISTOL = new ResourceLocation(GunMod.MOD_ID, "pistol");
     public static final ResourceLocation TAB_SNIPER = new ResourceLocation(GunMod.MOD_ID, "sniper");
+    public static final ResourceLocation TAB_DMR = new ResourceLocation(GunMod.MOD_ID, "dmr");
     public static final ResourceLocation TAB_RIFLE = new ResourceLocation(GunMod.MOD_ID, "rifle");
     public static final ResourceLocation TAB_SHOTGUN = new ResourceLocation(GunMod.MOD_ID, "shotgun");
     public static final ResourceLocation TAB_SMG = new ResourceLocation(GunMod.MOD_ID, "smg");
@@ -42,6 +43,7 @@ public record TabConfig(ResourceLocation id, String name, ItemStack icon) {
             new TabConfig(TabConfig.TAB_AMMO, "tacz.type.ammo.name", AmmoItemBuilder.create().setId(DefaultAssets.DEFAULT_AMMO_ID).build()),
             new TabConfig(TabConfig.TAB_PISTOL, "tacz.type.pistol.name", GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "glock_17")).forceBuild()),
             new TabConfig(TabConfig.TAB_SNIPER, "tacz.type.sniper.name", GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "ai_awp")).forceBuild()),
+            new TabConfig(TabConfig.TAB_DMR, "tacz.type.dmr.name", GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "mk14")).forceBuild()),
             new TabConfig(TabConfig.TAB_RIFLE, "tacz.type.rifle.name", GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "ak47")).forceBuild()),
             new TabConfig(TabConfig.TAB_SHOTGUN, "tacz.type.shotgun.name", GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "db_short")).forceBuild()),
             new TabConfig(TabConfig.TAB_SMG, "tacz.type.smg.name", GunItemBuilder.create().setId(new ResourceLocation(GunMod.MOD_ID, "hk_mp5a5")).forceBuild()),

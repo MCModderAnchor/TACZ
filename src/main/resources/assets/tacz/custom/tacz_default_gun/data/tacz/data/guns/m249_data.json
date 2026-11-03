@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:556x45",
   "ammo_amount": 75,
   "extended_mag_ammo_amount": [
@@ -8,6 +9,7 @@
   ],
   "can_slide": false,
   "bolt": "open_bolt",
+  "force_aim_exit_on_reload": true,
   "rpm": 750,
   "bullet": {
     "life": 1.0,
@@ -23,7 +25,7 @@
         {"distance": "infinite", "damage": 4.5}
       ]
     },
-    "speed": 280,
+    "speed": 350,
     "gravity": 0.15,
     "knockback": 0,
     "friction": 0.015,

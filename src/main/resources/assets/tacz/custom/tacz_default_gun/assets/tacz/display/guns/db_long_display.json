@@ -1,4 +1,6 @@
 {
+  "state_machine": "tacz:default_state_machine_v2",
+  "ads_preset": "tacz:renew",
   "model": "tacz:gun/db_long_geo",
   "texture": "tacz:gun/uv/db_long",
   "lod": {
@@ -18,9 +20,15 @@
     }
   },
   "muzzle_flash": {
+    "type": "renew",
     "texture": "tacz:flash/common_muzzle_flash",
-    "scale": 0.75
+    "scale": 0.75,
+    "initial_speed_scale": 1.7,
+    "smoke_scale": 2
   },
+  "iron_zoom": 1.2,
+  "model_fov": 60,
+  "zoom_model_fov": 45,
   "sounds": {
     "reload_empty": "tacz:db_short/db_short_reload_empty",
     "reload_tactical": "tacz:db_short/db_short_reload_tactical",
@@ -34,13 +42,13 @@
     "melee_stock": "tacz:melee_stock/melee_stock_03"
   },
   "offhand_show": {
-    "pos": [0, 20, 4],
+    "pos": [2, 20, 4],
     "rotate": [0, 0, 60],
     "scale": [0.5, 0.5, 0.5]
   },
   "hotbar_show": {
     "0": {
-      "pos": [0, 20, 3],
+      "pos": [-2, 20, 3],
       "rotate": [-180, 0, 120],
       "scale": [0.5, 0.5, 0.5]
     }

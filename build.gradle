@@ -30,11 +30,11 @@ apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 
-version = "1.1.8-hotfix"
+version = "1.2.0"
 // 版本号，正式发布需要修改这一行
 //version = FORMAT.format(new Date())
 group = "com.tacz"
-archivesBaseName = "tacz-1.20.1"
+archivesBaseName = "tacz-forge-1.20.1"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -42,6 +42,7 @@ mixin {
     add sourceSets.main, "tacz.refmap.json"
     config "tacz.mixins.json"
     config "tacz.compat.acceleratedrendering.mixins.json"
+    config "tacz.oculus.mixins.json"
 }
 
 minecraft {
@@ -83,6 +84,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run/server')
+            jvmArgs "-Xmx4G", "-Xms4G"
             property 'mixin.env.disableRefMap', 'true'
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
@@ -113,6 +115,11 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    mavenLocal {
+        content {
+            includeGroup 'com.github.mcmodderanchor'
+        }
+    }
     maven {
         // 阿里云镜像，方便国内开发
         url = uri("https://maven.aliyun.com/repository/public/")
@@ -138,7 +145,7 @@ repositories {
         }
     }
     maven { url "https://maven.shedaniel.me/" } // cloth config api
-    maven { url "https://dvs1.progwml6.com/files/maven/" }
+//    maven { url "https://dvs1.progwml6.com/files/maven/" }
     maven { url "https://modmaven.dev" }
 //    maven {
 //        name = 'tterrag maven'
@@ -164,6 +171,7 @@ repositories {
         content {
             includeGroup "com.github.rtyley"
             includeGroup "com.github.FiguraMC.luaj"
+            includeGroup "com.github.mcmodderanchor"
         }
     }
     maven {
@@ -180,10 +188,10 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
 
-    jarJar(implementation(fg.deobf("com.github.mcmodderanchor:simplebedrockmodel:2.2.2-forge+mc1.20.1"))) {
-        jarJar.ranged(it, "[2.2.2,)")
+    jarJar(implementation(fg.deobf("com.github.mcmodderanchor:simplebedrockmodel:2.6.1-forge-mc1.20.1"))) {
+        jarJar.ranged(it, "[2.6.1,)")
     }
-    compileOnly("com.maydaymemory:mae:1.1.2") {
+    compileOnly("com.maydaymemory:mae:1.1.4") {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
         exclude group: 'it.unimi.dsi', module: 'fastutil'
         exclude group: 'org.joml', module: 'joml'
@@ -227,14 +235,19 @@ dependencies {
 
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_forge}")
 
-    compileOnly fg.deobf("curse.maven:embeddium-908741:${embeddedt_id}")
+    implementation fg.deobf("curse.maven:embeddium-908741:${embeddedt_id}")
     // 同时兼容两个版本
     compileOnly fg.deobf('libs:oculus_legacy:mc1.20.1-1.6.13')
-    compileOnly fg.deobf('libs:oculus:mc1.20.1-1.7.0')
+//    implementation fg.deobf('libs:oculus:mc1.20.1-1.7.0')
+    compileOnly fg.deobf("curse.maven:oculus-581495:6020952")
+    compileOnly fg.deobf('curse.maven:rubidium-extra-654373:6101745')
 
     runtimeOnly fg.deobf("curse.maven:carry-on-274259:${carry_on_id}")
 
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animation_lib}")
+
+    // 拔刀剑
+    runtimeOnly fg.deobf("curse.maven:slashblade-resharped-1022428:8090912")
 
     runtimeOnly fg.deobf("curse.maven:sound-physics-remastered-535489:7032235")
 
@@ -244,7 +257,10 @@ dependencies {
     compileOnly fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
 
     //加速渲染相关
-    compileOnly fg.deobf("curse.maven:accelerated-rendering-1314021:7342975")
+    implementation fg.deobf("curse.maven:accelerated-rendering-1314021:7342975")
+
+    // create
+    runtimeOnly fg.deobf("curse.maven:create-328085:7178761")
 
     // 引入 MixinExtras 以解决一些棘手的 Mixin 冲突问题（比如 @Redirect 不能嵌套）
     // 如果未来有迁移到 Fabric / NeoForge 的计划，请注意这两个框架都已自带 MixinExtras，无需自行打包。
@@ -262,7 +278,7 @@ jar {
         attributes([
                 "Implementation-Title"  : project.name,
                 "Implementation-Version": project.version,
-                "MixinConfigs": "tacz.mixins.json, tacz.compat.acceleratedrendering.mixins.json"
+                "MixinConfigs": "tacz.mixins.json, tacz.compat.acceleratedrendering.mixins.json, tacz.oculus.mixins.json"
         ])
     }
 }

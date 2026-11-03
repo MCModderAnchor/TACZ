@@ -11,9 +11,13 @@ public class SyncConfig {
     public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_WHITELIST_ENTITIES;
     public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_BLOCKS;
     public static ForgeConfigSpec.ConfigValue<List<String>> INTERACT_KEY_BLACKLIST_ENTITIES;
+    public static ForgeConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_WHITELIST_ITEMS;
+    public static ForgeConfigSpec.ConfigValue<List<String>> GUN_PEGBOARD_BLACKLIST_ITEMS;
     public static ForgeConfigSpec.BooleanValue ENABLE_TABLE_FILTER;
+    public static ForgeConfigSpec.IntValue BULLET_HIT_BLOCK_EFFECT_SEND_DISTANCE;
     public static ForgeConfigSpec.BooleanValue SERVER_SHOOT_NETWORK_V;
     public static ForgeConfigSpec.BooleanValue SERVER_SHOOT_COOLDOWN_V;
+    public static ForgeConfigSpec.BooleanValue USE_HIP_FIRE_INACCURACY_WHILE_AIRBORNE;
 
     // 三个全局系数，用于客户端枪械文本提示，需要同步
     public static ForgeConfigSpec.DoubleValue DAMAGE_BASE_MULTIPLIER;
@@ -29,9 +33,14 @@ public class SyncConfig {
     public static ForgeConfigSpec.ConfigValue<List<List<String>>> CLIENT_GUN_PACK_DOWNLOAD_URLS;
     // 禁用趴下战术动作
     public static ForgeConfigSpec.BooleanValue ENABLE_CRAWL;
+    public static ForgeConfigSpec.BooleanValue ENABLE_CRAWL_WITHOUT_GUN;
+    // 持枪趴下时的最大仰角和俯角，单位为度，需要同步到客户端。
+    public static ForgeConfigSpec.DoubleValue CRAWL_MAX_UP_ANGLE;
+    public static ForgeConfigSpec.DoubleValue CRAWL_MAX_DOWN_ANGLE;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         interactKey(builder);
+        gunPegboard(builder);
         baseMultiplier(builder);
         misc(builder);
     }
@@ -50,6 +59,18 @@ public class SyncConfig {
 
         builder.comment("These blacklist entities can be interacted with when the interact key is pressed");
         INTERACT_KEY_BLACKLIST_ENTITIES = builder.define("InteractKeyBlacklistEntities", Lists.newArrayList());
+
+        builder.pop();
+    }
+
+    private static void gunPegboard(ForgeConfigSpec.Builder builder) {
+        builder.push("gun_pegboard");
+
+        builder.comment("Extra item ids allowed on the gun pegboard, in addition to TACZ guns, attachments, ammo, and ammo boxes");
+        GUN_PEGBOARD_WHITELIST_ITEMS = builder.define("GunPegboardWhitelistItems", Lists.newArrayList());
+
+        builder.comment("Item ids denied on the gun pegboard. This list takes priority over the default allowed TACZ item types and whitelist");
+        GUN_PEGBOARD_BLACKLIST_ITEMS = builder.define("GunPegboardBlacklistItems", Lists.newArrayList());
 
         builder.pop();
     }
@@ -88,8 +109,23 @@ public class SyncConfig {
         builder.comment("Whether or not players are allowed to use the crawl feature");
         ENABLE_CRAWL = builder.define("EnableCrawl", true);
 
+        builder.comment("Allow players to crawl without holding a TACZ gun. EnableCrawl must also be enabled");
+        ENABLE_CRAWL_WITHOUT_GUN = builder.define("EnableCrawlWithoutGun", true);
+
+        builder.comment("Maximum upward look angle in degrees while crawling with a gun. Set both crawl angle limits to 90 for the full vanilla pitch range");
+        CRAWL_MAX_UP_ANGLE = builder.defineInRange("CrawlMaxUpAngle", 45.0D, 0.0D, 90.0D);
+
+        builder.comment("Maximum downward look angle in degrees while crawling with a gun");
+        CRAWL_MAX_DOWN_ANGLE = builder.defineInRange("CrawlMaxDownAngle", 30.0D, 0.0D, 90.0D);
+
+        builder.comment("Use only move or stand hip-fire inaccuracy while not on the ground, including jumping and falling. Ignore aiming, prone, and sneaking inaccuracy");
+        USE_HIP_FIRE_INACCURACY_WHILE_AIRBORNE = builder.define("UseHipFireInaccuracyWhileAirborne", false);
+
         builder.comment("Enable the recipe limit of default gunsmith table or not");
         ENABLE_TABLE_FILTER = builder.define("EnableDefaultGunSmithTableFilter", true);
+
+        builder.comment("The farthest distance for the server to send bullet hit block effect packets, 0 means no limit");
+        BULLET_HIT_BLOCK_EFFECT_SEND_DISTANCE = builder.defineInRange("BulletHitBlockEffectSendDistance", 128, 0, Integer.MAX_VALUE);
 
         builder.comment("[Debug Option] Do server-side network check while shooting or not");
         SERVER_SHOOT_NETWORK_V = builder.define("ServerShootNetworkCheck", true);

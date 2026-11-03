@@ -3,7 +3,10 @@
   "#tacz:extended_mag",
   "#tacz:bayonet_ar",
   "#tacz:aug_scope",
-  "#tacz:scope",
+  "#tacz:scope_scope",
+  "#tacz:scope_sight",
   "#tacz:ammo_mod_no_he",
-  "#tacz:ar_laser"
+  "#tacz:ar_laser",
+  "#tacz:adapter/pistol_riser",
+  "#tacz:adapter/rail_mid"
 ]

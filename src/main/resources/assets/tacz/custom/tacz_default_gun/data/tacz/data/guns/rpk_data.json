@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   // 指定枪械弹药
   "ammo": "tacz:762x39",
   // 弹容
@@ -9,10 +10,30 @@
     60,
     75
   ],
+  "can_slide": false,
   // 枪栓类型：开膛待机（open_bolt）、闭膛待击（closed_bolt）、手动上膛（manual_action)
   "bolt": "closed_bolt",
   // 每分钟射出弹药量，最大不应超过 1200
-  "rpm": 630,
+  "rpm": 600,
+  "script": "tacz:xmag_reload_logic",
+  "script_param": {
+    "reload_feed": 1.95,
+    "reload_cooldown": 2.77,
+    "empty_feed": 2.95,
+    "empty_cooldown": 3.69,
+    "reload_xmag_1_feed": 2.03,
+    "reload_xmag_1_cooldown": 3.12,
+    "empty_xmag_1_feed": 3.43,
+    "empty_xmag_1_cooldown": 4.20,
+    "reload_xmag_2_feed": 2.03,
+    "reload_xmag_2_cooldown": 3.12,
+    "empty_xmag_2_feed": 3.43,
+    "empty_xmag_2_cooldown": 4.20,
+    "reload_xmag_3_feed": 2.03,
+    "reload_xmag_3_cooldown": 3.12,
+    "empty_xmag_3_feed": 3.43,
+    "empty_xmag_3_cooldown": 4.20
+  },
   // 子弹实体属性
   "bullet": {
     // 寿命，单位秒
@@ -32,14 +53,14 @@
       "head_shot_multiplier": 1.5,
       // 距离-伤害分段常函数
       "damage_adjust": [
-        {"distance": 36, "damage": 10},
-        {"distance": 64, "damage": 7},
+        {"distance": 48, "damage": 10},
+        {"distance": 72, "damage": 8},
         // 如果你忘记写这个无穷，那么超过上述距离，我就认为是 0
         {"distance": "infinite", "damage": 6}
       ]
     },
     // 速度 m/s
-    "speed": 270,
+    "speed": 340,
     // 重力
     "gravity": 0.15,
     // 击退效果
@@ -114,8 +135,8 @@
   ],
   "recoil": {
     "pitch": [
-      {"time": 0, "value": [0.6, 0.6]},
-      {"time": 0.25, "value": [0.6, 0.6]},
+      {"time": 0, "value": [0.75, 0.75]},
+      {"time": 0.25, "value": [0.75, 0.75]},
       {"time": 0.65, "value": [-0.175, -0.175]},
       {"time": 0.7, "value": [0, 0]}
     ],
@@ -172,6 +193,16 @@
     "extended_mag"
   ],
   // 专属的配件属性
+  "builtin_attachments": {
+    "stock": {
+      "attachments": [
+        "tacz:oem_stock_light",
+        "tacz:oem_stock_tactical",
+        "tacz:oem_stock_heavy"
+      ],
+      "default_attached": "tacz:oem_stock_heavy"
+    }
+  },
   "exclusive_attachments": {
   }
 }

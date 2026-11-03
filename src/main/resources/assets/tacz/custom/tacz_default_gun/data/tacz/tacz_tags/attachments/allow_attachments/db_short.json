@@ -1,5 +1,6 @@
 [
   "#tacz:db_short_stock",
   "#tacz:ammo_mod_no_he",
-  "#tacz:ammo_mod_shotgun_exclusive"
+  "#tacz:ammo_mod_shotgun_exclusive",
+  "tacz:ammo_mod_overpressure_recoil"
 ]

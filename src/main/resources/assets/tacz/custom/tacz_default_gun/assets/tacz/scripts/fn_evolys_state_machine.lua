@@ -1,6 +1,6 @@
 -- 脚本的位置是 "{命名空间}:{路径}"，那么 require 的格式为 "{命名空间}_{路径}"
 -- 注意！require 取得的内容不应该被修改，应仅调用
-local default = require("tacz_default_state_machine")
+local default = require("tacz_default_state_machine_v2")
 local STATIC_TRACK_LINE = default.STATIC_TRACK_LINE
 local BLENDING_TRACK_LINE = default.BLENDING_TRACK_LINE
 local GUN_KICK_TRACK_LINE = default.GUN_KICK_TRACK_LINE
@@ -162,7 +162,6 @@ function crawl_states.crawl.transition(this, context, input)
         else
             context:runAnimation("crawl_end", context:getTrack(BLENDING_TRACK_LINE, SLIDE_TRACK), true, PLAY_ONCE_STOP, 0.2)
         end
-        print("exit")
         return this.crawl_states.normal
     end
 end

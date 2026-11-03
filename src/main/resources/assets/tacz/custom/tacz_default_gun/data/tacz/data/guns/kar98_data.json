@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:792x57",
   "ammo_amount": 4,
   "extended_mag_ammo_amount": [
@@ -22,7 +23,7 @@
         {"distance": "infinite", "damage": 15}
       ]
     },
-    "speed": 340,
+    "speed": 400,
     "gravity": 0.098,
     "knockback": 0,
     "friction": 0.015,
@@ -59,7 +60,7 @@
   "aim_time": 0.2,
   "sprint_time": 0.2,
   "bolt_action_time": 0.85,
-  "weight": 4,
+  "weight": 3.8,
   "movement_speed": {
     // 默认修正
     "base": 0.0,
@@ -97,6 +98,7 @@
     "lie": 2.5,
     "aim": 0.10
   },
+  "can_slide": false,
   "allow_attachment_types": [
 	"scope",
     "extended_mag"

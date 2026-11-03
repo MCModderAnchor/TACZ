@@ -1,0 +1,94 @@
+{
+  "ads_preset": "tacz:renew",
+  "model": "tacz:gun/svd_geo",
+  "texture": "tacz:gun/uv/svd",
+  "lod": {
+    "model": "tacz:gun/lod/svd",
+    "texture": "tacz:gun/lod/svd"
+  },
+  "hud": "tacz:gun/hud/svd",
+  "slot": "tacz:gun/slot/svd",
+  "animation": "tacz:svd",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "state_machine": "tacz:default_state_machine_v2",
+  "transform": {
+    "scale": {
+      "thirdperson": [0.6, 0.6, 0.6],
+      "ground": [0.6, 0.6, 0.6],
+      "fixed": [1.2, 1.2, 1.2]
+    }
+  },
+  "muzzle_flash": {
+    "type": "renew",
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1.0,
+    "smoke_scale": 2,
+    "initial_speed_scale": 2.45,
+    "smoke_particle_count": 30
+  },
+  "iron_zoom": 1.5,
+  "model_fov": 60,
+  "zoom_model_fov": 35,
+  "shell": {
+    "initial_velocity": [5, 2, 1],
+    "random_velocity": [1, 1, 0.25],
+    "acceleration": [0.0, -10, 0.0],
+    "angular_velocity": [360, -1200, 90],
+    "living_time": 1.0
+  },
+  "ammo":{
+    "hit_surface_particles": [
+      {
+        "name": "minecraft:cloud",
+        "count_range": [2, 4],
+        "life_time": 10,
+        "color": "#8A8175",
+        "scale": 0.8,
+        "surface_offset": 0.045,
+        "random_offset": 0.018,
+        "normal_speed": 0.15,
+        "random_speed": 0.02,
+        "spread_angle": 15
+      },
+      {
+        "name": "minecraft:campfire_cosy_smoke",
+        "count": 2,
+        "life_time": 35,
+        "scale": 0.9,
+        "surface_offset": 0.055,
+        "random_offset": 0.025,
+        "normal_speed": 0.035,
+        "random_speed": 0.02,
+        "spread_angle": 45
+      }
+    ]
+  },
+  "sounds": {
+    "draw": "tacz:svd/svd_draw",
+    "put_away": "tacz:svd/svd_put_away",
+    "shoot": "tacz:svd/svd_shoot",
+    "shoot_3p": "tacz:sks/sks_shoot_3p",
+    "silence": "tacz:svd/svd_silence",
+    "silence_3p": "tacz:sks/sks_silence_3p",
+    "dry_fire": "tacz:svd/svd_dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill",
+    "melee_push": "tacz:melee_stock/melee_stock_01",
+    "melee_stock": "tacz:melee_stock/melee_stock_03"
+  },
+  "offhand_show": {
+    "pos": [5, 18, 5],
+    "rotate": [-90, -5, -90],
+    "scale": [0.5, 0.5, 0.5]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [-3.5, 18, 5],
+      "rotate": [-90, -5, -90],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

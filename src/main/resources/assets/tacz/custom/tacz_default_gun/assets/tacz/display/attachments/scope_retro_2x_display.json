@@ -9,6 +9,8 @@
   "zoom": [
     3.25
   ],
+  "show_mount": false,
+  "idle_scope_height_adjust": 0.5,
   "scope": true,
   "fov": 45.0,
   "sounds": {

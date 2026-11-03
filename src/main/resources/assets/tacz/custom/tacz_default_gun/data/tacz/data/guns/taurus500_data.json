@@ -1,4 +1,5 @@
 {
+  "allow_ammo_unload": true,
   "ammo": "tacz:500mag",
   "ammo_amount": 5,
   "extended_mag_ammo_amount": [
@@ -6,6 +7,7 @@
     5,
     5
   ],
+  "force_aim_exit_on_reload": true,
   "rpm": 120,
   "bullet": {
     "life": 0.85,
@@ -30,10 +32,10 @@
     "pierce": 3,
     "explosion": {
       "explode": false,
-      "damage": 30,
-      "radius": 0.75,
+      "damage": 10,
+      "radius": 1,
       "knockback": true,
-      "delay": 1
+      "delay": 0.13
     }
   },
   "bolt": "open_bolt",

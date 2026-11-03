@@ -8,10 +8,7 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAttachment;
 import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.client.resource.index.ClientAmmoIndex;
-import com.tacz.guns.client.resource.index.ClientAttachmentIndex;
-import com.tacz.guns.client.resource.index.ClientBlockIndex;
-import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.client.resource.index.*;
 import com.tacz.guns.resource.modifier.AttachmentPropertyManager;
 import com.tacz.guns.resource.pojo.AmmoIndexPOJO;
 import com.tacz.guns.resource.pojo.AttachmentIndexPOJO;
@@ -24,36 +21,57 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicLong;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientIndexManager {
     private static final int HOTBAR_SLOT_COUNT = 9;
+    private static final AtomicLong RESOURCE_REVISION = new AtomicLong();
+    private static final Set<ResourceLocation> WARNED_MISSING_GUN_DISPLAYS = new HashSet<>();
 
     public static final Map<ResourceLocation, GunDisplayInstance> GUN_DISPLAY = Maps.newHashMap();
     public static final Map<ResourceLocation, ClientGunIndex> GUN_INDEX = Maps.newHashMap();
     public static final Map<ResourceLocation, ClientAmmoIndex> AMMO_INDEX = Maps.newHashMap();
     public static final Map<ResourceLocation, ClientAttachmentIndex> ATTACHMENT_INDEX = Maps.newHashMap();
+    public static final Map<ResourceLocation, ClientAttachmentVariantIndex> ATTACHMENT_VARIANT_INDEX = Maps.newHashMap();
+    public static final Map<ResourceLocation, ClientSlotAdapterIndex> SLOT_ADAPTER_INDEX = Maps.newHashMap();
     public static final Map<ResourceLocation, ClientBlockIndex> BLOCK_INDEX = Maps.newHashMap();
 
     public static void clear() {
+        ClientAssetLoadDispatcher.invalidate();
+        RESOURCE_REVISION.incrementAndGet();
         GUN_DISPLAY.clear();
+        WARNED_MISSING_GUN_DISPLAYS.clear();
         GUN_INDEX.clear();
         AMMO_INDEX.clear();
         ATTACHMENT_INDEX.clear();
+        ATTACHMENT_VARIANT_INDEX.clear();
+        SLOT_ADAPTER_INDEX.clear();
         BLOCK_INDEX.clear();
+    }
+
+    public static long resourceRevision() {
+        return RESOURCE_REVISION.get();
     }
 
     public static void reload() {
         clear();
-
-        loadGunDisplay();
-        loadGunIndex();
-        loadAmmoIndex();
-        loadAttachmentIndex();
-        loadBlockIndex();
-        warmUpInventoryModels();
+        try {
+            loadGunDisplay();
+            loadGunIndex();
+            loadAmmoIndex();
+            loadAttachmentIndex();
+            loadAttachmentVariantIndex();
+            loadSlotAdapterIndex();
+            loadBlockIndex();
+            preloadExternalModels();
+            warmUpInventoryModels();
+        } finally {
+            // 使重载过程中暂时解析失败的展示槽位在资源就绪后再次解析。
+            RESOURCE_REVISION.incrementAndGet();
+        }
 
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && IGun.mainHandHoldGun(player)) {
@@ -93,7 +111,10 @@ public class ClientIndexManager {
         if (instance != null) {
             return instance;
         }
-        GunMod.LOGGER.warn("{} display instance is missing from cache", displayId);
+        if (WARNED_MISSING_GUN_DISPLAYS.add(displayId)) {
+            GunMod.LOGGER.warn("Gun display {} is unavailable (assets/{}/display/guns/{}.json);",
+                    displayId, displayId.getNamespace(), displayId.getPath());
+        }
         return null;
     }
 
@@ -117,6 +138,28 @@ public class ClientIndexManager {
                 ATTACHMENT_INDEX.put(id, ClientAttachmentIndex.getInstance(id, pojo));
             } catch (IllegalArgumentException exception) {
                 GunMod.LOGGER.warn("{} index file read fail!", id, exception);
+            }
+        });
+    }
+
+    public static void loadAttachmentVariantIndex() {
+        TimelessAPI.getAllCommonAttachmentVariantIndex().forEach(index -> {
+            ResourceLocation id = index.getKey();
+            try {
+                ATTACHMENT_VARIANT_INDEX.put(id, ClientAttachmentVariantIndex.getInstance(index.getValue()));
+            } catch (IllegalArgumentException exception) {
+                GunMod.LOGGER.warn("{} attachment variant index file read fail!", id, exception);
+            }
+        });
+    }
+
+    public static void loadSlotAdapterIndex() {
+        TimelessAPI.getAllCommonSlotAdapterIndex().forEach(index -> {
+            ResourceLocation id = index.getKey();
+            try {
+                SLOT_ADAPTER_INDEX.put(id, ClientSlotAdapterIndex.getInstance(index.getValue()));
+            } catch (IllegalArgumentException exception) {
+                GunMod.LOGGER.warn("{} slot adapter index file read fail!", id, exception);
             }
         });
     }
@@ -145,8 +188,36 @@ public class ClientIndexManager {
         return ATTACHMENT_INDEX.entrySet();
     }
 
+    public static Set<Map.Entry<ResourceLocation, ClientAttachmentVariantIndex>> getAllAttachmentVariants() {
+        return ATTACHMENT_VARIANT_INDEX.entrySet();
+    }
+
+    public static Set<Map.Entry<ResourceLocation, ClientSlotAdapterIndex>> getAllSlotAdapters() {
+        return SLOT_ADAPTER_INDEX.entrySet();
+    }
+
     public static Set<Map.Entry<ResourceLocation, ClientBlockIndex>> getAllBlocks() {
         return BLOCK_INDEX.entrySet();
+    }
+
+    /** 重载时预加载默认命名空间的模型，其他枪包继续按需加载并由背包预热。 */
+    private static void preloadExternalModels() {
+        List<CompletableFuture<?>> tasks = new ArrayList<>();
+        for (GunDisplayInstance display : GUN_DISPLAY.values()) {
+            tasks.add(display.getExternalModels().preload());
+        }
+        for (ClientAttachmentIndex index : ATTACHMENT_INDEX.values()) {
+            tasks.add(index.getExternalModels().preload());
+        }
+        for (ClientAttachmentVariantIndex index : ATTACHMENT_VARIANT_INDEX.values()) {
+            tasks.add(index.getExternalModels().preload());
+        }
+        for (ClientSlotAdapterIndex index : SLOT_ADAPTER_INDEX.values()) {
+            tasks.add(index.getExternalModels().preload());
+        }
+
+        // 只在资源重载阶段等待；外部模型的渲染入口不会等待后台任务。
+        CompletableFuture.allOf(tasks.toArray(CompletableFuture<?>[]::new)).join();
     }
 
     public static void warmUpInventoryModels() {
@@ -211,7 +282,9 @@ public class ClientIndexManager {
         }
         IAttachment attachment = IAttachment.getIAttachmentOrNull(stack);
         if (attachment != null) {
-            TimelessAPI.getClientAttachmentIndex(attachment.getAttachmentId(stack)).ifPresent(ClientAttachmentIndex::warmUp);
+            ResourceLocation attachmentId = attachment.getAttachmentId(stack);
+            TimelessAPI.getClientAttachmentIndex(attachmentId).ifPresent(ClientAttachmentIndex::warmUp);
+            TimelessAPI.getClientAttachmentVariantIndex(stack).ifPresent(ClientAttachmentVariantIndex::warmUp);
             return;
         }
         IAmmo ammo = IAmmo.getIAmmoOrNull(stack);

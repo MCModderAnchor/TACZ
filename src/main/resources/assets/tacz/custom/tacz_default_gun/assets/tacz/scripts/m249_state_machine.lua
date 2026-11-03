@@ -1,6 +1,6 @@
 -- 脚本的位置是 "{命名空间}:{路径}"，那么 require 的格式为 "{命名空间}_{路径}"
 -- 注意！require 取得的内容不应该被修改，应仅调用
-local default = require("tacz_default_state_machine")
+local default = require("tacz_default_state_machine_v2")
 local STATIC_TRACK_LINE = default.STATIC_TRACK_LINE
 local BOLT_CAUGHT_TRACK = default.BOLT_CAUGHT_TRACK
 local bolt_caught_states = default.bolt_caught_states
