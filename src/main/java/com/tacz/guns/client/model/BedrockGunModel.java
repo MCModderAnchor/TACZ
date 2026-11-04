@@ -325,7 +325,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
             for (BedrockPart bedrockPart : scopePosPath) {
                 bedrockPart.translateAndRotateAndScale(matrixStack);
             }
-            AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay, bufferSource);
+            AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay, bufferSource, this::delegateRender);
             matrixStack.popPose();
             // 开启模板测试，因为镜内不渲染枪体
             if (iAttachment != null) {
@@ -362,7 +362,7 @@ public class BedrockGunModel extends BedrockAnimatedModel {
 				bedrockPart.translateAndRotateAndScale(matrixStack);
 			}
 
-			AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay, bufferSource);
+			AttachmentRender.renderAttachment(attachmentItem, currentGunItem, AttachmentType.SCOPE, matrixStack, transformType, light, overlay, bufferSource, this::delegateRender);
 			matrixStack.popPose();
 
 			// 开启模板测试，因为镜内不渲染枪体

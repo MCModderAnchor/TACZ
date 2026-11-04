@@ -26,7 +26,9 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.EnumMap;
+import java.util.function.Consumer;
 
 public class AttachmentRender implements IFunctionalRenderer {
     private final BedrockGunModel bedrockGunModel;
@@ -45,6 +47,13 @@ public class AttachmentRender implements IFunctionalRenderer {
     }
 
     public static void renderAttachment(ItemStack attachmentItem, ItemStack gunItem, AttachmentType type, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource) {
+        renderAttachment(attachmentItem, gunItem, type, poseStack, transformType, light, overlay, bufferSource, null);
+    }
+
+    /**
+     * 瞄具的槽位转接器可延后到枪体的模板测试窗口绘制，同时继承 AR 枪体层的模板设置。
+     */
+    public static void renderAttachment(ItemStack attachmentItem, ItemStack gunItem, AttachmentType type, PoseStack poseStack, ItemDisplayContext transformType, int light, int overlay, MultiBufferSource bufferSource, @Nullable Consumer<IFunctionalRenderer> deferredSlotAdapters) {
         if (attachmentItem.isEmpty()) {
             return;
         }
@@ -61,9 +70,18 @@ public class AttachmentRender implements IFunctionalRenderer {
                 }
                 ClientSlotAdapterIndex slotAdapter = getSlotAdapter(gunItem, type, attachmentId);
                 if (slotAdapter != null) {
-                    poseStack.pushPose();
-                    renderSlotAdapter(slotAdapter, gunItem, poseStack, transformType, light, overlay, bufferSource);
-                    poseStack.popPose();
+                    // 我真受不了这个傻逼function renderer了。。只能先这样了
+                    if (deferredSlotAdapters != null && transformType.firstPerson() && attachmentIndex.isScope()) {
+                        PoseStack adapterPose = new PoseStack();
+                        adapterPose.last().pose().set(poseStack.last().pose());
+                        adapterPose.last().normal().set(poseStack.last().normal());
+                        deferredSlotAdapters.accept((stack, consumer, context, packedLight, packedOverlay) ->
+                                renderSlotAdapter(slotAdapter, gunItem, adapterPose, context, packedLight, packedOverlay, bufferSource));
+                    } else {
+                        poseStack.pushPose();
+                        renderSlotAdapter(slotAdapter, gunItem, poseStack, transformType, light, overlay, bufferSource);
+                        poseStack.popPose();
+                    }
                     applyMountOffset(poseStack, slotAdapter.getMountOffset());
                 }
                 if (variant != null && variant.isOverlayMode()) {
