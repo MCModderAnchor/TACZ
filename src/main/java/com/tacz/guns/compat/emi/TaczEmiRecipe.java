@@ -83,6 +83,11 @@ public class TaczEmiRecipe implements EmiRecipe {
         };
     }
 
+    @Override
+    public boolean supportsRecipeTree() {
+        return layout == Layout.GUN_SMITH_TABLE;
+    }
+
     public boolean isGunSmithTableRecipe() {
         return layout == Layout.GUN_SMITH_TABLE && selectionRecipeId != null;
     }
