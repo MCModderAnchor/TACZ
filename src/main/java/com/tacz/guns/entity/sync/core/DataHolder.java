@@ -3,10 +3,10 @@ package com.tacz.guns.entity.sync.core;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class DataHolder {
     public Map<SyncedDataKey<?, ?>, DataEntry<?, ?>> dataMap = new HashMap<>();
@@ -40,10 +40,22 @@ public class DataHolder {
     }
 
     public List<DataEntry<?, ?>> gatherDirty() {
-        return this.dataMap.values().stream().filter(DataEntry::isDirty).filter(entry -> entry.getKey().syncMode() != SyncedDataKey.SyncMode.NONE).collect(Collectors.toList());
+        List<DataEntry<?, ?>> entries = new ArrayList<>();
+        for (DataEntry<?, ?> entry : this.dataMap.values()) {
+            if (entry.isDirty() && entry.getKey().syncMode() != SyncedDataKey.SyncMode.NONE) {
+                entries.add(entry);
+            }
+        }
+        return entries;
     }
 
     public List<DataEntry<?, ?>> gatherAll() {
-        return this.dataMap.values().stream().filter(entry -> entry.getKey().syncMode() != SyncedDataKey.SyncMode.NONE).collect(Collectors.toList());
+        List<DataEntry<?, ?>> entries = new ArrayList<>();
+        for (DataEntry<?, ?> entry : this.dataMap.values()) {
+            if (entry.getKey().syncMode() != SyncedDataKey.SyncMode.NONE) {
+                entries.add(entry);
+            }
+        }
+        return entries;
     }
 }
