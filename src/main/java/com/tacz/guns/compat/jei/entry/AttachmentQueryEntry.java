@@ -6,7 +6,6 @@ import com.tacz.guns.api.item.GunTabType;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.api.item.builder.GunItemBuilder;
-import com.tacz.guns.compat.jei.category.AttachmentQueryCategory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -14,6 +13,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class AttachmentQueryEntry {
+    public static final int MAX_GUN_SHOW_COUNT = 60;
+
     /**
      * 显示的配件
      */
@@ -76,9 +77,9 @@ public class AttachmentQueryEntry {
 
     private void dividedGuns() {
         int size = this.allowGunStacks.size();
-        if (size >= AttachmentQueryCategory.MAX_GUN_SHOW_COUNT) {
-            this.extraAllowGunStacks = this.allowGunStacks.subList(AttachmentQueryCategory.MAX_GUN_SHOW_COUNT, size);
-            this.allowGunStacks = this.allowGunStacks.subList(0, AttachmentQueryCategory.MAX_GUN_SHOW_COUNT);
+        if (size >= MAX_GUN_SHOW_COUNT) {
+            this.extraAllowGunStacks = this.allowGunStacks.subList(MAX_GUN_SHOW_COUNT, size);
+            this.allowGunStacks = this.allowGunStacks.subList(0, MAX_GUN_SHOW_COUNT);
         }
     }
 }

@@ -22,6 +22,7 @@ shoulder-surfing-reloaded-modrinth = "1.21.1-4.7.0+neoforge"
 framework-curseforge = "6531439"
 controllable-curseforge = "6277379"
 jei = "19.21.0.247"
+emi = "1.1.24+1.21.1"
 
 [libraries]
 com-github-mcmodderanchor-simplebedrockmodel = { module = "com.github.mcmodderanchor:simplebedrockmodel", version.ref = "simplebedrockmodel" }
@@ -43,6 +44,7 @@ curse-maven-controllable = { module = "curse.maven:controllable-317269", version
 mezz-jei-common-api = { module = "mezz.jei:jei-1.21.1-common-api", version.ref = "jei" }
 mezz-jei-neoforge-api = { module = "mezz.jei:jei-1.21.1-neoforge-api", version.ref = "jei" }
 mezz-jei-neoforge = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
+emi-neoforge = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
 
 [plugins]
 moddev = { id = "net.neoforged.moddev", version.ref = "moddev" }
