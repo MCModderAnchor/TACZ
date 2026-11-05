@@ -11,8 +11,8 @@ plugins {
 
 val id = project.property("mod_id") as String
 group = project.property("maven_group") as String
-version = dateFormat.format(Date())
-//version = project.property("mod_version") as String
+//version = dateFormat.format(Date())
+version = project.property("mod_version") as String
 
 base {
     archivesName.set(project.property("archives_base_name") as String)
@@ -157,7 +157,7 @@ dependencies {
     compileOnly(libs.mezz.jei.neoforge.api)
     runtimeOnly(libs.mezz.jei.neoforge)
     compileOnly("dev.emi:emi-neoforge:${libs.versions.emi.get()}:api")
-    runtimeOnly(libs.emi.neoforge)
+    compileOnly(libs.emi.neoforge)
     compileOnly(libs.curse.maven.framework)
     compileOnly(libs.curse.maven.controllable)
 }
