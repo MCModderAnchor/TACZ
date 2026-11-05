@@ -181,7 +181,7 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
         if (!this.recipeKeys.containsKey(selectedType)) {
             selectedType = null;
-            selectedRecipeList = null;
+            selectedRecipeList = new ArrayList<>();
             indexPage = 0;
         }
 
@@ -193,6 +193,9 @@ public class GunSmithTableScreen extends AbstractContainerScreen<GunSmithTableMe
 
         if (selectedType != null) {
             selectedRecipeList = this.recipes.get(selectedType);
+        }
+        if (selectedRecipeList == null) {
+            selectedRecipeList = new ArrayList<>();
         }
     }
 
