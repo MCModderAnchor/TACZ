@@ -2,7 +2,13 @@ package com.tacz.guns.compat.emi;
 
 import com.tacz.guns.GunMod;
 import com.tacz.guns.api.TimelessAPI;
+import com.tacz.guns.api.item.IAmmo;
+import com.tacz.guns.api.item.IAttachment;
+import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.builder.AmmoItemBuilder;
+import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
 import com.tacz.guns.api.item.builder.BlockItemBuilder;
+import com.tacz.guns.api.item.builder.GunItemBuilder;
 import com.tacz.guns.compat.jei.entry.AmmoQueryEntry;
 import com.tacz.guns.compat.jei.entry.AttachmentQueryData;
 import com.tacz.guns.compat.jei.entry.AttachmentQueryEntry;
@@ -18,6 +24,7 @@ import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.EmiCraftingRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
+import dev.emi.emi.api.stack.Comparison;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import net.minecraft.core.RegistryAccess;
@@ -33,6 +40,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 @EmiEntrypoint
 public class GunModEmiPlugin implements EmiPlugin {
@@ -43,6 +51,7 @@ public class GunModEmiPlugin implements EmiPlugin {
 
     @Override
     public void register(EmiRegistry registry) {
+        registerStackComparisons(registry);
         Map<ResourceLocation, EmiRecipeCategory> workbenchCategories = registerWorkbenches(registry);
         registerWorkbenchRecipes(registry, workbenchCategories);
         registerAmmoStorageRecipes(registry);
@@ -51,6 +60,30 @@ public class GunModEmiPlugin implements EmiPlugin {
         registerGunAttachmentQueries(registry, attachmentQueries.gunAttachmentQueries());
         registerAmmoQueries(registry);
         registry.addRecipeHandler(GunSmithTableMenu.TYPE, new GunSmithTableEmiRecipeHandler());
+    }
+
+    private void registerStackComparisons(EmiRegistry registry) {
+        TimelessAPI.getAllCommonGunIndex().forEach(entry ->
+                registerIdentifierComparison(registry,
+                        GunItemBuilder.create().setId(entry.getKey()).build(),
+                        stack -> stack.getItem() instanceof IGun gun ? gun.getGunId(stack) : null));
+        TimelessAPI.getAllCommonAttachmentIndex().forEach(entry ->
+                registerIdentifierComparison(registry,
+                        AttachmentItemBuilder.create().setId(entry.getKey()).build(),
+                        stack -> stack.getItem() instanceof IAttachment attachment
+                                ? attachment.getAttachmentId(stack) : null));
+        TimelessAPI.getAllCommonAmmoIndex().forEach(entry ->
+                registerIdentifierComparison(registry,
+                        AmmoItemBuilder.create().setId(entry.getKey()).build(),
+                        stack -> stack.getItem() instanceof IAmmo ammo ? ammo.getAmmoId(stack) : null));
+    }
+
+    private void registerIdentifierComparison(EmiRegistry registry, ItemStack stack,
+                                              Function<ItemStack, ResourceLocation> identifier) {
+        if (!stack.isEmpty()) {
+            registry.setDefaultComparison(EmiStack.of(stack),
+                    Comparison.compareData(emiStack -> identifier.apply(emiStack.getItemStack())));
+        }
     }
 
     private Map<ResourceLocation, EmiRecipeCategory> registerWorkbenches(EmiRegistry registry) {
