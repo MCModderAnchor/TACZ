@@ -14,8 +14,8 @@ bcel = "6.6.1"
 
 cloth-config = "15.0.140"
 player-animation-lib = "2.0.1+1.21.1"
-sodium-modrinth = "mc1.21.1-0.6.13-neoforge"
-iris-modrinth = "1.8.12+1.21.1-neoforge"
+sodium = "0.8.13+mc1.21.1"
+iris-modrinth = "1.8.14-beta.1+1.21.1-neoforge"
 acceleratedrendering-curseforge = "8448200"
 carry-on-modrinth = "2.2.2"
 shoulder-surfing-reloaded-modrinth = "1.21.1-4.7.0+neoforge"
@@ -34,7 +34,8 @@ org-apache-bcel = { module = "org.apache.bcel:bcel", version.ref = "bcel" }
 
 me-shedaniel-cloth-config-neoforge = { module = "me.shedaniel.cloth:cloth-config-neoforge", version.ref = "cloth-config" }
 dev-kosmx-player-animation-lib-forge = { module = "dev.kosmx.player-anim:player-animation-lib-forge", version.ref = "player-animation-lib" }
-maven-modrinth-sodium = { module = "maven.modrinth:sodium", version.ref = "sodium-modrinth" }
+net-caffeinemc-sodium-neoforge = { module = "net.caffeinemc:sodium-neoforge", version.ref = "sodium" }
+net-caffeinemc-sodium-neoforge-mod = { module = "net.caffeinemc:sodium-neoforge-mod", version.ref = "sodium" }
 maven-modrinth-iris = { module = "maven.modrinth:iris", version.ref = "iris-modrinth" }
 curse-maven-acceleratedrendering = { module = "curse.maven:accelerated-rendering-1314021", version.ref = "acceleratedrendering-curseforge" }
 maven-modrinth-carry-on = { module = "maven.modrinth:carry-on", version.ref = "carry-on-modrinth" }

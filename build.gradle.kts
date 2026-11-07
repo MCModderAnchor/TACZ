@@ -85,6 +85,17 @@ repositories {
     maven("https://maven.shedaniel.me")
     maven("https://maven.kosmx.dev")
     maven("https://maven.blamejared.com")
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "CaffeineMC"
+                url = uri("https://maven.caffeinemc.net/releases")
+            }
+        }
+        filter {
+            includeGroup("net.caffeinemc")
+        }
+    }
     maven("https://repo.sleeping.town") {
         content {
             includeGroup("dev.emi")
@@ -130,7 +141,27 @@ repositories {
     }
 }
 
+//// The unwrapped mod is for compilation; the service wrapper must load before mod discovery.
+//val sodiumRuntime by configurations.creating {
+//    isCanBeConsumed = false
+//    // The release jar already embeds its Fabric API dependencies.
+//    isTransitive = false
+//}
+//listOf("client" to "client_a", "client2" to "client_b").forEach { (runName, directory) ->
+//    val stageSodium = tasks.register<Copy>("stage${runName.replaceFirstChar { it.uppercaseChar() }}Sodium") {
+//        from(sodiumRuntime)
+//        into(layout.projectDirectory.dir("run/$directory/mods"))
+//        rename { "sodium-dev.jar" }
+//    }
+//    neoForge.runs.named(runName) {
+//        taskBefore(stageSodium)
+//    }
+//}
+
 dependencies {
+    implementation("org.commonmark:commonmark:0.21.0")
+    add("additionalRuntimeClasspath", "org.commonmark:commonmark:0.21.0")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
     implementation(libs.com.github.mcmodderanchor.simplebedrockmodel)
@@ -148,9 +179,16 @@ dependencies {
 
     implementation(libs.me.shedaniel.cloth.config.neoforge)
     implementation(libs.dev.kosmx.player.animation.lib.forge)
-    implementation(libs.maven.modrinth.sodium)
-    implementation(libs.maven.modrinth.iris)
+
+    compileOnly(libs.net.caffeinemc.sodium.neoforge)
+    "additionalRuntimeClasspath"(libs.net.caffeinemc.sodium.neoforge) {
+        isTransitive = false
+    }
+
+    compileOnly(libs.maven.modrinth.iris)
+
     compileOnly(libs.curse.maven.acceleratedrendering)
+
     compileOnly(libs.maven.modrinth.carry.on)
     compileOnly(libs.maven.modrinth.shoulder.surfing.reloaded)
     compileOnly(libs.mezz.jei.common.api)
@@ -160,6 +198,9 @@ dependencies {
     compileOnly(libs.emi.neoforge)
     compileOnly(libs.curse.maven.framework)
     compileOnly(libs.curse.maven.controllable)
+
+    //sable
+    implementation("curse.maven:sable-1312371:9043865")
 }
 
 java {

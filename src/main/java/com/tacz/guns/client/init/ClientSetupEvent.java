@@ -24,6 +24,7 @@ import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.init.ModItems;
 import com.tacz.guns.inventory.tooltip.*;
 import com.tacz.guns.item.AmmoBoxItem;
+import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -77,6 +78,8 @@ public class ClientSetupEvent {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(RenderHelper::initializeItemEntityStencil);
+
         // 注册自己的的硬编码第三人称动画
         event.enqueueWork(ThirdPersonManager::registerDefault);
 

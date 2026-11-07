@@ -48,6 +48,15 @@ public final class RenderHelper {
         BufferUploader.draw(bufferbuilder.buildOrThrow());
     }
 
+    /** Allocate before render pipelines cache or wrap the main target (e.g. Veil's hand FBO). */
+    public static void initializeItemEntityStencil() {
+        RenderSystem.assertOnRenderThread();
+        if (!IS_OPTIFINE_INSTALLED) {
+            // enableStencil resizes the target; doing this inside an item draw invalidates its attachments.
+            Minecraft.getInstance().getMainRenderTarget().enableStencil();
+        }
+    }
+
     public static void enableItemEntityStencilTest() {
         RenderSystem.assertOnRenderThread();
         if (IS_OPTIFINE_INSTALLED) {
@@ -64,8 +73,6 @@ public final class RenderHelper {
                     GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, depthTextureId, 0);
                 }
             }
-        } else {
-            Minecraft.getInstance().getMainRenderTarget().enableStencil();
         }
         GL11.glEnable(GL11.GL_STENCIL_TEST);
     }
