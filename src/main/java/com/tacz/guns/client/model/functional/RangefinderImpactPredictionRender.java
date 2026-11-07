@@ -9,6 +9,7 @@ import com.mojang.math.Axis;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.model.bedrock.BedrockModel;
 import com.tacz.guns.client.resource.pojo.display.gun.RangefinderManager;
+import com.tacz.guns.client.util.FirstPersonRenderMath;
 import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
@@ -19,7 +20,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
 
 public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
     private static final float MODEL_TEXT_SCALE = 2.0f / 300.0f;
@@ -78,13 +78,8 @@ public class RangefinderImpactPredictionRender implements IFunctionalRenderer {
 
     private static float projectGuiY(Matrix4f pose, float localY) {
         int height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
-        Vector4f point = new Vector4f(0.0f, localY, 0.0f, 1.0f);
-        point.mul(pose);
-        point.mul(RenderSystem.getProjectionMatrix());
-        if (point.w() <= 0.0f) {
-            return Float.NaN;
-        }
-        float ndcY = point.y() / point.w();
+        float ndcY = FirstPersonRenderMath.projectNdcY(RenderSystem.getProjectionMatrix(),
+                RenderSystem.getModelViewMatrix(), pose, localY);
         return (1.0f - ndcY) * height / 2.0f;
     }
 

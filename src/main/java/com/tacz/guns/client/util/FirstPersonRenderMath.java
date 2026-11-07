@@ -19,6 +19,16 @@ public final class FirstPersonRenderMath {
         return new Matrix4f(modelView).mul(pose);
     }
 
+    /** Projects a point on a node's local Y axis with the same matrices used by its shader. */
+    public static float projectNdcY(Matrix4fc projection, Matrix4fc modelView, Matrix4fc pose, float localY) {
+        Vector4f point = new Vector4f(0.0f, localY, 0.0f, 1.0f);
+        point.mul(pose).mul(modelView).mul(projection);
+        if (point.w() <= 0.0f) {
+            return Float.NaN;
+        }
+        return point.y() / point.w();
+    }
+
     /** Converts view-space vertices to the space expected before the shader applies ModelView. */
     public static Matrix4f viewToRender(Matrix4fc modelView) {
         return new Matrix4f(modelView).invert();
