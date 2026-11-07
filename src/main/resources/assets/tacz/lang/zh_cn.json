@@ -143,6 +143,8 @@
   "config.tacz.common.ammo.explosive_ammo_fire.desc": "警告：如果开启，那么具有爆炸性的弹药会使周围环境着火",
   "config.tacz.common.ammo.explosive_ammo_knock_back": "爆炸弹药击退",
   "config.tacz.common.ammo.explosive_ammo_knock_back.desc": "具有爆炸属性的弹药可以施加击退效果",
+  "config.tacz.common.ammo.sable_compat": "Sable / 航空学兼容",
+  "config.tacz.common.ammo.sable_compat.desc": "使子弹命中 Sable 子世界，弹孔跟随结构移动，并支持爆炸破坏。",
   "config.tacz.common.ammo.explosive_ammo_visible_distance": "爆炸弹药可见距离",
   "config.tacz.common.ammo.explosive_ammo_visible_distance.desc": "可以看到爆炸物的距离（比如 RPG-7 火箭弹）",
   "config.tacz.common.ammo.ignite_block": "引燃方块",

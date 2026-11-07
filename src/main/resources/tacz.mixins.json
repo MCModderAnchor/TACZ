@@ -4,6 +4,7 @@
   "package": "com.tacz.guns.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "common.ClipContextMixin",
     "common.LivingEntityMixin",
     "common.ServerGamePacketListenerImplMixin",
     "common.ServerPlayerMixin",

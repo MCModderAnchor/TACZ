@@ -1,6 +1,7 @@
 package com.tacz.guns.client.particle;
 
 import com.tacz.guns.init.ModBlocks;
+import com.tacz.guns.compat.sable.SableCompat;
 import com.tacz.guns.particles.BulletHoleOption;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -30,8 +31,9 @@ public final class HitBlockEffectHandler {
         if (state.is(ModBlocks.TARGET.get()) || shouldRemove(level, blockPos, hitPos)) {
             return;
         }
-        HitSurfaceParticleSpawner.spawn(level, hitPos, direction, blockPos, ammoId, gunId, gunDisplayId, incendiary);
-        playHitBlockStepSound(level, state, hitPos.x, hitPos.y, hitPos.z);
+        Vec3 worldHitPos = SableCompat.toWorldPosition(level, hitPos);
+        HitSurfaceParticleSpawner.spawn(level, worldHitPos, direction, blockPos, ammoId, gunId, gunDisplayId, incendiary);
+        playHitBlockStepSound(level, state, worldHitPos.x, worldHitPos.y, worldHitPos.z);
         if (BulletHoleParticle.isBulletHoleEnabled(ammoId, gunId, gunDisplayId)) {
             level.addParticle(new BulletHoleOption(direction, blockPos, ammoId, gunId, gunDisplayId, incendiary), true, hitPos.x, hitPos.y, hitPos.z, 0, 0, 0);
         }
@@ -84,9 +86,10 @@ public final class HitBlockEffectHandler {
         }
         AABB baseBlockBoundingBox = shape.bounds();
         AABB blockBoundingBox = baseBlockBoundingBox.move(blockPos);
+        Vec3 localHitPos = SableCompat.toLocalPosition(level, blockPos, hitPos);
         boolean intersects = blockBoundingBox.intersects(
-                hitPos.x - 0.1, hitPos.y - 0.1, hitPos.z - 0.1,
-                hitPos.x + 0.1, hitPos.y + 0.1, hitPos.z + 0.1);
+                localHitPos.x - 0.1, localHitPos.y - 0.1, localHitPos.z - 0.1,
+                localHitPos.x + 0.1, localHitPos.y + 0.1, localHitPos.z + 0.1);
         return !intersects;
     }
 

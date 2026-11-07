@@ -14,6 +14,7 @@ import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.client.particle.AmmoParticleSpawner;
 import com.tacz.guns.config.common.AmmoConfig;
+import com.tacz.guns.compat.sable.SableCompat;
 import com.tacz.guns.config.sync.SyncConfig;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.init.ModDamageTypes;
@@ -501,7 +502,9 @@ public class EntityKineticBullet extends Projectile implements IEntityWithComple
         }
         // 弹孔与点燃特效
         if (this.level() instanceof ServerLevel serverLevel) {
-            ServerMessageBulletHitBlock message = new ServerMessageBulletHitBlock(hitVec, result.getDirection(), result.getBlockPos(), this.ammoId.toString(), this.gunId.toString(), this.gunDisplayId.toString(), this.igniteEntity);
+            // Preserve the attachment point while the ship moves between the server hit and packet arrival.
+            Vec3 effectHitPos = SableCompat.toLocalPosition(this.level(), pos, hitVec);
+            ServerMessageBulletHitBlock message = new ServerMessageBulletHitBlock(effectHitPos, result.getDirection(), result.getBlockPos(), this.ammoId.toString(), this.gunId.toString(), this.gunDisplayId.toString(), this.igniteEntity);
             sendBulletHitBlockEffect(serverLevel, message, hitVec, this.getOwner());
             if (this.igniteBlock) {
                 serverLevel.sendParticles(ParticleTypes.LAVA, hitVec.x, hitVec.y, hitVec.z, 1, 0, 0, 0, 0);

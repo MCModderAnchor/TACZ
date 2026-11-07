@@ -75,6 +75,11 @@ neoForge {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven("https://maven.ryanhcode.dev/releases") {
+        content {
+            includeGroup("dev.ryanhcode.sable-companion")
+        }
+    }
     maven("https://jitpack.io") {
         content {
             includeGroup("com.github.rtyley")
@@ -141,23 +146,6 @@ repositories {
     }
 }
 
-//// The unwrapped mod is for compilation; the service wrapper must load before mod discovery.
-//val sodiumRuntime by configurations.creating {
-//    isCanBeConsumed = false
-//    // The release jar already embeds its Fabric API dependencies.
-//    isTransitive = false
-//}
-//listOf("client" to "client_a", "client2" to "client_b").forEach { (runName, directory) ->
-//    val stageSodium = tasks.register<Copy>("stage${runName.replaceFirstChar { it.uppercaseChar() }}Sodium") {
-//        from(sodiumRuntime)
-//        into(layout.projectDirectory.dir("run/$directory/mods"))
-//        rename { "sodium-dev.jar" }
-//    }
-//    neoForge.runs.named(runName) {
-//        taskBefore(stageSodium)
-//    }
-//}
-
 dependencies {
     implementation("org.commonmark:commonmark:0.21.0")
     add("additionalRuntimeClasspath", "org.commonmark:commonmark:0.21.0")
@@ -199,8 +187,12 @@ dependencies {
     compileOnly(libs.curse.maven.framework)
     compileOnly(libs.curse.maven.controllable)
 
-    //sable
+    // sable
     implementation("curse.maven:sable-1312371:9043865")
+    compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:1.6.0")
+    // Create Aeronautics
+    runtimeOnly("curse.maven:create-328085:7963363") // Create 6.0.10
+    runtimeOnly("curse.maven:create-aeronautics-676721:8763471") // Aeronautics 1.3.2
 }
 
 java {
@@ -211,6 +203,10 @@ java {
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.release.set(21)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.processResources {
@@ -224,11 +220,4 @@ tasks.processResources {
     filteringCharset = "UTF-8"
     inputs.properties(properties)
     filesMatching("META-INF/neoforge.mods.toml") { expand(properties) }
-}
-
-
-tasks.register("gunPackCompatibilityTest") {
-    group = "verification"
-    description = "Runs gun-pack overlays and universal conversion regression checks."
-    dependsOn(tasks.test)
 }

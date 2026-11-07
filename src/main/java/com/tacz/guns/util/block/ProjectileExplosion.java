@@ -2,6 +2,7 @@ package com.tacz.guns.util.block;
 
 import com.google.common.collect.Sets;
 import com.tacz.guns.config.common.AmmoConfig;
+import com.tacz.guns.compat.sable.SableCompat;
 import com.tacz.guns.util.EntityUtil;
 import com.tacz.guns.util.HitboxHelper;
 import net.minecraft.core.BlockPos;
@@ -67,6 +68,9 @@ public class ProjectileExplosion extends Explosion {
         }
         this.level.gameEvent(this.exploder, GameEvent.EXPLODE, BlockPos.containing(this.x, this.y, this.z));
         Set<BlockPos> set = Sets.newHashSet();
+        SableCompat.ExplosionTrace subLevelTrace = SableCompat.explosionTrace(this.level,
+                new Vec3(this.x, this.y, this.z), this.damageCalculator,
+                this.knockback && AmmoConfig.EXPLOSIVE_AMMO_KNOCK_BACK.get());
         int i = 16;
 
         for (int x = 0; x < i; ++x) {
@@ -91,6 +95,13 @@ public class ProjectileExplosion extends Explosion {
                             FluidState fluidState = this.level.getFluidState(pos);
                             if (!this.level.isInWorldBounds(pos)) {
                                 break;
+                            }
+
+                            if (subLevelTrace != null) {
+                                f = subLevelTrace.sample(this, new Vec3(blockX, blockY, blockZ), f, set);
+                                if (f <= 0.0F) {
+                                    break;
+                                }
                             }
 
                             Optional<Float> optional = this.damageCalculator.getBlockExplosionResistance(this, this.level, pos, blockState, fluidState);

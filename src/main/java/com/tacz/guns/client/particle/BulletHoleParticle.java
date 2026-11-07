@@ -3,6 +3,7 @@ package com.tacz.guns.client.particle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.compat.sable.SableCompat;
 import com.tacz.guns.init.ModBlocks;
 import com.tacz.guns.particles.BulletHoleOption;
 import net.minecraft.client.Camera;
@@ -36,6 +37,7 @@ import org.joml.Vector3f;
 public class BulletHoleParticle extends TextureSheetParticle {
     private final Direction direction;
     private final BlockPos pos;
+    private final SableCompat.BulletHoleAttachment subLevelAttachment;
     private int uOffset;
     private int vOffset;
     private float textureDensity;
@@ -46,6 +48,14 @@ public class BulletHoleParticle extends TextureSheetParticle {
         this.setSprite(this.getSprite(pos));
         this.direction = direction;
         this.pos = pos;
+        this.subLevelAttachment = SableCompat.attachBulletHole(world, pos, new Vec3(x, y, z));
+        if (this.subLevelAttachment != null) {
+            Vec3 worldPosition = this.subLevelAttachment.worldPosition();
+            this.setPos(worldPosition.x, worldPosition.y, worldPosition.z);
+            this.xo = this.x;
+            this.yo = this.y;
+            this.zo = this.z;
+        }
         this.lifetime = this.getLifetimeFromConfig(world);
         this.hasPhysics = false;
         this.gravity = 0.0F;
@@ -145,19 +155,30 @@ public class BulletHoleParticle extends TextureSheetParticle {
         }
         if (shouldRemove()) {
             this.remove();
+            return;
+        }
+        if (this.subLevelAttachment != null) {
+            Vec3 position = this.subLevelAttachment.worldPosition();
+            // Keep the particle's culling bounds near the moving ship as well as its rendered quad.
+            this.setPos(position.x, position.y, position.z);
         }
     }
 
     @Override
     public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-        if (!this.validAttachment) {
+        if (!this.validAttachment || this.subLevelAttachment != null && this.subLevelAttachment.isRemoved()) {
             return;
         }
         Vec3 view = renderInfo.getPosition();
-        float particleX = (float) (Mth.lerp(partialTicks, this.xo, this.x) - view.x());
-        float particleY = (float) (Mth.lerp(partialTicks, this.yo, this.y) - view.y());
-        float particleZ = (float) (Mth.lerp(partialTicks, this.zo, this.z) - view.z());
-        Quaternionf quaternion = this.direction.getRotation();
+        SableCompat.BulletHolePose attachmentPose = this.subLevelAttachment == null
+                ? null : this.subLevelAttachment.renderPose(this.direction, partialTicks);
+        Vec3 position = attachmentPose == null
+                ? new Vec3(Mth.lerp(partialTicks, this.xo, this.x), Mth.lerp(partialTicks, this.yo, this.y),
+                Mth.lerp(partialTicks, this.zo, this.z)) : attachmentPose.position();
+        float particleX = (float) (position.x - view.x());
+        float particleY = (float) (position.y - view.y());
+        float particleZ = (float) (position.z - view.z());
+        Quaternionf quaternion = attachmentPose == null ? this.direction.getRotation() : attachmentPose.rotation();
         Vector3f[] points = new Vector3f[]{
                 // Y 值稍微大一点点，防止 z-fight
                 new Vector3f(-1.0F, 0.01F, -1.0F),
@@ -207,6 +228,9 @@ public class BulletHoleParticle extends TextureSheetParticle {
     }
 
     private boolean shouldRemove() {
+        if (this.subLevelAttachment != null && this.subLevelAttachment.isRemoved()) {
+            return true;
+        }
         final BlockState blockState = this.level.getBlockState(this.pos);
         if (blockState.isAir()) {
             return true;
@@ -218,9 +242,11 @@ public class BulletHoleParticle extends TextureSheetParticle {
             }
             AABB baseBlockBoundingBox = shape.bounds();
             AABB blockBoundingBox = baseBlockBoundingBox.move(this.pos);
+            Vec3 position = this.subLevelAttachment == null ? new Vec3(this.x, this.y, this.z)
+                    : this.subLevelAttachment.localPosition();
             boolean intersects = blockBoundingBox.intersects(
-                    this.x - 0.1, this.y - 0.1, this.z - 0.1,
-                    this.x + 0.1, this.y + 0.1, this.z + 0.1);
+                    position.x - 0.1, position.y - 0.1, position.z - 0.1,
+                    position.x + 0.1, position.y + 0.1, position.z + 0.1);
             return !intersects;
         }
     }

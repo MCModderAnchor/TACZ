@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.client.resource.pojo.display.ammo.HitSurfaceParticle;
 import com.tacz.guns.config.client.RenderConfig;
+import com.tacz.guns.compat.sable.SableCompat;
 import com.tacz.guns.util.ColorHex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -56,7 +57,8 @@ public final class HitSurfaceParticleSpawner {
         ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
         RandomSource random = level.random;
         Integer blockParticleCount = getAmmoBlockParticleCount(ammoId);
-        spawnBlockParticles(particleEngine, random, blockState, hitPos, direction, blockParticleCount, incendiary);
+        Vec3 normal = SableCompat.worldNormal(level, blockPos, direction);
+        spawnBlockParticles(particleEngine, random, blockState, hitPos, normal, blockParticleCount, incendiary);
         if (!RenderConfig.HIT_EXTRA_PARTICLE_ENABLE.get()) {
             return;
         }
@@ -66,7 +68,7 @@ public final class HitSurfaceParticleSpawner {
         }
         int remainingCount = MAX_DISPLAY_PARTICLE_COUNT_PER_HIT;
         for (HitSurfaceParticle particle : particles) {
-            remainingCount -= spawnDisplayParticle(particleEngine, random, blockState, hitPos, direction, particle, remainingCount);
+            remainingCount -= spawnDisplayParticle(particleEngine, random, blockState, hitPos, normal, particle, remainingCount);
             if (remainingCount <= 0) {
                 return;
             }
@@ -83,16 +85,16 @@ public final class HitSurfaceParticleSpawner {
         return player != null && player.distanceToSqr(hitPos) <= maxDistanceSqr;
     }
 
-    private static void spawnBlockParticles(ParticleEngine particleEngine, RandomSource random, BlockState blockState, Vec3 hitPos, Direction direction, @Nullable Integer configuredCount, boolean incendiary) {
+    private static void spawnBlockParticles(ParticleEngine particleEngine, RandomSource random, BlockState blockState, Vec3 hitPos, Vec3 normal, @Nullable Integer configuredCount, boolean incendiary) {
         int count = configuredCount == null ? DEFAULT_BLOCK_PARTICLE_COUNT : Math.min(configuredCount, MAX_BLOCK_PARTICLE_COUNT);
         if (count <= 0) {
             return;
         }
         ParticleOptions options = incendiary ? ParticleTypes.LAVA : new BlockParticleOption(ParticleTypes.BLOCK, blockState);
         for (int i = 0; i < count; i++) {
-            Vec3 pos = randomPosition(random, hitPos, direction, DEFAULT_SURFACE_OFFSET, DEFAULT_RANDOM_OFFSET);
+            Vec3 pos = randomPosition(random, hitPos, normal, DEFAULT_SURFACE_OFFSET, DEFAULT_RANDOM_OFFSET);
             Vec3 speed = randomVelocity(random,
-                    direction,
+                    normal,
                     DEFAULT_BLOCK_NORMAL_SPEED,
                     DEFAULT_BLOCK_RANDOM_SPEED,
                     DEFAULT_BLOCK_SPREAD_ANGLE);
@@ -128,7 +130,7 @@ public final class HitSurfaceParticleSpawner {
         }
     }
 
-    private static int spawnDisplayParticle(ParticleEngine particleEngine, RandomSource random, BlockState blockState, Vec3 hitPos, Direction direction, HitSurfaceParticle particle, int maxCount) {
+    private static int spawnDisplayParticle(ParticleEngine particleEngine, RandomSource random, BlockState blockState, Vec3 hitPos, Vec3 normal, HitSurfaceParticle particle, int maxCount) {
         ParticleOptions options = parseParticle(blockState, particle);
         if (options == null || maxCount <= 0) {
             return 0;
@@ -136,8 +138,8 @@ public final class HitSurfaceParticleSpawner {
         int count = Math.min(randomCount(random, particle), maxCount);
         int spawned = 0;
         for (int i = 0; i < count; i++) {
-            Vec3 pos = randomPosition(random, hitPos, direction, particle.getSurfaceOffset(), particle.getRandomOffset());
-            Vec3 speed = randomVelocity(random, direction, particle.getNormalSpeed(), particle.getRandomSpeed(), particle.getSpreadAngle());
+            Vec3 pos = randomPosition(random, hitPos, normal, particle.getSurfaceOffset(), particle.getRandomOffset());
+            Vec3 speed = randomVelocity(random, normal, particle.getNormalSpeed(), particle.getRandomSpeed(), particle.getSpreadAngle());
             Particle result = particleEngine.createParticle(options, pos.x, pos.y, pos.z, speed.x, speed.y, speed.z);
             if (result != null) {
                 applyParticleOverrides(result, particle);
@@ -246,16 +248,15 @@ public final class HitSurfaceParticleSpawner {
         return DUST.equals(particleId) || DUST_COLOR_TRANSITION.equals(particleId);
     }
 
-    private static Vec3 randomPosition(RandomSource random, Vec3 hitPos, Direction direction, float surfaceOffset, float randomOffset) {
-        Vec3 normal = Vec3.atLowerCornerOf(direction.getNormal());
+    private static Vec3 randomPosition(RandomSource random, Vec3 hitPos, Vec3 normal, float surfaceOffset, float randomOffset) {
         double offsetX = randomOffset == 0 ? 0 : random.nextGaussian() * randomOffset;
         double offsetY = randomOffset == 0 ? 0 : random.nextGaussian() * randomOffset;
         double offsetZ = randomOffset == 0 ? 0 : random.nextGaussian() * randomOffset;
         return hitPos.add(normal.scale(surfaceOffset)).add(offsetX, offsetY, offsetZ);
     }
 
-    private static Vec3 randomVelocity(RandomSource random, Direction direction, float normalSpeed, float randomSpeed, float spreadAngle) {
-        Vec3 normal = Vec3.atLowerCornerOf(direction.getNormal()).normalize();
+    private static Vec3 randomVelocity(RandomSource random, Vec3 normal, float normalSpeed, float randomSpeed, float spreadAngle) {
+        normal = normal.normalize();
         Vec3 tangent = Math.abs(normal.y) > 0.9 ? new Vec3(1, 0, 0) : normal.cross(new Vec3(0, 1, 0)).normalize();
         Vec3 bitangent = normal.cross(tangent).normalize();
         double spread = Math.tan(Math.toRadians(spreadAngle));

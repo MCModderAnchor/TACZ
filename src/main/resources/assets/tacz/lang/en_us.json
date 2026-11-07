@@ -352,6 +352,8 @@
   "config.tacz.common.ammo.explosive_ammo_fire.desc": "Warning: Ammo with explosive properties can set the surroundings on fire",
   "config.tacz.common.ammo.explosive_ammo_knock_back": "Explosive Ammo KnockBack",
   "config.tacz.common.ammo.explosive_ammo_knock_back.desc": "Ammo with explosive properties can add knockback effect",
+  "config.tacz.common.ammo.sable_compat": "Sable / Create Aeronautics Compatibility",
+  "config.tacz.common.ammo.sable_compat.desc": "Enable bullet collisions, attached bullet holes and explosions on Sable sub-levels.",
   "config.tacz.common.ammo.explosive_ammo_visible_distance": "Explosive Ammo Visible Distance",
   "config.tacz.common.ammo.explosive_ammo_visible_distance.desc": "The distance at which the explosion effect can be seen",
   "config.tacz.common.ammo.pass_through_blocks": "Pass Through Blocks",

@@ -1,11 +1,11 @@
 package com.tacz.guns.util.block;
 
 import com.tacz.guns.config.util.AmmoBlockConfigRead;
+import com.tacz.guns.compat.sable.BulletRayTraceContext;
+import com.tacz.guns.compat.sable.SableCompat;
 import com.tacz.guns.init.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -25,6 +25,9 @@ public final class BlockRayTrace {
             input.is(ModBlocks.BULLET_IGNORE_BLOCKS);
 
     public static BlockHitResult rayTraceBlocks(Level level, ClipContext context) {
+        if (SableCompat.isEnabled()) {
+            return BulletRayTraceContext.trace(BlockRayTrace::canPassThrough, () -> SableCompat.clip(level, context));
+        }
         return performRayTrace(context, (rayTraceContext, blockPos) -> {
             BlockState blockState = level.getBlockState(blockPos);
             // 这里添加判断方块是否可以穿透，如果可以穿透则返回 null
@@ -40,6 +43,10 @@ public final class BlockRayTrace {
             Vec3 vec3 = rayTraceContext.getFrom().subtract(rayTraceContext.getTo());
             return BlockHitResult.miss(rayTraceContext.getTo(), Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(rayTraceContext.getTo()));
         });
+    }
+
+    private static boolean canPassThrough(BlockState state) {
+        return AmmoBlockConfigRead.canPassThrough(state) || IGNORES.test(state);
     }
 
     @Nullable

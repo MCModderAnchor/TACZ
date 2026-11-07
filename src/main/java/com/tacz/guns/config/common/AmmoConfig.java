@@ -14,6 +14,7 @@ public class AmmoConfig {
     public static ModConfigSpec.BooleanValue EXPLOSIVE_AMMO_DESTROYS_BLOCK;
     public static ModConfigSpec.BooleanValue EXPLOSIVE_AMMO_FIRE;
     public static ModConfigSpec.BooleanValue EXPLOSIVE_AMMO_KNOCK_BACK;
+    public static ModConfigSpec.BooleanValue SABLE_COMPAT;
     public static ModConfigSpec.IntValue EXPLOSIVE_AMMO_VISIBLE_DISTANCE;
     public static ModConfigSpec.ConfigValue<List<? extends String>> PASS_THROUGH_BLOCKS;
     public static ModConfigSpec.BooleanValue DESTROY_GLASS;
@@ -37,6 +38,9 @@ public class AmmoConfig {
 
         builder.comment("Ammo with explosive properties can add knockback effect");
         EXPLOSIVE_AMMO_KNOCK_BACK = builder.define("ExplosiveAmmoKnockBack", true);
+
+        builder.comment("Enable Sable / Create Aeronautics bullet collision, attached bullet holes and explosions. Disable when another addon handles this compatibility.");
+        SABLE_COMPAT = builder.define("EnableSableCompat", true);
 
         builder.comment("The distance at which the explosion effect can be seen");
         EXPLOSIVE_AMMO_VISIBLE_DISTANCE = builder.defineInRange("ExplosiveAmmoVisibleDistance", 192, 0, Integer.MAX_VALUE);
