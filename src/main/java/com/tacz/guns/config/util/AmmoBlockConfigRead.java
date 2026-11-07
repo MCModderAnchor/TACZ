@@ -22,6 +22,7 @@ public final class AmmoBlockConfigRead {
     }
 
     public static void init() {
+        AmmoConfig.migrateLegacyDestroyBlocks();
         passThroughBlocks = readBlockList(AmmoConfig.PASS_THROUGH_BLOCKS.get(), "PassThroughBlocks");
         destroyBlocks = readBlockList(AmmoConfig.DESTROY_BLOCKS.get(), "DestroyBlocks");
     }

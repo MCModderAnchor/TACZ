@@ -7,7 +7,8 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.List;
 
 public class AmmoConfig {
-    public static final List<String> DEFAULT_DESTROY_BLOCKS = List.of("#forge:glass", "#forge:glass_panes");
+    public static final List<String> DEFAULT_DESTROY_BLOCKS = List.of("#c:glass_blocks", "#c:glass_panes");
+    private static final List<String> LEGACY_DEFAULT_DESTROY_BLOCKS = List.of("#forge:glass", "#forge:glass_panes");
     public static final List<String> DEFAULT_BULLET_DAMAGE_IGNORE_LIST = List.of(
             "minecraft:painting", "minecraft:item_frame", "minecraft:glow_item_frame");
 
@@ -45,13 +46,13 @@ public class AmmoConfig {
         builder.comment("The distance at which the explosion effect can be seen");
         EXPLOSIVE_AMMO_VISIBLE_DISTANCE = builder.defineInRange("ExplosiveAmmoVisibleDistance", 192, 0, Integer.MAX_VALUE);
 
-        builder.comment("Blocks that bullets can pass through. Accepts block IDs and tags prefixed with #, e.g. minecraft:glass or #forge:glass.");
+        builder.comment("Blocks that bullets can pass through. Accepts block IDs and tags prefixed with #, e.g. minecraft:glass or #c:glass_blocks.");
         PASS_THROUGH_BLOCKS = builder.defineListAllowEmpty("PassThroughBlocks", Lists.newArrayList(), value -> value instanceof String);
 
         builder.comment("Allow bullets to destroy blocks listed in DestroyBlocks without drops. The name is retained for compatibility; the list is not limited to glass.");
         DESTROY_GLASS = builder.define("DestroyGlass", true);
 
-        builder.comment("Blocks that bullets can destroy when DestroyGlass is enabled, subject to DestroyBlockHardnessThreshold. Accepts block IDs and tags prefixed with #, e.g. minecraft:glass or #forge:glass.");
+        builder.comment("Blocks that bullets can destroy when DestroyGlass is enabled, subject to DestroyBlockHardnessThreshold. Accepts block IDs and tags prefixed with #, e.g. minecraft:glass or #c:glass_blocks.");
         DESTROY_BLOCKS = builder.defineListAllowEmpty("DestroyBlocks", Lists.newArrayList(DEFAULT_DESTROY_BLOCKS), value -> value instanceof String);
 
         builder.comment("Maximum block hardness for direct bullet destruction. Blocks above this threshold or with negative hardness (unbreakable) are never destroyed, even if listed in DestroyBlocks. Default: 1.0; vanilla glass has hardness 0.3.");
@@ -78,5 +79,13 @@ public class AmmoConfig {
         GLOBAL_BULLET_SPEED_MODIFIER = builder.defineInRange("GlobalBulletSpeedModifier", 2.0, 0.01, 20);
 
         builder.pop();
+    }
+
+    public static void migrateLegacyDestroyBlocks() {
+        // 修正错误的旧tag配置
+        if (LEGACY_DEFAULT_DESTROY_BLOCKS.equals(DESTROY_BLOCKS.get())) {
+            DESTROY_BLOCKS.set(Lists.newArrayList(DEFAULT_DESTROY_BLOCKS));
+            DESTROY_BLOCKS.save();
+        }
     }
 }
