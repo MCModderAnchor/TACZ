@@ -235,25 +235,9 @@ public class BulletHoleParticle extends TextureSheetParticle {
         GameRenderer gameRenderer = mc.gameRenderer;
         Camera camera = gameRenderer.getMainCamera();
         double distance = camera.getPosition().distanceTo(this.getPos());
-        float componentLength = -new Vector3f(camera.getLookVector()).normalize().dot(step);
-        float componentLengthPow = componentLength * componentLength * componentLength;
-        float offsetLength = (float) Math.sqrt(distance) * 0.1F * componentLengthPow;
-        offsetLength = pingpong(offsetLength, 0.05F * componentLengthPow) + 0.01F;
+        float componentLength = Math.abs(new Vector3f(camera.getLookVector()).normalize().dot(step));
+        float offsetLength = (float) Math.sqrt(distance) * componentLength * 0.02F;
         return step.mul(offsetLength);
-    }
-
-    private static float pingpong(float value, float length) {
-        length = Math.abs(length);
-        if (length == 0.0F) {
-            return 0.0F;
-        }
-
-        float remainder = value % (length * 2.0F);
-        if (remainder < 0.0F) {
-            remainder += length * 2.0F;
-        }
-
-        return remainder <= length ? remainder : length * 2.0F - remainder;
     }
 
     @OnlyIn(Dist.CLIENT)
