@@ -16,6 +16,7 @@ public final class PackConversionPlan {
     public boolean targetFormatValidated;
     public boolean registryValidationDeferred;
     public String status = "checking";
+    public String skipReason;
     public String rulesSource;
     public int convertedRecipes;
     public int skippedRecipes;
@@ -70,8 +71,15 @@ public final class PackConversionPlan {
 
     public boolean isPartial() { return skippedRecipes > 0; }
 
+    public void skip(String file, String path, String code, String message) {
+        skipReason = message;
+        diagnostics.add(new Diagnostic("skipped", file, path, code, message));
+    }
+
+    public boolean isSkipped() { return skipReason != null; }
+
     public void finish() {
-        status = hasErrors() ? "failed" : isPartial() ? "partial" : "complete";
+        status = hasErrors() ? "failed" : isSkipped() ? "skipped" : isPartial() ? "partial" : "complete";
     }
 
     public boolean hasErrors() {

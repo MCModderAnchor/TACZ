@@ -44,20 +44,22 @@ public final class GunPackConversionBatch {
 
     public record Outcome(Path source, UniversalPackConverter.Result result, Exception failure) { }
 
-    public record Summary(int complete, int partial, int failed) {
-        public int total() { return complete + partial + failed; }
+    public record Summary(int complete, int partial, int skipped, int failed) {
+        public int total() { return complete + partial + skipped + failed; }
     }
 
     public static Summary convert(List<Path> sources, UniversalPackConverter converter, Path output,
                                   boolean export, Consumer<Outcome> listener) {
         int complete = 0;
         int partial = 0;
+        int skipped = 0;
         int failed = 0;
         for (Path source : sources) {
             Outcome outcome;
             try {
                 var result = converter.convert(source, output, export);
                 if (result.report().hasErrors()) failed++;
+                else if (result.report().isSkipped()) skipped++;
                 else if (result.report().isPartial()) partial++;
                 else complete++;
                 outcome = new Outcome(source, result, null);
@@ -67,6 +69,6 @@ public final class GunPackConversionBatch {
             }
             listener.accept(outcome);
         }
-        return new Summary(complete, partial, failed);
+        return new Summary(complete, partial, skipped, failed);
     }
 }

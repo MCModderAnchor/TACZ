@@ -86,14 +86,15 @@ public final class UniversalPackConverter {
         }
         Path reportPath = outputDirectory.resolve(stem + "-universal.report.json");
         Path packPath = outputDirectory.resolve(stem + "-universal.zip");
-        if (export && Files.exists(packPath)) {
-            plan.error("", "$", "OUTPUT_EXISTS", "Output already exists: " + packPath.getFileName());
-            return finish(plan, reportPath, null);
-        }
         try (GunPackInput input = new GunPackInput(source)) {
             plan.baseFiles = input.files.size();
             JsonObject meta = readObject(required(input, "gunpack.meta.json"));
             Set<String> existingOverlays = prepareMetadata(meta, input, plan);
+            if (plan.isSkipped()) return finish(plan, reportPath, null);
+            if (export && Files.exists(packPath)) {
+                plan.error("", "$", "OUTPUT_EXISTS", "Output already exists: " + packPath.getFileName());
+                return finish(plan, reportPath, null);
+            }
             if (!plan.hasErrors()) {
                 for (var entry : input.files.entrySet()) {
                     String name = entry.getKey();
@@ -144,22 +145,28 @@ public final class UniversalPackConverter {
         if (!meta.has("namespace") || meta.get("namespace").getAsString().isBlank()) {
             throw new IllegalArgumentException("Missing gun pack name in namespace metadata");
         }
-        if (!ResourceLocation.isValidNamespace(meta.get("namespace").getAsString())) {
-            plan.warn("gunpack.meta.json", "$.namespace", "PACK_NAME_LABEL", "Preserved legacy pack name; resource namespaces are validated independently");
-        }
         Set<String> existing = new HashSet<>();
         if (meta.has("overlays")) {
             PackMeta parsed = GSON.fromJson(meta, PackMeta.class);
             GunPackOverlayResolver.resolve(parsed, "1.20.1");
+            boolean hasTargetOverlay = false;
             for (var overlay : parsed.getOverlays().entries()) {
                 existing.add(overlay.directory());
                 if (overlay.directory().equals(OVERLAY) || GunPackOverlayResolver.matches(overlay.minecraft(), "1.21.1")) {
-                    plan.error("gunpack.meta.json", "$.overlays", "OVERLAY_CONFLICT", "Pack already has a 1.21.1 overlay; refusing to overwrite it");
+                    hasTargetOverlay = true;
                 }
+            }
+            if (hasTargetOverlay) {
+                plan.skip("gunpack.meta.json", "$.overlays", "EXISTING_OVERLAY", "Pack already has a Minecraft 1.21.1 compatibility overlay; skipped conversion");
+                return existing;
             }
         }
         if (input.files.keySet().stream().anyMatch(name -> name.startsWith(OVERLAY + "/"))) {
-            plan.error("gunpack.meta.json", "$.overlays", "OVERLAY_CONFLICT", "Target overlay directory already exists");
+            plan.skip("gunpack.meta.json", "$.overlays", "EXISTING_OVERLAY", "Minecraft 1.21.1 compatibility overlay directory already exists; skipped conversion");
+            return existing;
+        }
+        if (!ResourceLocation.isValidNamespace(meta.get("namespace").getAsString())) {
+            plan.warn("gunpack.meta.json", "$.namespace", "PACK_NAME_LABEL", "Preserved legacy pack name; resource namespaces are validated independently");
         }
         // A source-version overlay would have to be flattened before converting the effective old pack.
         if (meta.has("overlays")) {

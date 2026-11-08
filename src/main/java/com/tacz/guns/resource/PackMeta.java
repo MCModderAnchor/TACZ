@@ -29,6 +29,15 @@ public class PackMeta {
         return name;
     }
 
+    public boolean supportsMinecraftVersion(String version) {
+        if (dependencies == null) return false;
+        try {
+            return GunPackOverlayResolver.matches(dependencies.get("minecraft"), version);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
     public Overlays getOverlays() {
         return overlays;
     }

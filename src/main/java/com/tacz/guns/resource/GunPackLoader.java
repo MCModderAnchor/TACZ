@@ -50,7 +50,11 @@ public enum GunPackLoader implements RepositorySource {
     private static final Marker MARKER = MarkerManager.getMarker("GunPackFinder");
     public PackType packType;
     private boolean firstLoad = true;
+    private volatile List<String> packsNeedingConversion = List.of();
 
+    public List<String> getPacksNeedingConversion() {
+        return packsNeedingConversion;
+    }
 
     @Override
     public void loadPacks(Consumer<Pack> pOnLoad) {
@@ -61,6 +65,7 @@ public enum GunPackLoader implements RepositorySource {
     }
 
     public Pack discoverExtensions() {
+        packsNeedingConversion = List.of();
         Path resourcePacksPath = FMLPaths.GAMEDIR.get().resolve("tacz");
         File folder = resourcePacksPath.toFile();
         if (!folder.isDirectory()) {
@@ -86,6 +91,11 @@ public enum GunPackLoader implements RepositorySource {
 
         GunMod.LOGGER.info(MARKER, "Start scanning for gun packs in {}", resourcePacksPath);
         List<GunPack> gunPacks = scanExtensions(resourcePacksPath);
+        packsNeedingConversion = gunPacks.stream()
+                .filter(GunPack::needsConversion)
+                .map(pack -> pack.path().getFileName().toString())
+                .sorted()
+                .toList();
         GunMod.LOGGER.info(MARKER, "Found {} possible gunpack(s) and added them to resource set.", gunPacks.size());
         PackLocationInfo info = new PackLocationInfo("tacz_resources", Component.literal("TACZ Resources"), PackSource.BUILT_IN, Optional.empty());
         PackMetadataSection meta = new PackMetadataSection(Component.translatable("tacz.resources.modresources"), SharedConstants.getCurrentVersion().getPackVersion(packType), Optional.empty());
@@ -182,7 +192,7 @@ public enum GunPackLoader implements RepositorySource {
 //        return config;
 //    }
 
-    private static GunPack fromDirPath(Path path) throws IOException {
+    static GunPack fromDirPath(Path path) throws IOException {
         Path packInfoFilePath = path.resolve("gunpack.meta.json");
         try (InputStream stream = Files.newInputStream(packInfoFilePath)) {
             PackMeta info = CommonAssetsManager.GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), PackMeta.class);
@@ -205,7 +215,7 @@ public enum GunPackLoader implements RepositorySource {
         return null;
     }
 
-    private static GunPack fromZipPath(Path path)  {
+    static GunPack fromZipPath(Path path)  {
         try(ZipFile zipFile = new ZipFile(path.toFile())){
             ZipEntry extDescriptorEntry = zipFile.getEntry("gunpack.meta.json");
             if (extDescriptorEntry == null) {
@@ -263,6 +273,8 @@ public enum GunPackLoader implements RepositorySource {
     private static boolean modVersionAllMatch(PackMeta info) throws InvalidVersionSpecificationException {
         HashMap<String, String> dependencies = info.getDependencies();
         for (String modId : dependencies.keySet()) {
+            // Minecraft compatibility is advisory; other mod dependencies remain mandatory.
+            if ("minecraft".equals(modId)) continue;
             if (!modVersionMatch(modId, dependencies.get(modId))) {
                 return false;
             }
@@ -283,9 +295,10 @@ public enum GunPackLoader implements RepositorySource {
         if (info.getName() == null || info.getName().isBlank()) throw new IOException("Missing gun pack namespace");
         List<String> overlays = GunPackOverlayResolver.resolve(info, SharedConstants.getCurrentVersion().getName());
         GunPackOverlayResolver.validate(path, overlays);
-        return new GunPack(path, info.getName(), overlays);
+        return new GunPack(path, info.getName(), overlays,
+                !info.supportsMinecraftVersion(SharedConstants.getCurrentVersion().getName()));
     }
 
-    public record GunPack(Path path, String name, List<String> overlays) {
+    public record GunPack(Path path, String name, List<String> overlays, boolean needsConversion) {
     }
 }

@@ -11,7 +11,10 @@ import com.tacz.guns.resource.convert.UniversalPackConverter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLPaths;
 
@@ -64,15 +67,15 @@ public final class UniversalConvertCommand {
             Path root = FMLPaths.GAMEDIR.get().resolve("tacz");
             inputs = all ? GunPackConversionBatch.discover(root) : List.of(GunPackConversionBatch.select(root, name));
             if (inputs.isEmpty()) {
-                source.sendFailure(Component.translatable("message.tacz.converter.universal.batch_empty"));
+                source.sendFailure(message("batch_empty"));
                 return 0;
             }
         } catch (IOException | RuntimeException e) {
-            source.sendFailure(Component.translatable("message.tacz.converter.universal.failed", e.getMessage()));
+            source.sendFailure(message("failed", e.getMessage()));
             return 0;
         }
         if (!acquire(inputs)) {
-            source.sendFailure(Component.translatable("message.tacz.converter.universal.busy"));
+            source.sendFailure(message("busy"));
             return 0;
         }
         Path output = FMLPaths.GAMEDIR.get().resolve("tacz-converted");
@@ -88,25 +91,32 @@ public final class UniversalConvertCommand {
                         if (outcome.failure() != null) GunMod.LOGGER.error("Gun pack conversion failed for {}", outcome.source(), outcome.failure());
                         source.getServer().execute(() -> report(source, outcome, export));
                     });
-                    if (all) source.getServer().execute(() -> source.sendSuccess(() ->
-                        Component.translatable(export ? "message.tacz.converter.universal.batch_exported" : "message.tacz.converter.universal.batch_checked",
-                            summary.total(), summary.complete(), summary.partial(), summary.failed(), output.toString())
-                            .withStyle(summary.failed() > 0 || summary.partial() > 0 ? ChatFormatting.YELLOW : ChatFormatting.GREEN), false));
+                    source.getServer().execute(() -> {
+                        if (all) source.sendSuccess(() ->
+                            message(export ? "batch_exported" : "batch_checked",
+                                summary.total(), summary.complete(), summary.partial(), summary.skipped(), summary.failed(), "tacz-converted/")
+                                .withStyle(summary.failed() > 0 || summary.partial() > 0 ? ChatFormatting.YELLOW : ChatFormatting.GREEN), false);
+                        else source.sendSystemMessage(message("reports_directory", "tacz-converted/"));
+                        if (summary.complete() + summary.partial() > 0) {
+                            source.sendSystemMessage(export ? message("install_hint") : message("export_hint",
+                                suggestCommand("/tacz convert universal " + (all ? "all" : StringArgumentType.escapeIfRequired(name)) + " export")));
+                        }
+                    });
                 } catch (Exception e) {
                     GunMod.LOGGER.error("Gun pack conversion job failed for {}", inputs, e);
-                    source.getServer().execute(() -> source.sendFailure(Component.translatable("message.tacz.converter.universal.failed", e.getMessage())));
+                    source.getServer().execute(() -> source.sendFailure(message("failed", e.getMessage())));
                 } finally {
                     release(inputs);
                 }
             });
         } catch (RejectedExecutionException e) {
             release(inputs);
-            source.sendFailure(Component.translatable("message.tacz.converter.universal.busy"));
+            source.sendFailure(message("busy"));
             return 0;
         }
         source.sendSystemMessage(all
-            ? Component.translatable("message.tacz.converter.universal.batch_queued", inputs.size())
-            : Component.translatable("message.tacz.converter.universal.queued", name));
+            ? message(export ? "batch_export_queued" : "batch_queued", inputs.size())
+            : message(export ? "export_queued" : "queued", name));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -125,27 +135,44 @@ public final class UniversalConvertCommand {
     }
 
     private static void report(CommandSourceStack source, GunPackConversionBatch.Outcome outcome, boolean export) {
+        String name = outcome.source().getFileName().toString();
         if (outcome.failure() != null) {
-            source.sendFailure(Component.translatable("message.tacz.converter.universal.failed",
-                outcome.source().getFileName() + ": " + outcome.failure().getMessage()));
+            source.sendFailure(message("pack_failed", name, outcome.failure().getMessage()));
             return;
         }
         var result = outcome.result();
         var report = result.report();
         if (report.hasErrors()) {
-            source.sendFailure(Component.translatable("message.tacz.converter.universal.rejected", result.reportPath().toString()));
-            report.diagnostics.stream().filter(d -> d.severity().equals("error")).limit(3).forEach(d ->
-                source.sendSystemMessage(Component.literal(d.file() + " " + d.path() + " [" + d.code() + "] " + d.message())));
+            source.sendFailure(message(export ? "rejected" : "check_rejected", name));
+        } else if (report.isSkipped()) {
+            source.sendSystemMessage(message("skipped", name).withStyle(ChatFormatting.GRAY));
         } else if (report.isPartial()) {
-            source.sendSuccess(() -> Component.translatable(export ? "message.tacz.converter.universal.partial_exported" : "message.tacz.converter.universal.partial_checked",
-                export ? result.packPath().toString() : result.reportPath().toString(), report.skippedRecipes, result.reportPath().toString())
+            source.sendSuccess(() -> message(export ? "partial_exported" : "partial_checked", name,
+                export ? displayPath(result.packPath()) : report.overlayFiles, report.skippedRecipes)
                 .withStyle(ChatFormatting.YELLOW), false);
         } else {
-            source.sendSuccess(() -> Component.translatable(export ? "message.tacz.converter.universal.exported" : "message.tacz.converter.universal.checked",
-                export ? result.packPath().toString() : result.reportPath().toString(), report.overlayFiles), false);
+            source.sendSuccess(() -> message(export ? "exported" : "checked", name,
+                export ? displayPath(result.packPath()) : report.overlayFiles)
+                .withStyle(ChatFormatting.GREEN), false);
         }
         if (!report.missingItemIds.isEmpty()) {
-            source.sendSystemMessage(Component.translatable("message.tacz.converter.universal.deferred_items", report.missingItemIds.size()));
+            source.sendSystemMessage(message("deferred_items", name, report.missingItemIds.size()));
         }
+    }
+
+    private static String displayPath(Path path) {
+        return "tacz-converted/" + path.getFileName();
+    }
+
+    private static MutableComponent message(String key, Object... arguments) {
+        return Component.translatable("message.tacz.pre")
+            .append(Component.translatable("message.tacz.converter.universal." + key, arguments));
+    }
+
+    private static Component suggestCommand(String command) {
+        return Component.literal(command).withStyle(style -> style.withColor(ChatFormatting.AQUA).withUnderlined(true)
+            .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command))
+            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                Component.translatable("message.tacz.pack_compatibility.command.hover"))));
     }
 }
