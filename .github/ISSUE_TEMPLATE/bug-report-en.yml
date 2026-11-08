@@ -19,13 +19,15 @@ body:
         - label: tacz is up to date
         - label: unable to reproduce without tacz
           required: true
+        - label: can be reproduced without any tacz-related addon mods
+          required: true
 
   - type: input
     id: minecraft-modloader-version
     attributes:
       label: Minecraft and modloader version
       description: |
-        The minecraft version and mod loader you use(forge/fabric) and their version.  
+        The minecraft version and mod loader you use(forge/neoforge) and their version.  
 
         You can find them at the corner of main menu or in the log while startup.
         
@@ -35,7 +37,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: tac version
+      label: tacz version
       description: Versions can be find in mod menu or at the corner of hud when you hold a tacz gun.
     validations:
       required: true
