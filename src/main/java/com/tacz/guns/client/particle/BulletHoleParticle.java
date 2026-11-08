@@ -77,7 +77,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
         });
         this.alpha = 0.9F;
 
-        Vector3f offset = direction.step().mul(this.random.nextFloat() * 0.0025F + 0.0025F);
+        Vector3f offset = direction.step().mul(this.random.nextFloat() * 0.005F + 0.005F);
         this.offsetX = offset.x;
         this.offsetY = offset.y;
         this.offsetZ = offset.z;
