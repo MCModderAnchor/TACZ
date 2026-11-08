@@ -11,7 +11,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -41,6 +40,9 @@ public class BulletHoleParticle extends TextureSheetParticle {
     private int vOffset;
     private float textureDensity;
     private boolean validAttachment = true;
+    private final float offsetX;
+    private final float offsetY;
+    private final float offsetZ;
 
     public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos, String ammoId, String gunId, String gunDisplayId, boolean incendiary) {
         super(world, x, y, z);
@@ -74,6 +76,11 @@ public class BulletHoleParticle extends TextureSheetParticle {
             }
         });
         this.alpha = 0.9F;
+
+        Vector3f offset = direction.step().mul(this.random.nextFloat() * 0.0025F + 0.0025F);
+        this.offsetX = offset.x;
+        this.offsetY = offset.y;
+        this.offsetZ = offset.z;
     }
 
     public static boolean isBulletHoleEnabled(String ammoId, String gunId, String gunDisplayId) {
@@ -155,13 +162,9 @@ public class BulletHoleParticle extends TextureSheetParticle {
             return;
         }
         Vec3 view = renderInfo.getPosition();
-        float particleX = (float) (Mth.lerp(partialTicks, this.xo, this.x) - view.x());
-        float particleY = (float) (Mth.lerp(partialTicks, this.yo, this.y) - view.y());
-        float particleZ = (float) (Mth.lerp(partialTicks, this.zo, this.z) - view.z());
-        Vector3f offset = this.getRenderOffset();
-        particleX += offset.x;
-        particleY += offset.y;
-        particleZ += offset.z;
+        float particleX = (float) (Mth.lerp(partialTicks, this.xo, this.x) - view.x()) + this.offsetX;
+        float particleY = (float) (Mth.lerp(partialTicks, this.yo, this.y) - view.y()) + this.offsetY;
+        float particleZ = (float) (Mth.lerp(partialTicks, this.zo, this.z) - view.z()) + this.offsetZ;
         Quaternionf quaternion = this.direction.getRotation();
         Vector3f[] points = new Vector3f[]{
                 new Vector3f(-1.0F, 0.0F, -1.0F),
@@ -227,17 +230,6 @@ public class BulletHoleParticle extends TextureSheetParticle {
                     this.x + 0.1, this.y + 0.1, this.z + 0.1);
             return !intersects;
         }
-    }
-
-    private Vector3f getRenderOffset() {
-        Vector3f step = this.direction.step();
-        Minecraft mc = Minecraft.getInstance();
-        GameRenderer gameRenderer = mc.gameRenderer;
-        Camera camera = gameRenderer.getMainCamera();
-        double distance = camera.getPosition().distanceTo(this.getPos());
-        float componentLength = Math.abs(new Vector3f(camera.getLookVector()).normalize().dot(step));
-        float offsetLength = (float) Math.sqrt(distance) * componentLength * 0.02F;
-        return step.mul(offsetLength);
     }
 
     @OnlyIn(Dist.CLIENT)
