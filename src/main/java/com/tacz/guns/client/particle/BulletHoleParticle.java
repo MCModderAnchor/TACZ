@@ -11,6 +11,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -157,13 +158,16 @@ public class BulletHoleParticle extends TextureSheetParticle {
         float particleX = (float) (Mth.lerp(partialTicks, this.xo, this.x) - view.x());
         float particleY = (float) (Mth.lerp(partialTicks, this.yo, this.y) - view.y());
         float particleZ = (float) (Mth.lerp(partialTicks, this.zo, this.z) - view.z());
+        Vector3f offset = this.getRenderOffset();
+        particleX += offset.x;
+        particleY += offset.y;
+        particleZ += offset.z;
         Quaternionf quaternion = this.direction.getRotation();
         Vector3f[] points = new Vector3f[]{
-                // Y 值稍微大一点点，防止 z-fight
-                new Vector3f(-1.0F, 0.01F, -1.0F),
-                new Vector3f(-1.0F, 0.01F, 1.0F),
-                new Vector3f(1.0F, 0.01F, 1.0F),
-                new Vector3f(1.0F, 0.01F, -1.0F)
+                new Vector3f(-1.0F, 0.0F, -1.0F),
+                new Vector3f(-1.0F, 0.0F, 1.0F),
+                new Vector3f(1.0F, 0.0F, 1.0F),
+                new Vector3f(1.0F, 0.0F, -1.0F)
         };
         float scale = this.getQuadSize(partialTicks);
 
@@ -223,6 +227,33 @@ public class BulletHoleParticle extends TextureSheetParticle {
                     this.x + 0.1, this.y + 0.1, this.z + 0.1);
             return !intersects;
         }
+    }
+
+    private Vector3f getRenderOffset() {
+        Vector3f step = this.direction.step();
+        Minecraft mc = Minecraft.getInstance();
+        GameRenderer gameRenderer = mc.gameRenderer;
+        Camera camera = gameRenderer.getMainCamera();
+        double distance = camera.getPosition().distanceTo(this.getPos());
+        float componentLength = -new Vector3f(camera.getLookVector()).normalize().dot(step);
+        float componentLengthPow = componentLength * componentLength * componentLength;
+        float offsetLength = (float) Math.sqrt(distance) * 0.1F * componentLengthPow;
+        offsetLength = pingpong(offsetLength, 0.05F * componentLengthPow) + 0.01F;
+        return step.mul(offsetLength);
+    }
+
+    private static float pingpong(float value, float length) {
+        length = Math.abs(length);
+        if (length == 0.0F) {
+            return 0.0F;
+        }
+
+        float remainder = value % (length * 2.0F);
+        if (remainder < 0.0F) {
+            remainder += length * 2.0F;
+        }
+
+        return remainder <= length ? remainder : length * 2.0F - remainder;
     }
 
     @OnlyIn(Dist.CLIENT)
