@@ -40,6 +40,9 @@ public class BulletHoleParticle extends TextureSheetParticle {
     private int vOffset;
     private float textureDensity;
     private boolean validAttachment = true;
+    private final float offsetX;
+    private final float offsetY;
+    private final float offsetZ;
 
     public BulletHoleParticle(ClientLevel world, double x, double y, double z, Direction direction, BlockPos pos, String ammoId, String gunId, String gunDisplayId, boolean incendiary) {
         super(world, x, y, z);
@@ -73,6 +76,11 @@ public class BulletHoleParticle extends TextureSheetParticle {
             }
         });
         this.alpha = 0.9F;
+
+        Vector3f offset = direction.step().mul(this.random.nextFloat() * 0.005F + 0.005F);
+        this.offsetX = offset.x;
+        this.offsetY = offset.y;
+        this.offsetZ = offset.z;
     }
 
     public static boolean isBulletHoleEnabled(String ammoId, String gunId, String gunDisplayId) {
@@ -154,16 +162,15 @@ public class BulletHoleParticle extends TextureSheetParticle {
             return;
         }
         Vec3 view = renderInfo.getPosition();
-        float particleX = (float) (Mth.lerp(partialTicks, this.xo, this.x) - view.x());
-        float particleY = (float) (Mth.lerp(partialTicks, this.yo, this.y) - view.y());
-        float particleZ = (float) (Mth.lerp(partialTicks, this.zo, this.z) - view.z());
+        float particleX = (float) (Mth.lerp(partialTicks, this.xo, this.x) - view.x()) + this.offsetX;
+        float particleY = (float) (Mth.lerp(partialTicks, this.yo, this.y) - view.y()) + this.offsetY;
+        float particleZ = (float) (Mth.lerp(partialTicks, this.zo, this.z) - view.z()) + this.offsetZ;
         Quaternionf quaternion = this.direction.getRotation();
         Vector3f[] points = new Vector3f[]{
-                // Y 值稍微大一点点，防止 z-fight
-                new Vector3f(-1.0F, 0.01F, -1.0F),
-                new Vector3f(-1.0F, 0.01F, 1.0F),
-                new Vector3f(1.0F, 0.01F, 1.0F),
-                new Vector3f(1.0F, 0.01F, -1.0F)
+                new Vector3f(-1.0F, 0.0F, -1.0F),
+                new Vector3f(-1.0F, 0.0F, 1.0F),
+                new Vector3f(1.0F, 0.0F, 1.0F),
+                new Vector3f(1.0F, 0.0F, -1.0F)
         };
         float scale = this.getQuadSize(partialTicks);
 
