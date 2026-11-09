@@ -1,5 +1,6 @@
 [
   "tacz:scope_retro_2x",
-  "#tacz:scope",
+  "#tacz:scope_scope",
+  "#tacz:scope_sight",
   "#tacz:scope_lowsight"
 ]
