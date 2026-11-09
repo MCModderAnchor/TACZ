@@ -920,7 +920,7 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "positioning",
-					"pivot": [-0.025, 4.1, -21.475]
+					"pivot": [-0.025, 8.6, -19.225]
 				},
 				{
 					"name": "fixed",

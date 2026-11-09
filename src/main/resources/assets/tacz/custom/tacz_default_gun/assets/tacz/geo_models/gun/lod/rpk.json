@@ -743,7 +743,7 @@
 				{
 					"name": "muzzle_flash",
 					"parent": "positioning2",
-					"pivot": [0, -10.44375, -28.075]
+					"pivot": [0, 9.05625, -28.075]
 				},
 				{
 					"name": "scope_pos",
