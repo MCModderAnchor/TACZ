@@ -2685,6 +2685,7 @@
 				},
 				{
 					"name": "bone",
+					"parent": "scope_body",
 					"pivot": [0.84399, 1.80672, 1.5901],
 					"cubes": [
 						{
