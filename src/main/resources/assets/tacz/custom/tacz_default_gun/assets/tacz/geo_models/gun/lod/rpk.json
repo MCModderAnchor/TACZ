@@ -748,12 +748,12 @@
 				{
 					"name": "scope_pos",
 					"parent": "positioning2",
-					"pivot": [0, -7.675, 4.0875]
+					"pivot": [0, 11.825, 4.0875]
 				},
 				{
 					"name": "shell",
 					"parent": "positioning2",
-					"pivot": [-0.5, -10.15, 0]
+					"pivot": [-0.5, 9.85, 0]
 				},
 				{
 					"name": "camera",
