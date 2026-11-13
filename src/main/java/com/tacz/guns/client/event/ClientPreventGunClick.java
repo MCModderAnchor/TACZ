@@ -27,6 +27,9 @@ public class ClientPreventGunClick {
         if (InteractKey.INTERACT_KEY.isDown()) {
             return;
         }
+        if (event.isUseItem() && InteractKey.sharesUseBinding(event.getKeyMapping())) {
+            return;
+        }
         // 只要主手有枪，那么禁止交互
         ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (itemInHand.getItem() instanceof IGun) {
