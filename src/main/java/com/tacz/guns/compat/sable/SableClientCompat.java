@@ -6,13 +6,32 @@ import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3dc;
 
 import javax.annotation.Nullable;
 
 final class SableClientCompat {
     private SableClientCompat() {
+    }
+
+    @Nullable
+    static SableCompat.BlockRenderPose blockRenderPose(BlockEntity blockEntity, float partialTick) {
+        ClientSubLevel subLevel = Sable.HELPER.getContainingClient(blockEntity);
+        if (subLevel == null || subLevel.isRemoved()) {
+            return null;
+        }
+        Pose3dc pose = subLevel.renderPose(partialTick);
+        BlockPos pos = blockEntity.getBlockPos();
+        Vector3dc scale = pose.scale();
+        return new SableCompat.BlockRenderPose(
+                pose.transformPosition(Vec3.atLowerCornerOf(pos)),
+                pose.transformPosition(Vec3.atCenterOf(pos)),
+                new Matrix4f().rotation(new Quaternionf(pose.orientation()))
+                        .scale((float) scale.x(), (float) scale.y(), (float) scale.z()));
     }
 
     @Nullable

@@ -18,6 +18,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,7 +35,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GunDisplayCaseBlock extends BaseEntityBlock {
@@ -139,6 +143,11 @@ public class GunDisplayCaseBlock extends BaseEntityBlock {
             return state.setValue(property, false);
         }
         return state;
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
@@ -312,7 +321,7 @@ public class GunDisplayCaseBlock extends BaseEntityBlock {
                 continue;
             }
             connected.add(pos);
-            queueConnectedCases(queue, pos, state, facing);
+            addConnectedCases(queue, pos, state);
         }
         return connected;
     }
@@ -397,22 +406,30 @@ public class GunDisplayCaseBlock extends BaseEntityBlock {
             if (state.getValue(LOCKED) != locked) {
                 level.setBlock(pos, state.setValue(LOCKED, locked), LOCK_UPDATE_FLAGS);
             }
-            queueConnectedCases(queue, pos, state, facing);
+            addConnectedCases(queue, pos, state);
         }
     }
 
-    private static void queueConnectedCases(ArrayDeque<BlockPos> queue, BlockPos pos, BlockState state, Direction facing) {
+    public List<BlockPos> getConnectedNeighbors(BlockGetter level, BlockPos pos, BlockState state) {
+        List<BlockPos> neighbors = new ArrayList<>(4);
+        addConnectedCases(neighbors, pos, state);
+        neighbors.removeIf(neighbor -> !connectsTo(state, level.getBlockState(neighbor)));
+        return neighbors;
+    }
+
+    private static void addConnectedCases(Collection<BlockPos> positions, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
         if (state.getValue(LEFT)) {
-            queue.add(pos.relative(leftOf(facing)));
+            positions.add(pos.relative(leftOf(facing)));
         }
         if (state.getValue(RIGHT)) {
-            queue.add(pos.relative(rightOf(facing)));
+            positions.add(pos.relative(rightOf(facing)));
         }
         if (state.getValue(UP)) {
-            queue.add(pos.above());
+            positions.add(pos.above());
         }
         if (state.getValue(DOWN)) {
-            queue.add(pos.below());
+            positions.add(pos.below());
         }
     }
 }

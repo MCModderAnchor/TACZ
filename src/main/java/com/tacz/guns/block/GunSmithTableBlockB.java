@@ -37,7 +37,7 @@ public class GunSmithTableBlockB extends AbstractGunSmithTableBlock {
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, BedPart.FOOT));
     }
 
-    private static Direction getNeighbourDirection(BedPart bedPart, Direction direction) {
+    public static Direction getNeighbourDirection(BedPart bedPart, Direction direction) {
         return bedPart == BedPart.FOOT ? direction : direction.getOpposite();
     }
 

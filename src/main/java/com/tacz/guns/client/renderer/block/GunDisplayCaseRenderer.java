@@ -36,12 +36,13 @@ public class GunDisplayCaseRenderer implements BlockEntityRenderer<GunDisplayCas
     @Override
     public void render(GunDisplayCaseBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         Direction facing = blockEntity.getBlockState().getValue(GunDisplayCaseBlock.FACING);
+        var movingDisplay = DisplayGunMeshGroup.movingDisplay(blockEntity, partialTick, displayItemLight(), packedOverlay);
         for (int slot = 0; slot < GunDisplayCaseBlockEntity.SLOT_COUNT; slot++) {
             ItemStack stack = blockEntity.getItem(slot);
             if (stack.isEmpty()) {
                 continue;
             }
-            if (DisplayGunMeshGroup.tryRender(blockEntity, slot, packedOverlay)) {
+            if (DisplayGunMeshGroup.tryRender(blockEntity, slot, packedOverlay, movingDisplay)) {
                 continue;
             }
             int row = slot / GunDisplayCaseBlockEntity.GRID_SIZE;

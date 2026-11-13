@@ -11,8 +11,8 @@ plugins {
 
 val id = project.property("mod_id") as String
 group = project.property("maven_group") as String
-//version = dateFormat.format(Date())
-version = project.property("mod_version") as String
+version = dateFormat.format(Date())
+//version = project.property("mod_version") as String
 
 base {
     archivesName.set(project.property("archives_base_name") as String)
@@ -78,6 +78,7 @@ repositories {
     maven("https://maven.ryanhcode.dev/releases") {
         content {
             includeGroup("dev.ryanhcode.sable-companion")
+            includeGroup("dev.simulated_team.simulated")
         }
     }
     maven("https://jitpack.io") {
@@ -191,6 +192,9 @@ dependencies {
     implementation("curse.maven:sable-1312371:9043865")
     compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:1.6.0")
     // Create Aeronautics
+    compileOnly("dev.simulated_team.simulated:simulated-neoforge-1.21.1:1.3.2") {
+        isTransitive = false
+    }
     runtimeOnly("curse.maven:create-328085:7963363") // Create 6.0.10
     runtimeOnly("curse.maven:create-aeronautics-676721:8763471") // Aeronautics 1.3.2
 }

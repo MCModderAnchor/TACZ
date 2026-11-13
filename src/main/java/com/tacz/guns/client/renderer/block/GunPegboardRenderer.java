@@ -35,12 +35,13 @@ public class GunPegboardRenderer implements BlockEntityRenderer<GunPegboardBlock
 
     @Override
     public void render(GunPegboardBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        var movingDisplay = DisplayGunMeshGroup.movingDisplay(blockEntity, partialTick, packedLight, packedOverlay);
         for (int slot = 0; slot < GunPegboardBlockEntity.SLOT_COUNT; slot++) {
             ItemStack stack = blockEntity.getItem(slot);
             if (stack.isEmpty()) {
                 continue;
             }
-            if (DisplayGunMeshGroup.tryRender(blockEntity, slot, packedOverlay)) {
+            if (DisplayGunMeshGroup.tryRender(blockEntity, slot, packedOverlay, movingDisplay)) {
                 continue;
             }
             Direction facing = GunPegboardSlotHelper.getSlotFacing(blockEntity.getBlockState(), slot);

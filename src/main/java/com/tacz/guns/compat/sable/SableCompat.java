@@ -7,9 +7,11 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
+import org.joml.Matrix4fc;
 import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
@@ -21,7 +23,21 @@ public final class SableCompat {
     }
 
     public static boolean isEnabled() {
-        return ModList.get() != null && ModList.get().isLoaded("sable") && AmmoConfig.SABLE_COMPAT.get();
+        return isLoaded() && AmmoConfig.SABLE_COMPAT.get();
+    }
+
+    private static boolean isLoaded() {
+        return ModList.get() != null && ModList.get().isLoaded("sable");
+    }
+
+    @Nullable
+    public static BlockRenderPose blockRenderPose(BlockEntity blockEntity, float partialTick) {
+        Level level = blockEntity.getLevel();
+        return level != null && level.isClientSide() && isLoaded()
+                ? SableClientCompat.blockRenderPose(blockEntity, partialTick) : null;
+    }
+
+    public record BlockRenderPose(Vec3 origin, Vec3 center, Matrix4fc rotationAndScale) {
     }
 
     public static BlockHitResult clip(Level level, ClipContext context) {

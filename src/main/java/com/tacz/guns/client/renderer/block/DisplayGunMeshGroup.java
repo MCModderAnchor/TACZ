@@ -12,6 +12,7 @@ import com.tacz.guns.block.entity.DisplayGunSlot;
 import com.tacz.guns.block.entity.GunDisplayBlockEntity;
 import com.tacz.guns.client.renderer.external.ExternalGunAppearance;
 import com.tacz.guns.client.resource.ClientIndexManager;
+import com.tacz.guns.compat.sable.SableCompat;
 import com.tacz.guns.config.client.RenderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -23,8 +24,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
+import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -34,14 +37,27 @@ public class DisplayGunMeshGroup {
     private static WorldMeshGroup<DisplayGunSlot> group;
     private static boolean configWasEnabled;
     private static final Map<DisplayGunSlot, CachedAppearance> APPEARANCES = new WeakHashMap<>();
+    private static final Map<DisplayGunSlot, MovingDisplay> MOVING_DISPLAYS = new WeakHashMap<>();
     public static final MeshCachePolicy TTL_300 = new MeshCachePolicy(Duration.ofSeconds(300), 128,
             512L * 1024L * 1024L);
 
     private DisplayGunMeshGroup() {
     }
 
-    private record CachedAppearance(long appearanceRevision, long resourceRevision,
+    public record CachedAppearance(long appearanceRevision, long resourceRevision,
                                     ExternalGunAppearance.Resolution resolution) {
+    }
+
+    public record MovingDisplay(SableCompat.BlockRenderPose pose, int packedLight) {
+    }
+
+    @Nullable
+    public static MovingDisplay movingDisplay(BlockEntity blockEntity, float partialTick, int packedLight, int packedOverlay) {
+        if (!RenderConfig.DISPLAY_GUN_VBO.get() || packedOverlay != OverlayTexture.NO_OVERLAY) {
+            return null;
+        }
+        SableCompat.BlockRenderPose pose = SableCompat.blockRenderPose(blockEntity, partialTick);
+        return pose == null ? null : new MovingDisplay(pose, packedLight);
     }
 
     private static final MeshRenderableAdapter<DisplayGunSlot> ADAPTER = new MeshRenderableAdapter<>() {
@@ -54,6 +70,7 @@ public class DisplayGunMeshGroup {
                     && !stack.isEmpty() && IGun.getIGunOrNull(stack) != null;
             if (!valid) {
                 APPEARANCES.remove(slot);
+                MOVING_DISPLAYS.remove(slot);
             }
             return valid;
         }
@@ -65,7 +82,9 @@ public class DisplayGunMeshGroup {
 
         @Override
         public Vec3 origin(DisplayGunSlot slot) {
-            return Vec3.atLowerCornerOf(slot.owner().getBlockEntity().getBlockPos());
+            MovingDisplay display = MOVING_DISPLAYS.get(slot);
+            return display == null ? Vec3.atLowerCornerOf(slot.owner().getBlockEntity().getBlockPos())
+                    : display.pose().origin();
         }
 
         @Override
@@ -78,7 +97,9 @@ public class DisplayGunMeshGroup {
             double y = ((localIndex / gridSize) + 0.5D) / gridSize - 0.5D;
             PoseStack pose = new PoseStack();
             DisplayItemTransforms.apply(pose, owner.getSlotFacing(index), x, y, ITEM_DEPTH, owner.getRotation(index));
-            return new Matrix4f(pose.last().pose());
+            Matrix4f transform = new Matrix4f(pose.last().pose());
+            MovingDisplay display = MOVING_DISPLAYS.get(slot);
+            return display == null ? transform : transform.mulLocal(display.pose().rotationAndScale());
         }
 
         @Override
@@ -86,6 +107,10 @@ public class DisplayGunMeshGroup {
             GunDisplayBlockEntity owner = slot.owner();
             if (owner.isDisplayGlowing()) {
                 return LightTexture.pack(15, 15);
+            }
+            MovingDisplay display = MOVING_DISPLAYS.get(slot);
+            if (display != null) {
+                return display.packedLight();
             }
             BlockEntity blockEntity = owner.getBlockEntity();
             return LevelRenderer.getLightColor(blockEntity.getLevel(), blockEntity.getBlockPos());
@@ -105,13 +130,14 @@ public class DisplayGunMeshGroup {
     };
 
     /** 方块实体渲染器对当前槽位调用；返回 true 表示由 SBM 接管，包括等待模型或 VBO 就绪。 */
-    public static boolean tryRender(GunDisplayBlockEntity owner, int index, int overlay) {
+    static boolean tryRender(GunDisplayBlockEntity owner, int index, int overlay, @Nullable MovingDisplay display) {
         if (!RenderConfig.DISPLAY_GUN_VBO.get()) {
             if (configWasEnabled) {
                 if (group != null) {
                     group.clear();
                 }
                 APPEARANCES.clear();
+                MOVING_DISPLAYS.clear();
             }
             configWasEnabled = false;
             return false;
@@ -125,9 +151,8 @@ public class DisplayGunMeshGroup {
         if (stack.isEmpty() || IGun.getIGunOrNull(stack) == null) {
             return false;
         }
-
         DisplayGunSlot slot = owner.getDisplaySlot(index);
-        ExternalGunAppearance.Snapshot current = snapshot(slot);
+        ExternalGunAppearance.Snapshot current = snapshot(slot, display);
         CachedAppearance cached = APPEARANCES.get(slot);
         if (current == null) {
             return cached != null && cached.resolution().pending();
@@ -142,7 +167,15 @@ public class DisplayGunMeshGroup {
             );
         }
         group.track(slot, ADAPTER);
-        if (slot.consumeChange()) {
+        boolean displayChanged = !Objects.equals(MOVING_DISPLAYS.get(slot), display);
+        if (displayChanged) {
+            if (display == null) {
+                MOVING_DISPLAYS.remove(slot);
+            } else {
+                MOVING_DISPLAYS.put(slot, display);
+            }
+        }
+        if (slot.consumeChange() || displayChanged) {
             group.markDirty(slot);
         }
 
@@ -153,6 +186,10 @@ public class DisplayGunMeshGroup {
     }
 
     public static ExternalGunAppearance.Snapshot snapshot(DisplayGunSlot slot) {
+        return snapshot(slot, MOVING_DISPLAYS.get(slot));
+    }
+
+    private static ExternalGunAppearance.Snapshot snapshot(DisplayGunSlot slot, @Nullable MovingDisplay display) {
         GunDisplayBlockEntity owner = slot.owner();
         BlockEntity blockEntity = owner.getBlockEntity();
         if (blockEntity.isRemoved()) {
@@ -177,8 +214,10 @@ public class DisplayGunMeshGroup {
         }
 
         int range = RenderConfig.GUN_LOD_RENDER_DISTANCE.get();
-        boolean useLod = range == 0 || blockEntity.getBlockPos().distToCenterSqr(
-                Minecraft.getInstance().gameRenderer.getMainCamera().getPosition()) >= (double) range * range;
+        Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        double disSqr = display == null ? blockEntity.getBlockPos().distToCenterSqr(camera)
+                : display.pose().center().distanceToSqr(camera);
+        boolean useLod = range == 0 || disSqr >= (double) range * range;
         return variants.select(useLod);
     }
 }

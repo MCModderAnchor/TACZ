@@ -2,13 +2,14 @@ package com.tacz.guns.init;
 
 import com.tacz.guns.advancement.TargetHitTrigger;
 import com.tacz.guns.advancement.GunRefitTrigger;
+import com.tacz.guns.compat.simulated.SimulatedCompat;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.resource.GunPackLoader;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -36,6 +37,11 @@ public final class CommonRegistry {
         event.enqueueWork(ModSyncedEntityData::init);
         event.enqueueWork(() -> CauldronInteraction.WATER.map().put(ModItems.GUN_PEGBOARD.get(), CauldronInteraction.DYED_ITEM));
         event.enqueueWork(() -> CauldronInteraction.WATER.map().put(ModItems.GLOW_GUN_PEGBOARD.get(), CauldronInteraction.DYED_ITEM));
+        event.enqueueWork(() -> {
+            if (ModList.get().isLoaded("simulated")) {
+                SimulatedCompat.registerAssemblyChecks();
+            }
+        });
     }
 
     @SubscribeEvent

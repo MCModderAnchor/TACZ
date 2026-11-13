@@ -12,6 +12,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,7 +22,7 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.Map;
 
-public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlockEntity {
+public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlockEntity, Clearable {
     public static final int GRID_SIZE = 4;
     public static final int SLOTS_PER_FACE = GRID_SIZE * GRID_SIZE;
     // 原有 0..15 槽位保持不变，16..31 属于折面；转角时每面仅启用三列。
@@ -162,9 +163,7 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
         }
         Direction facing = GunPegboardSlotHelper.getSlotFacing(getBlockState(), slot);
         Block.popResource(level, worldPosition.relative(facing), items[slot]);
-        items[slot] = ItemStack.EMPTY;
-        rotations[slot] = 0;
-        displaySlotChanged(slot);
+        clearSlot(slot);
         update();
         return true;
     }
@@ -173,9 +172,7 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
         if (!isValidSlot(slot) || items[slot].isEmpty()) {
             return false;
         }
-        items[slot] = ItemStack.EMPTY;
-        rotations[slot] = 0;
-        displaySlotChanged(slot);
+        clearSlot(slot);
         update();
         return true;
     }
@@ -187,12 +184,23 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
         for (int i = 0; i < SLOT_COUNT; i++) {
             if (!items[i].isEmpty()) {
                 Block.popResource(level, worldPosition.relative(GunPegboardSlotHelper.getSlotFacing(getBlockState(), i)), items[i]);
-                items[i] = ItemStack.EMPTY;
-                rotations[i] = 0;
-                displaySlotChanged(i);
+                clearSlot(i);
             }
         }
         update();
+    }
+
+    @Override
+    public void clearContent() {
+        for (int slot = 0; slot < SLOT_COUNT; slot++) {
+            clearSlot(slot);
+        }
+    }
+
+    private void clearSlot(int slot) {
+        items[slot] = ItemStack.EMPTY;
+        rotations[slot] = 0;
+        displaySlotChanged(slot);
     }
 
     private void update() {
@@ -221,9 +229,7 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
                 if (level != null && !level.isClientSide() && !items[slot].isEmpty()
                         && (!GunPegboardSlotHelper.isSlotActive(state, slot) || removedFace)) {
                     Block.popResource(level, worldPosition.relative(GunPegboardSlotHelper.getSlotFacing(previous, slot)), items[slot]);
-                    items[slot] = ItemStack.EMPTY;
-                    rotations[slot] = 0;
-                    displaySlotChanged(slot);
+                    clearSlot(slot);
                     changed = true;
                 }
             }
@@ -296,7 +302,7 @@ public class GunPegboardBlockEntity extends BlockEntity implements GunDisplayBlo
             }
         }
         tag.put(ITEMS_TAG, list);
-        tag.putByteArray(ROTATIONS_TAG, rotations);
+        tag.putByteArray(ROTATIONS_TAG, rotations.clone());
     }
 
     @Override

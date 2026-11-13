@@ -10,6 +10,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.tacz.guns.block.StatueBlock.FACING;
 
-public class StatueBlockEntity extends BlockEntity {
+public class StatueBlockEntity extends BlockEntity implements Clearable {
     public static final BlockEntityType<StatueBlockEntity> TYPE = BlockEntityType.Builder.of(StatueBlockEntity::new, ModBlocks.STATUE.get()).build(null);
     private static final String ITEM_TAG = "Item";
     private ItemStack gunItem = ItemStack.EMPTY;
@@ -61,13 +62,18 @@ public class StatueBlockEntity extends BlockEntity {
         if (!gunItem.isEmpty() && level != null) {
             Direction direction = getBlockState().getValue(FACING);
             Block.popResource(level, worldPosition.relative(direction).above(), gunItem);
-            this.gunItem = ItemStack.EMPTY;
+            clearContent();
             if (level != null) {
                 BlockState state = level.getBlockState(worldPosition);
                 level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_ALL);
             }
             this.setChanged();
         }
+    }
+
+    @Override
+    public void clearContent() {
+        gunItem = ItemStack.EMPTY;
     }
 
     @Override
