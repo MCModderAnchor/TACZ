@@ -38,10 +38,20 @@ public class InteractKey {
             "key.category.tacz");
 
     public static boolean onInteractControllerPress(boolean isPress) {
-        return isPress && onInteractPress();
+        return isPress && onInteractPress(true);
     }
 
     public static boolean onInteractPress() {
+        return onInteractPress(false);
+    }
+
+    public static boolean sharesUseBinding(KeyMapping useKey) {
+        return !useKey.isUnbound()
+                && INTERACT_KEY.getKey().equals(useKey.getKey())
+                && INTERACT_KEY.getKeyModifier() == useKey.getKeyModifier();
+    }
+
+    private static boolean onInteractPress(boolean fromController) {
         if (!isInGame()) {
             return false;
         }
@@ -57,18 +67,19 @@ public class InteractKey {
         if (hitResult == null) {
             return false;
         }
+        boolean vanillaHandlesUse = !fromController && sharesUseBinding(mc.options.keyUse);
         if (hitResult instanceof BlockHitResult blockHitResult) {
-            interactBlock(blockHitResult, player, mc);
+            interactBlock(blockHitResult, player, mc, vanillaHandlesUse);
             return true;
         }
         if (hitResult instanceof EntityHitResult entityHitResult) {
-            interactEntity(entityHitResult, mc);
+            interactEntity(entityHitResult, mc, vanillaHandlesUse);
             return true;
         }
         return false;
     }
 
-    private static void interactBlock(BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc) {
+    private static void interactBlock(BlockHitResult blockHitResult, LocalPlayer player, Minecraft mc, boolean vanillaHandlesUse) {
         BlockPos blockPos = blockHitResult.getBlockPos();
         BlockState block = player.level().getBlockState(blockPos);
         if (block.getBlock() instanceof GunDisplayCaseBlock) {
@@ -78,14 +89,14 @@ public class InteractKey {
             net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientMessageAmmoStorageInteract(blockPos));
             return;
         }
-        if (InteractKeyConfigRead.canInteractBlock(block)) {
+        if (!vanillaHandlesUse && InteractKeyConfigRead.canInteractBlock(block)) {
             mc.startUseItem();
         }
     }
 
-    private static void interactEntity(EntityHitResult entityHitResult, Minecraft mc) {
+    private static void interactEntity(EntityHitResult entityHitResult, Minecraft mc, boolean vanillaHandlesUse) {
         Entity entity = entityHitResult.getEntity();
-        if (InteractKeyConfigRead.canInteractEntity(entity)) {
+        if (!vanillaHandlesUse && InteractKeyConfigRead.canInteractEntity(entity)) {
             mc.startUseItem();
         }
     }

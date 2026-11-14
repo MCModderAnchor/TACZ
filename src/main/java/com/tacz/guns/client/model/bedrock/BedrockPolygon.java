@@ -1,11 +1,21 @@
 package com.tacz.guns.client.model.bedrock;
 
 import net.minecraft.core.Direction;
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 
 public class BedrockPolygon {
     public final BedrockVertex[] vertices;
     public final Vector3f normal;
+
+    public static void bakeTransform(BedrockPolygon[] polygons, Matrix4fc transform, BedrockVertex... corners) {
+        for (BedrockVertex corner : corners) {
+            transform.transformPosition(corner.pos);
+        }
+        for (BedrockPolygon polygon : polygons) {
+            transform.transformDirection(polygon.normal);
+        }
+    }
 
     public BedrockPolygon(BedrockVertex[] vertices, float u1, float v1, float u2, float v2, float texWidth, float texHeight, boolean mirror, Direction direction) {
         this.vertices = vertices;

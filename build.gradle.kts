@@ -11,8 +11,8 @@ plugins {
 
 val id = project.property("mod_id") as String
 group = project.property("maven_group") as String
-version = dateFormat.format(Date())
-//version = project.property("mod_version") as String
+//version = dateFormat.format(Date())
+version = project.property("mod_version") as String
 
 base {
     archivesName.set(project.property("archives_base_name") as String)

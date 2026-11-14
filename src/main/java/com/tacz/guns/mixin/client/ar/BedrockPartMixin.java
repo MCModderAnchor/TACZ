@@ -1,5 +1,6 @@
 package com.tacz.guns.mixin.client.ar;
 
+import com.github.argon4w.acceleratedrendering.core.buffers.accelerated.builders.IAcceleratedVertexConsumer;
 import com.github.argon4w.acceleratedrendering.core.buffers.accelerated.builders.IBufferGraph;
 import com.github.argon4w.acceleratedrendering.core.buffers.accelerated.builders.VertexConsumerExtension;
 import com.github.argon4w.acceleratedrendering.core.buffers.accelerated.renderers.IAcceleratedRenderer;
@@ -60,6 +61,9 @@ public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartLightin
 			float alpha,
 			CallbackInfo ci
 	) {
+		if (cubes.isEmpty() || !ARCompat.shouldAccelerate()) {
+			return;
+		}
 		var lightingMode = BedrockPartLightingMode.SHADED;
 		var acceleratedConsumer = consumer;
 		Matrix3f normalMatrix = pose.normal();
@@ -69,9 +73,7 @@ public class BedrockPartMixin implements IAcceleratedRenderer<BedrockPartLightin
 			normalMatrix = unshadedConsumer.createNormalMatrix();
 		}
 
-		var extension = VertexConsumerExtension.getAccelerated(acceleratedConsumer);
-
-		if (ARCompat.shouldAccelerate() && extension.isAccelerated()) {
+		if (acceleratedConsumer instanceof IAcceleratedVertexConsumer extension && extension.isAccelerated()) {
 			ci.cancel();
 
 			int color = FastColor.ARGB32.color(
