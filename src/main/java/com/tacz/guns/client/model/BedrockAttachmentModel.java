@@ -14,8 +14,11 @@ import com.tacz.guns.client.resource.pojo.display.attachment.ScopeLensConfig;
 import com.tacz.guns.client.resource.pojo.display.gun.TextShow;
 import com.tacz.guns.client.resource.pojo.model.BedrockModelPOJO;
 import com.tacz.guns.client.resource.pojo.model.BedrockVersion;
+import com.tacz.guns.client.resource.pojo.model.BonesItem;
 import com.tacz.guns.compat.ar.ARCompat;
 import com.tacz.guns.compat.oculus.OculusCompat;
+import com.tacz.guns.config.ClientConfig;
+import com.tacz.guns.config.client.RenderConfig;
 import com.tacz.guns.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -45,6 +48,7 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
     private static final String OCULAR_NODE = "ocular";
     private static final String OCULAR_SIGHT_NODE = "ocular_sight";
     private static final String OCULAR_SCOPE_NODE = "ocular_scope";
+    private static final Pattern OCULAR_PATTERN = Pattern.compile("^(" + OCULAR_NODE + "|" + OCULAR_SIGHT_NODE + "|" + OCULAR_SCOPE_NODE + ")(_(\\d+))?$");
     private static final String RANGEFINDER_IMPACT_PREDICTION_NODE = "rangefinder_impact_prediction_pos";
     private static final Pattern LASER_BEAM_PATTERN = Pattern.compile("^laser_beam(_(\\d+))?$");
 
@@ -79,11 +83,9 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
             path = getPath(modelMap.get(SCOPE_VIEW_NODE + '_' + i++));
         }
         // 初始化 ocular 的 node path
-        String ocularRegex = "^(" + OCULAR_NODE + "|" + OCULAR_SIGHT_NODE + "|" + OCULAR_SCOPE_NODE + ")(_(\\d+))?$";
-        Pattern ocularPattern = Pattern.compile(ocularRegex);
         TreeMap<Integer, OcularWrapper> map = new TreeMap<>();
         for (Map.Entry<String, ModelRendererWrapper> entry : modelMap.entrySet()) {
-            Matcher matcher = ocularPattern.matcher(entry.getKey());
+            Matcher matcher = OCULAR_PATTERN.matcher(entry.getKey());
             if (matcher.matches()) {
                 int num = 1;
                 String numStr = matcher.group(3);
@@ -115,6 +117,22 @@ public class BedrockAttachmentModel extends BedrockAnimatedModel {
 
         scopeBodyPath = getPath(modelMap.get(SCOPE_BODY_NODE));
         ocularRingPath = getPath(modelMap.get(OCULAR_RING_NODE));
+    }
+
+    @Override
+    protected float getExtraCubeInflate(BonesItem bone) {
+        if (ClientConfig.CLIENT_CONFIG_SPEC == null || !ClientConfig.CLIENT_CONFIG_SPEC.isLoaded()
+                || !RenderConfig.ENABLE_OCULAR_INFLATE.get()) {
+            return 0;
+        }
+        // The stencil draw includes child parts. The bone index is complete before cubes are baked.
+        for (int i = 0; bone != null && i < indexBones.size(); i++) {
+            if (OCULAR_PATTERN.matcher(bone.getName()).matches()) {
+                return RenderConfig.OCULAR_INFLATE.get().floatValue();
+            }
+            bone = indexBones.get(bone.getParent());
+        }
+        return 0;
     }
 
     @Nullable

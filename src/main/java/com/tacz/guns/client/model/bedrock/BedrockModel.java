@@ -152,6 +152,7 @@ public class BedrockModel {
                 continue;
             }
 
+            float extraInflate = getExtraCubeInflate(bones);
             // 塞入 Cube List
             for (CubesItem cube : bones.getCubes()) {
                 List<Float> uv = cube.getUv();
@@ -159,7 +160,7 @@ public class BedrockModel {
                 List<Float> size = cube.getSize();
                 @Nullable List<Float> cubeRotation = cube.getRotation();
                 boolean mirror = cube.isMirror();
-                float inflate = cube.getInflate();
+                float inflate = cube.getInflate() + extraInflate;
 
                 Matrix4f cubeTransform = null;
                 float x;
@@ -255,12 +256,13 @@ public class BedrockModel {
                 continue;
             }
 
+            float extraInflate = getExtraCubeInflate(bones);
             // 塞入 Cube List
             for (CubesItem cube : bones.getCubes()) {
                 List<Float> uv = cube.getUv();
                 List<Float> size = cube.getSize();
                 boolean mirror = cube.isMirror();
-                float inflate = cube.getInflate();
+                float inflate = cube.getInflate() + extraInflate;
 
                 model.cubes.add(new BedrockCubeBox(uv.get(0), uv.get(1),
                         convertOrigin(bones, cube, 0), convertOrigin(bones, cube, 1), convertOrigin(bones, cube, 2),
@@ -268,6 +270,10 @@ public class BedrockModel {
                         texWidth, texHeight));
             }
         }
+    }
+
+    protected float getExtraCubeInflate(BonesItem bone) {
+        return 0;
     }
 
     /**

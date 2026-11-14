@@ -33,6 +33,8 @@ public class RenderConfig {
     public static ForgeConfigSpec.BooleanValue STATIC_ITEM_GUN_VBO;
     public static ForgeConfigSpec.BooleanValue EXPERIMENTAL_SCOPE_LENS;
     public static ForgeConfigSpec.BooleanValue SCOPE_THERMAL_ENABLE;
+    public static ForgeConfigSpec.BooleanValue ENABLE_OCULAR_INFLATE;
+    public static ForgeConfigSpec.DoubleValue OCULAR_INFLATE;
 
     public static void init(ForgeConfigSpec.Builder builder) {
         builder.push("render");
@@ -123,6 +125,12 @@ public class RenderConfig {
 
         builder.comment("Allow thermal imaging for attachments whose display selects a thermal vision mode. Disabling this uses their normal optical lens and skips thermal entity capture. Requires EnableExperimentalScopeLens.");
         SCOPE_THERMAL_ENABLE = builder.define("EnableScopeThermal", true);
+
+        builder.comment("Try enabling this if you see flickering black spots when aiming through a scope. Expands ocular cubes during model baking to close small gaps. Reload client resources after changing this setting.");
+        ENABLE_OCULAR_INFLATE = builder.define("EnableOcularInflate", true);
+
+        builder.comment("Extra inflate added to ocular cubes in Bedrock model units. Requires EnableOcularInflate. Reload client resources after changing this setting.");
+        OCULAR_INFLATE = builder.defineInRange("OcularInflate", 0.0005, 0.0, Float.MAX_VALUE);
 
         builder.pop();
     }
