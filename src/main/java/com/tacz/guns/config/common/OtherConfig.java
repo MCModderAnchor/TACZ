@@ -4,6 +4,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class OtherConfig {
     public static ModConfigSpec.BooleanValue DEFAULT_PACK_DEBUG;
+    public static ModConfigSpec.BooleanValue HIDE_GUN_PACK_COMPATIBILITY_WARNING;
     public static ModConfigSpec.IntValue TARGET_SOUND_DISTANCE;
     public static ModConfigSpec.DoubleValue SERVER_HITBOX_OFFSET;
     public static ModConfigSpec.BooleanValue SERVER_HITBOX_LATENCY_FIX;
@@ -14,6 +15,9 @@ public class OtherConfig {
 
         builder.comment("Deprecated and ignored: use [gunpack].DefaultPackDebug in <game directory>/tacz/tacz-pre.toml.");
         DEFAULT_PACK_DEBUG = builder.define("DefaultPackDebug", false);
+
+        builder.comment("Hide warnings about gun packs that may need conversion for this Minecraft version.");
+        HIDE_GUN_PACK_COMPATIBILITY_WARNING = builder.define("HideGunPackCompatibilityWarning", false);
 
         builder.comment("The farthest sound distance of the target, including minecarts type");
         TARGET_SOUND_DISTANCE = builder.defineInRange("TargetSoundDistance", 128, 0, Integer.MAX_VALUE);
