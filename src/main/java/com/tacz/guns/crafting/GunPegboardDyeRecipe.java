@@ -1,14 +1,13 @@
 package com.tacz.guns.crafting;
 
-import com.tacz.guns.item.GunPegboardItem;
 import com.tacz.guns.init.ModRecipe;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.CraftingInput;
+import com.tacz.guns.item.GunPegboardItem;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -41,7 +40,7 @@ public class GunPegboardDyeRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput container, net.minecraft.core.HolderLookup.Provider registryAccess) {
+    public ItemStack assemble(CraftingInput container, HolderLookup.Provider registryAccess) {
         ItemStack pegboard = ItemStack.EMPTY;
         List<DyeItem> dyes = new ArrayList<>();
         for (int slot = 0; slot < container.size(); slot++) {

@@ -1,25 +1,34 @@
 package com.tacz.guns.item;
 
-import com.tacz.guns.block.entity.GunPegboardBlockEntity;
 import com.tacz.guns.block.GunPegboardBlock;
+import com.tacz.guns.block.entity.GunPegboardBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class GunPegboardItem extends BlockItem {
-    public static boolean hasCustomColor(ItemStack stack) { return stack.has(net.minecraft.core.component.DataComponents.DYED_COLOR); }
-    public static int getColor(ItemStack stack) { return stack.getOrDefault(net.minecraft.core.component.DataComponents.DYED_COLOR, new net.minecraft.world.item.component.DyedItemColor(-1, false)).rgb(); }
-    public static void setColor(ItemStack stack, int color) { stack.set(net.minecraft.core.component.DataComponents.DYED_COLOR, new net.minecraft.world.item.component.DyedItemColor(color, false)); }
+    public static boolean hasCustomColor(ItemStack stack) {
+        return stack.has(DataComponents.DYED_COLOR);
+    }
+
+    public static int getColor(ItemStack stack) {
+        DyedItemColor color = stack.get(DataComponents.DYED_COLOR);
+        return color == null ? -1 : color.rgb();
+    }
+
+    public static void setColor(ItemStack stack, int color) {
+        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color, true));
+    }
 
     public GunPegboardItem(Block block, Properties properties) {
         super(block, properties);
