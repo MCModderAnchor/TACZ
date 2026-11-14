@@ -2,6 +2,7 @@ package com.tacz.guns.client.model.bedrock;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.tacz.guns.client.model.IFunctionalRenderer;
 import com.tacz.guns.client.resource.pojo.model.*;
 import com.tacz.guns.compat.oculus.OculusCompat;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -159,39 +161,31 @@ public class BedrockModel {
                 boolean mirror = cube.isMirror();
                 float inflate = cube.getInflate();
 
-                // 当做普通 cube 存入
+                Matrix4f cubeTransform = null;
+                float x;
+                float y;
+                float z;
                 if (cubeRotation == null) {
-                    if (faceUv == null) {
-                        model.cubes.add(new BedrockCubeBox(uv.get(0), uv.get(1),
-                                convertOrigin(bones, cube, 0), convertOrigin(bones, cube, 1), convertOrigin(bones, cube, 2),
-                                size.get(0), size.get(1), size.get(2), inflate, mirror,
-                                texWidth, texHeight));
-                    } else {
-                        model.cubes.add(new BedrockCubePerFace(
-                                convertOrigin(bones, cube, 0), convertOrigin(bones, cube, 1), convertOrigin(bones, cube, 2),
-                                size.get(0), size.get(1), size.get(2), inflate,
-                                texWidth, texHeight, faceUv));
-                    }
+                    x = convertOrigin(bones, cube, 0);
+                    y = convertOrigin(bones, cube, 1);
+                    z = convertOrigin(bones, cube, 2);
+                } else {
+                    x = convertOrigin(cube, 0);
+                    y = convertOrigin(cube, 1);
+                    z = convertOrigin(cube, 2);
+                    // Bake cube-local geometry into its bone in model units.
+                    cubeTransform = new Matrix4f()
+                            .translation(convertPivot(bones, cube, 0), convertPivot(bones, cube, 1), convertPivot(bones, cube, 2))
+                            .rotate(Axis.ZP.rotation(convertRotation(cubeRotation.get(2))))
+                            .rotate(Axis.YP.rotation(convertRotation(cubeRotation.get(1))))
+                            .rotate(Axis.XP.rotation(convertRotation(cubeRotation.get(0))));
                 }
-                // 创建 Cube ModelRender
-                else {
-                    BedrockPart cubeRenderer = new BedrockPart(null);
-                    cubeRenderer.setPos(convertPivot(bones, cube, 0), convertPivot(bones, cube, 1), convertPivot(bones, cube, 2));
-                    setRotationAngle(cubeRenderer, convertRotation(cubeRotation.get(0)), convertRotation(cubeRotation.get(1)), convertRotation(cubeRotation.get(2)));
-                    if (faceUv == null) {
-                        cubeRenderer.cubes.add(new BedrockCubeBox(uv.get(0), uv.get(1),
-                                convertOrigin(cube, 0), convertOrigin(cube, 1), convertOrigin(cube, 2),
-                                size.get(0), size.get(1), size.get(2), inflate, mirror,
-                                texWidth, texHeight));
-                    } else {
-                        cubeRenderer.cubes.add(new BedrockCubePerFace(
-                                convertOrigin(cube, 0), convertOrigin(cube, 1), convertOrigin(cube, 2),
-                                size.get(0), size.get(1), size.get(2), inflate,
-                                texWidth, texHeight, faceUv));
-                    }
-
-                    // 添加进父骨骼中
-                    model.addChild(cubeRenderer);
+                if (faceUv == null) {
+                    model.cubes.add(new BedrockCubeBox(uv.get(0), uv.get(1), x, y, z,
+                            size.get(0), size.get(1), size.get(2), inflate, mirror, texWidth, texHeight, cubeTransform));
+                } else {
+                    model.cubes.add(new BedrockCubePerFace(x, y, z,
+                            size.get(0), size.get(1), size.get(2), inflate, texWidth, texHeight, faceUv, cubeTransform));
                 }
             }
         }

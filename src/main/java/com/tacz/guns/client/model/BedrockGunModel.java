@@ -161,11 +161,9 @@ public class BedrockGunModel extends BedrockAnimatedModel {
     @Nullable
     private IFunctionalRenderer attachmentAdapterNodeRender(BedrockPart bedrockPart) {
         for (BedrockPart child : bedrockPart.children) {
-            if (child.name == null) {
-                child.visible = false;
-                continue;
+            if (child.name != null) {
+                child.visible = adapterToRender.contains(child.name);
             }
-            child.visible = adapterToRender.contains(child.name);
         }
         return null;
     }

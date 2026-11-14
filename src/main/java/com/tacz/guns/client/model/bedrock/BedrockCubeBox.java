@@ -3,10 +3,9 @@ package com.tacz.guns.client.model.bedrock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.core.Direction;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
+
+import javax.annotation.Nullable;
 
 public class BedrockCubeBox implements BedrockCube {
     public final float minX;
@@ -18,12 +17,29 @@ public class BedrockCubeBox implements BedrockCube {
     private final BedrockPolygon[] polygons;
 
     public BedrockCubeBox(float texOffX, float texOffY, float x, float y, float z, float width, float height, float depth, float delta, boolean mirror, float texWidth, float texHeight) {
-        this.minX = x;
-        this.minY = y;
-        this.minZ = z;
-        this.maxX = x + width;
-        this.maxY = y + height;
-        this.maxZ = z + depth;
+        this(texOffX, texOffY, x, y, z, width, height, depth, delta, mirror, texWidth, texHeight, null);
+    }
+
+    public BedrockCubeBox(float texOffX, float texOffY, float x, float y, float z, float width, float height, float depth,
+                   float delta, boolean mirror, float texWidth, float texHeight, @Nullable Matrix4fc transform) {
+        if (transform == null) {
+            this.minX = x;
+            this.minY = y;
+            this.minZ = z;
+            this.maxX = x + width;
+            this.maxY = y + height;
+            this.maxZ = z + depth;
+        } else {
+            Vector3f min = new Vector3f();
+            Vector3f max = new Vector3f();
+            transform.transformAab(x, y, z, x + width, y + height, z + depth, min, max);
+            this.minX = min.x;
+            this.minY = min.y;
+            this.minZ = min.z;
+            this.maxX = max.x;
+            this.maxY = max.y;
+            this.maxZ = max.z;
+        }
         this.polygons = new BedrockPolygon[6];
 
         float xEnd = x + width;
@@ -71,6 +87,9 @@ public class BedrockCubeBox implements BedrockCube {
         this.polygons[4] = new BedrockPolygon(new BedrockVertex[]{vertex2, vertex1, vertex4, vertex3}, p1, p6, p2, p7, texWidth, texHeight, mirror, Direction.NORTH);
         this.polygons[0] = new BedrockPolygon(new BedrockVertex[]{vertex6, vertex2, vertex3, vertex7}, p2, p6, p4, p7, texWidth, texHeight, mirror, Direction.EAST);
         this.polygons[5] = new BedrockPolygon(new BedrockVertex[]{vertex5, vertex6, vertex7, vertex8}, p4, p6, p5, p7, texWidth, texHeight, mirror, Direction.SOUTH);
+        if (transform != null) {
+            BedrockPolygon.bakeTransform(polygons, transform, vertex1, vertex2, vertex3, vertex4, vertex5, vertex6, vertex7, vertex8);
+        }
     }
 
     @Override
