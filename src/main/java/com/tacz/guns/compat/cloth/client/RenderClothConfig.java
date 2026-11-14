@@ -134,5 +134,13 @@ public class RenderClothConfig {
         render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.scope_thermal_enable"), RenderConfig.SCOPE_THERMAL_ENABLE.get())
                 .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.scope_thermal_enable.desc"))
                 .setSaveConsumer(RenderConfig.SCOPE_THERMAL_ENABLE::set).build());
+
+        render.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.tacz.client.render.ocular_inflate_enable"), RenderConfig.ENABLE_OCULAR_INFLATE.get())
+                .setDefaultValue(true).setTooltip(Component.translatable("config.tacz.client.render.ocular_inflate_enable.desc"))
+                .setSaveConsumer(RenderConfig.ENABLE_OCULAR_INFLATE::set).build());
+
+        render.addEntry(entryBuilder.startDoubleField(Component.translatable("config.tacz.client.render.ocular_inflate"), RenderConfig.OCULAR_INFLATE.get())
+                .setMin(0).setMax(Float.MAX_VALUE).setDefaultValue(0.0005).setTooltip(Component.translatable("config.tacz.client.render.ocular_inflate.desc"))
+                .setSaveConsumer(RenderConfig.OCULAR_INFLATE::set).build());
     }
 }
