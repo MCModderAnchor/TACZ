@@ -17,10 +17,10 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber
 public final class SyncedEntityDataEvent {
@@ -112,11 +112,21 @@ public final class SyncedEntityDataEvent {
             if (entries.isEmpty()) {
                 continue;
             }
-            List<DataEntry<?, ?>> selfEntries = entries.stream().filter(entry -> entry.getKey().syncMode().isSelf()).collect(Collectors.toList());
+            List<DataEntry<?, ?>> selfEntries = new ArrayList<>();
+            for (DataEntry<?, ?> entry : entries) {
+                if (entry.getKey().syncMode().isSelf()) {
+                    selfEntries.add(entry);
+                }
+            }
             if (!selfEntries.isEmpty() && entity instanceof ServerPlayer) {
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) entity), new ServerMessageUpdateEntityData(entity.getId(), selfEntries));
             }
-            List<DataEntry<?, ?>> trackingEntries = entries.stream().filter(entry -> entry.getKey().syncMode().isTracking()).collect(Collectors.toList());
+            List<DataEntry<?, ?>> trackingEntries = new ArrayList<>();
+            for (DataEntry<?, ?> entry : entries) {
+                if (entry.getKey().syncMode().isTracking()) {
+                    trackingEntries.add(entry);
+                }
+            }
             if (!trackingEntries.isEmpty()) {
                 NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), new ServerMessageUpdateEntityData(entity.getId(), trackingEntries));
             }
