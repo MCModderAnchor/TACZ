@@ -1,5 +1,6 @@
 package com.tacz.guns.resource;
 
+import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PathPackResources;
@@ -8,13 +9,11 @@ import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException
 import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipFile;
 
@@ -119,20 +118,12 @@ public final class GunPackOverlayResolver {
             for (String directory : selected) overlays.add(new PathPackResources(info, path.resolve(directory)));
             return new OverlayPackResources(new PathPackResources(info, path), overlays, null);
         }
-        // Like the legacy Forge loader, use directory traversal on a mounted ZIP
-        // instead of enumerating the entire archive for every resource query.
-        var zip = FileSystems.newFileSystem(path, Map.of());
-        try {
-            Path root = zip.getPath("/");
-            for (String directory : selected) overlays.add(new PathPackResources(info, root.resolve(directory)));
-            return new OverlayPackResources(new PathPackResources(info, root), overlays, zip);
-        } catch (RuntimeException | Error e) {
-            try {
-                zip.close();
-            } catch (IOException closeException) {
-                e.addSuppressed(closeException);
-            }
-            throw e;
-        }
+        // PathPackResources retains paths into a mounted ZIP filesystem.  Those paths
+        // become invalid as soon as a resource-manager generation is closed, while
+        // callers can still enumerate resources during the transition.  Use vanilla's
+        // shared ZIP access instead, whose lifetime is owned by the pack resources.
+        var zip = new FilePackResources.SharedZipFileAccess(path.toFile());
+        for (String directory : selected) overlays.add(new FilePackResources(info, zip, directory));
+        return new OverlayPackResources(new FilePackResources(info, zip, ""), overlays, zip);
     }
 }
